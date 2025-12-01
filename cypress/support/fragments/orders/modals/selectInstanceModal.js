@@ -10,6 +10,7 @@ import {
   not,
   Accordion,
   Checkbox,
+  SearchField,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
@@ -117,6 +118,17 @@ export default {
     cy.expect(
       selectInstanceModal.find(HTML(including('Enter search criteria to start search'))).absent(),
     );
+  },
+  searchByParameter: (parameter, value) => {
+    cy.do([
+      SearchField('Search field index').selectIndex(parameter),
+      searchInput.fillIn(value),
+      cy.wait(500),
+      searchButton.focus(),
+      cy.wait(500),
+      searchButton.click(),
+      cy.wait(1000),
+    ]);
   },
   selectInstance({ shouldConfirm = false } = {}) {
     cy.do(selectInstanceModal.find(MultiColumnListRow({ index: 0 })).click());
