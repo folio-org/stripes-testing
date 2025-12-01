@@ -154,7 +154,18 @@ describe('Inventory', () => {
     testData.forEach((scenario) => {
       it(
         `${scenario.id} Verify ISSN search normalization - Case ${scenario.case} (spitfire)`,
-        { tags: ['extendedPath', 'spitfire', scenario.id] },
+        {
+          tags: [
+            'extendedPath',
+            'spitfire',
+            'C831991',
+            'C831992',
+            'C831993',
+            'C831994',
+            'C831996',
+            'C831997',
+          ],
+        },
         () => {
           // Run searches on Instance tab
           scenario.searchQueries.forEach((query) => {
