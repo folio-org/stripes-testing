@@ -19,6 +19,7 @@ import {
 } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { TransactionDetails } from '../../../support/fragments/finance';
 
 describe('Finance', () => {
   describe('Transactions', () => {
@@ -115,7 +116,7 @@ describe('Finance', () => {
 
                           Invoices.changeInvoiceStatusViaApi({
                             invoice: firstInvoice,
-                            status: INVOICE_STATUSES.PAID,
+                            status: INVOICE_STATUSES.APPROVED,
                           });
                         });
                       });
@@ -149,20 +150,26 @@ describe('Finance', () => {
 
     it(
       'C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C375105'] },
       () => {
         FinanceHelp.searchByName(defaultFund.name);
         Funds.selectFund(defaultFund.name);
         Funds.selectBudgetDetails();
         Funds.viewTransactions();
         Funds.selectTransactionInList('Encumbrance');
-        Funds.varifyDetailsInTransactionFundTo(
-          defaultFiscalYear.code,
-          '($0.00)',
-          `${orderNumber}-1`,
-          'Encumbrance',
-          `${defaultFund.name} (${defaultFund.code})`,
-        );
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: defaultFiscalYear.code },
+            { key: 'Amount', value: '$0.00' },
+            { key: 'Source', value: `${orderNumber}-1` },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: `${defaultFund.name} (${defaultFund.code})` },
+            { key: 'Initial encumbrance', value: '$100.00' },
+            { key: 'Awaiting payment', value: '$100.00' },
+            { key: 'Expended', value: '$0.00' },
+            { key: 'Status', value: 'Released' },
+          ],
+        });
         TopMenuNavigation.navigateToApp('Invoices');
         Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
         Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
@@ -170,20 +177,26 @@ describe('Finance', () => {
         TopMenuNavigation.navigateToApp('Finance');
         Funds.closeTransactionDetails();
         Funds.selectTransactionInList('Encumbrance');
-        Funds.varifyDetailsInTransactionFundTo(
-          defaultFiscalYear.code,
-          '($100.00)',
-          `${orderNumber}-1`,
-          'Encumbrance',
-          `${defaultFund.name} (${defaultFund.code})`,
-        );
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: defaultFiscalYear.code },
+            { key: 'Amount', value: '($100.00)' },
+            { key: 'Source', value: `${orderNumber}-1` },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: `${defaultFund.name} (${defaultFund.code})` },
+            { key: 'Initial encumbrance', value: '$100.00' },
+            { key: 'Awaiting payment', value: '$0.00' },
+            { key: 'Expended', value: '$0.00' },
+            { key: 'Status', value: 'Unreleased' },
+          ],
+        });
         Funds.closeTransactionDetails();
-        Funds.selectTransactionInList('Payment');
+        Funds.selectTransactionInList('Pending payment');
         Funds.varifyDetailsInTransactionFundTo(
           defaultFiscalYear.code,
           '($100.00)',
           firstInvoice.vendorInvoiceNo,
-          'Payment',
+          'Pending payment',
           `${defaultFund.name} (${defaultFund.code})`,
         );
         Funds.clickInfoInTransactionDetails();

@@ -1388,4 +1388,20 @@ export default {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
   },
+
+  selectTransactionInListByIndex(transactionType, index = 0) {
+    cy.wait(6000);
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .eq(index)
+      .find('a')
+      .first()
+      .click();
+  },
+
+  checkTransactionCount(transactionType, expectedCount) {
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .should('have.length', expectedCount);
+  },
 };

@@ -16,6 +16,8 @@ import Organizations from '../../../../support/fragments/organizations/organizat
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import FinanceHelper from '../../../../support/fragments/finance/financeHelper';
+import { TransactionDetails } from '../../../../support/fragments/finance';
+import { OrderLineDetails } from '../../../../support/fragments/orders';
 
 describe('Finance › Fiscal Year Rollover', () => {
   let user;
@@ -203,26 +205,38 @@ describe('Finance › Fiscal Year Rollover', () => {
 
   it(
     'C552995 Verify Order line encumbrance link updated to current fiscal year encumbrance after rollover (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C552995'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbrance('0.00');
-      Funds.varifyDetailsInTransaction(
-        fiscalYear2.code,
-        '$0.00',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${fundA.name} (${fundA.code})`,
-      );
-
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYear2.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${firstOrderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${fundA.name} (${fundA.code})` },
+          { key: 'Initial encumbrance', value: '$0.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.checkCurrentEncumbranceIsBlank();
+      OrderLineDetails.checkFundDistibutionTableContent([
+        {
+          name: fundA.name,
+          expenseClass: '',
+          value: '100%',
+          amount: '$10.00',
+          initialEncumbrance: '',
+          currentEncumbrance: '',
+        },
+      ]);
     },
   );
 });
