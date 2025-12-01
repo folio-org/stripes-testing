@@ -12,175 +12,224 @@ import Funds from '../../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../../../support/fragments/invoices/invoices';
 import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
-import NewOrder from '../../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../../support/fragments/organizations/organizations';
+import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { TransactionDetails } from '../../../../support/fragments/finance';
 
 describe('Fiscal Year Rollover', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const testData = {
+    fiscalYears: {
+      first: {},
+      second: {},
+    },
+    ledger: {},
+    fund: {},
+    budgets: {
+      current: {},
+      planned: {},
+    },
+    organization: {},
+    order: {},
+    orderLine: {},
+    invoice: {},
+    user: {},
+    location: {},
   };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const secondOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
+
+  const createFiscalYears = () => {
+    const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+
+    return FiscalYears.createViaApi(firstFiscalYear).then((firstFYResponse) => {
+      testData.fiscalYears.first = firstFYResponse;
+
+      const secondFiscalYear = {
+        ...FiscalYears.defaultUiFiscalYear,
+        code: firstFYResponse.code.slice(0, -1) + '2',
+        periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+        periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+      };
+
+      return FiscalYears.createViaApi(secondFiscalYear).then((secondFYResponse) => {
+        testData.fiscalYears.second = secondFYResponse;
+      });
+    });
   };
-  const firstOrder = {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
-    approved: true,
-    reEncumber: true,
+
+  const createLedger = () => {
+    const ledger = {
+      ...Ledgers.defaultUiLedger,
+      fiscalYearOneId: testData.fiscalYears.first.id,
+    };
+
+    return Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+      testData.ledger = ledgerResponse;
+    });
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const budget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
+
+  const createFundWithBudget = () => {
+    const fund = {
+      ...Funds.defaultUiFund,
+      ledgerId: testData.ledger.id,
+    };
+
+    return Funds.createViaApi(fund).then((fundResponse) => {
+      testData.fund = fundResponse.fund;
+
+      const currentBudget = {
+        ...Budgets.getDefaultBudget(),
+        fiscalYearId: testData.fiscalYears.first.id,
+        fundId: fundResponse.fund.id,
+        allocated: 1000,
+        budgetStatus: 'Active',
+      };
+
+      return Budgets.createViaApi(currentBudget).then((budgetResponse) => {
+        testData.budgets.current = budgetResponse;
+
+        const plannedBudget = {
+          ...Budgets.getDefaultBudget(),
+          fiscalYearId: testData.fiscalYears.second.id,
+          fundId: fundResponse.fund.id,
+          allocated: 500,
+          budgetStatus: 'Planned',
+        };
+
+        return Budgets.createViaApi(plannedBudget).then((plannedBudgetResponse) => {
+          testData.budgets.planned = plannedBudgetResponse;
+        });
+      });
+    });
   };
-  let user;
-  let location;
-  let invoice;
-  let firstOrderNumber;
+
+  const createOrderWithInvoice = (locationId, materialTypeId, acquisitionMethodId) => {
+    const order = {
+      id: uuid(),
+      vendor: testData.organization.id,
+      orderType: 'Ongoing',
+      ongoing: { isSubscription: false, manualRenewal: false },
+      approved: true,
+      reEncumber: true,
+    };
+
+    return Orders.createOrderViaApi(order).then((orderResponse) => {
+      testData.order = orderResponse;
+
+      const orderLine = {
+        ...BasicOrderLine.defaultOrderLine,
+        purchaseOrderId: orderResponse.id,
+        cost: {
+          listUnitPrice: 100.0,
+          currency: 'USD',
+          discountType: 'percentage',
+          quantityPhysical: 1,
+          poLineEstimatedPrice: 100.0,
+        },
+        fundDistribution: [
+          {
+            code: testData.fund.code,
+            fundId: testData.fund.id,
+            value: 100,
+          },
+        ],
+        locations: [
+          {
+            locationId,
+            quantity: 1,
+            quantityPhysical: 1,
+          },
+        ],
+        acquisitionMethod: acquisitionMethodId,
+        physical: {
+          createInventory: 'Instance, Holding, Item',
+          materialType: materialTypeId,
+          materialSupplier: testData.organization.id,
+          volumes: [],
+        },
+      };
+
+      return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
+        testData.orderLine = orderLineResponse;
+
+        return Orders.updateOrderViaApi({
+          ...orderResponse,
+          workflowStatus: ORDER_STATUSES.OPEN,
+        }).then(() => {
+          return OrderLines.getOrderLineViaApi({ query: `id=="${orderLineResponse.id}"` }).then(
+            (orderLinesArray) => {
+              testData.orderLine = orderLinesArray[0];
+
+              return cy.getBatchGroups().then((batchGroup) => {
+                return Invoices.createInvoiceWithInvoiceLineViaApi({
+                  vendorId: testData.organization.id,
+                  poLineId: testData.orderLine.id,
+                  fiscalYearId: testData.fiscalYears.first.id,
+                  batchGroupId: batchGroup.id,
+                  fundDistributions: testData.orderLine.fundDistribution,
+                  accountingCode: testData.organization.erpCode,
+                  subTotal: 110.0,
+                  releaseEncumbrance: true,
+                  exportToAccounting: false,
+                }).then((invoiceResponse) => {
+                  testData.invoice = invoiceResponse;
+
+                  return Invoices.changeInvoiceStatusViaApi({
+                    invoice: invoiceResponse,
+                    status: INVOICE_STATUSES.PAID,
+                  });
+                });
+              });
+            },
+          );
+        });
+      });
+    });
+  };
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      budget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-          budget.fundId = fundResponse.fund.id;
-          cy.wait(2000);
-          Budgets.createViaApi(budget);
+    createFiscalYears()
+      .then(() => createLedger())
+      .then(() => createFundWithBudget())
+      .then(() => {
+        return Organizations.createOrganizationViaApi({
+          ...NewOrganization.defaultUiOrganizations,
+          isVendor: true,
+          exportToAccounting: false,
+        }).then((orgResponse) => {
+          testData.organization = { id: orgResponse };
 
-          // Create second Fiscal Year for Rollover
-          FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-            secondFiscalYear.id = secondFiscalYearResponse.id;
-          });
+          return ServicePoints.getViaApi().then((servicePoint) => {
+            return NewLocation.createViaApi(
+              NewLocation.getDefaultLocation(servicePoint[0].id),
+            ).then((locationResponse) => {
+              testData.location = locationResponse;
 
-          cy.getLocations({ limit: 1 }).then((res) => {
-            location = res;
-
-            cy.getDefaultMaterialType().then((mtype) => {
-              cy.getAcquisitionMethodsApi({
-                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-              }).then((params) => {
-                // Prepare 2 Open Orders for Rollover
-                Organizations.createOrganizationViaApi(organization).then(
-                  (responseOrganizations) => {
-                    organization.id = responseOrganizations;
-                    secondOrder.vendor = organization.id;
-                    firstOrder.vendor = organization.id;
-                    const firstOrderLine = {
-                      ...BasicOrderLine.defaultOrderLine,
-                      cost: {
-                        listUnitPrice: 10.0,
-                        currency: 'USD',
-                        discountType: 'percentage',
-                        quantityPhysical: 1,
-                        poLineEstimatedPrice: 10.0,
-                      },
-                      fundDistribution: [
-                        { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
-                      ],
-                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
-                      acquisitionMethod: params.body.acquisitionMethods[0].id,
-                      physical: {
-                        createInventory: 'Instance, Holding, Item',
-                        materialType: mtype.id,
-                        materialSupplier: responseOrganizations,
-                        volumes: [],
-                      },
-                    };
-                    const secondOrderLine = {
-                      ...BasicOrderLine.defaultOrderLine,
-                      id: uuid(),
-                      cost: {
-                        listUnitPrice: 40.0,
-                        currency: 'USD',
-                        discountType: 'percentage',
-                        quantityPhysical: 1,
-                        poLineEstimatedPrice: 40.0,
-                      },
-                      fundDistribution: [
-                        { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
-                      ],
-                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
-                      acquisitionMethod: params.body.acquisitionMethods[0].id,
-                      physical: {
-                        createInventory: 'Instance, Holding, Item',
-                        materialType: mtype.id,
-                        materialSupplier: responseOrganizations,
-                        volumes: [],
-                      },
-                    };
-                    Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                      firstOrder.id = firstOrderResponse.id;
-                      firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                      firstOrderNumber = firstOrderResponse.poNumber;
-                      OrderLines.createOrderLineViaApi(firstOrderLine);
-                      Orders.updateOrderViaApi({
-                        ...firstOrderResponse,
-                        workflowStatus: ORDER_STATUSES.OPEN,
-                      });
-                      Invoices.createInvoiceWithInvoiceLineViaApi({
-                        vendorId: organization.id,
-                        fiscalYearId: firstFiscalYear.id,
-                        poLineId: firstOrderLine.id,
-                        fundDistributions: firstOrderLine.fundDistribution,
-                        accountingCode: organization.erpCode,
-                        releaseEncumbrance: true,
-                        subTotal: 10,
-                      }).then((invoiceRescponse) => {
-                        invoice = invoiceRescponse;
-
-                        Invoices.changeInvoiceStatusViaApi({
-                          invoice,
-                          status: INVOICE_STATUSES.PAID,
-                        });
-                      });
-                    });
-                    Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
-                      secondOrder.id = secondOrderResponse.id;
-                      secondOrderLine.purchaseOrderId = secondOrderResponse.id;
-
-                      OrderLines.createOrderLineViaApi(secondOrderLine);
-                      Orders.updateOrderViaApi({
-                        ...secondOrderResponse,
-                        workflowStatus: ORDER_STATUSES.OPEN,
-                      });
-                    });
-                  },
-                );
+              return cy.getDefaultMaterialType().then((materialType) => {
+                return cy
+                  .getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  })
+                  .then((acquisitionMethods) => {
+                    return createOrderWithInvoice(
+                      locationResponse.id,
+                      materialType.id,
+                      acquisitionMethods.body.acquisitionMethods[0].id,
+                    );
+                  });
               });
             });
           });
         });
       });
-    });
+
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFiscalYear.gui,
@@ -188,7 +237,7 @@ describe('Fiscal Year Rollover', () => {
       permissions.uiFinanceViewLedger.gui,
       permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
@@ -198,30 +247,59 @@ describe('Fiscal Year Rollover', () => {
 
   after(() => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C359186: "Planned" budget status is updating to "Active" during FY rollover (based on "Expended") (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C359186'] },
     () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      FinanceHelp.searchByName(testData.ledger.name);
+      Ledgers.selectLedger(testData.ledger.name);
       Ledgers.rollover();
-      Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
+      Ledgers.fillInRolloverInfoForOngoingOrdersWithAllocations(
+        testData.fiscalYears.second.code,
+        'None',
+        'Transfer',
+        'Expended',
+      );
       Ledgers.closeRolloverInfo();
-      Ledgers.selectFundInLedger(defaultFund.name);
+      Ledgers.selectFundInLedger(testData.fund.name);
+      Funds.selectBudgetDetails();
+      Funds.checkBudgetStatus('Closed');
+      Funds.closeBudgetDetails();
       Funds.selectPlannedBudgetDetails();
+      Funds.checkFundingInformation(
+        '$500.00', // Initial allocation
+        '$1,000.00', // Increase in allocation
+        '$0.00', // Decrease in allocation
+        '$1,500.00', // Total allocated (1000 + 500)
+        '$0.00', // Net transfers
+        '$1,500.00', // Total funding
+      );
+      Funds.checkFinancialActivityAndOverages(
+        '$110.00', // Encumbered (paid amount from invoice)
+        '$0.00', // Awaiting payment
+        '$0.00', // Expended
+        '$0.00', // Credited
+        '$110.00', // Unavailable
+      );
+      Funds.checkBudgetStatus('Active');
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$40.00',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYears.second.code },
+          { key: 'Amount', value: '($110.00)' },
+          { key: 'Source', value: `${testData.order.poNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${testData.fund.name} (${testData.fund.code})` },
+          { key: 'Initial encumbrance', value: '$110.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });
