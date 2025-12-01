@@ -259,7 +259,7 @@ describe('MARC', () => {
           }
 
           // Step 7: Save and close
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           InventoryInstance.waitLoading();
 
           // Capture instance ID for cleanup

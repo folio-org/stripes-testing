@@ -150,7 +150,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(testData.tags.tag009, testData.fieldValues.field009);
 
           // Step 6: Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
 
