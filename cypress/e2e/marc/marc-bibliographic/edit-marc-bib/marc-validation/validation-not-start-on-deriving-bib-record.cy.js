@@ -113,7 +113,7 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBibRecord();
 
           QuickMarcEditor.updateExistingField(fieldValue.tag, fieldValue.newValue);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessageForField(
             fields[0].index,
             'Fail: Field 1XX is non-repeatable.Help',
@@ -122,7 +122,7 @@ describe('MARC', () => {
           fields.forEach(({ index }) => {
             QuickMarcEditor.deleteField(index);
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkDeleteModalClosed();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();

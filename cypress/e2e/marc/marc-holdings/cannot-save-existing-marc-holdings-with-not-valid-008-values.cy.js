@@ -92,7 +92,7 @@ describe('MARC', () => {
           testData.invalidAcqEndDate,
         );
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);
       },
     );

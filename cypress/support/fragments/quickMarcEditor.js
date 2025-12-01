@@ -3081,9 +3081,16 @@ export default {
     });
   },
 
-  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true, indicatorsShown = true) {
+  verifyAllBoxesInARowAreDisabled(
+    rowNumber,
+    isDisabled = true,
+    indicatorsShown = true,
+    tagFieldDisabled = true,
+  ) {
     cy.expect([
-      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Field'))
+        .has({ disabled: isDisabled && tagFieldDisabled }),
       getRowInteractorByRowNumber(rowNumber)
         .find(TextArea({ ariaLabel: 'Subfield' }))
         .has({ disabled: isDisabled }),
