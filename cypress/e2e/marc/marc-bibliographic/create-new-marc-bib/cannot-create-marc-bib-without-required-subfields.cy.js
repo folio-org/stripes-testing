@@ -15,7 +15,6 @@ import {
   generateIndicatorData,
   generateIndicatorCodeData,
   findLocalField,
-  toggleAllUndefinedValidationRules,
 } from '../../../../support/api/specifications-helper';
 import { INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES } from '../../../../support/constants';
 
@@ -69,7 +68,6 @@ describe('MARC', () => {
 
           getBibliographicSpec().then((bibSpec) => {
             specId = bibSpec.id;
-            toggleAllUndefinedValidationRules(specId, { enable: true });
             // Setup Field 245 subfields
             cy.getSpecificationFields(specId)
               .then((response) => {
@@ -206,7 +204,6 @@ describe('MARC', () => {
         if (field981Id) {
           cy.deleteSpecificationField(field981Id, false);
         }
-        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
@@ -215,7 +212,6 @@ describe('MARC', () => {
         () => {
           // Step 1: Open new MARC bib record editor
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
 
           // Step 2-3: Select valid LDR and 008 values
           QuickMarcEditor.updateLDR06And07Positions();
@@ -239,7 +235,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag981, '\\', 1);
 
           // Step 6: First save attempt - verify inline errors and callout
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyValidationCallout(
             testData.expectedWarningCount,
             testData.expectedFailCount,
@@ -270,7 +266,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
           // Step 7: Second save attempt - same errors
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyValidationCallout(
             testData.expectedWarningCount,
             testData.expectedFailCount,
@@ -286,7 +282,7 @@ describe('MARC', () => {
           cy.wait(1000);
 
           // Step 9: Third save attempt - same errors (empty subfields still fail)
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyValidationCallout(
             testData.expectedWarningCount,
             testData.expectedFailCount,

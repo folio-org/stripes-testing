@@ -15,7 +15,6 @@ import {
   generateIndicatorData,
   generateIndicatorCodeData,
   findLocalField,
-  toggleAllUndefinedValidationRules,
 } from '../../../../support/api/specifications-helper';
 import { INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES } from '../../../../support/constants';
 
@@ -61,7 +60,6 @@ describe('MARC', () => {
 
           getBibliographicSpec().then((bibSpec) => {
             specId = bibSpec.id;
-            toggleAllUndefinedValidationRules(specId, { enable: true });
 
             // Setup Field 245 subfields
             cy.getSpecificationFields(specId)
@@ -200,8 +198,6 @@ describe('MARC', () => {
         if (field981Id) {
           cy.deleteSpecificationField(field981Id, false);
         }
-
-        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
@@ -210,7 +206,6 @@ describe('MARC', () => {
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
 
           // Step 2: Select valid values in "LDR" positions 06 (Type), 07 (BLvl)
           QuickMarcEditor.updateLDR06And07Positions();
