@@ -117,7 +117,7 @@ describe('MARC', () => {
             const errorCount = item.warning ? 1 : 2;
             QuickMarcEditor.updateIndicatorValue(testData.tag245, item.values[0], 0);
             QuickMarcEditor.updateIndicatorValue(testData.tag245, item.values[1], 1);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(warningCount, errorCount);
             if (item.error) QuickMarcEditor.checkErrorMessageForFieldByTag(testData.tag245, item.error);
             if (item.warning) QuickMarcEditor.checkWarningMessageForFieldByTag(testData.tag245, item.warning);
@@ -135,7 +135,7 @@ describe('MARC', () => {
               ...item.values,
             );
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(8, 0);
           [testData.tag245, testData.tag600, testData.tag610].forEach((tag) => {
             QuickMarcEditor.checkWarningMessageForFieldByTag(

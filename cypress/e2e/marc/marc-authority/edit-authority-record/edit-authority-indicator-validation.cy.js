@@ -137,7 +137,7 @@ describe('MARC', () => {
           indicatorData1XX.forEach((item) => {
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[0], 0);
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[1], 1);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(...item.counts);
             if (item.error) QuickMarcEditor.checkErrorMessageForFieldByTag(testData.tag100, item.error);
             if (item.warning) QuickMarcEditor.checkWarningMessageForFieldByTag(testData.tag100, item.warning);
@@ -155,7 +155,7 @@ describe('MARC', () => {
               ...item.values,
             );
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(5, 0);
           [testData.tag100, testData.tag400, testData.tag410].forEach((tag) => {
             QuickMarcEditor.checkWarningMessageForFieldByTag(

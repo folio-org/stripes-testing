@@ -18,6 +18,7 @@ import {
   FieldSet,
   PaneHeader,
   DropdownMenu,
+  Select,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHoldingsResourceView from './eHoldingsResourceView';
@@ -380,7 +381,7 @@ export default {
     cy.wait(3000);
     cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
     cy.expect([
-      TextField('Name*').exists(),
+      Select('Proxy').exists(),
       Button('Save & close').has({ disabled: true }),
       Button('Cancel').has({ disabled: true }),
     ]);

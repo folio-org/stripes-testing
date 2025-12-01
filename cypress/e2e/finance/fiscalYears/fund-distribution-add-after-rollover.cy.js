@@ -15,6 +15,7 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import { TransactionDetails } from '../../../support/fragments/finance';
 
 describe('Finance › Fiscal Year Rollover', () => {
   let user;
@@ -186,7 +187,7 @@ describe('Finance › Fiscal Year Rollover', () => {
 
   it(
     'C451639 Fund can be added to Fund distribution of PO line after rollover (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C451639'] },
     () => {
       Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', orderNumber);
@@ -194,35 +195,43 @@ describe('Finance › Fiscal Year Rollover', () => {
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
       OrderLines.changePercentsValueInFundDistribution('50');
-      OrderLines.addSecondFundToPOLWithPersentrageValue(fundB, '50');
+      OrderLines.addFundToPOLWithoutSave(1, fundB, '50');
+      OrderLines.saveOrderLine();
       cy.visit(TopMenu.financePath);
       Funds.searchByName(fundA.name);
       Funds.selectFund(fundA.name);
       Funds.selectPreviousBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '$100.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${fundA.name} (${fundA.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: firstFiscalYear.code },
+          { key: 'Amount', value: '($100.00)' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${fundA.name} (${fundA.code})` },
+          { key: 'Initial encumbrance', value: '$100.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       Funds.closeBudgetTransactionApp(budget1.name);
       Funds.closeBudgetDetails();
       Funds.searchByName(fundB.name);
       Funds.selectFund(fundB.name);
       Funds.selectBudgetDetails();
       Funds.openTransactions();
-      Funds.selectTransactionInList('Allocation');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$100.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${fundB.name} (${fundB.code})`,
-      );
+      Funds.selectTransactionInList('Encumbrance');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: secondFiscalYear.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${fundB.name} (${fundB.code})` },
+          { key: 'Initial encumbrance', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });
