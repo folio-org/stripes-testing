@@ -374,7 +374,7 @@ describe('Data Export', () => {
               verifyMarcFieldByTag(record, '999', {
                 ind1: 'f',
                 ind2: 'f',
-                subf: ['i', instance.uuid],
+                subfields: ['i', instance.uuid],
               });
             },
           ];
@@ -395,112 +395,112 @@ describe('Data Export', () => {
               verifyMarcFieldByTag(record, '010', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', '2025123456'],
+                subfields: ['a', '2025123456'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '019', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'CSC-54321'],
+                subfields: ['a', 'CSC-54321'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '020', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', '978-0-12345-678-9'],
+                subfields: ['a', '978-0-12345-678-9'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '022', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', '1234-5678'],
+                subfields: ['a', '1234-5678'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '024', {
                 ind1: '8',
                 ind2: ' ',
-                subf: ['a', 'B000123456'],
+                subfields: ['a', 'B000123456'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '028', {
                 ind1: '5',
                 ind2: '2',
-                subf: ['a', 'PDN-112233'],
+                subfields: ['a', 'PDN-112233'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '030', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'ABCD1234'],
+                subfields: ['a', 'ABCD1234'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '035', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'SCN-987654'],
+                subfields: ['a', 'SCN-987654'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '088', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'RN-2025-001'],
+                subfields: ['a', 'RN-2025-001'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '100', {
                 ind1: '1',
                 ind2: ' ',
-                subf: ['a', 'Test Author'],
+                subfields: ['a', 'Test Author'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '130', {
                 ind1: '0',
                 ind2: ' ',
-                subf: ['a', 'Test Uniform Title'],
+                subfields: ['a', 'Test Uniform Title'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '246', {
                 ind1: '0',
                 ind2: ' ',
-                subf: ['a', 'Test Variant Title'],
+                subfields: ['a', 'Test Variant Title'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '247', {
                 ind1: '0',
                 ind2: '0',
-                subf: ['a', 'Test Former Title'],
+                subfields: ['a', 'Test Former Title'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '250', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'First edition'],
+                subfields: ['a', 'First edition'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '300', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', '300 pages'],
+                subfields: ['a', '300 pages'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '310', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'Annual'],
+                subfields: ['a', 'Annual'],
               });
             },
             (record) => {
@@ -518,49 +518,49 @@ describe('Data Export', () => {
               verifyMarcFieldByTag(record, '362', {
                 ind1: '1',
                 ind2: ' ',
-                subf: ['a', '2020-2023'],
+                subfields: ['a', '2020-2023'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '490', {
                 ind1: '0',
                 ind2: ' ',
-                subf: ['a', 'Test Series'],
+                subfields: ['a', 'Test Series'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '500', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'Test general note'],
+                subfields: ['a', 'Test general note'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '653', {
                 ind1: ' ',
                 ind2: ' ',
-                subf: ['a', 'Test Subject'],
+                subfields: ['a', 'Test Subject'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '655', {
                 ind1: ' ',
                 ind2: '4',
-                subf: ['a', natureOfContentName],
+                subfields: ['a', natureOfContentName],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '710', {
                 ind1: '2',
                 ind2: ' ',
-                subf: ['a', 'Test Corporate Name'],
+                subfields: ['a', 'Test Corporate Name'],
               });
             },
             (record) => {
               verifyMarcFieldByTag(record, '711', {
                 ind1: '2',
                 ind2: ' ',
-                subf: ['a', 'Test Meeting Name'],
+                subfields: ['a', 'Test Meeting Name'],
               });
             },
             (record) => {

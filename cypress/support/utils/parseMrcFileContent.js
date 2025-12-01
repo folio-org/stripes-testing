@@ -122,46 +122,33 @@ export default function parseMrcFileContentAndVerify(
   });
 }
 
-export function verifyMarcFieldByTag(
-  record,
-  tag,
-  { ind1 = ' ', ind2 = ' ', subf = [], subfields = [] },
-) {
+export function verifyMarcFieldByTag(record, tag, { ind1 = ' ', ind2 = ' ', subfields = [] }) {
   const field = record.get(tag)[0];
 
-  expect(
-    field.ind1,
-    `Incorrect ind1 for tag ${tag}: expected '${ind1}', got '${field.ind1}'`,
-  ).to.eq(ind1);
-  expect(
-    field.ind2,
-    `Incorrect ind2 for tag ${tag}: expected '${ind2}', got '${field.ind2}'`,
-  ).to.eq(ind2);
+  expect(field.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(field.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
 
-  // Handle single subfield format: subf = ['a', 'value']
-  if (subf.length > 0) {
-    expect(
-      field.subf[0],
-      `Incorrect subfields for tag ${tag}: expected ${JSON.stringify(subf)}, got ${JSON.stringify(field.subf[0])}`,
-    ).to.deep.eq(subf);
-  }
-
-  // Handle multiple subfields format: subfields = [['a', 'value1'], ['b', 'value2']]
   if (subfields.length > 0) {
-    subfields.forEach(([subfieldCode, subfieldValue]) => {
-      expect(
-        field.subf.some((sf) => sf[0] === subfieldCode && sf[1] === subfieldValue),
-        `Subfield $${subfieldCode} with value '${subfieldValue}' not found in tag ${tag}`,
-      ).to.be.true;
-    });
+    // Check if it's a single subfield ['a', 'value'] or multiple [['a', 'value1'], ['b', 'value2']]
+    const isSingleSubfield = typeof subfields[0] === 'string';
+
+    if (isSingleSubfield) {
+      // Handle single subfield format: ['a', 'value']
+      expect(field.subf[0], `MARC tag ${tag} subfield`).to.deep.eq(subfields);
+    } else {
+      // Handle multiple subfields format: [['a', 'value1'], ['b', 'value2']]
+      subfields.forEach(([subfieldCode, subfieldValue]) => {
+        expect(
+          field.subf.some((sf) => sf[0] === subfieldCode && sf[1] === subfieldValue),
+          `MARC tag ${tag} subfield $${subfieldCode}`,
+        ).to.equal(true);
+      });
+    }
   }
 }
 
 export function verify001FieldValue(record, expectedValue) {
   const field001 = record.get('001')[0];
 
-  expect(
-    field001.value,
-    `Incorrect value for tag 001: expected '${expectedValue}', got '${field001.value}'`,
-  ).to.eq(expectedValue);
+  expect(field001.value, 'MARC tag 001').to.eq(expectedValue);
 }
