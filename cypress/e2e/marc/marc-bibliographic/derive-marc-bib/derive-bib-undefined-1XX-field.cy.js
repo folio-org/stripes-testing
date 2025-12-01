@@ -84,7 +84,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(testData.tags.tag199, testData.newFieldContent, 4);
           QuickMarcEditor.verifyTagValue(5, testData.tags.tag199);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.expectedWarning);
           QuickMarcEditor.verifyValidationCallout(1, 0);
 

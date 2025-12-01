@@ -224,15 +224,19 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(defaultLedger),
     ]);
-    // TO DO: change xpath to interactors when it would be possible
-    cy.get('[data-test-col-transfer-from="true"]').click();
-    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
-      .contains(firstFund.name)
-      .click();
-    cy.get('[data-test-col-transfer-to="true"] button[aria-label="open menu"]').click();
-    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
-      .contains(secondFund.name)
-      .click();
+
+    cy.get('[data-test-col-transfer-from="true"]').within(() => {
+      cy.get('button[aria-label="open menu"]').click();
+    });
+    cy.get('[aria-labelledby*="fund-transfer-from"]').should('be.visible');
+    cy.get('[aria-labelledby*="fund-transfer-from"]').contains(firstFund.name).click();
+
+    cy.get('[data-test-col-transfer-to="true"]').within(() => {
+      cy.get('button[aria-label="open menu"]').click();
+    });
+    cy.get('[aria-labelledby*="fund-transfer-to"]').should('be.visible');
+    cy.get('[aria-labelledby*="fund-transfer-to"]').contains(secondFund.name).click();
+
     cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
     this.waitLoading();
   },
@@ -1383,5 +1387,21 @@ export default {
   assertAllocationToolsSubmenuAbsent() {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
+  },
+
+  selectTransactionInListByIndex(transactionType, index = 0) {
+    cy.wait(6000);
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .eq(index)
+      .find('a')
+      .first()
+      .click();
+  },
+
+  checkTransactionCount(transactionType, expectedCount) {
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .should('have.length', expectedCount);
   },
 };

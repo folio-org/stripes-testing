@@ -140,7 +140,7 @@ describe('MARC', () => {
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           InteractorsTools.checkCalloutMessage(
             'Record cannot be saved. An 852 is required.',
             calloutTypes.error,
