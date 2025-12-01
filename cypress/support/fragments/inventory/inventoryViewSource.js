@@ -202,4 +202,17 @@ export default {
   getContentFromRow(rowIndex) {
     return cy.then(() => rootSection.find(TableRow({ index: rowIndex })).innerText());
   },
+
+  verifyFieldsOrder(expectedTagsArray) {
+    const rows = [];
+    cy.then(() => {
+      cy.get('table[class^="marc"]').within(() => {
+        cy.get('tr').each(($tr) => {
+          rows.push($tr.find('td').eq(1).text());
+        });
+      });
+    }).then(() => {
+      expect(rows).to.deep.equal(expectedTagsArray);
+    });
+  },
 };
