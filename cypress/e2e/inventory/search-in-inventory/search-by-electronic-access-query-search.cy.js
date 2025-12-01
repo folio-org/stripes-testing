@@ -104,7 +104,7 @@ describe('Inventory', () => {
           { query: `electronicAccess = "${materialsSpecPrefix} 1"`, foundInstanceIndexes: [] },
           { query: `electronicAccess = "${notePrefix}"`, foundInstanceIndexes: [1, 2] },
           {
-            query: `electronicAccess = "${electronicAccessData[0].relationShip.name}"`,
+            query: `electronicAccess = "${electronicAccessData[0].relationShip.name}" and electronicAccess.uri = "${uri}"`,
             foundInstanceIndexes: [],
           },
           {
