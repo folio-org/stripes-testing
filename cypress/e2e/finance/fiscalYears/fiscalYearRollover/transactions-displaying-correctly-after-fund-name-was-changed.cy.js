@@ -16,6 +16,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { TransactionDetails } from '../../../../support/fragments/finance';
 
 describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -164,7 +165,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C357565 Transactions are displaying correctly after rollover when fund name was changed in POL after opening order (Thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1', 'C357565'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -178,13 +179,17 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '$70.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: firstFiscalYear.code },
+          { key: 'Amount', value: '($70.00)' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '$70.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       Funds.checkStatusInTransactionDetails('Unreleased');
       Funds.closeBudgetTransactionApp(secondBudget.name);
       Funds.closeBudgetDetails();
@@ -209,13 +214,17 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectPlannedBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$70.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: secondFiscalYear.code },
+          { key: 'Amount', value: '($70.00)' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '$70.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       Funds.closeTransactionApp(secondFund, secondFiscalYear);
       Funds.closeBudgetDetails();
       FinanceHelp.searchByName(firstFund.name);
@@ -228,13 +237,17 @@ describe('Fiscal Year Rollover', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.openPageCurrentEncumbrance('$70.00');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$70.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: secondFiscalYear.code },
+          { key: 'Amount', value: '($70.00)' },
+          { key: 'Source', value: `${orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '$70.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });
