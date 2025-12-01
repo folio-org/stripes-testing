@@ -1,6 +1,6 @@
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Permissions from '../../../../support/dictionary/permissions';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -85,25 +85,30 @@ describe('Inventory', () => {
         });
         cy.resetTenant();
 
-        cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then(
-          (userProperties) => {
-            testData.user = userProperties;
+        cy.createTempUser([]).then((userProperties) => {
+          testData.user = userProperties;
 
-            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(testData.user.userId, [
-              Permissions.inventoryAll.gui,
-              Permissions.uiInventoryUpdateOwnership.gui,
-            ]);
-            cy.resetTenant();
+          cy.assignCapabilitiesToExistingUser(
+            testData.user.userId,
+            [],
+            [CapabilitySets.uiInventoryInstanceView],
+          );
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignCapabilitiesToExistingUser(
+            testData.user.userId,
+            [],
+            [CapabilitySets.uiInventory, CapabilitySets.uiConsortiaInventoryUpdateOwnershipItem],
+          );
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
 
-            cy.login(testData.user.username, testData.user.password);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
-          },
-        );
+          cy.login(testData.user.username, testData.user.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+        });
       });
 
       after('Delete test data', () => {
