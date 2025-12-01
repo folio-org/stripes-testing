@@ -12,6 +12,7 @@ cypress/screenshots
 .DS_Store
 
 allure-results
+allure-report
 
 videos
 .vs
@@ -22,5 +23,6 @@ scripts/update_permission_names/permissions_backups/*
 
 .github/instructions/*
 .github/copilot-instructions.md
+.github/agents/*
 
 mcp.json

@@ -28,7 +28,7 @@ let instanceTypeId;
 let locationId;
 let sourceId;
 let centralSharedNoteTypeData;
-const callNumberStarts = `${randomFourDigitNumber()}`;
+const callNumberStarts = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
 const folioInstance = {
   title: `AT_C566143_FolioInstance_${getRandomPostfix()}`,
   holdingCallNumberInCollege: `${callNumberStarts}${randomFourDigitNumber()}`,

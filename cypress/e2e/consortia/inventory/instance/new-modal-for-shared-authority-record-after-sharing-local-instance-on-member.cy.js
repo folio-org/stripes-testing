@@ -77,8 +77,7 @@ describe('Inventory', () => {
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResults(testData.authorityHeading);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
+            cy.wait(2000);
             QuickMarcEditor.clickSaveAndKeepEditing();
           });
         cy.resetTenant();

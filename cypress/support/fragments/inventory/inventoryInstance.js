@@ -1123,9 +1123,10 @@ export default {
   addMultipleTags(tagNames) {
     cy.wait(1500);
     tagNames.forEach((tag) => {
-      cy.do(textFieldTagInput.choose(tag));
       cy.expect(textFieldTagInput.find(Spinner()).absent());
-      cy.wait(500);
+      this.addTag(tag);
+      this.checkTagSelectedInDropdown(tag);
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
     });
     cy.wait(1500);
     tagNames.forEach((tag) => {
@@ -1137,9 +1138,13 @@ export default {
     cy.wait(1500);
     tagNames.forEach((tag) => {
       this.checkTagSelectedInDropdown(tag);
-      cy.do(ValueChipRoot(tag).find(closeTag).click());
       cy.expect(textFieldTagInput.find(Spinner()).absent());
-      cy.wait(500);
+      cy.intercept('PUT', '**/inventory/instances/*').as('removeTag');
+      cy.do(ValueChipRoot(tag).find(closeTag).click());
+      cy.wait('@removeTag');
+      cy.wait(1000);
+      this.checkTagSelectedInDropdown(tag, false);
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
     });
     cy.wait(1500);
     tagNames.forEach((tag) => {
@@ -1975,5 +1980,19 @@ export default {
         MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
       );
     cy.expect(targetEl.exists());
+  },
+
+  copyItemBarcode(itemIndex = 0, holdingsLocation, whileMoving = false) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    cy.do(
+      holdingSection
+        .find(MultiColumnListCell({ columnIndex: whileMoving ? 3 : 1, row: itemIndex }))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(
+      matching(/The item barcode .+ was successfully copied to the clipboard/),
+    );
   },
 };

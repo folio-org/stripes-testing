@@ -55,6 +55,7 @@ const startBulkEditButton = Button('Start bulk edit');
 const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
+const nextButton = Button('Next');
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
 const downloadChangedRecordsButton = Button('Download changed records (CSV)');
@@ -831,6 +832,14 @@ export default {
     ]);
   },
 
+  openSelectLoanTypeDropdown(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'loanType' }))
+        .click(),
+    );
+  },
+
   editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -1350,7 +1359,11 @@ export default {
   },
 
   clickNext() {
-    cy.do([Modal().find(Button('Next')).click()]);
+    cy.do([Modal().find(nextButton).click()]);
+  },
+
+  verifyNextButtonInCsvModalDisabled(isDisabled = true) {
+    cy.expect(Modal().find(nextButton).has({ disabled: isDisabled }));
   },
 
   verifyNoNewBulkEditButton() {

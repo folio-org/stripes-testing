@@ -1,3 +1,5 @@
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+
 describe('fse-inventory', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
@@ -13,6 +15,20 @@ describe('fse-inventory', { retries: { runMode: 1 } }, () => {
       cy.getInventoryInstanceByStatus('Available').then((response) => {
         cy.expect(response.status).to.eq(200);
       });
+    },
+  );
+
+  it(
+    `TC196250 - Check mod-inventory API for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'inventory'] },
+    () => {
+      InventoryInstances.getInstanceIdApi({
+        limit: 1,
+        query: 'title=*',
+      }).then((instanceId) => cy.getInventoryInstanceById(instanceId).then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body.id).to.eq(instanceId);
+      }));
     },
   );
 });

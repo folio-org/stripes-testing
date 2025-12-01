@@ -17,6 +17,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import {
@@ -305,6 +306,7 @@ describe('Data Import', () => {
         // check instance is updated
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+        InventoryInstances.selectInstance();
         InventoryInstance.checkIsInstanceUpdated();
 
         // verify table data in marc bibliographic source

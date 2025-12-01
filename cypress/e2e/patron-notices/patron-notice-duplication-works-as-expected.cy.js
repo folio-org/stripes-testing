@@ -34,11 +34,9 @@ describe('Patron notices', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.waitForAuthRefresh(() => {
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-            waiter: NewNoticePolicyTemplate.waitLoading,
-          });
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+          waiter: NewNoticePolicyTemplate.waitLoading,
         });
       });
     });
@@ -62,7 +60,7 @@ describe('Patron notices', () => {
     () => {
       NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
       NewNoticePolicyTemplate.duplicateTemplate();
-      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible('ADMINISTRATOR');
       NewNoticePolicyTemplate.verifyGeneralInformationForDuplicate(testData.noticeTemplateBody);
       NewNoticePolicyTemplate.typeTemplateName(newNoticeTemplateName);
       NewNoticePolicyTemplate.saveAndClose();

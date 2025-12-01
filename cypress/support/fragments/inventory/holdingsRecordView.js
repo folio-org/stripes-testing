@@ -10,11 +10,13 @@ import {
   MultiColumnListRow,
   PaneHeader,
   Section,
+  matching,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -393,4 +395,9 @@ export default {
   },
 
   checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
+
+  copyHoldingsHrid() {
+    cy.do(holdingHrIdKeyValue.find(Button({ icon: 'clipboard' })).click());
+    InteractorsTools.checkCalloutMessage(matching(/Successfully copied ".*" to clipboard./));
+  },
 };

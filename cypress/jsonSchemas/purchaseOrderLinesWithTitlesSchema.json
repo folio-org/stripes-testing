@@ -1,0 +1,650 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Purchase Order Lines with Titles",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pol.cost_currency": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_resource_url": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "instance.created_at": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "instance.classifications": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "instance.editions": {
+            "type": ["string", "null"]
+          },
+          "instance.succeedingTitles": {
+            "type": ["string", "null"]
+          },
+          "organization.is_donor": {
+            "type": ["string", "null"]
+          },
+          "pol.payment_status": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.tags": {
+            "type": ["string", "null"]
+          },
+          "pol.publication_date": {
+            "type": ["string", "null"]
+          },
+          "instance.staff_suppress": {
+            "type": ["string", "null"]
+          },
+          "instance.format_names": {
+            "type": ["string", "null"]
+          },
+          "instance.statistical_code_names": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_type_name": {
+            "type": ["string", "null"]
+          },
+          "instance.electronic_access": {
+            "type": ["string", "null"]
+          },
+          "instance.parentInstances": {
+            "type": ["string", "null"]
+          },
+          "pol.id": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.po_number": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_create_inventory": {
+            "type": ["string", "null"]
+          },
+          "instance.tags": {
+            "type": ["string", "null"]
+          },
+          "instance.discovery_suppress": {
+            "type": ["string", "null"]
+          },
+          "pol.physical_expected_receipt_date": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "instance.precedingTitles": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_2": {
+            "type": ["string", "null"]
+          },
+          "pol.updated_at": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_1": {
+            "type": ["string", "null"]
+          },
+          "instance.index_title": {
+            "type": ["string", "null"]
+          },
+          "pol.details_receiving_note": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.approved": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.updated_at": {
+            "type": ["string", "null"]
+          },
+          "instance.source_uri": {
+            "type": ["string", "null"]
+          },
+          "pol.description": {
+            "type": ["string", "null"]
+          },
+          "organization.is_vendor": {
+            "type": ["string", "null"]
+          },
+          "organization.code": {
+            "type": ["string", "null"]
+          },
+          "pol.selector": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.notes": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "instance.title": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.created_at": {
+            "type": ["string", "null"]
+          },
+          "pol.locations": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_expected_activation": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.updated_by": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.order_type": {
+            "type": ["string", "null"]
+          },
+          "pol.source": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.assigned_to": {
+            "type": ["string", "null"]
+          },
+          "pol.receipt_date": {
+            "type": ["string", "null"]
+          },
+          "pol.donor": {
+            "type": ["string", "null"]
+          },
+          "instance.contributors": {
+            "type": ["string", "null"]
+          },
+          "pol.acquisition_method_name": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.created_by": {
+            "type": ["string", "null"]
+          },
+          "instance.physical_descriptions": {
+            "type": ["array", "null"]
+          },
+          "updated_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "organization.jsonb": {
+            "type": ["string", "null"]
+          },
+          "instance.administrative_notes": {
+            "type": ["string", "null"]
+          },
+          "pol.acquisition_method": {
+            "type": ["string", "null"]
+          },
+          "instance.series": {
+            "type": ["string", "null"]
+          },
+          "pol.tags": {
+            "type": ["string", "null"]
+          },
+          "instance.alternative_titles": {
+            "type": ["string", "null"]
+          },
+          "instance.identifiers": {
+            "type": ["string", "null"]
+          },
+          "instance.jsonb": {
+            "type": ["string", "null"]
+          },
+          "instance.previously_held": {
+            "type": ["string", "null"]
+          },
+          "pol.fund_distribution": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.re_encumber": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "instance.source": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_type_id": {
+            "type": ["string", "null"]
+          },
+          "instance.publication": {
+            "type": ["string", "null"]
+          },
+          "organization._id": {
+            "type": ["string", "null"]
+          },
+          "instance.updated_at": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.id": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "instance.id": {
+            "type": ["string", "null"]
+          },
+          "pol.po_line_number": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "pol.jsonb": {
+            "type": ["string", "null"]
+          },
+          "pol.cost_exchange_rate": {
+            "type": ["number", "null"]
+          },
+          "updated_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.acq_unit_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "pol.cost_po_line_estimated_price": {
+            "type": ["number", "null"]
+          },
+          "pol.created_at": {
+            "type": ["string", "null"]
+          },
+          "instance.notes": {
+            "type": ["string", "null"]
+          },
+          "instance.nature_of_content_term_ids": {
+            "type": ["array", "null"]
+          },
+          "pol.receipt_status": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "instance.status_id": {
+            "type": ["string", "null"]
+          },
+          "pol.rush": {
+            "type": ["string", "null"]
+          },
+          "instance.languages": {
+            "type": ["array", "null"]
+          },
+          "organization.edi_vendor_edi_code": {
+            "type": ["string", "null"]
+          },
+          "organization.id": {
+            "type": ["string", "null"]
+          },
+          "instance.subjects": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "pol.order_format": {
+            "type": ["string", "null"]
+          },
+          "instance.nature_of_content_term": {
+            "type": ["string", "null"]
+          },
+          "instance.hrid": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "instance.childInstances": {
+            "type": ["string", "null"]
+          },
+          "organization.status": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.username": {
+            "type": ["string", "null"]
+          },
+          "instance.flag_for_deletion": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "instance.publication_range": {
+            "type": ["string", "null"]
+          },
+          "pol.created_by": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "instance.statistical_code_ids": {
+            "type": ["array", "null"]
+          },
+          "instance.mode_of_issuance_name": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.workflow_status": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "pol.publisher": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol.updated_by": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_activated": {
+            "type": ["string", "null"]
+          },
+          "instance.publication_frequency": {
+            "type": ["string", "null"]
+          },
+          "pol.agreement_id": {
+            "type": ["string", "null"]
+          },
+          "instance.created_by": {
+            "type": ["string", "null"]
+          },
+          "created_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "pol.title_or_package": {
+            "type": ["string", "null"]
+          },
+          "purchase_order.jsonb": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "organization.name": {
+            "type": ["string", "null"]
+          },
+          "organization.edi_vendor_edi_type": {
+            "type": ["string", "null"]
+          },
+          "instance.updated_by": {
+            "type": ["string", "null"]
+          },
+          "pol_updated_by_user.email": {
+            "type": ["string", "null"]
+          },
+          "updated_by_user.id": {
+            "type": ["string", "null"]
+          },
+          "pol_created_by_user.active": {
+            "type": ["string", "null"]
+          },
+          "pol.eresource_trial": {
+            "type": ["string", "null"]
+          },
+          "instance.cataloged_date": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_format_ids": {
+            "type": ["array", "null"]
+          },
+          "instance.version": {
+            "type": ["number", "null"]
+          },
+          "updated_by_user.user_updated_date": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "pol.cost_currency",
+          "pol.eresource_resource_url",
+          "created_by_user.active",
+          "instance.created_at",
+          "pol_created_by_user.user_created_date",
+          "instance.classifications",
+          "pol_created_by_user.created_by_user_id",
+          "instance.editions",
+          "instance.succeedingTitles",
+          "organization.is_donor",
+          "pol.payment_status",
+          "purchase_order.tags",
+          "pol.publication_date",
+          "instance.staff_suppress",
+          "instance.format_names",
+          "instance.statistical_code_names",
+          "instance.instance_type_name",
+          "instance.electronic_access",
+          "instance.parentInstances",
+          "pol.id",
+          "purchase_order.po_number",
+          "pol.eresource_create_inventory",
+          "instance.tags",
+          "instance.discovery_suppress",
+          "pol.physical_expected_receipt_date",
+          "pol_updated_by_user.username",
+          "instance.precedingTitles",
+          "instance.instance_date_2",
+          "pol.updated_at",
+          "instance.instance_date_1",
+          "instance.index_title",
+          "pol.details_receiving_note",
+          "purchase_order.approved",
+          "purchase_order.updated_at",
+          "instance.source_uri",
+          "pol.description",
+          "organization.is_vendor",
+          "organization.code",
+          "pol.selector",
+          "pol_updated_by_user.id",
+          "pol_updated_by_user.active",
+          "purchase_order.notes",
+          "updated_by_user.last_name_first_name",
+          "instance.title",
+          "purchase_order.created_at",
+          "pol.locations",
+          "created_by_user.created_by_user_id",
+          "pol.eresource_expected_activation",
+          "pol_updated_by_user.user_updated_date",
+          "purchase_order.updated_by",
+          "pol_created_by_user.updated_by_user_id",
+          "pol_updated_by_user.created_by_user_id",
+          "purchase_order.order_type",
+          "pol.source",
+          "purchase_order.assigned_to",
+          "pol.receipt_date",
+          "pol.donor",
+          "instance.contributors",
+          "pol.acquisition_method_name",
+          "purchase_order.created_by",
+          "instance.physical_descriptions",
+          "updated_by_user.user_created_date",
+          "organization.jsonb",
+          "instance.administrative_notes",
+          "pol.acquisition_method",
+          "instance.series",
+          "pol.tags",
+          "instance.alternative_titles",
+          "instance.identifiers",
+          "instance.jsonb",
+          "instance.previously_held",
+          "pol.fund_distribution",
+          "purchase_order.re_encumber",
+          "created_by_user.user_created_date",
+          "instance.source",
+          "instance.instance_date_type_id",
+          "instance.publication",
+          "organization._id",
+          "instance.updated_at",
+          "purchase_order.id",
+          "pol_created_by_user.email",
+          "created_by_user.id",
+          "created_by_user.email",
+          "instance.id",
+          "pol.po_line_number",
+          "pol_created_by_user.user_updated_date",
+          "pol.jsonb",
+          "pol.cost_exchange_rate",
+          "updated_by_user.username",
+          "purchase_order.acq_unit_ids",
+          "pol.cost_po_line_estimated_price",
+          "pol.created_at",
+          "instance.notes",
+          "instance.nature_of_content_term_ids",
+          "pol.receipt_status",
+          "pol_created_by_user.last_name_first_name",
+          "instance.status_id",
+          "pol.rush",
+          "instance.languages",
+          "organization.edi_vendor_edi_code",
+          "organization.id",
+          "instance.subjects",
+          "created_by_user.updated_by_user_id",
+          "updated_by_user.created_by_user_id",
+          "purchase_order.acquisition_unit",
+          "pol.order_format",
+          "instance.nature_of_content_term",
+          "instance.hrid",
+          "created_by_user.last_name_first_name",
+          "created_by_user.username",
+          "instance.childInstances",
+          "organization.status",
+          "pol_created_by_user.username",
+          "instance.flag_for_deletion",
+          "pol_updated_by_user.last_name_first_name",
+          "instance.publication_range",
+          "pol.created_by",
+          "updated_by_user.active",
+          "instance.statistical_code_ids",
+          "instance.mode_of_issuance_name",
+          "purchase_order.workflow_status",
+          "pol_updated_by_user.user_created_date",
+          "pol.publisher",
+          "pol_created_by_user.id",
+          "pol.updated_by",
+          "pol_updated_by_user.updated_by_user_id",
+          "pol.eresource_activated",
+          "instance.publication_frequency",
+          "pol.agreement_id",
+          "instance.created_by",
+          "created_by_user.user_updated_date",
+          "updated_by_user.email",
+          "pol.title_or_package",
+          "purchase_order.jsonb",
+          "updated_by_user.updated_by_user_id",
+          "organization.name",
+          "organization.edi_vendor_edi_type",
+          "instance.updated_by",
+          "pol_updated_by_user.email",
+          "updated_by_user.id",
+          "pol_created_by_user.active",
+          "pol.eresource_trial",
+          "instance.cataloged_date",
+          "instance.instance_format_ids",
+          "instance.version",
+          "updated_by_user.user_updated_date"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

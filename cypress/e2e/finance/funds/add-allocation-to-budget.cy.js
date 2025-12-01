@@ -56,7 +56,7 @@ describe('Transactions', () => {
     cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
 
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    Ledgers.deleteLedgerViaApi(defaultLedger.id);
 
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
 

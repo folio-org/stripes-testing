@@ -19,6 +19,16 @@ const COLUMN_INDEX = {
   ACTIONS: 4,
 };
 
+export const FOLIO_SUBJECT_SOURCES = [
+  'Library of Congress Subject Headings',
+  'Répertoire de vedettes-matière',
+  'Source not specified',
+  'Medical Subject Headings',
+  'Canadian Subject Headings',
+  "Library of Congress Children's and Young Adults' Subject Headings",
+  'National Agricultural Library subject authority file',
+];
+
 export const ACTION_BUTTONS = {
   EDIT: 'edit',
   TRASH: 'trash',

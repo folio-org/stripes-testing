@@ -70,7 +70,7 @@ describe('Finance', () => {
           budgets.forEach((budget) => Budgets.deleteViaApi(budget.id));
         });
         Funds.deleteFundViaApi(fund.id);
-        Ledgers.deleteledgerViaApi(ledger.id);
+        Ledgers.deleteLedgerViaApi(ledger.id);
         Object.values(fiscalYears).forEach((fiscalYear) => {
           FiscalYears.deleteFiscalYearViaApi(fiscalYear.id);
         });
