@@ -20,7 +20,10 @@ import NatureOfContent from '../../../support/fragments/settings/inventory/insta
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
+import parseMrcFileContentAndVerify, {
+  verifyMarcFieldByTag,
+  verify001FieldValue,
+} from '../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
@@ -266,22 +269,6 @@ function createInstance(instance) {
     }
   });
 }
-function verifyMarcField(record, tag, { ind1 = ' ', ind2 = ' ', subf = [] }) {
-  const field = record.get(tag)[0];
-
-  expect(
-    field.ind1,
-    `Incorrect ind1 for tag ${tag}: expected '${ind1}', got '${field.ind1}'`,
-  ).to.eq(ind1);
-  expect(
-    field.ind2,
-    `Incorrect ind2 for tag ${tag}: expected '${ind2}', got '${field.ind2}'`,
-  ).to.eq(ind2);
-  expect(
-    field.subf[0],
-    `Incorrect subfields for tag ${tag}: expected ${JSON.stringify(subf)}, got ${JSON.stringify(field.subf[0])}`,
-  ).to.deep.eq(subf);
-}
 
 describe('Data Export', () => {
   describe('Consortia', () => {
@@ -425,7 +412,7 @@ describe('Data Export', () => {
             const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 
             const commonAssertions = (instance) => [
-              (record) => expect(record.get('001')[0].value).to.eq(instance.hrid),
+              (record) => verify001FieldValue(record, instance.hrid),
               (record) => {
                 expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
               },
@@ -439,12 +426,11 @@ describe('Data Export', () => {
                 expect(field245.subf[0][1]).to.eq(instance.title);
               },
               (record) => {
-                const field999 = record.get('999')[0];
-
-                expect(field999.ind1).to.eq('f');
-                expect(field999.ind2).to.eq('f');
-                expect(field999.subf[0][0]).to.eq('i');
-                expect(field999.subf[0][1]).to.eq(instance.uuid);
+                verifyMarcFieldByTag(record, '999', {
+                  ind1: 'f',
+                  ind2: 'f',
+                  subf: ['i', instance.uuid],
+                });
               },
             ];
 
@@ -465,15 +451,23 @@ describe('Data Export', () => {
               },
               // 010 LCCN
               (record) => {
-                verifyMarcField(record, '010', { ind1: ' ', ind2: ' ', subf: ['a', '2025123456'] });
+                verifyMarcFieldByTag(record, '010', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', '2025123456'],
+                });
               },
               // 019 Cancelled System Control Numbers
               (record) => {
-                verifyMarcField(record, '019', { ind1: ' ', ind2: ' ', subf: ['a', 'CSC-54321'] });
+                verifyMarcFieldByTag(record, '019', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', 'CSC-54321'],
+                });
               },
               // 020 ISBN
               (record) => {
-                verifyMarcField(record, '020', {
+                verifyMarcFieldByTag(record, '020', {
                   ind1: ' ',
                   ind2: ' ',
                   subf: ['a', '978-0-12345-678-9'],
@@ -481,27 +475,47 @@ describe('Data Export', () => {
               },
               // 022 ISSN
               (record) => {
-                verifyMarcField(record, '022', { ind1: ' ', ind2: ' ', subf: ['a', '1234-5678'] });
+                verifyMarcFieldByTag(record, '022', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', '1234-5678'],
+                });
               },
               // 024 ASIN
               (record) => {
-                verifyMarcField(record, '024', { ind1: '8', ind2: ' ', subf: ['a', 'B000123456'] });
+                verifyMarcFieldByTag(record, '024', {
+                  ind1: '8',
+                  ind2: ' ',
+                  subf: ['a', 'B000123456'],
+                });
               },
               // 028 Publisher or Distributor Number
               (record) => {
-                verifyMarcField(record, '028', { ind1: '5', ind2: '2', subf: ['a', 'PDN-112233'] });
+                verifyMarcFieldByTag(record, '028', {
+                  ind1: '5',
+                  ind2: '2',
+                  subf: ['a', 'PDN-112233'],
+                });
               },
               // 030 CODEN
               (record) => {
-                verifyMarcField(record, '030', { ind1: ' ', ind2: ' ', subf: ['a', 'ABCD1234'] });
+                verifyMarcFieldByTag(record, '030', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', 'ABCD1234'],
+                });
               },
               // 035 System Control Number
               (record) => {
-                verifyMarcField(record, '035', { ind1: ' ', ind2: ' ', subf: ['a', 'SCN-987654'] });
+                verifyMarcFieldByTag(record, '035', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', 'SCN-987654'],
+                });
               },
               // 088 Report number
               (record) => {
-                verifyMarcField(record, '088', {
+                verifyMarcFieldByTag(record, '088', {
                   ind1: ' ',
                   ind2: ' ',
                   subf: ['a', 'RN-2025-001'],
@@ -509,7 +523,7 @@ describe('Data Export', () => {
               },
               // 100 Contributor (Personal name, primary)
               (record) => {
-                verifyMarcField(record, '100', {
+                verifyMarcFieldByTag(record, '100', {
                   ind1: '1',
                   ind2: ' ',
                   subf: ['a', 'Test Author'],
@@ -517,7 +531,7 @@ describe('Data Export', () => {
               },
               // 130 Uniform title alternative title
               (record) => {
-                verifyMarcField(record, '130', {
+                verifyMarcFieldByTag(record, '130', {
                   ind1: '0',
                   ind2: ' ',
                   subf: ['a', 'Test Uniform Title'],
@@ -525,7 +539,7 @@ describe('Data Export', () => {
               },
               // 246 Variant title alternative title
               (record) => {
-                verifyMarcField(record, '246', {
+                verifyMarcFieldByTag(record, '246', {
                   ind1: '0',
                   ind2: ' ',
                   subf: ['a', 'Test Variant Title'],
@@ -533,7 +547,7 @@ describe('Data Export', () => {
               },
               // 247 Former title alternative title
               (record) => {
-                verifyMarcField(record, '247', {
+                verifyMarcFieldByTag(record, '247', {
                   ind1: '0',
                   ind2: '0',
                   subf: ['a', 'Test Former Title'],
@@ -541,7 +555,7 @@ describe('Data Export', () => {
               },
               // 250 Edition
               (record) => {
-                verifyMarcField(record, '250', {
+                verifyMarcFieldByTag(record, '250', {
                   ind1: ' ',
                   ind2: ' ',
                   subf: ['a', 'First edition'],
@@ -549,35 +563,43 @@ describe('Data Export', () => {
               },
               // 300 Physical description
               (record) => {
-                verifyMarcField(record, '300', { ind1: ' ', ind2: ' ', subf: ['a', '300 pages'] });
+                verifyMarcFieldByTag(record, '300', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', '300 pages'],
+                });
               },
               // 310 Publication frequency
               (record) => {
-                verifyMarcField(record, '310', { ind1: ' ', ind2: ' ', subf: ['a', 'Annual'] });
+                verifyMarcFieldByTag(record, '310', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subf: ['a', 'Annual'],
+                });
               },
               // 264 Publication field
               (record) => {
-                const publicationField = record.get('264')[0];
-
-                expect(publicationField.ind1).to.eq(' ');
-                expect(
-                  publicationField.subf.some((subf) => subf[0] === 'a' && subf[1] === 'Test Place'),
-                ).to.be.true;
-                expect(
-                  publicationField.subf.some(
-                    (subf) => subf[0] === 'b' && subf[1] === 'Test Publisher',
-                  ),
-                ).to.be.true;
-                expect(publicationField.subf.some((subf) => subf[0] === 'c' && subf[1] === '2023'))
-                  .to.be.true;
+                verifyMarcFieldByTag(record, '264', {
+                  ind1: ' ',
+                  ind2: '1',
+                  subfields: [
+                    ['a', 'Test Place'],
+                    ['b', 'Test Publisher'],
+                    ['c', '2023'],
+                  ],
+                });
               },
               // 362 Publication range
               (record) => {
-                verifyMarcField(record, '362', { ind1: '1', ind2: ' ', subf: ['a', '2020-2023'] });
+                verifyMarcFieldByTag(record, '362', {
+                  ind1: '1',
+                  ind2: ' ',
+                  subf: ['a', '2020-2023'],
+                });
               },
               // 490 Series
               (record) => {
-                verifyMarcField(record, '490', {
+                verifyMarcFieldByTag(record, '490', {
                   ind1: '0',
                   ind2: ' ',
                   subf: ['a', 'Test Series'],
@@ -585,7 +607,7 @@ describe('Data Export', () => {
               },
               // 500 General note
               (record) => {
-                verifyMarcField(record, '500', {
+                verifyMarcFieldByTag(record, '500', {
                   ind1: ' ',
                   ind2: ' ',
                   subf: ['a', 'Test general note'],
@@ -593,7 +615,7 @@ describe('Data Export', () => {
               },
               // 653 Subject
               (record) => {
-                verifyMarcField(record, '653', {
+                verifyMarcFieldByTag(record, '653', {
                   ind1: ' ',
                   ind2: ' ',
                   subf: ['a', 'Test Subject'],
@@ -601,7 +623,7 @@ describe('Data Export', () => {
               },
               // 655 Nature of content
               (record) => {
-                verifyMarcField(record, '655', {
+                verifyMarcFieldByTag(record, '655', {
                   ind1: ' ',
                   ind2: '4',
                   subf: ['a', natureOfContentName],
@@ -609,7 +631,7 @@ describe('Data Export', () => {
               },
               // 710 Corporate name contributor
               (record) => {
-                verifyMarcField(record, '710', {
+                verifyMarcFieldByTag(record, '710', {
                   ind1: '2',
                   ind2: ' ',
                   subf: ['a', 'Test Corporate Name'],
@@ -617,7 +639,7 @@ describe('Data Export', () => {
               },
               // 711 Meeting name contributor
               (record) => {
-                verifyMarcField(record, '711', {
+                verifyMarcFieldByTag(record, '711', {
                   ind1: '2',
                   ind2: ' ',
                   subf: ['a', 'Test Meeting Name'],
@@ -625,26 +647,16 @@ describe('Data Export', () => {
               },
               // 856 Electronic access
               (record) => {
-                const field856 = record.get('856');
-
-                expect(field856).to.exist;
-                expect(field856[0].ind1).to.eq('4');
-                expect(field856[0].ind2).to.eq('0');
-                expect(
-                  field856[0].subf.some(
-                    (subf) => subf[0] === 'u' && subf[1] === 'https://example.com',
-                  ),
-                ).to.be.true;
-                expect(field856[0].subf.some((subf) => subf[0] === 'y' && subf[1] === 'Test Link'))
-                  .to.be.true;
-                expect(
-                  field856[0].subf.some((subf) => subf[0] === '3' && subf[1] === 'Test Materials'),
-                ).to.be.true;
-                expect(
-                  field856[0].subf.some(
-                    (subf) => subf[0] === 'z' && subf[1] === 'Test Public Note',
-                  ),
-                ).to.be.true;
+                verifyMarcFieldByTag(record, '856', {
+                  ind1: '4',
+                  ind2: '0',
+                  subfields: [
+                    ['u', 'https://example.com'],
+                    ['y', 'Test Link'],
+                    ['3', 'Test Materials'],
+                    ['z', 'Test Public Note'],
+                  ],
+                });
               },
             ];
 

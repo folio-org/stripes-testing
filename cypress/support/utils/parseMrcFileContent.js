@@ -121,3 +121,47 @@ export default function parseMrcFileContentAndVerify(
     });
   });
 }
+
+export function verifyMarcFieldByTag(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', subf = [], subfields = [] },
+) {
+  const field = record.get(tag)[0];
+
+  expect(
+    field.ind1,
+    `Incorrect ind1 for tag ${tag}: expected '${ind1}', got '${field.ind1}'`,
+  ).to.eq(ind1);
+  expect(
+    field.ind2,
+    `Incorrect ind2 for tag ${tag}: expected '${ind2}', got '${field.ind2}'`,
+  ).to.eq(ind2);
+
+  // Handle single subfield format: subf = ['a', 'value']
+  if (subf.length > 0) {
+    expect(
+      field.subf[0],
+      `Incorrect subfields for tag ${tag}: expected ${JSON.stringify(subf)}, got ${JSON.stringify(field.subf[0])}`,
+    ).to.deep.eq(subf);
+  }
+
+  // Handle multiple subfields format: subfields = [['a', 'value1'], ['b', 'value2']]
+  if (subfields.length > 0) {
+    subfields.forEach(([subfieldCode, subfieldValue]) => {
+      expect(
+        field.subf.some((sf) => sf[0] === subfieldCode && sf[1] === subfieldValue),
+        `Subfield $${subfieldCode} with value '${subfieldValue}' not found in tag ${tag}`,
+      ).to.be.true;
+    });
+  }
+}
+
+export function verify001FieldValue(record, expectedValue) {
+  const field001 = record.get('001')[0];
+
+  expect(
+    field001.value,
+    `Incorrect value for tag 001: expected '${expectedValue}', got '${field001.value}'`,
+  ).to.eq(expectedValue);
+}
