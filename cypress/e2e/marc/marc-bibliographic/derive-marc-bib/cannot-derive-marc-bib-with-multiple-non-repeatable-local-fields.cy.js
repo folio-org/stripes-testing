@@ -98,7 +98,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(6, testData.tag980);
           QuickMarcEditor.updateExistingFieldContent(6, testData.field980Two);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, testData.expectedNonRepeatableError);
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },

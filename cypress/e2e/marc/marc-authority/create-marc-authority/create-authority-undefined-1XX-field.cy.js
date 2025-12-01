@@ -91,7 +91,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(field.tag, field.content);
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(3, 0);
           fields.slice(1).forEach((_, index) => {
             QuickMarcEditor.checkErrorMessage(
