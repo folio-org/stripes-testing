@@ -147,8 +147,33 @@ export function verifyMarcFieldByTag(record, tag, { ind1 = ' ', ind2 = ' ', subf
   }
 }
 
+export function verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', subfields = [] },
+) {
+  verifyMarcFieldByTag(record, tag, { ind1, ind2 });
+
+  if (subfields.length > 0) {
+    const field = record.get(tag)[0];
+
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(field.subf[index], `MARC tag ${tag} subfield at position ${index}`).to.deep.equal([
+        subfieldCode,
+        subfieldValue,
+      ]);
+    });
+  }
+}
+
 export function verify001FieldValue(record, expectedValue) {
   const field001 = record.get('001')[0];
 
   expect(field001.value, 'MARC tag 001').to.eq(expectedValue);
+}
+
+export function verify008FieldValue(record, expectedValue) {
+  const field008 = record.get('008')[0];
+
+  expect(field008.value, 'MARC tag 008').to.eq(expectedValue);
 }
