@@ -1,48 +1,45 @@
+import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
-import ItemRecordView, {
-  actionsMenuOptions,
-} from '../../../../support/fragments/inventory/item/itemRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
     describe('Consortia', () => {
       const testData = {
-        instance: {},
         user: {},
+        instance: {},
         holdings: {},
-        item: { barcode: getRandomPostfix() },
+        item: { barcode: uuid() },
       };
+      const userPermissions = [Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui];
 
-      before('Create test data', () => {
+      before('Create test data and login', () => {
         cy.getAdminToken();
-        cy.getConsortiaId().then((consortiaId) => {
-          testData.consortiaId = consortiaId;
-        });
-        cy.setTenant(Affiliations.College).then(() => {
-          InventoryInstance.createInstanceViaApi()
-            .then(({ instanceData }) => {
-              testData.instance = instanceData;
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
 
+          cy.setTenant(Affiliations.College)
+            .then(() => {
               ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
                 const collegeLocationData = Locations.getDefaultLocation({
                   servicePointId: servicePoint.id,
                 }).location;
                 Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.location = location;
+                  testData.locationId = location.id;
                   testData.locationName = location.name;
                 });
               });
@@ -59,14 +56,14 @@ describe('Inventory', () => {
             .then(() => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: testData.instance.instanceId,
-                permanentLocationId: testData.location.id,
+                permanentLocationId: testData.locationId,
                 sourceId: testData.holdings.sourceId,
               }).then((holding) => {
                 testData.holdings = holding;
 
                 InventoryItems.createItemViaApi({
                   barcode: testData.item.barcode,
-                  holdingsRecordId: testData.holdings.id,
+                  holdingsRecordId: holding.id,
                   materialType: { id: testData.item.materialTypeId },
                   permanentLoanType: { id: testData.item.loanTypeId },
                   status: { name: ITEM_STATUS_NAMES.AVAILABLE },
@@ -74,38 +71,24 @@ describe('Inventory', () => {
                   testData.item = item;
                 });
               });
-
-              InventoryInstance.shareInstanceViaApi(
-                testData.instance.instanceId,
-                testData.consortiaId,
-                Affiliations.College,
-                Affiliations.Consortia,
-              );
             });
         });
         cy.resetTenant();
 
-        cy.createTempUser([]).then((userProperties) => {
+        cy.createTempUser(userPermissions).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            [],
-            [CapabilitySets.uiInventoryInstanceView],
-          );
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            [],
-            [CapabilitySets.uiInventory, CapabilitySets.uiConsortiaInventoryUpdateOwnershipItem],
-          );
+          cy.assignPermissionsToExistingUser(testData.user.userId, userPermissions);
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(testData.user.userId, userPermissions);
+          cy.resetTenant();
 
           cy.login(testData.user.username, testData.user.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
         });
@@ -115,34 +98,47 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instance.instanceId);
+        cy.deleteItemViaApi(testData.item.id);
+        InventoryHoldings.deleteHoldingRecordViaApi(testData.holdings.id);
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
         Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       });
 
       it(
-        'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C526748'] },
+        'C594480 (CONSORTIA) "Move items within an instance" is not visible for shared instances without local holdings on member tenant (consortia) (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C594480'] },
         () => {
+          InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InstanceRecordView.validateOptionInActionsMenu(
+            actionsMenuOptions.moveItemsWithinAnInstance,
+            false,
+          );
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.openHoldingView();
-          HoldingsRecordView.checkHoldingRecordViewOpened();
-          HoldingsRecordView.validateOptionInActionsMenu([
-            { optionName: actionsMenuOptions.updateOwnership, shouldExist: true },
-          ]);
-          HoldingsRecordView.close();
+          InstanceRecordView.validateOptionInActionsMenu(
+            actionsMenuOptions.moveItemsWithinAnInstance,
+            false,
+          );
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventoryInstances.searchByTitle(testData.instance.instanceId);
+          InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
-          InstanceRecordView.openHoldingItem({
-            name: testData.locationName,
-            barcode: testData.item.barcode,
-          });
-          ItemRecordView.validateOptionInActionsMenu([
-            { optionName: actionsMenuOptions.updateOwnership, shouldExist: true },
-          ]);
+          InstanceRecordView.validateOptionInActionsMenu(
+            actionsMenuOptions.moveItemsWithinAnInstance,
+            true,
+          );
         },
       );
     });
