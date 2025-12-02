@@ -149,6 +149,10 @@ export default {
     return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
 
+  getPreviousPaginationButtonState() {
+    return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
   checkRowValues(
     classificationNumber,
     title = '',
