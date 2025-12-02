@@ -230,9 +230,9 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(instance.itemIds.length);
 
-          instance.itemIds.forEach((itemId) => {
+          instance.itemBarcodes.forEach((itemBarcode) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-              itemId,
+              itemBarcode,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BINDING_NOTE,
               bindingNote,
             );
