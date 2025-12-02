@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { Marc } from 'marcjs';
 import { Readable } from 'stream';
+import DateTools from './dateTools';
 
 /**
  * Returns an array of default assertions for a MARC record.
@@ -170,6 +171,13 @@ export function verify001FieldValue(record, expectedValue) {
   const field001 = record.get('001')[0];
 
   expect(field001.value, 'MARC tag 001').to.eq(expectedValue);
+}
+
+export function verify005FieldValue(record, expectedValue = null) {
+  const field005 = record.get('005')[0];
+  const valueToCheck = expectedValue || DateTools.getCurrentDateYYYYMMDD();
+
+  expect(field005.value.startsWith(valueToCheck), 'MARC tag 005').to.be.true;
 }
 
 export function verify008FieldValue(record, expectedValue) {

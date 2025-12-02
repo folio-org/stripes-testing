@@ -24,6 +24,7 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
+  verify005FieldValue,
   verify008FieldValue,
   verifyLeaderPositions,
 } from '../../../support/utils/parseMrcFileContent';
@@ -363,13 +364,10 @@ describe('Data Export', () => {
 
             // Steps 7-10: Verify the downloaded .mrc file includes both shared instances
             const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
-            const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 
             const commonAssertions = (instance) => [
               (record) => verify001FieldValue(record, instance.hrid),
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
+              (record) => verify005FieldValue(record),
             ];
 
             const marcInstanceAssertions = (instance) => [

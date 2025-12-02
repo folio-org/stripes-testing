@@ -20,10 +20,10 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
+  verify005FieldValue,
   verify008FieldValue,
   verifyLeaderPositions,
 } from '../../../support/utils/parseMrcFileContent';
-import DateTools from '../../../support/utils/dateTools';
 
 let user;
 let exportedFileName;
@@ -145,13 +145,10 @@ describe('Data Export', () => {
             DataExportLogs.clickButtonWithText(exportedFileName);
 
             // Steps 12-13: Verify the downloaded .mrc file
-            const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 
             const marcInstanceAssertions = [
               (record) => verify001FieldValue(record, marcInstance.hrid),
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
+              (record) => verify005FieldValue(record),
               (record) => {
                 verifyLeaderPositions(record, {
                   5: 'c',
