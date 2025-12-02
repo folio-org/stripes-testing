@@ -206,8 +206,8 @@ const clickActionsButton = () => {
 
 export const actionsMenuOptions = {
   addMarcHoldingsRecord: 'Add MARC holdings record',
-  edit: 'Edit',
-  duplicate: 'Duplicate',
+  edit: 'Edit instance',
+  duplicate: 'Duplicate instance',
   delete: 'Delete',
   moveHoldingsItemsToAnotherInstance: 'Move holdings/items to another instance',
   moveItemsWithinAnInstance: 'Move items within an instance',
@@ -786,8 +786,8 @@ export default {
       .should('have.text', header);
   },
 
-  validateOptionInActionsMenu(optionName, shouldExist = true) {
-    clickActionsButton();
+  validateOptionInActionsMenu(optionName, shouldExist = true, openMenu = true) {
+    if (openMenu) clickActionsButton();
     if (shouldExist) {
       cy.expect(Button(optionName).exists());
     } else {

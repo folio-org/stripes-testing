@@ -469,4 +469,13 @@ export default {
         .hrefClick(),
     );
   },
+
+  checkValueIncludedForRow(contributor, columnIndex, value) {
+    cy.do(
+      MultiColumnListCell(contributor).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(including(value), { row: rowNumber, columnIndex }).exists());
+      }),
+    );
+  },
 };

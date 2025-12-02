@@ -144,4 +144,32 @@ export default {
   getNextPaginationButtonState() {
     return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
+
+  getPreviousPaginationButtonState() {
+    return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
+  checkRowValues(
+    classificationNumber,
+    title = '',
+    contributors = '',
+    numberOfTitles = 1,
+    isHighlighted = true,
+  ) {
+    const contentString = `${classificationNumber}${title}${contributors}${numberOfTitles}`;
+    if (isHighlighted) {
+      cy.expect(
+        MultiColumnListRow({
+          innerHTML: including(`<strong>${classificationNumber}</strong>`),
+          content: contentString,
+        }).exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnListRow({
+          content: contentString,
+        }).exists(),
+      );
+    }
+  },
 };
