@@ -121,3 +121,69 @@ export default function parseMrcFileContentAndVerify(
     });
   });
 }
+
+export function verifyMarcFieldByTag(record, tag, { ind1 = ' ', ind2 = ' ', subfields = [] }) {
+  const field = record.get(tag)[0];
+
+  expect(field.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(field.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
+
+  if (subfields.length > 0) {
+    // Check if it's a single subfield ['a', 'value'] or multiple [['a', 'value1'], ['b', 'value2']]
+    const isSingleSubfield = typeof subfields[0] === 'string';
+
+    if (isSingleSubfield) {
+      // Handle single subfield format: ['a', 'value']
+      expect(field.subf[0], `MARC tag ${tag} subfield`).to.deep.eq(subfields);
+    } else {
+      // Handle multiple subfields format: [['a', 'value1'], ['b', 'value2']]
+      subfields.forEach(([subfieldCode, subfieldValue]) => {
+        expect(
+          field.subf.some((sf) => sf[0] === subfieldCode && sf[1] === subfieldValue),
+          `MARC tag ${tag} subfield $${subfieldCode}`,
+        ).to.equal(true);
+      });
+    }
+  }
+}
+
+export function verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', subfields = [] },
+) {
+  verifyMarcFieldByTag(record, tag, { ind1, ind2 });
+
+  if (subfields.length > 0) {
+    const field = record.get(tag)[0];
+
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(field.subf[index], `MARC tag ${tag} subfield at position ${index}`).to.deep.equal([
+        subfieldCode,
+        subfieldValue,
+      ]);
+    });
+  }
+}
+
+export function verify001FieldValue(record, expectedValue) {
+  const field001 = record.get('001')[0];
+
+  expect(field001.value, 'MARC tag 001').to.eq(expectedValue);
+}
+
+export function verify008FieldValue(record, expectedValue) {
+  const field008 = record.get('008')[0];
+
+  expect(field008.value, 'MARC tag 008').to.eq(expectedValue);
+}
+
+export function verifyLeaderPositions(record, positions = {}) {
+  expect(record.leader, 'Leader field').to.exist;
+
+  Object.entries(positions).forEach(([position, expectedValue]) => {
+    const pos = parseInt(position, 10);
+
+    expect(record.leader[pos], `Leader position ${position}`).to.eq(expectedValue);
+  });
+}
