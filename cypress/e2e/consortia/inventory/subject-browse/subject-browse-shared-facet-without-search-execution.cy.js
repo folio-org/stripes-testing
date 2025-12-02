@@ -122,9 +122,11 @@ describe('Inventory', () => {
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.inventoryPath);
-          InventoryInstances.waitContentLoading();
+          cy.waitForAuthRefresh(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
+          });
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseSubjects.select();

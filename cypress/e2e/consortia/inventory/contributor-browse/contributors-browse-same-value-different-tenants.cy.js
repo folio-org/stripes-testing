@@ -78,7 +78,7 @@ describe('Inventory', () => {
             BrowseContributors.getContributorNameTypes({ searchParams: { limit: 100 } }).then(
               (contributorNameTypes) => {
                 BrowseContributors.getContributorTypes({
-                  searchParams: { limit: 200, query: 'source<>local' },
+                  searchParams: { limit: 1000, query: 'source<>local' },
                 }).then((contributorTypes) => {
                   // Instance with "Corporate name" contributor name type to check non-exact match
                   InventoryInstances.createFolioInstanceViaApi({
@@ -181,9 +181,11 @@ describe('Inventory', () => {
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.inventoryPath);
-          InventoryInstances.waitContentLoading();
+          cy.waitForAuthRefresh(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
+          });
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();

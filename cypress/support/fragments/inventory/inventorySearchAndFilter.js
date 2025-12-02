@@ -1509,6 +1509,35 @@ export default {
     this.checkBrowseSearchInputFieldContent('');
   },
 
+  deleteQueryUsingButton(count, key) {
+    // transfer number of chars for deleting and keyboard button
+    cy.get('#input-record-search')
+      .focus()
+      .invoke('val')
+      .then((initialValue) => {
+        let expectedValue;
+        let cursorPos;
+        if (key === '{del}') {
+          cursorPos = 0; // set cursor in the begining of query, before chars
+          expectedValue = initialValue.substring(count);
+        } else if (key === '{backspace}') {
+          cursorPos = count; // set cursor after specified char of query
+          expectedValue = initialValue.substring(count);
+        }
+
+        cy.get('#input-record-search')
+          .focus()
+          .then((input) => input[0].setSelectionRange(cursorPos, cursorPos))
+          .type(key.repeat(count))
+          .should('have.value', expectedValue)
+          .then((input) => {
+            const el = input[0];
+            expect(el.selectionStart, 'cursor position (start)').to.eq(0);
+            expect(el.selectionEnd, 'cursor position (end)').to.eq(0);
+          });
+      });
+  },
+
   verifyBrowseFacetsNotDisplayed() {
     cy.expect(searchAndFilterSection.find(Accordion()).absent());
   },
