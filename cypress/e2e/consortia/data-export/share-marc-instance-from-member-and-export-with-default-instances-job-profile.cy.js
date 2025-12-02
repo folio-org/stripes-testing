@@ -21,6 +21,7 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
   verify008FieldValue,
+  verifyLeaderPositions,
 } from '../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../support/utils/dateTools';
 
@@ -152,10 +153,11 @@ describe('Data Export', () => {
                 expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
               },
               (record) => {
-                expect(record.leader).to.exist;
-                expect(record.leader[5]).to.eq('c');
-                expect(record.leader[6]).to.eq('g');
-                expect(record.leader[7]).to.eq('m');
+                verifyLeaderPositions(record, {
+                  5: 'c',
+                  6: 'g',
+                  7: 'm',
+                });
               },
               (record) => {
                 verify008FieldValue(record, '130502s2013    xxu050            vleng d');

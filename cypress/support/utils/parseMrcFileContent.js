@@ -177,3 +177,13 @@ export function verify008FieldValue(record, expectedValue) {
 
   expect(field008.value, 'MARC tag 008').to.eq(expectedValue);
 }
+
+export function verifyLeaderPositions(record, positions = {}) {
+  expect(record.leader, 'Leader field').to.exist;
+
+  Object.entries(positions).forEach(([position, expectedValue]) => {
+    const pos = parseInt(position, 10);
+
+    expect(record.leader[pos], `Leader position ${position}`).to.eq(expectedValue);
+  });
+}

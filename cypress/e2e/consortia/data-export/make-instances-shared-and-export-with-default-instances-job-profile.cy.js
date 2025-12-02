@@ -25,6 +25,7 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
   verify008FieldValue,
+  verifyLeaderPositions,
 } from '../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../support/utils/dateTools';
 
@@ -373,10 +374,11 @@ describe('Data Export', () => {
 
             const marcInstanceAssertions = (instance) => [
               (record) => {
-                expect(record.leader).to.exist;
-                expect(record.leader[5]).to.eq('n');
-                expect(record.leader[6]).to.eq('a');
-                expect(record.leader[7]).to.eq('a');
+                verifyLeaderPositions(record, {
+                  5: 'n',
+                  6: 'a',
+                  7: 'a',
+                });
               },
               (record) => {
                 verify008FieldValue(record, `${todayDateYYMMDD}                                  `);
@@ -402,10 +404,11 @@ describe('Data Export', () => {
 
             const folioInstanceAssertions = (instance) => [
               (record) => {
-                expect(record.leader).to.exist;
-                expect(record.leader[5]).to.eq('n');
-                expect(record.leader[6]).to.eq('a');
-                expect(record.leader[7]).to.eq('m');
+                verifyLeaderPositions(record, {
+                  5: 'n',
+                  6: 'a',
+                  7: 'm',
+                });
               },
               (record) => {
                 verify008FieldValue(record, `${todayDateYYMMDD}|2023||||||||||||       |||||und||`);
