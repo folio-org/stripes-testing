@@ -11,6 +11,8 @@ import {
   TextField,
   FieldSet,
   including,
+  MultiSelect,
+  MultiSelectOption,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -119,6 +121,15 @@ export default {
     if (invoice.note) {
       cy.do(infoFields.note.fillIn(invoice.note));
       cy.expect(infoFields.note.has({ value: invoice.note }));
+    }
+    if (invoice.acqUnits) {
+      cy.do([
+        MultiSelect({ id: 'invoice-acq-units' })
+          .find(Button({ ariaLabel: 'open menu' }))
+          .click(),
+        cy.wait(4000),
+        MultiSelectOption(...invoice.acqUnits).click(),
+      ]);
     }
   },
   uploadFile(fileName) {
