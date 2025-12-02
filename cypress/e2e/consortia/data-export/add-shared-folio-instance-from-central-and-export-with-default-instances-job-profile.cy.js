@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import { APPLICATION_NAMES, NOTE_TYPES } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import { APPLICATION_NAMES, NOTE_TYPES, LOCATION_NAMES } from '../../../support/constants';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -10,8 +10,10 @@ import DataExportLogs from '../../../support/fragments/data-export/dataExportLog
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryNewInstance from '../../../support/fragments/inventory/inventoryNewInstance';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
@@ -34,34 +36,36 @@ const recordsCount = 5;
 const userPermissions = [
   permissions.dataExportUploadExportDownloadFileViewLogs.gui,
   permissions.inventoryAll.gui,
-  permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+  permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+  permissions.dataImportUploadAll.gui,
 ];
 const instances = [
   {
-    title: `AT_C407648_Local_FolioInstance_${getRandomPostfix()}`,
+    title: `AT_C407649_Local_FolioInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.College,
     type: 'folio',
   },
   {
-    title: `AT_C407648_Local_MarcInstance_${getRandomPostfix()}`,
+    title: `AT_C407649_Local_MarcInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.College,
     type: 'marc',
   },
   {
-    title: `AT_C407648_Shared_FolioInstance_${getRandomPostfix()}`,
+    title: `AT_C407649_Shared_FolioInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
     type: 'folio',
   },
   {
-    title: `AT_C407648_Shared_MarcInstance_${getRandomPostfix()}`,
+    title: `AT_C407649_Shared_MarcInstance_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
     type: 'marc',
   },
 ];
-const newInstanceTitle = `AT_C407648_NewLocal_FolioInstance_${getRandomPostfix()}`;
-const instanceUUIDsFileName = `AT_C407648_instanceUUIDs_${getRandomPostfix()}.csv`;
+const instanceUUIDsFileName = `AT_C407649_instanceUUIDs_${getRandomPostfix()}.csv`;
 const testData = {
-  newInstance: {},
+  newSharedInstance: {
+    title: `AT_C407649_NewShared_FolioInstance_${getRandomPostfix()}`,
+  },
 };
 
 function createInstance(instance) {
@@ -152,11 +156,9 @@ function createInstance(instance) {
           });
         })
         .then(() => {
-          // Retrieve modeOfIssuanceId by name 'multipart monograph'
           return cy.getModesOfIssuance({ query: 'name=="multipart monograph"' });
         })
         .then((modeOfIssuance) => {
-          // Create FOLIO instance with comprehensive fields for Step 13 mapping verification
           const instanceData = {
             instanceTypeId,
             title: instance.title,
@@ -283,9 +285,8 @@ describe('Data Export', () => {
           cy.affiliateUserToTenant({
             tenantId: Affiliations.College,
             userId: user.userId,
-            permissions: [...userPermissions, permissions.consortiaInventoryShareLocalInstance.gui],
+            permissions: userPermissions,
           }).then(() => {
-            // Create precondition instances
             instances.forEach((instance) => {
               createInstance(instance);
             });
@@ -296,7 +297,7 @@ describe('Data Export', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
 
@@ -304,6 +305,8 @@ describe('Data Export', () => {
       cy.resetTenant();
       cy.getAdminToken();
       cy.withinTenant(Affiliations.College, () => {
+        cy.deleteHoldingRecordViaApi(testData.newSharedInstance.holdingId);
+
         const localInstances = instances.filter(
           (instance) => instance.affiliation === Affiliations.College,
         );
@@ -321,7 +324,7 @@ describe('Data Export', () => {
           InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
 
-        InventoryInstance.deleteInstanceViaApi(testData.newInstance.uuid);
+        InventoryInstance.deleteInstanceViaApi(testData.newSharedInstance.uuid);
         Users.deleteViaApi(user.userId);
       });
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
@@ -329,14 +332,14 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407648 Consortia | Share FOLIO instance from member and export with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407648'] },
+      'C407649 Consortia | Add shared FOLIO instance from central and export with Default instances job profile (consortia) (firebird)',
+      { tags: ['criticalPathECS', 'firebird', 'C407649'] },
       () => {
-        // Step 1: Go to "Inventory" app => Select "Actions" => Select "New local record" button
+        // Step 1: Go to "Inventory" app => Select "Actions" => Select "New shared record" button
         InventoryInstances.addNewInventory();
 
         // Step 2: Fill in the "Resource title*" field with any Instance's title
-        InventoryNewInstance.fillResourceTitle(newInstanceTitle);
+        InventoryNewInstance.fillResourceTitle(testData.newSharedInstance.title);
 
         // Step 3: Select from the "Resource type*" dropdown any existing resource type
         InventoryNewInstance.fillResourceType();
@@ -344,51 +347,65 @@ describe('Data Export', () => {
         // Step 4: Click the "Save and close" button
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyInstanceTitle(newInstanceTitle);
+        InventoryInstance.verifyInstanceTitle(testData.newSharedInstance.title);
+        InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.getAssignedHRID().then((hrid) => {
-          testData.newInstance.hrid = hrid;
+          testData.newSharedInstance.hrid = hrid;
         });
 
         cy.location('pathname').then((pathname) => {
           const uuidMatch = pathname.match(/\/inventory\/view\/([a-f0-9-]+)/);
           if (uuidMatch) {
-            testData.newInstance.uuid = uuidMatch[1];
+            testData.newSharedInstance.uuid = uuidMatch[1];
           }
-        });
 
-        // Step 5: Click on the "Actions" menu button => Select "Share local instance" option => Click "Share"
-        InventoryInstance.shareInstance();
-        InventoryInstance.verifyCalloutMessage(
-          `Local instance ${newInstanceTitle} has been successfully shared`,
-        );
-        InventoryInstance.checkSharedTextInDetailView();
+          // Step 5: Switch affiliation to member tenant
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
-        // Verify Instance HRID is changed and contains central tenant prefix from the very beginning
-        InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
-          testData.newInstance.hrid = updatedHrid;
+          // Step 6: Go to the "Inventory" app => Search for just created shared instance
+          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventoryInstances.searchByTitle(testData.newSharedInstance.uuid);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.verifyInstanceTitle(testData.newSharedInstance.title);
+          InventoryInstance.checkSharedTextInDetailView();
+          InventoryInstance.pressAddHoldingsButton();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.fillHoldingFields({
+            permanentLocation: LOCATION_NAMES.ANNEX,
+          });
+          HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+          InventoryInstance.waitLoading();
+          InventoryInstance.openHoldingView();
 
-          // Step 6: Go to the "Data export" app
+          cy.location('href').then((fullUrl) => {
+            const holdingMatch = fullUrl.match(/\/inventory\/view\/[a-f0-9-]+\/([a-f0-9-]+)/);
+            testData.newSharedInstance.holdingId = holdingMatch[1];
+          });
+
+          InventoryInstance.closeHoldingsView();
+          InventoryInstance.waitLoading();
+
+          // Step 8: Go to the "Data export" app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           DataExportLogs.waitLoading();
 
-          // Create CSV file with all instance UUIDs
+          // Step 7: Retrieve result list of Instances from Precondition # 4 and Step 4 => Click "Actions" menu => Select "Save instances UUIDs"
           const allInstances = [...instances];
           allInstances.push({
-            uuid: testData.newInstance.uuid,
-            hrid: testData.newInstance.hrid,
-            title: newInstanceTitle,
+            uuid: testData.newSharedInstance.uuid,
+            hrid: testData.newSharedInstance.hrid,
+            title: testData.newSharedInstance.title,
           });
 
           const uuids = allInstances.map((instance) => instance.uuid).join('\n');
 
           FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, uuids);
 
-          // Step 7: Trigger the data export by clicking on the "or choose file" button and submitting .csv file
+          // Step 9: Trigger the data export by clicking on the "or choose file" button and submitting .csv file
           ExportFileHelper.uploadFile(instanceUUIDsFileName);
 
-          // Step 8: Run the "Default instance export job profile"
+          // Step 10: Run the "Default instance export job profile"
           ExportFileHelper.exportWithDefaultJobProfile(instanceUUIDsFileName);
 
           cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
@@ -398,7 +415,7 @@ describe('Data Export', () => {
             const jobId = jobData.hrId;
             exportedFileName = `${instanceUUIDsFileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
 
-            // Step 9: Download the recently created file
+            // Step 11: Download the recently created file
             DataExportResults.verifySuccessExportResultCells(
               exportedFileName,
               recordsCount,
@@ -407,7 +424,7 @@ describe('Data Export', () => {
             );
             DataExportLogs.clickButtonWithText(exportedFileName);
 
-            // Steps 10-13: Verify the downloaded .mrc file includes all instances
+            // Steps 12-15: Verify the downloaded .mrc file includes all instances
             const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
             const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 
@@ -434,22 +451,18 @@ describe('Data Export', () => {
               },
             ];
 
-            // Additional assertions for FOLIO instances to verify Step 13 MARC mapping
             const folioInstanceAssertions = [
-              // LDR positions 6 and 7
               (record) => {
                 expect(record.leader).to.exist;
                 expect(record.leader[6]).to.eq('a');
                 expect(record.leader[7]).to.eq('m');
               },
-              // 008 field publication date verification (positions 07-10)
               (record) => {
                 const field008 = record.get('008');
                 const publicationDate = field008[0].value.substring(7, 11);
 
                 expect(publicationDate).to.eq('2023');
               },
-              // 010 LCCN
               (record) => {
                 verifyMarcFieldByTag(record, '010', {
                   ind1: ' ',
@@ -457,7 +470,6 @@ describe('Data Export', () => {
                   subfields: ['a', '2025123456'],
                 });
               },
-              // 019 Cancelled System Control Numbers
               (record) => {
                 verifyMarcFieldByTag(record, '019', {
                   ind1: ' ',
@@ -465,7 +477,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'CSC-54321'],
                 });
               },
-              // 020 ISBN
               (record) => {
                 verifyMarcFieldByTag(record, '020', {
                   ind1: ' ',
@@ -473,7 +484,6 @@ describe('Data Export', () => {
                   subfields: ['a', '978-0-12345-678-9'],
                 });
               },
-              // 022 ISSN
               (record) => {
                 verifyMarcFieldByTag(record, '022', {
                   ind1: ' ',
@@ -481,7 +491,6 @@ describe('Data Export', () => {
                   subfields: ['a', '1234-5678'],
                 });
               },
-              // 024 ASIN
               (record) => {
                 verifyMarcFieldByTag(record, '024', {
                   ind1: '8',
@@ -489,7 +498,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'B000123456'],
                 });
               },
-              // 028 Publisher or Distributor Number
               (record) => {
                 verifyMarcFieldByTag(record, '028', {
                   ind1: '5',
@@ -497,7 +505,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'PDN-112233'],
                 });
               },
-              // 030 CODEN
               (record) => {
                 verifyMarcFieldByTag(record, '030', {
                   ind1: ' ',
@@ -505,7 +512,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'ABCD1234'],
                 });
               },
-              // 035 System Control Number
               (record) => {
                 verifyMarcFieldByTag(record, '035', {
                   ind1: ' ',
@@ -513,7 +519,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'SCN-987654'],
                 });
               },
-              // 088 Report number
               (record) => {
                 verifyMarcFieldByTag(record, '088', {
                   ind1: ' ',
@@ -521,7 +526,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'RN-2025-001'],
                 });
               },
-              // 100 Contributor (Personal name, primary)
               (record) => {
                 verifyMarcFieldByTag(record, '100', {
                   ind1: '1',
@@ -529,7 +533,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Author'],
                 });
               },
-              // 130 Uniform title alternative title
               (record) => {
                 verifyMarcFieldByTag(record, '130', {
                   ind1: '0',
@@ -537,7 +540,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Uniform Title'],
                 });
               },
-              // 246 Variant title alternative title
               (record) => {
                 verifyMarcFieldByTag(record, '246', {
                   ind1: '0',
@@ -545,7 +547,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Variant Title'],
                 });
               },
-              // 247 Former title alternative title
               (record) => {
                 verifyMarcFieldByTag(record, '247', {
                   ind1: '0',
@@ -553,7 +554,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Former Title'],
                 });
               },
-              // 250 Edition
               (record) => {
                 verifyMarcFieldByTag(record, '250', {
                   ind1: ' ',
@@ -561,7 +561,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'First edition'],
                 });
               },
-              // 300 Physical description
               (record) => {
                 verifyMarcFieldByTag(record, '300', {
                   ind1: ' ',
@@ -569,7 +568,6 @@ describe('Data Export', () => {
                   subfields: ['a', '300 pages'],
                 });
               },
-              // 310 Publication frequency
               (record) => {
                 verifyMarcFieldByTag(record, '310', {
                   ind1: ' ',
@@ -577,7 +575,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Annual'],
                 });
               },
-              // 264 Publication field
               (record) => {
                 verifyMarcFieldByTag(record, '264', {
                   ind1: ' ',
@@ -589,7 +586,6 @@ describe('Data Export', () => {
                   ],
                 });
               },
-              // 362 Publication range
               (record) => {
                 verifyMarcFieldByTag(record, '362', {
                   ind1: '1',
@@ -597,7 +593,6 @@ describe('Data Export', () => {
                   subfields: ['a', '2020-2023'],
                 });
               },
-              // 490 Series
               (record) => {
                 verifyMarcFieldByTag(record, '490', {
                   ind1: '0',
@@ -605,7 +600,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Series'],
                 });
               },
-              // 500 General note
               (record) => {
                 verifyMarcFieldByTag(record, '500', {
                   ind1: ' ',
@@ -613,7 +607,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test general note'],
                 });
               },
-              // 653 Subject
               (record) => {
                 verifyMarcFieldByTag(record, '653', {
                   ind1: ' ',
@@ -621,7 +614,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Subject'],
                 });
               },
-              // 655 Nature of content
               (record) => {
                 verifyMarcFieldByTag(record, '655', {
                   ind1: ' ',
@@ -629,7 +621,6 @@ describe('Data Export', () => {
                   subfields: ['a', natureOfContentName],
                 });
               },
-              // 710 Corporate name contributor
               (record) => {
                 verifyMarcFieldByTag(record, '710', {
                   ind1: '2',
@@ -637,7 +628,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Corporate Name'],
                 });
               },
-              // 711 Meeting name contributor
               (record) => {
                 verifyMarcFieldByTag(record, '711', {
                   ind1: '2',
@@ -645,7 +635,6 @@ describe('Data Export', () => {
                   subfields: ['a', 'Test Meeting Name'],
                 });
               },
-              // 856 Electronic access
               (record) => {
                 verifyMarcFieldByTag(record, '856', {
                   ind1: '4',
@@ -661,8 +650,8 @@ describe('Data Export', () => {
             ];
 
             const recordsToVerify = allInstances.map((instance) => {
-              const isPreconditionFolioInstance = instance.type === 'folio';
-              const assertions = isPreconditionFolioInstance
+              const isFolioInstance = instance.type === 'folio';
+              const assertions = isFolioInstance
                 ? [...commonAssertions(instance), ...folioInstanceAssertions]
                 : commonAssertions(instance);
 
