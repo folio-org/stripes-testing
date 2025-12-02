@@ -25,6 +25,7 @@ import ClassificationIdentifierTypes from '../../../support/fragments/settings/i
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -2924,6 +2925,300 @@ describe('Inventory', () => {
             BrowseCallNumber.checkValuePresentInResults(classificationNumber);
           });
         });
+      },
+    );
+  });
+
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const testData = {
+      instanceTitlePrefix: `AT_C805747_FolioInstance_${randomPostfix}`,
+      classificationNumber: `AT_C805747_ClassifNumber_${randomPostfix}`,
+      contributorNamePrefix: `AT_C805747_Contributor_${randomPostfix}`,
+    };
+    const instanceTitles = [
+      `${testData.instanceTitlePrefix}_A`,
+      `${testData.instanceTitlePrefix}_B`,
+    ];
+    const classificationTypeIds = [
+      CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+      CLASSIFICATION_IDENTIFIER_TYPES.LC,
+    ];
+    const contributorNames = [
+      [`${testData.contributorNamePrefix}_A1`, `${testData.contributorNamePrefix}_A2`],
+      [`${testData.contributorNamePrefix}_B1`, `${testData.contributorNamePrefix}_B2`],
+    ];
+
+    const instanceIds = [];
+    let instanceTypeId;
+    let contributorNameTypeId;
+    let user;
+
+    before('Creating user and test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('AT_C805747');
+
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+        user = createdUserProperties;
+
+        cy.then(() => {
+          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
+          BrowseContributors.getContributorNameTypes().then((nameTypes) => {
+            contributorNameTypeId = nameTypes[0].id;
+          });
+        })
+          .then(() => {
+            instanceTitles.forEach((instanceTitle, index) => {
+              const instanceData = {
+                instanceTypeId,
+                title: instanceTitle,
+                classifications: [
+                  {
+                    classificationNumber: testData.classificationNumber,
+                    classificationTypeId: classificationTypeIds[index],
+                  },
+                ],
+                contributors: contributorNames[index].map((contributor) => {
+                  return {
+                    name: contributor,
+                    contributorNameTypeId,
+                    contributorTypeText: '',
+                    primary: false,
+                  };
+                }),
+              };
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: instanceData,
+              }).then((specialInstanceIds) => {
+                instanceIds.push(specialInstanceIds.instanceId);
+              });
+            });
+          })
+          .then(() => {
+            cy.getAdminToken();
+            // Set browse identifier types
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              defaultClassificationBrowseIdsAlgorithms[0].id,
+              defaultClassificationBrowseIdsAlgorithms[0].algorithm,
+              [],
+            );
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              defaultClassificationBrowseIdsAlgorithms[1].id,
+              defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+              [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+            );
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              defaultClassificationBrowseIdsAlgorithms[2].id,
+              defaultClassificationBrowseIdsAlgorithms[2].algorithm,
+              [CLASSIFICATION_IDENTIFIER_TYPES.LC],
+            );
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventorySearchAndFilter.switchToBrowseTab();
+            InventorySearchAndFilter.verifyCallNumberBrowsePane();
+            InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+              BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
+            );
+            BrowseClassifications.waitForClassificationNumberToAppear(
+              testData.classificationNumber,
+            );
+          });
+      });
+    });
+
+    after('Deleting created user and test data', () => {
+      cy.getAdminToken();
+      // Reset browse identifier types to default
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        defaultClassificationBrowseIdsAlgorithms[0].id,
+        defaultClassificationBrowseIdsAlgorithms[0].algorithm,
+        [],
+      );
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        defaultClassificationBrowseIdsAlgorithms[1].id,
+        defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+        [],
+      );
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        defaultClassificationBrowseIdsAlgorithms[2].id,
+        defaultClassificationBrowseIdsAlgorithms[2].algorithm,
+        [],
+      );
+      instanceIds.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C805747 Browse for classification which exists in multiple Instances when classifications have different types (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C805747'] },
+      () => {
+        InventorySearchAndFilter.browseSearch(testData.classificationNumber);
+        BrowseClassifications.checkRowValues(
+          testData.classificationNumber,
+          instanceTitles[0],
+          contributorNames[0].join(' ; '),
+          1,
+          true,
+        );
+        BrowseClassifications.checkRowValues(
+          testData.classificationNumber,
+          instanceTitles[1],
+          contributorNames[1].join(' ; '),
+          1,
+          true,
+        );
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
+        );
+        InventorySearchAndFilter.browseSearch(testData.classificationNumber);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationNumber);
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          1,
+          instanceTitles[0],
+        );
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          2,
+          contributorNames[0].join(' ; '),
+        );
+
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          BROWSE_CLASSIFICATION_OPTIONS.LIBRARY_OF_CONGRESS,
+        );
+        InventorySearchAndFilter.browseSearch(testData.classificationNumber);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationNumber);
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          1,
+          instanceTitles[1],
+        );
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          2,
+          contributorNames[1].join(' ; '),
+        );
+      },
+    );
+  });
+
+  describe('Instance classification browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const testData = {
+      instanceTitle: `AT_C805748_FolioInstance_${randomPostfix} Cell shape and surface architecture. Cell shape and surface architecture are crucial for cellular function and are determined by a complex interplay of internal and external forces, including the cytoskeleton, adhesion structures, and the cell's mechanical environment. Cell shape can influence various cellular behaviors like proliferation, differentiation, and migration : proceedings of the ICN-UCLA conference held at Squaw Valley, California`,
+      classificationNumber: `AT_C805748_ClassNumber_${randomPostfix}_long1`,
+      contributorNamePrefix: `AT_C805748_Contributor_${randomPostfix}`,
+      classificationTypeId: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+      browseId: defaultClassificationBrowseIdsAlgorithms[0].id, // "all"
+      browseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm, // "default"
+    };
+    const contributorNames = Array.from(
+      { length: 16 },
+      (_, index) => `${testData.contributorNamePrefix}_${index}`,
+    );
+
+    const instanceIds = [];
+    let instanceTypeId;
+    let contributorNameTypeId;
+    let user;
+
+    before('Creating user and test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('AT_C805748');
+
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+        user = createdUserProperties;
+
+        cy.then(() => {
+          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
+          BrowseContributors.getContributorNameTypes().then((nameTypes) => {
+            contributorNameTypeId = nameTypes[0].id;
+          });
+        })
+          .then(() => {
+            const instanceData = {
+              instanceTypeId,
+              title: testData.instanceTitle,
+              classifications: [
+                {
+                  classificationNumber: testData.classificationNumber,
+                  classificationTypeId: testData.classificationTypeId,
+                },
+              ],
+              contributors: contributorNames.map((contributor) => {
+                return {
+                  name: contributor,
+                  contributorNameTypeId,
+                  contributorTypeText: '',
+                  primary: false,
+                };
+              }),
+            };
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: instanceData,
+            }).then((specialInstanceIds) => {
+              instanceIds.push(specialInstanceIds.instanceId);
+            });
+          })
+          .then(() => {
+            cy.getAdminToken();
+            // Reset browse identifier types to default
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              defaultClassificationBrowseIdsAlgorithms[0].id,
+              defaultClassificationBrowseIdsAlgorithms[0].algorithm,
+              [],
+            );
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventorySearchAndFilter.switchToBrowseTab();
+            InventorySearchAndFilter.verifyCallNumberBrowsePane();
+            InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+              BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
+            );
+            BrowseClassifications.waitForClassificationNumberToAppear(
+              testData.classificationNumber,
+            );
+          });
+      });
+    });
+
+    after('Deleting created user and test data', () => {
+      cy.getAdminToken();
+      instanceIds.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C805748 Browse for classification which exists in Instance with long title and more than 15 contributors (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C805748'] },
+      () => {
+        InventorySearchAndFilter.browseSearch(testData.classificationNumber);
+        BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationNumber);
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          1,
+          testData.instanceTitle,
+        );
+        BrowseCallNumber.checkValuePresentForRow(
+          testData.classificationNumber,
+          2,
+          contributorNames.join(' ; '),
+        );
       },
     );
   });
