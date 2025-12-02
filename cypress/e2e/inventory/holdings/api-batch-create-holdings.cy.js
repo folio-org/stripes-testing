@@ -85,7 +85,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C927744'] },
       () => {
         // Step 1. Send POST ‘/holdings-storage/batch/synchronous?upsert=true’ with following body (without holdings “id”)
-        const holdingsRecordInvalid = [
+        const holdingsRecordWithoutIds = [
           {
             instanceId: testData.folioInstances[0].instanceId,
             permanentLocationId: locationA.id,
@@ -99,7 +99,7 @@ describe('Inventory', () => {
         ];
 
         cy.getToken(user.username, user.password);
-        cy.batchUpdateHoldingsViaApi(holdingsRecordInvalid).then((batchResponse) => {
+        cy.batchUpdateHoldingsViaApi(holdingsRecordWithoutIds).then((batchResponse) => {
           expect(batchResponse.status).to.eq(201);
         });
 
@@ -114,7 +114,7 @@ describe('Inventory', () => {
         });
 
         // Step 3. Send POST request via "Postman" to create multiple new holdings records for the same instance record
-        const holdingsRecords = [
+        const holdingsRecordsWithId = [
           {
             id: testData.holdingsAUuid,
             instanceId: testData.folioInstances[1].instanceId,
@@ -130,7 +130,7 @@ describe('Inventory', () => {
         ];
 
         cy.getToken(user.username, user.password);
-        cy.batchUpdateHoldingsViaApi(holdingsRecords).then((batchResponse) => {
+        cy.batchUpdateHoldingsViaApi(holdingsRecordsWithId).then((batchResponse) => {
           expect(batchResponse.status).to.eq(201);
 
           // Step 4-5. Verify that the holdings records were created successfully
