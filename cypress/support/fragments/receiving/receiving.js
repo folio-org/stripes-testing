@@ -536,10 +536,6 @@ export default {
             currentPiece.displayOnHolding !== undefined
               ? currentPiece.displayOnHolding
               : piece.displayOnHolding,
-          displayToPublic:
-            currentPiece.displayToPublic !== undefined
-              ? currentPiece.displayToPublic
-              : piece.displayToPublic,
           receiptDate: currentPiece.receiptDate || piece.receiptDate,
           sequenceNumber: piece.sequenceNumber,
           supplement:
