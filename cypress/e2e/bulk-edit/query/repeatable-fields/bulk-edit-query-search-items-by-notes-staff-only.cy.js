@@ -5,7 +5,7 @@ import Users from '../../../../support/fragments/users/users';
 import QueryModal, {
   QUERY_OPERATIONS,
   itemFieldValues,
-  booleanOperators,
+  booleanOperatorsInRepeatableFields,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -233,7 +233,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(itemFieldValues.itemNotesStaffOnly);
           QueryModal.verifySelectedField(itemFieldValues.itemNotesStaffOnly);
           QueryModal.verifyOperatorColumn();
-          QueryModal.verifyOperatorsList(booleanOperators);
+          QueryModal.verifyOperatorsList(booleanOperatorsInRepeatableFields);
 
           // Step 2: Search using "equals" operator with "True"
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
@@ -257,7 +257,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 3: Search using "equals" operator with "False"
+          // Step 3-4: Search using "equals" operator with "False"
           QueryModal.chooseValueSelect('False');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
@@ -274,50 +274,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 4: Search using "not equal to" operator with "True"
-          QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
-          QueryModal.chooseValueSelect('True');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
-
-          expectedItemsToFind = [expectedItems[1], expectedItems[4]];
-
-          expectedItemsToFind.forEach((item) => {
-            verifyItemNotes(item);
-          });
-
-          notExpectedToFindItemBarcodes = [
-            expectedItems[0].barcode,
-            expectedItems[2].barcode,
-            expectedItems[3].barcode,
-          ];
-
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-
-          // Step 5-6: Search using "not equal to" operator with "False"
-          QueryModal.chooseValueSelect('False');
-          QueryModal.clickTestQuery();
-          QueryModal.verifyPreviewOfRecordsMatched();
-
-          expectedItemsToFind = [expectedItems[0], expectedItems[4]];
-
-          expectedItemsToFind.forEach((item) => {
-            verifyItemNotes(item);
-          });
-
-          notExpectedToFindItemBarcodes = [
-            expectedItems[1].barcode,
-            expectedItems[2].barcode,
-            expectedItems[3].barcode,
-          ];
-
-          notExpectedToFindItemBarcodes.forEach((barcode) => {
-            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
-          });
-
-          // Step 7: Search using "is null/empty" operator with "True"
+          // Step 5: Search using "is null/empty" operator with "True"
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
           QueryModal.chooseValueSelect('True');
           QueryModal.clickTestQuery();
@@ -338,7 +295,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
           });
 
-          // Step 8: Search using "is null/empty" operator with "False"
+          // Step 6: Search using "is null/empty" operator with "False"
           QueryModal.chooseValueSelect('False');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
