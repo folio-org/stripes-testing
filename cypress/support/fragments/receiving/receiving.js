@@ -502,4 +502,61 @@ export default {
   addRoutingListExist: () => {
     cy.expect(Button('Add routing list').exists());
   },
+
+  getPiecesViaApi(poLineId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/pieces',
+        searchParams: {
+          query: `poLineId==${poLineId}`,
+        },
+      })
+      .then(({ body }) => body?.pieces || []);
+  },
+
+  receivePieceViaApi({ poLineId, pieces }) {
+    return this.getPiecesViaApi(poLineId).then((allPieces) => {
+      const checkInPieces = pieces.map((currentPiece) => {
+        const piece = allPieces.find((p) => p.id === currentPiece.id);
+
+        return {
+          // receiveToNewHolding is used to receive a piece into a new holding
+          // if true, a new holding will be created at the specified location
+          id: piece.id,
+          holdingId: currentPiece.receiveToNewHolding ? null : piece.holdingId,
+          locationId: currentPiece.receiveToNewHolding ? currentPiece.locationId : piece.locationId,
+          accessionNumber: currentPiece.accessionNumber || piece.accessionNumber,
+          barcode: currentPiece.barcode || piece.barcode,
+          callNumber: currentPiece.callNumber || piece.callNumber,
+          chronology: currentPiece.chronology || piece.chronology,
+          comment: currentPiece.comment || piece.comment,
+          copyNumber: currentPiece.copyNumber || piece.copyNumber,
+          enumeration: currentPiece.enumeration || piece.enumeration,
+          displaySummary: currentPiece.displaySummary || piece.displaySummary,
+          displayOnHolding:
+            currentPiece.displayOnHolding !== undefined
+              ? currentPiece.displayOnHolding
+              : piece.displayOnHolding,
+          displayToPublic:
+            currentPiece.displayToPublic !== undefined
+              ? currentPiece.displayToPublic
+              : piece.displayToPublic,
+          receiptDate: currentPiece.receiptDate || piece.receiptDate,
+          sequenceNumber: piece.sequenceNumber,
+          supplement:
+            currentPiece.supplement !== undefined ? currentPiece.supplement : piece.supplement,
+        };
+      });
+
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'orders/check-in',
+        body: {
+          toBeCheckedIn: [{ poLineId, checkedIn: checkInPieces.length, checkInPieces }],
+          totalRecords: checkInPieces.length,
+        },
+      });
+    });
+  },
 };
