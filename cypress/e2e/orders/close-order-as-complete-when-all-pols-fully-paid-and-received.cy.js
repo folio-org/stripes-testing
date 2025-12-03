@@ -137,7 +137,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    OrderLinesLimit.setPOLLimitViaApi(99);
+    OrderLinesLimit.setPOLLimit(99);
     return createOrderData().then(() => {
       cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
         testData.user = userProperties;
