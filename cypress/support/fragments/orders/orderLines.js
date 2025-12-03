@@ -1341,13 +1341,16 @@ export default {
     submitOrderLine();
   },
 
-  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
+  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value, amountType = false) {
     cy.do([
       addFundDistributionButton.click(),
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
     cy.wait(4000);
+    if (amountType) {
+      cy.do([Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click()]);
+    }
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
