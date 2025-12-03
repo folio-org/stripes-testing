@@ -37,33 +37,24 @@ describe('Funds', () => {
       });
     });
 
-    cy.createTempUser([
-      permissions.uiFinanceViewEditCreateFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.waitForAuthRefresh(() => {
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.fundPath,
-          waiter: Funds.waitLoading,
-        });
-        cy.reload();
-        Funds.waitLoading();
-      }, 20_000);
-    });
+    cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.waitForAuthRefresh(() => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.fundPath,
+            waiter: Funds.waitLoading,
+          });
+          cy.reload();
+          Funds.waitLoading();
+        }, 20_000);
+      },
+    );
   });
 
   after(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    Funds.checkIsBudgetDeleted();
-
-    Funds.closeFundDetails();
-
+    Budgets.deleteViaApi(defaultBudget.id);
     Funds.deleteFundViaApi(firstFund.id);
     Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
@@ -72,7 +63,7 @@ describe('Funds', () => {
 
   it(
     'C380709 Filter in "Status" fields works correctly when creating and editing fund (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C380709'] },
     () => {
       const fundEditForm = Funds.clickCreateNewFundButton();
       fundEditForm.checkButtonsConditions([
