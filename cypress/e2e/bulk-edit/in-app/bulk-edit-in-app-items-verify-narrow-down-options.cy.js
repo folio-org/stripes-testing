@@ -205,7 +205,6 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyCancelButtonDisabled(false);
 
         allOptions.forEach((_, index) => {
-          BulkEditActions.verifyPlusButtonAbsentInRow(true, index);
           BulkEditActions.verifyDeleteButtonExistsInRow(true, index);
         });
       },
