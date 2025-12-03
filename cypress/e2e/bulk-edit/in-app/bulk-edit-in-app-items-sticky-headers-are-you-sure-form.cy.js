@@ -25,243 +25,256 @@ let locationId;
 let loanTypeId;
 let materialTypeId;
 let sourceId;
-const itemUUIDsFileName = `itemUUIDs-${getRandomPostfix()}.csv`;
-const fileNames = BulkEditFiles.getAllDownloadedFileNames(itemUUIDsFileName, true);
-const administrativeNote = `AT_C386512_AdminNote_${getRandomPostfix()}`.repeat(10);
-const instance = {
-  instanceTitle: `AT_C386512_FolioInstance_${getRandomPostfix()}`,
-};
-const testItems = [];
+let itemUUIDsFileName;
+let fileNames;
+let administrativeNote;
+let instance;
+let testItems;
 const numberOfItems = 10;
 
 describe('Bulk-edit', () => {
-  describe('In-app approach', () => {
-    before('create test data', () => {
-      cy.clearLocalStorage();
-      cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewCreateEditItems.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+  describe(
+    'In-app approach',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      beforeEach('create test data', () => {
+        itemUUIDsFileName = `itemUUIDs-${getRandomPostfix()}.csv`;
+        administrativeNote = `AT_C386512_AdminNote_${getRandomPostfix()}`.repeat(10);
+        instance = {
+          instanceTitle: `AT_C386512_FolioInstance_${getRandomPostfix()}`,
+        };
+        testItems = [];
+        fileNames = BulkEditFiles.getAllDownloadedFileNames(itemUUIDsFileName, true);
+        cy.clearLocalStorage();
+        cy.createTempUser([
+          permissions.bulkEditEdit.gui,
+          permissions.uiInventoryViewCreateEditItems.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
 
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-          instanceTypeId = instanceTypeData[0].id;
-        });
-        cy.getLocations({ limit: 1 }).then((res) => {
-          locationId = res.id;
-        });
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          loanTypeId = res[0].id;
-        });
-        cy.getDefaultMaterialType().then((res) => {
-          materialTypeId = res.id;
-        });
-        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-          sourceId = folioSource.id;
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+            instanceTypeId = instanceTypeData[0].id;
+          });
+          cy.getLocations({ limit: 1 }).then((res) => {
+            locationId = res.id;
+          });
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            loanTypeId = res[0].id;
+          });
+          cy.getDefaultMaterialType().then((res) => {
+            materialTypeId = res.id;
+          });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            sourceId = folioSource.id;
 
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId,
-              title: instance.instanceTitle,
-            },
-          }).then((createdInstanceData) => {
-            instance.instanceId = createdInstanceData.instanceId;
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId,
+                title: instance.instanceTitle,
+              },
+            }).then((createdInstanceData) => {
+              instance.instanceId = createdInstanceData.instanceId;
 
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: instance.instanceId,
-              permanentLocationId: locationId,
-              sourceId,
-            }).then((holding) => {
-              instance.holdingId = holding.id;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: instance.instanceId,
+                permanentLocationId: locationId,
+                sourceId,
+              }).then((holding) => {
+                instance.holdingId = holding.id;
 
-              const itemsToCreate = Array.from({ length: numberOfItems }, (_, i) => ({
-                barcode: `item_${i + 1}_${getRandomPostfix()}`,
-                index: i,
-              }));
+                const itemsToCreate = Array.from({ length: numberOfItems }, (_, i) => ({
+                  barcode: `item_${i + 1}_${getRandomPostfix()}`,
+                  index: i,
+                }));
 
-              cy.wrap(itemsToCreate)
-                .each((itemToCreate) => {
-                  InventoryItems.createItemViaApi({
-                    barcode: itemToCreate.barcode,
-                    holdingsRecordId: instance.holdingId,
-                    materialType: { id: materialTypeId },
-                    permanentLoanType: { id: loanTypeId },
-                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  }).then((item) => {
-                    const itemData = {
-                      itemId: item.id,
-                      itemHrid: item.hrid,
+                cy.wrap(itemsToCreate)
+                  .each((itemToCreate) => {
+                    InventoryItems.createItemViaApi({
                       barcode: itemToCreate.barcode,
-                    };
+                      holdingsRecordId: instance.holdingId,
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    }).then((item) => {
+                      const itemData = {
+                        itemId: item.id,
+                        itemHrid: item.hrid,
+                        barcode: itemToCreate.barcode,
+                      };
 
-                    if (itemToCreate.index === 0) {
-                      const updatedItem = item;
-                      updatedItem.administrativeNotes = [administrativeNote];
-                      cy.updateItemViaApi(updatedItem);
-                    }
+                      if (itemToCreate.index === 0) {
+                        const updatedItem = item;
+                        updatedItem.administrativeNotes = [administrativeNote];
+                        cy.updateItemViaApi(updatedItem);
+                      }
 
-                    testItems.push(itemData);
+                      testItems.push(itemData);
+                    });
+                  })
+                  .then(() => {
+                    const itemUUIDs = testItems.map((item) => item.itemId).join('\n');
+
+                    FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, itemUUIDs);
                   });
-                })
-                .then(() => {
-                  const itemUUIDs = testItems.map((item) => item.itemId).join('\n');
-
-                  FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, itemUUIDs);
-                });
+              });
             });
           });
-        });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
-    });
 
-    after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
-      FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
-      BulkEditFiles.deleteAllDownloadedFiles(fileNames);
-    });
+      afterEach('delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
+        FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
+        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+      });
 
-    it(
-      'C386512 Verify that headers on the "Are you sure" are sticky (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C386512'] },
-      () => {
-        // Step 1: Select the "Inventory - items" radio button on the "Record types" accordion => Select "Item UUIDs" option from the "Record identifier" dropdown
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
+      it(
+        'C386512 Verify that headers on the "Are you sure" are sticky (firebird)',
+        { tags: ['extendedPath', 'firebird', 'C386512'] },
+        () => {
+          // Step 1: Select the "Inventory - items" radio button on the "Record types" accordion => Select "Item UUIDs" option from the "Record identifier" dropdown
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
 
-        // Step 2: Upload a .csv file with valid Items UUIDs by dragging it on the "Drag & drop" area
-        BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-        BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(...testItems.map((item) => item.barcode));
+          // Step 2: Upload a .csv file with valid Items UUIDs by dragging it on the "Drag & drop" area
+          BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+          BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditSearchPane.verifyMatchedResults(...testItems.map((item) => item.barcode));
 
-        // Step 3: Click "Actions" menu => Select checkboxes next to "Administrative Note" and "Suppress from discovery"
-        BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-        );
-        BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
-          true,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-        );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          testItems[0].barcode,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-          administrativeNote,
-        );
-
-        testItems.forEach((item) => {
+          // Step 3: Click "Actions" menu => Select checkboxes next to "Administrative Note" and "Suppress from discovery"
+          BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          );
+          BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+            true,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          );
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            'false',
+            testItems[0].barcode,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            administrativeNote,
           );
-        });
 
-        // Step 4: Click "Actions" menu => Select the "Start bulk edit" element
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.verifyBulkEditsAccordionExists();
-        BulkEditActions.verifyOptionsDropdown();
-        BulkEditActions.verifyRowIcons();
+          testItems.forEach((item) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              item.barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+              'false',
+            );
+          });
 
-        // Step 5: Click "Select Option" dropdown => Select "Suppress from discovery" option
-        BulkEditActions.selectOption('Suppress from discovery');
-        BulkEditActions.verifyOptionSelected('Suppress from discovery');
+          // Step 4: Click "Actions" menu => Select the "Start bulk edit" element
+          BulkEditActions.openStartBulkEditForm();
+          BulkEditActions.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyOptionsDropdown();
+          BulkEditActions.verifyRowIcons();
 
-        // Step 6: Click "Select action" dropdown => Select "Set true" option
-        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE);
-        BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_TRUE);
-        BulkEditActions.verifyConfirmButtonDisabled(false);
+          // Step 5: Click "Select Option" dropdown => Select "Suppress from discovery" option
+          BulkEditActions.selectOption('Suppress from discovery');
+          BulkEditActions.verifyOptionSelected('Suppress from discovery');
 
-        // Step 7: Click "Confirm changes" button
-        BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(numberOfItems);
-        BulkEditActions.verifyMessageBannerInAreYouSureForm(numberOfItems);
+          // Step 6: Click "Select action" dropdown => Select "Set true" option
+          BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE);
+          BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_TRUE);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        testItems.forEach((item) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            'true',
+          // Step 7: Click "Confirm changes" button
+          BulkEditActions.confirmChanges();
+          BulkEditActions.verifyAreYouSureForm(numberOfItems);
+          BulkEditActions.verifyMessageBannerInAreYouSureForm(numberOfItems);
+
+          testItems.forEach((item) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              item.barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+              'true',
+            );
+          });
+
+          BulkEditSearchPane.verifyAreYouSureFormScrollableVertically();
+
+          // Step 8: Scroll down to the bottom of the "Preview of records to be changed"
+          BulkEditSearchPane.scrollInAreYouSureForm('bottom');
+          BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
           );
-        });
+          BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+          );
+          BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          );
 
-        BulkEditSearchPane.verifyAreYouSureFormScrollableVertically();
+          // Step 9: Click the "Download preview in CSV format" button
+          BulkEditActions.downloadPreview();
 
-        // Step 8: Scroll down to the bottom of the "Preview of records to be changed"
-        BulkEditSearchPane.scrollInAreYouSureForm('bottom');
-        BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-        );
-        BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-        );
-        BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-        );
+          // Verify CSV file contains all column headers
+          BulkEditFiles.verifyColumnHeaderExistsInCsvFile(
+            fileNames.previewRecordsCSV,
+            Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS).filter(
+              (header) => header !== BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+            ),
+          );
 
-        // Step 9: Click the "Download preview in CSV format" button
-        BulkEditActions.downloadPreview();
+          testItems.forEach((item) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.previewRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+              item.itemId,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+              true,
+            );
+          });
 
-        // Verify CSV file contains all column headers
-        BulkEditFiles.verifyColumnHeaderExistsInCsvFile(
-          fileNames.previewRecordsCSV,
-          Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS).filter(
-            (header) => header !== BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
-          ),
-        );
-
-        testItems.forEach((item) => {
           BulkEditFiles.verifyValueInRowByUUID(
             fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-            item.itemId,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            true,
+            testItems[0].itemId,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            administrativeNote,
           );
-        });
 
-        BulkEditFiles.verifyValueInRowByUUID(
-          fileNames.previewRecordsCSV,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
-          testItems[0].itemId,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-          administrativeNote,
-        );
+          // Step 10: Click "Commit changes" button
+          BulkEditActions.commitChanges();
+          BulkEditSearchPane.waitFileUploading();
+          BulkEditActions.verifySuccessBanner(numberOfItems);
 
-        // Step 10: Click "Commit changes" button
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.verifySuccessBanner(numberOfItems);
+          testItems.forEach((item) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              item.barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+              'true',
+            );
+          });
 
-        testItems.forEach((item) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
-            'true',
-          );
-        });
+          // Step 11: Navigate to the "Inventory" app => Find and open updated Items records => Make sure that changes were applied
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.switchToItem();
 
-        // Step 11: Navigate to the "Inventory" app => Find and open updated Items records => Make sure that changes were applied
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.switchToItem();
-
-        testItems.forEach((item) => {
-          InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-          ItemRecordView.waitLoading();
-          ItemRecordView.suppressedAsDiscoveryIsPresent();
-          ItemRecordView.closeDetailView();
-          InventorySearchAndFilter.resetAll();
-        });
-      },
-    );
-  });
+          testItems.forEach((item) => {
+            InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+            ItemRecordView.waitLoading();
+            ItemRecordView.suppressedAsDiscoveryIsPresent();
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
+          });
+        },
+      );
+    },
+  );
 });

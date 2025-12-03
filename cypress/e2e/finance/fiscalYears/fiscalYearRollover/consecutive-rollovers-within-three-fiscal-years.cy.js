@@ -1,5 +1,6 @@
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
+import { TransactionDetails } from '../../../../support/fragments/finance';
 import Budgets from '../../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -115,6 +116,7 @@ describe('Fiscal Year Rollover', () => {
                     };
                     Orders.createOrderViaApi(defaultOrder).then((firstOrderResponse) => {
                       defaultOrder.id = firstOrderResponse.id;
+                      defaultOrder.poNumber = firstOrderResponse.poNumber;
                       firstOrderLine.purchaseOrderId = firstOrderResponse.id;
 
                       OrderLines.createOrderLineViaApi(firstOrderLine);
@@ -166,33 +168,40 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C407710 Consecutive rollovers within three fiscal years (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C407710'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$10.00',
-        `${defaultOrder}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: secondFiscalYear.code },
+          { key: 'Amount', value: '($10.00)' },
+          { key: 'Source', value: `${defaultOrder.poNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${defaultFund.name} (${defaultFund.code})` },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       Funds.closeTransactionApp(defaultFund, secondFiscalYear);
       Funds.closeBudgetDetails();
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '$10.00',
-        `${defaultOrder}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: firstFiscalYear.code },
+          { key: 'Amount', value: '($10.00)' },
+          { key: 'Source', value: `${defaultOrder.poNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${defaultFund.name} (${defaultFund.code})` },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);
@@ -224,13 +233,17 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectPlannedBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        thirdFiscalYear.code,
-        '$10.00',
-        `${defaultOrder}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: thirdFiscalYear.code },
+          { key: 'Amount', value: '($10.00)' },
+          { key: 'Source', value: `${defaultOrder.poNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${defaultFund.name} (${defaultFund.code})` },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });
