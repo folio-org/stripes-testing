@@ -328,6 +328,11 @@ describe('Bulk-edit', () => {
               },
             ],
           );
+          BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
+            folioInstance.uuid,
+            folioInstance.hrid,
+            folioInstance.title,
+          );
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
             marcInstance.hrid,
