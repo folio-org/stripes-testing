@@ -6,7 +6,9 @@ import {
   BULK_EDIT_ACTIONS,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
 } from '../../../support/constants';
-import BulkEditPane from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
+import BulkEditPane, {
+  PROFILE_TYPES,
+} from '../../../support/fragments/settings/bulk-edit/bulkEditPane';
 import UsersBulkEditProfilesPane from '../../../support/fragments/settings/bulk-edit/profilePane/usersBulkEditProfilesPane';
 import UsersBulkEditProfileView from '../../../support/fragments/settings/bulk-edit/profileView/usersBulkEditProfileView';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -86,11 +88,11 @@ describe('Bulk-edit', () => {
       BulkEditPane.waitLoading();
 
       // Step 2: Verify profiles types listed under "Other profiles" group
-      BulkEditPane.verifyProfilesTypesPresent(['Users bulk edit profiles']);
+      BulkEditPane.verifyProfilesTypesPresent([PROFILE_TYPES.USERS]);
       BulkEditPane.verifyProfilesTypesAbsent([
-        'Holdings bulk edit profiles',
-        'Instances bulk edit profiles',
-        'Items bulk edit profiles',
+        PROFILE_TYPES.HOLDINGS,
+        PROFILE_TYPES.INSTANCES,
+        PROFILE_TYPES.ITEMS,
       ]);
 
       // Step 3: Click "Users bulk edit profiles" and click on any existing users bulk edit profile row

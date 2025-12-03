@@ -180,7 +180,6 @@ describe('Bulk-edit', () => {
           ItemsBulkEditProfileForm.verifyFormElements('New items bulk edit profile');
 
           // Step 2: Verify only shared note types are displayed
-          ItemsBulkEditProfileForm.selectOption('Item notes');
           ItemsBulkEditProfileForm.clickSelectOptionDropdown();
           ItemsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
@@ -190,6 +189,7 @@ describe('Bulk-edit', () => {
             0,
             false,
           );
+          ItemsBulkEditProfileForm.clickSelectOptionDropdown();
 
           // Step 3: Select shared note type and verify Change note type action
           ItemsBulkEditProfileForm.selectOption(
