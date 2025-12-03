@@ -22,6 +22,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -30,6 +31,7 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
   verifyLeaderPositions,
+  verifyMarcFieldByFindingSubfield,
 } from '../../../support/utils/parseMrcFileContent';
 
 let user;
@@ -285,6 +287,32 @@ describe('Data Export', () => {
                   };
                 });
               });
+
+              // Add MARC holdings to imported instance
+              cy.getLocations({ limit: 1 }).then((location) => {
+                cy.createMarcHoldingsViaAPI(testData.importedMarcInstance.uuid, [
+                  {
+                    content: testData.importedMarcInstance.hrid,
+                    tag: '004',
+                  },
+                  {
+                    content: QuickMarcEditor.defaultValid008HoldingsValues,
+                    tag: '008',
+                  },
+                  {
+                    content: `$b ${location.code}`,
+                    indicators: ['\\', '\\'],
+                    tag: '852',
+                  },
+                ]).then((marcHoldingId) => {
+                  cy.getHoldings({ query: `"id"="${marcHoldingId}"` }).then((holdings) => {
+                    testData.importedMarcInstance.marcHoldings = {
+                      id: holdings[0].id,
+                      hrid: holdings[0].hrid,
+                    };
+                  });
+                });
+              });
             });
 
             // Create custom mapping profile and job profile
@@ -326,6 +354,7 @@ describe('Data Export', () => {
           testData.localMarcInstance.holdings.id,
           testData.sharedMarcInstance.holdings.id,
           testData.importedMarcInstance.holdings.id,
+          testData.importedMarcInstance.marcHoldings.id,
         ].forEach((holdingId) => {
           cy.deleteHoldingRecordViaApi(holdingId);
         });
@@ -364,7 +393,7 @@ describe('Data Export', () => {
             .true;
           testData.importedMarcInstance.hrid = updatedHrid;
 
-          // Step 7: Holdings already added via API in before hook
+          // Step 7: MARC holdings already added via API in before hook
           // Step 8: Go to the "Data export" app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           DataExportLogs.waitLoading();
@@ -453,9 +482,26 @@ describe('Data Export', () => {
               },
             ];
 
+            // Additional assertion for imported instance's second 901 field (MARC holdings)
+            const importedInstanceAdditionalAssertions = [
+              (record) => {
+                verifyMarcFieldByFindingSubfield(record, '901', {
+                  findBySubfield: 'a',
+                  findByValue: testData.importedMarcInstance.marcHoldings.hrid,
+                  subfields: [
+                    ['a', testData.importedMarcInstance.marcHoldings.hrid],
+                    ['b', testData.importedMarcInstance.marcHoldings.id],
+                  ],
+                });
+              },
+            ];
+
             const recordsToVerify = allInstances.map((instance) => ({
               uuid: instance.uuid,
-              assertions: customMappingAssertions(instance),
+              assertions:
+                instance.uuid === testData.importedMarcInstance.uuid
+                  ? [...customMappingAssertions(instance), ...importedInstanceAdditionalAssertions]
+                  : customMappingAssertions(instance),
             }));
 
             parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount, false);
