@@ -11,7 +11,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'POST',
-        path: 'configurations/entries',
+        path: 'settings/entries',
         body: config,
       })
       .then(({ body }) => body);
@@ -26,7 +26,7 @@ export default {
   deleteConfigViaApi(config) {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `configurations/entries/${config.id}`,
+      path: `settings/entries/${config.id}`,
     });
   },
 };
