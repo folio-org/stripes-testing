@@ -73,8 +73,11 @@ describe('Patron notices', () => {
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
         const { lastName, firstName, middleName } = userData.personal;
-        const expectedCreator = `${lastName}, ${firstName} ${middleName}`;
-        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(expectedCreator);
+        const creator = `${lastName}, ${firstName} ${middleName}`;
+        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible({
+          creator,
+          paneTitle: noticeTemplate.name,
+        });
       },
     );
   });
