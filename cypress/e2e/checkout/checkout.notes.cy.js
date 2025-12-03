@@ -147,7 +147,7 @@ describe('Check out', () => {
       CheckOutActions.checkNoteModalNotDisplayed();
       // Repeat step "Checkout Item" one more time
       CheckOutActions.checkOutItem(itemBarcode);
-      // Modals with user notes do NOT appear drtyuk
+      // Modals with user notes do NOT appear dgkyuli;
       CheckOutActions.checkNoteModalNotDisplayed();
     },
 
