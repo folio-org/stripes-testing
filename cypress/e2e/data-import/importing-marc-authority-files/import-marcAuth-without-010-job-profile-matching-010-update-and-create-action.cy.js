@@ -85,6 +85,7 @@ describe('Data Import', () => {
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
+      cy.getAdminToken();
       cy.waitForAuthRefresh(() => {
         cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
@@ -114,6 +115,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getAdminToken();
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,

@@ -99,7 +99,10 @@ describe('MARC', () => {
                 ],
               ],
             });
+          })
+          .then(() => {
             cy.wait(5000);
+            cy.getAdminToken();
             cy.waitForAuthRefresh(() => {
               cy.login(userProperties.username, userProperties.password, {
                 path: TopMenu.inventoryPath,

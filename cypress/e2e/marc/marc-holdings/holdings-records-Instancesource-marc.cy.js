@@ -4,6 +4,7 @@ import HoldingsRecordView, {
 } from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -22,8 +23,11 @@ describe('MARC', () => {
     });
 
     beforeEach(() => {
-      cy.loginAsAdmin();
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+      });
       InventoryActions.import();
       // TODO: redesign to api step
       InventorySteps.addMarcHoldingRecord();
