@@ -2,7 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -69,7 +68,6 @@ describe('Data Export', () => {
       { tags: ['smoke', 'firebird', 'C9288'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
-        SelectJobProfile.searchForAJobProfile('Default instances');
         ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
