@@ -131,65 +131,44 @@ const createRoleWithCapabilitiesForAffiliation = (affiliation, testData) => {
 };
 
 const createHoldingsAndItemsForTenant = ({
-  firstBarcodePrefix,
-  secondBarcodePrefix,
+  barcodePrefix,
   barcodesArray,
   holdingIdsArray,
   holdingHridsArray,
+  numberOfHoldings = 2,
 }) => {
-  // Create first holding
-  return InventoryHoldings.createHoldingRecordViaApi({
-    instanceId: folioInstance.uuid,
-    permanentLocationId: locationId,
-    sourceId,
-  })
-    .then((holding) => {
+  const createHoldingWithItem = () => {
+    return InventoryHoldings.createHoldingRecordViaApi({
+      instanceId: folioInstance.uuid,
+      permanentLocationId: locationId,
+      sourceId,
+    }).then((holding) => {
       holdingIdsArray.push(holding.id);
       holdingHridsArray.push(holding.hrid);
-      cy.wait(500);
 
-      // Create item for first holding
-      const barcode1 = `${firstBarcodePrefix}${getRandomPostfix()}`;
-      barcodesArray.push(barcode1);
+      // Create item for this holding
+      const barcode = `${barcodePrefix}${getRandomPostfix()}`;
+      barcodesArray.push(barcode);
 
       return InventoryItems.createItemViaApi({
-        barcode: barcode1,
+        barcode,
         holdingsRecordId: holding.id,
         materialType: { id: materialTypeId },
         permanentLoanType: { id: loanTypeId },
         status: { name: ITEM_STATUS_NAMES.AVAILABLE },
       });
-    })
-    .then(() => {
-      cy.wait(500);
-
-      // Create second holding
-      return InventoryHoldings.createHoldingRecordViaApi({
-        instanceId: folioInstance.uuid,
-        permanentLocationId: locationId,
-        sourceId,
-      });
-    })
-    .then((holding) => {
-      holdingIdsArray.push(holding.id);
-      holdingHridsArray.push(holding.hrid);
-      cy.wait(500);
-
-      // Create item for second holding
-      const barcode2 = `${secondBarcodePrefix}${getRandomPostfix()}`;
-      barcodesArray.push(barcode2);
-
-      return InventoryItems.createItemViaApi({
-        barcode: barcode2,
-        holdingsRecordId: holding.id,
-        materialType: { id: materialTypeId },
-        permanentLoanType: { id: loanTypeId },
-        status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-      });
-    })
-    .then(() => {
-      cy.wait(500);
     });
+  };
+
+  // Create holdings sequentially using recursive chaining
+  const createMultipleHoldings = (count) => {
+    if (count === 0) {
+      return cy.wrap(null);
+    }
+    return createMultipleHoldings(count - 1).then(() => createHoldingWithItem());
+  };
+
+  return createMultipleHoldings(numberOfHoldings);
 };
 
 const createIdentifierFiles = () => {
@@ -205,7 +184,7 @@ const createIdentifierFiles = () => {
 
   FileManager.createFile(
     `cypress/fixtures/${instanceHRIDsFileName}`,
-    `"${folioInstance.instanceHrid}"`,
+    [folioInstance.instanceHrid].join('\n'),
   );
 
   FileManager.createFile(
@@ -246,13 +225,16 @@ const verifyErrorsForCollegeHoldings = ({
   BulkEditSearchPane.uploadFile(identifiersFile);
   BulkEditSearchPane.verifyPaneTitleFileName(identifiersFile);
   BulkEditSearchPane.verifyPaneRecordsCount('2 holdings');
-  BulkEditSearchPane.verifyErrorLabel(2);
+  BulkEditSearchPane.verifyErrorLabel(11);
   BulkEditActions.openActions();
   BulkEditActions.downloadErrors();
-  ExportFile.verifyFileIncludes(errorsFile, [
-    `ERROR,${folioInstance[identifierKey][0]},${errorTemplate(folioInstance[identifierKey][0])}`,
-    `ERROR,${folioInstance[identifierKey][1]},${errorTemplate(folioInstance[identifierKey][1])}`,
-  ]);
+
+  // Build expected error messages for all 11 College holdings
+  const expectedErrors = folioInstance[identifierKey].map(
+    (holdingIdentifier) => `ERROR,${holdingIdentifier},${errorTemplate(holdingIdentifier)}`,
+  );
+
+  ExportFile.verifyFileIncludes(errorsFile, expectedErrors);
 };
 
 const deleteHoldingsAndItemsForTenant = (affiliation, holdingIdsArray) => {
@@ -315,7 +297,10 @@ describe('Bulk-edit', () => {
             }))
             .then((createdInstanceData) => {
               folioInstance.uuid = createdInstanceData.instanceId;
-              folioInstance.instanceHrid = createdInstanceData.instanceHrid;
+
+              cy.getInstanceById(createdInstanceData.instanceId).then((instance) => {
+                folioInstance.instanceHrid = instance.hrid;
+              });
             })
             .then(() => {
               // Create holdings and items in College tenant
@@ -325,11 +310,11 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => createHoldingsAndItemsForTenant({
-              firstBarcodePrefix: 'col_',
-              secondBarcodePrefix: 'col_',
+              barcodePrefix: 'col_',
               barcodesArray: folioInstance.barcodesCollege,
               holdingIdsArray: folioInstance.holdingIdsCollege,
               holdingHridsArray: folioInstance.holdingHridsCollege,
+              numberOfHoldings: 11,
             }))
             .then(() => {
               // Create holdings and items in University tenant
@@ -339,8 +324,7 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => createHoldingsAndItemsForTenant({
-              firstBarcodePrefix: 'uni_',
-              secondBarcodePrefix: 'uni_',
+              barcodePrefix: 'uni_',
               barcodesArray: folioInstance.barcodesUniversity,
               holdingIdsArray: folioInstance.holdingIdsUniversity,
               holdingHridsArray: folioInstance.holdingHridsUniversity,
@@ -422,9 +406,9 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingsUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingsUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('4 holdings');
+          BulkEditSearchPane.verifyPaneRecordsCount('13 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingsUUIDsFileName);
-          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(13);
 
           // Open Actions menu and enable Holdings UUID column
           BulkEditActions.openActions();
@@ -484,7 +468,7 @@ describe('Bulk-edit', () => {
           uploadAndVerifyMatchedResults({
             recordIdentifier: 'Holdings HRIDs',
             fileName: holdingsHRIDsFileName,
-            expectedCountLabel: '4 holdings',
+            expectedCountLabel: '13 holdings',
             matchedFileName: matchedRecordsFileHoldingsHRID,
             expectedValues: folioInstance.holdingHridsCollege.concat(
               folioInstance.holdingHridsUniversity,
@@ -496,7 +480,7 @@ describe('Bulk-edit', () => {
           uploadAndVerifyMatchedResults({
             recordIdentifier: 'Instance HRIDs',
             fileName: instanceHRIDsFileName,
-            expectedCountLabel: '4 holdings',
+            expectedCountLabel: '13 holdings',
             matchedFileName: matchedRecordsFileInstanceHRID,
             expectedValues: folioInstance.holdingIdsCollege.concat(
               folioInstance.holdingIdsUniversity,
