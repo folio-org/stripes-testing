@@ -14,10 +14,10 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 
 let user;
-let marcInstanceId;
+let marcInstanceIdC692112;
 const instanceUUIDsFileName = `instanceUUIDs_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName, true);
-const marcFileName = 'marcBibC850013.mrc';
+const marcFileNameC692112 = 'marcBibC692112.mrc';
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -29,16 +29,27 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
+        // Import MARC file for C692112 (missing SRS record)
         DataImport.uploadFileViaApi(
-          marcFileName,
-          `marcBibInvalid008_${getRandomPostfix()}.mrc`,
+          marcFileNameC692112,
+          `marcBibMissingSRS_${getRandomPostfix()}.mrc`,
           DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
-          response.forEach((record) => {
-            marcInstanceId = record.instance.id;
+          marcInstanceIdC692112 = response[0].instance.id;
+
+          // Update SRS record state to OLD to create corrupted MARC Instance
+          cy.getSrsRecordsByInstanceId(marcInstanceIdC692112).then((srsRecord) => {
+            const updatedSrsRecord = {
+              ...srsRecord,
+              state: 'OLD',
+            };
+            cy.updateSrsRecord(srsRecord.id, updatedSrsRecord);
           });
 
-          FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, marcInstanceId);
+          FileManager.createFile(
+            `cypress/fixtures/${instanceUUIDsFileName}`,
+            marcInstanceIdC692112,
+          );
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
@@ -50,16 +61,15 @@ describe('Bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(marcInstanceId);
+      InventoryInstance.deleteInstanceViaApi(marcInstanceIdC692112);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
-    // Trillium
-    it.skip(
-      'C850013 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record (firebird)',
-      { tags: [] },
+    it(
+      'C850013, C692112 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record and missing or old status underlying SRS record (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C850013', 'C692112'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" from dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
@@ -77,8 +87,8 @@ describe('Bulk-edit', () => {
 
         // Step 4: Check the columns in the "Errors & warnings" accordion
         BulkEditSearchPane.verifyErrorByIdentifier(
-          marcInstanceId,
-          ERROR_MESSAGES.INVALID_MARC_RECORD,
+          marcInstanceIdC692112,
+          ERROR_MESSAGES.MISSING_SRS_RECORD,
         );
 
         // Step 5: Click "Actions" menu
@@ -88,9 +98,7 @@ describe('Bulk-edit', () => {
         // Step 6: Download errors CSV file
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
-          'ERROR',
-          marcInstanceId,
-          ERROR_MESSAGES.INVALID_MARC_RECORD,
+          `ERROR,${marcInstanceIdC692112},${ERROR_MESSAGES.MISSING_SRS_RECORD}`,
         ]);
       },
     );
