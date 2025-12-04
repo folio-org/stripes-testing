@@ -1636,4 +1636,17 @@ export default {
   verifySearchErrorText(query) {
     cy.expect(paneResultsSection.find(HTML(getSearchErrorText(query))).exists());
   },
+
+  clickSearchAndVerifySearchExecuted() {
+    cy.intercept('/search/instances*').as('getInstances');
+    this.clickSearch();
+    cy.wait('@getInstances').then((interception) => {
+      expect(interception.response.statusCode).to.eq(200);
+      if (interception.response.body.totalRecords === 0) {
+        this.verifyNoRecordsFound();
+      } else {
+        this.verifyResultListExists();
+      }
+    });
+  },
 };
