@@ -128,12 +128,14 @@ describe('Eureka', () => {
           testData.userBody.personal.firstName,
         );
         cy.intercept(`${testData.promotePath}/${testData.userId}`).as('promote');
+        cy.intercept('GET', '/users?limit=*').as('getUsers');
         UserEdit.clickConfirmInPromoteUserModal();
         cy.wait('@promote').its('response.statusCode').should('eq', 201);
         UsersCard.verifyUserLastFirstNameInCard(
           testData.userBody.personal.lastName,
           testData.userBody.personal.firstName,
         );
+        cy.wait('@getUsers').its('response.statusCode').should('eq', 200);
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(testData.userBody.username);

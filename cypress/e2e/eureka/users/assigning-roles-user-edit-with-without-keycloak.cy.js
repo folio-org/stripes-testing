@@ -149,12 +149,14 @@ describe('Eureka', () => {
           userBodies[0].personal.firstName,
         );
         cy.intercept(`${testData.promotePath}/${userIds[0]}`).as('promoteA');
+        cy.intercept('GET', '/users?limit=*').as('getUsers1');
         UserEdit.clickConfirmInPromoteUserModal();
         cy.wait('@promoteA').its('response.statusCode').should('eq', 201);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
         );
+        cy.wait('@getUsers1').its('response.statusCode').should('eq', 200);
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[0].username);
@@ -223,12 +225,14 @@ describe('Eureka', () => {
         UserEdit.saveUserEditForm();
 
         // workaround for issue UIU-3390
+        cy.intercept('GET', '/users?limit=*').as('getUsers2');
         Modals.closeModalWithEscapeIfAny();
 
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
         );
+        cy.wait('@getUsers2').its('response.statusCode').should('eq', 200);
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[2].username);
