@@ -11,7 +11,6 @@ import DataExportResults from '../../../support/fragments/data-export/dataExport
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
@@ -300,7 +299,6 @@ describe('Data Export', () => {
       { tags: ['criticalPathECS', 'firebird', 'C407645'] },
       () => {
         // Step 1-2: Search for local instances from preconditions and share them to central tenant
-        InventorySearchAndFilter.clearDefaultFilter('Held by');
         InventoryInstances.searchByTitle(instances[0].title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

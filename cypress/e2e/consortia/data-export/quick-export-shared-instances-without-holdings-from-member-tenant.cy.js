@@ -303,7 +303,6 @@ describe('Data Export', () => {
       { tags: ['criticalPathECS', 'firebird', 'C411288'] },
       () => {
         // Step 1: Search two target instances by the same title prefix
-        InventorySearchAndFilter.clearDefaultFilter('Held by');
         InventorySearchAndFilter.executeSearch(titlePrefix);
         InventorySearchAndFilter.verifyNumberOfSearchResults(recordsCount);
         InventoryInstances.clickSelectAllInstancesCheckbox();

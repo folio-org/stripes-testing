@@ -10,7 +10,6 @@ import DataExportLogs from '../../../support/fragments/data-export/dataExportLog
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryNewInstance from '../../../support/fragments/inventory/inventoryNewInstance';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -363,7 +362,6 @@ describe('Data Export', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
           // Step 6: Go to the "Inventory" app => Search for just created shared instance
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.newSharedInstance.uuid);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

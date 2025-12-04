@@ -11,7 +11,6 @@ import DataExportResults from '../../../support/fragments/data-export/dataExport
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -98,7 +97,6 @@ describe('Data Export', () => {
       () => {
         // Step 1-5: Implemented via API calls in the "before" hook
         // Step 6: Find the imported MARC instance from preconditions
-        InventorySearchAndFilter.clearDefaultFilter('Held by');
         InventoryInstances.searchByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
