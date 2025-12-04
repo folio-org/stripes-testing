@@ -195,3 +195,34 @@ export function verifyLeaderPositions(record, positions = {}) {
     expect(record.leader[pos], `Leader position ${position}`).to.eq(expectedValue);
   });
 }
+
+export function verifyMarcFieldByFindingSubfield(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', findBySubfield, findByValue, subfields = [] },
+) {
+  const fields = record.get(tag);
+
+  expect(fields, `MARC tag ${tag} should exist`).to.exist;
+  expect(fields.length, `MARC tag ${tag} should have at least one occurrence`).to.be.greaterThan(0);
+
+  // Find the field that contains the specified subfield value
+  const targetField = fields.find((field) => {
+    return field.subf.some((sf) => sf[0] === findBySubfield && sf[1] === findByValue);
+  });
+
+  expect(targetField, `MARC tag ${tag} with $${findBySubfield} = "${findByValue}" should exist`).to
+    .exist;
+  expect(targetField.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(targetField.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
+
+  // Verify subfields in strict order if provided
+  if (subfields.length > 0) {
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(
+        targetField.subf[index],
+        `MARC tag ${tag} subfield at position ${index}`,
+      ).to.deep.equal([subfieldCode, subfieldValue]);
+    });
+  }
+}
