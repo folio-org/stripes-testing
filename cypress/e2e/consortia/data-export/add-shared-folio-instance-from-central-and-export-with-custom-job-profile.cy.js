@@ -15,7 +15,6 @@ import ExportJobProfiles from '../../../support/fragments/data-export/exportJobP
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryNewInstance from '../../../support/fragments/inventory/inventoryNewInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -323,7 +322,6 @@ describe('Data Export', () => {
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
           // Step 6: Add Holdings by clicking on the "Add holdings" button
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.newSharedInstance.uuid);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
