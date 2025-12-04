@@ -19,7 +19,7 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-acquisitions', 'app-dcb'],
+        originalApplications: ['app-acquisitions', 'app-platform-complete'],
         newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
@@ -34,7 +34,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Data-Export Export',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],

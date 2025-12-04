@@ -17,7 +17,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430262 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-dcb'],
+        originalApplications: ['app-platform-minimal', 'app-platform-complete'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -61,7 +61,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Dcb Transactions',
+            resource: 'Data-Export Export',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],

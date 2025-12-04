@@ -10,7 +10,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430264 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        firstApplicationName: 'app-dcb',
+        firstApplicationName: 'app-platform-minimal',
         secondApplicationName: 'app-acquisitions',
       };
 

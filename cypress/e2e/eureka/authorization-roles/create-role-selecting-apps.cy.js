@@ -28,12 +28,12 @@ describe(
           testData = {
             roleName: `Auto Role C430260 ${getRandomPostfix()}`,
             roleDescription: `Description C430260 ${getRandomPostfix()}`,
-            firstApplicationName: 'app-dcb',
+            firstApplicationName: 'app-platform-minimal',
             secondApplicationName: 'app-acquisitions',
             capabilities: [
               {
                 table: CAPABILITY_TYPES.DATA,
-                resource: 'Circulation-Item',
+                resource: 'Policies',
                 action: CAPABILITY_ACTIONS.MANAGE,
               },
               {
@@ -43,12 +43,12 @@ describe(
               },
               {
                 table: CAPABILITY_TYPES.DATA,
-                resource: 'Dcb Transactions Status',
+                resource: 'UI-Receiving',
                 action: CAPABILITY_ACTIONS.VIEW,
               },
               {
                 table: CAPABILITY_TYPES.PROCEDURAL,
-                resource: 'Dcb Transactions',
+                resource: 'Login Password',
                 action: CAPABILITY_ACTIONS.EXECUTE,
               },
               {

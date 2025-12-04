@@ -56,7 +56,9 @@ describe('Eureka', () => {
               },
             });
           }
-          if (!Cypress.env('OKAPI_TENANT').includes('int_0')) delete userBodies[1].username;
+          cy.ifConsortia(false, () => {
+            delete userBodies[1].username;
+          });
           cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
             userIds.push(userId);
           });
@@ -83,13 +85,11 @@ describe('Eureka', () => {
     });
 
     before('Login', () => {
-      cy.waitForAuthRefresh(() => {
-        cy.login(testData.tempUser.username, testData.tempUser.password, {
-          path: TopMenu.usersPath,
-          waiter: Users.waitLoading,
-        });
-        cy.reload();
-      }, 20_000);
+      cy.login(testData.tempUser.username, testData.tempUser.password, {
+        path: TopMenu.usersPath,
+        waiter: Users.waitLoading,
+        authRefresh: true,
+      });
       Users.waitLoading();
     });
 
@@ -169,7 +169,7 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
-        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+        cy.ifConsortia(false, () => {
           UsersSearchPane.searchByKeywords(
             `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
           );
@@ -204,7 +204,7 @@ describe('Eureka', () => {
             userBodies[1].personal.firstName,
           );
           UsersCard.verifyUserRolesCounter('0');
-        }
+        });
 
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.clickOnUserRowContaining(userBodies[2].username);
