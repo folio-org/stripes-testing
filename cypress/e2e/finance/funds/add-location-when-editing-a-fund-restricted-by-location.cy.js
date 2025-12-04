@@ -3,7 +3,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -12,6 +13,7 @@ describe('Funds', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
+  let servicePointId;
   let firstLocation;
   let secondLocation;
   let thirdLocation;
@@ -23,25 +25,41 @@ describe('Funds', () => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-      InventoryInstances.getLocations({ limit: 3 }).then((res) => {
-        [firstLocation, secondLocation, thirdLocation] = res;
-        defaultFund.locations.push({ locationId: firstLocation.id });
-        defaultFund.locations.push({ locationId: secondLocation.id });
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-          defaultLedger.id = ledgerResponse.id;
-          defaultFund.ledgerId = defaultLedger.id;
+        ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
 
-          Funds.createViaApi(defaultFund).then((fundResponse) => {
-            defaultFund.id = fundResponse.fund.id;
+          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+            firstLocation = res;
+            defaultFund.locations.push({ locationId: firstLocation.id });
 
-            cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
-              (userProperties) => {
-                user = userProperties;
-                cy.login(userProperties.username, userProperties.password, {
-                  path: TopMenu.fundPath,
-                  waiter: Funds.waitLoading,
-                });
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
+              (res2) => {
+                secondLocation = res2;
+                defaultFund.locations.push({ locationId: secondLocation.id });
+
+                NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
+                  (res3) => {
+                    thirdLocation = res3;
+
+                    Funds.createViaApi(defaultFund).then((fundResponse) => {
+                      defaultFund.id = fundResponse.fund.id;
+
+                      cy.createTempUser([permissions.uiFinanceViewEditFundAndBudget.gui]).then(
+                        (userProperties) => {
+                          user = userProperties;
+                          cy.login(userProperties.username, userProperties.password, {
+                            path: TopMenu.fundPath,
+                            waiter: Funds.waitLoading,
+                          });
+                        },
+                      );
+                    });
+                  },
+                );
               },
             );
           });
@@ -53,6 +71,14 @@ describe('Funds', () => {
   after(() => {
     cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
+    [firstLocation, secondLocation, thirdLocation].forEach((location) => {
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id,
+      );
+    });
     Ledgers.deleteLedgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
@@ -92,6 +118,9 @@ describe('Funds', () => {
 
       Funds.selectLocationByName(thirdLocation.name);
       Funds.verifyTotalSelectedLocations(3);
+
+      Funds.verifyLocationNotPresentInModal(firstLocation.name);
+      Funds.verifyLocationNotPresentInModal(secondLocation.name);
 
       Funds.saveLocationsModal();
       Funds.varifyLocationInSection(firstLocation.name);

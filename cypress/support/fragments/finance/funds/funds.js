@@ -251,6 +251,15 @@ export default {
     cy.contains(`Total selected: ${count}`, { timeout: 10000 }).should('be.visible');
   },
 
+  verifyLocationNotPresentInModal(locationName) {
+    cy.do([
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.contains('0 records found', { timeout: 10000 }).should('be.visible');
+  },
+
   saveLocationsModal() {
     cy.do(selectLocationsModal.find(selectLocationsModalSaveButton).click());
     cy.wait(2000);
