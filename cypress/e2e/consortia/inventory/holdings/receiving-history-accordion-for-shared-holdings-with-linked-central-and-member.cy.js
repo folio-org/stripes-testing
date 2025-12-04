@@ -125,6 +125,13 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
+        // create instance on central tenant
+        // create holding on member tenant
+        // create ongoing order with order line on central tenant with synhronized receiving workflow
+        // receive piece for the order line on central tenant
+        // create ongoing order with order line on member tenant with synhronized receiving workflow
+        // receive piece for the order line on member tenant
+
         cy.getAdminToken();
         InventoryInstance.createInstanceViaApi()
           .then(({ instanceData }) => {
