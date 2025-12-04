@@ -24,6 +24,8 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
   verify001FieldValue,
+  verify005FieldValue,
+  verifyLeaderPositions,
 } from '../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../support/utils/dateTools';
 
@@ -424,13 +426,10 @@ describe('Data Export', () => {
 
             // Steps 12-15: Verify the downloaded .mrc file includes all instances
             const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
-            const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 
             const commonAssertions = (instance) => [
               (record) => verify001FieldValue(record, instance.hrid),
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
+              (record) => verify005FieldValue(record),
               (record) => {
                 expect(record.get('008')[0].value.startsWith(todayDateYYMMDD)).to.be.true;
               },
@@ -451,9 +450,10 @@ describe('Data Export', () => {
 
             const folioInstanceAssertions = [
               (record) => {
-                expect(record.leader).to.exist;
-                expect(record.leader[6]).to.eq('a');
-                expect(record.leader[7]).to.eq('m');
+                verifyLeaderPositions(record, {
+                  6: 'a',
+                  7: 'm',
+                });
               },
               (record) => {
                 const field008 = record.get('008');
