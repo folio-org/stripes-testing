@@ -39,17 +39,15 @@ describe('eHoldings', () => {
       });
     }
 
-    cy.then(() => {
-      cy.createTempUser([Permissions.uiSettingsEHoldingsAccessStatusTypesAll.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
-          });
-        },
-      );
-    });
+    cy.createTempUser([Permissions.uiSettingsEHoldingsAccessStatusTypesAll.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
+      },
+    );
   });
 
   after('Delete test data', () => {
