@@ -41,8 +41,8 @@ describe('Create Item or Title level request', () => {
     cy.getAdminToken()
       .then(() => {
         ServicePoints.createViaApi(testData.userServicePoint);
-        // testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        // Location.createViaApi(testData.defaultLocation);
+        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+        Location.createViaApi(testData.defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -163,12 +163,12 @@ describe('Create Item or Title level request', () => {
     Users.deleteViaApi(userForHold.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    // Location.deleteInstitutionCampusLibraryLocationViaApi(
-    //   testData.defaultLocation.institutionId,
-    //   testData.defaultLocation.campusId,
-    //   testData.defaultLocation.libraryId,
-    //   testData.defaultLocation.id,
-    // );
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id,
+    );
   });
   it(
     'C350417 Check that user can create "Hold" Title level request (vega)',
