@@ -1,6 +1,10 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
 
 describe('fse-invoices - UI (data manipulation)', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -36,22 +40,25 @@ describe('fse-invoices - UI (data manipulation)', () => {
   );
 });
 
-// describe('fse-invoices - UI (no data manipulation)', () => {
-//   beforeEach(() => {
-//     // hide sensitive data from the report
-//     cy.allure().logCommandSteps(false);
-//     cy.loginAsAdmin({
-//       path: TopMenu.invoicesPath,
-//       waiter: Invoices.waitLoading,
-//     });
-//     cy.allure().logCommandSteps();
-//   });
+describe('fse-invoices - UI (no data manipulation)', () => {
+  beforeEach(() => {
+    // hide sensitive data from the report
+    cy.allure().logCommandSteps(false);
+    cy.loginAsAdmin({
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
+    });
+    cy.allure().logCommandSteps();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+  });
 
-//   it(
-//     `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-//     { tags: ['sanity', 'fse', 'ui', 'invoice'] },
-//     () => {
-//       Invoices.waitLoading();
-//     },
-//   );
-// });
+  it(
+    `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'ui', 'invoice'] },
+    () => {
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
+    },
+  );
+});
