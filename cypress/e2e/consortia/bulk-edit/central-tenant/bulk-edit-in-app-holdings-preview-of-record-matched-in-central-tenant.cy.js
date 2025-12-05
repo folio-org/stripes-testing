@@ -211,7 +211,9 @@ const uploadAndVerifyMatchedResults = ({
   BulkEditSearchPane.verifyPaneRecordsCount(expectedCountLabel);
 
   BulkEditActions.downloadMatchedResults();
-  BulkEditFiles.verifyMatchedResultFileContent(matchedFileName, expectedValues, valueType);
+  expectedValues.forEach((value) => {
+    BulkEditFiles.verifyValueInRowByUUID(matchedFileName, valueType, value, valueType, value);
+  });
 };
 
 const verifyErrorsForCollegeHoldings = ({
@@ -458,11 +460,17 @@ describe('Bulk-edit', () => {
           // Download matched records
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            matchedRecordsFileHoldingsUUID,
-            folioInstance.holdingIdsCollege.concat(folioInstance.holdingIdsUniversity),
-            'id',
-          );
+          folioInstance.holdingIdsCollege
+            .concat(folioInstance.holdingIdsUniversity)
+            .forEach((holdingId) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsFileHoldingsUUID,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                holdingId,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                holdingId,
+              );
+            });
 
           // Upload and verify Holdings HRIDs
           uploadAndVerifyMatchedResults({
@@ -473,7 +481,7 @@ describe('Bulk-edit', () => {
             expectedValues: folioInstance.holdingHridsCollege.concat(
               folioInstance.holdingHridsUniversity,
             ),
-            valueType: 'hrid',
+            valueType: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           });
 
           // Upload and verify Instance HRIDs (at least one Instance has more than 10 Holdings)
@@ -485,7 +493,7 @@ describe('Bulk-edit', () => {
             expectedValues: folioInstance.holdingIdsCollege.concat(
               folioInstance.holdingIdsUniversity,
             ),
-            valueType: 'id',
+            valueType: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           });
 
           // Remove College affiliation from existing user and verify errors when uploading Holdings UUIDs
