@@ -8,7 +8,7 @@ describe('fse-reading-room-access', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195706 - Get reading rooms for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['ramsons', 'fse', 'api', 'sanity', 'reading-room', 'loc'] },
+    { tags: ['ramsons', 'fse', 'api', 'reading-room', 'loc'] },
     () => {
       cy.getReadingRoom().then((response) => {
         cy.expect(response.status).to.eq(200);
