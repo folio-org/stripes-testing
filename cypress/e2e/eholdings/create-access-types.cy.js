@@ -21,13 +21,11 @@ describe('eHoldings', () => {
   before('Creating data', () => {
     cy.getAdminToken();
 
-    cy.then(() => {
-      Credentials.getCredentialsViaApi().then((credentials) => {
-        AccessStatusTypes.getAccessStatusTypesViaApi(credentials[0].id).then((types) => {
-          const testTypes = types.filter((type) => type.attributes.name.includes('AT_C590791_AccessStatusType_'));
-          testTypes.forEach((type) => {
-            AccessStatusTypes.deleteAccessStatusTypeViaApi(credentials[0].id, type.id);
-          });
+    Credentials.getCredentialsViaApi().then((credentials) => {
+      AccessStatusTypes.getAccessStatusTypesViaApi(credentials[0].id).then((types) => {
+        const testTypes = types.filter((type) => type.attributes.name.includes('AT_C590791_AccessStatusType_'));
+        testTypes.forEach((type) => {
+          AccessStatusTypes.deleteAccessStatusTypeViaApi(credentials[0].id, type.id);
         });
       });
     });
@@ -35,10 +33,9 @@ describe('eHoldings', () => {
     for (let i = 0; i < MAX_ACCESS_STATUS_TYPES - 1; i++) {
       const name = `${accessStatusTypeNamePrefix}_${i}`;
       const description = `${accessStatusTypeDescriptionPrefix}_${i}`;
-      cy.then(() => {
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(name, description).then((id) => {
-          createdAccessStatusTypeIds.push(id);
-        });
+
+      AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(name, description).then((id) => {
+        createdAccessStatusTypeIds.push(id);
       });
     }
 
