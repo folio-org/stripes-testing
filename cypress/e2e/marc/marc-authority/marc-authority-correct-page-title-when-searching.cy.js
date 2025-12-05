@@ -155,10 +155,10 @@ describe('MARC', () => {
         MarcAuthorities.searchBeats(testData.authorityHeadingPrefix);
         cy.title().should('eq', testData.expectedTitles.basicSearch2);
 
+        MarcAuthorities.chooseTypeOfHeading(testData.typesOfHeading[1]);
         MarcAuthoritiesSearch.selectExcludeReferencesFilter(
           REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
         );
-        MarcAuthorities.chooseTypeOfHeading(testData.typesOfHeading[1]);
         cy.title().should('eq', testData.expectedTitles.basicSearch2);
 
         MarcAuthorities.clickResetAndCheck();
