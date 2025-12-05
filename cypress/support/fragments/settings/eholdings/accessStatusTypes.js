@@ -28,6 +28,7 @@ const deleteModal = Modal('Delete Access status type');
 const deleteButton = Button('Delete');
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
+const newButton = Button('New');
 
 export default {
   ICON_ACTIONS,
@@ -178,5 +179,13 @@ export default {
 
   clickSave() {
     cy.do(saveButton.click());
+  },
+
+  verifyNewButtonDisabled(isDisabled = true) {
+    cy.expect(rootPane.find(newButton).has({ disabled: isDisabled }));
+  },
+
+  clickNew() {
+    cy.do(rootPane.find(newButton).click());
   },
 };
