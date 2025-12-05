@@ -277,7 +277,6 @@ describe('Data Import', () => {
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.waitLoading();
         InstanceRecordView.viewSource();
-        cy.wait(1500);
         InstanceRecordView.verifySrsMarcRecord();
         InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);

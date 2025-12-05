@@ -95,6 +95,28 @@ const Adjustments = {
     cy.do(actionsButton.click());
     cy.expect([editButton.exists(), deleteButton.exists()]);
   },
+
+  getAdjustmentByDescription: (description) => {
+    return cy
+      .okapiRequest({
+        path: 'invoice-storage/adjustment-presets',
+        searchParams: {
+          query: `description=="${description}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.adjustmentPresets[0];
+      });
+  },
+
+  deleteViaApi: (adjustmentId) => {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `invoice-storage/adjustment-presets/${adjustmentId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };
 
 export default Adjustments;

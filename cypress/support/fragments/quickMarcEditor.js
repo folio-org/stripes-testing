@@ -359,8 +359,8 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 );
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
-const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
-const readOnlyHoldingsTags = ['001', '004', '005', '999'];
+const readOnlyAuthorityTags = ['LDR', '001', '999'];
+const readOnlyHoldingsTags = ['001', '004', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -1151,6 +1151,7 @@ export default {
     isArrowUpButtonShown,
     isArrowDownButtonShown,
     isDeleteFieldButtonShown = true,
+    isAddFieldButtonShown = true,
   ) {
     if (isArrowUpButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
@@ -1162,8 +1163,11 @@ export default {
     } else {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).absent());
     }
-
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
+    if (isAddFieldButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).absent());
+    }
     if (isDeleteFieldButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
     } else {
@@ -1991,6 +1995,14 @@ export default {
     });
   },
 
+  check005TagIsEditable() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: false }),
+    );
+  },
+
   verifyAllBoxesInARowAreEditable(tag) {
     cy.expect([
       getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
@@ -2757,8 +2769,9 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: 2 })
         .find(TextField('Field'))
-        .has({ value: '005', disabled: true }),
+        .has({ value: '005', disabled: false }),
     );
+    this.checkFourthBoxEditable(2, false);
     this.checkEmptyContent('005');
     cy.expect(
       QuickMarcEditorRow({ index: 3 })
@@ -3068,9 +3081,16 @@ export default {
     });
   },
 
-  verifyAllBoxesInARowAreDisabled(rowNumber, isDisabled = true, indicatorsShown = true) {
+  verifyAllBoxesInARowAreDisabled(
+    rowNumber,
+    isDisabled = true,
+    indicatorsShown = true,
+    tagFieldDisabled = true,
+  ) {
     cy.expect([
-      getRowInteractorByRowNumber(rowNumber).find(TextField('Field')).has({ disabled: isDisabled }),
+      getRowInteractorByRowNumber(rowNumber)
+        .find(TextField('Field'))
+        .has({ disabled: isDisabled && tagFieldDisabled }),
       getRowInteractorByRowNumber(rowNumber)
         .find(TextArea({ ariaLabel: 'Subfield' }))
         .has({ disabled: isDisabled }),
@@ -3429,5 +3449,15 @@ export default {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(targetRow.find(TextField({ label: boxLabel })).has({ focused: isFocused }));
+  },
+
+  verifyRowOrderByTags(expectedTagsOrder) {
+    expectedTagsOrder.forEach((tag, index) => {
+      cy.expect(
+        QuickMarcEditorRow({ index })
+          .find(TextField({ name: `records[${index}].tag` }))
+          .has({ value: tag }),
+      );
+    });
   },
 };

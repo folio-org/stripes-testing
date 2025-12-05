@@ -76,50 +76,58 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].id);
+      cy.getAdminToken()
+        .then(() => {
+          testData.instanceRecords.forEach((instanceRecord) => {
+            InventoryInstances.deleteInstanceByTitleViaApi(instanceRecord);
+          });
+          testData.searchAuthorityQueries.forEach((authorityQuery) => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityQuery);
+          });
+          testData.marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.recordIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
+          for (let i = 0; i < testData.instanceRecords.length; i++) {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.byShared('No');
+            });
+            InventoryInstances.searchByTitle(testData.recordIDs[i]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tags[i]);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.searchResults(testData.searchAuthorityQueries[i]);
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
+            MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
+            QuickMarcEditor.pressSaveAndClose();
+            InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
+            InventoryInstances.resetAllFilters();
+          }
+          cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+            testData.user = userProperties;
+          });
         });
-      });
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin();
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-      }, 20_000);
-      for (let i = 0; i < testData.instanceRecords.length; i++) {
-        cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.byShared('No');
-        });
-        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tags[i]);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(testData.searchAuthorityQueries[i]);
-        cy.ifConsortia(true, () => {
-          MarcAuthorities.clickAccordionByName('Shared');
-          MarcAuthorities.actionsSelectCheckbox('No');
-        });
-        MarcAuthoritiesSearch.selectExcludeReferencesFilter();
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.pressSaveAndClose();
-        InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
-        InventoryInstances.resetAllFilters();
-      }
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-      });
-      cy.logout();
     });
 
     after('Delete test data', () => {

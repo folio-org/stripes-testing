@@ -240,7 +240,6 @@ describe('Data Export', () => {
             DataExportLogs.waitLoading();
 
             // Step 9-10: Upload CSV and run export job
-            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
             ExportFileHelper.uploadFile(exportedCSVFileName);
             ExportFileHelper.exportWithDefaultJobProfile(
               exportedCSVFileName,
@@ -248,13 +247,14 @@ describe('Data Export', () => {
               'Authorities',
               '.csv',
             );
-            DataExportLogs.verifyAreYouSureModalAbsent();
-
-            cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
+            cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+            cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
               const { jobExecutions } = response.body;
               const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
               const jobId = jobData.hrId;
               exportedInUniversityMRCFile = `${exportedCSVFileName.replace('.csv', '')}-${jobId}.mrc`;
+
+              DataExportLogs.verifyAreYouSureModalAbsent();
 
               DataExportResults.verifyCompletedWithErrorsExportResultCells(
                 exportedInUniversityMRCFile,

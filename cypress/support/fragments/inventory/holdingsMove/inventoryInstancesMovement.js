@@ -3,12 +3,15 @@ import {
   Button,
   DropdownMenu,
   Modal,
+  MultiColumnListCell,
+  Pane,
   HTML,
   Section,
   including,
   Accordion,
   Badge,
 } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 
@@ -55,5 +58,29 @@ export default {
         .find(Badge())
         .has({ text: itemCount }),
     );
+  },
+
+  verifyItemBarcodeInHoldings(barcode, holdingsLocation, isExist = true) {
+    const targetCell = Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).find(
+      MultiColumnListCell({ content: barcode }),
+    );
+    if (isExist) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  checkHoldingsMoveSuccessCallout(holdingsCount) {
+    const message =
+      holdingsCount === 1
+        ? '1 holding has been successfully moved.'
+        : `${holdingsCount} holdings have been successfully moved.`;
+    InteractorsTools.checkCalloutMessage(message);
+  },
+
+  verifyHoldingsLocationInInstancePane(holdingsLocation, instanceTitle, isExist = true) {
+    const targetAccordion = Pane(including(instanceTitle)).find(
+      Accordion({ label: including(`Holdings: ${holdingsLocation}`) }),
+    );
+    if (isExist) cy.expect(targetAccordion.exists());
+    else cy.expect(targetAccordion.absent());
   },
 };

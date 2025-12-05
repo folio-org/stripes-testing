@@ -93,6 +93,10 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 
+  selectFoundValueByValue(value) {
+    cy.do(MultiColumnListCell({ content: value }).find(Button()).click());
+  },
+
   getClassificationNumbersViaApi(classificationBrowseId = 'all', classificationNumber) {
     return cy.okapiRequest({
       method: 'GET',
@@ -124,9 +128,9 @@ export default {
         }
       },
       {
-        limit: 12,
+        limit: 14,
         delay: 5000,
-        timeout: 60000,
+        timeout: 72000,
         error: `Classification number did not appear: "${classificationNumber}"`,
       },
     );
@@ -143,5 +147,33 @@ export default {
 
   getNextPaginationButtonState() {
     return cy.wrap(nextButton.perform((el) => !el.disabled));
+  },
+
+  getPreviousPaginationButtonState() {
+    return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
+  checkRowValues(
+    classificationNumber,
+    title = '',
+    contributors = '',
+    numberOfTitles = 1,
+    isHighlighted = true,
+  ) {
+    const contentString = `${classificationNumber}${title}${contributors}${numberOfTitles}`;
+    if (isHighlighted) {
+      cy.expect(
+        MultiColumnListRow({
+          innerHTML: including(`<strong>${classificationNumber}</strong>`),
+          content: contentString,
+        }).exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnListRow({
+          content: contentString,
+        }).exists(),
+      );
+    }
   },
 };

@@ -73,6 +73,10 @@ const fundFormSection = Section({ id: 'pane-fund-form' });
 const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
+const selectLocationsModalSearchField = SearchField({ id: 'input-record-search' });
+const selectLocationsModalSearchButton = Button('Search');
+const selectLocationsModalList = MultiColumnList();
+const selectLocationsModalSaveButton = Button('Save');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
@@ -178,14 +182,96 @@ export default {
   addLocationToFund(locationName) {
     cy.do([
       locationSection.find(Button({ id: 'fund-locations' })).click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
       selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
+      selectLocationsModal.find(selectLocationsModalSaveButton).click(),
     ]);
+  },
+
+  openAddLocationModal() {
+    cy.do(locationSection.find(Button({ id: 'fund-locations' })).click());
+    cy.expect(selectLocationsModal.exists());
+  },
+
+  clickActionsButtonInLocationsModal() {
+    cy.do(selectLocationsModal.find(Button('Actions')).click());
+    cy.wait(1000);
+  },
+
+  toggleColumnVisibilityInLocationsModal(columnName, shouldCheck = true) {
+    cy.contains('label', columnName, { timeout: 5000 })
+      .find('input[type="checkbox"]')
+      .then(($checkbox) => {
+        const isChecked = $checkbox.is(':checked');
+        if ((shouldCheck && !isChecked) || (!shouldCheck && isChecked)) {
+          cy.wrap($checkbox).click({ force: true });
+        }
+      });
+    cy.wait(500);
+  },
+
+  verifyShowColumnsMenu() {
+    cy.contains('Show columns', { timeout: 5000 }).should('be.visible');
+    cy.contains('label', 'Name').should('be.visible');
+    cy.contains('label', 'Code').should('be.visible');
+  },
+
+  checkUnassignedLocationFilter() {
+    cy.do(
+      selectLocationsModal
+        .find(Accordion('Location assignment status'))
+        .find(Checkbox('Unassigned'))
+        .click(),
+    );
+    cy.wait(5000);
+  },
+
+  selectLocationByName(locationName) {
+    cy.do([
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do(
+      selectLocationsModal
+        .find(selectLocationsModalList)
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Checkbox())
+        .click(),
+    );
+    cy.wait(500);
+  },
+
+  verifyTotalSelectedLocations(count) {
+    cy.wait(2000);
+    cy.contains(`Total selected: ${count}`, { timeout: 10000 }).should('be.visible');
+  },
+
+  verifyLocationNotPresentInModal(locationName) {
+    cy.do([
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.contains('0 records found', { timeout: 10000 }).should('be.visible');
+  },
+
+  saveLocationsModal() {
+    cy.do(selectLocationsModal.find(selectLocationsModalSaveButton).click());
+    cy.wait(2000);
+  },
+
+  verifyLocationWithDeleteIcon(locationName) {
+    cy.get('#locations')
+      .find('ul[class^=list-]')
+      .contains('li', locationName)
+      .should('exist')
+      .find('button[aria-label*="Remove location"]')
+      .should('exist');
   },
 
   varifyLocationSectionExist() {
@@ -224,15 +310,19 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(defaultLedger),
     ]);
-    // TO DO: change xpath to interactors when it would be possible
-    cy.get('[data-test-col-transfer-from="true"]').click();
-    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
-      .contains(firstFund.name)
-      .click();
-    cy.get('[data-test-col-transfer-to="true"] button[aria-label="open menu"]').click();
-    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
-      .contains(secondFund.name)
-      .click();
+
+    cy.get('[data-test-col-transfer-from="true"]').within(() => {
+      cy.get('button[aria-label="open menu"]').click();
+    });
+    cy.get('[aria-labelledby*="fund-transfer-from"]').should('be.visible');
+    cy.get('[aria-labelledby*="fund-transfer-from"]').contains(firstFund.name).click();
+
+    cy.get('[data-test-col-transfer-to="true"]').within(() => {
+      cy.get('button[aria-label="open menu"]').click();
+    });
+    cy.get('[aria-labelledby*="fund-transfer-to"]').should('be.visible');
+    cy.get('[aria-labelledby*="fund-transfer-to"]').contains(secondFund.name).click();
+
     cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
     this.waitLoading();
   },
@@ -1383,5 +1473,21 @@ export default {
   assertAllocationToolsSubmenuAbsent() {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
+  },
+
+  selectTransactionInListByIndex(transactionType, index = 0) {
+    cy.wait(6000);
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .eq(index)
+      .find('a')
+      .first()
+      .click();
+  },
+
+  checkTransactionCount(transactionType, expectedCount) {
+    cy.get('div[class*=mclRow-]')
+      .filter(`:contains("${transactionType}")`)
+      .should('have.length', expectedCount);
   },
 };

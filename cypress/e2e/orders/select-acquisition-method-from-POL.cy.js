@@ -3,13 +3,13 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewPreffixSuffix from '../../support/fragments/settings/orders/newPreffixSuffix';
 import Organizations from '../../support/fragments/organizations/organizations';
+import { PrefixSuffix } from '../../support/fragments/settings/orders/newPrefixSuffix';
+import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
-import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
@@ -18,8 +18,8 @@ describe('Export Manager', () => {
         ...NewOrganization.defaultUiOrganizations,
         paymentMethod: 'EFT',
       };
-      const poNumberPrefix = { ...NewPreffixSuffix.defaultPreffix };
-      const poNumberSuffix = { ...NewPreffixSuffix.defaultSuffix };
+      const poNumberPrefix = { ...PrefixSuffix.defaultPrefix };
+      const poNumberSuffix = { ...PrefixSuffix.defaultSuffix };
       const order = {
         ...NewOrder.defaultOneTimeOrder,
         poNumberPrefix: poNumberPrefix.name,

@@ -19,4 +19,8 @@ export default {
   clickCloseWithoutSavingButton() {
     cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
   },
+
+  clickKeepEditingButton() {
+    cy.do(areYouSureForm.find(keepEditingBtn).click());
+  },
 };

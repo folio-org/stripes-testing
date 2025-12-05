@@ -55,6 +55,7 @@ const startBulkEditButton = Button('Start bulk edit');
 const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
+const nextButton = Button('Next');
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
 const downloadChangedRecordsButton = Button('Download changed records (CSV)');
@@ -831,6 +832,14 @@ export default {
     ]);
   },
 
+  openSelectLoanTypeDropdown(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'loanType' }))
+        .click(),
+    );
+  },
+
   editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -900,26 +909,23 @@ export default {
   },
 
   verifyTheOptionsForChangingNoteType(expectedOptions, rowIndex = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
-        .allOptionsText()
-        .then((actualOptions) => {
-          const actualEnabledOptions = actualOptions.filter(
-            (actualOption) => !actualOption.includes('disabled'),
-          );
+    cy.then(() => {
+      return RepeatableFieldItem({ index: rowIndex }).find(noteTypeSelection).optionsText();
+    }).then((actualOptions) => {
+      const actualEnabledOptions = actualOptions.filter(
+        (actualOption) => !actualOption.includes('Select option'),
+      );
 
-          // verify options sorted alphabetically
-          const sortedOptions = [...actualEnabledOptions].sort();
+      // verify options sorted alphabetically
+      const sortedOptions = [...actualEnabledOptions].sort((a, b) => a.localeCompare(b));
 
-          expect(actualEnabledOptions).to.deep.equal(sortedOptions);
+      expect(actualEnabledOptions).to.deep.equal(sortedOptions);
 
-          // verify options exist
-          expectedOptions.forEach((option) => {
-            expect(actualEnabledOptions).to.include(option);
-          });
-        }),
-    );
+      // verify options exist
+      expectedOptions.forEach((option) => {
+        expect(actualEnabledOptions).to.include(option);
+      });
+    });
   },
 
   verifyTheActionOptions(expectedOptions, rowIndex = 0) {
@@ -1353,7 +1359,11 @@ export default {
   },
 
   clickNext() {
-    cy.do([Modal().find(Button('Next')).click()]);
+    cy.do([Modal().find(nextButton).click()]);
+  },
+
+  verifyNextButtonInCsvModalDisabled(isDisabled = true) {
+    cy.expect(Modal().find(nextButton).has({ disabled: isDisabled }));
   },
 
   verifyNoNewBulkEditButton() {
@@ -1652,11 +1662,14 @@ export default {
     );
   },
 
-  verifySelectOptionsHoldingSortedAlphabetically() {
+  verifySelectOptionsSortedAlphabetically(isInstance = false) {
     this.clickOptionsSelection();
 
     const group = 'li[class*="groupLabel"]';
     const option = '[class*="optionSegment"]';
+    const nextUntilSelector = isInstance
+      ? '[class*="selectionList"] li:not([class*="groupedOption"])'
+      : group;
 
     // check that the group names are sorted alphabetically
     cy.get('[class*="selectionList"] li:not([class*="groupedOption"])').then((groups) => {
@@ -1671,43 +1684,7 @@ export default {
       const optionTexts = [];
 
       cy.wrap($groupLabel)
-        .nextUntil(group)
-        .each(($option) => {
-          cy.wrap($option)
-            .find(option)
-            .invoke('text')
-            .then((text) => {
-              optionTexts.push(text);
-            });
-        })
-        .then(() => {
-          const sortedOptionTexts = [...optionTexts].sort((a, b) => a.localeCompare(b));
-
-          expect(sortedOptionTexts).to.deep.equal(optionTexts);
-        });
-    });
-  },
-
-  verifySelectOptionsInstanceSortedAlphabetically() {
-    this.clickOptionsSelection();
-
-    const group = 'li[class*="groupLabel"]';
-    const option = '[class*="optionSegment"]';
-
-    // check that the group names are sorted alphabetically
-    cy.get('[class*="selectionList"] li:not([class*="groupedOption"])').then((groups) => {
-      const groupTexts = groups.get().map((el) => el.innerText);
-      const sortedGroupTexts = [...groupTexts].sort((a, b) => a.localeCompare(b));
-
-      expect(sortedGroupTexts).to.deep.equal(groupTexts);
-    });
-
-    // check that the option names in the group are sorted alphabetically
-    cy.get(group).each(($groupLabel) => {
-      const optionTexts = [];
-
-      cy.wrap($groupLabel)
-        .nextUntil('[class*="selectionList"] li:not([class*="groupedOption"])')
+        .nextUntil(nextUntilSelector)
         .each(($option) => {
           cy.wrap($option)
             .find(option)

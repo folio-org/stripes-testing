@@ -78,7 +78,7 @@ describe('MARC', () => {
 
           // The new row should be read-only (1st and 4th boxes)
           QuickMarcEditor.verifyTagValue(6, tag005);
-          QuickMarcEditor.verifyAllBoxesInARowAreDisabled(6, true, false);
+          QuickMarcEditor.verifyAllBoxesInARowAreDisabled(6, true, false, false);
 
           const todayDate = moment(new Date()).format('YYYYMMDD');
           // Step 7: Save and check for successful creation

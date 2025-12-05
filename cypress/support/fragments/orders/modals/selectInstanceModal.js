@@ -3,6 +3,7 @@ import {
   HTML,
   Modal,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   TextField,
   including,
@@ -10,8 +11,9 @@ import {
   not,
   Accordion,
   Checkbox,
+  SearchField,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import { DEFAULT_WAIT_TIME, INVENTORY_COLUMN_HEADERS } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
 
 const selectInstanceModal = Modal('Select instance');
@@ -78,6 +80,13 @@ const searchItemsOptions = [
   'All',
   'Query search',
 ];
+export const COLUMN_HEADERS = [
+  INVENTORY_COLUMN_HEADERS.TITLE,
+  INVENTORY_COLUMN_HEADERS.CONTRIBUTORS,
+  INVENTORY_COLUMN_HEADERS.PUBLISHERS,
+  INVENTORY_COLUMN_HEADERS.DATE,
+  INVENTORY_COLUMN_HEADERS.INSTANCE_HRID,
+];
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -117,6 +126,17 @@ export default {
     cy.expect(
       selectInstanceModal.find(HTML(including('Enter search criteria to start search'))).absent(),
     );
+  },
+  searchByParameter: (parameter, value) => {
+    cy.do([
+      SearchField('Search field index').selectIndex(parameter),
+      searchInput.fillIn(value),
+      cy.wait(500),
+      searchButton.focus(),
+      cy.wait(500),
+      searchButton.click(),
+      cy.wait(1000),
+    ]);
   },
   selectInstance({ shouldConfirm = false } = {}) {
     cy.do(selectInstanceModal.find(MultiColumnListRow({ index: 0 })).click());
@@ -273,5 +293,21 @@ export default {
   },
   checkSearchButtonEnabled() {
     cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  validateSearchTableColumnsShown(columnHeaders = COLUMN_HEADERS, isShown = true) {
+    const headers = Array.isArray(columnHeaders) ? columnHeaders : [columnHeaders];
+    cy.get('#list-plugin-find-records div[class^="mclScrollable"]')
+      .should('exist')
+      .scrollTo('right', { ensureScrollable: false });
+    headers.forEach((header) => {
+      if (isShown) cy.expect(resultsList.find(MultiColumnListHeader(header)).exists());
+      else cy.expect(resultsList.find(MultiColumnListHeader(header)).absent());
+    });
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(selectInstanceModal.find(Accordion(accordionName)).clickHeader());
+    cy.expect(selectInstanceModal.find(Accordion(accordionName)).has({ open: true }));
   },
 };

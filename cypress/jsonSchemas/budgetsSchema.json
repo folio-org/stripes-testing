@@ -1,0 +1,562 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Budgets",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fiscal_year_updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "budget.credits": {
+            "type": ["number", "null"]
+          },
+          "fund.ledger.code": {
+            "type": ["string", "null"]
+          },
+          "budget.fiscal_year_id": {
+            "type": ["string", "null"]
+          },
+          "budget.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.active": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "budget.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.locations": {},
+          "budget_updated_by.username": {
+            "type": ["string", "null"]
+          },
+          "budget_updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.acq_unit_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "fund.fund.id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.currency": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.code": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.created_by_user_id": {},
+          "fiscal_year.updated_date": {
+            "type": ["string", "null"]
+          },
+          "budget.net_transfers": {
+            "type": ["number", "null"]
+          },
+          "budget.allocated": {},
+          "budget.allowable_encumbrance": {
+            "type": ["number", "null"]
+          },
+          "budget_created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.donor_organizations": {},
+          "budget_updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "budget.encumbered": {
+            "type": ["number", "null"]
+          },
+          "fiscal_year_created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "budget.allocation_to": {
+            "type": ["number", "null"]
+          },
+          "fund.ledger.created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.ledger_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "budget.allowable_expenditure": {
+            "type": ["number", "null"]
+          },
+          "budget.allocation_from": {
+            "type": ["number", "null"]
+          },
+          "fund.updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "budget.initial_allocation": {
+            "type": ["number", "null"]
+          },
+          "fiscal_year_updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "budget.budget_status": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.description": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.email": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.fiscal_year_one_id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.allocated_from_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "budget.created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_type.id": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.allocated_to": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fiscal_year.currency": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.series": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.created_date": {
+            "type": ["string", "null"]
+          },
+          "budget_updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "budget.name": {
+            "type": ["string", "null"]
+          },
+          "fund.updated_by.created_by_user_id": {},
+          "fund.updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.created_by_user_id": {},
+          "budget_created_by.username": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.external_account_no": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_type.name": {
+            "type": ["string", "null"]
+          },
+          "budget.fund_id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.donor_organization_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "budget_updated_by.created_by_user_id": {},
+          "fiscal_year_created_by.id": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.username": {
+            "type": ["string", "null"]
+          },
+          "budget_updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "budget.over_encumbrance": {},
+          "fund.updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "budget.over_expended": {},
+          "fiscal_year_updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.name": {
+            "type": ["string", "null"]
+          },
+          "budget.acq_unit_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "fund.fund.restrict_by_locations": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.restrict_encumbrance": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.created_by_user_id": {},
+          "fiscal_year_created_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.fiscal_year_one": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.code": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.acquisition_unit": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fiscal_year.version": {
+            "type": ["number", "null"]
+          },
+          "budget_updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.user_created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.name": {
+            "type": ["string", "null"]
+          },
+          "budget_updated_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "budget.expenditures": {
+            "type": ["number", "null"]
+          },
+          "fund.fund.fund_status": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.email": {
+            "type": ["string", "null"]
+          },
+          "budget.version": {
+            "type": ["number", "null"]
+          },
+          "fiscal_year.id": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.created_by_user_id": {},
+          "fund.updated_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.username": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.username": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.acq_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]  
+            }
+          },
+          "budget.available": {},
+          "fund.fund.acquisition_unit": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.created_by.id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_created_by.active": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.restrict_expenditures": {
+            "type": ["string", "null"]
+          },
+          "fund.updated_by.username": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.period_begin_date": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "budget.cash_balance": {
+            "type": ["number", "null"]
+          },
+          "fund.updated_by.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year.period_end_date": {
+            "type": ["string", "null"]
+          },
+          "budget.tags": {},
+          "budget_updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.updated_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.tag_list": {},
+          "fund.ledger.updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.allocated_to_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "budget_created_by.active": {
+            "type": ["string", "null"]
+          },
+          "budget_created_by.email": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.user_updated_date": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.version": {
+            "type": ["number", "null"]
+          },
+          "fiscal_year.acquisition_unit": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.created_by_user_id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.name": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.created_date": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.version": {
+            "type": ["number", "null"]
+          },
+          "budget.updated_date": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.id": {
+            "type": ["string", "null"]
+          },
+          "fund.fund_type.version": {
+            "type": ["number", "null"]
+          },
+          "fund.fund.allocated_from": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "fund.updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "budget.awaiting_payment": {
+            "type": ["number", "null"]
+          },
+          "budget.id": {
+            "type": ["string", "null"]
+          },
+          "budget.unavailable": {},
+          "budget.total_funding": {
+            "type": ["number", "null"]
+          },
+          "fund.fund.fund_type_id": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.acq_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fund.ledger.ledger_status": {
+            "type": ["string", "null"]
+          },
+          "fund.updated_by.active": {
+            "type": ["string", "null"]
+          },
+          "fiscal_year_updated_by.email": {
+            "type": ["string", "null"]
+          },
+          "fund.ledger.description": {
+            "type": ["string", "null"]
+          },
+          "fund.created_by.last_name_first_name": {
+            "type": ["string", "null"]
+          },
+          "fund.fund.description": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "budget.credits",
+          "fund.ledger.code",
+          "budget.fiscal_year_id",
+          "fund.fund.locations",
+          "fiscal_year.acq_unit_ids",
+          "fund.fund.id",
+          "fund.fund.code",
+          "fiscal_year_updated_by.created_by_user_id",
+          "fiscal_year.updated_date",
+          "budget.net_transfers",
+          "budget.allocated",
+          "budget.allowable_encumbrance",
+          "fund.fund.donor_organizations",
+          "budget.encumbered",
+          "fiscal_year_created_by.last_name_first_name",
+          "budget.allocation_to",
+          "fund.ledger.created_date",
+          "fund.fund.ledger_id",
+          "budget.allowable_expenditure",
+          "budget.allocation_from",
+          "budget.initial_allocation",
+          "fiscal_year_updated_by.last_name_first_name",
+          "budget.budget_status",
+          "fiscal_year.description",
+          "fund.ledger.fiscal_year_one_id",
+          "fund.fund.allocated_from_ids",
+          "budget.created_date",
+          "fund.fund.updated_date",
+          "fund.fund.allocated_to",
+          "fiscal_year.currency",
+          "fiscal_year.series",
+          "fiscal_year.created_date",
+          "budget.name",
+          "fund.updated_by.created_by_user_id",
+          "fiscal_year_created_by.created_by_user_id",
+          "fund.fund.external_account_no",
+          "budget.fund_id",
+          "fund.fund.donor_organization_ids",
+          "budget_updated_by.created_by_user_id",
+          "budget.over_encumbrance",
+          "fund.updated_by.last_name_first_name",
+          "budget.over_expended",
+          "fiscal_year.name",
+          "budget.acq_unit_ids",
+          "fund.fund.restrict_by_locations",
+          "fund.ledger.restrict_encumbrance",
+          "fund.created_by.created_by_user_id",
+          "fund.ledger.fiscal_year_one",
+          "fiscal_year.code",
+          "fund.ledger.id",
+          "fiscal_year.version",
+          "fund.fund.name",
+          "budget_updated_by.last_name_first_name",
+          "budget.expenditures",
+          "fund.fund.fund_status",
+          "budget.version",
+          "fiscal_year.id",
+          "budget_created_by.created_by_user_id",
+          "budget_created_by.last_name_first_name",
+          "fund.fund.acq_unit_ids",
+          "budget.available",
+          "fund.ledger.restrict_expenditures",
+          "fiscal_year.period_begin_date",
+          "budget.cash_balance",
+          "fiscal_year.period_end_date",
+          "budget.tags",
+          "fund.fund.tag_list",
+          "fund.ledger.updated_date",
+          "fund.fund.allocated_to_ids",
+          "fund.ledger.version",
+          "fiscal_year.acquisition_unit",
+          "fund.ledger.name",
+          "fund.fund.created_date",
+          "fund.fund.version",
+          "budget.updated_date",
+          "fund.fund.allocated_from",
+          "budget.awaiting_payment",
+          "budget.id",
+          "budget.unavailable",
+          "budget.total_funding",
+          "fund.ledger.acq_unit_ids",
+          "fund.ledger.ledger_status",
+          "fund.ledger.description",
+          "fund.created_by.last_name_first_name"
+        ]
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {},
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}

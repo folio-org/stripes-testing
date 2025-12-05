@@ -56,7 +56,7 @@ describe('Bulk-edit', () => {
           instance.callNumberTypeId = res[0].id;
         });
         UrlRelationship.getViaApi({
-          query: `name="${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE}"`,
+          query: `name=="${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE}"`,
         }).then((relationships) => {
           instance.relationshipId = relationships[0].id;
         });

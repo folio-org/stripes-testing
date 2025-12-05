@@ -103,9 +103,9 @@ describe('Prepare test data', () => {
           return null;
         }
 
-        return Budgets.getBudgetViaApi({ query: 'code=AFRICAHIST' }).then(({ budgetResp }) => {
+        return Budgets.getBudgetViaApi({ query: 'code=EUROHIST' }).then(({ budgetResp }) => {
           if (!budgetResp) {
-            cy.log('AFRICAHIST budget not found, skipping expense class assignment');
+            cy.log('EUROHIST budget not found, skipping expense class assignment');
             return null;
           }
 
@@ -133,13 +133,16 @@ describe('Prepare test data', () => {
           userId = id;
         })
         .then(() => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          // Get or create Circ Desk 1 service point
+          ServicePoints.getOrCreateCircDesk1ServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
             defaultServicePointId = servicePoint.id;
           });
-          ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+          // Get or create Circ Desk 2 service point
+          ServicePoints.getOrCreateCircDesk2ServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
           });
+          // Get Online service point (assuming it exists or should be created elsewhere)
           ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
             servicePointIds.push(servicePoint.id);
           });

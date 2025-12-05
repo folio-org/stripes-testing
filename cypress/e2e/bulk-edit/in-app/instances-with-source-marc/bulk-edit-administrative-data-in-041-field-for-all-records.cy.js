@@ -151,7 +151,7 @@ describe('Bulk-edit', () => {
           QueryModal.verify();
           QueryModal.selectField(instanceFieldValues.languages);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.chooseFromValueMultiselect('German');
+          QueryModal.chooseFromValueMultiselect('ger');
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.statisticalCodeNames, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);

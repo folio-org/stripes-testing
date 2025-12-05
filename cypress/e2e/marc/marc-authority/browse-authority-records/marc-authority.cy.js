@@ -130,30 +130,6 @@ describe('MARC', () => {
       );
 
       it(
-        'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350575'] },
-        () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
-          MarcAuthority.edit();
-          MarcAuthority.checkNotDeletableTags('008');
-        },
-      );
-
-      it(
-        'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350576'] },
-        () => {
-          MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
-          MarcAuthority.edit();
-          MarcAuthority.change008Field('b', 'f', 'a');
-          QuickMarcEditor.pressSaveAndClose();
-          MarcAuthority.contains('bfa');
-        },
-      );
-
-      it(
         'C350578 Browse existing Authorities (spitfire)',
         { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350578'] },
         () => {
@@ -194,6 +170,8 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
+          QuickMarcEditor.check005TagIsEditable();
+          QuickMarcEditor.checkFourthBoxEditable(2, false);
           QuickMarcEditor.verifyBoxValuesInLDRFieldInMarcAuthorityRecord(
             '00853',
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
@@ -203,10 +181,12 @@ describe('MARC', () => {
             AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN['\\'],
             '\\4500',
           );
+          MarcAuthority.checkNotDeletableTags('LDR');
+          MarcAuthority.checkNotDeletableTags('008');
           MarcAuthority.check008Field('e');
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(
             9,
             'Tag must contain three characters and can only accept numbers 0-9.',
