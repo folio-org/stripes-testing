@@ -68,7 +68,7 @@ const resetAllBtn = Button('Reset all');
 const navigationInstancesButton = Button({
   id: 'segment-navigation-instances',
 });
-const paneFilterSection = Section({ id: 'pane-filter' });
+const paneFilterSection = Section({ id: or('pane-filter', 'browse-inventory-filters-pane') });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instancesTagsSection = Section({ id: including('Tags') });
@@ -1618,5 +1618,10 @@ export default {
         this.verifyResultListExists();
       }
     });
+  },
+
+  verifyNumberOfSelectedOptionsInMultiSelectFilter(accordionName, selectedCount) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.expect(multiSelect.has({ selectedCount }));
   },
 };
