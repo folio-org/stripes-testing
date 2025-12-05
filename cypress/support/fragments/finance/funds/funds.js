@@ -208,6 +208,7 @@ export default {
       .then(($checkbox) => {
         const isChecked = $checkbox.is(':checked');
         if ((shouldCheck && !isChecked) || (!shouldCheck && isChecked)) {
+          // eslint-disable-next-line cypress/no-force
           cy.wrap($checkbox).click({ force: true });
         }
       });
