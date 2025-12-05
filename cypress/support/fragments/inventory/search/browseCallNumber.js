@@ -204,7 +204,7 @@ export default {
       .then((response) => response.body.items);
   },
 
-  waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all') {
+  waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all', numberOfTitles) {
     return cy.recurse(
       () => {
         return this.getCallNumbersViaApi(typeCode, callNumber);
@@ -213,6 +213,9 @@ export default {
         const foundCallNumbers = response.filter((item) => {
           return item.fullCallNumber === callNumber;
         });
+        if (isPresent && numberOfTitles) {
+          return foundCallNumbers[0].totalRecords === numberOfTitles && foundCallNumbers.length > 0;
+        }
         return isPresent ? foundCallNumbers.length > 0 : foundCallNumbers.length === 0;
       },
       {
