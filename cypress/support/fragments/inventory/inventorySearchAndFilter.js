@@ -105,6 +105,7 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1630,5 +1631,22 @@ export default {
       MultiColumnListCell({ column: columnName, row: rowIndex }),
     );
     cy.expect(targetCell.has({ content: expectedValue }));
+  },
+
+  verifySearchErrorText(query) {
+    cy.expect(paneResultsSection.find(HTML(getSearchErrorText(query))).exists());
+  },
+
+  clickSearchAndVerifySearchExecuted() {
+    cy.intercept('/search/instances*').as('getInstances');
+    this.clickSearch();
+    cy.wait('@getInstances').then((interception) => {
+      expect(interception.response.statusCode).to.eq(200);
+      if (interception.response.body.totalRecords === 0) {
+        this.verifyNoRecordsFound();
+      } else {
+        this.verifyResultListExists();
+      }
+    });
   },
 };
