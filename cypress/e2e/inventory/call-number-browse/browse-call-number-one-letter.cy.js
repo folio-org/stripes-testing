@@ -40,6 +40,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventorySearchAndFilter.waitLoading,
+          authRefresh: true,
         });
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

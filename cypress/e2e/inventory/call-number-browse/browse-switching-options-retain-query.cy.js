@@ -22,6 +22,7 @@ describe('Inventory', () => {
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -35,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C387486 Retain entered search query in "Inventory >> Browse" during browse options switching (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387486', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'spitfire', 'C387486'] },
       () => {
         InventorySearchAndFilter.fillInBrowseSearch(query);
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent(query);
