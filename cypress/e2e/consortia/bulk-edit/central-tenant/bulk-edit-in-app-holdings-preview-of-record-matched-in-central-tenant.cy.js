@@ -493,7 +493,7 @@ describe('Bulk-edit', () => {
             expectedValues: folioInstance.holdingIdsCollege.concat(
               folioInstance.holdingIdsUniversity,
             ),
-            valueType: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+            valueType: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
           });
 
           // Remove College affiliation from existing user and verify errors when uploading Holdings UUIDs
