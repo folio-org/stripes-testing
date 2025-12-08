@@ -22,85 +22,48 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
-  verifyMarcFieldByFindingSubfield,
   verify001FieldValue,
-  verify005FieldValue,
   verifyLeaderPositions,
-  verifyMarcFieldAbsence,
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
+  verifyMarcFieldByFindingSubfield,
 } from '../../../support/utils/parseMrcFileContent';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
 let exportedFileName;
 let urlRelationshipId;
 let instanceTypeId;
+let isbnTypeId;
 let mappingProfileId;
 let jobProfileId;
 const postfix = getRandomPostfix();
-const recordsCount = 4;
-const instanceUUIDsFileName = `AT_C468204_instanceUUIDs_${postfix}.csv`;
-const customMappingProfileName = `AT_C468204_CustomMappingProfile_${postfix}`;
-const customJobProfileName = `AT_C468204_CustomJobProfile_${postfix} export job profile`;
-
-const userPermissions = [
-  permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-  permissions.uiInventoryViewCreateInstances.gui,
-];
-
+const recordsCount = 2;
+const instanceUUIDsFileName = `AT_C468210_instanceUUIDs_${postfix}.csv`;
+const customMappingProfileName = `AT_C468210_CustomMappingProfile_${postfix}`;
+const customJobProfileName = `AT_C468210_CustomJobProfile_${postfix} export job profile`;
 const instances = [
   {
-    title: `AT_C468204_Shared_MARC_WithHoldings_${getRandomPostfix()}`,
+    title: `AT_C468210_Shared_MARC_WithHoldings_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
     type: 'marc',
     hasHoldings: true,
   },
   {
-    title: `AT_C468204_Shared_FOLIO_WithHoldings_${getRandomPostfix()}`,
+    title: `AT_C468210_Shared_FOLIO_WithHoldings_${getRandomPostfix()}`,
     affiliation: Affiliations.Consortia,
     type: 'folio',
     hasHoldings: true,
-  },
-  {
-    title: `AT_C468204_Local_MARC_WithHoldings_${getRandomPostfix()}`,
-    affiliation: Affiliations.College,
-    type: 'marc',
-    hasHoldings: true,
-  },
-  {
-    title: `AT_C468204_Local_FOLIO_WithHoldings_${getRandomPostfix()}`,
-    affiliation: Affiliations.College,
-    type: 'folio',
-    hasHoldings: true,
-  },
-  {
-    title: `AT_C468204_Shared_MARC_NoHoldings_${getRandomPostfix()}`,
-    affiliation: Affiliations.Consortia,
-    type: 'marc',
-    hasHoldings: false,
-  },
-  {
-    title: `AT_C468204_Shared_FOLIO_NoHoldings_${getRandomPostfix()}`,
-    affiliation: Affiliations.Consortia,
-    type: 'folio',
-    hasHoldings: false,
   },
 ];
 
-const createCustomMappingProfile = (relationshipId) => ({
+const createCustomMappingProfile = (relationshipId, isbnIdentifierTypeId) => ({
   default: false,
-  recordTypes: ['SRS', 'HOLDINGS', 'ITEM'],
+  recordTypes: ['HOLDINGS', 'ITEM', 'INSTANCE'],
   outputFormat: 'MARC',
   fieldsSuppression: '',
   suppress999ff: false,
   name: customMappingProfileName,
   transformations: [
-    {
-      fieldId: 'holdings.electronic.access.uri.resource',
-      path: `$.holdings[*].electronicAccess[?(@.relationshipId=='${relationshipId}')].uri`,
-      recordType: 'HOLDINGS',
-      transformation: '85640$u',
-      enabled: true,
-    },
     {
       fieldId: 'holdings.electronic.access.linktext.resource',
       path: `$.holdings[*].electronicAccess[?(@.relationshipId=='${relationshipId}')].linkText`,
@@ -113,6 +76,13 @@ const createCustomMappingProfile = (relationshipId) => ({
       path: `$.holdings[*].electronicAccess[?(@.relationshipId=='${relationshipId}')].materialsSpecification`,
       recordType: 'HOLDINGS',
       transformation: '85640$3',
+      enabled: true,
+    },
+    {
+      fieldId: 'holdings.electronic.access.uri.resource',
+      path: `$.holdings[*].electronicAccess[?(@.relationshipId=='${relationshipId}')].uri`,
+      recordType: 'HOLDINGS',
+      transformation: '85640$u',
       enabled: true,
     },
     {
@@ -134,6 +104,27 @@ const createCustomMappingProfile = (relationshipId) => ({
       path: '$.holdings[*].id',
       recordType: 'HOLDINGS',
       transformation: '901  $b',
+      enabled: true,
+    },
+    {
+      fieldId: 'instance.hrid',
+      path: '$.instance.hrid',
+      recordType: 'INSTANCE',
+      transformation: '001  ',
+      enabled: true,
+    },
+    {
+      fieldId: 'instance.id',
+      path: '$.instance.id',
+      recordType: 'INSTANCE',
+      transformation: '999ff$i',
+      enabled: true,
+    },
+    {
+      fieldId: 'instance.identifiers.isbn',
+      path: `$.instance.identifiers[?(@.identifierTypeId=='${isbnIdentifierTypeId}')].value`,
+      recordType: 'INSTANCE',
+      transformation: '020  $a',
       enabled: true,
     },
     {
@@ -166,6 +157,12 @@ function createInstance(instance) {
       const instanceData = {
         title: instance.title,
         instanceTypeId,
+        identifiers: [
+          {
+            identifierTypeId: isbnTypeId,
+            value: `978-0-${getRandomPostfix()}-${getRandomPostfix()}-${getRandomPostfix()}`,
+          },
+        ],
       };
 
       InventoryInstances.createFolioInstanceViaApi({
@@ -177,19 +174,29 @@ function createInstance(instance) {
         })
         .then((instanceDetails) => {
           instance.hrid = instanceDetails.hrid;
+          instance.isbn = instanceDetails.identifiers[0].value;
         });
     } else {
-      cy.createSimpleMarcBibViaAPI(instance.title)
+      // Create MARC instance with ISBN identifier
+      const isbn = `978-1-${getRandomPostfix()}-${getRandomPostfix()}-${getRandomPostfix()}`;
+      instance.isbn = isbn;
+
+      const marcFields = [
+        {
+          tag: '008',
+          content: QuickMarcEditor.defaultValid008Values,
+        },
+        { tag: '020', content: `$a ${isbn}`, indicators: ['\\', '\\'] },
+        { tag: '245', content: `$a ${instance.title}`, indicators: ['\\', '\\'] },
+      ];
+
+      cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcFields)
         .then((instanceId) => {
           instance.uuid = instanceId;
           return cy.getInstanceById(instanceId);
         })
         .then((instanceData) => {
           instance.hrid = instanceData.hrid;
-          return cy.getSrsRecordsByInstanceId(instance.uuid);
-        })
-        .then((srsRecords) => {
-          instance.srsId = srsRecords?.matchedId;
         });
     }
   });
@@ -329,84 +336,74 @@ describe('Data Export', () => {
   describe('Consortia', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser(userPermissions).then((userProperties) => {
-        user = userProperties;
+      cy.createTempUser([permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(
+        (userProperties) => {
+          user = userProperties;
 
-        cy.affiliateUserToTenant({
-          tenantId: Affiliations.College,
-          userId: user.userId,
-          permissions: [permissions.uiInventoryViewInstances.gui],
-        });
-
-        cy.affiliateUserToTenant({
-          tenantId: Affiliations.University,
-          userId: user.userId,
-          permissions: [],
-        });
-
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          instanceTypeId = instanceTypes[0].id;
-        });
-        UrlRelationship.getViaApi().then((relationships) => {
-          urlRelationshipId = relationships.find(
-            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
-          )?.id;
-        });
-
-        cy.then(() => {
-          instances.forEach((instance) => {
-            createInstance(instance);
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.College,
+            userId: user.userId,
+            permissions: [permissions.uiInventoryViewInstances.gui],
           });
-        }).then(() => {
-          instances
-            .filter((instance) => instance.hasHoldings)
-            .forEach((instance) => {
-              // All instances with holdings get holdings/items in College (member-1)
-              addHoldingsAndItems(instance, Affiliations.College);
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.University,
+            userId: user.userId,
+            permissions: [],
+          });
 
-              // Only shared instances get holdings/items in University (member-2) and School (member-3)
-              if (instance.affiliation === Affiliations.Consortia) {
-                addHoldingsAndItems(instance, Affiliations.University);
-                addHoldingsAndItems(instance, Affiliations.School);
-              }
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
+
+          cy.getInstanceIdentifierTypes().then(() => {
+            const identifierTypes = Cypress.env('identifierTypes');
+            isbnTypeId = identifierTypes.find((type) => type.name === 'ISBN')?.id;
+          });
+
+          UrlRelationship.getViaApi().then((relationships) => {
+            urlRelationshipId = relationships.find(
+              (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+            )?.id;
+          });
+
+          cy.then(() => {
+            instances.forEach((instance) => {
+              createInstance(instance);
             });
-        });
-
-        cy.then(() => {
-          const customMappingProfile = createCustomMappingProfile(urlRelationshipId);
-
-          cy.createDataExportCustomMappingProfile(customMappingProfile).then((resp) => {
-            mappingProfileId = resp.id;
-
-            ExportNewJobProfile.createNewJobProfileViaApi(customJobProfileName, resp.id).then(
-              (jobResp) => {
-                jobProfileId = jobResp.body.id;
-              },
-            );
+          }).then(() => {
+            instances.forEach((instance) => {
+              addHoldingsAndItems(instance, Affiliations.College);
+              addHoldingsAndItems(instance, Affiliations.University);
+              addHoldingsAndItems(instance, Affiliations.School);
+            });
           });
 
-          const sharedInstanceUUIDs = instances
-            .filter((inst) => inst.affiliation === Affiliations.Consortia)
-            .map((inst) => inst.uuid);
-          const localInstanceUUIDs = instances
-            .filter((inst) => inst.affiliation === Affiliations.College)
-            .map((inst) => inst.uuid);
+          cy.then(() => {
+            const customMappingProfile = createCustomMappingProfile(urlRelationshipId, isbnTypeId);
 
-          const csvContent = [
-            ...sharedInstanceUUIDs,
-            ...sharedInstanceUUIDs,
-            ...localInstanceUUIDs,
-            ...localInstanceUUIDs,
-          ].join('\n');
+            cy.createDataExportCustomMappingProfile(customMappingProfile).then((resp) => {
+              mappingProfileId = resp.id;
 
-          FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, csvContent);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
-        });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      });
+              ExportNewJobProfile.createNewJobProfileViaApi(customJobProfileName, resp.id).then(
+                (jobResp) => {
+                  jobProfileId = jobResp.body.id;
+                },
+              );
+            });
+
+            const instanceUUIDs = instances.map((inst) => inst.uuid);
+            const csvContent = instanceUUIDs.join('\n');
+
+            FileManager.createFile(`cypress/fixtures/${instanceUUIDsFileName}`, csvContent);
+          });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.dataExportPath,
+            waiter: DataExportLogs.waitLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -414,70 +411,54 @@ describe('Data Export', () => {
       cy.getAdminToken();
 
       cy.withinTenant(Affiliations.College, () => {
-        instances
-          .filter((instance) => instance.hasHoldings)
-          .forEach((instance) => {
-            instance.items?.forEach((item) => {
-              if (item.tenant === Affiliations.College) {
-                cy.deleteItemViaApi(item.id);
-              }
-            });
-            instance.holdings?.forEach((holding) => {
-              if (holding.tenant === Affiliations.College) {
-                cy.deleteHoldingRecordViaApi(holding.id);
-              }
-            });
+        instances.forEach((instance) => {
+          instance.items?.forEach((item) => {
+            if (item.tenant === Affiliations.College) {
+              cy.deleteItemViaApi(item.id);
+            }
           });
-
-        instances
-          .filter((instance) => instance.affiliation === Affiliations.College)
-          .forEach((instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.uuid);
+          instance.holdings?.forEach((holding) => {
+            if (holding.tenant === Affiliations.College) {
+              cy.deleteHoldingRecordViaApi(holding.id);
+            }
           });
+        });
       });
 
       cy.withinTenant(Affiliations.University, () => {
-        instances
-          .filter((instance) => instance.hasHoldings)
-          .forEach((instance) => {
-            instance.items?.forEach((item) => {
-              if (item.tenant === Affiliations.University) {
-                cy.deleteItemViaApi(item.id);
-              }
-            });
-            instance.holdings?.forEach((holding) => {
-              if (holding.tenant === Affiliations.University) {
-                cy.deleteHoldingRecordViaApi(holding.id);
-              }
-            });
+        instances.forEach((instance) => {
+          instance.items?.forEach((item) => {
+            if (item.tenant === Affiliations.University) {
+              cy.deleteItemViaApi(item.id);
+            }
           });
+          instance.holdings?.forEach((holding) => {
+            if (holding.tenant === Affiliations.University) {
+              cy.deleteHoldingRecordViaApi(holding.id);
+            }
+          });
+        });
       });
 
       cy.withinTenant(Affiliations.School, () => {
-        instances
-          .filter(
-            (instance) => instance.hasHoldings && instance.affiliation === Affiliations.Consortia,
-          )
-          .forEach((instance) => {
-            instance.items?.forEach((item) => {
-              if (item.tenant === Affiliations.School) {
-                cy.deleteItemViaApi(item.id);
-              }
-            });
-            instance.holdings?.forEach((holding) => {
-              if (holding.tenant === Affiliations.School) {
-                cy.deleteHoldingRecordViaApi(holding.id);
-              }
-            });
+        instances.forEach((instance) => {
+          instance.items?.forEach((item) => {
+            if (item.tenant === Affiliations.School) {
+              cy.deleteItemViaApi(item.id);
+            }
           });
+          instance.holdings?.forEach((holding) => {
+            if (holding.tenant === Affiliations.School) {
+              cy.deleteHoldingRecordViaApi(holding.id);
+            }
+          });
+        });
       });
 
       cy.withinTenant(Affiliations.Consortia, () => {
-        instances
-          .filter((instance) => instance.affiliation === Affiliations.Consortia)
-          .forEach((instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.uuid);
-          });
+        instances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        });
       });
 
       ExportJobProfiles.deleteJobProfileViaApi(jobProfileId);
@@ -489,8 +470,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C468204 ECS | Export Instances from Central tenant with custom SRS & Holdings & Item profile (file with Instances UUIDs) (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C468204'] },
+      'C468210 ECS | Export Instances from Central tenant with custom Instance & Holdings & Item profile (file with Instances UUIDs) (consortia) (firebird)',
+      { tags: ['criticalPathECS', 'firebird', 'C468210'] },
       () => {
         // Step 1: Upload .csv file with Instances UUIDs
         ExportFile.uploadFile(instanceUUIDsFileName);
@@ -502,7 +483,7 @@ describe('Data Export', () => {
         // Step 2: Run Custom job profile > Specify "Instance" type > Click "Run"
         ExportFile.exportWithDefaultJobProfile(
           instanceUUIDsFileName,
-          `AT_C468204_CustomJobProfile_${postfix}`,
+          `AT_C468210_CustomJobProfile_${postfix}`,
           'Instances',
         );
 
@@ -516,59 +497,48 @@ describe('Data Export', () => {
 
           DataExportResults.verifyCompletedWithErrorsExportResultCells(
             exportedFileName,
-            12,
+            2,
             recordsCount,
             jobId,
             user,
-            `AT_C468204_CustomJobProfile_${postfix}`,
+            `AT_C468210_CustomJobProfile_${postfix}`,
+            true,
           );
 
           // Step 4: Download created file
           DataExportLogs.clickButtonWithText(exportedFileName);
 
-          // Step 5-6: Verify exported .mrc file content - only shared records with College tenant holdings/items
-          const sharedInstances = instances.filter(
-            (inst) => inst.affiliation === Affiliations.Consortia,
-          );
-          const localInstanceUUIDs = instances
-            .filter((inst) => inst.affiliation === Affiliations.College)
-            .map((inst) => inst.uuid);
-
-          // Collect holdings/items from University (member-2) and School (member-3) that should NOT be exported
+          // Step 5-6: Verify exported .mrc file content - both shared instances with College tenant holdings/items
           const universityHoldingsItems = [];
           const schoolHoldingsItems = [];
 
-          instances
-            .filter((inst) => inst.hasHoldings)
-            .forEach((instance) => {
-              instance.holdings?.forEach((holding) => {
-                if (holding.tenant === Affiliations.University) {
-                  universityHoldingsItems.push(holding.hrid, holding.id);
-                }
-                if (holding.tenant === Affiliations.School) {
-                  schoolHoldingsItems.push(holding.hrid, holding.id);
-                }
-              });
-              instance.items?.forEach((item) => {
-                if (item.tenant === Affiliations.University) {
-                  universityHoldingsItems.push(item.hrid, item.id, item.barcode);
-                }
-                if (item.tenant === Affiliations.School) {
-                  schoolHoldingsItems.push(item.hrid, item.id, item.barcode);
-                }
-              });
+          instances.forEach((instance) => {
+            instance.holdings?.forEach((holding) => {
+              if (holding.tenant === Affiliations.University) {
+                universityHoldingsItems.push(holding.hrid, holding.id);
+              }
+              if (holding.tenant === Affiliations.School) {
+                schoolHoldingsItems.push(holding.hrid, holding.id);
+              }
             });
+            instance.items?.forEach((item) => {
+              if (item.tenant === Affiliations.University) {
+                universityHoldingsItems.push(item.hrid, item.id, item.barcode);
+              }
+              if (item.tenant === Affiliations.School) {
+                schoolHoldingsItems.push(item.hrid, item.id, item.barcode);
+              }
+            });
+          });
 
           ExportFile.verifyFileIncludes(
             exportedFileName,
-            [...localInstanceUUIDs, ...universityHoldingsItems, ...schoolHoldingsItems],
+            [...universityHoldingsItems, ...schoolHoldingsItems],
             false,
           );
 
           // Instance 1: Shared MARC with holdings - 2 holdings (FOLIO + MARC), 2 items
-          const instance1 = sharedInstances.find(
-            (inst) => inst.type === 'marc' && inst.hasHoldings,
-          );
+          const instance1 = instances.find((inst) => inst.type === 'marc');
           const instance1FolioHolding = instance1.holdings?.find(
             (h) => h.tenant === Affiliations.College && h.type === 'folio',
           );
@@ -583,35 +553,22 @@ describe('Data Export', () => {
           );
 
           // Instance 2: Shared FOLIO with holdings - 1 FOLIO holding, 1 item
-          const instance2 = sharedInstances.find(
-            (inst) => inst.type === 'folio' && inst.hasHoldings,
-          );
+          const instance2 = instances.find((inst) => inst.type === 'folio');
           const instance2Holding = instance2.holdings?.find(
             (h) => h.tenant === Affiliations.College,
           );
           const instance2Item = instance2.items?.find((i) => i.tenant === Affiliations.College);
-
-          // Instance 3: Shared MARC without holdings
-          const instance3 = sharedInstances.find(
-            (inst) => inst.type === 'marc' && !inst.hasHoldings,
-          );
-
-          // Instance 4: Shared FOLIO without holdings
-          const instance4 = sharedInstances.find(
-            (inst) => inst.type === 'folio' && !inst.hasHoldings,
-          );
 
           const recordsToVerify = [
             {
               uuid: instance1.uuid,
               assertions: [
                 (record) => verify001FieldValue(record, instance1.hrid),
-                (record) => verify005FieldValue(record),
                 (record) => {
-                  verifyMarcFieldByTag(record, '245', {
+                  verifyMarcFieldByTag(record, '020', {
                     ind1: ' ',
                     ind2: ' ',
-                    subfields: ['a', instance1.title],
+                    subfields: ['a', instance1.isbn],
                   });
                 },
                 // Two 856 fields - one from FOLIO holding, one from MARC holding
@@ -719,13 +676,10 @@ describe('Data Export', () => {
                   });
                 },
                 (record) => {
-                  verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
+                  verifyMarcFieldByTag(record, '999', {
                     ind1: 'f',
                     ind2: 'f',
-                    subfields: [
-                      ['i', instance1.uuid],
-                      ['s', instance1.srsId],
-                    ],
+                    subfields: ['i', instance1.uuid],
                   });
                 },
               ],
@@ -741,12 +695,11 @@ describe('Data Export', () => {
                   });
                 },
                 (record) => verify001FieldValue(record, instance2.hrid),
-                (record) => verify005FieldValue(record),
                 (record) => {
-                  verifyMarcFieldByTag(record, '245', {
-                    ind1: '0',
-                    ind2: '0',
-                    subfields: ['a', instance2.title],
+                  verifyMarcFieldByTag(record, '020', {
+                    ind1: ' ',
+                    ind2: ' ',
+                    subfields: ['a', instance2.isbn],
                   });
                 },
                 // One 856 field from FOLIO holding
@@ -805,119 +758,36 @@ describe('Data Export', () => {
                 },
               ],
             },
-            {
-              uuid: instance3.uuid,
-              assertions: [
-                (record) => verify001FieldValue(record, instance3.hrid),
-                (record) => verify005FieldValue(record),
-                (record) => {
-                  verifyMarcFieldByTag(record, '245', {
-                    ind1: ' ',
-                    ind2: ' ',
-                    subfields: ['a', instance3.title],
-                  });
-                },
-                (record) => {
-                  verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
-                    ind1: 'f',
-                    ind2: 'f',
-                    subfields: [
-                      ['i', instance3.uuid],
-                      ['s', instance3.srsId],
-                    ],
-                  });
-                },
-                // No holdings/items fields
-                (record) => verifyMarcFieldAbsence(record, '856'),
-                (record) => verifyMarcFieldAbsence(record, '876'),
-                (record) => verifyMarcFieldAbsence(record, '901'),
-                (record) => verifyMarcFieldAbsence(record, '902'),
-              ],
-            },
-            {
-              uuid: instance4.uuid,
-              assertions: [
-                (record) => {
-                  verifyLeaderPositions(record, {
-                    5: 'n',
-                    6: 'a',
-                    7: 'm',
-                  });
-                },
-                (record) => verify001FieldValue(record, instance4.hrid),
-                (record) => verify005FieldValue(record),
-                (record) => {
-                  verifyMarcFieldByTag(record, '245', {
-                    ind1: '0',
-                    ind2: '0',
-                    subfields: ['a', instance4.title],
-                  });
-                },
-                (record) => {
-                  verifyMarcFieldByTag(record, '999', {
-                    ind1: 'f',
-                    ind2: 'f',
-                    subfields: ['i', instance4.uuid],
-                  });
-                },
-                // No holdings/items fields
-                (record) => verifyMarcFieldAbsence(record, '856'),
-                (record) => verifyMarcFieldAbsence(record, '876'),
-                (record) => verifyMarcFieldAbsence(record, '901'),
-                (record) => verifyMarcFieldAbsence(record, '902'),
-              ],
-            },
           ];
 
-          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount);
+          parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount, false);
 
           // Step 7: Click export job row
           DataExportLogs.clickFileNameFromTheList(exportedFileName);
 
-          // Step 8-11: Verify error messages
+          // Step 8-10: Verify error messages
           const date = new Date();
           const formattedDateUpToHours = date.toISOString().slice(0, 13);
 
-          // Step 8: Verify error for missed affiliation (School tenant - member-3)
-          sharedInstances
-            .filter((inst) => inst.hasHoldings)
-            .forEach((instance) => {
-              DataExportLogs.verifyErrorTextInErrorLogsPane(
-                new RegExp(
-                  `${formattedDateUpToHours}.*ERROR ${instance.uuid} - the user ${user.username} is not affiliated with ${Affiliations.School} data tenant\\(s\\) and holdings and item records from this tenant were omitted during export\\.`,
-                ),
-              );
-            });
-
-          // Step 9: Verify error for missed permissions (University tenant)
-          sharedInstances
-            .filter((inst) => inst.hasHoldings)
-            .forEach((instance) => {
-              DataExportLogs.verifyErrorTextInErrorLogsPane(
-                new RegExp(
-                  `${formattedDateUpToHours}.*ERROR ${instance.uuid} - the user ${user.username} does not have permissions to view holdings or items in ${Affiliations.University} data tenant\\(s\\)\\. Holdings and item records from this tenant were omitted during export`,
-                ),
-              );
-            });
-
-          // Step 10: Verify repeated UUIDs errors
-          const sharedInstancesUUIDs = sharedInstances.map((inst) => inst.uuid);
-          [...sharedInstancesUUIDs, ...localInstanceUUIDs].forEach((uuid) => {
+          // Step 8: Verify error for missed permissions (University tenant - member-2)
+          instances.forEach((instance) => {
             DataExportLogs.verifyErrorTextInErrorLogsPane(
-              new RegExp(`${formattedDateUpToHours}.*ERROR UUID ${uuid} repeated 2 times.`),
+              new RegExp(
+                `${formattedDateUpToHours}.*ERROR ${instance.uuid} - the user ${user.username} does not have permissions to view holdings or items in ${Affiliations.University} data tenant\\(s\\)\\. Holdings and item records from this tenant were omitted during export\\.`,
+              ),
             );
           });
 
-          // Step 11: Verify "Record not found" error for local records
-          const regexParts = localInstanceUUIDs.map(
-            (notFoundInstanceUUID) => `(?=.*${notFoundInstanceUUID})`,
-          );
-          const regexPattern = `${formattedDateUpToHours}.*ERROR Record not found: ${regexParts.join('')}`;
-          const regex = new RegExp(regexPattern);
+          // Step 9: Verify error for missed affiliation (School tenant - member-3)
+          instances.forEach((instance) => {
+            DataExportLogs.verifyErrorTextInErrorLogsPane(
+              new RegExp(
+                `${formattedDateUpToHours}.*ERROR ${instance.uuid} - the user ${user.username} is not affiliated with ${Affiliations.School} data tenant\\(s\\) and holdings and item records from this tenant were omitted during export\\.`,
+              ),
+            );
+          });
 
-          DataExportLogs.verifyErrorTextInErrorLogsPane(regex);
-
-          const totalErrorLinesNumber = 12;
+          const totalErrorLinesNumber = 4;
 
           DataExportLogs.verifyTotalErrorLinesCount(totalErrorLinesNumber);
         });
