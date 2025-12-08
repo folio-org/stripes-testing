@@ -579,30 +579,30 @@ const UI = {
   selectActiveLists() {
     cy.do(activeCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectInactiveLists() {
     cy.do(inactiveCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectSharedLists() {
     cy.do(sharedCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectPrivateLists() {
     cy.do(privateCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectRecordTypeFilter(type) {
@@ -797,26 +797,28 @@ const QueryBuilder = {
     cy.expect(MultiColumnListHeader(header).exists());
   },
 
-  verifyQueryValue(value, condition, locator) {
+  verifyQueryValue(value, condition, locator, valueInColumn = '') {
     let columnNumber = 0;
     cy.wrap(true)
       .then(() => {
+        cy.wait(1000);
         if (locator) {
-          cy.log(`Locator is: ${locator}`);
+          cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).should('exist');
           cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).then(($index) => {
             columnNumber = $index;
+          }).then(() => {
+            cy.log(`Column number is: ${columnNumber}`);
           });
-          cy.log(`Column number is: ${columnNumber}`);
         }
       })
       .then(() => {
         cy.get('div[class^="mclRowContainer--"]')
           .find('[data-row-index]')
           .each(($el, index) => {
+            cy.log(`Index is: ${index}, column number is: ${columnNumber}`);
             switch (condition) {
               case 'equals':
                 if (locator) {
-                  cy.log(`Index is: ${index}, column number is: ${columnNumber}`);
                   cy.expect(
                     MultiColumnListCell({
                       row: index,
@@ -864,7 +866,7 @@ const QueryBuilder = {
                     MultiColumnListCell({
                       row: index,
                       columnIndex: columnNumber,
-                      content: '',
+                      content: valueInColumn,
                     }).exists(),
                   );
                 } else {
@@ -994,7 +996,6 @@ const API = {
       path: `query/${queryId}`,
       isDefaultSearchParamsRequired: false,
       searchParams: searchParameters,
-      customTimeout: 5000,
     });
   },
 
