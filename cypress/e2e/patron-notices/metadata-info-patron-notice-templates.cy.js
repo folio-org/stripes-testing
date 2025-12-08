@@ -10,11 +10,15 @@ import Users from '../../support/fragments/users/users';
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
     let userData;
+    let creator;
     const newBodytext = 'New text';
     const noticeTemplate = NoticeTemplates.getDefaultTemplate();
 
     before('Preconditions', () => {
       cy.getAdminToken();
+      cy.getAdminSourceRecord().then((user) => {
+        creator = user;
+      });
       NoticeTemplates.createViaApi(noticeTemplate);
       ServicePoints.getCircDesk1ServicePointViaApi()
         .then((servicePoint) => {
@@ -72,9 +76,7 @@ describe('Patron notices', () => {
       { tags: ['extendedPath', 'volaris', 'C387440'] },
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
-        const { lastName, firstName, middleName } = userData.personal;
-        const expectedCreator = `${lastName}, ${firstName} ${middleName}`;
-        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(expectedCreator);
+        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(creator, noticeTemplate.name);
       },
     );
   });

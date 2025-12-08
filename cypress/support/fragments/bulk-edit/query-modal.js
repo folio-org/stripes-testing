@@ -241,6 +241,7 @@ export const enumOperators = [
   'is null/empty',
 ];
 export const booleanOperators = ['Select operator', 'equals', 'not equal to', 'is null/empty'];
+export const booleanOperatorsInRepeatableFields = ['Select operator', 'equals', 'is null/empty'];
 
 export const QUERY_OPERATIONS = {
   PLACEHOLDER: 'Select operator',
@@ -409,7 +410,11 @@ export default {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
       (options) => {
         const textArray = options.get().map((el) => el.label);
-        expect(textArray).to.eql(Object.values(operators));
+        const expectedOperators = Object.values(operators);
+        expect(textArray).to.eql(
+          expectedOperators,
+          `Expected operators list to match for row ${row}.\nExpected: [${expectedOperators.join(', ')}]\nActual: [${textArray.join(', ')}]`,
+        );
       },
     );
   },

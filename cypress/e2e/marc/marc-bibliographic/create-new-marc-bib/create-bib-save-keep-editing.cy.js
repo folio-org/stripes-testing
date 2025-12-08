@@ -138,8 +138,6 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
             false,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.closeAllCallouts();
 
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();

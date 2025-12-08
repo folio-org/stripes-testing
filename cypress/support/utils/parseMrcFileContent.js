@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { Marc } from 'marcjs';
 import { Readable } from 'stream';
+import DateTools from './dateTools';
 
 /**
  * Returns an array of default assertions for a MARC record.
@@ -120,4 +121,108 @@ export default function parseMrcFileContentAndVerify(
       });
     });
   });
+}
+
+export function verifyMarcFieldByTag(record, tag, { ind1 = ' ', ind2 = ' ', subfields = [] }) {
+  const field = record.get(tag)[0];
+
+  expect(field.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(field.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
+
+  if (subfields.length > 0) {
+    // Check if it's a single subfield ['a', 'value'] or multiple [['a', 'value1'], ['b', 'value2']]
+    const isSingleSubfield = typeof subfields[0] === 'string';
+
+    if (isSingleSubfield) {
+      // Handle single subfield format: ['a', 'value']
+      expect(field.subf[0], `MARC tag ${tag} subfield`).to.deep.eq(subfields);
+    } else {
+      // Handle multiple subfields format: [['a', 'value1'], ['b', 'value2']]
+      subfields.forEach(([subfieldCode, subfieldValue]) => {
+        expect(
+          field.subf.some((sf) => sf[0] === subfieldCode && sf[1] === subfieldValue),
+          `MARC tag ${tag} subfield $${subfieldCode}`,
+        ).to.equal(true);
+      });
+    }
+  }
+}
+
+export function verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', subfields = [] },
+) {
+  verifyMarcFieldByTag(record, tag, { ind1, ind2 });
+
+  if (subfields.length > 0) {
+    const field = record.get(tag)[0];
+
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(field.subf[index], `MARC tag ${tag} subfield at position ${index}`).to.deep.equal([
+        subfieldCode,
+        subfieldValue,
+      ]);
+    });
+  }
+}
+
+export function verify001FieldValue(record, expectedValue) {
+  const field001 = record.get('001')[0];
+
+  expect(field001.value, 'MARC tag 001').to.eq(expectedValue);
+}
+
+export function verify005FieldValue(record, expectedValue = null) {
+  const field005 = record.get('005')[0];
+  const valueToCheck = expectedValue || DateTools.getCurrentDateYYYYMMDD();
+
+  expect(field005.value.startsWith(valueToCheck), 'MARC tag 005').to.be.true;
+}
+
+export function verify008FieldValue(record, expectedValue) {
+  const field008 = record.get('008')[0];
+
+  expect(field008.value, 'MARC tag 008').to.eq(expectedValue);
+}
+
+export function verifyLeaderPositions(record, positions = {}) {
+  expect(record.leader, 'Leader field').to.exist;
+
+  Object.entries(positions).forEach(([position, expectedValue]) => {
+    const pos = parseInt(position, 10);
+
+    expect(record.leader[pos], `Leader position ${position}`).to.eq(expectedValue);
+  });
+}
+
+export function verifyMarcFieldByFindingSubfield(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', findBySubfield, findByValue, subfields = [] },
+) {
+  const fields = record.get(tag);
+
+  expect(fields, `MARC tag ${tag} should exist`).to.exist;
+  expect(fields.length, `MARC tag ${tag} should have at least one occurrence`).to.be.greaterThan(0);
+
+  // Find the field that contains the specified subfield value
+  const targetField = fields.find((field) => {
+    return field.subf.some((sf) => sf[0] === findBySubfield && sf[1] === findByValue);
+  });
+
+  expect(targetField, `MARC tag ${tag} with $${findBySubfield} = "${findByValue}" should exist`).to
+    .exist;
+  expect(targetField.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(targetField.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
+
+  // Verify subfields in strict order if provided
+  if (subfields.length > 0) {
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(
+        targetField.subf[index],
+        `MARC tag ${tag} subfield at position ${index}`,
+      ).to.deep.equal([subfieldCode, subfieldValue]);
+    });
+  }
 }

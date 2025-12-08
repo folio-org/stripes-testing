@@ -22,6 +22,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { TransactionDetails } from '../../../../support/fragments/finance';
 
 describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -234,7 +235,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C357580 Budget summary and Encumbrances updated correctly when editing POL with related invoice after rollover of fiscal year (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1', 'C357580'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
@@ -297,29 +298,58 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '($70.00)',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: secondFiscalYear.code },
+          { key: 'Amount', value: '($70.00)' },
+          { key: 'Source', value: `${firstOrderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '$70.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
       Funds.closeTransactionApp(secondFund, secondFiscalYear);
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
+      Funds.selectBudgetDetails();
+      Funds.openTransactions();
+      Funds.checkNoTransactionOfType('Encumbrance');
+      Funds.checkNoTransactionOfType('Payment');
+      Funds.closeTransactionApp(firstFund, secondFiscalYear);
+      Funds.closeBudgetDetails();
       Funds.selectPreviousBudgetDetails();
       Funds.openTransactions();
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '$0.00',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${firstFund.name} (${firstFund.code})`,
-      );
+      Funds.selectTransactionInListByIndex('Encumbrance', 1);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: firstFiscalYear.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${firstOrderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${firstFund.name} (${firstFund.code})` },
+          { key: 'Initial encumbrance', value: '$100.00' },
+          { key: 'Expended', value: '$100.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
+      Funds.closeTransactionDetails();
+      Funds.selectTransactionInListByIndex('Encumbrance', 0);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: firstFiscalYear.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${secondOrderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${firstFund.name} (${firstFund.code})` },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
     },
   );
 });

@@ -20,6 +20,7 @@ import {
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { TransactionDetails } from '../../../support/fragments/finance';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -238,23 +239,29 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449364 Order can NOT be opened when encumbered amount exceeding remaining allowed encumbrances (thunderjet)',
-    { tags: ['criticalPathFlaky', 'thunderjet'] },
+    { tags: ['criticalPathFlaky', 'thunderjet', 'C449364'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);
       Orders.openOrder();
+      Orders.checkOrderIsNotOpened(secondFund.code);
+      Orders.checkOrderStatus('Pending');
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbrance(`${secondFund.name}(${secondFund.code})`);
       Funds.viewTransactionsForCurrentBudget();
+      Funds.checkTransactionCount('Encumbrance', 1);
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        defaultFiscalYear.code,
-        '($10.00)',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${secondFund.name} (${secondFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: defaultFiscalYear.code },
+          { key: 'Amount', value: '($10.00)' },
+          { key: 'Source', value: `${firstOrderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: `${secondFund.name} (${secondFund.code})` },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });

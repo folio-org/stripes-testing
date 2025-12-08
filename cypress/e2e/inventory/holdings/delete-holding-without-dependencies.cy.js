@@ -79,6 +79,7 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.delete();
+        cy.wait(3000);
         InventoryInstance.waitLoading();
         InventoryInstance.verifyHoldingsAbsent(testData.locationName);
       },
