@@ -367,6 +367,10 @@ export default {
     internal: 'inventory-storage.holdings.batch.post',
     gui: 'inventory storage - create or update a number of holdings',
   },
+  inventoryStorageInstancesBatchUpdate: {
+    internal: 'inventory-storage.instances.batch.synchronous.post',
+    gui: 'Inventory-Storage Instances Batch Synchronous',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
