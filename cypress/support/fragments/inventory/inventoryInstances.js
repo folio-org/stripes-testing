@@ -61,6 +61,9 @@ const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
+const buttonResetAllInAdvSearchModal = advSearchModal.find(
+  Button({ ariaLabel: 'Reset all', disabled: or(false, true) }),
+);
 const buttonSearchInAdvSearchModal = advSearchModal.find(
   Button({ ariaLabel: 'Search', disabled: or(false, true) }),
 );
