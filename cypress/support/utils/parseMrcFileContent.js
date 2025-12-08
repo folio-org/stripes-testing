@@ -226,3 +226,9 @@ export function verifyMarcFieldByFindingSubfield(
     });
   }
 }
+
+export function verifyMarcFieldAbsence(record, tag) {
+  const field = record.get(tag);
+
+  expect(field, `MARC tag ${tag} should not exist`).to.be.empty;
+}
