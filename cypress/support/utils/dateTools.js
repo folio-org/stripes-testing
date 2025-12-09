@@ -678,4 +678,13 @@ export default {
   getFormattedDateTimeWithSeconds() {
     return moment.utc().format('M/D/YYYY, h:mm:ss A');
   },
+
+  getFullFiscalYearStartAndEnd(index = 0) {
+    const currentYear = new Date().getFullYear();
+    const year = currentYear + index;
+    return {
+      periodStart: `${year}-01-01T00:00:00.000Z`,
+      periodEnd: `${year}-12-31T23:59:59.999Z`,
+    };
+  },
 };
