@@ -28,6 +28,7 @@ import parseMrcFileContentAndVerify, {
   verifyLeaderPositions,
   verifyMarcFieldAbsence,
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
+  verifyMarcFieldsWithIdenticalTagsAndSubfieldValues,
 } from '../../../support/utils/parseMrcFileContent';
 
 let user;
@@ -616,29 +617,16 @@ describe('Data Export', () => {
                 },
                 // Two 856 fields - one from FOLIO holding, one from MARC holding
                 (record) => {
-                  const fields856 = record.get('856');
-                  expect(fields856.length).to.eq(2);
-
-                  const instance1FolioHoldingElectronicAccess =
-                    instance1FolioHolding.electronicAccess[0];
-
-                  fields856.forEach((field) => {
-                    expect(field.ind1).to.eq('4');
-                    expect(field.ind2).to.eq('0');
-
-                    const subfU = field.subf.find((subf) => subf[0] === 'u');
-                    expect(subfU[1]).to.eq(instance1FolioHoldingElectronicAccess.uri);
-
-                    const subfY = field.subf.find((subf) => subf[0] === 'y');
-                    expect(subfY[1]).to.eq(instance1FolioHoldingElectronicAccess.linkText);
-
-                    const subf3 = field.subf.find((subf) => subf[0] === '3');
-                    expect(subf3[1]).to.eq(
-                      instance1FolioHoldingElectronicAccess.materialsSpecification,
-                    );
-
-                    const subfZ = field.subf.find((subf) => subf[0] === 'z');
-                    expect(subfZ[1]).to.eq(instance1FolioHoldingElectronicAccess.publicNote);
+                  verifyMarcFieldsWithIdenticalTagsAndSubfieldValues(record, '856', {
+                    ind1: '4',
+                    ind2: '0',
+                    expectedCount: 2,
+                    subfields: [
+                      ['u', instance1FolioHolding.electronicAccess[0].uri],
+                      ['y', instance1FolioHolding.electronicAccess[0].linkText],
+                      ['3', instance1FolioHolding.electronicAccess[0].materialsSpecification],
+                      ['z', instance1FolioHolding.electronicAccess[0].publicNote],
+                    ],
                   });
                 },
                 // Two 876 fields - one for each item
