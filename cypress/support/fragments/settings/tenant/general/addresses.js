@@ -91,10 +91,9 @@ export default {
     address = `autotest_address_value_${randomFourDigitNumber()}`,
   } = {}) {
     return {
-      value: JSON.stringify({ name, address }),
-      module: 'TENANT',
-      configName: 'tenant.addresses',
-      code: `ADDRESS_${randomFourDigitNumber()}`,
+      value: { name, address },
+      scope: 'ui-tenant-settings.addresses.manage',
+      key: `ADDRESS_${randomFourDigitNumber()}`,
       id: uuid(),
     };
   },
