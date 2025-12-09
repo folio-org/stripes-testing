@@ -14,7 +14,8 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 
 let user;
 let instanceTypeId;
-let location;
+let permanentLocation;
+let temporaryLocation;
 let sourceId;
 let exportedFileName;
 const recordsCount = 2;
@@ -36,8 +37,9 @@ describe('Data Export', () => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           instanceTypeId = instanceTypes[0].id;
         });
-        cy.getLocations({ limit: 1 }).then((res) => {
-          location = res;
+        InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+          permanentLocation = res[0];
+          temporaryLocation = res[1];
         });
         InventoryHoldings.getHoldingsFolioSource()
           .then((folioSource) => {
@@ -57,7 +59,7 @@ describe('Data Export', () => {
             // create holding without temporary location
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: createdInstanceData.instanceId,
-              permanentLocationId: location.id,
+              permanentLocationId: permanentLocation.id,
               sourceId,
             })
               .then((holding) => {
@@ -67,9 +69,9 @@ describe('Data Export', () => {
                 // create holding with temporary location
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: createdInstanceData.instanceId,
-                  permanentLocationId: location.id,
+                  permanentLocationId: permanentLocation.id,
                   sourceId,
-                  temporaryLocationId: location.id,
+                  temporaryLocationId: temporaryLocation.id,
                 }).then((holding) => {
                   instance.holdingsIDs.push(holding.id);
                 });
@@ -130,8 +132,10 @@ describe('Data Export', () => {
                 (record) => expect(record.leader).to.exist,
                 (record) => expect(record.get('001')).to.not.be.empty,
                 (record) => expect(record.get('004')).to.not.be.empty,
+                (record) => expect(record.get('852')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('852')[0].ind2).to.eq(' '),
                 (record) => expect(record.get('852')[0].subf[0][0]).to.eq('b'),
-                (record) => expect(record.get('852')[0].subf[0][1]).to.eq(location.name),
+                (record) => expect(record.get('852')[0].subf[0][1]).to.eq(permanentLocation.name),
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instance.holdingsIDs[0]),
               ],
@@ -142,6 +146,10 @@ describe('Data Export', () => {
                 (record) => expect(record.leader).to.exist,
                 (record) => expect(record.get('001')).to.not.be.empty,
                 (record) => expect(record.get('004')).to.not.be.empty,
+                (record) => expect(record.get('852')[0].ind1).to.eq(' '),
+                (record) => expect(record.get('852')[0].ind2).to.eq(' '),
+                (record) => expect(record.get('852')[0].subf[0][0]).to.eq('c'),
+                (record) => expect(record.get('852')[0].subf[0][1]).to.eq(temporaryLocation.name),
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => expect(record.get('999')[0].subf[0][1]).to.eq(instance.holdingsIDs[1]),
               ],
