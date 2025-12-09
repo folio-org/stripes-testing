@@ -38,12 +38,11 @@ describe('Check out', () => {
     'C418580 Check that no errors appears after user logout from the "Check out" app (vega)',
     { tags: ['extendedPath', 'vega', 'C418580'] },
     () => {
-      Checkout.waitLoading();
       CheckOutActions.checkIsInterfacesOpened();
       CheckOutActions.checkOutUser(testData.user.barcode);
       cy.logout();
 
-      const waitTime = Cypress.env('shortWait') ? 60000 : 60000;
+      const waitTime = Cypress.env('shortWait') ? 60000 : 1200000;
       cy.wait(waitTime);
     },
   );
