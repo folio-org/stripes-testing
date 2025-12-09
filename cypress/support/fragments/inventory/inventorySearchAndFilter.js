@@ -106,6 +106,7 @@ const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
 const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
+const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1653,5 +1654,36 @@ export default {
   verifyNumberOfSelectedOptionsInMultiSelectFilter(accordionName, selectedCount) {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
     cy.expect(multiSelect.has({ selectedCount }));
+  },
+
+  resizeSearchInputField(height, width) {
+    cy.do(inventorySearchAndFilter.resize(height, width));
+  },
+
+  verifySearchInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(inventorySearchAndFilter.has({ height }));
+    if (width !== null) cy.expect(inventorySearchAndFilter.has({ width }));
+  },
+
+  resizeBrowseInputField(height, width) {
+    cy.do(browseSearchInputField.resize(height, width));
+  },
+
+  verifyBrowseInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(browseSearchInputField.has({ height }));
+    if (width !== null) cy.expect(browseSearchInputField.has({ width }));
+  },
+
+  checkClearIconShownInBrowseField(isShown = true) {
+    if (isShown) cy.expect(browseSearchInputField.find(clearIcon).exists());
+    else cy.expect(browseSearchInputField.find(clearIcon).absent());
+  },
+
+  focusOnBrowseField() {
+    cy.do(browseSearchInputField.focus());
+  },
+
+  verifyBrowseResultListExists(isExist = true) {
+    cy.expect(isExist ? anyBrowseResultList.exists() : anyBrowseResultList.absent());
   },
 };
