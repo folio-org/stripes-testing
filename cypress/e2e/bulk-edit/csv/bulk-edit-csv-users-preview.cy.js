@@ -24,7 +24,7 @@ describe(
     },
   },
   () => {
-    describe('csv approach', () => {
+    describe('Csv approach', () => {
       beforeEach('create test data', () => {
         newFirstName = `testNewFirstName_${getRandomPostfix()}`;
         userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;

@@ -61,6 +61,10 @@ export default {
     cy.get('[class^=errorLogsContainer]').contains(errorText);
   },
 
+  verifyTotalErrorLinesCount(expectedCount) {
+    cy.get('div [data-test-error-log=true]').should('have.length', expectedCount);
+  },
+
   verifyViewAllLogsButtonEnabled() {
     cy.expect(viewAllLogsButton.has({ disabled: false }));
   },
