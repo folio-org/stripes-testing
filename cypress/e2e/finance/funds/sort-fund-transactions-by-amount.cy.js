@@ -84,8 +84,7 @@ describe('Finance', () => {
       () => {
         Funds.waitForFundDetailsLoading();
 
-        Funds.openActionsMenu();
-        Funds.selectViewTransactionsForCurrentBudget();
+        Funds.viewTransactionsForCurrentBudget();
         Funds.waitLoadingTransactions();
         Funds.verifyTransactionsTableDisplayed();
 

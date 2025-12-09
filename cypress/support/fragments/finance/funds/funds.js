@@ -1438,10 +1438,6 @@ export default {
     cy.do(actionsButton.click());
   },
 
-  selectViewTransactionsForCurrentBudget: () => {
-    cy.do(Button('View transactions for current budget').click());
-  },
-
   verifyTransactionsTableDisplayed: () => {
     cy.expect([cy.get('[data-row-index]').should('have.length.greaterThan', 0)]);
   },
@@ -1462,13 +1458,9 @@ export default {
     ]);
   },
 
-  cancelUnassignAllLocationsModal: () => {
-    cy.do(unassignAllLocationsModal.find(cancelButton).click());
-    cy.wait(2000);
-  },
-
-  confirmUnassignAllLocationsModal: () => {
-    cy.do(unassignAllLocationsModal.find(submitButton).click());
+  selectActionInUnassignAllLocationsModal: (action) => {
+    const button = action === 'cancel' ? cancelButton : submitButton;
+    cy.do(unassignAllLocationsModal.find(button).click());
     cy.wait(2000);
   },
 
@@ -1479,12 +1471,8 @@ export default {
     ]);
   },
 
-  verifyUnassignAllLocationsButtonIsActive: () => {
-    cy.expect(locationSection.find(unassignAllLocationsButton).has({ disabled: false }));
-  },
-
-  verifyUnassignAllLocationsButtonIsInactive: () => {
-    cy.expect(locationSection.find(unassignAllLocationsButton).has({ disabled: true }));
+  verifyUnassignAllLocationsButtonState: (shouldBeDisabled) => {
+    cy.expect(locationSection.find(unassignAllLocationsButton).has({ disabled: shouldBeDisabled }));
   },
 
   cancelEditingFund: () => {
@@ -1503,18 +1491,6 @@ export default {
 
   closeWithoutSaving: () => {
     cy.do(areYouSureModal.find(closeWithoutSavingButton).click());
-    cy.wait(2000);
-  },
-
-  keepEditingFund: () => {
-    cy.do(
-      areYouSureModal.find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' })).click(),
-    );
-    cy.wait(2000);
-  },
-
-  clickSaveAndCloseOnEditPage: () => {
-    cy.do(saveAndCloseButton.click());
     cy.wait(2000);
   },
 };

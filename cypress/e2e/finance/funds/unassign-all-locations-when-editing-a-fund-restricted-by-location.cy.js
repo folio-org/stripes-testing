@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import fundEditForm from '../../../support/fragments/finance/funds/fundEditForm';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
@@ -92,21 +93,21 @@ describe('Finance', () => {
         Funds.editFund();
         Funds.varifyLocationInSection(firstLocation.name);
         Funds.varifyLocationInSection(secondLocation.name);
-        Funds.verifyUnassignAllLocationsButtonIsActive();
+        Funds.verifyUnassignAllLocationsButtonState(false);
 
         Funds.clickUnassignAllLocationsButton();
         Funds.verifyUnassignAllLocationsModal();
 
-        Funds.cancelUnassignAllLocationsModal();
+        Funds.selectActionInUnassignAllLocationsModal('cancel');
         Funds.varifyLocationInSection(firstLocation.name);
         Funds.varifyLocationInSection(secondLocation.name);
 
         Funds.clickUnassignAllLocationsButton();
         Funds.verifyUnassignAllLocationsModal();
 
-        Funds.confirmUnassignAllLocationsModal();
+        Funds.selectActionInUnassignAllLocationsModal('confirm');
         Funds.verifyNoLocationsFound();
-        Funds.verifyUnassignAllLocationsButtonIsInactive();
+        Funds.verifyUnassignAllLocationsButtonState(true);
 
         Funds.cancelEditingFund();
         Funds.verifyAreYouSureModal();
@@ -118,21 +119,21 @@ describe('Finance', () => {
         Funds.editFund();
         Funds.varifyLocationInSection(firstLocation.name);
         Funds.varifyLocationInSection(secondLocation.name);
-        Funds.verifyUnassignAllLocationsButtonIsActive();
+        Funds.verifyUnassignAllLocationsButtonState(false);
 
         Funds.clickUnassignAllLocationsButton();
         Funds.verifyUnassignAllLocationsModal();
 
-        Funds.confirmUnassignAllLocationsModal();
+        Funds.selectActionInUnassignAllLocationsModal('confirm');
         Funds.verifyNoLocationsFound();
-        Funds.verifyUnassignAllLocationsButtonIsInactive();
+        Funds.verifyUnassignAllLocationsButtonState(true);
 
         Funds.cancelEditingFund();
         Funds.verifyAreYouSureModal();
 
-        Funds.keepEditingFund();
+        fundEditForm.keepEditingFund();
 
-        Funds.clickSaveAndCloseOnEditPage();
+        fundEditForm.clickSaveAndCloseButton({ fundSaved: false });
         Funds.varifyLocationRequiredError();
       },
     );
