@@ -67,10 +67,7 @@ describe('Inventory', () => {
           InventoryInstance.editInstance();
           InstanceRecordEdit.addIdentifier(element.identifier, resourceIdentifier, element.line);
           InventorySearchAndFilter.resetAll();
-          searchAndOpenInstance(
-            'Keyword (title, contributor, identifier, HRID, UUID)',
-            resourceIdentifier,
-          );
+          searchAndOpenInstance('Identifier (all)', resourceIdentifier);
           InventoryInstance.checkInstanceIdentifier(resourceIdentifier, element.line);
           InventorySearchAndFilter.resetAll();
         },
