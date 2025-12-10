@@ -30,10 +30,20 @@ export default HTML.extend('text area')
     disabled: (el) => el.querySelector('textarea').disabled,
     dataTestID: (el) => el.querySelector('textarea').getAttribute('data-testid'),
     dataActionIndex: (el) => el.querySelector('textarea').getAttribute('data-action-index'),
+    width: (el) => el.querySelector('textarea').offsetWidth,
+    height: (el) => el.querySelector('textarea').offsetHeight,
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ find }) => find(TextField()).focus(),
     clear: ({ find }) => find(IconButton({ icon: 'times-circle-solid' })).click(),
+    resize: async ({ perform }, newHeight = null, newWidth = null) => {
+      return perform((el) => {
+        const textareaElement = el.querySelector('textarea');
+        const heightString = newHeight !== null ? `height: ${newHeight}px;` : '';
+        const widthString = newWidth !== null ? `width: ${newWidth}px;` : '';
+        textareaElement.style = `${heightString}${widthString}`;
+      });
+    },
   });
