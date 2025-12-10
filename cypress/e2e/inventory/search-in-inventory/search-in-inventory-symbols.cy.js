@@ -145,8 +145,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C368038'] },
+      'C958456 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
+      { tags: ['criticalPathFlaky', 'spitfire', 'C958456'] },
       () => {
         InventoryInstances.waitContentLoading();
         expectedTitlesC368038.forEach((expectedTitlesSet, index) => {
