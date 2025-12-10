@@ -32,7 +32,7 @@ describe('Eureka', () => {
         const appRegExp = new RegExp(`${appName}-\\d\\..+`);
         return (
           appRegExp.test(capability.applicationId) &&
-          !resultArray.find((el) => el.resource === capability.resource)
+          !resultArray.find((el) => el.name === capability.name)
         );
       }
 
@@ -55,42 +55,50 @@ describe('Eureka', () => {
       });
 
       before('Assign capabilities and login', () => {
-        cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.setIds);
-        cy.getCapabilitiesForRoleApi(testData.roleId, {
-          limit: 5000,
-          expand: true,
-        }).then((response) => {
-          response.body.capabilities.forEach((capability) => {
-            if (
-              isCapabilityFromApp(
-                capability,
-                testData.originalApplications[0],
-                testData.capabilitiesForFirstApp,
-              )
-            ) {
-              testData.capabilitiesForFirstApp.push(capability);
-            }
-            if (
-              isCapabilityFromApp(
-                capability,
-                testData.originalApplications[1],
-                testData.capabilitiesForSecondApp,
-              )
-            ) {
-              testData.capabilitiesForSecondApp.push(capability);
-            }
+        cy.then(() => {
+          cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.setIds);
+          cy.getCapabilitiesForSetApi(testData.setIds[0], {
+            limit: 5000,
+          }).then((response) => {
+            response.body.capabilities.forEach((capability) => {
+              if (
+                isCapabilityFromApp(
+                  capability,
+                  testData.originalApplications[0],
+                  testData.capabilitiesForFirstApp,
+                )
+              ) {
+                testData.capabilitiesForFirstApp.push(capability);
+              }
+            });
           });
+          cy.getCapabilitiesForSetApi(testData.setIds[1], {
+            limit: 5000,
+          }).then((response) => {
+            response.body.capabilities.forEach((capability) => {
+              if (
+                isCapabilityFromApp(
+                  capability,
+                  testData.originalApplications[1],
+                  testData.capabilitiesForSecondApp,
+                )
+              ) {
+                testData.capabilitiesForSecondApp.push(capability);
+              }
+            });
+          });
+        }).then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
+          AuthorizationRoles.openForEdit();
         });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.settingsAuthorizationRoles,
-          waiter: AuthorizationRoles.waitContentLoading,
-        });
-        AuthorizationRoles.searchRole(testData.roleName);
-        AuthorizationRoles.clickOnRoleName(testData.roleName);
-        AuthorizationRoles.openForEdit();
       });
 
-      afterEach('Delete user, role', () => {
+      after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
