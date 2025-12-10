@@ -1822,6 +1822,11 @@ export default {
     });
   },
 
+  clickSaveCqlButton() {
+    cy.do(saveCqlButton.click());
+    cy.wait(5000);
+  },
+
   verifyResultsPane() {
     cy.expect([
       resultsPaneHeader.has({ subtitle: matching(/\d+ records? found/) }),

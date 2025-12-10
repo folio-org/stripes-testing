@@ -200,3 +200,16 @@ Cypress.Commands.add('getAuthoritiesCountViaAPI', () => {
     return body.totalRecords;
   });
 });
+
+Cypress.Commands.add('getSrsRecordsByAuthorityId', (instanceId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `source-storage/records/${instanceId}/formatted`,
+    searchParams: {
+      idType: 'AUTHORITY',
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
