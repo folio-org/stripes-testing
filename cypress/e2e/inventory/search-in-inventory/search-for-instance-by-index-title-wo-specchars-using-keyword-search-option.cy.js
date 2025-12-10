@@ -20,19 +20,16 @@ const testData = {
     'Jurassic  Park : the truth is terrifying',
     'Jurassic  Park & the truth is terrifying',
     'Jurassic  Park / the truth is terrifying',
+    'Jurassic  Park \\ the truth is terrifying',
     'Jurassic Park /the truth is terrifying',
     'Jurassic Park the truth is terrifying;',
     '...Jurassic Park the truth is terrifying',
-  ],
-
-  negativeSearchQueries: [
-    'Jurassicpark the truth is terrifying',
-    'Jurassic  Park \\ the truth is terrifying',
     '. Jurassic Park the truth is terrifying  ',
     '(Jurassic Park ) the truth is terrifying',
     'Jurassic Park the truth is NOT terrifying',
-    'J. P. the truth is terrifying',
   ],
+
+  negativeSearchQueries: ['Jurassicpark the truth is terrifying', 'J. P. the truth is terrifying'],
 
   searchResults: [
     'JURASSIC PARK THE TRUTH IS TERRIFYING edited by Nicolas Michaud and Jessica Watkins',

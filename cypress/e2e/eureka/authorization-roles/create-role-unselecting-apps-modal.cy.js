@@ -30,7 +30,7 @@ describe('Eureka', () => {
         const appRegExp = new RegExp(`${appName}-\\d\\..+`);
         return (
           appRegExp.test(capability.applicationId) &&
-          !resultArray.find((el) => el.resource === capability.resource)
+          !resultArray.find((el) => el.name === capability.name)
         );
       }
 
