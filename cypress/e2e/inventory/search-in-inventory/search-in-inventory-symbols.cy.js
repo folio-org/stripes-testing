@@ -67,8 +67,9 @@ describe('Inventory', () => {
       testData.titlesC368038,
       testData.titlesC368038,
       testData.titlesC368038,
-      [testData.titlesC368038[0], testData.titlesC368038[1], testData.titlesC368038[5]],
+      testData.titlesC368038,
       [testData.titlesC368038[5]],
+      testData.titlesC368038,
     ];
     const marcFiles = [
       {
@@ -158,10 +159,6 @@ describe('Inventory', () => {
           });
           InventorySearchAndFilter.checkRowsCount(expectedTitlesSet.length);
         });
-        InventoryInstances.searchByTitle(testData.searchQueriesC368038[8]);
-        // wait for search results to be updated
-        cy.wait(1500);
-        InventorySearchAndFilter.verifyNoRecordsFound();
       },
     );
   });

@@ -52,7 +52,7 @@ describe('Inventory', () => {
       },
       {
         value: `${randomDigits}Ultimate Matrix and collection discs 5, ${randomDigits}6`,
-        expectedInstanceIndexes: [1, 2, 6],
+        expectedInstanceIndexes: [1, 2, 3, 4, 5, 6, 7, 8],
       },
       {
         value: `${randomDigits}Ultimate & Matrix : collection discs 5 / ${randomDigits}6, (new edition).`,
@@ -60,7 +60,7 @@ describe('Inventory', () => {
       },
       {
         value: `.${randomDigits}Ultimate - Matrix [collection] discs 5, ${randomDigits}6`,
-        expectedInstanceIndexes: [],
+        expectedInstanceIndexes: [1, 2, 3, 4, 5, 6, 7, 8],
       },
     ];
 
@@ -84,6 +84,7 @@ describe('Inventory', () => {
               instanceTypeId: instanceTypeData[0].id,
               title: instance.title,
               series: [{ value: instance.seriesStatement }],
+              languages: ['eng'],
             },
           }).then((instanceId) => {
             instance.id = instanceId;

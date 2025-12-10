@@ -13,11 +13,11 @@ const testData = {
   instanceIDs: [],
   searchQueries: [
     'Arroyo Center 1984 Force Development Technology Program',
-    'Arroyo Center 1984 Force Development & Technology Program',
     'Arroyo Center : 1984 Force Development Technology Program',
     '"Arroyo Center" 1984 / Force-Development {Technology Program}',
     'Arroyo Center: 1984 Force/ Development&Technology Program',
     'Technology Program : (Force Development) Arroyo Center "1984".',
+    '.Arroyo Center - 1984 Force Development [Technology] Program !',
   ],
   searchResults: [
     'Arroyo Center 1984 Force Development and Technology Program',
@@ -83,6 +83,14 @@ describe('Inventory', () => {
         });
 
         InventoryInstances.searchByTitle(
+          'Arroyo Center 1984 Force Development & Technology Program',
+        );
+        InventorySearchAndFilter.checkRowsCount(3);
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[0], true);
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[1], true);
+        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
+
+        InventoryInstances.searchByTitle(
           'Arroyo Center 1984 Force Development and Technology Program',
         );
         InventorySearchAndFilter.checkRowsCount(3);
@@ -96,13 +104,6 @@ describe('Inventory', () => {
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
-
-        InventoryInstances.resetAllFilters();
-        InventoryInstances.searchByTitle(
-          '.Arroyo Center - 1984 Force Development [Technology] Program !',
-          false,
-        );
-        InventorySearchAndFilter.verifyNoRecordsFound();
       },
     );
   });

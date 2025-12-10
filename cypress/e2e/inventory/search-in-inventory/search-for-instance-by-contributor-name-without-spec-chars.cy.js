@@ -18,19 +18,19 @@ const testData = {
     'Hasidic New Wave',
     'Musical Group Hasidic Wave New',
     'Hasidic : New Wave (Musical group)',
-    'Hasidic & New Wave (Musical group)',
     'Hasidic / New Wave (Musical group)',
     'Hasidic \\New Wave (Musical group)',
+    'Hasidic - New Wave (Musical group)',
     'Hasidic New Wave (Musical group);',
     '...Hasidic New Wave Musical group',
+    '. Hasidic New Wave Musical group  ',
     '[Hasidic] New Wave (Musical group)',
   ],
   negativeSearchQueries: [
     'Hasidic Newwave (Musical group)',
-    'Hasidic - New Wave (Musical group)',
-    '. Hasidic New Wave Musical group  ',
     'Hasidic New Wave (Musical group) album',
     'Hasidic N.W. (Mg)',
+    'Hasidic & New Wave (Musical group)',
   ],
 
   searchResults: [
@@ -51,6 +51,16 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: 'title="MSEARCH-466"',
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
         testData.marcFile.fileName,

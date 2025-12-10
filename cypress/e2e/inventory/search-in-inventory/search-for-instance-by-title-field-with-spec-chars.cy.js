@@ -18,6 +18,9 @@ const testData = {
     'Harry Potter / the cursed child Parts one, two',
     'Harry Potter&the-cursed child: Parts one/ two',
     'the cursed child : Harry Potter',
+    'Harry Potter and the cursed child Parts one, two',
+    'Harry Potter - the cursed child Parts one, two',
+    'Harry Potter & the cursed child; Parts one, two\\',
   ],
   titleSearchQuery: 'Harry Potter the cursed child Parts one, two\\',
   searchResults: [
@@ -38,14 +41,22 @@ const testData = {
     numberOfRecords: 8,
     propertyName: 'instance',
   },
+  queryForDelete: 'Harry Potter',
 };
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      testData.searchQueries.forEach((query) => {
-        InventoryInstances.deleteFullInstancesByTitleViaApi(query.replace(/[:&/]/g, ''));
+      InventoryInstances.getInstancesViaApi({
+        limit: 20,
+        query: `title="${testData.queryForDelete}"`,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
       });
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
@@ -93,25 +104,11 @@ describe('Inventory', () => {
         cy.ifConsortia(() => {
           InventorySearchAndFilter.byShared('No');
         });
-        InventoryInstances.searchByTitle('Harry Potter and the cursed child Parts one, two');
-        InventorySearchAndFilter.checkRowsCount(3);
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[0], true);
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[1], true);
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
-
-        InventoryInstances.resetAllFilters();
-        cy.ifConsortia(() => {
-          InventorySearchAndFilter.byShared('No');
-        });
         InventoryInstances.searchByTitle(
           'Harry Potter & the cursed child : Parts one / two, (a new play by writer Jack Thorne).',
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
-
-        InventoryInstances.resetAllFilters();
-        InventoryInstances.searchByTitle('Harry Potter - the cursed child Parts one, two', false);
-        InventorySearchAndFilter.verifyNoRecordsFound();
 
         InventoryInstances.searchInstancesWithOption(
           testData.titleSearchOption,
