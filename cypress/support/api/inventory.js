@@ -889,6 +889,16 @@ Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
   });
 });
 
+Cypress.Commands.add('batchUpdateInstancesViaApi', (instances, { upsert } = {}) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'instance-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    searchParams: upsert ? { upsert } : {},
+    body: { instances },
+  });
+});
+
 Cypress.Commands.add('batchUpdateHoldingsViaApi', (holdingsRecords) => {
   return cy.okapiRequest({
     method: 'POST',

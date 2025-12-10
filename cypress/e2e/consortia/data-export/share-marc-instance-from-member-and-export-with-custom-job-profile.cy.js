@@ -22,6 +22,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -29,7 +30,10 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
   verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder,
   verify001FieldValue,
+  verify005FieldValue,
+  verify008FieldValue,
   verifyLeaderPositions,
+  verifyMarcFieldByFindingSubfield,
 } from '../../../support/utils/parseMrcFileContent';
 
 let user;
@@ -62,7 +66,7 @@ const testData = {
 // Custom mapping profile configuration function
 const createCustomMappingProfile = () => ({
   default: false,
-  recordTypes: ['INSTANCE', 'HOLDINGS', 'ITEM'],
+  recordTypes: ['SRS', 'HOLDINGS', 'ITEM'],
   outputFormat: 'MARC',
   fieldsSuppression: '',
   suppress999ff: false,
@@ -285,6 +289,32 @@ describe('Data Export', () => {
                   };
                 });
               });
+
+              // Add MARC holdings to imported instance
+              cy.getLocations({ limit: 1 }).then((location) => {
+                cy.createMarcHoldingsViaAPI(testData.importedMarcInstance.uuid, [
+                  {
+                    content: testData.importedMarcInstance.hrid,
+                    tag: '004',
+                  },
+                  {
+                    content: QuickMarcEditor.defaultValid008HoldingsValues,
+                    tag: '008',
+                  },
+                  {
+                    content: `$b ${location.code}`,
+                    indicators: ['\\', '\\'],
+                    tag: '852',
+                  },
+                ]).then((marcHoldingId) => {
+                  cy.getHoldings({ query: `"id"="${marcHoldingId}"` }).then((holdings) => {
+                    testData.importedMarcInstance.marcHoldings = {
+                      id: holdings[0].id,
+                      hrid: holdings[0].hrid,
+                    };
+                  });
+                });
+              });
             });
 
             // Create custom mapping profile and job profile
@@ -326,6 +356,7 @@ describe('Data Export', () => {
           testData.localMarcInstance.holdings.id,
           testData.sharedMarcInstance.holdings.id,
           testData.importedMarcInstance.holdings.id,
+          testData.importedMarcInstance.marcHoldings.id,
         ].forEach((holdingId) => {
           cy.deleteHoldingRecordViaApi(holdingId);
         });
@@ -364,7 +395,7 @@ describe('Data Export', () => {
             .true;
           testData.importedMarcInstance.hrid = updatedHrid;
 
-          // Step 7: Holdings already added via API in before hook
+          // Step 7: MARC holdings already added via API in before hook
           // Step 8: Go to the "Data export" app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           DataExportLogs.waitLoading();
@@ -404,13 +435,36 @@ describe('Data Export', () => {
             DataExportLogs.clickButtonWithText(exportedFileName);
 
             // Steps 12-15: Verify the downloaded .mrc file includes all instances
-            const customMappingAssertions = (instance) => [
+            // Common assertions for all MARC instances
+            const commonAssertions = (instance) => [
               (record) => verify001FieldValue(record, instance.hrid),
+              (record) => verify005FieldValue(record),
+              (record) => {
+                verifyMarcFieldByTag(record, '245', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', instance.title],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
+                  ind1: 'f',
+                  ind2: 'f',
+                  subfields: [
+                    ['i', instance.uuid],
+                    ['s', instance.srsId],
+                  ],
+                });
+              },
+            ];
+
+            // Assertions for created MARC instances (local and shared)
+            const createdMarcAssertions = (instance) => [
               (record) => {
                 verifyLeaderPositions(record, {
                   5: 'n',
                   6: 'a',
-                  7: 'm',
+                  7: 'a',
                 });
               },
               (record) => {
@@ -444,19 +498,396 @@ describe('Data Export', () => {
                   ],
                 });
               },
+            ];
+
+            // Assertions for imported MARC instance with all original fields
+            const importedMarcAssertions = [
               (record) => {
-                verifyMarcFieldByTag(record, '999', {
-                  ind1: 'f',
-                  ind2: 'f',
-                  subfields: ['i', instance.uuid],
+                verifyLeaderPositions(record, {
+                  5: 'c',
+                  6: 'g',
+                  7: 'm',
+                });
+              },
+              (record) => {
+                verify008FieldValue(record, '130502s2013    xxu050            vleng d');
+              },
+              (record) => {
+                const field007 = record.get('007');
+
+                expect(field007[0].value).to.eq('vd cvaizq');
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '024', {
+                  ind1: '1',
+                  ind2: ' ',
+                  subfields: ['a', '883929341139'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '028', {
+                  ind1: '4',
+                  ind2: '2',
+                  subfields: [
+                    ['a', '1000403458'],
+                    ['b', 'Warner Bros Ent. Canada Inc.'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '037', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['b', 'Midwest Tape'],
+                    ['n', 'http://www.midwesttapes.com'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '040', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'TEFMT'],
+                    ['b', 'eng'],
+                    ['e', 'rda'],
+                    ['c', 'TEFMT'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '041', {
+                  ind1: '0',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'eng'],
+                    ['j', 'eng'],
+                    ['h', 'eng'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '043', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'e-uk---'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '046', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['k', '2011'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '050', {
+                  ind1: ' ',
+                  ind2: '4',
+                  subfields: [
+                    ['a', 'DA112'],
+                    ['b', '.C67 2013'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '082', {
+                  ind1: '0',
+                  ind2: '4',
+                  subfields: [
+                    ['a', '941.085'],
+                    ['2', '23'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '257', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'United Kingdom.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '264', {
+                  ind1: ' ',
+                  ind2: '2',
+                  subfields: [
+                    ['a', 'Burbank, CA :'],
+                    ['b', 'Distributed in the USA by Warner Home Video,'],
+                    ['c', '[2013]'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '300', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', '1 videodisc (50 min.) :'],
+                    ['b', 'sound, color with black and white sequences ;'],
+                    ['c', '4 3/4 in. +'],
+                    ['e', '1 booklet (23 cm).'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '336', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'two-dimensional moving image'],
+                    ['b', 'tdi'],
+                    ['2', 'rdacontent'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '337', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'video'],
+                    ['b', 'v'],
+                    ['2', 'rdamedia'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '338', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'videodisc'],
+                    ['b', 'vd'],
+                    ['2', 'rdacarrier'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '344', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'digital'],
+                    ['b', 'optical'],
+                    ['g', 'stereo'],
+                    ['h', 'Dolby digital stereo'],
+                    ['2', 'rda'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '346', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'laser optical'],
+                    ['b', 'NTSC'],
+                    ['2', 'rda'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '347', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'video file'],
+                    ['b', 'DVD video'],
+                    ['e', 'region 1'],
+                    ['2', 'rda'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '490', {
+                  ind1: '1',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', 'Royal collection ;'],
+                    ['v', '[3]'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '500', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'Title from web page.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '508', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'Prducer/director, Jamie Muir ; narrator, Tamsin Greig.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '511', {
+                  ind1: '0',
+                  ind2: ' ',
+                  subfields: ['a', 'Queen Elizabeth II.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '520', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    'a',
+                    'The coronation of Elizabeth II was an enormous logistical operation, and an event of huge cultural significance. Now, using hitherto unseen archives and with co-operation of the Palace, the diaries and papers of those at the heart of the planning are opened up to reveal the behind the scenes story of the Coronation.',
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '538', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'DVD, widescreen (16x9) presentation; stereo.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '546', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: ['a', 'English SDH subtitles.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '600', {
+                  ind1: '0',
+                  ind2: '0',
+                  subfields: [
+                    ['a', 'Elizabeth'],
+                    ['b', 'II,'],
+                    ['c', 'Queen of Great Britain,'],
+                    ['d', '1926-2022'],
+                    ['x', 'Coronation.'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '648', {
+                  ind1: ' ',
+                  ind2: '7',
+                  subfields: [
+                    ['a', 'Since 1900'],
+                    ['2', 'fast'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '650', {
+                  ind1: ' ',
+                  ind2: '0',
+                  subfields: [
+                    ['a', 'Coronations'],
+                    ['z', 'Great Britain'],
+                    ['x', 'History'],
+                    ['y', '20th century.'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '651', {
+                  ind1: ' ',
+                  ind2: '0',
+                  subfields: [
+                    ['a', 'Great Britain'],
+                    ['x', 'Kings and rulers'],
+                    ['v', 'Biography.'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '655', {
+                  ind1: ' ',
+                  ind2: '2',
+                  subfields: ['a', 'Documentaries and Factual Films'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '700', {
+                  ind1: '1',
+                  ind2: ' ',
+                  subfields: ['a', 'Muir, Jamie.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTag(record, '710', {
+                  ind1: '2',
+                  ind2: ' ',
+                  subfields: ['a', 'British Broadcasting Corporation.'],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '830', {
+                  ind1: ' ',
+                  ind2: '0',
+                  subfields: [
+                    ['a', 'Royal collection ;'],
+                    ['v', '3.'],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '876', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', testData.importedMarcInstance.items.barcode],
+                    ['3', testData.importedMarcInstance.holdings.hrid],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '901', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', testData.importedMarcInstance.holdings.hrid],
+                    ['b', testData.importedMarcInstance.holdings.id],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByFindingSubfield(record, '901', {
+                  findBySubfield: 'a',
+                  findByValue: testData.importedMarcInstance.marcHoldings.hrid,
+                  subfields: [
+                    ['a', testData.importedMarcInstance.marcHoldings.hrid],
+                    ['b', testData.importedMarcInstance.marcHoldings.id],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '902', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', testData.importedMarcInstance.items.hrid],
+                    ['b', testData.importedMarcInstance.items.id],
+                    ['3', testData.importedMarcInstance.holdings.hrid],
+                  ],
                 });
               },
             ];
 
-            const recordsToVerify = allInstances.map((instance) => ({
-              uuid: instance.uuid,
-              assertions: customMappingAssertions(instance),
-            }));
+            const recordsToVerify = allInstances.map((instance) => {
+              if (instance.uuid === testData.importedMarcInstance.uuid) {
+                return {
+                  uuid: instance.uuid,
+                  assertions: [...commonAssertions(instance), ...importedMarcAssertions],
+                };
+              }
+
+              return {
+                uuid: instance.uuid,
+                assertions: [...commonAssertions(instance), ...createdMarcAssertions(instance)],
+              };
+            });
 
             parseMrcFileContentAndVerify(exportedFileName, recordsToVerify, recordsCount, false);
           });

@@ -8,7 +8,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import {
   getBibliographicSpec,
-  findStandardField,
+  findSystemField,
   findLocalField,
   validateApiResponse,
 } from '../../../../support/api/specifications-helper';
@@ -71,10 +71,7 @@ describe('MARC', () => {
               validateApiResponse(response, 200);
 
               // Find field 245 (try standard first, then system)
-              let field245 = findStandardField(response.body.fields, testData.tags.tag245);
-              if (!field245) {
-                field245 = response.body.fields.find((f) => f.tag === testData.tags.tag245);
-              }
+              const field245 = findSystemField(response.body.fields, testData.tags.tag245);
               // eslint-disable-next-line no-unused-expressions
               expect(field245, 'Field 245 exists').to.exist;
 

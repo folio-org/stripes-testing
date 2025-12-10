@@ -69,7 +69,7 @@ const resetAllBtn = Button('Reset all');
 const navigationInstancesButton = Button({
   id: 'segment-navigation-instances',
 });
-const paneFilterSection = Section({ id: 'pane-filter' });
+const paneFilterSection = Section({ id: or('pane-filter', 'browse-inventory-filters-pane') });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instancesTagsSection = Section({ id: including('Tags') });
@@ -105,6 +105,8 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
+const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1630,5 +1632,58 @@ export default {
       MultiColumnListCell({ column: columnName, row: rowIndex }),
     );
     cy.expect(targetCell.has({ content: expectedValue }));
+  },
+
+  verifySearchErrorText(query) {
+    cy.expect(paneResultsSection.find(HTML(getSearchErrorText(query))).exists());
+  },
+
+  clickSearchAndVerifySearchExecuted() {
+    cy.intercept('/search/instances*').as('getInstances');
+    this.clickSearch();
+    cy.wait('@getInstances').then((interception) => {
+      expect(interception.response.statusCode).to.eq(200);
+      if (interception.response.body.totalRecords === 0) {
+        this.verifyNoRecordsFound();
+      } else {
+        this.verifyResultListExists();
+      }
+    });
+  },
+
+  verifyNumberOfSelectedOptionsInMultiSelectFilter(accordionName, selectedCount) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.expect(multiSelect.has({ selectedCount }));
+  },
+
+  resizeSearchInputField(height, width) {
+    cy.do(inventorySearchAndFilter.resize(height, width));
+  },
+
+  verifySearchInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(inventorySearchAndFilter.has({ height }));
+    if (width !== null) cy.expect(inventorySearchAndFilter.has({ width }));
+  },
+
+  resizeBrowseInputField(height, width) {
+    cy.do(browseSearchInputField.resize(height, width));
+  },
+
+  verifyBrowseInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(browseSearchInputField.has({ height }));
+    if (width !== null) cy.expect(browseSearchInputField.has({ width }));
+  },
+
+  checkClearIconShownInBrowseField(isShown = true) {
+    if (isShown) cy.expect(browseSearchInputField.find(clearIcon).exists());
+    else cy.expect(browseSearchInputField.find(clearIcon).absent());
+  },
+
+  focusOnBrowseField() {
+    cy.do(browseSearchInputField.focus());
+  },
+
+  verifyBrowseResultListExists(isExist = true) {
+    cy.expect(isExist ? anyBrowseResultList.exists() : anyBrowseResultList.absent());
   },
 };

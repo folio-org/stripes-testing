@@ -138,9 +138,8 @@ describe('MARC', () => {
           );
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.saveAndCheck();
-
-          const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
-          const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
+          const today = DateTools.getCurrentDateForFiscalYear();
+          const tomorrow = DateTools.getDayTomorrowDateForFiscalYear();
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal(today, tomorrow);
           MarcAuthorities.clickExportButton();
@@ -182,6 +181,24 @@ describe('MARC', () => {
             ],
           );
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+
+          const expectedData = {
+            naturalIdOld: 'n83130007',
+            naturalIdNew: 'n83130007',
+            headingNew:
+              'C375231Beethoven, Ludwig Jr, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+            headingOld:
+              'C375231Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+            sourceFileNew: 'LC Name Authority file (LCNAF)',
+            sourceFileOld: 'LC Name Authority file (LCNAF)',
+            lbTotal: 2,
+            lbUpdated: 2,
+            startedAt: today,
+            startedByUserFirstName: testData.userProperties.firstName,
+            startedByUserLastName: testData.userProperties.lastName,
+          };
+
+          MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedData);
         },
       );
     });
