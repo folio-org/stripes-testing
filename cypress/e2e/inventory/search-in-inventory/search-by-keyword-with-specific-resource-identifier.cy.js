@@ -34,7 +34,7 @@ describe('Inventory', () => {
           instanceTypeId = instanceTypes[0].id;
         });
         InventoryInstances.getIdentifierTypes({
-          query: `name="${testData.identifierTypeName}"`,
+          query: `name=="${testData.identifierTypeName}"`,
         }).then((identifierType) => {
           identifierTypeId = identifierType.id;
         });
@@ -53,7 +53,7 @@ describe('Inventory', () => {
         }).then((instanceData) => {
           instanceIds.push(instanceData.instanceId);
 
-          cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+          cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
             testData.user = userProperties;
 
             cy.login(testData.user.username, testData.user.password, {
