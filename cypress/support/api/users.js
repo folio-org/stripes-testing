@@ -256,85 +256,95 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
   });
 });
 
-Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
-  if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
-    cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
-      cy.updateRolesForUserApi(userId, [roleId]);
-    });
-  } else if (Cypress.env('eureka')) {
-    let capabilitiesIds;
-    let capabilitySetsIds;
-    const permissionNames = [];
-    permissions.forEach((permission) => {
-      for (const permissionObject in permissionsList) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (permissionsList.hasOwnProperty(permissionObject)) {
-          const { gui, internal } = permissionsList[permissionObject];
-          if (gui.includes(permission)) {
-            permissionNames.push(internal);
-            break;
+// shouldReplace - if true, existing permissions will be replaced with new ones
+// if false, new permissions will be added to existing ones
+Cypress.Commands.add(
+  'assignPermissionsToExistingUser',
+  (userId, permissions = [], shouldReplace = false) => {
+    if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+      cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
+        cy.updateRolesForUserApi(userId, [roleId]);
+      });
+    } else if (Cypress.env('eureka')) {
+      let capabilitiesIds;
+      let capabilitySetsIds;
+      const permissionNames = [];
+      permissions.forEach((permission) => {
+        for (const permissionObject in permissionsList) {
+          // eslint-disable-next-line no-prototype-builtins
+          if (permissionsList.hasOwnProperty(permissionObject)) {
+            const { gui, internal } = permissionsList[permissionObject];
+            if (gui.includes(permission)) {
+              permissionNames.push(internal);
+              break;
+            }
           }
         }
-      }
-    });
+      });
 
-    if (permissionNames.length) {
-      cy.okapiRequest({
-        path: 'capabilities',
-        searchParams: {
-          query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
-        },
-        isDefaultSearchParamsRequired: false,
-      }).then((responseCapabs) => {
-        capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
+      if (permissionNames.length) {
         cy.okapiRequest({
-          path: 'capability-sets',
+          path: 'capabilities',
           searchParams: {
             query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
           },
           isDefaultSearchParamsRequired: false,
-        }).then((responseSets) => {
-          capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+        }).then((responseCapabs) => {
+          capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
+          cy.okapiRequest({
+            path: 'capability-sets',
+            searchParams: {
+              query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+            },
+            isDefaultSearchParamsRequired: false,
+          }).then((responseSets) => {
+            capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
 
-          permissionNames.forEach((permissionName) => {
-            // eslint-disable-next-line no-unused-expressions
-            cy.expect(
-              responseCapabs.body.capabilities.filter(
-                (capab) => capab.permission === permissionName,
-              ).length > 0 ||
-                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
-                  .length > 0,
-              `Capabilities/sets found for "${permissionName}"`,
-            ).to.be.true;
+            permissionNames.forEach((permissionName) => {
+              // eslint-disable-next-line no-unused-expressions
+              cy.expect(
+                responseCapabs.body.capabilities.filter(
+                  (capab) => capab.permission === permissionName,
+                ).length > 0 ||
+                  responseSets.body.capabilitySets.filter(
+                    (set) => set.permission === permissionName,
+                  ).length > 0,
+                `Capabilities/sets found for "${permissionName}"`,
+              ).to.be.true;
+            });
+
+            if (capabilitiesIds.length === 0) {
+              cy.log('Capabilities not found ');
+            } else if (shouldReplace) {
+              cy.updateCapabilitiesForUserApi(userId, capabilitiesIds);
+            } else {
+              cy.addCapabilitiesToNewUserApi(userId, capabilitiesIds);
+            }
+
+            if (capabilitySetsIds.length === 0) {
+              cy.log('Capability sets not found ');
+            } else if (shouldReplace) {
+              cy.updateCapabilitySetsForUserApi(userId, capabilitySetsIds);
+            } else {
+              cy.addCapabilitySetsToNewUserApi(userId, capabilitySetsIds);
+            }
           });
-
-          if (capabilitiesIds.length === 0) {
-            cy.log('Capabilities not found ');
-          } else {
-            cy.addCapabilitiesToNewUserApi(userId, capabilitiesIds);
-          }
-
-          if (capabilitySetsIds.length === 0) {
-            cy.log('Capability sets not found ');
-          } else {
-            cy.addCapabilitySetsToNewUserApi(userId, capabilitySetsIds);
-          }
+        });
+      }
+    } else {
+      const queryField = 'displayName';
+      cy.getPermissionsApi({
+        query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+      }).then((permissionsResponse) => {
+        cy.getUserPermissions(userId).then((permissionId) => {
+          cy.addPermissionsToExistingUserApi(permissionId, userId, [
+            ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+          ]);
         });
       });
     }
-  } else {
-    const queryField = 'displayName';
-    cy.getPermissionsApi({
-      query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-    }).then((permissionsResponse) => {
-      cy.getUserPermissions(userId).then((permissionId) => {
-        cy.addPermissionsToExistingUserApi(permissionId, userId, [
-          ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
-        ]);
-      });
-    });
-  }
-});
+  },
+);
 
 Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
   cy.okapiRequest({

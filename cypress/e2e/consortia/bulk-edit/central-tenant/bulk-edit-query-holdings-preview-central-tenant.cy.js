@@ -88,7 +88,11 @@ describe('Bulk-edit', () => {
             cy.affiliateUserToTenant({
               tenantId: affiliation,
               userId: user.userId,
-              permissions: defaultPerms,
+              permissions: [
+                permissions.uiInventoryViewCreateHoldings.gui,
+                permissions.bulkEditQueryView.gui,
+                permissions.bulkEditLogsView.gui,
+              ],
             });
           });
 
@@ -255,8 +259,6 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
             // Step 7: Check checkbox next to the "Member" column name under "Show columns"
-            // Checkbox is checked next to the "Member" column name under "Show columns"
-            // "Member" column is displayed in the table with matched Holdings records under "Preview of record matched" accordion populated with tenant name
             BulkEditSearchPane.changeShowColumnCheckbox(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.MEMBER,
             );
@@ -511,11 +513,6 @@ describe('Bulk-edit', () => {
                     cy.logout();
                     cy.getAdminToken();
                     cy.removeAffiliationFromUser(Affiliations.College, user.userId);
-                    cy.setTenant(Affiliations.University);
-                    cy.updateCapabilitiesForUserApi(user.userId, []);
-                    cy.updateCapabilitySetsForUserApi(user.userId, []);
-                    cy.resetTenant();
-                    cy.removeAffiliationFromUser(Affiliations.University, user.userId);
 
                     // Add limited permissions to University (no view permission)
                     cy.affiliateUserToTenant({
@@ -526,6 +523,7 @@ describe('Bulk-edit', () => {
                         permissions.bulkEditQueryView.gui,
                         permissions.bulkEditLogsView.gui,
                       ],
+                      shouldReplacePerms: true,
                     });
 
                     cy.login(user.username, user.password, {
