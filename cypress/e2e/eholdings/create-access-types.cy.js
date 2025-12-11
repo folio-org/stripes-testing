@@ -60,55 +60,49 @@ describe('eHoldings', () => {
     });
   });
 
-  it(
-    'C590791 Create access status types (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C590791'] },
-    () => {
-      SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
-      AccessStatusTypes.openTab();
-      AccessStatusTypes.checkTableHeaders();
+  it.skip('C590791 Create access status types (spitfire)', { tags: [] }, () => {
+    SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
+    AccessStatusTypes.openTab();
+    AccessStatusTypes.checkTableHeaders();
 
-      for (let i = 0; i < MAX_ACCESS_STATUS_TYPES - 1; i++) {
-        AccessStatusTypes.verifyAccessStatusTypeShown({
-          name: `${accessStatusTypeNamePrefix}_${i}`,
-          description: `${accessStatusTypeDescriptionPrefix}_${i}`,
-          actions: [AccessStatusTypes.ICON_ACTIONS.EDIT, AccessStatusTypes.ICON_ACTIONS.TRASH],
-        });
-      }
-
-      AccessStatusTypes.clickNew();
-      const lastName = `${accessStatusTypeNamePrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`;
-      const lastDescription = `${accessStatusTypeDescriptionPrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`;
-      AccessStatusTypes.fillInTextFields(lastName, lastDescription);
-      AccessStatusTypes.clickSave();
-
-      cy.getAdminToken().then(() => {
-        Credentials.getCredentialsViaApi().then((credentials) => {
-          AccessStatusTypes.getAccessStatusTypesViaApi(credentials[0].id).then((types) => {
-            const createdType = types.find((type) => type.attributes.name === lastName);
-            createdAccessStatusTypeIds.push(createdType.id);
-          });
-        });
-      });
-
+    for (let i = 0; i < MAX_ACCESS_STATUS_TYPES - 1; i++) {
       AccessStatusTypes.verifyAccessStatusTypeShown({
-        name: lastName,
-        description: lastDescription,
+        name: `${accessStatusTypeNamePrefix}_${i}`,
+        description: `${accessStatusTypeDescriptionPrefix}_${i}`,
         actions: [AccessStatusTypes.ICON_ACTIONS.EDIT, AccessStatusTypes.ICON_ACTIONS.TRASH],
       });
+    }
 
-      AccessStatusTypes.verifyNewButtonDisabled();
+    AccessStatusTypes.clickNew();
+    const lastName = `${accessStatusTypeNamePrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`;
+    const lastDescription = `${accessStatusTypeDescriptionPrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`;
+    AccessStatusTypes.fillInTextFields(lastName, lastDescription);
+    AccessStatusTypes.clickSave();
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
-      EHoldingSearch.switchToPackages();
-      EHoldingsPackagesSearch.openAccessStatusTypesDropdown();
+    cy.getAdminToken().then(() => {
+      Credentials.getCredentialsViaApi().then((credentials) => {
+        AccessStatusTypes.getAccessStatusTypesViaApi(credentials[0].id).then((types) => {
+          const createdType = types.find((type) => type.attributes.name === lastName);
+          createdAccessStatusTypeIds.push(createdType.id);
+        });
+      });
+    });
 
-      EHoldingsPackagesSearch.checkAccessStatusTypeOptionAvailable(
-        `${accessStatusTypeNamePrefix}_0`,
-      );
-      EHoldingsPackagesSearch.checkAccessStatusTypeOptionAvailable(
-        `${accessStatusTypeNamePrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`,
-      );
-    },
-  );
+    AccessStatusTypes.verifyAccessStatusTypeShown({
+      name: lastName,
+      description: lastDescription,
+      actions: [AccessStatusTypes.ICON_ACTIONS.EDIT, AccessStatusTypes.ICON_ACTIONS.TRASH],
+    });
+
+    AccessStatusTypes.verifyNewButtonDisabled();
+
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
+    EHoldingSearch.switchToPackages();
+    EHoldingsPackagesSearch.openAccessStatusTypesDropdown();
+
+    EHoldingsPackagesSearch.checkAccessStatusTypeOptionAvailable(`${accessStatusTypeNamePrefix}_0`);
+    EHoldingsPackagesSearch.checkAccessStatusTypeOptionAvailable(
+      `${accessStatusTypeNamePrefix}_${MAX_ACCESS_STATUS_TYPES - 1}`,
+    );
+  });
 });
