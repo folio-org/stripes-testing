@@ -140,9 +140,10 @@ describe('MARC', () => {
             'Authority source',
             'Number of titles',
           ];
-
+          MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthority.checkPresentedColumns(checkPresentedColumns);
+          MarcAuthorities.verifyRecordFound(testData.authority.title);
         },
       );
 

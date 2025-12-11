@@ -37,6 +37,7 @@ import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
 import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -69,7 +70,7 @@ const resetAllBtn = Button('Reset all');
 const navigationInstancesButton = Button({
   id: 'segment-navigation-instances',
 });
-const paneFilterSection = Section({ id: 'pane-filter' });
+const paneFilterSection = Section({ id: or('pane-filter', 'browse-inventory-filters-pane') });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instancesTagsSection = Section({ id: including('Tags') });
@@ -106,6 +107,9 @@ const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
 const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
+const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
+const URI_CHAR_LIMIT = 8192;
+const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -511,12 +515,12 @@ export default {
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
-      cy.wait(500),
-      searchButton.focus(),
-      cy.wait(500),
-      searchButton.click(),
-      cy.wait(1000),
     ]);
+    cy.wait(500);
+    cy.do(searchButton.focus());
+    cy.wait(500);
+    cy.do(searchButton.click());
+    cy.wait(1000);
   },
 
   switchToItem: () => {
@@ -927,8 +931,20 @@ export default {
     cy.do([browseSearchInputField.fillIn(searchValue)]);
   },
 
-  fillInSearchQuery(searchValue) {
-    cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+  fillInSearchQuery(searchValue, { directInput = false } = {}) {
+    if (directInput) {
+      cy.get('#input-inventory-search').then(($textarea) => {
+        const textarea = $textarea[0];
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLTextAreaElement.prototype,
+          'value',
+        ).set;
+        nativeInputValueSetter.call(textarea, searchValue);
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    } else {
+      cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+    }
   },
 
   browseSearch(searchValue) {
@@ -1648,5 +1664,46 @@ export default {
         this.verifyResultListExists();
       }
     });
+  },
+
+  verifyNumberOfSelectedOptionsInMultiSelectFilter(accordionName, selectedCount) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.expect(multiSelect.has({ selectedCount }));
+  },
+
+  resizeSearchInputField(height, width) {
+    cy.do(inventorySearchAndFilter.resize(height, width));
+  },
+
+  verifySearchInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(inventorySearchAndFilter.has({ height }));
+    if (width !== null) cy.expect(inventorySearchAndFilter.has({ width }));
+  },
+
+  resizeBrowseInputField(height, width) {
+    cy.do(browseSearchInputField.resize(height, width));
+  },
+
+  verifyBrowseInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(browseSearchInputField.has({ height }));
+    if (width !== null) cy.expect(browseSearchInputField.has({ width }));
+  },
+
+  checkClearIconShownInBrowseField(isShown = true) {
+    if (isShown) cy.expect(browseSearchInputField.find(clearIcon).exists());
+    else cy.expect(browseSearchInputField.find(clearIcon).absent());
+  },
+
+  focusOnBrowseField() {
+    cy.do(browseSearchInputField.focus());
+  },
+
+  verifyBrowseResultListExists(isExist = true) {
+    cy.expect(isExist ? anyBrowseResultList.exists() : anyBrowseResultList.absent());
+  },
+
+  verifyUriCharLimitMessageAndCallout() {
+    cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
+    InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
   },
 };
