@@ -565,7 +565,7 @@ Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
       },
       (response) => response.body.status === 'CREATED',
       {
-        limit: 10,
+        limit: 14,
         timeout: 80000,
         delay: 5000,
       },
