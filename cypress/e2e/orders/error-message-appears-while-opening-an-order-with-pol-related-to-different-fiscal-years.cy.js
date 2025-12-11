@@ -246,7 +246,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    OrderLinesLimit.setPOLLimitViaApi(99);
+    OrderLinesLimit.setPOLLimit(99);
 
     return createFinanceData().then(() => {
       return createOrderData().then(() => {
