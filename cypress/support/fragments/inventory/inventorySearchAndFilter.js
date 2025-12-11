@@ -928,6 +928,11 @@ export default {
 
   fillInSearchQuery(searchValue, { directInput = false } = {}) {
     if (directInput) {
+      /*
+        Required for very large queries - usual methods too slow (test may hang for 1+ mins).
+        Setting input value directly, without simulating user input.
+        Using native input value setter to trigger input event correctly.
+      */
       cy.get('#input-inventory-search').then(($textarea) => {
         const textarea = $textarea[0];
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
