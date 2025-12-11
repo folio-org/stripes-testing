@@ -63,10 +63,10 @@ describe('Inventory', () => {
         { length: contributorsData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const sharedContributors = contributorsData.filter(
-        (c) => c.affiliation === Affiliations.Consortia,
-      );
-      const sharedInstanceIndexes = sharedContributors.map((_, index) => index);
+      const sharedInstanceIndexes = contributorsData
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.affiliation === Affiliations.Consortia)
+        .map(({ index }) => index);
       let user;
       let memberLocation;
 
@@ -178,6 +178,12 @@ describe('Inventory', () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         cy.setTenant(Affiliations.College);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+          memberLocation.institutionId,
+          memberLocation.campusId,
+          memberLocation.libraryId,
+          memberLocation.id,
+        );
       });
 
       it(
