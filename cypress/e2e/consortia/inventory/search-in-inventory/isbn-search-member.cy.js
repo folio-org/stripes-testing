@@ -56,7 +56,7 @@ describe('Inventory', () => {
           identifierValue,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
-          holdingsAffiliation: Affiliations.Consortia,
+          holdingsAffiliation: Affiliations.College,
         },
         {
           identifierValue,
