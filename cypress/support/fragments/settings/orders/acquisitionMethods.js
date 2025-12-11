@@ -69,9 +69,9 @@ export default {
     cy.do([TextField().fillIn(`${newAMName}`), acquisitionMethodPane.find(saveButton).click()]);
   },
 
-  deleteAcquisitionMethod: (AMName) => {
+  deleteAcquisitionMethod: (AMName, shouldDelete = true) => {
     cy.do(
-      MultiColumnListCell({ content: `${AMName}` }).perform((element) => {
+      MultiColumnListCell({ content: AMName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.do(
           getEditableListRow(rowNumber)
@@ -84,13 +84,39 @@ export default {
     cy.expect(
       confirmationModal.has({ message: `The acquisition method ${AMName} will be deleted.` }),
     );
-    cy.do(Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click());
-    InteractorsTools.checkCalloutMessage(
-      `The acquisition method ${AMName} was successfully deleted`,
-    );
-  },
 
-  checkDeletedAcquisitionMethod: (AMName) => {
-    cy.expect(MultiColumnListCell(AMName).absent());
+    if (shouldDelete) {
+      cy.do(Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click());
+      InteractorsTools.checkCalloutMessage(
+        `The acquisition method ${AMName} was successfully deleted`,
+      );
+      cy.expect(MultiColumnListCell(AMName).absent());
+    } else {
+      cy.do(confirmationModal.find(Button('Delete')).click());
+      const cannotDeleteModal = Modal('Cannot delete the acquisition method');
+      cy.expect(
+        cannotDeleteModal.has({
+          message:
+            'This acquisition method cannot be deleted, as it is in use by one or more records.',
+        }),
+      );
+      cy.do(cannotDeleteModal.find(Button('Okay')).click());
+      cy.expect(MultiColumnListCell(AMName).exists());
+    }
+  },
+  checkSystemAcquisitionMethodCannotBeDeleted: (AMName) => {
+    cy.do(
+      MultiColumnListCell({ content: AMName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.expect([
+          getEditableListRow(rowNumber)
+            .find(Button({ icon: 'edit' }))
+            .absent(),
+          getEditableListRow(rowNumber)
+            .find(Button({ icon: 'trash' }))
+            .absent(),
+        ]);
+      }),
+    );
   },
 };
