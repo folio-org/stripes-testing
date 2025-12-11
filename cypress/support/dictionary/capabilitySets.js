@@ -42,6 +42,16 @@ export default {
     resource: 'UI-Authorization-Policies Settings Admin',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiDataExportSettingsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Export Settings',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiDataExportSettingsEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Export Settings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiInventorySettingsHoldingsSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Holdings-Sources',
@@ -208,6 +218,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiMarcAuthoritiesAuthorityRecordEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
