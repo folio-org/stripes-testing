@@ -48,7 +48,7 @@ let matchedRecordsQueryFileInstanceUUID;
 let errorsFileHoldingsUUID;
 
 // Error message templates
-const errorNoPermissionTemplate = (holdingId) => `User ${user.username} does not have required permission to view the holdings record - id=${holdingId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoPermissionTemplate = (holdingId) => `User ${user.username} does not have required permission to view the holdings record - id=${holdingId} on the tenant ${Affiliations.University.toLowerCase()}`;
 
 const createHoldingsForTenant = ({ holdingIdsArray, holdingHridsArray, numberOfHoldings = 2 }) => {
   const createHoldingRecord = () => {
@@ -182,9 +182,7 @@ describe('Bulk-edit', () => {
         'C503016 Query - Verify "Preview of record matched" when querying by valid Holdings identifiers in Central tenant (consortia) (firebird)',
         { tags: ['criticalPathECS', 'firebird', 'C503016'] },
         () => {
-          cy.log('=== STEPS 1-4: Query by Holdings UUIDs ===');
-          // Step 1: Select "Inventory - holdings" radio button under "Record types" accordion
-          // Click "Build query" button
+          // Step 1: Build query for Holdings UUIDs
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.clickBuildQueryButton();
@@ -192,8 +190,7 @@ describe('Bulk-edit', () => {
           QueryModal.cancelDisabled(false);
           QueryModal.runQueryDisabled();
 
-          // Step 2: Select "Holdings — UUID" field, Select "in" operator
-          // In "Value" text box type prepared in Preconditions Holdings UUIDs separated by a comma
+          // Step 2: Fill in Holdings UUIDs with "in" operator
           const holdingsUUIDs = [
             ...folioInstance.holdingIdsCollege,
             ...folioInstance.holdingIdsUniversity,
@@ -206,18 +203,14 @@ describe('Bulk-edit', () => {
           );
           QueryModal.testQueryDisabled(false);
 
-          // Step 3: Click "Test query" button
-          // Preview of the matched records is displayed with matched Holdings records
-          // The number of matched records is correct
-          // "Run query" button becomes enabled
+          // Step 3: Test query
           cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.testQuery();
           QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyNumberOfMatchedRecords(14);
           QueryModal.runQueryDisabled(false);
 
-          // Step 4: Click "Run query" button
-          // Check the Preview of record matched on "Bulk edit query" page
+          // Step 4: Run query
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
@@ -228,14 +221,6 @@ describe('Bulk-edit', () => {
             )[1];
             matchedRecordsQueryFileHoldingsUUID = `*-Matched-Records-Query-${interceptedUuid}.csv`;
 
-            // The "Build query" form closes
-            // The "Bulk edit query" pane includes the following elements:
-            // "Bulk edit query" pane name with the icon
-            // "<count> holdings records matched" text with correct number of matched records from both member tenants
-            // Built query next to "Query:" label
-            // The "Preview of record matched" accordion shows a table populated with matched Holdings records
-            // Paginator is displayed at the bottom of "Preview of record matched"
-            // "Actions" menu (enabled)
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
@@ -244,10 +229,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
-            cy.log('=== STEP 5: Verify matched Holdings records in table ===');
-            // Step 5: Check the matched Holdings records in the table under "Preview of record matched" accordion
-            // The table contains matched records from member-1 and member-2 tenants populated with appropriate Holdings records values
-            // Enable Holdings UUID column (hidden by default)
+            // Step 5: Verify matched Holdings records (enable UUID column)
             BulkEditSearchPane.changeShowColumnCheckbox(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
             );
@@ -268,13 +250,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            cy.log('=== STEP 6-7: Verify Actions menu and Member column ===');
-            // Step 6: Click "Actions" menu
-            // The "Actions" menu shows the following options:
-            // "Download matched records (CSV)"
-            // Under "Show columns":
-            // Search box with placeholder "Search column name"
-            // Scrollable list of available columns name (columns already displayed in "Preview of record matched" table have a checked checkbox)
+            // Step 6-7: Verify Actions menu and Member column
             BulkEditActions.openActions();
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
@@ -300,10 +276,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            cy.log('=== STEP 8: Download and verify matched records CSV ===');
-            // Step 8: Click "Actions" menu => Click "Download matched records (CSV)" element
-            // The .csv file with all valid matched records is saved to the local machine with the name <yyyy-mm-dd-Matched-Records-Query-<bulk-edit-job-id>.csv
-            // The file contains matched records from member-1 and member-2 tenants populated with appropriate Holdings records values
+            // Step 8: Download and verify matched records CSV
             BulkEditActions.openActions();
             BulkEditActions.downloadMatchedResults();
             folioInstance.holdingIdsCollege
@@ -318,11 +291,7 @@ describe('Bulk-edit', () => {
                 );
               });
 
-            cy.log('=== STEPS 9-10: Query by Holdings HRID ===');
-            // Step 9: Click "Bulk edit" button in the header
-            // Click "Query" tab
-            // Select "Inventory - holdings" radio button under "Record types" accordion
-            // Click "Build query" button
+            // Step 9-10: Query by Holdings HRID
             BulkEditSearchPane.clickToBulkEditMainButton();
             BulkEditSearchPane.openQuerySearch();
             BulkEditSearchPane.checkHoldingsRadio();
@@ -331,9 +300,7 @@ describe('Bulk-edit', () => {
             QueryModal.cancelDisabled(false);
             QueryModal.runQueryDisabled();
 
-            // Step 10: Select "Holding — HRID" field, Select "equals" operator
-            // In "Value" text box type prepared in Preconditions Holdings HRID
-            // Click "Test query" button
+            // Step 10: Fill in Holdings HRID with "equals" operator
             const holdingHRID = folioInstance.holdingHridsCollege[0];
             QueryModal.selectField(holdingsFieldValues.holdingsHrid);
             QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
@@ -359,26 +326,20 @@ describe('Bulk-edit', () => {
               )[1];
               matchedRecordsQueryFileHoldingsHRID = `*-Matched-Records-Query-${interceptedUuid2}.csv`;
 
-              // The "Build query" form closes
-              // The "Bulk edit query" pane includes the following elements
               BulkEditSearchPane.verifyBulkEditQueryPaneExists();
               BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 holdings');
               BulkEditSearchPane.verifyQueryHeadLine(`(holdings.hrid == ${holdingHRID})`);
               BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
               BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
-              cy.log('=== STEP 12: Verify matched Holdings HRID in table ===');
-              // Step 12: Check the matched Holdings records in the table under "Preview of record matched" accordion
-              // The table contains matched records from member tenants populated with appropriate Holdings records values
+              // Step 12: Verify matched Holdings HRID
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 holdingHRID,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
                 holdingHRID,
               );
 
-              cy.log('=== STEP 13: Download and verify HRID matched records CSV ===');
-              // Step 13: Click "Actions" menu => Click "Download matched records (CSV)" element
-              // The .csv file with all valid matched records is saved to the local machine
+              // Step 13: Download and verify HRID matched records CSV
               BulkEditActions.openActions();
               BulkEditActions.downloadMatchedResults();
               BulkEditFiles.verifyValueInRowByUUID(
@@ -389,11 +350,7 @@ describe('Bulk-edit', () => {
                 holdingHRID,
               );
 
-              cy.log('=== STEPS 14-15: Query by Instance UUID (10+ holdings) ===');
-              // Step 14: Repeat Step 8 (Navigate back to Query tab)
-              // Select "Holding — Instance UUID" field, Select "equals" operator
-              // In "Value" text box type prepared in Preconditions Instance UUID (one Instance with more than 10 Holdings)
-              // Click "Test query" button
+              // Step 14-15: Query by Instance UUID (10+ holdings)
               BulkEditSearchPane.clickToBulkEditMainButton();
               BulkEditSearchPane.openQuerySearch();
               BulkEditSearchPane.checkHoldingsRadio();
@@ -409,12 +366,10 @@ describe('Bulk-edit', () => {
               cy.intercept('GET', '/query/**').as('waiterForQueryCompleted3');
               QueryModal.testQuery();
               QueryModal.waitForQueryCompleted('@waiterForQueryCompleted3');
-              // Total holdings = 3 (College) + 11 (University) = 14
-              QueryModal.verifyNumberOfMatchedRecords(14);
+              QueryModal.verifyNumberOfMatchedRecords(14); // Total: 3 College + 11 University
               QueryModal.runQueryDisabled(false);
 
-              // Step 15: Click "Run query" button
-              // Check the Preview of record matched on "Bulk edit query" page
+              // Step 15: Run query
               cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview3');
               QueryModal.clickRunQuery();
               QueryModal.verifyClosed();
@@ -425,8 +380,6 @@ describe('Bulk-edit', () => {
                 )[1];
                 matchedRecordsQueryFileInstanceUUID = `*-Matched-Records-Query-${interceptedUuid3}.csv`;
 
-                // The "Build query" form closes
-                // The "Bulk edit query" pane includes the following elements
                 BulkEditSearchPane.verifyBulkEditQueryPaneExists();
                 BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
                 BulkEditSearchPane.verifyQueryHeadLine(
@@ -435,11 +388,7 @@ describe('Bulk-edit', () => {
                 BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
                 BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
-                cy.log('=== STEP 16: Verify matched Holdings by Instance UUID ===');
-                // Step 16: Check the matched Holdings records in the table under "Preview of record matched" accordion
-                // The table contains matched records from member-1 and member-2 tenants populated with appropriate Holdings records values
-                // Enable Holdings UUID column (hidden by default)
-
+                // Step 16: Verify matched Holdings by Instance UUID
                 folioInstance.holdingIdsCollege
                   .concat(folioInstance.holdingIdsUniversity)
                   .forEach((holdingId) => {
@@ -450,9 +399,7 @@ describe('Bulk-edit', () => {
                     );
                   });
 
-                cy.log('=== STEP 17: Download and verify Instance UUID matched records CSV ===');
-                // Step 17: Click "Actions" menu => Click "Download matched records (CSV)" element
-                // The .csv file with all valid matched records is saved to the local machine
+                // Step 17: Download and verify Instance UUID matched records CSV
                 BulkEditActions.openActions();
                 BulkEditActions.downloadMatchedResults();
                 folioInstance.holdingIdsCollege
@@ -467,12 +414,10 @@ describe('Bulk-edit', () => {
                     );
                   });
 
-                cy.log('=== STEPS 18-20: Test affiliation removal scenario ===');
-                // Step 18: Remove User's affiliation in member-1 tenant
-                // Relogin in central tenant and open "Bulk edit" app, "Query" tab
+                // Step 18-20: Remove University affiliation, verify only College holdings matched
                 cy.logout();
                 cy.getAdminToken();
-                cy.removeAffiliationFromUser(Affiliations.College, user.userId);
+                cy.removeAffiliationFromUser(Affiliations.University, user.userId);
                 cy.resetTenant();
 
                 cy.login(user.username, user.password, {
@@ -480,8 +425,7 @@ describe('Bulk-edit', () => {
                   waiter: BulkEditSearchPane.waitLoading,
                 });
 
-                // Step 19: Repeat Steps 1-4
-                // Check the Preview of record matched on "Bulk edit query" page
+                // Step 19: Repeat query by Holdings UUIDs
                 BulkEditSearchPane.openQuerySearch();
                 BulkEditSearchPane.checkHoldingsRadio();
                 BulkEditSearchPane.clickBuildQueryButton();
@@ -494,28 +438,19 @@ describe('Bulk-edit', () => {
                 cy.intercept('GET', '/query/**').as('waiterForQueryCompleted4');
                 QueryModal.testQuery();
                 QueryModal.waitForQueryCompleted('@waiterForQueryCompleted4');
-                // Only University holdings should match (11 holdings)
-                QueryModal.verifyNumberOfMatchedRecords(11);
+                QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
 
                 cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview4');
                 QueryModal.clickRunQuery();
                 QueryModal.verifyClosed();
 
                 cy.wait('@getPreview4', getLongDelay()).then(() => {
-                  // The "Bulk edit query" pane includes the following elements
-                  // "<count> holdings records matched" text with correct number of matched records from member-2 tenant
                   BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                  BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('11 holdings');
-                  BulkEditSearchPane.verifyPaginatorInMatchedRecords(11);
+                  BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
+                  BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
-                  cy.log(
-                    '=== STEP 20: Verify only University holdings matched (no College affiliation) ===',
-                  );
-                  // Step 20: Check the matched Holdings records in the table under "Preview of record matched" accordion
-                  // The table contains matched records from member-2 tenant populated with appropriate Holdings records values
-                  // Enable Holdings UUID column (hidden by default)
-
-                  folioInstance.holdingIdsUniversity.forEach((holdingId) => {
+                  // Step 20: Verify only College holdings matched
+                  folioInstance.holdingIdsCollege.forEach((holdingId) => {
                     BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                       holdingId,
                       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
@@ -523,15 +458,11 @@ describe('Bulk-edit', () => {
                     );
                   });
 
-                  cy.log('=== STEPS 21-23: Test permission removal scenario ===');
-                  // Step 21: Assign back User's affiliation in member-1 tenant
-                  // Remove User's permissions in member-1 tenant
-                  // Relogin in central tenant and open "Bulk edit" app, "Query" tab
-
+                  // Step 21-23: Restore University affiliation, remove permissions, verify only College holdings
                   cy.logout();
                   cy.getAdminToken();
-                  cy.assignAffiliationToUser(Affiliations.College, user.userId);
-                  cy.setTenant(Affiliations.College);
+                  cy.assignAffiliationToUser(Affiliations.University, user.userId);
+                  cy.setTenant(Affiliations.University);
                   cy.updateCapabilitiesForUserApi(user.userId, []);
                   cy.updateCapabilitySetsForUserApi(user.userId, []);
                   cy.resetTenant();
@@ -541,8 +472,7 @@ describe('Bulk-edit', () => {
                     waiter: BulkEditSearchPane.waitLoading,
                   });
 
-                  // Step 22: Repeat Steps 1-4
-                  // Check the Preview of record matched on "Bulk edit query" page
+                  // Step 22: Repeat query by Holdings UUIDs
                   BulkEditSearchPane.openQuerySearch();
                   BulkEditSearchPane.checkHoldingsRadio();
                   BulkEditSearchPane.clickBuildQueryButton();
@@ -555,8 +485,7 @@ describe('Bulk-edit', () => {
                   cy.intercept('GET', '/query/**').as('waiterForQueryCompleted5');
                   QueryModal.testQuery();
                   QueryModal.waitForQueryCompleted('@waiterForQueryCompleted5');
-                  // Only University holdings should match (11 holdings)
-                  QueryModal.verifyNumberOfMatchedRecords(11);
+                  QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
 
                   cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                     'getPreview5',
@@ -565,19 +494,12 @@ describe('Bulk-edit', () => {
                   QueryModal.verifyClosed();
 
                   cy.wait('@getPreview5', getLongDelay()).then(() => {
-                    // The "Bulk edit query" pane includes the following elements
                     BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                    BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('11 holdings');
-                    BulkEditSearchPane.verifyPaginatorInMatchedRecords(11);
+                    BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
+                    BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
-                    cy.log(
-                      '=== STEP 23: Verify only University holdings matched (no College permissions) ===',
-                    );
-                    // Step 23: Check the matched Holdings records in the table under "Preview of record matched" accordion
-                    // The table contains matched records from member-2 tenant populated with appropriate Holdings records values
-                    // Enable Holdings UUID column (hidden by default)
-
-                    folioInstance.holdingIdsUniversity.forEach((holdingId) => {
+                    // Step 23: Verify only College holdings matched
+                    folioInstance.holdingIdsCollege.forEach((holdingId) => {
                       BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                         holdingId,
                         BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
@@ -585,25 +507,19 @@ describe('Bulk-edit', () => {
                       );
                     });
 
-                    cy.log('=== STEPS 24-27: Test insufficient permissions scenario ===');
-                    // Step 24: Remove User's affiliation in member-2 tenant
-                    // Add the following capability sets to User in member-1 tenant:
-                    // data - UI-Inventory Holdings - create
-                    // procedural - UI-Bulk-Edit Query - execute
-                    // data - UI-Bulk-Edit Logs - view
-                    // Relogin in central tenant and open "Bulk edit" app, "Query" tab
+                    // Step 24-27: Remove College affiliation, add limited permissions to University, verify errors
                     cy.logout();
                     cy.getAdminToken();
-                    cy.removeAffiliationFromUser(Affiliations.University, user.userId);
-                    cy.setTenant(Affiliations.College);
+                    cy.removeAffiliationFromUser(Affiliations.College, user.userId);
+                    cy.setTenant(Affiliations.University);
                     cy.updateCapabilitiesForUserApi(user.userId, []);
                     cy.updateCapabilitySetsForUserApi(user.userId, []);
                     cy.resetTenant();
-                    cy.removeAffiliationFromUser(Affiliations.College, user.userId);
+                    cy.removeAffiliationFromUser(Affiliations.University, user.userId);
 
-                    // Add limited permissions to College tenant
+                    // Add limited permissions to University (no view permission)
                     cy.affiliateUserToTenant({
-                      tenantId: Affiliations.College,
+                      tenantId: Affiliations.University,
                       userId: user.userId,
                       permissions: [
                         permissions.uiInventoryViewCreateHoldings.gui,
@@ -617,8 +533,7 @@ describe('Bulk-edit', () => {
                       waiter: BulkEditSearchPane.waitLoading,
                     });
 
-                    // Step 25: Repeat Steps 1-4
-                    // Check the Preview of record matched on "Bulk edit query" page
+                    // Step 25: Repeat query by Holdings UUIDs
                     BulkEditSearchPane.openQuerySearch();
                     BulkEditSearchPane.checkHoldingsRadio();
                     BulkEditSearchPane.clickBuildQueryButton();
@@ -631,8 +546,7 @@ describe('Bulk-edit', () => {
                     cy.intercept('GET', '/query/**').as('waiterForQueryCompleted6');
                     QueryModal.testQuery();
                     QueryModal.waitForQueryCompleted('@waiterForQueryCompleted6');
-                    // No holdings should match (0 holdings) - user doesn't have view permission
-                    QueryModal.verifyNumberOfMatchedRecords(0);
+                    QueryModal.verifyNumberOfMatchedRecords(0); // No view permission
 
                     cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                       'getPreview6',
@@ -646,25 +560,14 @@ describe('Bulk-edit', () => {
                       )[1];
                       errorsFileHoldingsUUID = `*-Matching-Records-Errors-Query-${interceptedUuid6}.csv`;
 
-                      // The "Build query" form closes
-                      // The "Bulk edit query" pane includes the following elements:
-                      // "Bulk edit query" pane name with the icon
-                      // "0 holdings records matched" text
-                      // Built query next to "Query:" label
-                      // The "Preview of record matched" accordion is absent
-                      // The "Errors" accordion shows a table populated with Top 10 Errors for Holdings records
                       BulkEditSearchPane.verifyBulkEditQueryPaneExists();
                       BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');
                       BulkEditSearchPane.verifyQueryHeadLine(
                         `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
                       );
-                      BulkEditSearchPane.verifyErrorLabel(14);
+                      BulkEditSearchPane.verifyErrorLabel(11);
 
-                      cy.log('=== STEP 26: Verify permission errors in table ===');
-                      // Step 26: Check the table populated with Top 10 Errors
-                      // The table contains:
-                      // Record identifier - populated with Holdings UUID
-                      // Reason for error - User <username> does not have required permission to view the holdings record
+                      // Step 26: Verify permission errors (top 11)
                       folioInstance.holdingIdsCollege
                         .concat(folioInstance.holdingIdsUniversity)
                         .slice(0, 10)
@@ -675,9 +578,7 @@ describe('Bulk-edit', () => {
                           );
                         });
 
-                      cy.log('=== STEP 27: Download and verify errors CSV ===');
-                      // Step 27: Click "Actions" menu => Click "Download errors (CSV)" option
-                      // The .csv file with all errors is saved to the local machine
+                      // Step 27: Download and verify errors CSV (all 11 errors)
                       BulkEditActions.openActions();
                       BulkEditActions.downloadErrors();
 
