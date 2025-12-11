@@ -290,18 +290,11 @@ describe('Data Import', () => {
 
           // create match profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-          MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
-          MatchProfiles.checkMatchProfilePresented(
-            collectionOfMatchProfiles[0].matchProfile.profileName,
-          );
-          MatchProfiles.createMatchProfile(collectionOfMatchProfiles[1].matchProfile);
-          MatchProfiles.checkMatchProfilePresented(
-            collectionOfMatchProfiles[1].matchProfile.profileName,
-          );
-          MatchProfiles.createMatchProfile(collectionOfMatchProfiles[2].matchProfile);
-          MatchProfiles.checkMatchProfilePresented(
-            collectionOfMatchProfiles[2].matchProfile.profileName,
-          );
+          collectionOfMatchProfiles.forEach((profile) => {
+            MatchProfiles.createMatchProfile(profile.matchProfile);
+            MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+            cy.wait(1000);
+          });
 
           // create job profile
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

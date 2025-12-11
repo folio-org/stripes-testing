@@ -297,4 +297,23 @@ export default {
   openInvoice(number) {
     cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
+
+  updateEncumbrances() {
+    this.expandActionsDropdown();
+    cy.do(Button('Update encumbrances').click());
+  },
+
+  checkApiErrorResponse(
+    interception,
+    { expectedStatus, expectedErrorCode, expectedErrorMessage } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedErrorCode) {
+      expect(interception.response.body.errors[0].code).to.equal(expectedErrorCode);
+    }
+    if (expectedErrorMessage) {
+      expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
+    }
+  },
 };
