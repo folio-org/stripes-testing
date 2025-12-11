@@ -16,6 +16,7 @@ describe('Inventory', () => {
       const randomDigitPostfix = `369044${randomDigits}${randomDigits}`;
       const queries = [
         `Of wilderness and wolves${randomDigitPostfix}`,
+        `wolves${randomDigitPostfix} Foxes${randomDigitPostfix} Bur${randomDigitPostfix} oak book 9781609381234${randomDigitPostfix} Sivils${randomDigitPostfix}, Matthew`,
         `wolves${randomDigitPostfix} Foxes${randomDigitPostfix} Bur${randomDigitPostfix} oak book Sivils${randomDigitPostfix}, Matthew`,
       ];
       const instanceTitlePrefix = `AT_C369044_MarcBibInstance_${randomPostfix}`;
@@ -33,6 +34,11 @@ describe('Inventory', () => {
             {
               tag: '008',
               content: QuickMarcEditor.defaultValid008Values,
+            },
+            {
+              tag: '020',
+              content: `$z 9781609381234${randomDigitPostfix} $q (pbk. ; $q acid-free paper)`,
+              indicators: ['\\', '\\'],
             },
             {
               tag: '100',
@@ -89,8 +95,10 @@ describe('Inventory', () => {
         () => {
           queries.forEach((query, index) => {
             if (index) InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-            InventoryInstances.searchByTitle(query);
-            InventorySearchAndFilter.verifySearchResult(including(instanceTitlePrefix));
+            InventorySearchAndFilter.fillInSearchQuery(query);
+            InventorySearchAndFilter.clickSearch();
+            if (index === 1) InventorySearchAndFilter.verifyNoRecordsFound();
+            else InventorySearchAndFilter.verifySearchResult(including(instanceTitlePrefix));
           });
         },
       );
