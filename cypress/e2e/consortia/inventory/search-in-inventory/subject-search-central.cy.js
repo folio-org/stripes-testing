@@ -6,7 +6,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -17,53 +16,52 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `AT_C411577_Instance_${randomPostfix}`;
-      const contributorPrefix = `AT_C411577_Contributor_${randomPostfix}`;
-      const contributorSearchOption = 'Contributor';
-      const contributorNameTypeName = 'Personal name';
-      const contributorsData = [
+      const instancePrefix = `AT_C411633_Instance_${randomPostfix}`;
+      const subjectPrefix = `AT_C411633_Subject_${randomPostfix}`;
+      const subjectSearchOption = 'Subject';
+      const subjectsData = [
         {
-          contributorValue: `${contributorPrefix} 1 Shared Marc`,
+          subjectValue: `${subjectPrefix} 1 Shared Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.Consortia,
           hasHoldings: false,
         },
         {
-          contributorValue: `${contributorPrefix} 2 Shared Marc`,
+          subjectValue: `${subjectPrefix} 2 Shared Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.Consortia,
           hasHoldings: true,
         },
         {
-          contributorValue: `${contributorPrefix} 3 Shared Folio`,
+          subjectValue: `${subjectPrefix} 3 Shared Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
           hasHoldings: false,
         },
         {
-          contributorValue: `${contributorPrefix} 4 Shared Folio`,
+          subjectValue: `${subjectPrefix} 4 Shared Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
           hasHoldings: true,
         },
         {
-          contributorValue: `${contributorPrefix} 5 Local Folio`,
+          subjectValue: `${subjectPrefix} 5 Local Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.College,
           hasHoldings: true,
         },
         {
-          contributorValue: `${contributorPrefix} 6 Local Marc`,
+          subjectValue: `${subjectPrefix} 6 Local Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.College,
           hasHoldings: true,
         },
       ];
       const instanceTitles = Array.from(
-        { length: contributorsData.length },
+        { length: subjectsData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const sharedInstanceIndexes = contributorsData
+      const sharedInstanceIndexes = subjectsData
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.affiliation === Affiliations.Consortia)
         .map(({ index }) => index);
@@ -73,67 +71,56 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411577');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411633');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             user = userProperties;
 
             cy.setTenant(Affiliations.College);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411577');
+            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411633');
           })
           .then(() => {
             cy.resetTenant();
             cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
-              BrowseContributors.getContributorNameTypes({
-                searchParams: { limit: 1, query: `name==${contributorNameTypeName}` },
-              }).then((contributorNameTypes) => {
-                contributorsData.forEach((contributorData, index) => {
-                  cy.setTenant(contributorData.affiliation);
+              subjectsData.forEach((subjectData, index) => {
+                cy.setTenant(subjectData.affiliation);
 
-                  if (contributorData.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO) {
-                    InventoryInstances.createFolioInstanceViaApi({
-                      instance: {
-                        instanceTypeId: instanceTypes[0].id,
-                        title: `${instanceTitles[index]}`,
-                        contributors: [
-                          {
-                            name: contributorData.contributorValue,
-                            contributorNameTypeId: contributorNameTypes[0].id,
-                            contributorTypeText: '',
-                            primary: false,
-                          },
-                        ],
-                      },
-                    }).then((createdInstanceData) => {
-                      contributorData.instanceId = createdInstanceData.instanceId;
-                    });
-                  } else {
-                    const marcInstanceFields = [
-                      {
-                        tag: '008',
-                        content: QuickMarcEditor.defaultValid008Values,
-                      },
-                      {
-                        tag: '245',
-                        content: `$a ${instanceTitles[index]}`,
-                        indicators: ['1', '1'],
-                      },
-                      {
-                        tag: '700',
-                        content: `$a ${contributorData.contributorValue}`,
-                        indicators: ['\\', '\\'],
-                      },
-                    ];
+                if (subjectData.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO) {
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId: instanceTypes[0].id,
+                      title: `${instanceTitles[index]}`,
+                      subjects: [{ value: subjectData.subjectValue }],
+                    },
+                  }).then((createdInstanceData) => {
+                    subjectData.instanceId = createdInstanceData.instanceId;
+                  });
+                } else {
+                  const marcInstanceFields = [
+                    {
+                      tag: '008',
+                      content: QuickMarcEditor.defaultValid008Values,
+                    },
+                    {
+                      tag: '245',
+                      content: `$a ${instanceTitles[index]}`,
+                      indicators: ['1', '1'],
+                    },
+                    {
+                      tag: '600',
+                      content: `$a ${subjectData.subjectValue}`,
+                      indicators: ['\\', '\\'],
+                    },
+                  ];
 
-                    cy.createMarcBibliographicViaAPI(
-                      QuickMarcEditor.defaultValidLdr,
-                      marcInstanceFields,
-                    ).then((instanceId) => {
-                      contributorData.instanceId = instanceId;
-                    });
-                  }
-                });
+                  cy.createMarcBibliographicViaAPI(
+                    QuickMarcEditor.defaultValidLdr,
+                    marcInstanceFields,
+                  ).then((instanceId) => {
+                    subjectData.instanceId = instanceId;
+                  });
+                }
               });
             });
           })
@@ -148,12 +135,12 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            contributorsData.forEach((contributorData) => {
-              if (contributorData.hasHoldings) {
+            subjectsData.forEach((subjectData) => {
+              if (subjectData.hasHoldings) {
                 cy.setTenant(Affiliations.College);
                 InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: contributorData.instanceId,
+                    instanceId: subjectData.instanceId,
                     permanentLocationId: memberLocation.id,
                     sourceId: folioSource.id,
                   });
@@ -169,7 +156,7 @@ describe('Inventory', () => {
               authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventorySearchAndFilter.selectSearchOption(contributorSearchOption);
+            InventorySearchAndFilter.selectSearchOption(subjectSearchOption);
           });
       });
 
@@ -189,10 +176,10 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411577 Search for Shared/Local records by "Contributor" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411577'] },
+        'C411633 Search for Shared/Local records by "Subject" search option from "Central" tenant (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C411633'] },
         () => {
-          InventorySearchAndFilter.fillInSearchQuery(contributorPrefix);
+          InventorySearchAndFilter.fillInSearchQuery(`${subjectPrefix}*`);
           InventorySearchAndFilter.clickSearch();
 
           sharedInstanceIndexes.forEach((instanceIndex) => {
