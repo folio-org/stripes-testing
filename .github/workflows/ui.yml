@@ -66,6 +66,22 @@ jobs:
           output.write("folio-npm-registry=" + current_npm_registry + "\n")
           output.write("folio-npm-registry-auth=" + current_npm_registry_auth + "\n")
           output.close()
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+      - id: changed-files
+        name: Get changed files
+        run: |
+            if ${{ github.event_name == 'pull_request' }}; then
+                echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+            else
+                echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+            fi
+      - name: List changed files
+        run: |
+            for file in ${{ steps.changed-files.outputs.changed_files }}; do
+                echo "$file was changed"
+            done
 
   install:
     name: Install
