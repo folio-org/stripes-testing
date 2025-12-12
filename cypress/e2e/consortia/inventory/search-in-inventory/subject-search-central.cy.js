@@ -162,10 +162,14 @@ describe('Inventory', () => {
       after('Delete user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-        InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         cy.setTenant(Affiliations.College);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+
+        cy.resetTenant();
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+
+        cy.setTenant(Affiliations.College);
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           memberLocation.institutionId,
           memberLocation.campusId,

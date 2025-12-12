@@ -216,18 +216,25 @@ describe('Inventory', () => {
       after('Delete user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
-        cy.setTenant(Affiliations.College);
+
+        cy.setTenant(Affiliations.University);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+
+        cy.resetTenant();
+        InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+
+        cy.setTenant(Affiliations.College);
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           member1Location.institutionId,
           member1Location.campusId,
           member1Location.libraryId,
           member1Location.id,
         );
+
         cy.setTenant(Affiliations.University);
-        InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           member2Location.institutionId,
           member2Location.campusId,
