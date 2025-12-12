@@ -48,7 +48,6 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.checkFileIsRunning(fileNames[1]);
         cy.wait(60000);
         Logs.waitFileIsImported(fileNames[1]);
         Logs.openFileDetails(fileNames[1]);
@@ -60,8 +59,8 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.checkFileIsRunning(fileNames[0]);
         cy.wait(30000);
+        Logs.waitFileIsImported(fileNames[0]);
         Logs.openFileDetails(fileNames[0]);
         FileDetails.verifyHeader(fileNames[0], numberOfRecords[0]);
         FileDetails.paginateThroughAllPages(1);
