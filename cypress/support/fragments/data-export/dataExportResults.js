@@ -4,6 +4,7 @@ import {
   ListRow,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiColumnList,
   matching,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
@@ -21,6 +22,10 @@ export default {
       }),
       MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),
     ]);
+  },
+
+  verifyTableWithResultsExists() {
+    cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
   },
 
   verifySuccessExportResultCells(

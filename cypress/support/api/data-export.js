@@ -42,3 +42,11 @@ Cypress.Commands.add('getDataExportJobProfile', (searchParams) => {
       return response.body.jobProfiles[0];
     });
 });
+
+Cypress.Commands.add('deleteDataExportJobExecutionFromLogs', (jobExecutionId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-export/job-executions/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
