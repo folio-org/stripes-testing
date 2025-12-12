@@ -49,7 +49,7 @@ jobs:
 
           complete_specs_list = ''
 
-          for file in changed_files:
+          for file in changed_files.split():
             if re.match(r'.+\.cy\.js', file):
               complete_specs_list += file + ' '
 
