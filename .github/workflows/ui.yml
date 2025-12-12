@@ -26,50 +26,10 @@ jobs:
       folio-npm-registry: ${{ steps.logic.outputs.folio-npm-registry }}
       folio-npm-registry-auth: ${{ steps.logic.outputs.folio-npm-registry-auth }}
     steps:
-      - id: logic
-        name: Determine default values
-        shell: python # quicker to use than node, since node would require a longer installation step
-        run: |
-          # if these strings contain " there's likely a much larger problem...
-          ref = "${{ github.ref }}"
-          current_npm_registry = "${{ inputs.folio-npm-registry }}"
-          current_npm_registry_auth = "${{ inputs.folio-npm-registry-auth }}"
-
-          import re
-          print("We are on ref:", ref)
-          if re.match(r'^refs/tags/v\d+\..+', ref):
-            print("  We are on a tag vX.Y")
-            is_release = True
-          else:
-            print("  We are not on a version tag")
-            is_release = False
-
-          print("Current npm registry:", current_npm_registry)
-          print("Current npm registry auth:", current_npm_registry_auth)
-          if current_npm_registry == "":
-            print("  No npm registry provided, using default")
-            if is_release:
-              current_npm_registry = "https://repository.folio.org/repository/npm-folio/"
-            else:
-              current_npm_registry = "https://repository.folio.org/repository/npm-folioci/"
-
-          if current_npm_registry_auth == "":
-            print("  No npm registry auth provided, using default")
-            if is_release:
-              current_npm_registry_auth = "//repository.folio.org/repository/npm-folio/"
-            else:
-              current_npm_registry_auth = "//repository.folio.org/repository/npm-folioci/"
-
-          import os
-          output = open(os.environ['GITHUB_OUTPUT'], 'a')
-          output.write("is-release=" + str(is_release) + "\n")
-          output.write("folio-npm-registry=" + current_npm_registry + "\n")
-          output.write("folio-npm-registry-auth=" + current_npm_registry_auth + "\n")
-          output.close()
       - uses: actions/checkout@v3
         with:
             fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
-      - id: changed-files
+      - id: get-changed-files
         name: Get changed files
         run: |
             if ${{ github.event_name == 'pull_request' }}; then
@@ -82,6 +42,26 @@ jobs:
             for file in ${{ steps.changed-files.outputs.changed_files }}; do
                 echo "$file was changed"
             done
+      - name: Filter and format changed files for cypress
+        shell: python # quicker to use than node, since node would require a longer installation step
+        run: |
+          changed_files = "${{ steps.get-changed_files.outputs.changed_files }}"
+
+          print(changed_files)
+
+          import re
+
+          complete_specs_list = ''
+
+          for file in changed_files:
+            if re.match(r'.+\.cy\.js', file):
+              complete_specs_list += file + ' '
+
+          print(complete_specs_list)
+          import os
+          output = open(os.environ['GITHUB_OUTPUT'], 'a')
+          output.write("specs-list=" + complete_specs_list + "\n")
+          output.close()
 
   install:
     name: Install
