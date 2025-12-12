@@ -5,15 +5,133 @@ on:
   - workflow_dispatch
 
 jobs:
-  ui:
-    uses: folio-org/.github/.github/workflows/ui.yml@v1
-    if: github.ref_name == github.event.repository.default_branch || github.event_name != 'push' || github.ref_type == 'tag'
-    secrets: inherit
-    with:
-      jest-enabled: false
-      sonar-enabled: false
-      compile-translations: false
-      generate-module-descriptor: false
-      publish-module-descriptor: false
-      install-before-publish: true
+  install-cypress:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
+        with:
+          # Disable running of tests within install job
+          runTests: false
+          build: npm run build
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          if-no-files-found: error
+          path: build
+
+  set-shared-variables:
+    name: Set shared variables
+    runs-on: ubuntu-latest
+    outputs:
+      # unfortunately we can only output strings, so this is "True" or "False"
+      is-release: ${{ steps.logic.outputs.is-release }}
+      folio-npm-registry: ${{ steps.logic.outputs.folio-npm-registry }}
+      folio-npm-registry-auth: ${{ steps.logic.outputs.folio-npm-registry-auth }}
+    steps:
+      - id: logic
+        name: Determine default values
+        shell: python # quicker to use than node, since node would require a longer installation step
+        run: |
+          # if these strings contain " there's likely a much larger problem...
+          ref = "${{ github.ref }}"
+          current_npm_registry = "${{ inputs.folio-npm-registry }}"
+          current_npm_registry_auth = "${{ inputs.folio-npm-registry-auth }}"
+
+          import re
+          print("We are on ref:", ref)
+          if re.match(r'^refs/tags/v\d+\..+', ref):
+            print("  We are on a tag vX.Y")
+            is_release = True
+          else:
+            print("  We are not on a version tag")
+            is_release = False
+
+          print("Current npm registry:", current_npm_registry)
+          print("Current npm registry auth:", current_npm_registry_auth)
+          if current_npm_registry == "":
+            print("  No npm registry provided, using default")
+            if is_release:
+              current_npm_registry = "https://repository.folio.org/repository/npm-folio/"
+            else:
+              current_npm_registry = "https://repository.folio.org/repository/npm-folioci/"
+
+          if current_npm_registry_auth == "":
+            print("  No npm registry auth provided, using default")
+            if is_release:
+              current_npm_registry_auth = "//repository.folio.org/repository/npm-folio/"
+            else:
+              current_npm_registry_auth = "//repository.folio.org/repository/npm-folioci/"
+
+          import os
+          output = open(os.environ['GITHUB_OUTPUT'], 'a')
+          output.write("is-release=" + str(is_release) + "\n")
+          output.write("folio-npm-registry=" + current_npm_registry + "\n")
+          output.write("folio-npm-registry-auth=" + current_npm_registry_auth + "\n")
+          output.close()
+
+  run:
+    name: Install and lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          show-progress: false # spammy
+
+      - name: Install Node ${{ inputs.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          check-latest: true
+          always-auth: true
+
+      - name: Set FOLIO NPM registry
+        run: yarn config set @folio:registry ${{ inputs.folio-npm-registry }}
+
+        # We must check if a yarn.lock exists, as we do not want to add --frozen-lockfile if there is no lockfile.
+      # Just adding this flag when there is no lockfile would normally cause no issues, however, it will prevent a lockfile
+      # from being generated if one does not exist. This breaks publication of the `yarn.lock` artifact (and use of `yarn list`).
+      - name: Check if lockfile should be frozen
+        id: check-yarn-lock
+        run: echo install-args=$(test -f yarn.lock && echo --frozen-lockfile) | tee -a $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: yarn install ${{ steps.check-yarn-lock.outputs.install-args }} --ignore-scripts --non-interactive
+
+      - name: List installed FOLIO package versions
+        run: yarn list --pattern @folio
+
+  cypress-tests:
+    name: Run Cypress tests
+    runs-on: ubuntu-24.04
+    needs: install-cypress
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download the build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          browser: chrome
+
+  # version-number:
+  #   # used for module descriptor and publishing to NPM
+  #   needs: [set-shared-variables]
+  #   uses: ./.github/workflows/ui-version-number.yml
+  #   with:
+  #     is-release: ${{ needs.set-shared-variables.outputs.is-release }}
