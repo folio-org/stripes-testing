@@ -139,7 +139,7 @@ describe('Check out', () => {
 
   it(
     'C651501 Check pagination on the "Select item" dialog in Check-out (vega)',
-    { tags: ['extendedPath', 'vega', 'C651501'] },
+    { tags: ['extendedPathBroken', 'vega', 'C651501'] },
     () => {
       // Step 1: Scan any user barcode
       CheckOutActions.checkOutUser(userData.barcode);
