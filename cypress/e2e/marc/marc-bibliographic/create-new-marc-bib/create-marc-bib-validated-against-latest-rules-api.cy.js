@@ -6,6 +6,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { getBibliographicSpec } from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -40,35 +41,43 @@ describe('MARC', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.getSpecificationIds({ profile: 'bibliographic', include: 'all' }).then((specs) => {
-            const spec = specs.find((s) => s.profile === 'bibliographic');
-            bibliographicSpecId = spec.id;
-
-            const field700 = spec.fields.find((f) => f.tag === testData.tag700);
-            if (field700) {
-              field700Id = field700.id;
-              field700InitialProperties = {
-                tag: field700.tag,
-                label: field700.label,
-                url: field700.url || 'https://www.loc.gov/marc/bibliographic/bd700.html',
-                repeatable: field700.repeatable,
-                required: field700.required,
-                deprecated: field700.deprecated,
-              };
-
-              if (!field700.required) {
-                cy.updateSpecificationField(field700Id, {
-                  tag: testData.tag700,
+          getBibliographicSpec().then((bibSpec) => {
+            bibliographicSpecId = bibSpec.id;
+            cy.getSpecificationFields(bibliographicSpecId).then((fieldsResponse) => {
+              const existingFields = fieldsResponse.body.fields;
+              const field700 = existingFields.find((f) => f.tag === testData.tag700);
+              if (field700) {
+                field700Id = field700.id;
+                field700InitialProperties = {
+                  tag: field700.tag,
                   label: field700.label,
-                  url: field700.url || 'https://www.loc.gov/marc/bibliographic/bd700.html',
+                  url: field700.url,
                   repeatable: field700.repeatable,
+                  required: field700.required,
+                  deprecated: field700.deprecated,
+                };
+
+                if (!field700.required) {
+                  cy.updateSpecificationField(field700Id, {
+                    ...field700InitialProperties,
+                    required: true,
+                  });
+                }
+              } else {
+                cy.createSpecificationField(bibliographicSpecId, {
+                  tag: testData.tag700,
+                  label: 'Added Entry - Personal Name',
+                  url: 'https://www.loc.gov/marc/bibliographic/bd700.html',
+                  repeatable: false,
                   required: true,
                   deprecated: false,
+                }).then((response) => {
+                  field700Id = response.body.id;
+                  createdLocalFieldId = field700Id;
                 });
               }
-            }
+            });
           });
-
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -80,8 +89,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         if (createdLocalFieldId) {
           cy.deleteSpecificationField(createdLocalFieldId, false);
-        }
-        if (field700Id && field700InitialProperties) {
+        } else if (field700Id && field700InitialProperties) {
           cy.updateSpecificationField(field700Id, field700InitialProperties, false);
         }
         Users.deleteViaApi(user.userId);

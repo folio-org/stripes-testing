@@ -73,14 +73,18 @@ describe('MARC', () => {
 
       after('Delete user and disable validation rules', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
+        getBibliographicSpec().then(({ id }) => {
+          toggleAllUndefinedValidationRules(id, { enable: false });
+        });
+        if (testData.userProperties.userId) {
+          Users.deleteViaApi(testData.userProperties.userId);
+        }
         if (createdInstanceId) {
           InventoryInstance.deleteInstanceViaApi(createdInstanceId);
         }
         if (field983Id) {
-          cy.deleteSpecificationField(specId, field983Id, false);
+          cy.deleteSpecificationField(field983Id, false);
         }
-        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
