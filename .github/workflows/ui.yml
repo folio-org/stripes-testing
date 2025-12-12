@@ -42,7 +42,7 @@ jobs:
         run: |
           changed_files = "${{ steps.get-changed_files.outputs.changed_files }}"
 
-          print(changed_files)
+          print("changed files:", changed_files)
 
           import re
 
@@ -53,7 +53,7 @@ jobs:
             if re.match(r'.+\.cy\.js', file):
               complete_specs_list += file + ' '
 
-          print(complete_specs_list)
+          print("complete specs list:", complete_specs_list)
           import os
           output = open(os.environ['GITHUB_OUTPUT'], 'a')
           output.write("specs-list=" + complete_specs_list + "\n")
