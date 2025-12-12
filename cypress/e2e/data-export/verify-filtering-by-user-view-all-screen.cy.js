@@ -111,7 +111,7 @@ describe('Data Export', () => {
       DataExportViewAllLogs.verifyClearUserFilterButtonExists();
       DataExportViewAllLogs.verifyResetAllButtonEnabled();
       DataExportViewAllLogs.verifyLogsFilteredByUser(secondUser.username);
-      DataExportViewAllLogs.verifyRecordsFoundCount(1);
+      DataExportViewAllLogs.verifyFoundRecordsCount(1);
 
       // Step 7: Click on "x" next to "User" filter
       DataExportViewAllLogs.clickClearUserFilter();
@@ -130,7 +130,7 @@ describe('Data Export', () => {
       DataExportViewAllLogs.verifyClearUserFilterButtonExists();
       DataExportViewAllLogs.verifyResetAllButtonEnabled();
       DataExportViewAllLogs.verifyLogsFilteredByUser(thirdUser.username);
-      DataExportViewAllLogs.verifyRecordsFoundCount(1);
+      DataExportViewAllLogs.verifyFoundRecordsCount(1);
 
       // Step 9: Click "Reset all" button
       DataExportViewAllLogs.resetAll();
