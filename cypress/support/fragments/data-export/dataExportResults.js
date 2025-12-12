@@ -233,7 +233,9 @@ export default {
     };
 
     const userNameToVerify = `${user.firstName} ${user.lastName}`;
-    const expectedFailedContent = `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`;
+    const expectedFailedContent = failedRecordsCount
+      ? `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`
+      : `${duplicatesCount} duplicate(s)`;
 
     cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),

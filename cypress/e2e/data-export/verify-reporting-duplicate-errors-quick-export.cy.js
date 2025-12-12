@@ -1,11 +1,15 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
+import { APPLICATION_NAMES } from '../../support/constants';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import ExportFile from '../../support/fragments/data-export/exportFile';
-import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import FileManager from '../../support/utils/fileManager';
@@ -13,16 +17,9 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const randomPostfix = getRandomPostfix();
-const totalRecordsCount = 3;
 const testData = {
-  validInstance: {
-    title: `AT_C411504_ValidInstance_${randomPostfix}`,
-    uuid: null,
-    hrid: null,
-    srsId: null,
-  },
   duplicateInstance: {
-    title: `AT_C411504_DuplicateInstance_${randomPostfix}`,
+    title: `AT_C446170_DuplicateInstance_${randomPostfix}`,
     uuid: null,
     hrid: null,
     srsIds: {
@@ -30,30 +27,15 @@ const testData = {
       duplicate: uuid(),
     },
   },
-  invalidUuid: uuid(),
-  csvFileName: `C411504_instances_${randomPostfix}.csv`,
 };
 
 describe('Data Export', () => {
   before('Create test data', () => {
-    cy.getAdminToken();
     cy.createTempUser([
       permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-
-      cy.createSimpleMarcBibViaAPI(testData.validInstance.title).then((instanceId) => {
-        testData.validInstance.uuid = instanceId;
-
-        cy.getInstanceById(instanceId).then((instanceData) => {
-          testData.validInstance.hrid = instanceData.hrid;
-        });
-
-        cy.getSrsRecordsByInstanceId(instanceId).then((srsRecord) => {
-          testData.validInstance.srsId = srsRecord.id;
-        });
-      });
 
       cy.createSimpleMarcBibViaAPI(testData.duplicateInstance.title).then((instanceId) => {
         testData.duplicateInstance.uuid = instanceId;
@@ -98,15 +80,10 @@ describe('Data Export', () => {
             },
           };
 
-          cy.createSrsRecord(duplicateSrsRecord).then(() => {
-            const csvContent = `${testData.validInstance.uuid}\n${testData.duplicateInstance.uuid}\n${testData.invalidUuid}`;
-
-            FileManager.createFile(`cypress/fixtures/${testData.csvFileName}`, csvContent);
-
-            cy.login(user.username, user.password, {
-              path: TopMenu.dataExportPath,
-              waiter: DataExportLogs.waitLoading,
-            });
+          cy.createSrsRecord(duplicateSrsRecord);
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
         });
       });
@@ -115,68 +92,81 @@ describe('Data Export', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    InventoryInstance.deleteInstanceViaApi(testData.validInstance.uuid);
     InventoryInstance.deleteInstanceViaApi(testData.duplicateInstance.uuid);
     cy.deleteSrsRecord(testData.duplicateInstance.srsIds.duplicate);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${testData.csvFileName}`);
+    FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
   });
 
   it(
-    'C411504 Verify reporting "duplicate" errors and failed instances of exported instances for Default job profile (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C411504'] },
+    'C446170 Verify reporting "duplicate" errors of exported instances for "Quick export" (firebird)',
+    { tags: ['extendedPath', 'firebird', 'C446170'] },
     () => {
-      // Step 1: Verify Data Export app main page
-      DataExportLogs.verifyDragAndDropAreaExists();
-      DataExportLogs.verifyUploadFileButtonDisabled(false);
-      DataExportLogs.verifyViewAllLogsButtonEnabled();
+      // Step 1: Select instance in Inventory
+      InventorySearchAndFilter.searchInstanceByTitle(testData.duplicateInstance.title);
+      InventorySearchAndFilter.selectResultCheckboxes(1);
+      InventorySearchAndFilter.verifySelectedRecords(1);
 
-      // Step 2-3: Upload CSV file and verify job profile selection page
-      ExportFile.uploadFile(testData.csvFileName);
-      SelectJobProfile.verifySelectJobPane();
-      SelectJobProfile.verifySubtitle();
-      SelectJobProfile.verifySearchBox();
-      SelectJobProfile.verifySearchButton(true);
+      // Step 2-4: Click "Actions" → "Export instances (MARC)" and verify CSV file download
+      cy.intercept('/data-export/quick-export').as('quickExport');
+      InventorySearchAndFilter.exportInstanceAsMarc();
 
-      // Step 4: Run Default instances export job profile
-      ExportFile.exportWithDefaultJobProfile(
-        testData.csvFileName,
-        'Default instances',
-        'Instances',
-      );
+      // Step 5: Verify CSV file download with correct naming and UUID content
+      cy.wait('@quickExport', getLongDelay()).then((req) => {
+        const expectedIDs = req.request.body.uuids;
 
-      // Step 5 & 6: Verify "Completed with errors" status, Failed column, and API response
+        FileManager.verifyFile(
+          InventoryActions.verifyInstancesMARCFileName,
+          'QuickInstanceExport*',
+          InventoryActions.verifyInstancesMARC,
+          [expectedIDs],
+        );
+
+        FileManager.findDownloadedFilesByMask('QuickInstanceExport*.csv').then((files) => {
+          const csvFileName = files[0];
+          const timestampPattern = /QuickInstanceExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}.*\.csv/;
+
+          expect(csvFileName).to.match(timestampPattern);
+
+          ExportFile.verifyCSVFileRecordsNumber('QuickInstanceExport*.csv', 1);
+        });
+      });
+
+      // Step 6: Navigate to Data Export app
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+      DataExportLogs.waitLoading();
+
+      // Step 7-10: Verify completed job with errors and API response
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
       cy.wait('@getJobInfo', getLongDelay()).then(({ response }) => {
         const { jobExecutions } = response.body;
         const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
-        const jobId = jobData.hrId;
-        const resultFileName = `${testData.csvFileName.replace('.csv', '')}-${jobData.hrId}.mrc`;
 
-        expect(jobData.progress).to.have.property('exported', totalRecordsCount);
-        expect(jobData.progress).to.have.property('failed', 1);
+        // Step 10: Verify API response
+        expect(jobData.progress).to.have.property('exported', 2);
+        expect(jobData.progress).to.have.property('failed', 0);
         expect(jobData.progress).to.have.property('duplicatedSrs', 1);
-        expect(jobData.progress).to.have.property('total', totalRecordsCount);
-        expect(jobData.progress).to.have.property('readIds', totalRecordsCount);
+        expect(jobData.progress).to.have.property('total', 1);
+        expect(jobData.progress).to.have.property('readIds', 0);
+
+        const jobId = jobData.hrId;
+        const resultFileName = `quick-export-${jobId}.mrc`;
 
         DataExportResults.verifyCompletedWithErrorsWithDuplicatesExportResultCells(
           resultFileName,
-          totalRecordsCount,
-          totalRecordsCount,
           1,
+          2,
+          0,
           1,
           jobId,
           user,
         );
 
-        // Step 7: Verify error log details
+        // Step 11: Click job row and verify error log
         DataExportLogs.clickFileNameFromTheList(resultFileName);
 
         const formattedDateUpToHours = new Date().toISOString().slice(0, 13);
-
         const errorMessages = [
-          new RegExp(`${formattedDateUpToHours}.*ERROR Record not found: ${testData.invalidUuid}`),
-          new RegExp(`${formattedDateUpToHours}.*ERROR Failed records number: 1.`),
           `"Instance UUID": "${testData.duplicateInstance.uuid}"`,
           `"Instance HRID": "${testData.duplicateInstance.hrid}"`,
           `"Instance Title": "${testData.duplicateInstance.title}"`,
@@ -191,13 +181,12 @@ describe('Data Export', () => {
           testData.duplicateInstance.srsIds.original,
           testData.duplicateInstance.srsIds.duplicate,
         ].map((srsId) => `(?=.*${srsId})`);
-
         const srsErrorPattern = new RegExp(
           `${formattedDateUpToHours}.*ERROR Instance with HRID: ${testData.duplicateInstance.hrid} has following SRS records associated: ${regexParts.join('')}`,
         );
 
         DataExportLogs.verifyErrorTextInErrorLogsPane(srsErrorPattern);
-        DataExportLogs.verifyTotalErrorLinesCount(3);
+        DataExportLogs.verifyTotalErrorLinesCount(1);
       });
     },
   );
