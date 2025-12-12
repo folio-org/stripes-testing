@@ -96,7 +96,7 @@ jobs:
 
   cypress-run:
     runs-on: ubuntu-24.04
-    needs: [install-cypress, install]
+    needs: [install-cypress, install, set-shared-variables]
     strategy:
       # don't fail the entire matrix on failure
       fail-fast: false
@@ -109,7 +109,7 @@ jobs:
         with:
           parallel: false
           group: 'UI-Chrome'
-          start: yarn cypress run --spec ${{ steps.format-specs-list.outputs.specs-list }}
+          start: yarn cypress run --spec ${{ needs.set-shared-variables.outputs.specs-list }}
 
   # version-number:
   #   # used for module descriptor and publishing to NPM
