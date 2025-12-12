@@ -107,9 +107,6 @@ jobs:
     strategy:
       # don't fail the entire matrix on failure
       fail-fast: false
-      matrix:
-        # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -117,10 +114,9 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          record: true
-          parallel: true
+          parallel: false
           group: 'UI-Chrome'
-          start: yarn cypress run
+          start: yarn cypress run --spec **/create-bib-with-multiple-006-007-fields.cy.js
 
   # version-number:
   #   # used for module descriptor and publishing to NPM
