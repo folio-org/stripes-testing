@@ -10,15 +10,11 @@ import Users from '../../support/fragments/users/users';
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
     let userData;
-    let creator;
     const newBodytext = 'New text';
     const noticeTemplate = NoticeTemplates.getDefaultTemplate();
 
     before('Preconditions', () => {
       cy.getAdminToken();
-      cy.getAdminSourceRecord().then((user) => {
-        creator = user;
-      });
       NoticeTemplates.createViaApi(noticeTemplate);
       ServicePoints.getCircDesk1ServicePointViaApi()
         .then((servicePoint) => {
@@ -75,8 +71,14 @@ describe('Patron notices', () => {
       'C387440 Add metadata info to view of Patron Notice Templates scenario 2/3 (volaris)',
       { tags: ['extendedPath', 'volaris', 'C387440'] },
       () => {
+        const { lastName, firstName, middleName } = userData.personal;
+        const creator = `${lastName}, ${firstName} ${middleName}`;
+
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
-        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(creator, noticeTemplate.name);
+        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible({
+          creator,
+          paneTitle: noticeTemplate.name,
+        });
       },
     );
   });
