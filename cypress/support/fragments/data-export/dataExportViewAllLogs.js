@@ -44,6 +44,10 @@ export default {
     cy.do(viewAllLogsButton.click());
   },
 
+  verifyTableWithResultsExists() {
+    cy.expect(MultiColumnList().exists());
+  },
+
   verifySearchAndFilterPane() {
     cy.expect(searchAndFilterPane.exists());
   },
@@ -136,6 +140,7 @@ export default {
     cy.expect(logsTable.find(HTML('Job profile')).exists());
     cy.expect(logsTable.find(HTML('Started running')).exists());
     cy.get('div.mclScrollable---JvHuN').scrollTo('right');
+    cy.wait(500);
     cy.expect(logsTable.find(HTML('Ended running')).exists());
     cy.expect(logsTable.find(HTML('Run by')).exists());
     cy.expect(logsTable.find(HTML({ id: 'list-column-hrid' })).exists());
@@ -215,6 +220,12 @@ export default {
   verifyJobProfileInDropdown(profileName) {
     cy.then(() => filterSelectionList.optionList()).then((options) => {
       cy.expect(options).to.include(profileName);
+    });
+  },
+
+  verifyJobProfileNotInDropdown(profileName) {
+    cy.then(() => filterSelectionList.optionList()).then((options) => {
+      cy.expect(options).to.not.include(profileName);
     });
   },
 
