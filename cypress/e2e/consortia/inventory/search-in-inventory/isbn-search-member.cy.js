@@ -56,7 +56,7 @@ describe('Inventory', () => {
           identifierValue,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
-          holdingsAffiliation: Affiliations.Consortia,
+          holdingsAffiliation: Affiliations.College,
         },
         {
           identifierValue,
@@ -94,8 +94,9 @@ describe('Inventory', () => {
         (_, i) => `${instancePrefix}_${i}`,
       );
       const expectedInstanceIndexes = identifiersData
-        .filter((c) => c.affiliation !== Affiliations.University)
-        .map((_, index) => index);
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.affiliation !== Affiliations.University)
+        .map(({ index }) => index);
       let user;
       let member1Location;
       let member2Location;
@@ -219,8 +220,20 @@ describe('Inventory', () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         cy.setTenant(Affiliations.College);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+          member1Location.institutionId,
+          member1Location.campusId,
+          member1Location.libraryId,
+          member1Location.id,
+        );
         cy.setTenant(Affiliations.University);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+          member2Location.institutionId,
+          member2Location.campusId,
+          member2Location.libraryId,
+          member2Location.id,
+        );
       });
 
       it(

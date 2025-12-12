@@ -68,10 +68,10 @@ describe('Inventory', () => {
         { length: identifiersData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const sharedIdentifiers = identifiersData.filter(
-        (c) => c.affiliation === Affiliations.Consortia,
-      );
-      const sharedInstanceIndexes = sharedIdentifiers.map((_, index) => index);
+      const sharedInstanceIndexes = identifiersData
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.affiliation === Affiliations.Consortia)
+        .map(({ index }) => index);
       let user;
       let memberLocation;
 
@@ -141,6 +141,7 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
+            cy.setTenant(Affiliations.College);
             ServicePoints.getViaApi().then((servicePoint) => {
               NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoint[0].id)).then(
                 (res) => {
@@ -181,6 +182,12 @@ describe('Inventory', () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         cy.setTenant(Affiliations.College);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+          memberLocation.institutionId,
+          memberLocation.campusId,
+          memberLocation.libraryId,
+          memberLocation.id,
+        );
       });
 
       it(

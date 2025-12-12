@@ -18,14 +18,14 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `AT_C411624_Instance_${randomPostfix}`;
-      const identifierValue = `AT_C411624_Identifier_${randomPostfix}`;
+      const instancePrefix = `AT_C411626_Instance_${randomPostfix}`;
+      const identifierValue = `AT_C411626_Identifier_${randomPostfix}`;
       const searchOptions = {
         identifierAll: 'Identifier (all)',
-        isbn: 'ISSN',
+        oclc: 'OCLC number, normalized',
         keywordInstances: searchInstancesOptions[0],
       };
-      const identifierTypeName = 'ISSN';
+      const identifierTypeName = 'OCLC';
       const helbyAccordionName = 'Held by';
       const identifiersData = [
         {
@@ -97,6 +97,13 @@ describe('Inventory', () => {
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.affiliation !== Affiliations.University)
         .map(({ index }) => index);
+      const expectedFolioInstanceIndexes = identifiersData
+        .map((item, index) => ({ item, index }))
+        .filter(
+          ({ item }) => item.affiliation !== Affiliations.University &&
+            item.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO,
+        )
+        .map(({ index }) => index);
       let user;
       let member1Location;
       let member2Location;
@@ -104,9 +111,9 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411624');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411626');
         cy.setTenant(Affiliations.College);
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411624');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411626');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
@@ -118,7 +125,7 @@ describe('Inventory', () => {
                   member1Location = res1;
 
                   cy.setTenant(Affiliations.University);
-                  InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411624');
+                  InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411626');
 
                   ServicePoints.getViaApi().then((servicePoint2) => {
                     NewLocation.createViaApi(
@@ -167,8 +174,8 @@ describe('Inventory', () => {
                         indicators: ['1', '1'],
                       },
                       {
-                        tag: '022',
-                        content: `$a ${identifierData.identifierValue}`,
+                        tag: '035',
+                        content: `$a (OCoLC)${identifierData.identifierValue}`,
                         indicators: ['\\', '\\'],
                       },
                     ];
@@ -237,17 +244,17 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411624 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Member" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411624'] },
+        'C411626 Search for Shared/Local records by "Identifier (all)" and "OCLC number, normalized" search options from "Member" tenant (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C411626'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 
           InventorySearchAndFilter.fillInSearchQuery(identifierValue);
           InventorySearchAndFilter.clickSearch();
-          expectedInstanceIndexes.forEach((instanceIndex) => {
+          expectedFolioInstanceIndexes.forEach((instanceIndex) => {
             InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
           });
-          InventorySearchAndFilter.checkRowsCount(expectedInstanceIndexes.length);
+          InventorySearchAndFilter.checkRowsCount(expectedFolioInstanceIndexes.length);
 
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
@@ -256,42 +263,8 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
-
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
-          InventorySearchAndFilter.clickSearch();
-          expectedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.checkRowsCount(expectedInstanceIndexes.length);
-
-          InventorySearchAndFilter.switchToHoldings();
-          InventorySearchAndFilter.holdingsTabIsDefault();
-          InventorySearchAndFilter.checkSearchQueryText('');
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-
-          InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
-
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
-          InventorySearchAndFilter.clickSearch();
-          expectedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.checkRowsCount(expectedInstanceIndexes.length);
-
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.itemTabIsDefault();
-          InventorySearchAndFilter.checkSearchQueryText('');
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-
-          InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
+          InventorySearchAndFilter.selectSearchOption(searchOptions.oclc);
+          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.oclc);
 
           InventorySearchAndFilter.fillInSearchQuery(identifierValue);
           InventorySearchAndFilter.clickSearch();
