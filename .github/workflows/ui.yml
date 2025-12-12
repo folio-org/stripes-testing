@@ -51,6 +51,7 @@ jobs:
 
           import re
 
+
           complete_specs_list = ''
 
           for file in changed_files:
