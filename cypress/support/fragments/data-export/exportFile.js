@@ -349,6 +349,7 @@ export default {
     jobProfileName = 'Default instances export job profile',
   ) {
     const fileDefinitionId = uuid();
+    let jobExecutionId;
 
     // Step 1: Create file definition
     return cy
@@ -363,7 +364,9 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       })
-      .then(() => {
+      .then((fileDefinitionResponse) => {
+        jobExecutionId = fileDefinitionResponse.body.jobExecutionId;
+
         // Step 2: Upload file (read file content and upload as plain text)
         return cy
           .readFile(`cypress/fixtures/${fileName}`)
@@ -400,7 +403,7 @@ export default {
                     isDefaultSearchParamsRequired: false,
                   })
                   .then(() => {
-                    // Step 5: Wait for job completion by polling
+                    // Step 5: Wait for job completion by polling for specific jobExecutionId
                     return recurse(
                       () => cy.okapiRequest({
                         path: 'data-export/job-executions?query=status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL) sortBy completedDate/sort.descending&limit=25',
@@ -408,7 +411,7 @@ export default {
                       }),
                       (jobResponse) => {
                         const jobs = jobResponse.body.jobExecutions || [];
-                        const matchingJob = jobs.find((job) => job.exportedFiles?.[0]?.fileName?.includes(fileName.replace('.csv', '')));
+                        const matchingJob = jobs.find((job) => job.id === jobExecutionId);
                         return !!matchingJob;
                       },
                       {
@@ -418,7 +421,7 @@ export default {
                       },
                     ).then((finalResponse) => {
                       const jobs = finalResponse.body.jobExecutions || [];
-                      const completedJob = jobs.find((job) => job.exportedFiles?.[0]?.fileName?.includes(fileName.replace('.csv', '')));
+                      const completedJob = jobs.find((job) => job.id === jobExecutionId);
 
                       return completedJob;
                     });
