@@ -2,9 +2,7 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances, {
-  searchInstancesOptions,
-} from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -13,62 +11,58 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `AT_C411623_Instance_${randomPostfix}`;
-      const identifierValue = `AT_C411623_Identifier_${randomPostfix}`;
-      const searchOptions = {
-        identifierAll: 'Identifier (all)',
-        isbn: 'ISSN',
-        keywordInstances: searchInstancesOptions[0],
-      };
-      const identifierTypeName = 'ISSN';
-      const identifiersData = [
+      const instancePrefix = `AT_C411627_Instance_${randomPostfix}`;
+      const notePrefix = `AT_C411627_Note_${randomPostfix}`;
+      const notesSearchOption = 'Instance notes (all)';
+      const notesData = [
         {
-          identifierValue,
+          noteValue: `${notePrefix} 1 Shared Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.Consortia,
           hasHoldings: false,
         },
         {
-          identifierValue,
+          noteValue: `${notePrefix} 2 Shared Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.Consortia,
           hasHoldings: true,
         },
         {
-          identifierValue,
+          noteValue: `${notePrefix} 3 Shared Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
           hasHoldings: false,
         },
         {
-          identifierValue,
+          noteValue: `${notePrefix} 4 Shared Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.Consortia,
           hasHoldings: true,
         },
         {
-          identifierValue,
+          noteValue: `${notePrefix} 5 Local Folio`,
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
           affiliation: Affiliations.College,
           hasHoldings: true,
         },
         {
-          identifierValue,
+          noteValue: `${notePrefix} 6 Local Marc`,
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
           affiliation: Affiliations.College,
           hasHoldings: true,
         },
       ];
       const instanceTitles = Array.from(
-        { length: identifiersData.length },
+        { length: notesData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const sharedInstanceIndexes = identifiersData
+      const sharedInstanceIndexes = notesData
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.affiliation === Affiliations.Consortia)
         .map(({ index }) => index);
@@ -78,38 +72,40 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411623');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411627');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             user = userProperties;
 
             cy.setTenant(Affiliations.College);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411623');
+            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411627');
           })
           .then(() => {
             cy.resetTenant();
             cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
-              InventoryInstances.getIdentifierTypes({
-                query: `name=="${identifierTypeName}"`,
-              }).then((identifierType) => {
-                identifiersData.forEach((identifierData, index) => {
-                  cy.setTenant(identifierData.affiliation);
+              InstanceNoteTypes.getInstanceNoteTypesViaApi({
+                limit: 1,
+                query: 'source="folio"',
+              }).then(({ instanceNoteTypes }) => {
+                notesData.forEach((noteData, index) => {
+                  cy.setTenant(noteData.affiliation);
 
-                  if (identifierData.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO) {
+                  if (noteData.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO) {
                     InventoryInstances.createFolioInstanceViaApi({
                       instance: {
                         instanceTypeId: instanceTypes[0].id,
                         title: `${instanceTitles[index]}`,
-                        identifiers: [
+                        notes: [
                           {
-                            value: identifierData.identifierValue,
-                            identifierTypeId: identifierType.id,
+                            instanceNoteTypeId: instanceNoteTypes[0].id,
+                            note: noteData.noteValue,
+                            staffOnly: false,
                           },
                         ],
                       },
                     }).then((createdInstanceData) => {
-                      identifierData.instanceId = createdInstanceData.instanceId;
+                      noteData.instanceId = createdInstanceData.instanceId;
                     });
                   } else {
                     const marcInstanceFields = [
@@ -123,9 +119,9 @@ describe('Inventory', () => {
                         indicators: ['1', '1'],
                       },
                       {
-                        tag: '022',
-                        content: `$a ${identifierData.identifierValue}`,
-                        indicators: ['\\', '\\'],
+                        tag: '510',
+                        content: `$a ${noteData.noteValue}`,
+                        indicators: ['3', '\\'],
                       },
                     ];
 
@@ -133,7 +129,7 @@ describe('Inventory', () => {
                       QuickMarcEditor.defaultValidLdr,
                       marcInstanceFields,
                     ).then((instanceId) => {
-                      identifierData.instanceId = instanceId;
+                      noteData.instanceId = instanceId;
                     });
                   }
                 });
@@ -151,12 +147,12 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            identifiersData.forEach((identifierData) => {
-              if (identifierData.hasHoldings) {
+            notesData.forEach((noteData) => {
+              if (noteData.hasHoldings) {
                 cy.setTenant(Affiliations.College);
                 InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: identifierData.instanceId,
+                    instanceId: noteData.instanceId,
                     permanentLocationId: memberLocation.id,
                     sourceId: folioSource.id,
                   });
@@ -169,10 +165,9 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventorySearchAndFilter.selectSearchOption(searchOptions.identifierAll);
+            InventorySearchAndFilter.selectSearchOption(notesSearchOption);
           });
       });
 
@@ -192,56 +187,12 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411623 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Central" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411623'] },
+        'C411627 Search for Shared/Local records by "Instance notes (all)" search option from "Central" tenant (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C411627'] },
         () => {
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
+          InventorySearchAndFilter.fillInSearchQuery(notePrefix);
           InventorySearchAndFilter.clickSearch();
-          sharedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.checkRowsCount(sharedInstanceIndexes.length);
 
-          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
-            searchOptions.keywordInstances,
-          );
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
-
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
-          InventorySearchAndFilter.clickSearch();
-          sharedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.checkRowsCount(sharedInstanceIndexes.length);
-
-          InventorySearchAndFilter.switchToHoldings();
-          InventorySearchAndFilter.holdingsTabIsDefault();
-          InventorySearchAndFilter.checkSearchQueryText('');
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
-
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
-          InventorySearchAndFilter.clickSearch();
-          sharedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.checkRowsCount(sharedInstanceIndexes.length);
-
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.itemTabIsDefault();
-          InventorySearchAndFilter.checkSearchQueryText('');
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.isbn);
-          InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.isbn);
-
-          InventorySearchAndFilter.fillInSearchQuery(identifierValue);
-          InventorySearchAndFilter.clickSearch();
           sharedInstanceIndexes.forEach((instanceIndex) => {
             InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
           });

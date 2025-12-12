@@ -141,6 +141,7 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
+            cy.setTenant(Affiliations.College);
             ServicePoints.getViaApi().then((servicePoint) => {
               NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoint[0].id)).then(
                 (res) => {
