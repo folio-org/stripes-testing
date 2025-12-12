@@ -6,18 +6,21 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `AT_C411635_Instance_${randomPostfix}`;
-      const hridSearchOption = 'Instance HRID';
+      const instancePrefix = `AT_C411646_Instance_${randomPostfix}`;
+      const shelvingTitleValue = `AT_C411646_ShelvingTitle_${randomPostfix}`;
+      const barcodePrefix = `AT_C411646_Barcode_${randomPostfix}`;
+      const allSearchOption = 'All';
       const instancesData = [
         {
           instanceSource: INSTANCE_SOURCE_NAMES.MARC,
@@ -54,28 +57,35 @@ describe('Inventory', () => {
         { length: instancesData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
+      const barcodeValues = Array.from(
+        { length: instancesData.length },
+        (_, i) => `${barcodePrefix}_${i}`,
+      );
       const sharedInstanceIndexes = instancesData
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.affiliation === Affiliations.Consortia)
         .map(({ index }) => index);
-      const localInstanceIndexes = instancesData
+      const sharedInstanceWithHoldingsIndexes = instancesData
         .map((item, index) => ({ item, index }))
-        .filter(({ item }) => item.affiliation !== Affiliations.Consortia)
+        .filter(({ item }) => item.affiliation === Affiliations.Consortia && item.hasHoldings)
         .map(({ index }) => index);
       let user;
       let memberLocation;
+      let hodingsSourceId;
+      let materialTypeId;
+      let loanTypeId;
 
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411635');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411646');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             user = userProperties;
 
             cy.setTenant(Affiliations.College);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411635');
+            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411646');
           })
           .then(() => {
             cy.resetTenant();
@@ -123,24 +133,34 @@ describe('Inventory', () => {
                 },
               );
             });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              hodingsSourceId = folioSource.id;
+            });
+            cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
+              loanTypeId = res[0].id;
+            });
+            cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((matType) => {
+              materialTypeId = matType.id;
+            });
           })
           .then(() => {
-            instancesData.forEach((instanceData) => {
-              cy.setTenant(instanceData.affiliation);
-              cy.getInstanceById(instanceData.instanceId).then((instance) => {
-                instanceData.instanceHrid = instance.hrid;
-
-                if (instanceData.hasHoldings) {
-                  cy.setTenant(Affiliations.College);
-                  InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instanceData.instanceId,
-                      permanentLocationId: memberLocation.id,
-                      sourceId: folioSource.id,
-                    });
+            instancesData.forEach((instanceData, index) => {
+              if (instanceData.hasHoldings) {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instanceData.instanceId,
+                  permanentLocationId: memberLocation.id,
+                  sourceId: hodingsSourceId,
+                  shelvingTitle: shelvingTitleValue,
+                }).then((createdHoldings) => {
+                  InventoryItems.createItemViaApi({
+                    barcode: barcodeValues[index],
+                    holdingsRecordId: createdHoldings.id,
+                    materialType: { id: materialTypeId },
+                    permanentLoanType: { id: loanTypeId },
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   });
-                }
-              });
+                });
+              }
             });
           })
           .then(() => {
@@ -150,7 +170,6 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventorySearchAndFilter.selectSearchOption(hridSearchOption);
           });
       });
 
@@ -164,6 +183,7 @@ describe('Inventory', () => {
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
+        cy.wait(1000);
         cy.setTenant(Affiliations.College);
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           memberLocation.institutionId,
@@ -174,26 +194,46 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411635 Search for Shared/Local records by "Instance HRID" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411635'] },
+        'C411646 Search for Shared/Local records by "All" search option from "Central" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C411646'] },
         () => {
-          sharedInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.fillInSearchQuery(instancesData[instanceIndex].instanceHrid);
+          function searchAndVerify() {
+            InventorySearchAndFilter.verifyResultPaneEmpty();
+            InventorySearchAndFilter.checkSearchQueryText('');
+
+            InventorySearchAndFilter.selectSearchOption(allSearchOption);
+
+            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
             InventorySearchAndFilter.clickSearch();
-
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-            InventorySearchAndFilter.checkRowsCount(1);
-          });
-
-          localInstanceIndexes.forEach((instanceIndex) => {
-            InventorySearchAndFilter.fillInSearchQuery(instancesData[instanceIndex].instanceHrid);
-            InventorySearchAndFilter.clickSearch();
-
-            InventorySearchAndFilter.verifyResultPaneEmpty({
-              noResultsFound: true,
-              searchQuery: instancesData[instanceIndex].instanceHrid,
+            sharedInstanceIndexes.forEach((instanceIndex) => {
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
             });
-          });
+            InventorySearchAndFilter.checkRowsCount(sharedInstanceIndexes.length);
+
+            InventorySearchAndFilter.fillInSearchQuery(shelvingTitleValue);
+            InventorySearchAndFilter.clickSearch();
+            sharedInstanceWithHoldingsIndexes.forEach((instanceIndex) => {
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+            });
+            InventorySearchAndFilter.checkRowsCount(sharedInstanceWithHoldingsIndexes.length);
+
+            InventorySearchAndFilter.fillInSearchQuery(`${barcodePrefix}*`);
+            InventorySearchAndFilter.clickSearch();
+            sharedInstanceWithHoldingsIndexes.forEach((instanceIndex) => {
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+            });
+            InventorySearchAndFilter.checkRowsCount(sharedInstanceWithHoldingsIndexes.length);
+          }
+
+          searchAndVerify();
+
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.holdingsTabIsDefault();
+          searchAndVerify();
+
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.itemTabIsDefault();
+          searchAndVerify();
         },
       );
     });
