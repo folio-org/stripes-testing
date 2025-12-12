@@ -34,7 +34,7 @@ jobs:
           echo "changed_files=$(git diff --name-only -r origin/${{ github.base_ref }}...HEAD | xargs)" >> $GITHUB_OUTPUT
       - name: List changed files
         run: |
-            for file in ${{ steps.changed-files.outputs.changed_files }}; do
+            for file in ${{ steps.get-changed-files.outputs.changed_files }}; do
                 echo "$file was changed"
             done
       - name: Filter and format changed files for cypress
