@@ -38,6 +38,7 @@ jobs:
                 echo "$file was changed"
             done
       - name: Filter and format changed files for cypress
+        id: format-specs-list
         shell: python # quicker to use than node, since node would require a longer installation step
         run: |
           changed_files = "${{ steps.get-changed-files.outputs.changed-files }}"
@@ -108,7 +109,7 @@ jobs:
         with:
           parallel: false
           group: 'UI-Chrome'
-          start: yarn cypress run --spec **/create-bib-with-multiple-006-007-fields.cy.js
+          start: yarn cypress run --spec ${{ steps.format-specs-list.outputs.specs-list }}
 
   # version-number:
   #   # used for module descriptor and publishing to NPM
