@@ -9,21 +9,16 @@ import EHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProvi
 
 describe('Notes assign and unassign', () => {
   const testData = {};
-  let firstProviderId;
-  let secondProviderId;
   let unassignedNote;
   let assignedNote;
-  let unassignedNoteId;
-  let assignedNoteId;
   const desiredName = 'General note';
 
   before('Creating data', () => {
     cy.getAdminToken();
     EHoldingsProviders.getProvidersViaApi().then((providers) => {
-      firstProviderId = providers[0]?.id;
-      secondProviderId = providers[1]?.id;
-      testData.firstProviderId = firstProviderId;
-      testData.secondProviderId = secondProviderId;
+      expect(providers.length).to.be.greaterThan(2);
+      testData.firstProviderId = providers[0]?.id;
+      testData.secondProviderId = providers[1]?.id;
     });
 
     NoteTypes.getNoteTypesViaApi()
@@ -39,11 +34,11 @@ describe('Notes assign and unassign', () => {
           links: [
             {
               type: 'provider',
-              id: firstProviderId,
+              id: testData.firstProviderId,
             },
             {
               type: 'provider',
-              id: secondProviderId,
+              id: testData.secondProviderId,
             },
           ],
         };
@@ -56,21 +51,17 @@ describe('Notes assign and unassign', () => {
           links: [
             {
               type: 'provider',
-              id: secondProviderId,
+              id: testData.secondProviderId,
             },
           ],
         };
 
         return Notes.createViaApi(unassignedNote).then((createdUnassignedNote) => {
-          unassignedNoteId = createdUnassignedNote.id;
-          unassignedNote.id = unassignedNoteId;
-          testData.unassignedNoteId = unassignedNoteId;
+          testData.unassignedNoteId = createdUnassignedNote.id;
         });
       })
       .then(() => Notes.createViaApi(assignedNote).then((createdAssignedNote) => {
-        assignedNoteId = createdAssignedNote.id;
-        assignedNote.id = assignedNoteId;
-        testData.assignedNoteId = assignedNoteId;
+        testData.assignedNoteId = createdAssignedNote.id;
       }))
       .then(() => {
         cy.createTempUser([
@@ -95,7 +86,7 @@ describe('Notes assign and unassign', () => {
     { tags: ['extendedPath', 'spitfire', 'C3629'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: `/eholdings/providers/${secondProviderId}`,
+        path: `/eholdings/providers/${testData.secondProviderId}`,
         waiter: NotesEholdings.waitLoading,
       });
 
