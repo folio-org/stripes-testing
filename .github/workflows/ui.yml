@@ -19,10 +19,7 @@ jobs:
     name: Set shared variables
     runs-on: ubuntu-latest
     outputs:
-      # unfortunately we can only output strings, so this is "True" or "False"
-      is-release: ${{ steps.logic.outputs.is-release }}
-      folio-npm-registry: ${{ steps.logic.outputs.folio-npm-registry }}
-      folio-npm-registry-auth: ${{ steps.logic.outputs.folio-npm-registry-auth }}
+      specs-list: ${{ steps.format-specs-list.outputs.specs-list }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -97,6 +94,8 @@ jobs:
   cypress-run:
     runs-on: ubuntu-24.04
     needs: [install-cypress, install, set-shared-variables]
+    with:
+      specs-list: ${{ needs.set-shared-variables.outputs.specs-list }}
     strategy:
       # don't fail the entire matrix on failure
       fail-fast: false
