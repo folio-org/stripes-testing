@@ -146,20 +146,20 @@ export default {
     cy.expect(previewModal.absent());
   },
 
-  verifyMetadataObjectIsVisible: (creator = 'Unknown user', templateName) => {
+  verifyMetadataObjectIsVisible({ creator = 'Unknown user', paneTitle = titles.newTemplate } = {}) {
     cy.expect(Accordion({ label: 'General information' }).exists());
     cy.expect(Button('General information').has({ ariaExpanded: 'true' }));
-    const paneName = templateName || titles.newTemplate;
-    cy.expect(Pane(paneName).exists());
-    cy.do(Pane(paneName).find(MetaSection()).click());
+    cy.do(Pane(paneTitle).find(MetaSection()).clickHeader());
     cy.expect(
-      Pane(paneName)
-        .find(MetaSection({ updatedByText: including(`Source: ${creator}`) }))
+      Pane(paneTitle)
+        .find(MetaSection({ updatedByText: including(creator) }))
         .exists(),
     );
   },
 
   verifyGeneralInformationForDuplicate: (template) => {
+    cy.expect(nameField.has({ focused: true }));
+    cy.do(nameField.blur());
     cy.expect([
       nameField.has({
         value: template.name,
