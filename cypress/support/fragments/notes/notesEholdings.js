@@ -10,6 +10,7 @@ import {
 
 const notesSection = Section({ id: 'providerShowNotes' });
 const createButton = Button({ id: 'note-create-button' });
+const assignUnassignButton = Button({ id: 'note-assign-button' });
 const titleField = TextField('Note title*');
 const detailsField = RichEditor({ id: 'note-details-field' });
 const submitButton = Button({ type: 'submit' });
@@ -74,5 +75,14 @@ export default {
       detailsField.fillIn(newDetails),
       submitButton.click(),
     ]);
+  },
+  clickAssignUnassignButton: () => {
+    cy.do(assignUnassignButton.click());
+  },
+  verifyNoteInList: (title) => {
+    cy.expect(notesSection.find(HTML(including(title))).exists());
+  },
+  verifyNoteNotInList: (title) => {
+    cy.expect(notesSection.find(HTML(including(title))).absent());
   },
 };
