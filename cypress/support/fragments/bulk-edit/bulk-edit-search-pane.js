@@ -861,6 +861,19 @@ export default {
     });
   },
 
+  verifyVisibleErrors(allowedIdentifiers, errorTemplate, expectedCount = 10) {
+    for (let i = 0; i < expectedCount; i++) {
+      errorsAccordion
+        .find(MultiColumnListRow({ indexRow: `row-${i}` }))
+        .find(MultiColumnListCell({ column: 'Record identifier' }))
+        .content()
+        .then((identifier) => {
+          expect(allowedIdentifiers).to.include(identifier);
+          this.verifyErrorByIdentifier(identifier, errorTemplate(identifier));
+        });
+    }
+  },
+
   verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
       errorsAccordion

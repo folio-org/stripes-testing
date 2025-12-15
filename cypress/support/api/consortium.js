@@ -38,16 +38,13 @@ Cypress.Commands.add('removeAffiliationFromUser', (tenantId, targetUserId) => {
   });
 });
 
-Cypress.Commands.add(
-  'affiliateUserToTenant',
-  ({ tenantId, userId, permissions, shouldReplacePerms }) => {
-    cy.resetTenant();
-    cy.assignAffiliationToUser(tenantId, userId);
-    cy.setTenant(tenantId);
-    cy.assignPermissionsToExistingUser(userId, permissions, shouldReplacePerms);
-    cy.resetTenant();
-  },
-);
+Cypress.Commands.add('affiliateUserToTenant', ({ tenantId, userId, permissions }) => {
+  cy.resetTenant();
+  cy.assignAffiliationToUser(tenantId, userId);
+  cy.setTenant(tenantId);
+  cy.assignPermissionsToExistingUser(userId, permissions);
+  cy.resetTenant();
+});
 
 Cypress.Commands.add('getPublications', (publicationForTenants, publicationUrl) => {
   cy.getConsortiaId().then((consortiaId) => {

@@ -231,4 +231,14 @@ export default {
     resource: 'UI-Inventory Instance Set-Records-For-Deletion',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiBulkEditQueryExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Bulk-Edit Query',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiBulkEditLogsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Logs',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 };

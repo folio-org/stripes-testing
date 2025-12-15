@@ -18,6 +18,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 let user;
 let instanceTypeId;
@@ -88,11 +89,7 @@ describe('Bulk-edit', () => {
             cy.affiliateUserToTenant({
               tenantId: affiliation,
               userId: user.userId,
-              permissions: [
-                permissions.uiInventoryViewCreateHoldings.gui,
-                permissions.bulkEditQueryView.gui,
-                permissions.bulkEditLogsView.gui,
-              ],
+              permissions: defaultPerms,
             });
           });
 
@@ -208,18 +205,16 @@ describe('Bulk-edit', () => {
           QueryModal.testQueryDisabled(false);
 
           // Step 3: Test query
-          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.testQuery();
-          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
+          QueryModal.waitForQueryCompleted('@query');
           QueryModal.verifyNumberOfMatchedRecords(14);
           QueryModal.runQueryDisabled(false);
 
           // Step 4: Run query
-          cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@getPreview', getLongDelay()).then((interception) => {
+          cy.wait('@preview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -292,307 +287,290 @@ describe('Bulk-edit', () => {
                   holdingId,
                 );
               });
+          });
 
-            // Step 9-10: Query by Holdings HRID
-            BulkEditSearchPane.clickToBulkEditMainButton();
-            BulkEditSearchPane.openQuerySearch();
-            BulkEditSearchPane.checkHoldingsRadio();
-            BulkEditSearchPane.clickBuildQueryButton();
-            QueryModal.verify();
-            QueryModal.cancelDisabled(false);
-            QueryModal.runQueryDisabled();
+          // Step 9-10: Query by Holdings HRID
+          BulkEditSearchPane.clickToBulkEditMainButton();
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+          QueryModal.cancelDisabled(false);
+          QueryModal.runQueryDisabled();
 
-            // Step 10: Fill in Holdings HRID with "equals" operator
-            const holdingHRID = folioInstance.holdingHridsCollege[0];
-            QueryModal.selectField(holdingsFieldValues.holdingsHrid);
-            QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-            QueryModal.fillInValueTextfield(holdingHRID);
-            QueryModal.verifyQueryAreaContent(`(holdings.hrid == ${holdingHRID})`);
-            QueryModal.testQueryDisabled(false);
+          // Step 10: Fill in Holdings HRID with "equals" operator
+          const holdingHRID = folioInstance.holdingHridsCollege[0];
+          QueryModal.selectField(holdingsFieldValues.holdingsHrid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.fillInValueTextfield(holdingHRID);
+          QueryModal.verifyQueryAreaContent(`(holdings.hrid == ${holdingHRID})`);
+          QueryModal.testQueryDisabled(false);
 
-            cy.intercept('GET', '/query/**').as('waiterForQueryCompleted2');
-            QueryModal.testQuery();
-            QueryModal.waitForQueryCompleted('@waiterForQueryCompleted2');
-            QueryModal.verifyNumberOfMatchedRecords(1);
-            QueryModal.runQueryDisabled(false);
+          QueryModal.testQuery();
+          QueryModal.waitForQueryCompleted('@query');
+          QueryModal.verifyNumberOfMatchedRecords(1);
+          QueryModal.runQueryDisabled(false);
 
-            // Step 11: Click "Run query" button
-            // Check the Preview of record matched on "Bulk edit query" page
-            cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview2');
-            QueryModal.clickRunQuery();
-            QueryModal.verifyClosed();
+          // Step 11: Click "Run query" button
+          // Check the Preview of record matched on "Bulk edit query" page
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
 
-            cy.wait('@getPreview2', getLongDelay()).then((interception2) => {
-              const interceptedUuid2 = interception2.request.url.match(
-                /bulk-operations\/([a-f0-9-]+)\/preview/,
-              )[1];
-              matchedRecordsQueryFileHoldingsHRID = `*-Matched-Records-Query-${interceptedUuid2}.csv`;
+          cy.wait('@preview', getLongDelay()).then((interception2) => {
+            const interceptedUuid2 = interception2.request.url.match(
+              /bulk-operations\/([a-f0-9-]+)\/preview/,
+            )[1];
+            matchedRecordsQueryFileHoldingsHRID = `*-Matched-Records-Query-${interceptedUuid2}.csv`;
 
-              BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-              BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 holdings');
-              BulkEditSearchPane.verifyQueryHeadLine(`(holdings.hrid == ${holdingHRID})`);
-              BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
-              BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 holdings');
+            BulkEditSearchPane.verifyQueryHeadLine(`(holdings.hrid == ${holdingHRID})`);
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
+            BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
-              // Step 12: Verify matched Holdings HRID
-              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                holdingHRID,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                holdingHRID,
-              );
+            // Step 12: Verify matched Holdings HRID
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              holdingHRID,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              holdingHRID,
+            );
 
-              // Step 13: Download and verify HRID matched records CSV
-              BulkEditActions.openActions();
-              BulkEditActions.downloadMatchedResults();
-              BulkEditFiles.verifyValueInRowByUUID(
-                matchedRecordsQueryFileHoldingsHRID,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                holdingHRID,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                holdingHRID,
-              );
+            // Step 13: Download and verify HRID matched records CSV
+            BulkEditActions.openActions();
+            BulkEditActions.downloadMatchedResults();
+            ExportFile.verifyFileIncludes(matchedRecordsQueryFileHoldingsHRID, [holdingHRID]);
+            BulkEditFiles.verifyValueInRowByUUID(
+              matchedRecordsQueryFileHoldingsHRID,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              holdingHRID,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              holdingHRID,
+            );
+          });
 
-              // Step 14-15: Query by Instance UUID (10+ holdings)
-              BulkEditSearchPane.clickToBulkEditMainButton();
-              BulkEditSearchPane.openQuerySearch();
-              BulkEditSearchPane.checkHoldingsRadio();
-              BulkEditSearchPane.clickBuildQueryButton();
-              QueryModal.verify();
+          // Step 14-15: Query by Instance UUID (10+ holdings)
+          BulkEditSearchPane.clickToBulkEditMainButton();
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
 
-              QueryModal.selectField(holdingsFieldValues.instanceUuid);
-              QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-              QueryModal.fillInValueTextfield(folioInstance.uuid);
-              QueryModal.verifyQueryAreaContent(`(holdings.instance_id == ${folioInstance.uuid})`);
-              QueryModal.testQueryDisabled(false);
+          QueryModal.selectField(holdingsFieldValues.instanceUuid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.fillInValueTextfield(folioInstance.uuid);
+          QueryModal.verifyQueryAreaContent(`(holdings.instance_id == ${folioInstance.uuid})`);
+          QueryModal.testQueryDisabled(false);
 
-              cy.intercept('GET', '/query/**').as('waiterForQueryCompleted3');
-              QueryModal.testQuery();
-              QueryModal.waitForQueryCompleted('@waiterForQueryCompleted3');
-              QueryModal.verifyNumberOfMatchedRecords(14); // Total: 3 College + 11 University
-              QueryModal.runQueryDisabled(false);
+          QueryModal.testQuery();
+          QueryModal.waitForQueryCompleted('@query');
+          QueryModal.verifyNumberOfMatchedRecords(14); // Total: 3 College + 11 University
+          QueryModal.runQueryDisabled(false);
 
-              // Step 15: Run query
-              cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview3');
-              QueryModal.clickRunQuery();
-              QueryModal.verifyClosed();
+          // Step 15: Run query
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
 
-              cy.wait('@getPreview3', getLongDelay()).then((interception3) => {
-                const interceptedUuid3 = interception3.request.url.match(
-                  /bulk-operations\/([a-f0-9-]+)\/preview/,
-                )[1];
-                matchedRecordsQueryFileInstanceUUID = `*-Matched-Records-Query-${interceptedUuid3}.csv`;
+          cy.wait('@preview', getLongDelay()).then((interception3) => {
+            const interceptedUuid3 = interception3.request.url.match(
+              /bulk-operations\/([a-f0-9-]+)\/preview/,
+            )[1];
+            matchedRecordsQueryFileInstanceUUID = `*-Matched-Records-Query-${interceptedUuid3}.csv`;
 
-                BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
-                BulkEditSearchPane.verifyQueryHeadLine(
-                  `(holdings.instance_id == ${folioInstance.uuid})`,
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
+            BulkEditSearchPane.verifyQueryHeadLine(
+              `(holdings.instance_id == ${folioInstance.uuid})`,
+            );
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
+            BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+
+            // Step 16: Verify matched Holdings by Instance UUID
+            folioInstance.holdingIdsCollege
+              .concat(folioInstance.holdingIdsUniversity)
+              .forEach((holdingId) => {
+                BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                  holdingId,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                  holdingId,
                 );
-                BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
-                BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-
-                // Step 16: Verify matched Holdings by Instance UUID
-                folioInstance.holdingIdsCollege
-                  .concat(folioInstance.holdingIdsUniversity)
-                  .forEach((holdingId) => {
-                    BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                      holdingId,
-                      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-                      holdingId,
-                    );
-                  });
-
-                // Step 17: Download and verify Instance UUID matched records CSV
-                BulkEditActions.openActions();
-                BulkEditActions.downloadMatchedResults();
-                folioInstance.holdingIdsCollege
-                  .concat(folioInstance.holdingIdsUniversity)
-                  .forEach((holdingId) => {
-                    BulkEditFiles.verifyValueInRowByUUID(
-                      matchedRecordsQueryFileInstanceUUID,
-                      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-                      holdingId,
-                      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-                      holdingId,
-                    );
-                  });
-
-                // Step 18-20: Remove University affiliation, verify only College holdings matched
-                cy.logout();
-                cy.getAdminToken();
-                cy.removeAffiliationFromUser(Affiliations.University, user.userId);
-                cy.resetTenant();
-
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
-                });
-
-                // Step 19: Repeat query by Holdings UUIDs
-                BulkEditSearchPane.openQuerySearch();
-                BulkEditSearchPane.checkHoldingsRadio();
-                BulkEditSearchPane.clickBuildQueryButton();
-                QueryModal.verify();
-
-                QueryModal.selectField(holdingsFieldValues.holdingsUuid);
-                QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-                QueryModal.fillInValueTextfield(holdingsUUIDs);
-
-                cy.intercept('GET', '/query/**').as('waiterForQueryCompleted4');
-                QueryModal.testQuery();
-                QueryModal.waitForQueryCompleted('@waiterForQueryCompleted4');
-                QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
-
-                cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview4');
-                QueryModal.clickRunQuery();
-                QueryModal.verifyClosed();
-
-                cy.wait('@getPreview4', getLongDelay()).then(() => {
-                  BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                  BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
-                  BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
-
-                  // Step 20: Verify only College holdings matched
-                  folioInstance.holdingIdsCollege.forEach((holdingId) => {
-                    BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                      holdingId,
-                      BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-                      holdingId,
-                    );
-                  });
-
-                  // Step 21-23: Restore University affiliation, remove permissions, verify only College holdings
-                  cy.logout();
-                  cy.getAdminToken();
-                  cy.assignAffiliationToUser(Affiliations.University, user.userId);
-                  cy.setTenant(Affiliations.University);
-                  cy.updateCapabilitiesForUserApi(user.userId, []);
-                  cy.updateCapabilitySetsForUserApi(user.userId, []);
-                  cy.resetTenant();
-
-                  cy.login(user.username, user.password, {
-                    path: TopMenu.bulkEditPath,
-                    waiter: BulkEditSearchPane.waitLoading,
-                  });
-
-                  // Step 22: Repeat query by Holdings UUIDs
-                  BulkEditSearchPane.openQuerySearch();
-                  BulkEditSearchPane.checkHoldingsRadio();
-                  BulkEditSearchPane.clickBuildQueryButton();
-                  QueryModal.verify();
-
-                  QueryModal.selectField(holdingsFieldValues.holdingsUuid);
-                  QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-                  QueryModal.fillInValueTextfield(holdingsUUIDs);
-
-                  cy.intercept('GET', '/query/**').as('waiterForQueryCompleted5');
-                  QueryModal.testQuery();
-                  QueryModal.waitForQueryCompleted('@waiterForQueryCompleted5');
-                  QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
-
-                  cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
-                    'getPreview5',
-                  );
-                  QueryModal.clickRunQuery();
-                  QueryModal.verifyClosed();
-
-                  cy.wait('@getPreview5', getLongDelay()).then(() => {
-                    BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                    BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
-                    BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
-
-                    // Step 23: Verify only College holdings matched
-                    folioInstance.holdingIdsCollege.forEach((holdingId) => {
-                      BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                        holdingId,
-                        BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-                        holdingId,
-                      );
-                    });
-
-                    // Step 24-27: Remove College affiliation, add limited permissions to University, verify errors
-                    cy.logout();
-                    cy.getAdminToken();
-                    cy.removeAffiliationFromUser(Affiliations.College, user.userId);
-
-                    // Add limited permissions to University (no view permission)
-                    cy.affiliateUserToTenant({
-                      tenantId: Affiliations.University,
-                      userId: user.userId,
-                      permissions: [
-                        permissions.uiInventoryViewCreateHoldings.gui,
-                        permissions.bulkEditQueryView.gui,
-                        permissions.bulkEditLogsView.gui,
-                      ],
-                      shouldReplacePerms: true,
-                    });
-
-                    cy.login(user.username, user.password, {
-                      path: TopMenu.bulkEditPath,
-                      waiter: BulkEditSearchPane.waitLoading,
-                    });
-
-                    // Step 25: Repeat query by Holdings UUIDs
-                    BulkEditSearchPane.openQuerySearch();
-                    BulkEditSearchPane.checkHoldingsRadio();
-                    BulkEditSearchPane.clickBuildQueryButton();
-                    QueryModal.verify();
-
-                    QueryModal.selectField(holdingsFieldValues.holdingsUuid);
-                    QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-                    QueryModal.fillInValueTextfield(holdingsUUIDs);
-
-                    cy.intercept('GET', '/query/**').as('waiterForQueryCompleted6');
-                    QueryModal.testQuery();
-                    QueryModal.waitForQueryCompleted('@waiterForQueryCompleted6');
-                    QueryModal.verifyNumberOfMatchedRecords(0); // No view permission
-
-                    cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
-                      'getPreview6',
-                    );
-                    QueryModal.clickRunQuery();
-                    QueryModal.verifyClosed();
-
-                    cy.wait('@getPreview6', getLongDelay()).then((interception6) => {
-                      const interceptedUuid6 = interception6.request.url.match(
-                        /bulk-operations\/([a-f0-9-]+)\/preview/,
-                      )[1];
-                      errorsFileHoldingsUUID = `*-Matching-Records-Errors-Query-${interceptedUuid6}.csv`;
-
-                      BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-                      BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');
-                      BulkEditSearchPane.verifyQueryHeadLine(
-                        `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
-                      );
-                      BulkEditSearchPane.verifyErrorLabel(11);
-
-                      // Step 26: Verify permission errors (top 11)
-                      folioInstance.holdingIdsCollege
-                        .concat(folioInstance.holdingIdsUniversity)
-                        .slice(0, 10)
-                        .forEach((holdingId) => {
-                          BulkEditSearchPane.verifyErrorByIdentifier(
-                            holdingId,
-                            errorNoPermissionTemplate(holdingId),
-                          );
-                        });
-
-                      // Step 27: Download and verify errors CSV (all 11 errors)
-                      BulkEditActions.openActions();
-                      BulkEditActions.downloadErrors();
-
-                      // Build expected error messages for all holdings
-                      const expectedErrors = folioInstance.holdingIdsCollege
-                        .concat(folioInstance.holdingIdsUniversity)
-                        .map(
-                          (holdingId) => `ERROR,${holdingId},${errorNoPermissionTemplate(holdingId)}`,
-                        );
-
-                      ExportFile.verifyFileIncludes(errorsFileHoldingsUUID, expectedErrors);
-                    });
-                  });
-                });
               });
+
+            // Step 17: Download and verify Instance UUID matched records CSV
+            BulkEditActions.openActions();
+            BulkEditActions.downloadMatchedResults();
+            ExportFile.verifyFileIncludes(matchedRecordsQueryFileInstanceUUID, [
+              folioInstance.holdingIdsCollege[0],
+            ]);
+            folioInstance.holdingIdsCollege
+              .concat(folioInstance.holdingIdsUniversity)
+              .forEach((holdingId) => {
+                BulkEditFiles.verifyValueInRowByUUID(
+                  matchedRecordsQueryFileInstanceUUID,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                  holdingId,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                  holdingId,
+                );
+              });
+          });
+
+          // Step 18-20: Remove University affiliation, verify only College holdings matched
+          cy.logout();
+          cy.getAdminToken();
+          cy.removeAffiliationFromUser(Affiliations.University, user.userId);
+          cy.resetTenant();
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+
+          // Step 19: Repeat query by Holdings UUIDs
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+
+          QueryModal.selectField(holdingsFieldValues.holdingsUuid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.fillInValueTextfield(holdingsUUIDs);
+
+          QueryModal.testQuery();
+          QueryModal.waitForQueryCompleted('@query');
+          QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
+
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
+
+          cy.wait('@preview', getLongDelay()).then(() => {
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
+
+            // Step 20: Verify only College holdings matched
+            folioInstance.holdingIdsCollege.forEach((holdingId) => {
+              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                holdingId,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                holdingId,
+              );
             });
+          });
+
+          // Step 21-23: Restore University affiliation, remove permissions, verify only College holdings
+          cy.logout();
+          cy.getAdminToken();
+          cy.assignAffiliationToUser(Affiliations.University, user.userId);
+          cy.setTenant(Affiliations.University);
+          cy.updateCapabilitiesForUserApi(user.userId, []);
+          cy.updateCapabilitySetsForUserApi(user.userId, []);
+          cy.resetTenant();
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+
+          // Step 22: Repeat query by Holdings UUIDs
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+
+          QueryModal.selectField(holdingsFieldValues.holdingsUuid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.fillInValueTextfield(holdingsUUIDs);
+
+          QueryModal.testQuery();
+          QueryModal.waitForQueryCompleted('@query');
+          QueryModal.verifyNumberOfMatchedRecords(3); // Only College holdings
+
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
+
+          cy.wait('@preview', getLongDelay()).then(() => {
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('3 holdings');
+            BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
+
+            // Step 23: Verify only College holdings matched
+            folioInstance.holdingIdsCollege.forEach((holdingId) => {
+              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                holdingId,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+                holdingId,
+              );
+            });
+          });
+
+          // Step 24-27: Remove College affiliation, add limited permissions to University, verify errors
+          cy.logout();
+          cy.getAdminToken();
+          cy.removeAffiliationFromUser(Affiliations.College, user.userId);
+
+          // Add limited permissions to University (no view permission)
+          cy.setTenant(Affiliations.University);
+          cy.assignCapabilitiesToExistingUser(
+            user.userId,
+            [],
+            [
+              CapabilitySets.uiInventoryHoldingsCreate,
+              CapabilitySets.uiBulkEditQueryExecute,
+              CapabilitySets.uiBulkEditLogsView,
+            ],
+          );
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+
+          // Step 25: Repeat query by Holdings UUIDs
+          BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.checkHoldingsRadio();
+          BulkEditSearchPane.clickBuildQueryButton();
+          QueryModal.verify();
+
+          QueryModal.selectField(holdingsFieldValues.holdingsUuid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.fillInValueTextfield(holdingsUUIDs);
+
+          QueryModal.testQuery();
+          QueryModal.waitForQueryCompleted('@query');
+          QueryModal.verifyNumberOfMatchedRecords(11);
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
+
+          cy.wait('@errors', getLongDelay()).then((interception6) => {
+            const interceptedUuid6 = interception6.request.url.match(
+              /bulk-operations\/([a-f0-9-]+)\/errors/,
+            )[1];
+            errorsFileHoldingsUUID = `*-Matching-Records-Errors-Query-${interceptedUuid6}.csv`;
+
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');
+            BulkEditSearchPane.verifyQueryHeadLine(
+              `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+            );
+            BulkEditSearchPane.verifyErrorLabel(11);
+
+            // Step 26: Verify permission errors (top 10 visible)
+            BulkEditSearchPane.verifyVisibleErrors(
+              folioInstance.holdingIdsUniversity,
+              errorNoPermissionTemplate,
+              10,
+            );
+
+            // Step 27: Download and verify errors CSV (all 11 errors)
+            BulkEditActions.openActions();
+            BulkEditActions.downloadErrors();
+
+            // Build expected error messages for all holdings
+            const expectedErrors = folioInstance.holdingIdsUniversity.map(
+              (holdingId) => `ERROR,${holdingId},${errorNoPermissionTemplate(holdingId)}`,
+            );
+
+            ExportFile.verifyFileIncludes(errorsFileHoldingsUUID, expectedErrors);
           });
         },
       );
