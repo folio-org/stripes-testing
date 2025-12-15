@@ -256,8 +256,6 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
   });
 });
 
-// shouldReplace - if true, existing permissions will be replaced with new ones
-// if false, new permissions will be added to existing ones
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
   if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
     cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
