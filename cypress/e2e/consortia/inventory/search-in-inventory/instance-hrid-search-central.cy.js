@@ -9,8 +9,6 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -116,12 +114,11 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
-            ServicePoints.getViaApi().then((servicePoint) => {
-              NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoint[0].id)).then(
-                (res) => {
-                  memberLocation = res;
-                },
-              );
+            cy.getLocations({
+              limit: 1,
+              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+            }).then((res) => {
+              memberLocation = res;
             });
           })
           .then(() => {
@@ -148,6 +145,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             InventorySearchAndFilter.selectSearchOption(hridSearchOption);
@@ -163,14 +161,6 @@ describe('Inventory', () => {
         cy.resetTenant();
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
-
-        cy.setTenant(Affiliations.College);
-        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-          memberLocation.institutionId,
-          memberLocation.campusId,
-          memberLocation.libraryId,
-          memberLocation.id,
-        );
       });
 
       it(
