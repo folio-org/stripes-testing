@@ -226,6 +226,10 @@ export default {
     internal: 'ui-inventory.holdings.edit',
     gui: 'Inventory: View, create, edit holdings',
   },
+  uiInventoryViewCreateHoldings: {
+    internal: 'ui-inventory.holdings.create',
+    gui: 'Inventory: View, create holdings',
+  },
   uiInventoryViewCreateEditInstances: {
     internal: 'ui-inventory.instance.edit',
     gui: 'Inventory: View, create, edit instances',
