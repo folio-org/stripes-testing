@@ -59,16 +59,6 @@ export default {
     resource: 'Capabilities',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
-  uiBulkEditLogsView: {
-    type: CAPABILITY_TYPES.DATA,
-    resource: 'UI-Bulk-Edit Logs',
-    action: CAPABILITY_ACTIONS.VIEW,
-  },
-  uiInventoryHoldingsCreate: {
-    type: CAPABILITY_TYPES.DATA,
-    resource: 'UI-Inventory-Holdings',
-    action: CAPABILITY_ACTIONS.CREATE,
-  },
 
   // Procedural capabilities
   uiUsersResetPassword: {
@@ -79,11 +69,6 @@ export default {
   usersKeycloakPasswordResetLinkGenerate: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'Users-keycloak Password-Reset-Link Generate',
-    action: CAPABILITY_ACTIONS.EXECUTE,
-  },
-  uiBulkEditQueryExecute: {
-    type: CAPABILITY_TYPES.PROCEDURAL,
-    resource: 'UI-Bulk Edit-Query',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };
