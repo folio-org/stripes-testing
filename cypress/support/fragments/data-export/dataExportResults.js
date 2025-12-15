@@ -4,6 +4,7 @@ import {
   ListRow,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiColumnList,
   matching,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
@@ -21,6 +22,10 @@ export default {
       }),
       MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),
     ]);
+  },
+
+  verifyTableWithResultsExists() {
+    cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
   },
 
   verifySuccessExportResultCells(
@@ -228,7 +233,9 @@ export default {
     };
 
     const userNameToVerify = `${user.firstName} ${user.lastName}`;
-    const expectedFailedContent = `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`;
+    const expectedFailedContent = failedRecordsCount
+      ? `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`
+      : `${duplicatesCount} duplicate(s)`;
 
     cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),

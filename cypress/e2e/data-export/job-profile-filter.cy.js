@@ -156,7 +156,7 @@ describe('Data Export', () => {
         DataExportViewAllLogs.verifyNumberOfFilteredJobProfiles(1);
 
         // Step 6: Select any job profile
-        DataExportViewAllLogs.selectJobProfile(jobProfileName);
+        DataExportViewAllLogs.selectFilterOption(jobProfileName);
         DataExportViewAllLogs.verifyResetAllButtonEnabled();
         DataExportViewAllLogs.verifySearchAndFilterPane();
         DataExportViewAllLogs.verifyJobProfileAccordion();
@@ -186,11 +186,11 @@ describe('Data Export', () => {
         // Step 8: Click on "Choose job profile" dropdown - Type non-existing option into the text field
         DataExportViewAllLogs.clickJobProfileDropdown();
         DataExportViewAllLogs.filterJobProfileByName('non-existing');
-        DataExportViewAllLogs.verifyJobProfileNotInList();
+        DataExportViewAllLogs.verifyValueNotInList();
 
         // Step 9: Click on "Choose job profile" filter - Select any job profile
         DataExportViewAllLogs.filterJobProfileByName(jobProfileName);
-        DataExportViewAllLogs.selectJobProfile(jobProfileName);
+        DataExportViewAllLogs.selectFilterOption(jobProfileName);
         DataExportViewAllLogs.verifyResetAllButtonEnabled();
         DataExportViewAllLogs.verifySearchAndFilterPane();
         DataExportViewAllLogs.verifyJobProfileAccordion();
