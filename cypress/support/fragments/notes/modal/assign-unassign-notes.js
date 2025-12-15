@@ -78,4 +78,14 @@ export default {
     cy.do(asignedCheckbox.checkIfNotSelected());
     cy.expect(asignedCheckbox.has({ checked: true }));
   },
+
+  verifyNoteCheckboxDisabled(noteTitle) {
+    cy.expect(notesList.exists());
+    cy.expect(
+      notesList
+        .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+        .find(assignNoteCheckbox)
+        .has({ disabled: true }),
+    );
+  },
 };

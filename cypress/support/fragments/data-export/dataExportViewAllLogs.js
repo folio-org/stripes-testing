@@ -1,3 +1,4 @@
+import { Keyboard } from '@interactors/keyboard';
 import {
   Button,
   Checkbox,
@@ -12,6 +13,8 @@ import {
   Selection,
   SelectionList,
   MultiColumnListCell,
+  PaneHeader,
+  including,
 } from '../../../../interactors';
 
 const viewAllLogsButton = Button('View all');
@@ -31,14 +34,18 @@ const recordsFoundText = HTML({ id: 'paneHeaderdata-export-logs-pane-subtitle' }
 const logsTable = MultiColumnList();
 const errorsInExportYesOptionId = 'clickable-filter-status-fail';
 const errorsInExportNoOptionId = 'clickable-filter-status-completed';
-const errorsInExportCrossButton = Button({ icon: 'times-circle-solid' });
 const jobProfileSelection = Selection({ singleValue: 'Choose job profile' });
-const jobProfileSelectionList = SelectionList({ placeholder: 'Filter options list' });
-const jobProfileClearButton = Button({ icon: 'times-circle-solid' });
+const filterSelectionList = SelectionList({ placeholder: 'Filter options list' });
+const emptyListMessage = HTML('-List is empty-');
+const clearButton = Button({ icon: 'times-circle-solid' });
 
 export default {
   openAllJobLogs() {
     cy.do(viewAllLogsButton.click());
+  },
+
+  verifyTableWithResultsExists() {
+    cy.expect(MultiColumnList().exists());
   },
 
   verifySearchAndFilterPane() {
@@ -117,6 +124,12 @@ export default {
     cy.expect(recordsFoundText.exists());
   },
 
+  verifyFoundRecordsCount(count) {
+    const recordText = count === 1 ? 'record found' : 'records found';
+
+    cy.expect(PaneHeader({ subtitle: including(`${count} ${recordText}`) }).exists());
+  },
+
   verifyLogsTable() {
     cy.expect(logsTable.exists());
     cy.expect(logsTable.find(HTML('File name')).exists());
@@ -127,6 +140,7 @@ export default {
     cy.expect(logsTable.find(HTML('Job profile')).exists());
     cy.expect(logsTable.find(HTML('Started running')).exists());
     cy.get('div.mclScrollable---JvHuN').scrollTo('right');
+    cy.wait(500);
     cy.expect(logsTable.find(HTML('Ended running')).exists());
     cy.expect(logsTable.find(HTML('Run by')).exists());
     cy.expect(logsTable.find(HTML({ id: 'list-column-hrid' })).exists());
@@ -166,7 +180,7 @@ export default {
   },
 
   clickTheCrossIcon() {
-    cy.do(errorsInExportCrossButton.click());
+    cy.do(clearButton.click());
   },
 
   verifyErrorsInExportCheckbox(option, expected) {
@@ -204,13 +218,19 @@ export default {
   },
 
   verifyJobProfileInDropdown(profileName) {
-    cy.then(() => jobProfileSelectionList.optionList()).then((options) => {
+    cy.then(() => filterSelectionList.optionList()).then((options) => {
       cy.expect(options).to.include(profileName);
     });
   },
 
+  verifyJobProfileNotInDropdown(profileName) {
+    cy.then(() => filterSelectionList.optionList()).then((options) => {
+      cy.expect(options).to.not.include(profileName);
+    });
+  },
+
   verifyNumberOfFilteredJobProfiles(expectedCount) {
-    cy.then(() => jobProfileSelectionList.optionList()).then((options) => {
+    cy.then(() => filterSelectionList.optionList()).then((options) => {
       cy.expect(options.length).to.equal(expectedCount);
     });
   },
@@ -224,9 +244,9 @@ export default {
     cy.expect(SelectionList().has({ highlighted: profileName }));
   },
 
-  selectJobProfile(profileName) {
+  selectFilterOption(option) {
     cy.wait(1000);
-    cy.do(SelectionList().select(profileName));
+    cy.do(SelectionList().select(including(option)));
   },
 
   verifyResetAllButtonEnabled() {
@@ -240,18 +260,94 @@ export default {
   },
 
   clickClearJobProfileFilter() {
-    cy.do(jobProfileAccordion.find(jobProfileClearButton).click());
+    cy.do(jobProfileAccordion.find(clearButton).click());
   },
 
   verifyClearFilterButtonExists(isExist = true) {
     if (isExist) {
-      cy.expect(jobProfileAccordion.find(jobProfileClearButton).exists());
+      cy.expect(jobProfileAccordion.find(clearButton).exists());
     } else {
-      cy.expect(jobProfileAccordion.find(jobProfileClearButton).absent());
+      cy.expect(jobProfileAccordion.find(clearButton).absent());
     }
   },
 
-  verifyJobProfileNotInList() {
-    cy.expect(jobProfileSelectionList.find(HTML('-List is empty-')).exists());
+  verifyValueNotInList() {
+    cy.expect(filterSelectionList.find(emptyListMessage).exists());
+  },
+
+  expandUserAccordion() {
+    cy.do(userAccordion.clickHeader());
+  },
+
+  verifyUserAccordionExpanded() {
+    cy.expect(userAccordion.has({ open: true }));
+  },
+
+  verifyUserDropdownExists() {
+    cy.expect(userAccordion.find(Selection()).exists());
+  },
+
+  clickUserDropdown() {
+    cy.do(userAccordion.find(Selection()).open());
+    cy.wait(1000);
+  },
+
+  filterUserByName(userName) {
+    cy.get('input[placeholder="Filter options list"]').eq(1).clear().type(userName);
+    cy.wait(2000);
+  },
+
+  verifyUserHighlightedInList(firstName, lastName) {
+    cy.expect(SelectionList().has({ highlighted: `${firstName} ${lastName}` }));
+  },
+
+  selectUserByEnter() {
+    cy.get('input[placeholder="Filter options list"]').eq(1).focus();
+    cy.wait(1000);
+    cy.do([Keyboard.press({ code: 'PageDown' }), Keyboard.press({ code: 'Enter' })]);
+    cy.wait(3000);
+  },
+
+  verifyClearUserFilterButtonExists(isExist = true) {
+    if (isExist) {
+      cy.expect(userAccordion.find(clearButton).exists());
+    } else {
+      cy.expect(userAccordion.find(clearButton).absent());
+    }
+  },
+
+  clickClearUserFilter() {
+    cy.do(userAccordion.find(clearButton).click());
+  },
+
+  verifyUserFilterSelected(firstName, lastName) {
+    cy.expect(userAccordion.find(Selection({ singleValue: `${firstName} ${lastName}` })).exists());
+  },
+
+  verifyLogsFilteredByUser(userName) {
+    cy.expect(
+      logsTable
+        .find(MultiColumnListCell({ column: 'Run by', content: including(userName) }))
+        .exists(),
+    );
+  },
+
+  verifyUsersInAlphabeticalOrder() {
+    cy.then(() => filterSelectionList.optionList()).then((options) => {
+      const sortedOptions = [...options].sort();
+
+      cy.expect(options).to.deep.equal(sortedOptions);
+    });
+  },
+
+  verifyUserListScrollable() {
+    cy.get('ul[id^="downshift-"][id$="-menu"]').should(($list) => {
+      const overflowY = $list.css('overflow-y');
+      const containerHeight = $list.height();
+      const scrollHeight = $list[0].scrollHeight;
+
+      expect(overflowY).to.equal('auto');
+      expect(scrollHeight).to.be.greaterThan(containerHeight);
+    });
   },
 };
