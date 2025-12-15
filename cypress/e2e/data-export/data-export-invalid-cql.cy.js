@@ -44,10 +44,10 @@ describe('Data Export', () => {
     { tags: ['criticalPath', 'firebird', 'C397323', 'C831974'] },
     () => {
       const checkedProfiles = [
-        { id: 1, name: 'Default instances', recordType: 'Instances' },
-        { id: 2, name: 'Default authority', recordType: 'Authorities' },
+        { name: 'Default instances', recordType: 'Instances' },
+        { name: 'Default authority', recordType: 'Authorities' },
       ];
-      checkedProfiles.forEach((profile) => {
+      checkedProfiles.forEach((profile, index) => {
         ExportFileHelper.uploadFile(editedFileName);
         ExportFileHelper.exportWithDefaultJobProfile(
           editedFileName,
@@ -56,7 +56,7 @@ describe('Data Export', () => {
           '.cql',
         );
 
-        const checkedJob = `getInfo${profile.id}`;
+        const checkedJob = `getInfo${index}`;
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(checkedJob);
         cy.wait(`@${checkedJob}`, getLongDelay()).then(({ response }) => {
           const { jobExecutions } = response.body;
