@@ -1,6 +1,8 @@
 import {
   Accordion,
+  MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   Button,
   Pane,
   Modal,
@@ -11,10 +13,30 @@ import {
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
+const logsList = logsPane.find(MultiColumnList({ id: 'job-logs-list' }));
 const fileButton = Button('or choose file');
 const areYouSureModal = Modal('Are you sure you want to run this job?');
 const viewAllLogsButton = Button('View all');
 const runningAccordion = Accordion('Running');
+
+const verifyTextColumnSorted = (selector, sortOrder, columnName) => {
+  cy.get(selector).then(($elements) => {
+    const textValues = Array.from($elements).map((el) => el.textContent.trim());
+
+    const sortedValues = [...textValues].sort((a, b) => {
+      if (sortOrder === 'ascending') {
+        return a.localeCompare(b, undefined, { sensitivity: 'base' });
+      } else {
+        return b.localeCompare(a, undefined, { sensitivity: 'base' });
+      }
+    });
+
+    expect(textValues).to.deep.equal(
+      sortedValues,
+      `${columnName} should be sorted in ${sortOrder} order`,
+    );
+  });
+};
 
 export default {
   waitLoading: () => {
@@ -91,5 +113,20 @@ export default {
 
   verifyJobAbsentInLogs(fileName) {
     cy.expect(MultiColumnListCell({ content: including(fileName) }).absent());
+  },
+
+  clickColumnHeader(columnName) {
+    cy.do(MultiColumnListHeader(columnName).click());
+    cy.wait(3000);
+  },
+
+  verifyColumnSorted(columnName, sortDirection) {
+    cy.expect(logsList.find(MultiColumnListHeader(columnName, { sort: sortDirection })).exists());
+
+    verifyTextColumnSorted(
+      '#job-logs-list [data-row-index] [class^="mclCell-"]:nth-child(2)',
+      sortDirection,
+      columnName,
+    );
   },
 };
