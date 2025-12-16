@@ -42,6 +42,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
       });
     });
