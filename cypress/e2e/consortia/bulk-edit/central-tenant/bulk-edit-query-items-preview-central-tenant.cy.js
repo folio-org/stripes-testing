@@ -47,7 +47,7 @@ const folioInstance = {
 };
 
 const defaultPerms = [
-  permissions.bulkEditView.gui,
+  permissions.bulkEditEdit.gui,
   permissions.bulkEditQueryView.gui,
   permissions.uiInventoryViewCreateEditItems.gui,
 ];
@@ -307,6 +307,8 @@ describe('Bulk-edit', () => {
             });
 
             // Step 6-7: Verify Member column
+            BulkEditActions.openActions();
+            BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
             BulkEditSearchPane.changeShowColumnCheckbox(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
             );
@@ -395,6 +397,17 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileItemUUID, [
               folioInstance.itemIdsCollege[0],
             ]);
+            folioInstance.itemIdsCollege
+              .concat(folioInstance.itemIdsUniversity)
+              .forEach((itemId) => {
+                BulkEditFiles.verifyValueInRowByUUID(
+                  matchedRecordsQueryFileItemUUID,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                );
+              });
           });
 
           // Step 13-15: Query by Item HRIDs
@@ -463,6 +476,17 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileAccessionNumber, [
               folioInstance.itemAccessionNumbersCollege[0],
             ]);
+            folioInstance.itemAccessionNumbersCollege
+              .concat(folioInstance.itemAccessionNumbersUniversity)
+              .forEach((accessionNumber) => {
+                BulkEditFiles.verifyValueInRowByUUID(
+                  matchedRecordsQueryFileAccessionNumber,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACCESSION_NUMBER,
+                  accessionNumber,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACCESSION_NUMBER,
+                  accessionNumber,
+                );
+              });
           });
 
           // Step 19-21: Query by Holdings UUID (10+ items)
@@ -497,6 +521,15 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileHoldingsUUID, [
               folioInstance.itemIdsUniversity[0],
             ]);
+            folioInstance.itemIdsUniversity.forEach((itemId) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsQueryFileHoldingsUUID,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                itemId,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                itemId,
+              );
+            });
           });
 
           // Step 22-24: Query by Holdings HRID
@@ -531,6 +564,15 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileHoldingsHRID, [
               folioInstance.itemIdsCollege[0],
             ]);
+            folioInstance.itemIdsCollege.forEach((itemId) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsQueryFileHoldingsHRID,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                itemId,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                itemId,
+              );
+            });
           });
 
           // Step 25-27: Query by Instance UUID
@@ -565,6 +607,17 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileInstanceUUID, [
               folioInstance.itemIdsCollege[0],
             ]);
+            folioInstance.itemIdsCollege
+              .concat(folioInstance.itemIdsUniversity)
+              .forEach((itemId) => {
+                BulkEditFiles.verifyValueInRowByUUID(
+                  matchedRecordsQueryFileInstanceUUID,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                );
+              });
           });
 
           // Step 28-30: Query by Instance HRID
@@ -599,6 +652,17 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(matchedRecordsQueryFileInstanceHRID, [
               folioInstance.itemIdsCollege[0],
             ]);
+            folioInstance.itemIdsCollege
+              .concat(folioInstance.itemIdsUniversity)
+              .forEach((itemId) => {
+                BulkEditFiles.verifyValueInRowByUUID(
+                  matchedRecordsQueryFileInstanceHRID,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+                  itemId,
+                );
+              });
           });
 
           // Step 31-33: Remove College affiliation
@@ -634,6 +698,10 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('11 item');
 
             // Step 33: Verify only University items
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            );
             folioInstance.itemIdsUniversity.forEach((id) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 id,
@@ -679,6 +747,10 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('11 item');
 
             // Step 36: Verify only University items
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            );
             folioInstance.itemIdsUniversity.forEach((id) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 id,
