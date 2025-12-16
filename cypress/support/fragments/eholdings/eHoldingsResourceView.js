@@ -8,6 +8,8 @@ import {
   Modal,
   Accordion,
   MultiColumnListCell,
+  MultiSelect,
+  MultiSelectOption,
   Link,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
@@ -15,6 +17,7 @@ import FileManager from '../../utils/fileManager';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import SelectAgreementModal from './modals/selectAgreementModal';
+import getRandomPostfix from '../../utils/stringTools';
 
 const closeViewButton = Button({ dataTestID: 'close-details-view-button' });
 const actionsButton = Button('Actions');
@@ -22,6 +25,8 @@ const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
 const agreementsSection = Section({ id: 'resourceShowAgreements' });
 const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
 const exportButton = Button('Export title package (CSV)');
+const tagsSection = Section({ id: 'resourceShowTags' });
+const tagsAccordion = Button({ id: 'accordion-toggle-button-resourceShowTags' });
 
 const checkHoldingStatus = (holdingStatus) => {
   cy.expect(holdingStatusSection.find(HTML(including(holdingStatus))).exists());
@@ -315,5 +320,29 @@ export default {
 
   verifyAccessStatusType(accessStatusTypeName) {
     cy.expect(accessStatusTypeKeyValue.has({ value: accessStatusTypeName }));
+  },
+
+  addTag: (newTag = `tag${getRandomPostfix()}`) => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
+      cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
+      cy.wait(500);
+      cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+      cy.wait(500);
+      cy.do(tagsSection.find(MultiSelect()).close());
+    });
+    return newTag;
+  },
+
+  verifyExistingTags: (...expectedTags) => {
+    cy.wait(1000);
+    cy.then(() => tagsAccordion.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded === 'false') {
+        cy.do(tagsAccordion.click());
+        cy.wait(1000);
+      }
+    });
+    expectedTags.forEach((tag) => {
+      cy.expect(tagsSection.find(HTML(including(tag))).exists());
+    });
   },
 };

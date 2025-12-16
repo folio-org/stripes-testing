@@ -88,4 +88,17 @@ export default {
       ListItem({ className: including('list-item-'), index: expectedCount }).absent(),
     ]);
   },
+
+  verifyTagPresentInFilter(tagValue, openDropdown = true) {
+    if (openDropdown) {
+      cy.do([
+        tagsAccordion.clickHeader(),
+        tagsAccordion.find(byTagCheckbox).checkIfNotSelected(),
+        tagsAccordion.find(byTagCheckbox).checkIfNotSelected(),
+        tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click(),
+      ]);
+    }
+    cy.do(tagsAccordion.find(MultiSelect()).filter(tagValue));
+    cy.expect(tagsAccordion.find(MultiSelectOption(including(tagValue))).exists());
+  },
 };
