@@ -393,6 +393,7 @@ export const VENDOR_NAMES = {
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
   AMAZON: 'Amazon.com',
+  MOSAIC: 'Mosaic',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
