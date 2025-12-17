@@ -44,27 +44,6 @@ describe('ui-orders: Orders and Order lines', () => {
   before('Create user, data', () => {
     cy.getAdminToken();
 
-    cy.request({
-      method: 'GET',
-      url: '/orders/composite-orders?query=(poNumber>=10500 and poNumber<=10600)&limit=100',
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (
-        response.status === 200 &&
-        response.body.purchaseOrders &&
-        response.body.purchaseOrders.length > 0
-      ) {
-        response.body.purchaseOrders.forEach((order) => {
-          cy.request({
-            method: 'DELETE',
-            url: `/orders/composite-orders/${order.id}`,
-            failOnStatusCode: false,
-          });
-        });
-        cy.wait(2000);
-      }
-    });
-
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
