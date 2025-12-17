@@ -126,11 +126,9 @@ describe('Check out', () => {
 
   after('Deleting test data', () => {
     cy.getAdminToken();
-    // Disable wildcard lookup
     OtherSettings.setOtherSettingsViaApi({
       wildcardLookupEnabled: false,
     });
-    // Delete instances with all items using the first barcode in each set
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(`${largeSetPrefix}1`);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(`${smallSetPrefix}1`);
     Users.deleteViaApi(userData.userId);
@@ -148,7 +146,7 @@ describe('Check out', () => {
       CheckOutActions.checkUserInfo(userData);
 
       // Step 2: Scan a barcode that returns less than 100 results
-      CheckOutActions.checkOutItem(smallSetPrefix);
+      CheckOutActions.checkOutItem(`${smallSetPrefix}*`);
       // Verify "Select item" modal opened
       SelectItemModal.waitLoading();
       SelectItemModal.verifyModalTitle();
@@ -163,7 +161,7 @@ describe('Check out', () => {
       SelectItemModal.closeModal();
 
       // Step 3: Scan a barcode that returns more than 200 but less than 300
-      CheckOutActions.checkOutItem(largeSetPrefix);
+      CheckOutActions.checkOutItem(`${largeSetPrefix}*`);
       // Verify "Select item" modal opened
       SelectItemModal.waitLoading();
       SelectItemModal.verifyModalTitle();
@@ -177,7 +175,7 @@ describe('Check out', () => {
       SelectItemModal.verifyNextButtonState(true);
 
       // Step 4: Click on "Next" button
-      SelectItemModal.clickNextButton();
+      SelectItemModal.clickNextButton('101 - 200');
       // Verify "Previous" button on the left bottom of the modal is enabled
       SelectItemModal.verifyPreviousButtonState(true);
       // Verify "101-200" text in the middle bottom of the modal displayed
@@ -186,7 +184,7 @@ describe('Check out', () => {
       SelectItemModal.verifyNextButtonState(true);
 
       // Step 5: Click on "Previous" button
-      SelectItemModal.clickPreviousButton();
+      SelectItemModal.clickPreviousButton('1 - 100');
       // Verify "Previous" button on the left bottom of the modal is disabled
       SelectItemModal.verifyPreviousButtonState(false);
       // Verify "1-100" text in the middle bottom of the modal displayed
@@ -195,7 +193,7 @@ describe('Check out', () => {
       SelectItemModal.verifyNextButtonState(true);
 
       // Step 6: Click on "Next" button
-      SelectItemModal.clickNextButton();
+      SelectItemModal.clickNextButton('101 - 200');
       // Verify "Previous" button on the left bottom of the modal is enabled
       SelectItemModal.verifyPreviousButtonState(true);
       // Verify "101-200" text in the middle bottom of the modal displayed
@@ -204,7 +202,7 @@ describe('Check out', () => {
       SelectItemModal.verifyNextButtonState(true);
 
       // Step 7: Click on "Next" button
-      SelectItemModal.clickNextButton();
+      SelectItemModal.clickNextButton(`201 - ${numberOfLargeSetItems}`);
       // Verify "Previous" button on the left bottom of the modal is enabled
       SelectItemModal.verifyPreviousButtonState(true);
       // Verify "201-#(236 for example)" text in the middle bottom of the modal displayed
