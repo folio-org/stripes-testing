@@ -199,6 +199,11 @@ export default {
     resource: 'UI-Inventory',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiInventoryItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiDataImport: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Import',
@@ -250,5 +255,15 @@ export default {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Inventory Instance Set-Records-For-Deletion',
     action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiBulkEditQueryExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Bulk-Edit Query',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiBulkEditLogsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Logs',
+    action: CAPABILITY_ACTIONS.VIEW,
   },
 };
