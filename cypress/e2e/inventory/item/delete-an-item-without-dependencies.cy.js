@@ -40,10 +40,10 @@ describe('Inventory', () => {
 
       cy.then(() => {
         cy.getLocations({
-          limit: 10,
+          limit: 1,
           query: '(isActive=true and name<>"AT_*") and name<>"autotest*"',
-        }).then(() => {
-          location = Cypress.env('locations')[0];
+        }).then((loc) => {
+          location = loc;
         });
         cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
           loanType = loanTypes[0];
