@@ -146,15 +146,20 @@ export default {
     cy.expect(previewModal.absent());
   },
 
-  verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
+  verifyMetadataObjectIsVisible({ creator = 'Unknown user', paneTitle = titles.newTemplate } = {}) {
     cy.expect(Accordion({ label: 'General information' }).exists());
     cy.expect(Button('General information').has({ ariaExpanded: 'true' }));
-    // Use `Button` to find `MetaSection` to avoid matching multiple elements (C396192)
-    cy.do(Button(including('Record last updated')).click());
-    cy.expect(MetaSection({ updatedByText: including(creator) }).exists());
+    cy.do(Pane(paneTitle).find(MetaSection()).clickHeader());
+    cy.expect(
+      Pane(paneTitle)
+        .find(MetaSection({ updatedByText: including(creator) }))
+        .exists(),
+    );
   },
 
   verifyGeneralInformationForDuplicate: (template) => {
+    cy.expect(nameField.has({ focused: true }));
+    cy.do(nameField.blur());
     cy.expect([
       nameField.has({
         value: template.name,

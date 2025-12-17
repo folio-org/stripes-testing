@@ -9,6 +9,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
@@ -73,9 +74,18 @@ const fundFormSection = Section({ id: 'pane-fund-form' });
 const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
+const selectLocationsModalSearchField = SearchField({ id: 'input-record-search' });
+const selectLocationsModalSearchButton = Button('Search');
+const selectLocationsModalList = MultiColumnList();
+const selectLocationsModalSaveButton = Button('Save');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
+const unassignAllLocationsModal = Modal('Unassign all locations');
+const areYouSureModal = Modal({ id: 'cancel-editing-confirmation' });
 const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
+const unassignAllLocationsButton = Button('Unassign all locations');
+const submitButton = Button('Submit');
+const keepEditingButton = Button('Keep editing');
 
 export default {
   defaultUiFund: {
@@ -178,14 +188,97 @@ export default {
   addLocationToFund(locationName) {
     cy.do([
       locationSection.find(Button({ id: 'fund-locations' })).click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
       selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
+      selectLocationsModal.find(selectLocationsModalSaveButton).click(),
     ]);
+  },
+
+  openAddLocationModal() {
+    cy.do(locationSection.find(Button({ id: 'fund-locations' })).click());
+    cy.expect(selectLocationsModal.exists());
+  },
+
+  clickActionsButtonInLocationsModal() {
+    cy.do(selectLocationsModal.find(Button('Actions')).click());
+    cy.wait(1000);
+  },
+
+  toggleColumnVisibilityInLocationsModal(columnName, shouldCheck = true) {
+    cy.contains('label', columnName, { timeout: 5000 })
+      .find('input[type="checkbox"]')
+      .then(($checkbox) => {
+        const isChecked = $checkbox.is(':checked');
+        if ((shouldCheck && !isChecked) || (!shouldCheck && isChecked)) {
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap($checkbox).click({ force: true });
+        }
+      });
+    cy.wait(500);
+  },
+
+  verifyShowColumnsMenu() {
+    cy.contains('Show columns', { timeout: 5000 }).should('be.visible');
+    cy.contains('label', 'Name').should('be.visible');
+    cy.contains('label', 'Code').should('be.visible');
+  },
+
+  checkUnassignedLocationFilter() {
+    cy.do(
+      selectLocationsModal
+        .find(Accordion('Location assignment status'))
+        .find(Checkbox('Unassigned'))
+        .click(),
+    );
+    cy.wait(5000);
+  },
+
+  selectLocationByName(locationName) {
+    cy.do([
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do(
+      selectLocationsModal
+        .find(selectLocationsModalList)
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Checkbox())
+        .click(),
+    );
+    cy.wait(500);
+  },
+
+  verifyTotalSelectedLocations(count) {
+    cy.wait(2000);
+    cy.contains(`Total selected: ${count}`, { timeout: 10000 }).should('be.visible');
+  },
+
+  verifyLocationNotPresentInModal(locationName) {
+    cy.do([
+      selectLocationsModal.find(selectLocationsModalSearchField).fillIn(locationName),
+      selectLocationsModalSearchButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.contains('0 records found', { timeout: 10000 }).should('be.visible');
+  },
+
+  saveLocationsModal() {
+    cy.do(selectLocationsModal.find(selectLocationsModalSaveButton).click());
+    cy.wait(2000);
+  },
+
+  verifyLocationWithDeleteIcon(locationName) {
+    cy.get('#locations')
+      .find('ul[class^=list-]')
+      .contains('li', locationName)
+      .should('exist')
+      .find('button[aria-label*="Remove location"]')
+      .should('exist');
   },
 
   varifyLocationSectionExist() {
@@ -554,25 +647,27 @@ export default {
   },
 
   increaseAllocation: (ammount = '50') => {
-    cy.do([
-      actionsButton.click(),
-      Button('Increase allocation').click(),
-      amountTextField.fillIn(ammount),
-    ]);
+    cy.do([actionsButton.click(), Button('Increase allocation').click()]);
+    // Wait for modal to open and funds dropdown to load
+    cy.wait(4000);
+    cy.do(amountTextField.fillIn(ammount));
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(addTransferModal.find(confirmButton).click());
+    // Wait for transaction to complete and UI to update
+    cy.wait(4000);
   },
 
   decreaseAllocation: (ammount = '50') => {
-    cy.do([
-      actionsButton.click(),
-      Button('Decrease allocation').click(),
-      amountTextField.fillIn(ammount),
-    ]);
+    cy.do([actionsButton.click(), Button('Decrease allocation').click()]);
+    // Wait for modal to open and funds dropdown to load
+    cy.wait(4000);
+    cy.do(amountTextField.fillIn(ammount));
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(addTransferModal.find(confirmButton).click());
+    // Wait for transaction to complete and UI to update
+    cy.wait(4000);
   },
 
   openIncreaseAllocationModal: () => {
@@ -1403,5 +1498,86 @@ export default {
     cy.get('div[class*=mclRow-]')
       .filter(`:contains("${transactionType}")`)
       .should('have.length', expectedCount);
+  },
+
+  clickTransactionAmountColumn: () => {
+    cy.do(MultiColumnListHeader('Amount').click());
+  },
+
+  verifyTransactionsSortedByAmount: (ascending = true) => {
+    cy.wait(1000);
+    const amounts = [];
+    cy.get('[data-row-index]')
+      .find('[class*="mclCell-"]:nth-child(3)')
+      .each(($el) => {
+        const text = $el.text().trim();
+        // Parse amount - get absolute value (negative values are sorted by amount, without parenthesis)
+        const amount = text.replace(/[()$,]/g, '').trim();
+        amounts.push(parseFloat(amount));
+      })
+      .then(() => {
+        const sortedAmounts = [...amounts].sort((a, b) => (ascending ? a - b : b - a));
+        expect(amounts).to.deep.equal(sortedAmounts);
+      });
+  },
+
+  openActionsMenu: () => {
+    cy.do(actionsButton.click());
+  },
+
+  verifyTransactionsTableDisplayed: () => {
+    cy.expect([cy.get('[data-row-index]').should('have.length.greaterThan', 0)]);
+  },
+
+  clickUnassignAllLocationsButton: () => {
+    cy.do(locationSection.find(unassignAllLocationsButton).click());
+    cy.wait(2000);
+  },
+
+  verifyUnassignAllLocationsModal: () => {
+    cy.expect([
+      unassignAllLocationsModal.exists(),
+      unassignAllLocationsModal
+        .find(HTML(including('Are you sure you want to unassign all locations from the fund?')))
+        .exists(),
+      unassignAllLocationsModal.find(cancelButton).has({ disabled: false }),
+      unassignAllLocationsModal.find(submitButton).has({ disabled: false }),
+    ]);
+  },
+
+  selectActionInUnassignAllLocationsModal: (action) => {
+    const button = action === 'cancel' ? cancelButton : submitButton;
+    cy.do(unassignAllLocationsModal.find(button).click());
+    cy.wait(2000);
+  },
+
+  verifyNoLocationsFound: () => {
+    cy.expect([
+      locationSection.exists(),
+      locationSection.find(HTML(including('No locations found'))).exists(),
+    ]);
+  },
+
+  verifyUnassignAllLocationsButtonState: (shouldBeDisabled) => {
+    cy.expect(locationSection.find(unassignAllLocationsButton).has({ disabled: shouldBeDisabled }));
+  },
+
+  cancelEditingFund: () => {
+    cy.do(cancelButton.click());
+    cy.wait(2000);
+  },
+
+  verifyAreYouSureModal: () => {
+    cy.expect([
+      areYouSureModal.exists(),
+      areYouSureModal.find(HTML(including('There are unsaved changes'))).exists(),
+      areYouSureModal.find(closeWithoutSavingButton).has({ disabled: false }),
+      areYouSureModal.find(keepEditingButton).has({ disabled: false }),
+    ]);
+  },
+
+  closeWithoutSaving: () => {
+    cy.do(areYouSureModal.find(closeWithoutSavingButton).click());
+    cy.wait(2000);
   },
 };

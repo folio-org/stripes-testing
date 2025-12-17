@@ -227,4 +227,14 @@ export default {
         .click(),
     );
   },
+  changeStatusAndCancelWithoutSaving: (newStatus) => {
+    cy.wait(2000);
+    cy.do([
+      Selection(including('Status*')).open(),
+      SelectionList().filter(newStatus),
+      SelectionList().select(including(newStatus)),
+    ]);
+    cy.wait(2000);
+    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
 };

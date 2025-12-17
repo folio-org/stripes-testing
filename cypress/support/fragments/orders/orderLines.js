@@ -1341,13 +1341,16 @@ export default {
     submitOrderLine();
   },
 
-  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
+  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value, amountType = false) {
     cy.do([
       addFundDistributionButton.click(),
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
     cy.wait(4000);
+    if (amountType) {
+      cy.do([Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click()]);
+    }
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
@@ -2848,5 +2851,23 @@ export default {
         .find(MultiColumnListCell({ content: donor }))
         .absent(),
     );
+  },
+
+  changeExpenseClassInPOLWithoutSave(indexOfPreviousExpenseClass, expenseClass) {
+    cy.do([
+      Button({ id: `fundDistribution[${indexOfPreviousExpenseClass}].expenseClassId` }).click(),
+      SelectionOption(`${expenseClass.name}`).click(),
+    ]);
+    cy.wait(2000);
+  },
+
+  setExchangeRate(exchangeRate) {
+    cy.do(Checkbox({ id: 'use-set-exchange-rate' }).click());
+    cy.get('[name="cost.exchangeRate"]').type('{selectall}{backspace}', { delay: 50 });
+    cy.get('[name="cost.exchangeRate"]').type(exchangeRate, { delay: 100 });
+  },
+
+  selectCurrency(currency) {
+    cy.do([currencyButton.click(), SelectionOption(currency).click()]);
   },
 };

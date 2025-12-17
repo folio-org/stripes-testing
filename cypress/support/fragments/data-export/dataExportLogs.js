@@ -61,6 +61,10 @@ export default {
     cy.get('[class^=errorLogsContainer]').contains(errorText);
   },
 
+  verifyTotalErrorLinesCount(expectedCount) {
+    cy.get('div [data-test-error-log=true]').should('have.length', expectedCount);
+  },
+
   verifyViewAllLogsButtonEnabled() {
     cy.expect(viewAllLogsButton.has({ disabled: false }));
   },
@@ -83,5 +87,9 @@ export default {
     cy.get('#job-logs-list [class^=downloadFile-]')
       .contains(fileName)
       .should('have.css', 'color', 'rgb(47, 96, 159)');
+  },
+
+  verifyJobAbsentInLogs(fileName) {
+    cy.expect(MultiColumnListCell({ content: including(fileName) }).absent());
   },
 };

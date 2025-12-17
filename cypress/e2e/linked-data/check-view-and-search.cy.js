@@ -87,7 +87,7 @@ describe('Citation: check navigation', () => {
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading();
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
+      TopMenuNavigation.openAppFromDropdown('Linked Data Editor');
       LinkedDataEditor.waitLoading();
       // search by any title
       SearchAndFilter.searchResourceByTitle(resourceData.title);

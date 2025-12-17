@@ -55,7 +55,7 @@ describe('Inventory', () => {
       },
       {
         value: `${randomDigits}The fellowship of the ring and being the first part of The Lord of the Rings by J.R.R. ${randomDigits}Tolkien`,
-        expectedInstanceIndexes: [1, 2, 6],
+        expectedInstanceIndexes: [1, 2, 3, 4, 5, 6, 7, 8],
       },
       {
         value: `${randomDigits}The fellowship of the ring and being the first part of The Lord of the Rings by writer J.R.R. ${randomDigits}Tolkien`,
@@ -63,7 +63,7 @@ describe('Inventory', () => {
       },
       {
         value: `.${randomDigits}The fellowship of the ring - being the first part of [The Lord of the Rings] by J.R.R. ${randomDigits}Tolkien !`,
-        expectedInstanceIndexes: [],
+        expectedInstanceIndexes: [1, 2, 3, 4, 5, 6, 7, 8],
       },
     ];
 
@@ -102,6 +102,7 @@ describe('Inventory', () => {
                   alternativeTitle,
                 },
               ],
+              languages: ['eng'],
             },
           }).then((instanceId) => {
             instance.id = instanceId;

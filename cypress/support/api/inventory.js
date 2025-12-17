@@ -565,7 +565,7 @@ Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
       },
       (response) => response.body.status === 'CREATED',
       {
-        limit: 10,
+        limit: 14,
         timeout: 80000,
         delay: 5000,
       },
@@ -886,6 +886,16 @@ Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
 
       return cy.get('@createdMarcHoldingId');
     });
+  });
+});
+
+Cypress.Commands.add('batchUpdateInstancesViaApi', (instances, { upsert } = {}) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'instance-storage/batch/synchronous',
+    isDefaultSearchParamsRequired: false,
+    searchParams: upsert ? { upsert } : {},
+    body: { instances },
   });
 });
 

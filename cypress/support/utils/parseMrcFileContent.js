@@ -195,3 +195,66 @@ export function verifyLeaderPositions(record, positions = {}) {
     expect(record.leader[pos], `Leader position ${position}`).to.eq(expectedValue);
   });
 }
+
+export function verifyMarcFieldByFindingSubfield(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', findBySubfield, findByValue, subfields = [] },
+) {
+  const fields = record.get(tag);
+
+  expect(fields, `MARC tag ${tag} should exist`).to.exist;
+  expect(fields.length, `MARC tag ${tag} should have at least one occurrence`).to.be.greaterThan(0);
+
+  // Find the field that contains the specified subfield value
+  const targetField = fields.find((field) => {
+    return field.subf.some((sf) => sf[0] === findBySubfield && sf[1] === findByValue);
+  });
+
+  expect(targetField, `MARC tag ${tag} with $${findBySubfield} = "${findByValue}" should exist`).to
+    .exist;
+  expect(targetField.ind1, `MARC tag ${tag} ind1`).to.eq(ind1);
+  expect(targetField.ind2, `MARC tag ${tag} ind2`).to.eq(ind2);
+
+  // Verify subfields in strict order if provided
+  if (subfields.length > 0) {
+    subfields.forEach(([subfieldCode, subfieldValue], index) => {
+      expect(
+        targetField.subf[index],
+        `MARC tag ${tag} subfield at position ${index}`,
+      ).to.deep.equal([subfieldCode, subfieldValue]);
+    });
+  }
+}
+
+export function verifyMarcFieldAbsence(record, tag) {
+  const field = record.get(tag);
+
+  expect(field, `MARC tag ${tag} should not exist`).to.be.empty;
+}
+
+export function verifyMarcFieldsWithIdenticalTagsAndSubfieldValues(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', expectedCount, subfields = [] },
+) {
+  const fields = record.get(tag);
+
+  expect(fields, `MARC tag ${tag} should exist`).to.exist;
+  expect(fields.length, `Number of ${tag} fields`).to.equal(expectedCount);
+
+  // Verify each field has the correct indicators and subfields
+  fields.forEach((field, fieldIndex) => {
+    expect(field.ind1, `${tag} field ${fieldIndex + 1} ind1`).to.eq(ind1);
+    expect(field.ind2, `${tag} field ${fieldIndex + 1} ind2`).to.eq(ind2);
+
+    // Verify each specified subfield exists and has the expected value
+    if (subfields.length > 0) {
+      subfields.forEach(([subfieldCode, subfieldValue]) => {
+        const subf = field.subf.find((sf) => sf[0] === subfieldCode);
+        expect(subf, `${tag} field ${fieldIndex + 1} $${subfieldCode}`).to.exist;
+        expect(subf[1], `${tag} field ${fieldIndex + 1} $${subfieldCode}`).to.eq(subfieldValue);
+      });
+    }
+  });
+}

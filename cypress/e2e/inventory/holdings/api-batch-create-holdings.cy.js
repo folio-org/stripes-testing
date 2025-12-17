@@ -13,7 +13,7 @@ describe('Inventory', () => {
     const instanceTitlePrefix = `AT_C927744_FolioInstance_${randomPostfix}`;
     const testData = {
       folioInstances: InventoryInstances.generateFolioInstances({
-        count: 1,
+        count: 2,
         instanceTitlePrefix,
         holdingsCount: 0,
         itemsCount: 0,
@@ -75,6 +75,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
         testData.folioInstances[0].instanceId,
+        testData.folioInstances[1].instanceId,
       );
       Users.deleteViaApi(user.userId);
     });
@@ -83,16 +84,14 @@ describe('Inventory', () => {
       'C927744 API | Create multiple holdings using POST /holdings-storage/batch/synchronous with upsert=true (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C927744'] },
       () => {
-        // Step 1. Send POST request via "Postman" to create multiple new holdings records for the same instance record
-        const holdingsRecords = [
+        // Step 1. Send POST ‘/holdings-storage/batch/synchronous?upsert=true’ with following body (without holdings “id”)
+        const holdingsRecordWithoutIds = [
           {
-            id: testData.holdingsAUuid,
             instanceId: testData.folioInstances[0].instanceId,
             permanentLocationId: locationA.id,
             sourceId: holdingsSourceId,
           },
           {
-            id: testData.holdingsBUuid,
             instanceId: testData.folioInstances[0].instanceId,
             permanentLocationId: locationB.id,
             sourceId: holdingsSourceId,
@@ -100,19 +99,50 @@ describe('Inventory', () => {
         ];
 
         cy.getToken(user.username, user.password);
-        cy.batchUpdateHoldingsViaApi(holdingsRecords).then((batchResponse) => {
+        cy.batchUpdateHoldingsViaApi(holdingsRecordWithoutIds).then((batchResponse) => {
+          expect(batchResponse.status).to.eq(201);
+        });
+
+        // Step 2. Verify that the holdings records were created successfully
+        cy.getHoldings({
+          query: `"instanceId"=="${testData.folioInstances[0].instanceId}"`,
+        }).then((holdings) => {
+          expect(holdings).to.have.length(2);
+          holdingsAId = holdings[0].id;
+          expect(holdings[0].instanceId).to.eq(testData.folioInstances[0].instanceId);
+          expect(holdings[1].instanceId).to.eq(testData.folioInstances[0].instanceId);
+        });
+
+        // Step 3. Send POST request via "Postman" to create multiple new holdings records for the same instance record
+        const holdingsRecordsWithId = [
+          {
+            id: testData.holdingsAUuid,
+            instanceId: testData.folioInstances[1].instanceId,
+            permanentLocationId: locationA.id,
+            sourceId: holdingsSourceId,
+          },
+          {
+            id: testData.holdingsBUuid,
+            instanceId: testData.folioInstances[1].instanceId,
+            permanentLocationId: locationB.id,
+            sourceId: holdingsSourceId,
+          },
+        ];
+
+        cy.getToken(user.username, user.password);
+        cy.batchUpdateHoldingsViaApi(holdingsRecordsWithId).then((batchResponse) => {
           expect(batchResponse.status).to.eq(201);
 
-          // Step 2-3. Verify that the holdings records were created successfully
+          // Step 4-5. Verify that the holdings records were created successfully
           cy.getHoldings({
-            query: `"instanceId"=="${testData.folioInstances[0].instanceId}"`,
+            query: `"instanceId"=="${testData.folioInstances[1].instanceId}"`,
           }).then((holdings) => {
             expect(holdings).to.have.length(2);
             holdingsAId = holdings[0].id;
-            expect(holdings[0].instanceId).to.eq(testData.folioInstances[0].instanceId);
-            expect(holdings[1].instanceId).to.eq(testData.folioInstances[0].instanceId);
+            expect(holdings[0].instanceId).to.eq(testData.folioInstances[1].instanceId);
+            expect(holdings[1].instanceId).to.eq(testData.folioInstances[1].instanceId);
 
-            // Step 4. Create an item record linked to one of the newly created holdings records
+            // Step 6. Create an item record linked to one of the newly created holdings records
             inventoryItems
               .createItemViaApi({
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
@@ -125,7 +155,7 @@ describe('Inventory', () => {
                 expect(response.barcode).to.eq(testData.itemBarcode);
               });
 
-            // Step 5. Verify that the item is correctly linked to the holdings record
+            // Step 7. Verify that the item is correctly linked to the holdings record
             inventoryItems.getItemsInHoldingsViaApi(holdingsAId).then((items) => {
               expect(items[0].barcode).to.eq(testData.itemBarcode);
             });

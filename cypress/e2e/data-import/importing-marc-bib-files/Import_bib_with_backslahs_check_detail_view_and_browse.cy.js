@@ -23,8 +23,8 @@ describe('Inventory', () => {
         source: 'Library of Congress Subject Headings',
         type: 'Topical term',
       },
-      subjectHeadings: 'C877081Church history\\--Periodicals',
       classification: 'C877081BR\\140 .\\\\J6',
+      classificationEscaped: 'C877081BR\\\\140 .\\\\\\\\J6',
       marcFile: {
         marc: 'marcBibC877081.mrc',
         fileName: `testMarcFileC877081.${randomFourDigitNumber()}.mrc`,
@@ -103,7 +103,7 @@ describe('Inventory', () => {
         BrowseClassifications.selectFoundValueByRow(5, testData.classification);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           querySearchOption.classifications,
-          `classifications.classificationNumber=="${testData.classification}"`,
+          `classifications.classificationNumber=="${testData.classificationEscaped}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
 

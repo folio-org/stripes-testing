@@ -71,10 +71,14 @@ describe('Patron notices', () => {
       'C387440 Add metadata info to view of Patron Notice Templates scenario 2/3 (volaris)',
       { tags: ['extendedPath', 'volaris', 'C387440'] },
       () => {
-        NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
         const { lastName, firstName, middleName } = userData.personal;
-        const expectedCreator = `${lastName}, ${firstName} ${middleName}`;
-        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible(expectedCreator);
+        const creator = `${lastName}, ${firstName} ${middleName}`;
+
+        NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
+        NewNoticePolicyTemplate.verifyMetadataObjectIsVisible({
+          creator,
+          paneTitle: noticeTemplate.name,
+        });
       },
     );
   });

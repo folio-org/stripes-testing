@@ -35,7 +35,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
 
   it(
     `TC195767 - check data-import log for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'data-import', 'fse-user-journey'] },
+    { tags: ['fse', 'ui', 'data-import', 'fse-user-journey', 'nonProd'] },
     () => {
       Logs.openViewAllLogs();
       cy.wait(8000);

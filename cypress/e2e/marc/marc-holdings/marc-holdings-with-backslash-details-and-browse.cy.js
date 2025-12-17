@@ -20,6 +20,7 @@ describe('MARC', () => {
       editedHoldingsFileName: 'C877082EditedHoldingsFile.mrc',
       holdingsHRIDPlaceholder: 'in00000001039',
       holdingsCallnumber: 'C877082BR\\140 .J\\\\86',
+      holdingsCallnumberEscaped: 'C877082BR\\\\140 .J\\\\\\\\86',
       holdingsStatement: '\\v.54-68\\ (2003\\2017)',
       holdingsStatementForIndexes: 'v. \\150\\\\ (1950\\\\1999)',
       itemBarcode: uuid(),
@@ -131,7 +132,7 @@ describe('MARC', () => {
         // Step 7. Click on the found result
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           'Query search',
-          `itemFullCallNumbers="${testData.holdingsCallnumber}"`,
+          `itemFullCallNumbers="${testData.holdingsCallnumberEscaped}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
       },
