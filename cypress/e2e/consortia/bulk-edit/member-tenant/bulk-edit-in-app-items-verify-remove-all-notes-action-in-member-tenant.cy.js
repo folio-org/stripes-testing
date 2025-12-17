@@ -225,6 +225,10 @@ describe('Bulk-edit', () => {
             false,
             localItemNoteTypeName,
           );
+          BulkEditSearchPane.changeShowColumnCheckbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_EFFECTIVE_LOCATION,
+          );
 
           // Step 5: Check checkboxes for shared and local note types
           BulkEditSearchPane.changeShowColumnCheckbox(
