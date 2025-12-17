@@ -19,7 +19,27 @@ const areYouSureModal = Modal('Are you sure you want to run this job?');
 const viewAllLogsButton = Button('View all');
 const runningAccordion = Accordion('Running');
 
-const verifyTextColumnSorted = (selector, sortOrder, columnName) => {
+const columnNameToIndex = {
+  'File name': 1,
+  Status: 2,
+  Total: 3,
+  Exported: 4,
+  Failed: 5,
+  'Job profile': 6,
+  'Started running': 7,
+  'Ended running': 8,
+  'Run by': 9,
+  ID: 10,
+};
+
+const verifyTextColumnSorted = (columnName, sortOrder) => {
+  const columnIndex = columnNameToIndex[columnName];
+  if (!columnIndex) {
+    throw new Error(`Unknown column name: ${columnName}`);
+  }
+
+  const selector = `#job-logs-list [data-row-index] [class^="mclCell-"]:nth-child(${columnIndex})`;
+
   cy.get(selector).then(($elements) => {
     const textValues = Array.from($elements).map((el) => el.textContent.trim());
 
@@ -123,10 +143,6 @@ export default {
   verifyColumnSorted(columnName, sortDirection) {
     cy.expect(logsList.find(MultiColumnListHeader(columnName, { sort: sortDirection })).exists());
 
-    verifyTextColumnSorted(
-      '#job-logs-list [data-row-index] [class^="mclCell-"]:nth-child(2)',
-      sortDirection,
-      columnName,
-    );
+    verifyTextColumnSorted(columnName, sortDirection);
   },
 };

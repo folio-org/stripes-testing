@@ -39,6 +39,7 @@ export const columnNames = {
   STARTED_RUNNING: 'Started running',
   ENDED_RUNNING: 'Ended running',
   RUN_BY: 'Run by',
+  ID: 'ID',
 };
 
 const viewAllLogsButton = Button('View all');
@@ -182,6 +183,7 @@ export default {
   checkErrorsInExportOption(option) {
     const checkboxToClick = option === 'Yes' ? errorsInExportYesOptionId : errorsInExportNoOptionId;
     cy.get(`#${checkboxToClick}`).check();
+    cy.wait(2000);
   },
 
   verifyStatusIncludesErrors() {
@@ -257,6 +259,10 @@ export default {
     });
   },
 
+  verifySelectedValueInJobProfileDropdown(profileName) {
+    cy.expect(jobProfileAccordion.find(Selection({ value: profileName })).exists());
+  },
+
   verifyNumberOfFilteredJobProfiles(expectedCount) {
     cy.then(() => filterSelectionList.optionList()).then((options) => {
       cy.expect(options.length).to.equal(expectedCount);
@@ -275,18 +281,49 @@ export default {
   selectFilterOption(option) {
     cy.wait(1000);
     cy.do(SelectionList().select(including(option)));
+    cy.wait(3000);
   },
 
   verifyResetAllButtonEnabled() {
     cy.expect(resetAllButton.has({ disabled: false }));
   },
 
-  verifyLogsFilteredByJobProfile(profileName) {
-    cy.expect(
-      logsTable
-        .find(MultiColumnListCell({ column: columnNames.JOB_PROFILE, content: profileName }))
-        .exists(),
+  verifyLogsFilteredByColumn(columnName, expectedValue) {
+    cy.get('[id="data-export-logs-pane-content"] [data-row-index] [role="gridcell"]').then(
+      ($cells) => {
+        const columnIndex = {
+          [columnNames.FILE_NAME]: 0,
+          [columnNames.STATUS]: 1,
+          [columnNames.TOTAL]: 2,
+          [columnNames.EXPORTED]: 3,
+          [columnNames.FAILED]: 4,
+          [columnNames.JOB_PROFILE]: 5,
+          [columnNames.STARTED_RUNNING]: 6,
+          [columnNames.ENDED_RUNNING]: 7,
+          [columnNames.RUN_BY]: 8,
+          [columnNames.ID]: 9,
+        }[columnName];
+
+        const rows = [];
+
+        for (let i = 0; i < $cells.length; i += 10) {
+          rows.push($cells[i + columnIndex]);
+        }
+
+        const columnValues = rows.map((cell) => cell.textContent.trim());
+
+        columnValues.forEach((value, index) => {
+          expect(
+            value,
+            `Row ${index}: "${columnName}" should be "${expectedValue}", but found "${value}"`,
+          ).to.equal(expectedValue);
+        });
+      },
     );
+  },
+
+  verifyLogsFilteredByJobProfile(profileName) {
+    this.verifyLogsFilteredByColumn(columnNames.JOB_PROFILE, profileName);
   },
 
   clickClearJobProfileFilter() {
@@ -534,7 +571,7 @@ export default {
 
   clickColumnHeader(columnName) {
     cy.do(MultiColumnListHeader(columnName).click());
-    cy.wait(3000);
+    cy.wait(5000);
   },
 
   getNumberOfFoundRecordsFromSubtitle() {
@@ -563,7 +600,7 @@ export default {
           [columnNames.STARTED_RUNNING]: 6,
           [columnNames.ENDED_RUNNING]: 7,
           [columnNames.RUN_BY]: 8,
-          ID: 9,
+          [columnNames.ID]: 9,
         }[columnName];
 
         const rows = [];
@@ -581,6 +618,17 @@ export default {
             const dateA = new Date(a);
             const dateB = new Date(b);
             return sortDirection === 'ascending' ? dateA - dateB : dateB - dateA;
+          }
+          // Handle numeric columns
+          if (
+            columnName === columnNames.TOTAL ||
+            columnName === columnNames.EXPORTED ||
+            columnName === columnNames.FAILED ||
+            columnName === columnNames.ID
+          ) {
+            const numA = parseInt(a, 10) || 0;
+            const numB = parseInt(b, 10) || 0;
+            return sortDirection === 'ascending' ? numA - numB : numB - numA;
           }
           // Handle text columns
           if (sortDirection === 'ascending') {
@@ -602,7 +650,7 @@ export default {
     const columnIdMap = {
       'file name': 'filename',
       status: 'status',
-      total: 'total',
+      total: 'totalrecords',
       exported: 'exported',
       failed: 'errors',
       'started running': 'starteddate',
