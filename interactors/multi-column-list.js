@@ -74,6 +74,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
   })
   .actions({
     click: ({ perform }) => perform((el) => el.querySelector('[role=button]').click()),
+    clickElement: ({ perform }) => perform((el) => el.click()),
   });
 
 const columns = (el) => [...el.querySelectorAll('[class*=mclHeader-]')].map((x) => x.textContent);
