@@ -59,11 +59,11 @@ describe('Inventory', () => {
             testData.testInstanceIds = createdInstance;
             testData.createdHoldings = createdInstance.holdings[0];
 
-            cy.okapiRequest({
-              method: 'GET',
-              path: `holdings-storage/holdings/${testData.createdHoldings.id}`,
-            }).then(({ body }) => {
-              testData.createdHoldings.hrid = body.hrid;
+            cy.getHoldings({
+              limit: 1,
+              query: `"id"="${testData.createdHoldings.id}"`,
+            }).then((holdings) => {
+              testData.createdHoldings.hrid = holdings[0].hrid;
             });
           });
         });
