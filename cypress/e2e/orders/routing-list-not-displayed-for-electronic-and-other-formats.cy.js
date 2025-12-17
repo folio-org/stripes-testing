@@ -1,7 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
@@ -11,20 +8,12 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-orders: Orders and Order lines', () => {
-  const defaultFund = { ...Funds.defaultUiFund };
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const firstOrder = {
     ...NewOrder.getDefaultOngoingOrder({ orderType: 'One-Time' }),
@@ -49,126 +38,100 @@ describe('ui-orders: Orders and Order lines', () => {
         (locationRes) => {
           location = locationRes;
 
-          FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-            defaultFiscalYear.id = firstFiscalYearResponse.id;
-            firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-            defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+          Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+            organization.id = responseOrganizations;
+            firstOrder.vendor = organization.id;
+            secondOrder.vendor = organization.id;
 
-            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-              defaultLedger.id = ledgerResponse.id;
-              defaultFund.ledgerId = defaultLedger.id;
+            MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+              (mtypes) => {
+                materialType = mtypes.body;
+                cy.getAcquisitionMethodsApi({
+                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                }).then((params) => {
+                  // eslint-disable-next-line no-unused-vars
+                  const { physical, ...orderLineWithoutPhysical } =
+                    BasicOrderLine.getDefaultOrderLine();
 
-              Funds.createViaApi(defaultFund).then((fundResponse) => {
-                defaultFund.id = fundResponse.fund.id;
-                firstBudget.fundId = fundResponse.fund.id;
+                  const firstOrderLine = {
+                    ...orderLineWithoutPhysical,
+                    acquisitionMethod: params.body.acquisitionMethods[0].id,
+                    orderFormat: 'Electronic Resource',
+                    cost: {
+                      listUnitPriceElectronic: 10.0,
+                      currency: 'USD',
+                      discountType: 'percentage',
+                      quantityElectronic: 1,
+                    },
+                    locations: [
+                      {
+                        locationId: location.id,
+                        quantity: 1,
+                        quantityElectronic: 1,
+                      },
+                    ],
+                    eresource: {
+                      createInventory: 'Instance, Holding',
+                      materialType: mtypes.body.id,
+                    },
+                  };
 
-                Budgets.createViaApi(firstBudget).then(() => {
-                  Organizations.createOrganizationViaApi(organization).then(
-                    (responseOrganizations) => {
-                      organization.id = responseOrganizations;
-                      firstOrder.vendor = organization.id;
-                      secondOrder.vendor = organization.id;
+                  Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
+                    firstOrder.id = firstOrderResponse.id;
+                    firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                    firstOrderNumber = firstOrderResponse.poNumber;
 
-                      MaterialTypes.createMaterialTypeViaApi(
-                        MaterialTypes.getDefaultMaterialType(),
-                      ).then((mtypes) => {
-                        materialType = mtypes.body;
-                        cy.getAcquisitionMethodsApi({
-                          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                        }).then((params) => {
-                          // eslint-disable-next-line no-unused-vars
-                          const { physical, ...orderLineWithoutPhysical } =
-                            BasicOrderLine.getDefaultOrderLine();
+                    OrderLines.createOrderLineViaApi(firstOrderLine).then(() => {
+                      const secondOrderLine = {
+                        ...BasicOrderLine.getDefaultOrderLine(),
+                        orderFormat: 'Other',
+                        cost: {
+                          listUnitPrice: 10.0,
+                          currency: 'USD',
+                          discountType: 'percentage',
+                          quantityPhysical: 1,
+                          poLineEstimatedPrice: 10.0,
+                        },
+                        locations: [
+                          {
+                            locationId: location.id,
+                            quantity: 1,
+                            quantityPhysical: 1,
+                          },
+                        ],
+                        acquisitionMethod: params.body.acquisitionMethods[0].id,
+                        physical: {
+                          createInventory: 'Instance, Holding',
+                          materialType: mtypes.body.id,
+                          materialSupplier: responseOrganizations,
+                          volumes: [],
+                        },
+                      };
 
-                          const firstOrderLine = {
-                            ...orderLineWithoutPhysical,
-                            acquisitionMethod: params.body.acquisitionMethods[0].id,
-                            orderFormat: 'Electronic Resource',
-                            cost: {
-                              listUnitPriceElectronic: 10.0,
-                              currency: 'USD',
-                              discountType: 'percentage',
-                              quantityElectronic: 1,
-                            },
-                            fundDistribution: [
-                              { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
-                            ],
-                            locations: [
-                              {
-                                locationId: location.id,
-                                quantity: 1,
-                                quantityElectronic: 1,
-                              },
-                            ],
-                            eresource: {
-                              createInventory: 'Instance, Holding',
-                              materialType: mtypes.body.id,
-                            },
-                          };
+                      Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
+                        secondOrder.id = secondOrderResponse.id;
+                        secondOrderLine.purchaseOrderId = secondOrderResponse.id;
+                        secondOrderNumber = secondOrderResponse.poNumber;
 
-                          Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                            firstOrder.id = firstOrderResponse.id;
-                            firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                            firstOrderNumber = firstOrderResponse.poNumber;
+                        OrderLines.createOrderLineViaApi(secondOrderLine).then(() => {
+                          cy.createTempUser([
+                            permissions.uiOrdersView.gui,
+                            permissions.uiOrdersEdit.gui,
+                          ]).then((userProperties) => {
+                            user = userProperties;
 
-                            OrderLines.createOrderLineViaApi(firstOrderLine).then(() => {
-                              const secondOrderLine = {
-                                ...BasicOrderLine.getDefaultOrderLine(),
-                                orderFormat: 'Other',
-                                cost: {
-                                  listUnitPrice: 10.0,
-                                  currency: 'USD',
-                                  discountType: 'percentage',
-                                  quantityPhysical: 1,
-                                  poLineEstimatedPrice: 10.0,
-                                },
-                                fundDistribution: [
-                                  { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
-                                ],
-                                locations: [
-                                  {
-                                    locationId: location.id,
-                                    quantity: 1,
-                                    quantityPhysical: 1,
-                                  },
-                                ],
-                                acquisitionMethod: params.body.acquisitionMethods[0].id,
-                                physical: {
-                                  createInventory: 'Instance, Holding',
-                                  materialType: mtypes.body.id,
-                                  materialSupplier: responseOrganizations,
-                                  volumes: [],
-                                },
-                              };
-
-                              Orders.createOrderViaApi(secondOrder).then((secondOrderResponse) => {
-                                secondOrder.id = secondOrderResponse.id;
-                                secondOrderLine.purchaseOrderId = secondOrderResponse.id;
-                                secondOrderNumber = secondOrderResponse.poNumber;
-
-                                OrderLines.createOrderLineViaApi(secondOrderLine).then(() => {
-                                  cy.createTempUser([
-                                    permissions.uiOrdersView.gui,
-                                    permissions.uiOrdersEdit.gui,
-                                  ]).then((userProperties) => {
-                                    user = userProperties;
-
-                                    cy.login(userProperties.username, userProperties.password, {
-                                      path: TopMenu.ordersPath,
-                                      waiter: Orders.waitLoading,
-                                    });
-                                  });
-                                });
-                              });
+                            cy.login(userProperties.username, userProperties.password, {
+                              path: TopMenu.ordersPath,
+                              waiter: Orders.waitLoading,
                             });
                           });
                         });
                       });
-                    },
-                  );
+                    });
+                  });
                 });
-              });
-            });
+              },
+            );
           });
         },
       );
@@ -181,10 +144,6 @@ describe('ui-orders: Orders and Order lines', () => {
     Orders.deleteOrderViaApi(firstOrder.id);
     Orders.deleteOrderViaApi(secondOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    Budgets.deleteViaApi(firstBudget.id);
-    Funds.deleteFundViaApi(defaultFund.id);
-    Ledgers.deleteLedgerViaApi(defaultLedger.id);
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     NewLocation.deleteViaApi(location.id);
     MaterialTypes.deleteViaApi(materialType.id);
   });
