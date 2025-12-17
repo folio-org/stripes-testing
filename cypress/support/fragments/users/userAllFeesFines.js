@@ -63,6 +63,12 @@ export default {
     cy.do(Button('Actions').click());
     cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
   },
+  createFeeFineViaActionsButton: () => {
+    cy.wait(500);
+    cy.get('[data-test-pane-header-actions-button]').click();
+    cy.wait(500);
+    cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
+  },
   waitLoading: () => cy.expect(HTML('All fees/fines for ').exists()),
   verifyPageHeader: (username) => cy.expect(HTML(including(`Fees/fines - ${username}`)).exists()),
   checkRowsAreChecked: (areRowsChecked) => {
