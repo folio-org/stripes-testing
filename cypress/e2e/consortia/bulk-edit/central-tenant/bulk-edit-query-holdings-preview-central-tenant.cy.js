@@ -233,7 +233,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
             // Step 5: Verify matched Holdings records (enable UUID column)
-            BulkEditSearchPane.changeShowColumnCheckbox(
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
             );
 
@@ -389,6 +389,9 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
             // Step 16: Verify matched Holdings by Instance UUID
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege
               .concat(folioInstance.holdingIdsUniversity)
               .forEach((holdingId) => {
@@ -452,6 +455,9 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
             // Step 20: Verify only College holdings matched
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege.forEach((holdingId) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 holdingId,
@@ -498,6 +504,9 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
             // Step 23: Verify only College holdings matched
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege.forEach((holdingId) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 holdingId,
