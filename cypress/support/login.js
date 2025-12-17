@@ -172,19 +172,20 @@ Cypress.Commands.add('selectTenantIfDropdown', () => {
     cy.wait(1000).then(() => {
       cy.get('body').then(($body) => {
         if ($body.find('select').length > 0) {
-          const targetTenantId = Tenant.get();
-          cy.resetTenant();
-          cy.getAdminToken();
-          cy.getConsortiaStatus().then((consortiaData) => {
-            cy.setTenant(consortiaData.centralTenantId);
-            cy.getAllTenants().then((userTenants) => {
-              const targetTenant = userTenants.filter(
-                (element) => element.id === targetTenantId,
-              )[0];
-              cy.setTenant(targetTenantId);
-              cy.selectTenantAndContinue(targetTenant.name);
-            });
-          });
+          cy.selectTenantAndContinue('AQA Consortia');
+          // const targetTenantId = Tenant.get();
+          // cy.resetTenant();
+          // cy.getAdminToken();
+          // cy.getConsortiaStatus().then((consortiaData) => {
+          //   cy.setTenant(consortiaData.centralTenantId);
+          //   cy.getAllTenants().then((userTenants) => {
+          //     const targetTenant = userTenants.filter(
+          //       (element) => element.id === targetTenantId,
+          //     )[0];
+          //     cy.setTenant(targetTenantId);
+          //     cy.selectTenantAndContinue('AQA Consortia');
+          //   });
+          // });
         } else {
           cy.log('No tenant/library select found');
         }
