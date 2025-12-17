@@ -215,7 +215,7 @@ describe('Inventory', () => {
                     return Receiving.getPiecesViaApi(memberData.orderLine.id).then((pieces) => {
                       return Receiving.receivePieceViaApi({
                         poLineId: memberData.orderLine.id,
-                        consortia: true,
+                        tenantId: Affiliations.College,
                         pieces: [
                           {
                             id: pieces[0].id,
@@ -255,7 +255,7 @@ describe('Inventory', () => {
                 return Receiving.getPiecesViaApi(centralData.orderLine.id).then((pieces) => {
                   return Receiving.receivePieceViaApi({
                     poLineId: centralData.orderLine.id,
-                    consortia: true,
+                    tenantId: Affiliations.College,
                     pieces: [
                       {
                         id: pieces[0].id,

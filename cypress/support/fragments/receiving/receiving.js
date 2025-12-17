@@ -515,12 +515,12 @@ export default {
       .then(({ body }) => body?.pieces || []);
   },
 
-  receivePieceViaApi({ poLineId, pieces, consortia = false }) {
+  receivePieceViaApi({ poLineId, pieces, tenantId }) {
     return this.getPiecesViaApi(poLineId).then((allPieces) => {
       const checkInPieces = pieces.map((currentPiece) => {
         const piece = allPieces.find((p) => p.id === currentPiece.id);
 
-        const pieceData = {
+        return {
           // receiveToNewHolding is used to receive a piece into a new holding
           // if true, a new holding will be created at the specified location
           id: piece.id,
@@ -546,14 +546,10 @@ export default {
           sequenceNumber: piece.sequenceNumber,
           supplement:
             currentPiece.supplement !== undefined ? currentPiece.supplement : piece.supplement,
+          ...(tenantId || currentPiece.receivingTenantId
+            ? { receivingTenantId: tenantId || currentPiece.receivingTenantId }
+            : {}),
         };
-
-        // Add receivingTenantId only for consortia environments
-        if (consortia) {
-          pieceData.receivingTenantId = 'college';
-        }
-
-        return pieceData;
       });
 
       return cy.okapiRequest({
