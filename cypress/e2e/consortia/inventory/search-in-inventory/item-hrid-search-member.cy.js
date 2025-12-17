@@ -17,12 +17,8 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `AT_C411751_Instance_${randomPostfix}`;
-      const callNumberPrefix = `AT_C411751_CallNumber_${randomPostfix}`;
-      const searchOptions = {
-        normalized: searchItemsOptions[5],
-        notNormalized: searchItemsOptions[4],
-      };
+      const instancePrefix = `AT_C411785_Instance_${randomPostfix}`;
+      const itemHridSearchOption = searchItemsOptions[9];
       const helbyAccordionName = 'Held by';
       const instancesData = [
         {
@@ -76,17 +72,20 @@ describe('Inventory', () => {
           holdingsAffiliations: [Affiliations.University],
         },
       ];
+      instancesData.forEach((instance) => {
+        instance.itemHrids = [];
+      });
       const instanceTitles = Array.from(
         { length: instancesData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const expectedInstanceIndexesCentral = instancesData
-        .map((item, index) => ({ item, index }))
-        .filter(({ item }) => item.affiliation === Affiliations.Consortia)
-        .map(({ index }) => index);
       const expectedInstanceIndexesMember = instancesData
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.affiliation !== Affiliations.University)
+        .map(({ index }) => index);
+      const notExpectedInstanceIndexesMember = instancesData
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.affiliation === Affiliations.University)
         .map(({ index }) => index);
       let user;
       const locations = {
@@ -100,21 +99,16 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411751');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411785');
 
+        cy.setTenant(Affiliations.College);
+        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411785');
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             user = userProperties;
-            cy.assignAffiliationToUser(Affiliations.College, user.userId);
-
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(user.userId, [
-              Permissions.uiInventoryViewInstances.gui,
-            ]);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411751');
 
             cy.setTenant(Affiliations.University);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411751');
+            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411785');
           })
           .then(() => {
             cy.resetTenant();
@@ -180,8 +174,8 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            instancesData.forEach((instanceData, instanceIndex) => {
-              instanceData.holdingsAffiliations.forEach((holdingsAffiliation, holdingsIndex) => {
+            instancesData.forEach((instanceData) => {
+              instanceData.holdingsAffiliations.forEach((holdingsAffiliation) => {
                 cy.setTenant(holdingsAffiliation);
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instanceData.instanceId,
@@ -193,19 +187,24 @@ describe('Inventory', () => {
                     materialType: { id: materialTypeId },
                     permanentLoanType: { id: loanTypeId },
                     status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    itemLevelCallNumber: `${callNumberPrefix}_${instanceIndex}-${holdingsIndex}`,
+                  }).then((item) => {
+                    instanceData.itemHrids.push(item.hrid);
                   });
                 });
               });
             });
           })
           .then(() => {
-            cy.resetTenant();
+            cy.setTenant(Affiliations.College);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            InventorySearchAndFilter.switchToItem();
+            InventorySearchAndFilter.itemTabIsDefault();
+            InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
+            InventorySearchAndFilter.selectSearchOption(itemHridSearchOption);
           });
       });
 
@@ -213,83 +212,39 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
+        Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
         cy.setTenant(Affiliations.University);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
         cy.resetTenant();
-        Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
       });
 
       it(
-        'C411751 Search for Shared/Local records by Item\'s "Call number, not normalized" and "Effective call number (item), normalized" search options from "Central" and "Member 1" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411751'] },
+        'C411785 Search for Shared/Local records by "Item HRID" search options from "Member" tenant (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C411785'] },
         () => {
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.itemTabIsDefault();
-          InventorySearchAndFilter.selectSearchOption(searchOptions.notNormalized);
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}*`);
-          InventorySearchAndFilter.clickSearch();
-          expectedInstanceIndexesCentral.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(
-            expectedInstanceIndexesCentral.length,
-          );
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}_2-0`);
-          InventorySearchAndFilter.clickSearch();
-          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          InventorySearchAndFilter.verifySearchResult(instanceTitles[2]);
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.normalized);
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}*`);
-          InventorySearchAndFilter.clickSearch();
-          expectedInstanceIndexesCentral.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(
-            expectedInstanceIndexesCentral.length,
-          );
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}_5-1`);
-          InventorySearchAndFilter.clickSearch();
-          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          InventorySearchAndFilter.verifySearchResult(instanceTitles[5]);
-
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          InventoryInstances.waitContentLoading();
-
-          InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.itemTabIsDefault();
-          InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.notNormalized);
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}*`);
-          InventorySearchAndFilter.clickSearch();
           expectedInstanceIndexesMember.forEach((instanceIndex) => {
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+            instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {
+              InventorySearchAndFilter.fillInSearchQuery(itemHrid);
+              InventorySearchAndFilter.clickSearch();
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+              InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+            });
           });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(
-            expectedInstanceIndexesMember.length,
-          );
 
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}_2-1`);
-          InventorySearchAndFilter.clickSearch();
-          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          InventorySearchAndFilter.verifySearchResult(instanceTitles[2]);
-
-          InventorySearchAndFilter.selectSearchOption(searchOptions.normalized);
-
-          InventorySearchAndFilter.fillInSearchQuery(`${callNumberPrefix}_5-0`);
-          InventorySearchAndFilter.clickSearch();
-          InventorySearchAndFilter.verifySearchResult(instanceTitles[5]);
-          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          notExpectedInstanceIndexesMember.forEach((instanceIndex) => {
+            instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {
+              InventorySearchAndFilter.fillInSearchQuery(itemHrid);
+              InventorySearchAndFilter.clickSearch();
+              InventorySearchAndFilter.verifyResultPaneEmpty({
+                noResultsFound: true,
+                searchQuery: itemHrid,
+              });
+            });
+          });
         },
       );
     });
