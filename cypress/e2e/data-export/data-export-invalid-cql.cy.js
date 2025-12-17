@@ -7,6 +7,9 @@ import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 const editedFileName = `invalid-query-${getRandomPostfix()}.cql`;
@@ -37,33 +40,51 @@ describe('Data Export', () => {
   });
 
   it(
-    'C397323 Verify trigger Data export with invalid CQL (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C397323'] },
+    'C397323 C831974 Verify trigger Data export of Instances, Authorities with invalid CQL (firebird)',
+    { tags: ['criticalPath', 'firebird', 'C397323', 'C831974'] },
     () => {
-      ExportFileHelper.uploadFile(editedFileName);
-      ExportFileHelper.exportWithDefaultJobProfile(
-        editedFileName,
-        'Default instances',
-        'Instances',
-        '.cql',
-      );
-
-      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-      cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
-        const { jobExecutions } = response.body;
-        const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
-        const recordsCount = jobData.progress.total;
-        const jobId = jobData.hrId;
-        const resultFileName = `${editedFileName.replace('.cql', '')}-${jobId}.mrc`;
-
-        DataExportResults.verifyFailedExportResultCells(
-          resultFileName,
-          recordsCount,
-          jobId,
-          user.username,
-          'Default instances',
-          true,
+      const checkedProfiles = [
+        { name: 'Default instances', recordType: 'Instances' },
+        { name: 'Default authority', recordType: 'Authorities' },
+      ];
+      checkedProfiles.forEach((profile, index) => {
+        ExportFileHelper.uploadFile(editedFileName);
+        ExportFileHelper.exportWithDefaultJobProfile(
+          editedFileName,
+          profile.name,
+          profile.recordType,
+          '.cql',
         );
+
+        const checkedJob = `getInfo${index}`;
+        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(checkedJob);
+        cy.wait(`@${checkedJob}`, getLongDelay()).then(({ response }) => {
+          const { jobExecutions } = response.body;
+          const jobData = jobExecutions.find(
+            ({ runBy, jobProfileName }) => runBy.userId === user.userId && jobProfileName.includes(profile.name),
+          );
+          const recordsCount = jobData.progress.total;
+          const jobId = jobData.hrId;
+          const resultFileName = `${editedFileName.replace('.cql', '')}-${jobId}.mrc`;
+
+          DataExportResults.verifyFailedExportResultCells(
+            resultFileName,
+            recordsCount,
+            jobId,
+            user.username,
+            profile.name,
+            true,
+          );
+
+          cy.getUserToken(user.username, user.password);
+
+          SearchPane.findResultRowIndexByContent(user.username).then((rowIndex) => {
+            DataExportResults.verifyFileNameIsDisabled(Number(rowIndex));
+            DataExportResults.verifyErrorMessage(Number(rowIndex), editedFileName);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+            DataExportLogs.waitLoading();
+          });
+        });
       });
     },
   );

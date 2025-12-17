@@ -41,12 +41,7 @@ export default {
     let outOfOrderCount = 0;
 
     for (let i = 1; i < array.length; i++) {
-      const normalize = (str) => str
-        .trim()
-        .toLowerCase()
-        .replace(/-/g, ' ')
-        .replace(/\s+/g, ' ')
-        .replace(/\d+(\.\d+)?$/, '');
+      const normalize = (str) => str.trim().toLowerCase().replace(/-/g, '');
 
       const prev = normalize(array[i - 1]);
       const current = normalize(array[i]);

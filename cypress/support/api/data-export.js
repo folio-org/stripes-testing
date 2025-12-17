@@ -30,3 +30,23 @@ Cypress.Commands.add('createDataExportCustomMappingProfile', (body) => {
     })
     .then((response) => response.body);
 });
+
+Cypress.Commands.add('getDataExportJobProfile', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'data-export/job-profiles',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.jobProfiles[0];
+    });
+});
+
+Cypress.Commands.add('deleteDataExportJobExecutionFromLogs', (jobExecutionId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-export/job-executions/${jobExecutionId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});

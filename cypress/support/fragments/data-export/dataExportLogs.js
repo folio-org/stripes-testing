@@ -88,4 +88,8 @@ export default {
       .contains(fileName)
       .should('have.css', 'color', 'rgb(47, 96, 159)');
   },
+
+  verifyJobAbsentInLogs(fileName) {
+    cy.expect(MultiColumnListCell({ content: including(fileName) }).absent());
+  },
 };
