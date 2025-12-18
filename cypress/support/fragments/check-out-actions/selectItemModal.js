@@ -14,6 +14,8 @@ const nextButton = Button('Next');
 export default {
   waitLoading: () => {
     cy.expect(rootModal.exists());
+    // Wait for spinner to disappear if present
+    cy.wait(1000);
   },
 
   verifyModalTitle: () => {
@@ -75,13 +77,31 @@ export default {
     }
   },
 
-  clickNextButton: () => {
+  clickNextButton: (expectedPaginationText = null) => {
     cy.do(rootModal.find(nextButton).click());
-    cy.wait(500);
+    if (expectedPaginationText) {
+      cy.get('[class^="modal---"]', { timeout: 10000 })
+        .find('div[class^="mclPrevNextPageInfoContainer-"]')
+        .should(($el) => {
+          const text = $el.text().trim().replace(/\s+/g, ' ');
+          expect(text).to.equal(expectedPaginationText);
+        });
+    } else {
+      cy.wait(1000);
+    }
   },
 
-  clickPreviousButton: () => {
+  clickPreviousButton: (expectedPaginationText = null) => {
     cy.do(rootModal.find(previousButton).click());
-    cy.wait(500);
+    if (expectedPaginationText) {
+      cy.get('[class^="modal---"]', { timeout: 10000 })
+        .find('div[class^="mclPrevNextPageInfoContainer-"]')
+        .should(($el) => {
+          const text = $el.text().trim().replace(/\s+/g, ' ');
+          expect(text).to.equal(expectedPaginationText);
+        });
+    } else {
+      cy.wait(1000);
+    }
   },
 };

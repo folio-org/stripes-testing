@@ -42,6 +42,10 @@ const versionHistoryButton = Button({ id: 'version-history-btn' });
 const linkedInstancesDetailsSection = orderLineDetailsSection.find(
   Section({ id: 'linkedInstances' }),
 );
+const routingListSection = orderLineDetailsSection.find(Section({ id: 'routing-list' }));
+const routingListAccordionButton = '#accordion-toggle-button-routing-list';
+const routingListBadgeSelector = '[class*="badge"]';
+const routingListContainer = '#routing-list';
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -366,5 +370,33 @@ export default {
     VersionHistory.waitLoading();
 
     return VersionHistory;
+  },
+  checkRoutingListSectionPresence(shouldBePresent = true) {
+    if (shouldBePresent) {
+      cy.expect(routingListSection.exists());
+    } else {
+      cy.expect(routingListSection.absent());
+    }
+  },
+  checkRoutingListSectionCollapsed() {
+    cy.get(routingListAccordionButton)
+      .scrollIntoView()
+      .should('have.attr', 'aria-expanded', 'false');
+  },
+  checkRoutingListSectionCounter(count) {
+    if (count === '0') {
+      cy.get(routingListAccordionButton).should('exist');
+    } else {
+      cy.get(routingListAccordionButton).find(routingListBadgeSelector).should('have.text', count);
+    }
+  },
+  expandRoutingListSection() {
+    cy.get(routingListAccordionButton).scrollIntoView().should('be.visible').click();
+  },
+  checkRoutingListSectionExpanded() {
+    cy.get(routingListAccordionButton).should('have.attr', 'aria-expanded', 'true');
+  },
+  checkNoRoutingListsText() {
+    cy.get(routingListContainer).should('contain.text', 'No routing lists');
   },
 };
