@@ -242,4 +242,66 @@ export default {
   checkBalance({ name, value }) {
     cy.expect(summarySection.find(HTML(including(`${name} balance: ${value}`))).exists());
   },
+
+  checkGroupNotFound(groupName) {
+    this.checkGroupNotInResults(groupName);
+    this.checkZeroSearchResultsHeader();
+  },
+
+  checkGroupNotInResults(groupName) {
+    cy.expect(Section({ id: 'group-results-pane' }).find(Link(groupName)).absent());
+  },
+
+  checkZeroSearchResultsHeader() {
+    cy.xpath('//*[@id="paneHeadergroup-results-pane-subtitle"]/span').should(
+      'have.text',
+      '0 records found',
+    );
+  },
+
+  createGroupWithAcquisitionUnit(group, acquisitionUnitName) {
+    cy.wait(2000);
+    cy.do([
+      Button('Actions').click(),
+      Button('New').click(),
+      nameField.fillIn(group.name),
+      codeField.fillIn(group.code),
+    ]);
+    cy.wait(2000);
+    cy.get('[id*="downshift"][id*="toggle-button"]').click();
+    cy.wait(500);
+    cy.contains('[id*="downshift"][id*="item"]', acquisitionUnitName).click();
+    cy.wait(1000);
+    cy.do(Button('Save & close').click());
+    cy.wait(2000);
+    this.waitForGroupDetailsLoading();
+  },
+
+  createGroupWithAcquisitionUnitAndCaptureId(group, acquisitionUnitName) {
+    cy.intercept('POST', '**/finance/groups*').as('createGroupRequest');
+
+    this.createGroupWithAcquisitionUnit(group, acquisitionUnitName);
+
+    return cy.wait('@createGroupRequest').then((interception) => {
+      group.id = interception.response.body.id;
+      return group;
+    });
+  },
+
+  selectStatusInSearch: (groupStatus) => {
+    cy.do(Accordion({ id: 'status' }).clickHeader());
+    switch (groupStatus) {
+      case 'Active':
+        cy.do(Checkbox({ name: 'Active' }).click());
+        break;
+      case 'Inactive':
+        cy.do(Checkbox({ name: 'Inactive' }).click());
+        break;
+      case 'Frozen':
+        cy.do(Checkbox({ name: 'Frozen' }).click());
+        break;
+      default:
+        cy.log('No such status like ' + groupStatus + '. Please use Active, Inactive or Frozen');
+    }
+  },
 };

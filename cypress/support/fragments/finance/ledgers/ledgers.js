@@ -599,6 +599,44 @@ export default {
     this.waitForLedgerDetailsLoading();
   },
 
+  createLedgerWithAcquisitionUnit(ledger, acquisitionUnitName) {
+    cy.do([
+      actionsButton.click(),
+      Button('New').click(),
+      TextField('Name*').fillIn(ledger.name),
+      TextField('Code*').fillIn(ledger.code),
+    ]);
+    cy.get(fiscalYearCss).select(ledger.fiscalYearOneId);
+    cy.wait(2000);
+    cy.get('[id*="downshift"][id*="toggle-button"]').click();
+    cy.wait(500);
+    cy.contains('[id*="downshift"][id*="item"]', acquisitionUnitName).click();
+    cy.wait(1000);
+    cy.do(saveAndClose.click());
+    cy.wait(2000);
+    this.waitForLedgerDetailsLoading();
+  },
+
+  createLedgerWithAcquisitionUnitAndCaptureId(ledger, acquisitionUnitName) {
+    cy.intercept('POST', '**/finance/ledgers*').as('createLedgerRequest');
+
+    this.createLedgerWithAcquisitionUnit(ledger, acquisitionUnitName);
+
+    return cy.wait('@createLedgerRequest').then((interception) => {
+      ledger.id = interception.response.body.id;
+      return ledger;
+    });
+  },
+
+  checkLedgerNotFound(ledgerName) {
+    this.checkLedgerNotInResults(ledgerName);
+    this.checkZeroSearchResultsHeader();
+  },
+
+  checkLedgerNotInResults(ledgerName) {
+    cy.expect(ledgerResultsPaneSection.find(Link(ledgerName)).absent());
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));

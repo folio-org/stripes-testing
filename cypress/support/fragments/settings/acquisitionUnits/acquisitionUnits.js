@@ -156,6 +156,36 @@ export default {
     cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
   },
+
+  selectDeleteCheckbox: () => {
+    cy.expect(assignedUsersSection.exists());
+    cy.do([Checkbox('Delete').click(), saveAUButton.click()]);
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+
+  fillInAUInfoWithDeleteOnly: (name) => {
+    cy.do(nameTextField.fillIn(name));
+
+    const checkboxConfig = [
+      { inputName: 'protectRead', label: 'View', shouldBeChecked: false },
+      { inputName: 'protectUpdate', label: 'Edit', shouldBeChecked: false },
+      { inputName: 'protectCreate', label: 'Create', shouldBeChecked: false },
+      { inputName: 'protectDelete', label: 'Delete', shouldBeChecked: true },
+    ];
+
+    checkboxConfig.forEach((config) => {
+      cy.get(`input[name="${config.inputName}"]`).then(($checkbox) => {
+        const isChecked = $checkbox.is(':checked');
+        if (isChecked !== config.shouldBeChecked) {
+          cy.do(Checkbox(config.label).click());
+        }
+      });
+    });
+
+    cy.do(saveAUButton.click());
+    cy.wait(6000);
+  },
+
   getAcquisitionUnitViaApi(searchParams) {
     return cy
       .okapiRequest({
