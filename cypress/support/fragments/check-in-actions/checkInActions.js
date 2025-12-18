@@ -101,11 +101,9 @@ export default {
 
   checkInItem: (barcode) => {
     waitLoading();
-    cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
-    cy.wait('@getItems', getLongDelay());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   checkInItemModified: (barcode) => {
     const buttonPreciseLocator = 'button[id="clickable-add-item"] span';

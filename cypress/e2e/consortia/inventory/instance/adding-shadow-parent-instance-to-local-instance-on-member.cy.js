@@ -137,7 +137,7 @@ describe('Inventory', () => {
             testData.shadowInstance.instanceHRID,
           );
           InstanceRecordEdit.selectParentRelationshipType('bound-with');
-          InstanceRecordEdit.saveAndClose();
+          InstanceRecordEdit.clickSaveAndCloseButton();
           InstanceRecordEdit.verifyShareParentLinkingError();
         },
       );

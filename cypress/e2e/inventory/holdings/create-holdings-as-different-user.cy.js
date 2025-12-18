@@ -1,5 +1,9 @@
 import { MultiColumnListCell } from '../../../../interactors';
-import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -7,6 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -41,10 +46,9 @@ describe('Inventory', () => {
         cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
           secondUser = userProperties;
 
-          cy.login(secondUser.username, secondUser.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.login(secondUser.username, secondUser.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
         });
       });
 
@@ -70,6 +74,7 @@ describe('Inventory', () => {
           InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
           InventoryNewInstance.clickSaveAndCloseButton();
 
+          cy.wait(2000);
           InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
           cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 

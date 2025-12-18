@@ -3,6 +3,7 @@ import { recurse } from 'cypress-recurse';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
+import SelectJobProfile from './selectJobProfile';
 
 const areYouSureModal = Modal('Are you sure you want to run this job?');
 
@@ -199,12 +200,12 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
-    cy.get('#search-results-list').within(() => {
-      cy.get('[class*="mclScrollable"]').scrollTo('bottom');
-    });
+    const profileName = `${jobType} export job profile`;
+
+    SelectJobProfile.searchForAJobProfile(profileName);
     cy.do(
       MultiColumnListCell({
-        content: `${jobType} export job profile`,
+        content: profileName,
         columnIndex: 0,
       }).click(),
     );
