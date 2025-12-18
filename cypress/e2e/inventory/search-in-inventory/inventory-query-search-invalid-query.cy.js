@@ -20,7 +20,7 @@ describe('Inventory', () => {
     const validQuery = `metadata.createdDate <= "${testData.currentDate}"`;
     const invalidQueriesData = [
       { query: 'metadata.createdDate <= "2031-7-31"', errorMessage: 'Invalid date format' },
-      { query: 'www.itemcase.com/test/uri', errorMessage: 'Failed to parse CQL query' },
+      { query: 'www.itemcase.com/test/uri', errorMessage: 'Failed to parse cql query' },
       { query: 'titles all "test"' },
     ];
     const folioInstances = InventoryInstances.generateFolioInstances({

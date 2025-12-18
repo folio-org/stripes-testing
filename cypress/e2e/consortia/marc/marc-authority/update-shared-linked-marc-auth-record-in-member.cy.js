@@ -198,7 +198,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[1]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[2]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[3]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[3], true);
         cy.setTenant(Affiliations.University);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[4]);
         cy.setTenant(Affiliations.College);

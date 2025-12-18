@@ -141,12 +141,14 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
 
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(barcodeOption, itemABarcode);
+        InventorySearchAndFilter.selectSearchOption(barcodeOption);
+        InventorySearchAndFilter.executeSearch(itemABarcode);
         ItemRecordView.checkBarcode(itemABarcode);
         ItemRecordView.checkInstanceTitle(`${instanceTitlePrefix} B`);
         ItemRecordView.closeDetailView();
 
-        InventorySearchAndFilter.searchByParameter(barcodeOption, itemBBarcode);
+        InventorySearchAndFilter.selectSearchOption(barcodeOption);
+        InventorySearchAndFilter.executeSearch(itemBBarcode);
         ItemRecordView.checkBarcode(itemBBarcode);
         ItemRecordView.checkInstanceTitle(`${instanceTitlePrefix} A`);
       },

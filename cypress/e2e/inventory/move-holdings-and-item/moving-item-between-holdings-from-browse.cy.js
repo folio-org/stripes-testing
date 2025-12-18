@@ -146,6 +146,7 @@ describe('Inventory', () => {
           shouldOpen: true,
           itemMoved: true,
         });
+        InventoryInstance.openHoldings(locationB.name);
         InventoryInstancesMovement.verifyItemBarcodeInHoldings(barcode, locationB.name);
       },
     );

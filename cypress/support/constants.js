@@ -636,7 +636,7 @@ export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   G: 'g - Projected medium',
   I: 'i - Nonmusical sound recording',
   J: 'j - Musical sound recording',
-  K: 'k - Two-dimensional nonprojectable  graphic',
+  K: 'k - Two-dimensional nonprojectable graphic',
   M: 'm - Computer file',
   O: 'o - Kit',
   P: 'p - Mixed materials',

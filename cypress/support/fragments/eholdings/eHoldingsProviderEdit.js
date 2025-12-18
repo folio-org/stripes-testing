@@ -25,7 +25,7 @@ const API = {
 
 export default {
   waitLoading: (providerName) => {
-    cy.intercept('eholdings/providers/**').as('getProviderProperties');
+    cy.intercept(/\/eholdings\/providers\/\d+$/).as('getProviderProperties');
     cy.wait('@getProviderProperties', getLongDelay()).then((request) => {
       cy.expect(Section({ id: providerName.replaceAll(' ', '-').toLowerCase() }).exists());
       cy.expect(proxySelect.has({ value: request.response.body.data.attributes.proxy.id }));
