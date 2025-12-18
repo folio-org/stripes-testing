@@ -13,7 +13,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourceId: '58-1017-3389',
+      resourceId: '304-1527224-5188145',
       fileName: `C367920autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
     };

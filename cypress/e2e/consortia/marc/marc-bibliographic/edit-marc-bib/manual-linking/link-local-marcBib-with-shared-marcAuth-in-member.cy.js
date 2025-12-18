@@ -98,7 +98,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
+              cy.getAdminToken().then(() => {
                 marcFilesForCentral.forEach((marcFile) => {
                   DataImport.uploadFileViaApi(
                     marcFile.marc,
@@ -112,7 +112,11 @@ describe('MARC', () => {
                 });
               });
 
-              cy.visit(TopMenu.inventoryPath).then(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              }).then(() => {
                 InventoryInstances.waitContentLoading();
                 InventoryInstances.searchByTitle(createdRecordIDs[0]);
                 InventoryInstances.selectInstance();

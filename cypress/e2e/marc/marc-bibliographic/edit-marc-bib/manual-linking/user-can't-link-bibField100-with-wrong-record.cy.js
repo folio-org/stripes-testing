@@ -148,6 +148,10 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.verifySearchOptions();
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorityBrowse.searchBy(
               testData.searchOptions.nameTitle,
               testData.authorityFieldValue.field100,
@@ -160,6 +164,10 @@ describe('MARC', () => {
 
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.verifyDisabledSearchButton();
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorityBrowse.searchBy(
               testData.searchOptions.corporateName,
               testData.authorityFieldValue.field110A,

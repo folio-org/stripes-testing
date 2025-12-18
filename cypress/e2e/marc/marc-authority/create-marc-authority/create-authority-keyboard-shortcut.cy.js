@@ -21,7 +21,7 @@ describe('MARC', () => {
       };
 
       const openCreateViaShortcutAndCheck = () => {
-        cy.get('#authority-search-results-pane').type('{alt}{n}');
+        cy.get('textarea[name="query"]').type('{alt}{n}');
         QuickMarcEditor.checkPaneheaderContains(testData.paneheaderRegExp);
       };
 

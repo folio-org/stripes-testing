@@ -80,7 +80,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
         }, 20_000);
         InventoryInstances.waitContentLoading();
 
@@ -94,17 +93,17 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOption);
 
         // Step 3: Search for first holdings HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, holdingsHRIDs[0]);
+        InventorySearchAndFilter.executeSearch(holdingsHRIDs[0]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[0].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
 
         // Step 4: Repeat test with second Holdings HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, holdingsHRIDs[1]);
+        InventorySearchAndFilter.executeSearch(holdingsHRIDs[1]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[1].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
 
         // Repeat test with third Holdings HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, holdingsHRIDs[2]);
+        InventorySearchAndFilter.executeSearch(holdingsHRIDs[2]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[2].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
       },

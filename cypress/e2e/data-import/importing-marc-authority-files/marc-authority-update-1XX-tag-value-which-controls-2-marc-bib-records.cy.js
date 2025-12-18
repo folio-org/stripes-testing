@@ -191,7 +191,7 @@ describe('Data Import', () => {
           twoMarcBibsToLink.forEach((marcBib) => {
             InventoryInstances.searchByTitle(marcBib.marcBibRecord);
             cy.wait(1500);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceByTitle(marcBib.marcBibRecord);
             InventoryInstance.editMarcBibliographicRecord();
             marcBib.linkingFields.forEach((linking) => {
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
