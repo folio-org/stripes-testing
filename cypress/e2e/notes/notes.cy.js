@@ -104,6 +104,36 @@ describe('Note creation', () => {
   );
 
   it(
+    'C359005 A user can view Notes that were edited by deleted user (spitfire)',
+    { tags: ['criticalPath', 'spitfire', 'C359005'] },
+    () => {
+      const editedNote = {
+        title: `Edited Title ${getRandomPostfix()}`,
+        details: `Edited details ${getRandomPostfix()}`,
+      };
+
+      NotesEholdings.createNote(note.title, note.details);
+      NotesEholdings.verifyNoteTitle(note.title);
+
+      cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
+      NotesEholdings.editNote(note.title, editedNote.title, editedNote.details);
+      NotesEholdings.verifyNoteTitle(editedNote.title);
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.deletedUserProperties.userId);
+
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
+      NotesEholdings.openNoteView(editedNote.title);
+      NotesEholdings.deleteNote();
+    },
+  );
+
+  it(
     'C16993 Able to sort Notes accordion column headings (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'C16993'] },
     () => {
