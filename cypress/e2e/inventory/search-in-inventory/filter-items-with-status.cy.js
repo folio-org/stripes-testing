@@ -15,7 +15,11 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
-const testData = {};
+const testData = {
+  itemStatusAccordionName: 'Item status',
+  itemStatusNotFullValue: 'out',
+  itemStatusFullValue: 'Checked out',
+};
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -129,6 +133,11 @@ describe('Inventory', () => {
           InventorySearchAndFilter.resetAll();
           cy.expect(MultiColumnList().absent());
         });
+        InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+          testData.itemStatusAccordionName,
+          testData.itemStatusNotFullValue,
+          testData.itemStatusFullValue,
+        );
       },
     );
   });

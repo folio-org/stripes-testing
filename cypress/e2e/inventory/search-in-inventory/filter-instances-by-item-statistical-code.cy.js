@@ -316,6 +316,11 @@ describe('Inventory', () => {
                     `^${testData.itemCount.toLocaleString('en-US')} record`,
                   );
                 });
+                InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                  STAT_CODE_ACCORDION,
+                  '76764',
+                  statCodeUiOptions[0],
+                );
               });
             });
           });

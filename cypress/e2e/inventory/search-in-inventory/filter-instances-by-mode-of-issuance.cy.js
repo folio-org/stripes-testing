@@ -248,6 +248,12 @@ describe('Inventory', () => {
                   cy.wait('@getInstances5', { timeout: 10_000 }).then(() => {
                     InventoryInstances.checkSearchResultCount('^5 records');
                   });
+                  InventorySearchAndFilter.clearFilter(testData.modeOfIssuanceAccordionName);
+                  InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                    testData.modeOfIssuanceAccordionName,
+                    '6725',
+                    modesOfIssuance[0].name,
+                  );
                 });
               });
             });
