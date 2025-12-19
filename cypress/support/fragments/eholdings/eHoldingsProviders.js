@@ -135,8 +135,7 @@ export default {
     ]);
   },
 
-  addTag: () => {
-    const newTag = `tag${getRandomPostfix()}`;
+  addTag: (newTag = `tag${getRandomPostfix()}`) => {
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
@@ -183,5 +182,22 @@ export default {
       cy.do(providerAccordion.click());
       cy.wait(2000);
     });
+  },
+
+  getProvidersViaApi: (searchParams = { count: 100, pageSize: 100 }) => {
+    return cy
+      .okapiRequest({
+        path: 'eholdings/providers',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.data
+          .filter((provider) => provider?.id && provider?.attributes?.name)
+          .map((provider) => ({
+            id: provider.id,
+            name: provider.attributes.name,
+          }));
+      });
   },
 };

@@ -2,7 +2,9 @@ import permissions from '../../support/dictionary/permissions';
 import { APPLICATION_NAMES } from '../../support/constants';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
+import DataExportViewAllLogs, {
+  accordionNames,
+} from '../../support/fragments/data-export/dataExportViewAllLogs';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportNewJobProfile from '../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
@@ -143,7 +145,7 @@ describe('Data Export', () => {
         DataExportLogs.verifyRecordsFoundSubtitleExists();
 
         // Step 3: Click "Job profile" accordion
-        DataExportViewAllLogs.expandJobProfileAccordion();
+        DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
         DataExportViewAllLogs.verifyJobProfileDropdownExists();
 
         // Step 4: Click on "Choose job profile" dropdown
@@ -156,7 +158,7 @@ describe('Data Export', () => {
         DataExportViewAllLogs.verifyNumberOfFilteredJobProfiles(1);
 
         // Step 6: Select any job profile
-        DataExportViewAllLogs.selectJobProfile(jobProfileName);
+        DataExportViewAllLogs.selectFilterOption(jobProfileName);
         DataExportViewAllLogs.verifyResetAllButtonEnabled();
         DataExportViewAllLogs.verifySearchAndFilterPane();
         DataExportViewAllLogs.verifyJobProfileAccordion();
@@ -186,11 +188,11 @@ describe('Data Export', () => {
         // Step 8: Click on "Choose job profile" dropdown - Type non-existing option into the text field
         DataExportViewAllLogs.clickJobProfileDropdown();
         DataExportViewAllLogs.filterJobProfileByName('non-existing');
-        DataExportViewAllLogs.verifyJobProfileNotInList();
+        DataExportViewAllLogs.verifyValueNotInList();
 
         // Step 9: Click on "Choose job profile" filter - Select any job profile
         DataExportViewAllLogs.filterJobProfileByName(jobProfileName);
-        DataExportViewAllLogs.selectJobProfile(jobProfileName);
+        DataExportViewAllLogs.selectFilterOption(jobProfileName);
         DataExportViewAllLogs.verifyResetAllButtonEnabled();
         DataExportViewAllLogs.verifySearchAndFilterPane();
         DataExportViewAllLogs.verifyJobProfileAccordion();
