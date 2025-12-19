@@ -120,6 +120,7 @@ describe('MARC', () => {
             testData.forC359232.searchOption,
             testData.forC359232.value,
           );
+          MarcAuthorities.selectFirst(testData.forC359232.value);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
           InventoryInstance.closeDetailsView();
         },
