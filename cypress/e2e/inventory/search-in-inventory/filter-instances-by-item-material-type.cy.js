@@ -312,6 +312,11 @@ describe('Inventory', () => {
                   InventoryInstances.checkSearchResultCount('^6 records');
                   InventorySearchAndFilter.verifyNumberOfSearchResults(6);
                 });
+                InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                  testData.materialTypeAccordionName,
+                  '76761',
+                  materialTypes[0].name,
+                );
               });
             });
           });
