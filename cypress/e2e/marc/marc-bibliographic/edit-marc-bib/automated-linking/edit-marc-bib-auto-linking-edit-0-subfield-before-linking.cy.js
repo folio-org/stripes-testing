@@ -122,6 +122,7 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -140,10 +141,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
+              authRefresh: true,
             });
           });
         });

@@ -1729,6 +1729,11 @@ export default {
         });
     });
   },
+
+  verifyLabelPresentInFilterOptionsList(label) {
+    cy.get('ul[class^="selectionList-"] li[class*="groupLabel"]').contains(label).should('exist');
+  },
+
   verifyFilteredMultiSelectOptionsListIncludesOptionsWithText(value) {
     cy.then(() => MultiSelectMenu().optionList()).then((options) => {
       options.forEach((option) => {

@@ -13,7 +13,12 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  CAMPUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Institutions from '../../../../support/fragments/settings/tenant/location-setup/institutions';
@@ -59,71 +64,83 @@ describe('Bulk-edit', () => {
             instanceTypeId = instanceTypeData[0].id;
           });
           // Get two locations for testing replace
-          InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
-            const locations = resp.filter((location) => location.name !== 'DCB');
-            [locationData, altLocationData] = locations;
+          InventoryInstances.getLocations({ query: `name=${LOCATION_NAMES.MAIN_LIBRARY_UI}` }).then(
+            (resp) => {
+              locationData = resp[0];
+              locationData.campusName = CAMPUS_NAMES.CITY_CAMPUS;
 
-            Institutions.getInstitutionByIdViaApi(altLocationData.institutionId).then(
-              (institution) => {
-                altLocationData.institutionName = institution.name;
-              },
-            );
+              InventoryInstances.getLocations({
+                query: `name=${LOCATION_NAMES.SECOND_FLOOR_UI}`,
+              }).then((altLocationResp) => {
+                altLocationData = altLocationResp[0];
+                altLocationData.campusName = CAMPUS_NAMES.CITY_CAMPUS;
 
-            InventoryHoldings.getHoldingsFolioSource()
-              .then((folioSource) => {
-                sourceId = folioSource.id;
-              })
-              .then(() => {
-                // create folio instance
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
+                Institutions.getInstitutionByIdViaApi(altLocationData.institutionId).then(
+                  (institution) => {
+                    altLocationData.institutionName = institution.name;
                   },
-                }).then((createdInstanceData) => {
-                  folioInstance.id = createdInstanceData.instanceId;
-                });
-              })
-              .then(() => {
-                // create marc instance
-                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                  marcInstance.id = instanceId;
-                });
-              })
-              .then(() => {
-                // create holdings: one with temp location, one without
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: folioInstance.id,
-                  permanentLocationId: locationData.id,
-                  temporaryLocationId: locationData.id,
-                  sourceId,
-                }).then((holding) => {
-                  folioInstance.holdingId = holding.id;
-                  folioInstance.holdingHrid = holding.hrid;
-                });
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: marcInstance.id,
-                  permanentLocationId: locationData.id,
-                  // No temporaryLocationId for this holding
-                  sourceId,
-                }).then((holding) => {
-                  marcInstance.holdingId = holding.id;
-                  marcInstance.holdingHrid = holding.hrid;
-                });
-              })
-              .then(() => {
-                FileManager.createFile(
-                  `cypress/fixtures/${holdingUUIDsFileName}`,
-                  `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
                 );
-                cy.resetTenant();
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
-                });
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+
+                InventoryHoldings.getHoldingsFolioSource()
+                  .then((folioSource) => {
+                    sourceId = folioSource.id;
+                  })
+                  .then(() => {
+                    // create folio instance
+                    InventoryInstances.createFolioInstanceViaApi({
+                      instance: {
+                        instanceTypeId,
+                        title: folioInstance.title,
+                      },
+                    }).then((createdInstanceData) => {
+                      folioInstance.id = createdInstanceData.instanceId;
+                    });
+                  })
+                  .then(() => {
+                    // create marc instance
+                    cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                      marcInstance.id = instanceId;
+                    });
+                  })
+                  .then(() => {
+                    // create holdings: one with temp location, one without
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: folioInstance.id,
+                      permanentLocationId: locationData.id,
+                      temporaryLocationId: locationData.id,
+                      sourceId,
+                    }).then((holding) => {
+                      folioInstance.holdingId = holding.id;
+                      folioInstance.holdingHrid = holding.hrid;
+                    });
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: marcInstance.id,
+                      permanentLocationId: locationData.id,
+                      // No temporaryLocationId for this holding
+                      sourceId,
+                    }).then((holding) => {
+                      marcInstance.holdingId = holding.id;
+                      marcInstance.holdingHrid = holding.hrid;
+                    });
+                  })
+                  .then(() => {
+                    FileManager.createFile(
+                      `cypress/fixtures/${holdingUUIDsFileName}`,
+                      `${folioInstance.holdingId}\n${marcInstance.holdingId}`,
+                    );
+                    cy.resetTenant();
+                    cy.login(user.username, user.password, {
+                      path: TopMenu.bulkEditPath,
+                      waiter: BulkEditSearchPane.waitLoading,
+                    });
+                    ConsortiumManager.switchActiveAffiliation(
+                      tenantNames.central,
+                      tenantNames.college,
+                    );
+                  });
               });
-          });
+            },
+          );
         });
       });
 

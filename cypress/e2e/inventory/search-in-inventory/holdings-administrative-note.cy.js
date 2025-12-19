@@ -63,10 +63,10 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchByParameter(
+        InventorySearchAndFilter.selectSearchOption(
           'Keyword (title, contributor, identifier, HRID, UUID)',
-          folioInstanceData.instanceTitle,
         );
+        InventorySearchAndFilter.executeSearch(folioInstanceData.instanceTitle);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
@@ -76,10 +76,10 @@ describe('Inventory', () => {
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.close();
         InventorySearchAndFilter.resetAll();
-        InventorySearchAndFilter.searchByParameter(
+        InventorySearchAndFilter.selectSearchOption(
           'Keyword (title, contributor, identifier, HRID, UUID)',
-          marcInstanceData.instanceTitle,
         );
+        InventorySearchAndFilter.executeSearch(marcInstanceData.instanceTitle);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
@@ -112,14 +112,16 @@ describe('Inventory', () => {
       () => {
         searchQueries.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
-          InventorySearchAndFilter.searchByParameter('Query search', query);
+          InventorySearchAndFilter.selectSearchOption('Query search');
+          InventorySearchAndFilter.executeSearch(query);
           // Search completed and at the result list are being displayed the "Instance" records with "Holdings" with "Item" records to which you created "Administrative notes" from precondition.
           InventorySearchAndFilter.verifySearchResult(folioInstanceData.instanceTitle);
           InventorySearchAndFilter.verifySearchResult(marcInstanceData.instanceTitle);
         });
         searchQueriesNotExist.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
-          InventorySearchAndFilter.searchByParameter('Query search', query);
+          InventorySearchAndFilter.selectSearchOption('Query search');
+          InventorySearchAndFilter.executeSearch(query);
           // Search completed and at the result list are being displayed the "Instance" records with "Holdings" with "Item" records to which you created "Administrative notes" from precondition.
           InventorySearchAndFilter.verifyContentNotExistInSearchResult(
             folioInstanceData.instanceTitle,
@@ -129,11 +131,13 @@ describe('Inventory', () => {
           );
         });
         // Edit the search query to " item.administrativeNotes ==/ string "Copy, Delete this Holdings 10-21-2022" " => Click on the "Search" button.
-        InventorySearchAndFilter.searchByParameter('Query search', queryForNote1);
+        InventorySearchAndFilter.selectSearchOption('Query search');
+        InventorySearchAndFilter.executeSearch(queryForNote1);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" record with source value "FOLIO" to which you created "Administrative note" from precondition.
         InventorySearchAndFilter.verifySearchResult(folioInstanceData.instanceTitle);
         // Edit the search query to " item.administrativeNotes ==/ string "Complex copy, Delete this Holdings 10-22-2022" " => Click on the "Search" button.
-        InventorySearchAndFilter.searchByParameter('Query search', queryForNote2);
+        InventorySearchAndFilter.selectSearchOption('Query search');
+        InventorySearchAndFilter.executeSearch(queryForNote2);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" record with source value "MARC" to which you created "Administrative note" from precondition.
         InventorySearchAndFilter.verifySearchResult(marcInstanceData.instanceTitle);
       },

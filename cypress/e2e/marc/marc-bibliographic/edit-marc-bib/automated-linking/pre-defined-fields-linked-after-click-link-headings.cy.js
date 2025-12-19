@@ -184,12 +184,10 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-              InventoryInstances.selectInstance();
+              InventoryInstances.selectInstanceById(createdRecordsIDs[0]);
               InventoryInstance.editMarcBibliographicRecord();
               autoLinkingEnabledFields.forEach((tag) => {
                 QuickMarcEditor.setRulesForField(tag, true);
@@ -214,11 +212,8 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
           });
         });
 

@@ -136,10 +136,18 @@ describe('Bulk-edit', () => {
         BulkEditActions.typeInFilterOptionsList(filterOtions.instance);
         BulkEditActions.verifyValueInInputOfFilterOptionsList(filterOtions.instance);
 
-        instanceNotesColumnNames.forEach((instanceNoteColumnName) => {
-          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(instanceNoteColumnName);
-        });
+        /* Verification was commented out because it makes the test flaky:
+         * the returned list of options depends on whether the environment in "Settings > Inventory > Instance note types"
+         * contains a note type with the word "instance" in it. If there is no such note type, the whole "Instance notes"
+         * group with all options in it is returned; if present, only note type(s) with the word "instance" in them are returned.
+         * Discussed with PO – for now, this is acceptable.
+         */
 
+        // instanceNotesColumnNames.forEach((instanceNoteColumnName) => {
+        //   BulkEditActions.verifyOptionExistsInSelectOptionDropdown(instanceNoteColumnName);
+        // });
+
+        BulkEditActions.verifyLabelPresentInFilterOptionsList('Instance notes');
         BulkEditActions.typeInFilterOptionsList(filterOtions.nonExisting);
         BulkEditActions.verifyValueInInputOfFilterOptionsList(filterOtions.nonExisting);
         BulkEditActions.verifyNoMatchingOptionsInFilterOptionsList();

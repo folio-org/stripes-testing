@@ -72,14 +72,11 @@ describe('Inventory', () => {
       'C9206 Verify search on Instance HRID (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C9206'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-        }, 20_000);
-        InventoryInstances.waitContentLoading();
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
 
         // Step 1: Open the Inventory app. Select the instance segment.
         InventorySearchAndFilter.instanceTabIsDefault();
@@ -90,17 +87,20 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOption);
 
         // Step 3: Search for first instance HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, instanceHRIDs[0]);
+        InventorySearchAndFilter.selectSearchOption(testData.searchOption);
+        InventorySearchAndFilter.executeSearch(instanceHRIDs[0]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[0].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
 
         // Step 4: Repeat test with second Instance HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, instanceHRIDs[1]);
+        InventorySearchAndFilter.selectSearchOption(testData.searchOption);
+        InventorySearchAndFilter.executeSearch(instanceHRIDs[1]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[1].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
 
         // Repeat test with third Instance HRID
-        InventorySearchAndFilter.searchByParameter(testData.searchOption, instanceHRIDs[2]);
+        InventorySearchAndFilter.selectSearchOption(testData.searchOption);
+        InventorySearchAndFilter.executeSearch(instanceHRIDs[2]);
         InventorySearchAndFilter.verifySearchResult(testData.folioInstances[2].instanceTitle);
         InventorySearchAndFilter.checkRowsCount(1);
       },
