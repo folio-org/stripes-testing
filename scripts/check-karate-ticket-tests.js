@@ -167,6 +167,11 @@ async function processJiraTickets() {
         console.log(ticket.jiraLink);
       });
       console.log(`\nTotal: ${includedTickets.length} tickets`);
+
+      // Output JQL for copy-paste into Jira search
+      const ticketKeys = includedTickets.map((t) => t.jiraKey).join(', ');
+      console.log('\n=== JQL for Jira Search ===');
+      console.log(`key in (${ticketKeys})`);
     } else {
       console.log('No tickets match the criteria.');
     }
