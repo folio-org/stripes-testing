@@ -93,9 +93,4 @@ export default {
         .absent(),
     ]);
   },
-
-  cancelModal() {
-    cy.do(cancelButton.click());
-    cy.expect(confirmModal.absent());
-  },
 };

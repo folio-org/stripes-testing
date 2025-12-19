@@ -10,16 +10,6 @@ export default {
     cy.do(Modal('Check in missing item?').find(Button('Confirm')).click());
   },
 
-  cancelMissingModal: () => {
-    const missingModal = Modal('Check in missing item?');
-    cy.do(missingModal.find(Button('Cancel')).click());
-    cy.expect(missingModal.absent());
-  },
-
-  verifyMissingModalExists: () => {
-    cy.expect(Modal('Check in missing item?').exists());
-  },
-
   confirmInTransitModal: () => {
     cy.wait(1000);
     cy.do(inTransitModal.find(printSlipCheckbox).click());
