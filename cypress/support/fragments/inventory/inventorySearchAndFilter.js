@@ -1486,6 +1486,20 @@ export default {
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
 
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([multiSelect.find(MultiSelectOption(including(fullValue))).exists()]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+  },
+
   verifyCheckboxesWithCountersExistInAccordion(accordionName) {
     cy.expect(
       Accordion(accordionName)
