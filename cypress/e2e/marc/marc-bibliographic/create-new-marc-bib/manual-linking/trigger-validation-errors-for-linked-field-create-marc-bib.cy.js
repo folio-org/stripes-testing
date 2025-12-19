@@ -240,7 +240,7 @@ describe('MARC', () => {
             QuickMarcEditor.fillEmptyTextAreaOfField(
               field700RowIndex,
               testData.fieldName.fifthBox(field700RowIndex),
-              '$a controlled subfield $v undefined subfield',
+              '$u sub1 $u sub2 $a controlled subfield $v undefined subfield',
             );
 
             // Add: $9 subfield 9 to the seventh box (uncontrolledNumber)
@@ -284,11 +284,7 @@ describe('MARC', () => {
             const invalidTagRowIndex = field700_2RowIndex + 1;
 
             // Step 10: Click "Save & close" and verify validation errors
-            cy.wait(1000);
             QuickMarcEditor.pressSaveAndCloseButton();
-            cy.wait(2000);
-
-            // Verify validation summary callout: 5 warnings, 13 failures
             QuickMarcEditor.verifyValidationCallout(0, 12);
 
             // Verify inline errors for linked 700 field
@@ -307,7 +303,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkErrorMessage(field700RowIndex, "Subfield 'a' is non-repeatable");
             QuickMarcEditor.checkErrorMessage(field700RowIndex, "Subfield 'e' is required");
             QuickMarcEditor.checkErrorMessage(field700RowIndex, "Subfield 'q' is required");
-            QuickMarcEditor.checkErrorMessage(field700RowIndex, "Subfield '9' is non-repeatable");
+            QuickMarcEditor.checkErrorMessage(field700RowIndex, "Subfield 'u' is non-repeatable");
 
             // Verify errors for second 700 field
             QuickMarcEditor.checkErrorMessage(
