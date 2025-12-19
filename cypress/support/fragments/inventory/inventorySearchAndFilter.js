@@ -1493,10 +1493,17 @@ export default {
     );
   },
 
-  verifyOptionAvailableMultiselect(accordionName, optionName, isShown = true) {
+  verifyOptionAvailableMultiselect(
+    accordionName,
+    optionName,
+    isShown = true,
+    { checkIncluding = false } = {},
+  ) {
     const accordion = paneFilterSection.find(Accordion(accordionName));
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
-    const option = accordion.find(MultiSelectOption(matching(escapedValue)));
+    const option = checkIncluding
+      ? accordion.find(MultiSelectOption(including(`${optionName} (`)))
+      : accordion.find(MultiSelectOption(matching(escapedValue)));
     cy.do(accordion.find(MultiSelect()).open());
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());

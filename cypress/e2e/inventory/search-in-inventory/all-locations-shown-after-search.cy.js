@@ -28,7 +28,10 @@ describe('Inventory', () => {
               cy.getMaterialTypes({ limit: 1, query: 'source="folio"' }).then((res) => {
                 testData.materialType = res.id;
               });
-              cy.getLocations({ limit: 2, query: 'name<>"AT_*"' }).then(() => {
+              cy.getLocations({
+                limit: 2,
+                query: 'isActive=true and name<>"AT_*" and name<>"auto*"',
+              }).then(() => {
                 testData.locations = [Cypress.env('locations')[0], Cypress.env('locations')[1]];
               });
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
@@ -109,6 +112,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyOptionAvailableMultiselect(
                 testData.effectiveLocationFacet,
                 location.name,
+                { checkIncluding: true },
               );
             });
             InventorySearchAndFilter.selectMultiSelectFilterOption(
@@ -123,6 +127,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyOptionAvailableMultiselect(
                 testData.effectiveLocationFacet,
                 location.name,
+                { checkIncluding: true },
               );
             });
             InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
@@ -144,6 +149,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyOptionAvailableMultiselect(
                 testData.effectiveLocationFacet,
                 location.name,
+                { checkIncluding: true },
               );
             });
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
