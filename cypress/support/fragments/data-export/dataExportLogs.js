@@ -10,6 +10,7 @@ import {
   including,
   matching,
 } from '../../../../interactors';
+import { columnNames } from './dataExportViewAllLogs';
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
@@ -20,42 +21,41 @@ const viewAllLogsButton = Button('View all');
 const runningAccordion = Accordion('Running');
 
 const columnNameToIndex = {
-  'File name': 1,
-  Status: 2,
-  Total: 3,
-  Exported: 4,
-  Failed: 5,
-  'Job profile': 6,
-  'Started running': 7,
-  'Ended running': 8,
-  'Run by': 9,
-  ID: 10,
+  [columnNames.FILE_NAME]: 1,
+  [columnNames.STATUS]: 2,
+  [columnNames.TOTAL]: 3,
+  [columnNames.EXPORTED]: 4,
+  [columnNames.FAILED]: 5,
+  [columnNames.JOB_PROFILE]: 6,
+  [columnNames.STARTED_RUNNING]: 7,
+  [columnNames.ENDED_RUNNING]: 8,
+  [columnNames.RUN_BY]: 9,
+  [columnNames.ID]: 10,
 };
 
-const verifyTextColumnSorted = (columnName, sortOrder) => {
-  const columnIndex = columnNameToIndex[columnName];
-  if (!columnIndex) {
-    throw new Error(`Unknown column name: ${columnName}`);
-  }
+const getColumnBackgroundImage = (columnName, callback) => {
+  const columnIdMap = {
+    'file name': 'filename',
+    status: 'status',
+    total: 'totalrecords',
+    exported: 'exported',
+    failed: 'errors',
+    'started running': 'starteddate',
+    'ended running': 'completeddate',
+    'job profile': 'jobprofilename',
+    'run by': 'runby',
+    id: 'hrid',
+  };
 
-  const selector = `#job-logs-list [data-row-index] [class^="mclCell-"]:nth-child(${columnIndex})`;
+  const columnId = `list-column-${columnIdMap[columnName.toLowerCase()] || columnName.toLowerCase().replace(/\s+/g, '')}`;
 
-  cy.get(selector).then(($elements) => {
-    const textValues = Array.from($elements).map((el) => el.textContent.trim());
-
-    const sortedValues = [...textValues].sort((a, b) => {
-      if (sortOrder === 'ascending') {
-        return a.localeCompare(b, undefined, { sensitivity: 'base' });
-      } else {
-        return b.localeCompare(a, undefined, { sensitivity: 'base' });
-      }
+  cy.get(`#${columnId}`)
+    .find('[class^="mclHeaderInner-"]')
+    .should(($el) => {
+      const afterStyles = window.getComputedStyle($el[0], '::after');
+      const backgroundImage = afterStyles.getPropertyValue('background-image');
+      callback(backgroundImage);
     });
-
-    expect(textValues).to.deep.equal(
-      sortedValues,
-      `${columnName} should be sorted in ${sortOrder} order`,
-    );
-  });
 };
 
 export default {
@@ -143,6 +143,101 @@ export default {
   verifyColumnSorted(columnName, sortDirection) {
     cy.expect(logsList.find(MultiColumnListHeader(columnName, { sort: sortDirection })).exists());
 
-    verifyTextColumnSorted(columnName, sortDirection);
+    const columnIndex = columnNameToIndex[columnName];
+    if (!columnIndex) {
+      throw new Error(`Unknown column name: ${columnName}`);
+    }
+
+    const selector = `#job-logs-list [data-row-index] [class^="mclCell-"]:nth-child(${columnIndex})`;
+
+    cy.get(selector).then(($elements) => {
+      const textValues = Array.from($elements).map((el) => el.textContent.trim());
+
+      const sortedValues = [...textValues].sort((a, b) => {
+        // Handle date columns
+        if (
+          columnName === columnNames.STARTED_RUNNING ||
+          columnName === columnNames.ENDED_RUNNING
+        ) {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
+          return sortDirection === 'ascending' ? dateA - dateB : dateB - dateA;
+        }
+        // Handle numeric columns
+        if (
+          columnName === columnNames.TOTAL ||
+          columnName === columnNames.EXPORTED ||
+          columnName === columnNames.FAILED ||
+          columnName === columnNames.ID
+        ) {
+          const numA = parseInt(a, 10) || 0;
+          const numB = parseInt(b, 10) || 0;
+          return sortDirection === 'ascending' ? numA - numB : numB - numA;
+        }
+        // Handle text columns - match backend sorting: convert to uppercase then compare
+        const valueA = a.toUpperCase();
+        const valueB = b.toUpperCase();
+
+        if (sortDirection === 'ascending') {
+          return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+        } else {
+          return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+        }
+      });
+
+      expect(textValues).to.deep.equal(
+        sortedValues,
+        `${columnName} should be sorted in ${sortDirection} order`,
+      );
+    });
+  },
+
+  verifyColumnSortIcon(columnName, isExist, sortDirection = null) {
+    getColumnBackgroundImage(columnName, (backgroundImage) => {
+      if (!isExist) {
+        expect(backgroundImage, `Column "${columnName}" should not have a sort icon`).to.be.oneOf([
+          'none',
+          '',
+        ]);
+      } else {
+        const descendingPathFragment = 'M7%2011.1L1.23%204.18';
+        const ascendingPathFragment = 'M7%202.9l5.77%206.92';
+        const expectedPathFragment =
+          sortDirection === 'descending' ? descendingPathFragment : ascendingPathFragment;
+
+        expect(
+          backgroundImage,
+          `Column "${columnName}" should have ${sortDirection} sort icon`,
+        ).to.include(expectedPathFragment);
+      }
+    });
+  },
+
+  verifyColumnUpDownIcon(columnName, isExist = true) {
+    const upArrowPathFragment = 'M7%202.9l5.77%206.92';
+    const downArrowPathFragment = 'M7%2011.1L1.23%204.18';
+
+    getColumnBackgroundImage(columnName, (backgroundImage) => {
+      if (isExist) {
+        expect(
+          backgroundImage,
+          `Column "${columnName}" should have up arrow in UpDown icon`,
+        ).to.include(upArrowPathFragment);
+        expect(
+          backgroundImage,
+          `Column "${columnName}" should have down arrow in UpDown icon`,
+        ).to.include(downArrowPathFragment);
+      } else {
+        const hasUpDown =
+          backgroundImage.includes(upArrowPathFragment) &&
+          backgroundImage.includes(downArrowPathFragment);
+
+        expect(hasUpDown, `Column "${columnName}" should not have an UpDown icon`).to.equal(false);
+      }
+    });
+  },
+
+  scrollTo(direction) {
+    cy.get('div[class*="mclScrollable-"]').scrollTo(direction);
   },
 };
