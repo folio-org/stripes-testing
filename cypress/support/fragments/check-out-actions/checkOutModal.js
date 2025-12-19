@@ -1,4 +1,4 @@
-import { including } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import { Button, Modal, MultiColumnListRow, MultiColumnListCell } from '../../../../interactors';
 
 const checkOutNotesModal = Modal('Check out notes');
@@ -53,5 +53,8 @@ export default {
         ]);
       }
     });
+  },
+  verifyModalMessage: (message) => {
+    cy.expect(checkOutModal.find(HTML(including(message))).exists());
   },
 };
