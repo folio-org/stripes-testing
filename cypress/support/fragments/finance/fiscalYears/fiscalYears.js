@@ -298,14 +298,6 @@ export default {
     cy.expect(SelectionOption(AUName).absent());
   },
 
-  checkSaveButtonIsEnabled() {
-    cy.expect(saveAndClose.is({ disabled: false }));
-  },
-
-  verifyAcquisitionUnitIsDisplayed(AUName) {
-    cy.expect(HTML(including(AUName)).exists());
-  },
-
   createFiscalYearWithAllFields(fiscalYear, AUName) {
     cy.do([
       TextField('Name*').fillIn(fiscalYear.name),

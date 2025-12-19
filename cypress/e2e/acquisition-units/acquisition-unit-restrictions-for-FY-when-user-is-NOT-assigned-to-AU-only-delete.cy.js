@@ -1,6 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import FiscalYearDetails from '../../support/fragments/finance/fiscalYears/fiscalYearDetails';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
@@ -8,8 +9,6 @@ import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -32,10 +31,6 @@ describe('Acquisition Units', () => {
       cy.reload();
       AcquisitionUnits.waitLoading();
     }, 20_000);
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-    });
 
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
@@ -74,15 +69,14 @@ describe('Acquisition Units', () => {
             return AcquisitionUnits.assignUserViaApi(adminUser.id, defaultAcquisitionUnit.id);
           })
           .then(() => {
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
-            FinanceHelp.selectFiscalYearsNavigation();
-            FinanceHelp.searchByAll(defaultFiscalYear.name);
-            FiscalYears.selectFisacalYear(defaultFiscalYear.name);
-            FiscalYears.editFiscalYearDetails();
-            FiscalYears.assignAU(defaultAcquisitionUnit.name);
-            FiscalYears.closeThirdPane();
-            FiscalYears.resetFilters();
-
+            FiscalYears.createViaApi({
+              ...defaultFiscalYear,
+              acqUnitIds: [defaultAcquisitionUnit.id],
+            }).then((firstFiscalYearResponse) => {
+              defaultFiscalYear.id = firstFiscalYearResponse.id;
+            });
+          })
+          .then(() => {
             cy.login(userProperties.username, userProperties.password, {
               path: TopMenu.fiscalYearPath,
               waiter: FiscalYears.waitForFiscalYearDetailsLoading,
@@ -114,20 +108,20 @@ describe('Acquisition Units', () => {
       FiscalYears.expectFY(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.checkFiscalYearDetails();
-      FiscalYears.verifyAcquisitionUnitIsDisplayed(defaultAcquisitionUnit.name);
+      FiscalYearDetails.checkFiscalYearDetails({
+        information: [{ key: 'Acquisition units', value: defaultAcquisitionUnit.name }],
+      });
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.checkDeleteButtonIsDisabled();
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.editFiscalYearDetails();
       FiscalYears.editDescription();
-      FiscalYears.checkSaveButtonIsEnabled();
       FiscalYears.clickSaveAndClose();
       cy.wait(1000);
       InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
       FiscalYears.closeThirdPane();
       FiscalYears.clickNewFY();
       FiscalYears.createFiscalYearWithAllFields(newFiscalYear, defaultAcquisitionUnit.name);
-      FiscalYears.checkSaveButtonIsEnabled();
       FiscalYears.clickSaveAndClose();
       cy.wait(1000);
       InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
