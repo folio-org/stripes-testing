@@ -46,7 +46,8 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', firstItemData.barcodes[0]);
+        InventorySearchAndFilter.selectSearchOption('Barcode');
+        InventorySearchAndFilter.executeSearch(firstItemData.barcodes[0]);
         ItemRecordView.waitLoading();
         ItemRecordView.openItemEditForm(firstItemData.instanceTitle);
         ItemRecordEdit.addAdministrativeNote(admNote1);
@@ -54,7 +55,8 @@ describe('Inventory', () => {
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemAdministrativeNote(admNote1);
         InventoryItems.closeItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', secondItemData.barcodes[0]);
+        InventorySearchAndFilter.selectSearchOption('Barcode');
+        InventorySearchAndFilter.executeSearch(secondItemData.barcodes[0]);
         ItemRecordView.waitLoading();
         ItemRecordView.openItemEditForm(secondItemData.instanceTitle);
         ItemRecordEdit.addAdministrativeNote(admNote2);
@@ -80,7 +82,8 @@ describe('Inventory', () => {
       () => {
         searchQueries.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
-          InventorySearchAndFilter.searchByParameter('Query search', query);
+          InventorySearchAndFilter.selectSearchOption('Query search');
+          InventorySearchAndFilter.executeSearch(query);
           // Search completed and at the result list are being displayed the "Instance" records with "Holdings" with "Item" records to which you created "Administrative notes" from precondition.
           InventorySearchAndFilter.verifySearchResult(firstItemData.instanceTitle);
           InventorySearchAndFilter.verifySearchResult(secondItemData.instanceTitle);
@@ -88,7 +91,8 @@ describe('Inventory', () => {
 
         noResultsQueries.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
-          InventorySearchAndFilter.searchByParameter('Query search', query);
+          InventorySearchAndFilter.selectSearchOption('Query search');
+          InventorySearchAndFilter.executeSearch(query);
           // Search completed and no results found for excact match query.
           InventorySearchAndFilter.verifyResultPaneEmpty({
             noResultsFound: true,
@@ -97,11 +101,13 @@ describe('Inventory', () => {
         });
 
         // Edit the search query to " item.administrativeNotes ==/ string "Original, restore this Item 07-15-2022" " => Click on the "Search" button.
-        InventorySearchAndFilter.searchByParameter('Query search', queryForNote1);
+        InventorySearchAndFilter.selectSearchOption('Query search');
+        InventorySearchAndFilter.executeSearch(queryForNote1);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" with "Item" record to which you created "Administrative notes" №1 from precondition.
         InventorySearchAndFilter.verifySearchResult(firstItemData.instanceTitle);
         // Edit the search query to " item.administrativeNotes ==/ string "Original, replace this Item 07-16-2022" " => Click on the "Search" button.
-        InventorySearchAndFilter.searchByParameter('Query search', queryForNote2);
+        InventorySearchAndFilter.selectSearchOption('Query search');
+        InventorySearchAndFilter.executeSearch(queryForNote2);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" with "Item" record to which you created "Administrative notes" №2 from precondition.
         InventorySearchAndFilter.verifySearchResult(secondItemData.instanceTitle);
       },

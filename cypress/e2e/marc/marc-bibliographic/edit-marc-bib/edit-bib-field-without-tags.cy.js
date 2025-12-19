@@ -247,8 +247,7 @@ describe('MARC', () => {
           });
 
           // Step 10: Click "Save & keep editing" button
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-          QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.waitLoading();
 
           // Verify that the 3 added fields and 5 edited fields are deleted

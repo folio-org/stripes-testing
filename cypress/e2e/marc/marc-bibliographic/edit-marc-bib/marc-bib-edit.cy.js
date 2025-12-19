@@ -324,6 +324,7 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(31);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(3000);
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.clickSaveAndCloseThenCheck('2');
           QuickMarcEditor.confirmDeletingFields();
           InstanceRecordView.waitLoading();

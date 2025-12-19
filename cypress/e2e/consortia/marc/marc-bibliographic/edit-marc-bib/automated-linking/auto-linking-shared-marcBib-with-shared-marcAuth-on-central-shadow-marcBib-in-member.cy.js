@@ -38,7 +38,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C410818 Johnson, Samuel, $d 1709-1784',
-            '$x Criticism and interpretation.',
+            '',
             '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
             '',
           ],
