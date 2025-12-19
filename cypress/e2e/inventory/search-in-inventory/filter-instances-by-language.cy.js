@@ -28,6 +28,7 @@ describe('Inventory', () => {
         instancesTitlePrefix: `AT_C476719_FolioInstance_${randomPostfix}`,
         languageAccordionName: 'Language',
         selectedRecordsCount: 0,
+        notFullValue: 'Castilian',
       };
       const createdRecordIDs = [];
       let user;
@@ -198,6 +199,13 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             testData.languageAccordionName,
             LANGUAGES[10].name,
+          );
+
+          // 13. Use type ahead search for one of the languages
+          InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+            testData.languageAccordionName,
+            testData.notFullValue,
+            LANGUAGES[4].name,
           );
         },
       );
