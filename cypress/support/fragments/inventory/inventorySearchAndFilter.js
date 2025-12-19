@@ -516,11 +516,7 @@ export default {
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
     ]);
-    cy.wait(500);
-    cy.do(searchButton.focus());
-    cy.wait(500);
     cy.do(searchButton.click());
-    cy.wait(1000);
   },
 
   switchToItem: () => {

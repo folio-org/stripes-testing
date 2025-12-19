@@ -14,4 +14,29 @@ async function getIssueStatus(api, key) {
   return this.issues[key];
 }
 
-module.exports = { getIssue, getIssueStatus };
+async function searchIssues(api, jql, maxResults = 100) {
+  const allIssues = [];
+  let next = true;
+  const requestBody = {
+    fields: ['summary', 'description', 'status', 'resolution'],
+    jql,
+    maxResults,
+  };
+  while (next) {
+    const response = await api.post('search/jql', requestBody);
+    if (response.status !== 200) {
+      throw new Error('Error searching issues with JQL: ' + jql);
+    }
+    if (response.data.issues && response.data.issues.length) {
+      allIssues.push(...response.data.issues);
+    }
+    if (response.data.isLast) {
+      next = false;
+    } else {
+      requestBody.nextPageToken = response.data.nextPageToken;
+    }
+  }
+  return allIssues;
+}
+
+module.exports = { getIssue, getIssueStatus, searchIssues };
