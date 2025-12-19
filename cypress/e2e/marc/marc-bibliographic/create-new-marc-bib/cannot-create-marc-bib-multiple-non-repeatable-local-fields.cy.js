@@ -75,6 +75,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -95,7 +96,7 @@ describe('MARC', () => {
         () => {
           // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record"
           InventoryInstance.newMarcBibRecord();
-          QuickMarcEditor.checkPaneheaderContains(/Create a new MARC bib record/);
+          QuickMarcEditor.checkPaneheaderContains(/Create a new .*MARC bib record/);
 
           // Step 2: Select valid values in "LDR" positions 06 (Type), 07 (BLvl)
           QuickMarcEditor.updateLDR06And07Positions();

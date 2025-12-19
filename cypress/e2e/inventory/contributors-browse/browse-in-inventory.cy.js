@@ -94,10 +94,7 @@ describe('Inventory', () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
-      });
-      cy.waitForAuthRefresh(() => {
-        cy.reload();
-        InventoryInstances.waitContentLoading();
+        authRefresh: true,
       });
     });
 
