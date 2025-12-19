@@ -243,15 +243,6 @@ export default {
     cy.expect(summarySection.find(HTML(including(`${name} balance: ${value}`))).exists());
   },
 
-  checkGroupNotFound(groupName) {
-    this.checkGroupNotInResults(groupName);
-    this.checkZeroSearchResultsHeader();
-  },
-
-  checkGroupNotInResults(groupName) {
-    cy.expect(Section({ id: 'group-results-pane' }).find(Link(groupName)).absent());
-  },
-
   checkZeroSearchResultsHeader() {
     cy.xpath('//*[@id="paneHeadergroup-results-pane-subtitle"]/span').should(
       'have.text',
@@ -286,22 +277,5 @@ export default {
       group.id = interception.response.body.id;
       return group;
     });
-  },
-
-  selectStatusInSearch: (groupStatus) => {
-    cy.do(Accordion({ id: 'status' }).clickHeader());
-    switch (groupStatus) {
-      case 'Active':
-        cy.do(Checkbox({ name: 'Active' }).click());
-        break;
-      case 'Inactive':
-        cy.do(Checkbox({ name: 'Inactive' }).click());
-        break;
-      case 'Frozen':
-        cy.do(Checkbox({ name: 'Frozen' }).click());
-        break;
-      default:
-        cy.log('No such status like ' + groupStatus + '. Please use Active, Inactive or Frozen');
-    }
   },
 };

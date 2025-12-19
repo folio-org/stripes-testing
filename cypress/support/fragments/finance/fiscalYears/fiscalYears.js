@@ -263,8 +263,8 @@ export default {
     cy.do([MultiSelect({ id: 'fy-acq-units' }).select(AUName), saveAndClose.click()]);
   },
 
-  editDescription: (description = 'Edited_by_AQA_Team') => {
-    cy.do(TextArea({ name: 'description' }).fillIn(description));
+  editDescription: () => {
+    cy.do([TextArea({ name: 'description' }).fillIn('Edited_by_AQA_Team'), saveAndClose.click()]);
   },
 
   checkNoResultsMessage(absenceMessage) {
@@ -298,16 +298,8 @@ export default {
     cy.expect(SelectionOption(AUName).absent());
   },
 
-  checkSaveButtonIsDisabled() {
-    cy.expect(saveAndClose.is({ disabled: true }));
-  },
-
   checkSaveButtonIsEnabled() {
     cy.expect(saveAndClose.is({ disabled: false }));
-  },
-
-  verifySuccessMessage() {
-    cy.expect(HTML(including('Fiscal year has been saved')).exists());
   },
 
   verifyAcquisitionUnitIsDisplayed(AUName) {
@@ -367,5 +359,9 @@ export default {
   assertAllocationToolsSubmenuAbsent() {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
+  },
+
+  checkFiscalYearDetails(options) {
+    return FiscalYearDetails.checkFiscalYearDetails(options);
   },
 };

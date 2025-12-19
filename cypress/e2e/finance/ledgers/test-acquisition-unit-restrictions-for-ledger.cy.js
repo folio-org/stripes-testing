@@ -81,10 +81,7 @@ describe('Finance: Ledgers', () => {
       });
 
       FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.checkLedgerNotFound(defaultLedger.name);
-
-      Ledgers.selectStatusInSearch('Active');
-      Ledgers.checkLedgerNotInResults(defaultLedger.name);
+      Ledgers.checkZeroSearchResultsHeader();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

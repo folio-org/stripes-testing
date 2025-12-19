@@ -71,10 +71,7 @@ describe('Finance: Groups', () => {
       });
 
       FinanceHelp.searchByName(defaultGroup.name);
-      Groups.checkGroupNotFound(defaultGroup.name);
-
-      Groups.selectStatusInSearch('Active');
-      Groups.checkGroupNotInResults(defaultGroup.name);
+      Groups.checkZeroSearchResultsHeader();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

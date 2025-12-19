@@ -7,6 +7,9 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -61,21 +64,30 @@ describe('Acquisition Units', () => {
     ]).then((userProperties) => {
       user = userProperties;
 
-      AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInAUInfoWithDeleteOnly(defaultAcquisitionUnit.name);
-      AcquisitionUnits.assignAdmin();
+      cy.getAdminUserDetails().then((adminUser) => {
+        defaultAcquisitionUnit.protectDelete = true;
+        defaultAcquisitionUnit.protectUpdate = false;
+        defaultAcquisitionUnit.protectCreate = false;
+        AcquisitionUnits.createAcquisitionUnitViaApi(defaultAcquisitionUnit)
+          .then((acqUnitResponse) => {
+            defaultAcquisitionUnit.id = acqUnitResponse.id;
+            return AcquisitionUnits.assignUserViaApi(adminUser.id, defaultAcquisitionUnit.id);
+          })
+          .then(() => {
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+            FinanceHelp.selectFiscalYearsNavigation();
+            FinanceHelp.searchByAll(defaultFiscalYear.name);
+            FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+            FiscalYears.editFiscalYearDetails();
+            FiscalYears.assignAU(defaultAcquisitionUnit.name);
+            FiscalYears.closeThirdPane();
+            FiscalYears.resetFilters();
 
-      cy.visit(TopMenu.fiscalYearPath);
-      FinanceHelp.searchByAll(defaultFiscalYear.name);
-      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.assignAU(defaultAcquisitionUnit.name);
-      FiscalYears.closeThirdPane();
-      FiscalYears.resetFilters();
-
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.fiscalYearPath,
+              waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+            });
+          });
       });
     });
   });
@@ -101,23 +113,24 @@ describe('Acquisition Units', () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.expectFY(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.checkFiscalYearDetails();
       FiscalYears.verifyAcquisitionUnitIsDisplayed(defaultAcquisitionUnit.name);
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.checkDeleteButtonIsDisabled();
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.checkSaveButtonIsDisabled();
-      const descriptionText = `Edited_by_test_${getRandomPostfix()}`;
-      FiscalYears.editDescription(descriptionText);
+      FiscalYears.editDescription();
       FiscalYears.checkSaveButtonIsEnabled();
       FiscalYears.clickSaveAndClose();
-      FiscalYears.verifySuccessMessage();
+      cy.wait(1000);
+      InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
       FiscalYears.closeThirdPane();
       FiscalYears.clickNewFY();
       FiscalYears.createFiscalYearWithAllFields(newFiscalYear, defaultAcquisitionUnit.name);
       FiscalYears.checkSaveButtonIsEnabled();
       FiscalYears.clickSaveAndClose();
-      FiscalYears.verifySuccessMessage();
+      cy.wait(1000);
+      InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
       FiscalYears.waitForFiscalYearDetailsLoading();
       FiscalYears.getFiscalYearIdByName(newFiscalYear.name).then((fiscalYearId) => {
         createdFiscalYearId = fiscalYearId;

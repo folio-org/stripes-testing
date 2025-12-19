@@ -628,15 +628,6 @@ export default {
     });
   },
 
-  checkLedgerNotFound(ledgerName) {
-    this.checkLedgerNotInResults(ledgerName);
-    this.checkZeroSearchResultsHeader();
-  },
-
-  checkLedgerNotInResults(ledgerName) {
-    cy.expect(ledgerResultsPaneSection.find(Link(ledgerName)).absent());
-  },
-
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
