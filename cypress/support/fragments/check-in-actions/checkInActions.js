@@ -301,6 +301,14 @@ export default {
     });
   },
 
+  endCheckInSessionAutomatically: () => {
+    cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
+    cy.wait('@end-patron-session', { timeout: 99000 }).then((xhr) => {
+      cy.wrap(xhr.response.statusCode).should('eq', 204);
+    });
+    cy.expect(endSessionButton.absent());
+  },
+
   checkFeeFinesDetails(
     billedAmount,
     instanceBarcode,
