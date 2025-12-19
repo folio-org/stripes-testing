@@ -2,7 +2,9 @@ import permissions from '../../support/dictionary/permissions';
 import { APPLICATION_NAMES } from '../../support/constants';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
+import DataExportViewAllLogs, {
+  accordionNames,
+} from '../../support/fragments/data-export/dataExportViewAllLogs';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportNewJobProfile from '../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
@@ -143,7 +145,7 @@ describe('Data Export', () => {
         DataExportLogs.verifyRecordsFoundSubtitleExists();
 
         // Step 3: Click "Job profile" accordion
-        DataExportViewAllLogs.expandJobProfileAccordion();
+        DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
         DataExportViewAllLogs.verifyJobProfileDropdownExists();
 
         // Step 4: Click on "Choose job profile" dropdown
