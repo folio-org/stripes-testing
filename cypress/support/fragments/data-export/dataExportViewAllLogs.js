@@ -13,9 +13,34 @@ import {
   Selection,
   SelectionList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   PaneHeader,
   including,
 } from '../../../../interactors';
+
+export const accordionNames = {
+  STARTED_RUNNING: 'Started running',
+  ENDED_RUNNING: 'Ended running',
+  JOB_PROFILE: 'Job profile',
+};
+
+export const fieldNames = {
+  FROM: 'From',
+  TO: 'To',
+};
+
+export const columnNames = {
+  FILE_NAME: 'File name',
+  STATUS: 'Status',
+  TOTAL: 'Total',
+  EXPORTED: 'Exported',
+  FAILED: 'Failed',
+  JOB_PROFILE: 'Job profile',
+  STARTED_RUNNING: 'Started running',
+  ENDED_RUNNING: 'Ended running',
+  RUN_BY: 'Run by',
+  ID: 'ID',
+};
 
 const viewAllLogsButton = Button('View all');
 const searchAndFilterPane = Pane('Search & filter');
@@ -38,6 +63,10 @@ const jobProfileSelection = Selection({ singleValue: 'Choose job profile' });
 const filterSelectionList = SelectionList({ placeholder: 'Filter options list' });
 const emptyListMessage = HTML('-List is empty-');
 const clearButton = Button({ icon: 'times-circle-solid' });
+const calendarButton = Button({ icon: 'calendar' });
+const applyButton = Button('Apply');
+const fromDateField = TextField({ name: 'startDate' });
+const toDateField = TextField({ name: 'endDate' });
 
 export default {
   openAllJobLogs() {
@@ -132,17 +161,17 @@ export default {
 
   verifyLogsTable() {
     cy.expect(logsTable.exists());
-    cy.expect(logsTable.find(HTML('File name')).exists());
-    cy.expect(logsTable.find(HTML('Status')).exists());
-    cy.expect(logsTable.find(HTML('Total')).exists());
-    cy.expect(logsTable.find(HTML('Exported')).exists());
-    cy.expect(logsTable.find(HTML('Failed')).exists());
-    cy.expect(logsTable.find(HTML('Job profile')).exists());
-    cy.expect(logsTable.find(HTML('Started running')).exists());
+    cy.expect(logsTable.find(HTML(columnNames.FILE_NAME)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.STATUS)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.TOTAL)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.EXPORTED)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.FAILED)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.JOB_PROFILE)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.STARTED_RUNNING)).exists());
     cy.get('div.mclScrollable---JvHuN').scrollTo('right');
     cy.wait(500);
-    cy.expect(logsTable.find(HTML('Ended running')).exists());
-    cy.expect(logsTable.find(HTML('Run by')).exists());
+    cy.expect(logsTable.find(HTML(columnNames.ENDED_RUNNING)).exists());
+    cy.expect(logsTable.find(HTML(columnNames.RUN_BY)).exists());
     cy.expect(logsTable.find(HTML({ id: 'list-column-hrid' })).exists());
   },
 
@@ -154,6 +183,7 @@ export default {
   checkErrorsInExportOption(option) {
     const checkboxToClick = option === 'Yes' ? errorsInExportYesOptionId : errorsInExportNoOptionId;
     cy.get(`#${checkboxToClick}`).check();
+    cy.wait(2000);
   },
 
   verifyStatusIncludesErrors() {
@@ -204,8 +234,8 @@ export default {
     });
   },
 
-  expandJobProfileAccordion() {
-    cy.do(jobProfileAccordion.clickHeader());
+  expandAccordion(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
   },
 
   verifyJobProfileDropdownExists() {
@@ -229,6 +259,10 @@ export default {
     });
   },
 
+  verifySelectedValueInJobProfileDropdown(profileName) {
+    cy.expect(jobProfileAccordion.find(Selection({ value: profileName })).exists());
+  },
+
   verifyNumberOfFilteredJobProfiles(expectedCount) {
     cy.then(() => filterSelectionList.optionList()).then((options) => {
       cy.expect(options.length).to.equal(expectedCount);
@@ -247,16 +281,49 @@ export default {
   selectFilterOption(option) {
     cy.wait(1000);
     cy.do(SelectionList().select(including(option)));
+    cy.wait(3000);
   },
 
   verifyResetAllButtonEnabled() {
     cy.expect(resetAllButton.has({ disabled: false }));
   },
 
-  verifyLogsFilteredByJobProfile(profileName) {
-    cy.expect(
-      logsTable.find(MultiColumnListCell({ column: 'Job profile', content: profileName })).exists(),
+  verifyLogsFilteredByColumn(columnName, expectedValue) {
+    cy.get('[id="data-export-logs-pane-content"] [data-row-index] [role="gridcell"]').then(
+      ($cells) => {
+        const columnIndex = {
+          [columnNames.FILE_NAME]: 0,
+          [columnNames.STATUS]: 1,
+          [columnNames.TOTAL]: 2,
+          [columnNames.EXPORTED]: 3,
+          [columnNames.FAILED]: 4,
+          [columnNames.JOB_PROFILE]: 5,
+          [columnNames.STARTED_RUNNING]: 6,
+          [columnNames.ENDED_RUNNING]: 7,
+          [columnNames.RUN_BY]: 8,
+          [columnNames.ID]: 9,
+        }[columnName];
+
+        const rows = [];
+
+        for (let i = 0; i < $cells.length; i += 10) {
+          rows.push($cells[i + columnIndex]);
+        }
+
+        const columnValues = rows.map((cell) => cell.textContent.trim());
+
+        columnValues.forEach((value, index) => {
+          expect(
+            value,
+            `Row ${index}: "${columnName}" should be "${expectedValue}", but found "${value}"`,
+          ).to.equal(expectedValue);
+        });
+      },
     );
+  },
+
+  verifyLogsFilteredByJobProfile(profileName) {
+    this.verifyLogsFilteredByColumn(columnNames.JOB_PROFILE, profileName);
   },
 
   clickClearJobProfileFilter() {
@@ -327,7 +394,7 @@ export default {
   verifyLogsFilteredByUser(userName) {
     cy.expect(
       logsTable
-        .find(MultiColumnListCell({ column: 'Run by', content: including(userName) }))
+        .find(MultiColumnListCell({ column: columnNames.RUN_BY, content: including(userName) }))
         .exists(),
     );
   },
@@ -349,5 +416,310 @@ export default {
       expect(overflowY).to.equal('auto');
       expect(scrollHeight).to.be.greaterThan(containerHeight);
     });
+  },
+
+  verifyAccordionExpanded(accordionName) {
+    cy.expect(Accordion(accordionName).has({ open: true }));
+  },
+
+  verifyStartedRunningDateFields() {
+    cy.expect([
+      startedRunningAccordion.find(applyButton).exists(),
+      startedRunningAccordion.find(fromDateField).has({ placeholder: 'YYYY-MM-DD' }),
+      startedRunningAccordion.find(toDateField).has({ placeholder: 'YYYY-MM-DD' }),
+    ]);
+  },
+
+  verifyPlaceholderInFieldInAccordion(accordionName, fieldName) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.expect(accordion.find(field).has({ placeholder: 'YYYY-MM-DD' }));
+  },
+
+  verifyCalendarButtonInFieldInAccordion(accordionName, fieldName) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.expect(accordion.find(field).find(calendarButton).has({ disabled: false }));
+  },
+
+  fillDateInFieldInAccordion(accordionName, fieldName, date) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.do(accordion.find(field).fillIn(date));
+  },
+
+  clickApplyButton(accordionName) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+
+    cy.do(accordion.find(applyButton).click());
+    cy.wait(2000);
+  },
+
+  verifyApplyButtonDisabled(isDisabled = true) {
+    cy.expect(applyButton.has({ disabled: isDisabled }));
+  },
+
+  verifyErrorInFieldInAccordion(accordionName, fieldName, errorMessage) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.expect(
+      accordion.find(field).has({ errorBorder: true, errorIcon: true, error: errorMessage }),
+    );
+  },
+
+  verifyValidationMessage(accordionName, message, isPresent = true) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+
+    if (isPresent) {
+      cy.expect(accordion.has({ validationMessage: message }));
+    } else {
+      cy.expect(HTML(message).absent());
+    }
+  },
+
+  verifyClearButtonExistsInFieldInAccordion(accordionName, fieldName, exists = true) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    if (exists) {
+      cy.expect(accordion.find(field).find(clearButton).exists());
+    } else {
+      cy.expect(accordion.find(field).find(clearButton).absent());
+    }
+  },
+
+  clickClearStartedRunningAccordionFilters() {
+    cy.do(
+      startedRunningAccordion
+        .find(Button({ ariaLabel: 'Clear selected Started running filters' }))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  verifyClearAccordionButtonExists(accordionName, isExist = true) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const ariaLabel =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? 'Clear selected Started running filters'
+        : 'Clear selected Ended running filters';
+
+    if (isExist) {
+      cy.expect(accordion.find(Button({ ariaLabel })).exists());
+    } else {
+      cy.expect(accordion.find(Button({ ariaLabel })).absent());
+    }
+  },
+
+  clickClearButtonInFieldInAccordion(accordionName, fieldName) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.do(accordion.find(field).find(clearButton).click());
+  },
+
+  verifyDateFieldValue(accordionName, fieldName, expectedValue) {
+    const accordion =
+      accordionName === accordionNames.STARTED_RUNNING
+        ? startedRunningAccordion
+        : endedRunningAccordion;
+    const field = fieldName === fieldNames.FROM ? fromDateField : toDateField;
+
+    cy.expect(accordion.find(field).has({ value: expectedValue }));
+  },
+
+  verifyEndedRunningDateFields() {
+    cy.expect([
+      endedRunningAccordion.find(fromDateField).exists(),
+      endedRunningAccordion.find(toDateField).exists(),
+      endedRunningAccordion.find(applyButton).exists(),
+      endedRunningAccordion.find(fromDateField).has({ placeholder: 'YYYY-MM-DD' }),
+      endedRunningAccordion.find(toDateField).has({ placeholder: 'YYYY-MM-DD' }),
+    ]);
+  },
+
+  clickColumnHeader(columnName) {
+    cy.do(MultiColumnListHeader(columnName).click());
+    cy.wait(5000);
+  },
+
+  getNumberOfFoundRecordsFromSubtitle() {
+    return cy
+      .get('#paneHeaderdata-export-logs-pane-subtitle')
+      .invoke('text')
+      .then((text) => {
+        const match = text.match(/(\d+)\srecord[s]?\sfound/);
+
+        return match ? parseInt(match[1], 10) : 0;
+      });
+  },
+
+  verifyColumnSort(columnName, sortDirection) {
+    cy.expect(logsTable.find(MultiColumnListHeader(columnName, { sort: sortDirection })).exists());
+
+    cy.get('[id="data-export-logs-pane-content"] [data-row-index] [role="gridcell"]').then(
+      ($cells) => {
+        const columnIndex = {
+          [columnNames.FILE_NAME]: 0,
+          [columnNames.STATUS]: 1,
+          [columnNames.TOTAL]: 2,
+          [columnNames.EXPORTED]: 3,
+          [columnNames.FAILED]: 4,
+          [columnNames.JOB_PROFILE]: 5,
+          [columnNames.STARTED_RUNNING]: 6,
+          [columnNames.ENDED_RUNNING]: 7,
+          [columnNames.RUN_BY]: 8,
+          [columnNames.ID]: 9,
+        }[columnName];
+
+        const rows = [];
+        for (let i = 0; i < $cells.length; i += 10) {
+          rows.push($cells[i + columnIndex]);
+        }
+
+        const values = rows.map((cell) => cell.textContent.trim());
+        const sortedValues = [...values].sort((a, b) => {
+          // Handle date columns
+          if (
+            columnName === columnNames.STARTED_RUNNING ||
+            columnName === columnNames.ENDED_RUNNING
+          ) {
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return sortDirection === 'ascending' ? dateA - dateB : dateB - dateA;
+          }
+          // Handle numeric columns
+          if (
+            columnName === columnNames.TOTAL ||
+            columnName === columnNames.EXPORTED ||
+            columnName === columnNames.FAILED ||
+            columnName === columnNames.ID
+          ) {
+            const numA = parseInt(a, 10) || 0;
+            const numB = parseInt(b, 10) || 0;
+            return sortDirection === 'ascending' ? numA - numB : numB - numA;
+          }
+          // Handle text columns
+          if (sortDirection === 'ascending') {
+            return a.localeCompare(b, undefined, { sensitivity: 'base' });
+          } else {
+            return b.localeCompare(a, undefined, { sensitivity: 'base' });
+          }
+        });
+
+        expect(values).to.deep.equal(
+          sortedValues,
+          `${columnName} should be sorted in ${sortDirection} order`,
+        );
+      },
+    );
+  },
+
+  verifyColumnSortIcon(columnName, isExist, sortDirection = null) {
+    const columnIdMap = {
+      'file name': 'filename',
+      status: 'status',
+      total: 'totalrecords',
+      exported: 'exported',
+      failed: 'errors',
+      'started running': 'starteddate',
+      'ended running': 'completeddate',
+      'job profile': 'jobprofilename',
+      'run by': 'runby',
+      id: 'hrid',
+    };
+
+    const columnId = `list-column-${columnIdMap[columnName.toLowerCase()] || columnName.toLowerCase().replace(/\s+/g, '')}`;
+
+    cy.get(`#${columnId}`)
+      .find('[class^="mclHeaderInner-"]')
+      .should(($el) => {
+        const afterStyles = window.getComputedStyle($el[0], '::after');
+        const backgroundImage = afterStyles.getPropertyValue('background-image');
+
+        if (!isExist) {
+          // Verify no sort icon is present
+          expect(backgroundImage, `Column "${columnName}" should not have a sort icon`).to.be.oneOf(
+            ['none', ''],
+          );
+        } else {
+          // Verify specific sort icon is present
+          const descendingPathFragment = 'M7%2011.1L1.23%204.18'; // Downward arrow
+          const ascendingPathFragment = 'M7%202.9l5.77%206.92'; // Upward arrow
+          const expectedPathFragment =
+            sortDirection === 'descending' ? descendingPathFragment : ascendingPathFragment;
+
+          expect(backgroundImage, `Column "${columnName}" should have a sort icon`).to.include(
+            'data:image/svg+xml',
+          );
+          expect(
+            backgroundImage,
+            `Column "${columnName}" should have ${sortDirection} sort icon`,
+          ).to.include(expectedPathFragment);
+        }
+      });
+  },
+
+  verifyStartedRunningDateRangeFilter(fromDate, toDate) {
+    cy.get('[id="data-export-logs-pane-content"] [data-row-index] [role="gridcell"]').then(
+      ($cells) => {
+        const startedRunningColumnIndex = 6;
+        const rows = [];
+        for (let i = 0; i < $cells.length; i += 10) {
+          rows.push($cells[i + startedRunningColumnIndex]);
+        }
+
+        const startedRunningValues = rows.map((cell) => cell.textContent.trim());
+        const fromDateTime = new Date(fromDate).setHours(0, 0, 0, 0);
+        const toDateTime = new Date(toDate).setHours(23, 59, 59, 999);
+
+        startedRunningValues.forEach((dateStr, index) => {
+          const cellDate = new Date(dateStr).getTime();
+          expect(
+            cellDate,
+            `Row ${index}: "${dateStr}" should be between ${fromDate} and ${toDate}`,
+          ).to.be.at.least(fromDateTime);
+          expect(
+            cellDate,
+            `Row ${index}: "${dateStr}" should be between ${fromDate} and ${toDate}`,
+          ).to.be.at.most(toDateTime);
+        });
+      },
+    );
+  },
+
+  verifyNoResultsFound() {
+    cy.expect(logsMainPane.find(HTML('The list contains no items')).exists());
   },
 };

@@ -1,6 +1,8 @@
 import permissions from '../../support/dictionary/permissions';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
-import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
+import DataExportViewAllLogs, {
+  accordionNames,
+} from '../../support/fragments/data-export/dataExportViewAllLogs';
 import ExportFile from '../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportNewJobProfile from '../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
@@ -125,7 +127,7 @@ describe('Data Export', () => {
       DataExportViewAllLogs.verifyPaginatorExists();
 
       // Step 2: Expand "Job profile" accordion under "Search & filter" pane => Click on "Choose job profile" dropdown
-      DataExportViewAllLogs.expandJobProfileAccordion();
+      DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
       DataExportViewAllLogs.verifyJobProfileDropdownExists();
       DataExportViewAllLogs.clickJobProfileDropdown();
       DataExportViewAllLogs.verifyJobProfileInDropdown(defaultJobProfiles.instances);
