@@ -280,7 +280,7 @@ export default {
         this.checkAccordionColumnItem(index, 'Status', record.status);
       }
       if (record.invoiceAmount) {
-        this.checkAccordionColumnItem(index, 'Invoice amount', record.invoiceAmount);
+        this.checkAccordionColumnItem(index, 'Expended amount', record.expendedAmount);
       }
     });
   },

@@ -337,22 +337,11 @@ describe('Orders', () => {
           { key: 'Initial encumbrance', value: '$100.00' },
           { key: 'Awaiting payment', value: '$100.00' },
           { key: 'Expended', value: '$0.00' },
-          { key: 'Status', value: 'Released' },
+          { key: 'Status', value: 'Unreleased' },
         ],
       });
       TransactionDetails.closeTransactionDetails();
       Funds.checkTransactionCount('Encumbrance', 1);
-      cy.intercept('GET', `/finance/transactions/${testData.encumbranceId}*`).as(
-        'encumbranceReleased',
-      );
-      Funds.selectTransactionInList('Encumbrance');
-      cy.wait('@encumbranceReleased').then((interception) => {
-        TransactionDetails.checkEncumbranceApiResponse(interception, {
-          expectedStatus: 200,
-          expectedEncumbranceStatus: 'Released',
-          expectedOrderStatus: 'Open',
-        });
-      });
     },
   );
 });

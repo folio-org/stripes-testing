@@ -286,7 +286,7 @@ describe('Orders', () => {
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,
-          invoiceAmount: testData.invoice.total,
+          expendedAmount: testData.invoice.total,
         },
       ]);
       Orders.searchByParameter('PO number', testData.orders[1].poNumber);
@@ -301,7 +301,7 @@ describe('Orders', () => {
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,
-          invoiceAmount: testData.invoice.total,
+          expendedAmount: testData.invoice.total,
         },
       ]);
     },

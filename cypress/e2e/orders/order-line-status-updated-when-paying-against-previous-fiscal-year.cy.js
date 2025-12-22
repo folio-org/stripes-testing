@@ -290,7 +290,6 @@ describe('Orders', () => {
               return Invoices.changeInvoiceStatusViaApi({
                 invoice,
                 status: INVOICE_STATUSES.PAID,
-                searchParams: { poLinePaymentStatus: 'Fully Paid' },
               });
             });
           });
