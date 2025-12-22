@@ -10,6 +10,7 @@ import {
   Accordion,
   Image,
   MultiColumnList,
+  MultiColumnListRow,
   Selection,
   SelectionList,
   MultiColumnListCell,
@@ -74,7 +75,7 @@ export default {
   },
 
   verifyTableWithResultsExists() {
-    cy.expect(MultiColumnList().exists());
+    cy.expect(MultiColumnListRow().exists());
   },
 
   verifySearchAndFilterPane() {
