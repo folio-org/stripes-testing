@@ -4,8 +4,8 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -89,17 +89,17 @@ describe('MARC', () => {
             Users.deleteViaApi(userData.userId);
           }
           createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
           if (createdInstanceId) {
-            InventoryInstance.deleteInstanceViaApi(createdInstanceId);
+            InventoryInstance.deleteInstanceViaApi(createdInstanceId, true);
           }
           QuickMarcEditor.setRulesForField(linkableField, false);
         });
 
         it(
           'C422152 Auto-linking fields when multiple "MARC Authority" records match "$0" but cannot be linked when creating new "MARC Bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C422152'] },
+          { tags: ['criticalPath', 'spitfire', 'C422152', 'nonParallel'] },
           () => {
             // Step 1: Click on "Actions" button in second pane → Select "+ New MARC bibliographic record" option
             InventoryInstances.createNewMarcBibRecord();
@@ -138,8 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             // Step 8: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.url().then((url) => {
               createdInstanceId = url.split('/')[5].split('?')[0];

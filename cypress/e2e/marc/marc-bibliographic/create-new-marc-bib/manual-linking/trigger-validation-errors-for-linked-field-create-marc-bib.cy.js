@@ -149,6 +149,7 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -209,7 +210,7 @@ describe('MARC', () => {
             // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.waitLoading();
-            QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);
+            QuickMarcEditor.checkPaneheaderContains(/Create a new.*MARC bib record/);
 
             // Step 2: Select valid values in LDR positions 06, 07
             QuickMarcEditor.updateLDR06And07Positions();
@@ -284,8 +285,8 @@ describe('MARC', () => {
             const invalidTagRowIndex = field700_2RowIndex + 1;
 
             // Step 10: Click "Save & close" and verify validation errors
-            QuickMarcEditor.pressSaveAndCloseButton();
-            QuickMarcEditor.verifyValidationCallout(0, 12);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.verifyValidationCallout(0, 13);
 
             // Verify inline errors for linked 700 field
             QuickMarcEditor.checkErrorMessage(

@@ -114,7 +114,7 @@ describe('MARC', () => {
 
         it(
           'C389480 All three messages shown for one field each when auto-linking fields when creating "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389480'] },
+          { tags: ['extendedPath', 'spitfire', 'C389480', 'nonParallel'] },
           () => {
             // Step 1: Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
             InventoryInstances.createNewMarcBibRecord();
@@ -205,7 +205,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             // Step 8: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.url().then((url) => {
