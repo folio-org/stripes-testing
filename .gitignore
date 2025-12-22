@@ -26,3 +26,5 @@ scripts/update_permission_names/permissions_backups/*
 .github/agents/*
 
 mcp.json
+
+parallelWorkers.json
