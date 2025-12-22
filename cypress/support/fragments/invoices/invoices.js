@@ -174,11 +174,12 @@ export default {
 
     return cy.get('@invoice');
   },
-  updateInvoiceViaApi(invoiceProperties) {
+  updateInvoiceViaApi(invoiceProperties, searchParams = {}) {
     return cy.okapiRequest({
       method: 'PUT',
       path: `invoice/invoices/${invoiceProperties.id}`,
       body: invoiceProperties,
+      searchParams,
     });
   },
   deleteInvoiceViaApi(invoiceId) {
@@ -195,11 +196,11 @@ export default {
       },
     );
   },
-  changeInvoiceStatusViaApi({ invoice, status }) {
+  changeInvoiceStatusViaApi({ invoice, status, searchParams = {} }) {
     const changeStatusViaApi = ({ vendorInvoiceNo, newStatus }) => {
       this.getInvoiceViaApi({ query: `vendorInvoiceNo="${vendorInvoiceNo}"` }).then(
         ({ invoices }) => {
-          this.updateInvoiceViaApi({ ...invoices[0], status: newStatus });
+          this.updateInvoiceViaApi({ ...invoices[0], status: newStatus }, searchParams);
         },
       );
     };
@@ -215,6 +216,7 @@ export default {
       return changeStatusViaApi({ vendorInvoiceNo, newStatus: status });
     }
   },
+
   createInvoiceLineViaApi(invoiceLineProperties) {
     return cy
       .okapiRequest({
