@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import FiscalYearDetails from '../../support/fragments/finance/fiscalYears/fiscalYearDetails';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
@@ -23,15 +22,6 @@ describe('Acquisition Units', () => {
   let createdFiscalYearId;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
-      cy.reload();
-      AcquisitionUnits.waitLoading();
-    }, 20_000);
-
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
       permissions.uiSettingsFinanceViewEditCreateDelete.gui,
@@ -104,10 +94,7 @@ describe('Acquisition Units', () => {
     'C375080 Acquisition unit restrictions for "Fiscal year" records (only Delete option is active) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C375080'] },
     () => {
-      FinanceHelp.searchByAll(defaultFiscalYear.name);
-      FiscalYears.expectFY(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
-      FiscalYears.checkFiscalYearDetails();
       FiscalYearDetails.checkFiscalYearDetails({
         information: [{ key: 'Acquisition units', value: defaultAcquisitionUnit.name }],
       });

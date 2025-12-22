@@ -352,8 +352,4 @@ export default {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
   },
-
-  checkFiscalYearDetails(options) {
-    return FiscalYearDetails.checkFiscalYearDetails(options);
-  },
 };
