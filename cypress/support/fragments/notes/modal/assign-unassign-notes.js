@@ -4,8 +4,12 @@ import {
   including,
   Modal,
   MultiColumnList,
+  MultiColumnListHeader,
   MultiColumnListRow,
   TextField,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
 } from '../../../../../interactors';
 
 const assignUnassignModal = Modal('Assign / Unassign note');
@@ -16,6 +20,7 @@ const assignNoteCheckbox = Checkbox({ className: including('notes-assign-checkbo
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
 const asignedCheckbox = Checkbox('Assigned');
+const noteTypeMultiSelect = MultiSelect({ ariaLabelledby: 'noteTypeSelect-label' });
 
 export default {
   verifyModalIsShown() {
@@ -87,5 +92,31 @@ export default {
         .find(assignNoteCheckbox)
         .has({ disabled: true }),
     );
+  },
+
+  selectNoteType(noteTypeName) {
+    cy.do([
+      noteTypeMultiSelect.open(),
+      MultiSelectMenu().find(MultiSelectOption(noteTypeName)).click(),
+    ]);
+    cy.wait(500);
+  },
+
+  clickTitleColumnHeader() {
+    cy.do(notesList.find(MultiColumnListHeader('Title')).click());
+    cy.wait(500);
+  },
+
+  verifyNotesSortedByTitle(sortOrder) {
+    cy.expect(notesList.find(MultiColumnListHeader('Title')).has({ sort: sortOrder }));
+  },
+
+  verifyColumnIsNotSortable(columnName) {
+    cy.expect(notesList.find(MultiColumnListHeader(columnName)).has({ sortable: false }));
+  },
+
+  clickColumnHeader(columnName) {
+    cy.do(notesList.find(MultiColumnListHeader(columnName)).clickElement());
+    cy.wait(500);
   },
 };

@@ -199,6 +199,11 @@ export default {
     resource: 'UI-Inventory',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiInventoryItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiDataImport: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Import',

@@ -261,6 +261,11 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.verifyNumberOfSearchResults(
                     testData.valuesDistribution.length,
                   );
+                  InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                    testData.statisticalCodeAccordionName,
+                    '76754',
+                    statisticalCodes[0].uiOptionName,
+                  );
                 });
               });
             });
