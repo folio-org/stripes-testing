@@ -135,6 +135,20 @@ export default {
     return fullPathToFile[fullPathToFile.length - 1];
   },
 
+  verifyFilesHaveEqualContent(firstFilePath, secondFilePath, encoding = 'binary') {
+    /*
+    Compares content of two files and verifies they are equal
+    firstFilePath: path to first file
+    secondFilePath: path to second file
+    encoding: file encoding (default: 'binary'). Use 'binary' for .mrc files, 'utf8' for text files
+    */
+    return cy.readFile(firstFilePath, encoding).then((firstFileContent) => {
+      cy.readFile(secondFilePath, encoding).then((secondFileContent) => {
+        expect(firstFileContent).to.equal(secondFileContent);
+      });
+    });
+  },
+
   renameFile(fileNameMask, fileName) {
     /*
     verifyNameFunc: function for verifying file name
