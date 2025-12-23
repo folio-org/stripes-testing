@@ -156,6 +156,7 @@ export default {
     cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
   },
+
   getAcquisitionUnitViaApi(searchParams) {
     return cy
       .okapiRequest({
