@@ -2,6 +2,7 @@ import uuid from 'uuid';
 
 import {
   Button,
+  HTML,
   MultiColumnListRow,
   Pane,
   PaneSet,
@@ -19,6 +20,7 @@ const saveNoteTypeButton = Button({ id: including('clickable-save-noteTypes-') }
 const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
+const maxCountMessage = HTML({ className: including('editableListError-') });
 const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
@@ -159,5 +161,32 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body.noteTypes[0].id);
+  },
+
+  clickSaveAndVerifyMaxLimitErrorToast() {
+    cy.do(saveNoteTypeButton.click());
+    cy.wait(3000);
+    cy.expect(
+      maxCountMessage.has({
+        text: including('Maximum number of note types allowed is 25'),
+      }),
+    );
+  },
+
+  createNoteTypeExpectingError(name) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'note-types',
+        body: { id: uuid(), name },
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        expect(response.status).to.equal(422);
+        expect(response.body.errors[0].message).to.include(
+          'Maximum number of note types allowed is 25',
+        );
+      });
   },
 };
