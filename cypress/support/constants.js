@@ -636,7 +636,7 @@ export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   G: 'g - Projected medium',
   I: 'i - Nonmusical sound recording',
   J: 'j - Musical sound recording',
-  K: 'k - Two-dimensional nonprojectable  graphic',
+  K: 'k - Two-dimensional nonprojectable graphic',
   M: 'm - Computer file',
   O: 'o - Kit',
   P: 'p - Mixed materials',
@@ -1022,6 +1022,12 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};
+
+export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
+  INSTANCES: 'Default instances export job profile',
+  HOLDINGS: 'Default holdings export job profile',
+  AUTHORITY: 'Default authority export job profile',
 };
 
 export const AUTHORIZATION_POLICY_TYPES = {

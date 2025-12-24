@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Pane, Button, Select, Checkbox, NavListItem, Modal } from '../../../../../interactors';
+import { Button, Checkbox, Modal, NavListItem, Pane, Select } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button('Save');
@@ -116,24 +116,27 @@ export default {
       let config = body.configs[0];
 
       if (body.configs.length === 0) {
-        config = {
-          value:
-            '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
-          module: 'SETTINGS',
-          configName: 'TLR',
-          id: uuid(),
-        };
-
-        const newValue = { ...JSON.parse(config.value), ...newSettings };
-        config.value = JSON.stringify(newValue);
-
-        cy.okapiRequest({
-          method: 'POST',
-          path: 'configurations/entries',
-          isDefaultSearchParamsRequired: false,
-          failOnStatusCode: false,
-          body: config,
-        });
+        cy.wrap(true)
+          .then(() => {
+            config = {
+              value:
+                '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
+              module: 'SETTINGS',
+              configName: 'TLR',
+              id: uuid(),
+            };
+          })
+          .then(() => {
+            const newValue = { ...JSON.parse(config.value), ...newSettings };
+            config.value = JSON.stringify(newValue);
+            cy.okapiRequest({
+              method: 'POST',
+              path: 'configurations/entries',
+              isDefaultSearchParamsRequired: false,
+              failOnStatusCode: false,
+              body: config,
+            });
+          });
       } else {
         const newValue = { ...JSON.parse(config.value), ...newSettings };
         config.value = JSON.stringify(newValue);
@@ -160,27 +163,30 @@ export default {
       let config = body.items[0];
 
       if (body.items.length === 0) {
-        config = {
-          value: {
-            titleLevelRequestsFeatureEnabled: true,
-            createTitleLevelRequestsByDefault: false,
-            tlrHoldShouldFollowCirculationRules: false,
-          },
-          scope: 'circulation',
-          key: 'generalTlr',
-          id: uuid(),
-        };
+        cy.wrap(true)
+          .then(() => {
+            config = {
+              value: {
+                titleLevelRequestsFeatureEnabled: true,
+                createTitleLevelRequestsByDefault: false,
+                tlrHoldShouldFollowCirculationRules: false,
+              },
+              scope: 'circulation',
+              key: 'generalTlr',
+              id: uuid(),
+            };
+          })
+          .then(() => {
+            config.value = { ...config.value, ...newSettings };
 
-        const newValue = { ...JSON.parse(config.value), ...newSettings };
-        config.value = JSON.stringify(newValue);
-
-        cy.okapiRequest({
-          method: 'POST',
-          path: 'settings/entries',
-          isDefaultSearchParamsRequired: false,
-          failOnStatusCode: false,
-          body: config,
-        });
+            cy.okapiRequest({
+              method: 'POST',
+              path: 'settings/entries',
+              isDefaultSearchParamsRequired: false,
+              failOnStatusCode: false,
+              body: config,
+            });
+          });
       } else {
         config.value = { ...config.value, ...newSettings };
 

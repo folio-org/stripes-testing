@@ -106,7 +106,6 @@ describe('Data Export', () => {
         SelectJobProfile.verifySubtitle();
         SelectJobProfile.verifySearchBox();
         SelectJobProfile.verifySearchButton(true);
-        SelectJobProfile.searchForAJobProfile('Default holdings');
         ExportFile.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');

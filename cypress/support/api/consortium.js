@@ -24,6 +24,20 @@ Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUser
   });
 });
 
+Cypress.Commands.add('removeAffiliationFromUser', (tenantId, targetUserId) => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `consortia/${consortiaId}/user-tenants`,
+      searchParams: {
+        tenantId,
+        userId: targetUserId,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  });
+});
+
 Cypress.Commands.add('affiliateUserToTenant', ({ tenantId, userId, permissions }) => {
   cy.resetTenant();
   cy.assignAffiliationToUser(tenantId, userId);

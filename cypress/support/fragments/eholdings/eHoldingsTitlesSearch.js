@@ -2,13 +2,16 @@ import {
   Accordion,
   Button,
   PaneContent,
+  PaneHeader,
   RadioButton,
   Select,
+  Selection,
   TextField,
   Heading,
   Section,
   KeyValue,
   including,
+  matching,
 } from '../../../../interactors';
 import EHoldingsTitles from './eHoldingsTitles';
 
@@ -16,6 +19,7 @@ const publicationTypeAccordion = Accordion({ id: 'filter-titles-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
 const searchResults = PaneContent({ id: 'search-results-content' });
 const titleInfoPane = Section({ id: 'titleShowTitleInformation' });
+const packagesAccordion = Accordion({ id: 'packagesFilter' });
 const mainSearchOptions = {
   bySubject: 'Subject',
   byTitle: 'Title',
@@ -71,5 +75,31 @@ export default {
       .then((res) => {
         return res.body.data;
       });
+  },
+  checkRecordCounter(expectedCount) {
+    const countRegExp =
+      expectedCount === undefined
+        ? /.*\d+ search results+/
+        : new RegExp(`${Number(expectedCount).toLocaleString('en-US')} search results+`);
+    cy.expect(PaneHeader({ subtitle: matching(countRegExp) }).exists());
+  },
+
+  verifyPackagesAccordionShown(isShown = true) {
+    if (isShown) cy.expect(packagesAccordion.exists());
+    else cy.expect(packagesAccordion.absent());
+  },
+
+  openPackagesDropdown() {
+    cy.do(packagesAccordion.clickHeader());
+    cy.do(packagesAccordion.find(Selection()).open());
+  },
+
+  verifyValueInPackagesDropdownInput(packageName) {
+    cy.expect(packagesAccordion.find(Selection()).has({ inputValue: packageName }));
+  },
+
+  fillInPackagesDropdownInput(packageName) {
+    cy.do(packagesAccordion.find(Selection()).filter(packageName));
+    this.verifyValueInPackagesDropdownInput(packageName);
   },
 };

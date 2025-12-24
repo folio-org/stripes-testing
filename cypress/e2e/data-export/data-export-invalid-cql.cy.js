@@ -7,7 +7,6 @@ import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
-import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 
 let user;
 const editedFileName = `invalid-query-${getRandomPostfix()}.cql`;
@@ -43,7 +42,6 @@ describe('Data Export', () => {
     { tags: ['criticalPath', 'firebird', 'C397323'] },
     () => {
       ExportFileHelper.uploadFile(editedFileName);
-      SelectJobProfile.searchForAJobProfile('Default instances');
       ExportFileHelper.exportWithDefaultJobProfile(
         editedFileName,
         'Default instances',

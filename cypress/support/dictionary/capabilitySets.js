@@ -42,6 +42,16 @@ export default {
     resource: 'UI-Authorization-Policies Settings Admin',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiDataExportSettingsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Export Settings',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiDataExportSettingsEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Data-Export Settings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiInventorySettingsHoldingsSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Holdings-Sources',
@@ -209,6 +219,11 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiMarcAuthoritiesAuthorityRecordEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
@@ -240,5 +255,15 @@ export default {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Inventory Instance Set-Records-For-Deletion',
     action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiBulkEditQueryExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Bulk-Edit Query',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiBulkEditLogsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Logs',
+    action: CAPABILITY_ACTIONS.VIEW,
   },
 };

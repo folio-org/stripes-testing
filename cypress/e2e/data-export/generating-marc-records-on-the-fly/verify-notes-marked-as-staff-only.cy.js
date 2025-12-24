@@ -12,7 +12,6 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let instanceTypeId;
@@ -97,7 +96,6 @@ describe('Data Export', () => {
 
         // Step 2: Trigger the data export by clicking on the "or choose file" button and submitting .csv file
         ExportFile.uploadFile(csvFileName);
-        SelectJobProfile.searchForAJobProfile('Default instances');
 
         // Step 3: Run the "Default instance export job profile" by clicking on it > Specify "Instance" type > Click on "Run" button
         ExportFile.exportWithDefaultJobProfile(csvFileName, 'Default instances', 'Instances');

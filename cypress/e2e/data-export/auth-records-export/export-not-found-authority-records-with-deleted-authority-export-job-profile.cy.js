@@ -8,7 +8,6 @@ import ExportFileHelper from '../../../support/fragments/data-export/exportFile'
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -52,7 +51,6 @@ describe('Data Export', () => {
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting the CSV file
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
-        SelectJobProfile.searchForAJobProfile(deletedAuthorityExportProfile);
 
         // Step 2-4: Run the "Deleted authority export job profile"
         ExportFileHelper.exportWithDefaultJobProfile(

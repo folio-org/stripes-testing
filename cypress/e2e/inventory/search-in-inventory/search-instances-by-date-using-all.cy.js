@@ -120,7 +120,12 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C553011'] },
       () => {
         testData.searchQueries.forEach((query, index) => {
-          InventorySearchAndFilter.searchByParameter(testData.searchOption, query);
+          cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
+          cy.intercept('GET', '/search/instances?*').as('getInstances');
+          InventorySearchAndFilter.selectSearchOption(testData.searchOption);
+          InventorySearchAndFilter.executeSearch(query);
+          cy.wait('@getFacets').its('response.statusCode').should('eq', 200);
+          cy.wait('@getInstances').its('response.statusCode').should('eq', 200);
           expectedDates[index].forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });

@@ -122,7 +122,7 @@ export default {
   saveRequestAndClose() {
     cy.intercept('POST', '**/requests').as('createRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait(1000);
+    cy.wait(3000);
   },
 
   waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),

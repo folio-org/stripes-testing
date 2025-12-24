@@ -23,7 +23,6 @@ import {
 import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import DateTools from '../../../support/utils/dateTools';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -156,7 +155,6 @@ describe(
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           DataExportLogs.waitLoading();
           ExportFileHelper.uploadFile(fileName);
-          SelectJobProfile.searchForAJobProfile('Default instances');
           ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
           cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');

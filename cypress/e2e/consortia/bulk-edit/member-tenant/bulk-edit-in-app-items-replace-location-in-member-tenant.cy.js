@@ -19,8 +19,10 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
+  CAMPUS_NAMES,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -64,94 +66,104 @@ describe('Bulk-edit', () => {
             instanceTypeId = instanceTypeData[0].id;
           });
           // Get two locations for testing replace
-          InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
-            [locationData, altLocationData] = resp;
+          InventoryInstances.getLocations({ query: `name=${LOCATION_NAMES.MAIN_LIBRARY_UI}` }).then(
+            (resp) => {
+              locationData = resp[0];
+              locationData.campusName = CAMPUS_NAMES.CITY_CAMPUS;
 
-            Institutions.getInstitutionByIdViaApi(altLocationData.institutionId).then(
-              (institution) => {
-                altLocationData.institutionName = institution.name;
-              },
-            );
+              InventoryInstances.getLocations({
+                query: `name=${LOCATION_NAMES.SECOND_FLOOR_UI}`,
+              }).then((altLocationResp) => {
+                altLocationData = altLocationResp[0];
+                altLocationData.campusName = CAMPUS_NAMES.CITY_CAMPUS;
 
-            InventoryHoldings.getHoldingsFolioSource()
-              .then((folioSource) => {
-                sourceId = folioSource.id;
-              })
-              .then(() => {
-                // create folio instance
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
+                Institutions.getInstitutionByIdViaApi(altLocationData.institutionId).then(
+                  (institution) => {
+                    altLocationData.institutionName = institution.name;
                   },
-                }).then((createdInstanceData) => {
-                  folioInstance.id = createdInstanceData.instanceId;
-                });
-              })
-              .then(() => {
-                // create marc instance
-                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-                  marcInstance.id = instanceId;
-                });
-              })
-              .then(() => {
-                // create holdings for both instances
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: locationData.id,
-                    sourceId,
-                  }).then((holding) => {
-                    instance.holdingId = holding.id;
-                  });
-                  cy.wait(1000);
-                });
-              })
-              .then(() => {
-                // create items for both holdings
-                cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                  materialTypeId = res.id;
-                  cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then(
-                    (resLoan) => {
-                      loanTypeId = resLoan[0].id;
-                      // One item with both locations, one without
-                      InventoryItems.createItemViaApi({
-                        barcode: folioInstance.barcode,
-                        holdingsRecordId: folioInstance.holdingId,
-                        materialType: { id: materialTypeId },
-                        permanentLoanType: { id: loanTypeId },
-                        permanentLocation: { id: locationData.id, name: locationData.name },
-                        temporaryLocation: { id: locationData.id, name: locationData.name },
-                        status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      }).then((item) => {
-                        folioInstance.itemId = item.id;
-                      });
-                      InventoryItems.createItemViaApi({
-                        barcode: marcInstance.barcode,
-                        holdingsRecordId: marcInstance.holdingId,
-                        materialType: { id: materialTypeId },
-                        permanentLoanType: { id: loanTypeId },
-                        status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      }).then((item) => {
-                        marcInstance.itemId = item.id;
-                      });
-                    },
-                  );
-                });
-              })
-              .then(() => {
-                // Create .csv file with item UUIDs
-                FileManager.createFile(
-                  `cypress/fixtures/${itemUUIDsFileName}`,
-                  `${folioInstance.itemId}\n${marcInstance.itemId}`,
                 );
-                cy.login(user.username, user.password, {
-                  path: TopMenu.bulkEditPath,
-                  waiter: BulkEditSearchPane.waitLoading,
-                });
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+
+                InventoryHoldings.getHoldingsFolioSource()
+                  .then((folioSource) => {
+                    sourceId = folioSource.id;
+                  })
+                  .then(() => {
+                    // create folio instance
+                    InventoryInstances.createFolioInstanceViaApi({
+                      instance: {
+                        instanceTypeId,
+                        title: folioInstance.title,
+                      },
+                    }).then((createdInstanceData) => {
+                      folioInstance.id = createdInstanceData.instanceId;
+                    });
+                  })
+                  .then(() => {
+                    // create marc instance
+                    cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                      marcInstance.id = instanceId;
+                    });
+                  })
+                  .then(() => {
+                    // create holdings for both instances
+                    instances.forEach((instance) => {
+                      InventoryHoldings.createHoldingRecordViaApi({
+                        instanceId: instance.id,
+                        permanentLocationId: locationData.id,
+                        sourceId,
+                      }).then((holding) => {
+                        instance.holdingId = holding.id;
+                      });
+                      cy.wait(1000);
+                    });
+                  })
+                  .then(() => {
+                    // create items for both holdings
+                    cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                      materialTypeId = res.id;
+                      cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then(
+                        (resLoan) => {
+                          loanTypeId = resLoan[0].id;
+                          // One item with both locations, one without
+                          InventoryItems.createItemViaApi({
+                            barcode: folioInstance.barcode,
+                            holdingsRecordId: folioInstance.holdingId,
+                            materialType: { id: materialTypeId },
+                            permanentLoanType: { id: loanTypeId },
+                            permanentLocation: { id: locationData.id, name: locationData.name },
+                            temporaryLocation: { id: locationData.id, name: locationData.name },
+                            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                          }).then((item) => {
+                            folioInstance.itemId = item.id;
+                          });
+                          InventoryItems.createItemViaApi({
+                            barcode: marcInstance.barcode,
+                            holdingsRecordId: marcInstance.holdingId,
+                            materialType: { id: materialTypeId },
+                            permanentLoanType: { id: loanTypeId },
+                            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                          }).then((item) => {
+                            marcInstance.itemId = item.id;
+                          });
+                        },
+                      );
+                    });
+                  })
+                  .then(() => {
+                    // Create .csv file with item UUIDs
+                    FileManager.createFile(
+                      `cypress/fixtures/${itemUUIDsFileName}`,
+                      `${folioInstance.itemId}\n${marcInstance.itemId}`,
+                    );
+                    cy.login(user.username, user.password, {
+                      path: TopMenu.bulkEditPath,
+                      waiter: BulkEditSearchPane.waitLoading,
+                    });
+                    ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                  });
               });
-          });
+            },
+          );
         });
       });
 
@@ -186,6 +198,10 @@ describe('Bulk-edit', () => {
 
           // Step 4: Show columns
           BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_EFFECTIVE_LOCATION,
+          );
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,

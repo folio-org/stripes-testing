@@ -218,6 +218,10 @@ describe('Bulk-edit', () => {
 
           // Step 4: Check Items note types under Show columns
           BulkEditActions.openActions();
+          BulkEditSearchPane.changeShowColumnCheckbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_EFFECTIVE_LOCATION,
+          );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             localItemNoteTypeName,

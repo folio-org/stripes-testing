@@ -3,7 +3,6 @@ import permissions from '../../../support/dictionary/permissions';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -100,7 +99,6 @@ describe('Data Export', () => {
       { tags: ['criticalPath', 'firebird', 'C543846'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
-        SelectJobProfile.searchForAJobProfile('Default instances');
         ExportFileHelper.exportWithDefaultJobProfile(fileName, 'Default instances', 'Instances');
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');

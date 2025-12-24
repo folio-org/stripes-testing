@@ -226,3 +226,35 @@ export function verifyMarcFieldByFindingSubfield(
     });
   }
 }
+
+export function verifyMarcFieldAbsence(record, tag) {
+  const field = record.get(tag);
+
+  expect(field, `MARC tag ${tag} should not exist`).to.be.empty;
+}
+
+export function verifyMarcFieldsWithIdenticalTagsAndSubfieldValues(
+  record,
+  tag,
+  { ind1 = ' ', ind2 = ' ', expectedCount, subfields = [] },
+) {
+  const fields = record.get(tag);
+
+  expect(fields, `MARC tag ${tag} should exist`).to.exist;
+  expect(fields.length, `Number of ${tag} fields`).to.equal(expectedCount);
+
+  // Verify each field has the correct indicators and subfields
+  fields.forEach((field, fieldIndex) => {
+    expect(field.ind1, `${tag} field ${fieldIndex + 1} ind1`).to.eq(ind1);
+    expect(field.ind2, `${tag} field ${fieldIndex + 1} ind2`).to.eq(ind2);
+
+    // Verify each specified subfield exists and has the expected value
+    if (subfields.length > 0) {
+      subfields.forEach(([subfieldCode, subfieldValue]) => {
+        const subf = field.subf.find((sf) => sf[0] === subfieldCode);
+        expect(subf, `${tag} field ${fieldIndex + 1} $${subfieldCode}`).to.exist;
+        expect(subf[1], `${tag} field ${fieldIndex + 1} $${subfieldCode}`).to.eq(subfieldValue);
+      });
+    }
+  });
+}

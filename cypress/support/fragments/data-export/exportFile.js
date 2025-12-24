@@ -1,5 +1,6 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
+import uuid from 'uuid';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
@@ -200,12 +201,10 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
-    const profileName = `${jobType} export job profile`;
-
-    SelectJobProfile.searchForAJobProfile(profileName);
+    SelectJobProfile.searchForAJobProfile(jobType);
     cy.do(
       MultiColumnListCell({
-        content: profileName,
+        content: `${jobType} export job profile`,
         columnIndex: 0,
       }).click(),
     );
@@ -324,5 +323,100 @@ export default {
         expect(values).to.have.length(recordsNumber);
       });
     });
+  },
+
+  /**
+   * Export file via API by executing the complete export workflow
+   * @param {string} fileName - Name of the CSV file to upload (e.g., 'empty.csv')
+   * @param {string} idType - Type of IDs to export ('instance', 'holdings', 'authority', etc.)
+   * @param {string} jobProfileName - Name of the job profile to use for export
+   * @returns {Cypress.Chainable} Chain with job execution details
+   */
+  exportFileViaApi(
+    fileName,
+    idType = 'instance',
+    jobProfileName = 'Default instances export job profile',
+  ) {
+    const fileDefinitionId = uuid();
+    let jobExecutionId;
+
+    // Step 1: Create file definition
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-export/file-definitions',
+        body: {
+          size: 0,
+          fileName,
+          uploadFormat: 'csv',
+          id: fileDefinitionId,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((fileDefinitionResponse) => {
+        jobExecutionId = fileDefinitionResponse.body.jobExecutionId;
+
+        // Step 2: Upload file (read file content and upload as plain text)
+        return cy
+          .readFile(`cypress/fixtures/${fileName}`)
+          .then((fileContent) => {
+            return cy.okapiRequest({
+              method: 'POST',
+              path: `data-export/file-definitions/${fileDefinitionId}/upload`,
+              body: fileContent,
+              contentTypeHeader: 'application/octet-stream',
+              isDefaultSearchParamsRequired: false,
+            });
+          })
+          .then(() => {
+            // Step 3: Get job profile by name
+            return cy
+              .getDataExportJobProfile({
+                query: `name=="${jobProfileName}"`,
+              })
+              .then((jobProfile) => {
+                if (!jobProfile) {
+                  throw new Error(`Job profile "${jobProfileName}" not found`);
+                }
+
+                // Step 4: Trigger export
+                return cy
+                  .okapiRequest({
+                    method: 'POST',
+                    path: 'data-export/export',
+                    body: {
+                      fileDefinitionId,
+                      jobProfileId: jobProfile.id,
+                      idType,
+                    },
+                    isDefaultSearchParamsRequired: false,
+                  })
+                  .then(() => {
+                    // Step 5: Wait for job completion by polling for specific jobExecutionId
+                    return recurse(
+                      () => cy.okapiRequest({
+                        path: 'data-export/job-executions?query=status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL) sortBy completedDate/sort.descending&limit=25',
+                        isDefaultSearchParamsRequired: false,
+                      }),
+                      (jobResponse) => {
+                        const jobs = jobResponse.body.jobExecutions || [];
+                        const matchingJob = jobs.find((job) => job.id === jobExecutionId);
+                        return !!matchingJob;
+                      },
+                      {
+                        log: true,
+                        timeout: 60000,
+                        delay: 2000,
+                      },
+                    ).then((finalResponse) => {
+                      const jobs = finalResponse.body.jobExecutions || [];
+                      const completedJob = jobs.find((job) => job.id === jobExecutionId);
+
+                      return completedJob;
+                    });
+                  });
+              });
+          });
+      });
   },
 };

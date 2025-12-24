@@ -9,7 +9,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
@@ -101,7 +100,6 @@ describe('Data Export', () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
 
         // Step 2-4: Run the "Deleted authority export job profile"
-        SelectJobProfile.searchForAJobProfile(deletedAuthorityExportProfile);
         ExportFileHelper.exportWithDefaultJobProfile(
           authorityUUIDsFileName,
           deletedAuthorityExportProfile,

@@ -157,8 +157,7 @@ export default {
     cy.expect(confirmationModal.absent());
   },
 
-  addTag: () => {
-    const newTag = `tag${getRandomPostfix()}`;
+  addTag: (newTag = `tag${getRandomPostfix()}`) => {
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
       cy.wait(500);

@@ -14,7 +14,6 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -77,7 +76,6 @@ describe('Data Export', () => {
       () => {
         // Step 1-4: Upload the .csv file
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
-        SelectJobProfile.searchForAJobProfile(authorityExportProfile);
         ExportFileHelper.exportWithDefaultJobProfile(
           authorityUUIDsFileName,
           'Default authority',

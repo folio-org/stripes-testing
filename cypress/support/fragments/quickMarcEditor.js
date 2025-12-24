@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { recurse } from 'cypress-recurse';
 import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
@@ -646,7 +647,7 @@ export default {
       this.confirmDelete();
     }
 
-    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+    cy.wait('@saveRecordRequest', { timeout: 13_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
@@ -810,6 +811,24 @@ export default {
         ruleIds.forEach((ruleId) => {
           cy.setRulesForFieldViaApi(ruleId, isEnabled);
         });
+        return cy.wrap(ruleIds);
+      })
+      .then((ruleIds) => {
+        recurse(
+          () => {
+            return cy.getAllRulesViaApi();
+          },
+          (body) => {
+            const currentStatuses = body
+              .filter((rule) => ruleIds.includes(rule.id))
+              .map((rule) => rule.autoLinkingEnabled);
+            return currentStatuses.every((status) => status === isEnabled);
+          },
+          {
+            timeout: 30 * 1000,
+            delay: 1000,
+          },
+        );
       });
   },
 

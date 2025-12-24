@@ -36,6 +36,8 @@ export default {
     cy.expect(selectPermanentLocationModal.exists());
     cy.do(institutionSelect.choose(locationObject.institutionName));
     // wait until values applied in dropdowns
+    cy.wait(2000);
+    cy.do(campusSelect.choose(locationObject.campusName));
     cy.wait(3000);
     cy.expect([
       institutionSelect.has({ value: locationObject.institutionId }),

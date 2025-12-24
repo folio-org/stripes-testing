@@ -45,6 +45,8 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Importing data, linking Bib fields', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C367974');
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 

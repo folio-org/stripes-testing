@@ -12,7 +12,6 @@ import DataExportResults from '../../../support/fragments/data-export/dataExport
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 
 let user;
 let exportedFileName;
@@ -74,7 +73,6 @@ describe('Data Export', () => {
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting the CSV file
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
-        SelectJobProfile.searchForAJobProfile(defaultAuthorityExportProfile);
 
         // Step 2-4: Run the "Default authority export job profile"
         ExportFileHelper.exportWithDefaultJobProfile(

@@ -79,6 +79,7 @@ describe('MARC', () => {
             cy.login(userA.username, userA.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
@@ -117,12 +118,15 @@ describe('MARC', () => {
             cy.waitForAuthRefresh(() => {
               cy.login(userB.username, userB.password);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ConsortiumManager.switchActiveAffiliation(
+                tenantNames.central,
+                tenantNames.university,
+              );
+              TopMenuNavigation.navigateToApp(
+                APPLICATION_NAMES.SETTINGS,
+                testData.marcAuthorityTabName,
+              );
             }, 20_000);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              testData.marcAuthorityTabName,
-            );
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
             ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();

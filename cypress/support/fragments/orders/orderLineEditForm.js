@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  KeyValue,
   RepeatableFieldItem,
   Section,
   Select,
@@ -61,6 +62,9 @@ const ongoingInformationFields = {
 const costDetailsFields = {
   physicalUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPrice' })),
   quantityPhysical: costDetailsSection.find(TextField({ name: 'cost.quantityPhysical' })),
+  useSetExchangeRate: costDetailsSection.find(Checkbox({ id: 'use-set-exchange-rate' })),
+  exchangeRate: costDetailsSection.find(TextField({ name: 'cost.exchangeRate' })),
+  calculatedTotalAmount: costDetailsSection.find(KeyValue('Calculated total amount (Exchanged)')),
 };
 
 const buttons = {
@@ -98,6 +102,9 @@ export default {
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
+  checkCostDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
   checkNotAvailableInstanceData(fields = []) {
     this.checkFieldsConditions({ fields, section: disabledButtons });
