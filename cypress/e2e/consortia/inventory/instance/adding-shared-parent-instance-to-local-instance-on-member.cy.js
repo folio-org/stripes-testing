@@ -68,7 +68,7 @@ describe('Inventory', () => {
             testData.sharedInstance.instanceHRID,
           );
           InstanceRecordEdit.selectParentRelationshipType('bound-with');
-          InstanceRecordEdit.saveAndClose();
+          InstanceRecordEdit.clickSaveAndCloseButton();
           InstanceRecordEdit.verifyShareParentLinkingError();
         },
       );
