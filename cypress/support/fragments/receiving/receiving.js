@@ -563,4 +563,56 @@ export default {
       });
     });
   },
+
+  getTitleByPoLineNumberViaApi(poLineNumber) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/titles',
+        searchParams: {
+          query: `(((poLine.poLineNumber==*${poLineNumber}*)))`,
+        },
+      })
+      .then(({ body }) => body?.titles?.[0]);
+  },
+
+  parsePOLformatToPieceFormat(format) {
+    switch (format) {
+      case 'Physical Resource':
+        return 'Physical';
+      case 'Electronic Resource':
+        return 'Electronic';
+      case 'P/E Mix':
+        return 'Physical';
+      case 'Other':
+        return 'Other';
+      default:
+        return 'Physical';
+    }
+  },
+
+  addPieceViaApi(
+    { poLineId, poLineNumber, format, holdingId, searchParams = {} },
+    otherParams = {},
+  ) {
+    return this.getTitleByPoLineNumberViaApi(poLineNumber).then((titleResponse) => {
+      const titleId = titleResponse.id;
+      const sequenceNumber = titleResponse.sequenceNumber;
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'orders/pieces',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          poLineId,
+          titleId,
+          format: this.parsePOLformatToPieceFormat(format),
+          holdingId: holdingId || null,
+          sequenceNumber,
+          receiptDate: titleResponse.expectedReceiptDate ? titleResponse.expectedReceiptDate : '',
+          ...otherParams,
+        },
+      });
+    });
+  },
 };

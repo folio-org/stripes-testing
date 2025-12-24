@@ -1025,6 +1025,12 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
 
+export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
+  INSTANCES: 'Default instances export job profile',
+  HOLDINGS: 'Default holdings export job profile',
+  AUTHORITY: 'Default authority export job profile',
+};
+
 export const AUTHORIZATION_POLICY_TYPES = {
   USER: 'user',
   ROLE: 'role',

@@ -50,3 +50,18 @@ Cypress.Commands.add('deleteDataExportJobExecutionFromLogs', (jobExecutionId) =>
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('downloadDataExportRecordViaApi', (recordId, idType, suppressOptions = {}) => {
+  const searchParams = { idType, ...suppressOptions };
+
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: `data-export/download-record/${recordId}`,
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body;
+    });
+});
