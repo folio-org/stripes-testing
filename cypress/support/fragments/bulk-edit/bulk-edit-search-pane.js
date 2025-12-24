@@ -310,6 +310,12 @@ export default {
     cy.expect(bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists());
   },
 
+  verifyBulkEditPaneAfterRecordTypeSelected() {
+    this.verifyBulkEditPaneItems();
+    this.actionsIsAbsent();
+    cy.expect(bulkEditPane.find(HTML('Select a record identifier.')).exists());
+  },
+
   verifySetCriteriaPaneItems(query = true, logs = true) {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),

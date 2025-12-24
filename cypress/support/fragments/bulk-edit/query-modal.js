@@ -173,6 +173,7 @@ export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceTitle: 'Instance — Resource title',
+  instanceLanguages: 'Instance — Languages',
   itemAccessionNumber: 'Item — Accession number',
   itemBarcode: 'Item — Barcode',
   itemCheckOutNotesNote: 'Item — Check out notes — Note',
