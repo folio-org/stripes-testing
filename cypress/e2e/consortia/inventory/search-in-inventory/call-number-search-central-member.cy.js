@@ -290,7 +290,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.verifySearchResult(instanceTitles[5]);
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          cy.wait(3000);
         },
       );
     });
