@@ -21,9 +21,7 @@ describe('Loans', () => {
       user: {},
     };
 
-    before('Create test data', function () {
-      this.timeout(300000);
-
+    before('Create test data', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
