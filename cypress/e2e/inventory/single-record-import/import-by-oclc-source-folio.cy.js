@@ -45,7 +45,6 @@ describe('Inventory', () => {
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.remoteStorageView.gui,
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
