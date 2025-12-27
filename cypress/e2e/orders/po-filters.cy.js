@@ -7,8 +7,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../support/constants';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('orders: Test PO filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -51,7 +50,6 @@ describe('orders: Test PO filters', () => {
     });
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
-      cy.loginAsAdmin();
       cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
@@ -60,7 +58,10 @@ describe('orders: Test PO filters', () => {
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin();
+          cy.visit(TopMenu.ordersPath);
+        });
         Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

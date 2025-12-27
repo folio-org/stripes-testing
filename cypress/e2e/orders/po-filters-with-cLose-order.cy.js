@@ -18,10 +18,6 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
   let orderNumber;
 
   before(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -32,14 +28,23 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
       orderLine.locations[0].locationId = location.id;
     });
-    cy.getBookMaterialType().then((materialType) => {
-      orderLine.physical.materialType = materialType.id;
-      cy.createOrderApi(order).then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
-          orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
-          orderLine.purchaseOrderId = order.id;
-          cy.createOrderLineApi(orderLine);
+    cy.getBookMaterialType()
+      .then((materialType) => {
+        orderLine.physical.materialType = materialType.id;
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
+            orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
+            orderLine.purchaseOrderId = order.id;
+            cy.createOrderLineApi(orderLine);
+          });
+        });
+      })
+      .then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+          authRefresh: true,
         });
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
@@ -53,7 +58,6 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
         Orders.closeThirdPane();
         Orders.resetFilters();
       });
-    });
   });
 
   after(() => {

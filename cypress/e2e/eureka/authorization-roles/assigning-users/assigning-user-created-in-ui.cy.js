@@ -86,6 +86,7 @@ describe('Eureka', () => {
             Users.saveCreatedUser();
             Users.checkCreateUserPaneOpened(false);
             Users.verifyLastNameOnUserDetailsPane(testData.lastName);
+            cy.getToken(testData.tempUser.username, testData.tempUser.password);
             cy.getUserWithBlUsersByUsername(testData.username).then(({ body }) => {
               testData.userId = body.user.id;
 

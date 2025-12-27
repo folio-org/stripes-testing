@@ -82,7 +82,6 @@ describe('orders: Test Po line filters', () => {
     });
     cy.getFundsApi({ query: 'code="USHIST"' }).then((funds) => {
       orderLine.fundDistribution[0].fundId = funds[0]?.id;
-      cy.loginAsAdmin();
       cy.getAdminToken();
       cy.createOrderApi(order).then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
@@ -93,7 +92,10 @@ describe('orders: Test Po line filters', () => {
           });
         });
       });
-      cy.visit(TopMenu.ordersPath);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.ordersPath);
+      });
       Orders.selectOrderLines();
     });
   });
