@@ -49,6 +49,7 @@ describe('eHoldings', () => {
         EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.addToHoldings();
 
+        cy.getToken(user.username, user.password);
         EHoldingsPackages.waitForPackageStatusChangeViaAPI(testData.packageName, true);
         EHoldingsPackage.verifySelectedPackage();
         EHoldingsPackage.filterTitles();

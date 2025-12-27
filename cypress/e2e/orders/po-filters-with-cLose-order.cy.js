@@ -18,6 +18,7 @@ describe('orders: Test PO filters', { retries: { runMode: 1 } }, () => {
   let orderNumber;
 
   before(() => {
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;

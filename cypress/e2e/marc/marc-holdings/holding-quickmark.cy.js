@@ -35,12 +35,12 @@ describe('MARC', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.getUserToken(testData.user.username, testData.user.password);
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
           authRefresh: true,
         }).then(() => {
+          cy.getUserToken(testData.user.username, testData.user.password);
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
