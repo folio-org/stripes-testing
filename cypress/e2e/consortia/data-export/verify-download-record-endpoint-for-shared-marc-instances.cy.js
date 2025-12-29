@@ -24,7 +24,6 @@ const sharedFromMemberExportedFromMemberTenant = `AT_C958466_sharedFromMember_ex
 describe('Data Export', () => {
   describe('Consortia', () => {
     before('Create test data', () => {
-      cy.clearCookie();
       cy.getAdminToken();
       cy.getConsortiaId().then((id) => {
         consortiaId = id;
@@ -89,30 +88,7 @@ describe('Data Export', () => {
       'C958466 Verify /data-export/download-record/{recordId} endpoint for shared MARC Instance record (consortia) (firebird)',
       { tags: ['extendedPathECS', 'firebird', 'C958466'] },
       () => {
-        // Step 1-2: Send GET request /data-export/download-record/{recordId} against Central tenant with idType=INSTANCE and save responses to .mrc files
-        cy.withinTenant(Affiliations.Consortia, () => {
-          cy.downloadDataExportRecordViaApi(sharedInstanceFromCentral.uuid, 'INSTANCE').then(
-            (body) => {
-              cy.wrap(body).should('include', sharedInstanceFromCentral.uuid);
-              FileManager.createFile(
-                `cypress/fixtures/${sharedFromCentralExportedFromCentralTenant}`,
-                body,
-              );
-            },
-          );
-
-          cy.downloadDataExportRecordViaApi(sharedInstanceFromMember.uuid, 'INSTANCE').then(
-            (body) => {
-              cy.wrap(body).should('include', sharedInstanceFromMember.uuid);
-              FileManager.createFile(
-                `cypress/fixtures/${sharedFromMemberExportedFromCentralTenant}`,
-                body,
-              );
-            },
-          );
-        });
-
-        // Step 3-4: Send GET request /data-export/download-record/{recordId} against Member tenant with idType=INSTANCE and save responses to .mrc files
+        // Step 1-2: Send GET request /data-export/download-record/{recordId} against Member tenant with idType=INSTANCE and save responses to .mrc files
         cy.withinTenant(Affiliations.College, () => {
           cy.downloadDataExportRecordViaApi(sharedInstanceFromCentral.uuid, 'INSTANCE').then(
             (body) => {
@@ -129,6 +105,29 @@ describe('Data Export', () => {
               cy.wrap(body).should('include', sharedInstanceFromMember.uuid);
               FileManager.createFile(
                 `cypress/fixtures/${sharedFromMemberExportedFromMemberTenant}`,
+                body,
+              );
+            },
+          );
+        });
+
+        // Step 3-4: Send GET request /data-export/download-record/{recordId} against Central tenant with idType=INSTANCE and save responses to .mrc files
+        cy.withinTenant(Affiliations.Consortia, () => {
+          cy.downloadDataExportRecordViaApi(sharedInstanceFromCentral.uuid, 'INSTANCE').then(
+            (body) => {
+              cy.wrap(body).should('include', sharedInstanceFromCentral.uuid);
+              FileManager.createFile(
+                `cypress/fixtures/${sharedFromCentralExportedFromCentralTenant}`,
+                body,
+              );
+            },
+          );
+
+          cy.downloadDataExportRecordViaApi(sharedInstanceFromMember.uuid, 'INSTANCE').then(
+            (body) => {
+              cy.wrap(body).should('include', sharedInstanceFromMember.uuid);
+              FileManager.createFile(
+                `cypress/fixtures/${sharedFromMemberExportedFromCentralTenant}`,
                 body,
               );
             },
