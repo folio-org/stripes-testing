@@ -1,11 +1,12 @@
+import { including } from '@interactors/html';
 import {
   Button,
   EditableListRow,
-  including,
   Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
+  TextField,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
@@ -13,6 +14,10 @@ import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-
 
 const rootPane = Pane('Subject sources');
 const modalWithErrorMessage = Modal('Cannot delete Subject source');
+const newButton = Button('+ New');
+const saveButton = Button('Save');
+const cancelButton = Button('Cancel');
+const nameField = TextField({ name: 'items[0].name' });
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -139,6 +144,9 @@ export default {
       }),
     );
   },
+  create(value, rowIndex = 0) {
+    cy.do([newButton.click(), TextField({ name: `items[${rowIndex}].name` }).fillIn(value)]);
+  },
 
   confirmDeletionOfSubjectSource(name) {
     DeleteCancelReason.waitLoadingDeleteModal('Subject source', name);
@@ -155,5 +163,14 @@ export default {
     );
     cy.do(Button('Okay').click());
     cy.expect(modalWithErrorMessage.absent());
+  },
+
+  validateNameFieldWithError(message) {
+    cy.expect([
+      nameField.has({ error: message }),
+      cancelButton.has({ disabled: false }),
+      saveButton.has({ disabled: true }),
+    ]);
+    cy.wait(1000);
   },
 };
