@@ -7,7 +7,7 @@ describe('fse-timers', () => {
   });
 
   it(
-    `TCxxxx - Get timers for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196314 - Get timers for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'api', 'sanity', 'timers'] },
     () => {
       cy.getTimers().then((response) => {
