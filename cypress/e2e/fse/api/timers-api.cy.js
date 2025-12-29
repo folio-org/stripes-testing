@@ -8,7 +8,7 @@ describe('fse-timers', () => {
 
   it(
     `TC196314 - Get timers for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'sanity', 'timers'] },
+    { tags: ['fse', 'api', 'timers'] },
     () => {
       cy.getTimers().then((response) => {
         cy.expect(response.status).to.eq(200);
