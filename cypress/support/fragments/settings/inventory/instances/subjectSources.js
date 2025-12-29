@@ -17,7 +17,7 @@ const modalWithErrorMessage = Modal('Cannot delete Subject source');
 const newButton = Button('+ New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
-const nameField = TextField({ name: 'items[0].name' });
+// const nameField = TextField({ name: 'items[0].name' });
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -144,8 +144,35 @@ export default {
       }),
     );
   },
+
   create(value, rowIndex = 0) {
     cy.do([newButton.click(), TextField({ name: `items[${rowIndex}].name` }).fillIn(value)]);
+  },
+
+  editSubjectSourceName(oldValue, newValue) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: oldValue });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do([
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.EDIT }))
+            .click(),
+          TextField({ name: `items[${rowIndex}].name` }).fillIn(newValue),
+        ]);
+      }),
+    );
+  },
+
+  validateButtonsState({ cancel = 'enabled', save = 'enabled' } = {}) {
+    const cancelButtonState = cancel === 'enabled' ? { disabled: false } : { disabled: true };
+    const saveButtonState = save === 'enabled' ? { disabled: false } : { disabled: true };
+
+    cy.expect([saveButton.has(saveButtonState), cancelButton.has(cancelButtonState)]);
   },
 
   confirmDeletionOfSubjectSource(name) {
@@ -165,9 +192,9 @@ export default {
     cy.expect(modalWithErrorMessage.absent());
   },
 
-  validateNameFieldWithError(message) {
+  validateNameFieldWithError(message, indexRow = 0) {
     cy.expect([
-      nameField.has({ error: message }),
+      TextField({ name: `items[${indexRow}].name` }).has({ error: message }),
       cancelButton.has({ disabled: false }),
       saveButton.has({ disabled: true }),
     ]);
