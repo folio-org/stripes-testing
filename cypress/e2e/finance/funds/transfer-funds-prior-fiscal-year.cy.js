@@ -123,7 +123,7 @@ describe('Finance › Funds', () => {
       Funds.selectPreviousBudgetDetails();
       Funds.transfer(fundA, fundB);
       InteractorsTools.checkCalloutMessage(
-        `$10.00 was successfully transferred to the budget ${budgetACurrent.name}.`,
+        `$10.00 was successfully transferred to the budget ${budgetACurrent.name}`,
       );
       Funds.openIncreaseAllocationModal();
       Funds.checkIncreaseAllocationModal();

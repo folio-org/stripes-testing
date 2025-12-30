@@ -42,7 +42,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Set record for deletion', () => {
     const testData = {};
-    const textForUpdateInMarcFile = '01209dam';
+    const textForUpdateInMarcFile = '01205dam';
     const marcFile = {
       marc: 'marcBibFileForC663275.mrc',
       fileName: `C663275 testMarcFile${getRandomPostfix()}.mrc`,
@@ -135,7 +135,7 @@ describe('Inventory', () => {
           DataImport.editMarcFile(
             marcFile.exportedFileName,
             marcFile.modifiedMarcFile,
-            ['01209cam'],
+            ['01205cam'],
             [textForUpdateInMarcFile],
           );
           FileManager.deleteFile(`cypress/downloads/${marcFile.exportedFileName}`);

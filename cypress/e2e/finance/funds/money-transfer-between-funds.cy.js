@@ -111,7 +111,7 @@ describe('Finance › Funds', () => {
       Funds.checkNegativeAvailableAmountModal(budgetB.name);
       Funds.clickConfirmInNegativeAvailableAmountModal();
       InteractorsTools.checkCalloutMessage(
-        `$10.00 was successfully transferred to the budget ${budgetA.name}.`,
+        `$10.00 was successfully transferred to the budget ${budgetA.name}`,
       );
       Funds.checkBudgetQuantity1('($10.00)', '($10.00)');
       Funds.viewTransactions();
