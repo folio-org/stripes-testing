@@ -36,6 +36,7 @@ const bulkEditsAccordion = Accordion('Bulk edits');
 const bulkEditsAdministrativeDataAccordion = Accordion('Bulk edits for administrative data');
 const bulkEditsMarcInstancesAccordion = Accordion('Bulk edits for instances with source MARC');
 const bulkEditsAccordions = Accordion(or('Bulk edits for administrative data', 'Bulk edits'));
+const changesAccordion = Accordion('Preview of records changed');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
@@ -314,6 +315,7 @@ export default {
 
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
+      areYouSureForm.has({ numberOfRows: count }),
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewInCSVFormatBtn).exists(),
@@ -471,11 +473,17 @@ export default {
 
   verifySuccessBanner(validRecordsCount = 1) {
     cy.wait(2000);
-    cy.expect(
-      MessageBanner().has({
-        textContent: `${validRecordsCount} records have been successfully changed`,
-      }),
-    );
+    const recordCount = parseInt(validRecordsCount, 10);
+    if (recordCount === 0) {
+      cy.expect(changesAccordion.absent());
+    } else {
+      cy.expect([
+        changesAccordion.has({ numberOfRows: recordCount }),
+        MessageBanner().has({
+          textContent: `${validRecordsCount} records have been successfully changed`,
+        }),
+      ]);
+    }
   },
 
   verifyLabel(text) {
@@ -1631,22 +1639,24 @@ export default {
   },
 
   verifyMessageBannerInAreYouSureForm(numberOfRecords) {
-    cy.expect(
+    cy.expect([
+      areYouSureForm.has({ numberOfRows: numberOfRecords }),
       areYouSureForm.find(MessageBanner()).has({
         textContent: `${numberOfRecords} records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.`,
       }),
-    );
+    ]);
   },
 
   verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(
     numberOfSupportedInstances,
     numberOfUnsupportedInstances,
   ) {
-    cy.expect(
+    cy.expect([
+      areYouSureForm.has({ numberOfRows: numberOfSupportedInstances }),
       areYouSureForm.find(MessageBanner()).has({
         textContent: `${numberOfSupportedInstances} records will be changed when the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving. ${numberOfUnsupportedInstances} instances have source that is not supported by MARC records bulk edit and cannot be updated.`,
       }),
-    );
+    ]);
   },
 
   verifyActionsColumnIsNotPopulated() {
