@@ -169,7 +169,7 @@ describe('MARC', () => {
         marcFiles.forEach((marcFile) => {
           cy.setTenant(marcFile.affiliation);
           marcFile.createdRecordIDs.forEach((record) => {
-            MarcAuthority.deleteViaAPI(record);
+            MarcAuthority.deleteViaAPI(record, true);
           });
         });
       });
