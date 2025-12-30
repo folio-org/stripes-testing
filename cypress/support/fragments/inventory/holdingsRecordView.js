@@ -333,6 +333,43 @@ export default {
     );
   },
 
+  checkReceivingHistoryForTenant(tenantName, receiptDate, source) {
+    const accordionConfigs = {
+      member: {
+        sectionId: 'receiving-history-accordion',
+        listId: 'college-receiving-history-list',
+      },
+      central: {
+        sectionId: 'central-receivings-accordion',
+        listId: 'consortium-receiving-history-list',
+      },
+    };
+
+    const config = accordionConfigs[tenantName];
+    const receivingHistoryList = Section({ id: config.sectionId }).find(
+      MultiColumnList({ id: config.listId }),
+    );
+
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Receipt date', content: receiptDate }))
+        .exists(),
+    );
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Source', content: source }))
+        .exists(),
+    );
+  },
+
+  checkReceivingHistoryAccordionForMemberTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('member', receiptDate, source);
+  },
+
+  checkReceivingHistoryAccordionForCentralTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('central', receiptDate, source);
+  },
+
   checkNotesByType(
     noteTypeRowIndex,
     columnHeader,
