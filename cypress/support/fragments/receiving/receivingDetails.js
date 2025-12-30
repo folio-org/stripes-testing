@@ -61,6 +61,28 @@ export default {
       this.checkReceivedTableContent(received);
     }
   },
+  expandTitleInformationAccordion() {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+  },
+  verifyAcquisitionUnitInTitleInformation(acquisitionUnitName, shouldExist = true) {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+    cy.wait(1000);
+    if (shouldExist) {
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Acquisition units'))
+          .has({ value: including(acquisitionUnitName) }),
+      );
+    } else {
+      cy.get('#information').within(() => {
+        cy.contains('Acquisition units').parent().should('not.contain', acquisitionUnitName);
+      });
+    }
+  },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.copyNumber) {
@@ -120,6 +142,11 @@ export default {
     ReceivingEditForm.waitLoading();
 
     return ReceivingEditForm;
+  },
+
+  verifyEditButtonIsInactive() {
+    // Check that Edit button exists and is disabled, regardless of visibility
+    cy.get('button').contains('Edit').should('be.disabled');
   },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);

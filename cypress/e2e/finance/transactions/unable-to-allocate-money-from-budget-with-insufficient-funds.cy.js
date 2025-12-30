@@ -5,9 +5,9 @@ import {
   FiscalYears,
   Funds,
   Ledgers,
-  Transactions,
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
+import budgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -82,21 +82,24 @@ describe('Finance: Funds', () => {
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C380517'] },
     () => {
       FinanceHelper.searchByName(fundA.name);
+
       Funds.selectFund(fundA.name);
 
       Funds.checkBudgetDetails([{ ...budgetA, available: budgetA.allocated }]);
+
       Funds.selectBudgetDetails();
+
+      budgetDetails.getIncreaseInAllocationValue().as('initialAllocation');
 
       const amount = '100';
       Funds.moveAllocation({ fromFund: fundA, toFund: fundB, amount, isDisabledConfirm: true });
+
       Funds.checkAmountInputError('Total allocation cannot be less than zero');
+
       Funds.closeTransferModal();
 
-      Funds.viewTransactions();
-      Transactions.waitLoading();
-      Transactions.checkTransactionsList({
-        records: [{ type: 'Allocation', amount }],
-        present: false,
+      cy.get('@initialAllocation').then((initialValue) => {
+        budgetDetails.checkIncreaseInAllocationValue(initialValue);
       });
     },
   );
