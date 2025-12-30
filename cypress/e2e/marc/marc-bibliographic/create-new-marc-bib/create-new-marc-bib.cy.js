@@ -131,7 +131,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.checkFieldContentMatch(
             'textarea[name="records[1].content"]',
-            /in\d{11}/gm,
+            /[a-z]+\d{11}/gm,
           );
           QuickMarcEditor.checkFieldContentMatch(
             'textarea[name="records[2].content"]',

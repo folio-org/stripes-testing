@@ -98,6 +98,7 @@ export default {
     if (!date) dateTime = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2} (AM|PM)/;
     else dateTime = new RegExp(`${date.replace('/', '\\/')}, \\d{1,2}:\\d{1,2} (AM|PM)`);
     if (lastName && firstName) source = `Source: ${lastName}, ${firstName}`;
+
     const targetCard = rootSection.find(Card({ index }));
     cy.expect([
       targetCard.has({ headerStart: matching(dateTime) }),
@@ -115,7 +116,7 @@ export default {
 
   verifyVersionHistoryCardWithTime(
     index = 0,
-    date, // уже "9/11/2025, 5:34 PM"
+    date,
     firstName,
     lastName,
     isOriginal = true,
@@ -124,10 +125,8 @@ export default {
     let dateTime;
 
     if (!date) {
-      // нет параметра — универсальный формат
       dateTime = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)/;
     } else {
-      // мы заранее подготовили строку через replace(' ', ', ')
       const escaped = date.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       dateTime = new RegExp(`^${escaped}$`);
     }
