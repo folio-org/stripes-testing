@@ -39,6 +39,7 @@ const setForDeletionChecbox = Checkbox({ name: 'deleted' });
 const instanceStatusTerm = Select('Instance status term');
 const addStatisticalCodeButton = Button('Add statistical code');
 const addNatureOfContentButton = Button('Add nature of content');
+const addFormatsButton = Button('Add format');
 const addParentInstanceButton = Button('Add parent instance');
 const addChildInstanceButton = Button('Add child instance');
 const parentInstanceFieldSet = FieldSet({ id: 'clickable-add-parent-instance' });
@@ -65,6 +66,10 @@ function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
 
+function addFormats() {
+  cy.do(addFormatsButton.click());
+}
+
 function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());
 }
@@ -76,6 +81,7 @@ function chooseStatisticalCode(code) {
 
 export default {
   addNatureOfContent,
+  addFormats,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
   dateTypePlaceholderOption,
@@ -177,6 +183,33 @@ export default {
     cy.do([
       Button('Add administrative note').click(),
       TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
+    ]);
+  },
+  addSeriesStatement: (statement) => {
+    cy.do([
+      Button('Add series').click(),
+      TextArea({ ariaLabel: 'Series statements' }).fillIn(statement),
+    ]);
+  },
+  addEditions: (edition) => {
+    cy.do(Button('Add edition').click(), TextField({ name: 'editions[0]' }).fillIn(edition));
+  },
+  addPhysicalDescriptions: (description) => {
+    cy.do([
+      Button('Add description').click(),
+      TextField({ name: 'physicalDescriptions[0]' }).fillIn(description),
+    ]);
+  },
+  addPublicationFrequency: (frequency) => {
+    cy.do([
+      Button('Add frequency').click(),
+      TextArea({ ariaLabel: 'Publication frequency' }).fillIn(frequency),
+    ]);
+  },
+  addPublicationRange: (range) => {
+    cy.do([
+      Button('Add range').click(),
+      TextArea({ ariaLabel: 'Publication range' }).fillIn(range),
     ]);
   },
   addExistingPrecedingTitle: (precedingTitle) => {
