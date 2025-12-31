@@ -40,6 +40,8 @@ const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 const createAdministrativeNoteButton = Button('Add administrative note');
 const administrativeNoteTextArea = TextArea({ ariaLabel: 'Administrative note' });
+const addFormerHoldingsIdButton = Button('Add former holdings ID');
+const FormerHoldingsIdTextField = TextField({ name: 'formerIds[0]' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const addElectronicAccessButton = Button('Add electronic access');
 const relationshipSelectDropdown = Select('Relationship');
@@ -177,6 +179,9 @@ export default {
   },
   addAdministrativeNote: (note) => {
     cy.do([createAdministrativeNoteButton.click(), administrativeNoteTextArea.fillIn(note)]);
+  },
+  addFormerHoldingsId: (id) => {
+    cy.do([addFormerHoldingsIdButton.click(), FormerHoldingsIdTextField.fillIn(id)]);
   },
   editHoldingsNotes: (newText, newType) => {
     cy.do(TextArea({ ariaLabel: 'Note' }).fillIn(newText));
