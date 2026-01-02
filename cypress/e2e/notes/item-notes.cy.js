@@ -1,10 +1,11 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -31,10 +32,9 @@ describe('Inventory', () => {
           location,
         });
       });
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
+      cy.loginAsAdmin();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
     });
 
     after('Delete test data', () => {

@@ -9,6 +9,7 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -33,7 +34,6 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -97,11 +97,9 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(testData.instanceId);
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
       });
     });
 
@@ -122,9 +120,13 @@ describe('Inventory', () => {
       'C663275 Record becomes "Set for deletion" after updating Leader 05 to "d" (folijet)',
       { tags: ['criticalPath', 'folijet', 'C663275'] },
       () => {
+        InventoryInstances.searchByTitle(testData.instanceId);
+        InventoryInstances.selectInstance();
+        InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.exportInstanceMarc();
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+        DataExportLogs.waitLoading();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
 
