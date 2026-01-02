@@ -40,12 +40,12 @@ describe('Eureka', () => {
           userIds.push(userId);
         });
 
-        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+        cy.ifConsortia(false, () => {
           cy.createUserWithoutKeycloakInEurekaApi(userC).then((userId) => {
             testData.userCId = userId;
             userIds.push(userId);
           });
-        }
+        });
 
         Users.createViaApi(userD).then((user) => {
           testData.userDId = user.id;
@@ -95,7 +95,7 @@ describe('Eureka', () => {
           },
         );
 
-        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+        cy.ifConsortia(false, () => {
           cy.addCapabilitiesToNewUserApi(testData.userCId, testData.capabilityIds, true).then(
             (response) => {
               expect(response.status).to.eq(404);
@@ -114,7 +114,7 @@ describe('Eureka', () => {
               });
             },
           );
-        }
+        });
 
         cy.addCapabilitiesToNewUserApi(testData.userDId, testData.capabilityIds).then(
           (response) => {

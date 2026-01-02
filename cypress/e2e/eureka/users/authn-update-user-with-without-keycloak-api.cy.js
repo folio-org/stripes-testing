@@ -30,7 +30,9 @@ describe('Eureka', () => {
             },
           });
         }
-        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) delete userBodies[2].username;
+        cy.ifConsortia(false, () => {
+          delete userBodies[2].username;
+        });
         userBodies.forEach((userBody, index) => {
           if (index < 3) {
             cy.createUserWithoutKeycloakInEurekaApi(userBody).then((userId) => {
@@ -90,7 +92,7 @@ describe('Eureka', () => {
             );
           });
 
-          if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          cy.ifConsortia(false, () => {
             cy.updateCredentials(
               testData.invalidUsername,
               testData.oldPassword,
@@ -100,7 +102,7 @@ describe('Eureka', () => {
               expect(status).to.eq(500);
               expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
             });
-          }
+          });
 
           cy.updateCredentials(
             userBodies[3].username,

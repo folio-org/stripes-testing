@@ -19,7 +19,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Permissions from '../../support/dictionary/permissions';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import ApproveInvoiceModal from '../../support/fragments/invoices/modal/approveInvoiceModal';
-import Approvals from '../../support/fragments/settings/orders/approvals';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 
 describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
