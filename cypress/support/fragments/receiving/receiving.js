@@ -515,7 +515,7 @@ export default {
       .then(({ body }) => body?.pieces || []);
   },
 
-  receivePieceViaApi({ poLineId, pieces }) {
+  receivePieceViaApi({ poLineId, pieces, tenantId }) {
     return this.getPiecesViaApi(poLineId).then((allPieces) => {
       const checkInPieces = pieces.map((currentPiece) => {
         const piece = allPieces.find((p) => p.id === currentPiece.id);
@@ -546,6 +546,9 @@ export default {
           sequenceNumber: piece.sequenceNumber,
           supplement:
             currentPiece.supplement !== undefined ? currentPiece.supplement : piece.supplement,
+          ...(tenantId || currentPiece.receivingTenantId
+            ? { receivingTenantId: tenantId || currentPiece.receivingTenantId }
+            : {}),
         };
       });
 
@@ -555,6 +558,59 @@ export default {
         body: {
           toBeCheckedIn: [{ poLineId, checkedIn: checkInPieces.length, checkInPieces }],
           totalRecords: checkInPieces.length,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
+
+  getTitleByPoLineNumberViaApi(poLineNumber) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/titles',
+        searchParams: {
+          query: `(((poLine.poLineNumber==*${poLineNumber}*)))`,
+        },
+      })
+      .then(({ body }) => body?.titles?.[0]);
+  },
+
+  parsePOLformatToPieceFormat(format) {
+    switch (format) {
+      case 'Physical Resource':
+        return 'Physical';
+      case 'Electronic Resource':
+        return 'Electronic';
+      case 'P/E Mix':
+        return 'Physical';
+      case 'Other':
+        return 'Other';
+      default:
+        return 'Physical';
+    }
+  },
+
+  addPieceViaApi(
+    { poLineId, poLineNumber, format, holdingId, searchParams = {} },
+    otherParams = {},
+  ) {
+    return this.getTitleByPoLineNumberViaApi(poLineNumber).then((titleResponse) => {
+      const titleId = titleResponse.id;
+      const sequenceNumber = titleResponse.sequenceNumber;
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'orders/pieces',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          poLineId,
+          titleId,
+          format: this.parsePOLformatToPieceFormat(format),
+          holdingId: holdingId || null,
+          sequenceNumber,
+          receiptDate: titleResponse.expectedReceiptDate ? titleResponse.expectedReceiptDate : '',
+          ...otherParams,
         },
       });
     });
