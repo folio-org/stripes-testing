@@ -29,15 +29,16 @@ describe('Organizations', () => {
   let preUpdated;
   let afterUpdated;
   let lastUpdate;
+  let adminUser;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
     });
-
+    cy.getAdminUserDetails().then((admin) => {
+      adminUser = admin.username;
+    });
     Organizations.createInterfaceViaApi(organizationInterface).then((interfaceId) => {
       organizationInterface.id = interfaceId;
     });
@@ -51,7 +52,7 @@ describe('Organizations', () => {
         organization.id = organizationResponse;
       });
     });
-    cy.wait(30000);
+    cy.wait(7000);
 
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganizationInCurrentPage(organization.name);
@@ -111,8 +112,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
-        'folio-aqa',
-        'folio-aqa',
+        adminUser,
+        adminUser,
         true,
         false,
       );
@@ -120,8 +121,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
-        'folio-aqa',
-        'folio-aqa',
+        adminUser,
+        adminUser,
         false,
         true,
       );

@@ -69,6 +69,7 @@ describe('Inventory', () => {
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
         BrowseSubjects.verifySearchResult(testData.firstConditionForFiltering, testData.columnName);
@@ -81,6 +82,7 @@ describe('Inventory', () => {
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
         BrowseSubjects.selectSubjectSource(testData.secondConditionForFiltering);
