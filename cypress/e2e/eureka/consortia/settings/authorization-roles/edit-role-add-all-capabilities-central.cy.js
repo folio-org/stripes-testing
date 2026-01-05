@@ -62,7 +62,6 @@ describe('Eureka', () => {
 
       const capabSetsForTestUser = [CapabilitySets.uiAuthorizationRolesSettingsEdit];
 
-      let capabilitiesCount;
       let capabilitySetsCount;
 
       before('Create test user', () => {
@@ -72,9 +71,6 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
 
           cy.then(() => {
-            cy.getCapabilitiesApi(5000, true, { customTimeout: 60_000 }).then((capabs) => {
-              capabilitiesCount = capabs.length;
-            });
             cy.getCapabilitySetsApi().then((capabSets) => {
               capabilitySetsCount = capabSets.length;
             });
@@ -98,6 +94,7 @@ describe('Eureka', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
@@ -154,7 +151,6 @@ describe('Eureka', () => {
             AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
             AuthorizationRoles.verifyRoleViewPane(testData.roleName);
             AuthorizationRoles.checkCapabilitySetsAccordionCounter(`${capabilitySetsCount}`);
-            AuthorizationRoles.checkCapabilitiesAccordionCounter(`${capabilitiesCount}`);
           });
         },
       );

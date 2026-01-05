@@ -49,21 +49,26 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true) => {
-  const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'capabilities',
-    searchParams: {
-      limit,
-      query,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    cy.wrap(body.capabilities).as('capabs');
-  });
-  return cy.get('@capabs');
-});
+Cypress.Commands.add(
+  'getCapabilitiesApi',
+  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null } = {}) => {
+    const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+    const requestData = {
+      method: 'GET',
+      path: 'capabilities',
+      searchParams: {
+        limit,
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    };
+    if (customTimeout) requestData.customTimeout = customTimeout;
+    cy.okapiRequest(requestData).then(({ body }) => {
+      cy.wrap(body.capabilities).as('capabs');
+    });
+    return cy.get('@capabs');
+  },
+);
 
 Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500) => {
   cy.okapiRequest({
