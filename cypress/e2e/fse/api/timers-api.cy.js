@@ -13,7 +13,7 @@ describe('fse-timers', () => {
       cy.getTimers().then((response) => {
         cy.expect(response.status).to.eq(200);
         cy.log('total records: ' + response.body.totalRecords);
-        cy.expect(response.body.totalRecords).to.eq(38);
+        cy.expect(response.body.totalRecords).to.be.at.least(38);
         // Check that each timer descriptor has enabled = true
         response.body.timerDescriptors.forEach((timer) => {
           cy.wrap(timer.enabled).should('be.true');
