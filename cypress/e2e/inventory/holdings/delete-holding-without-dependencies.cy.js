@@ -1,6 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances, {
+  searchHoldingsOptions,
+} from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -12,7 +14,11 @@ const testData = {
   user: {},
   instanceTitle: `C716 Inventory Instance ${getRandomPostfix()}`,
   locationName: LOCATION_NAMES.MAIN_LIBRARY_UI,
+  callNumber: `CN-${getRandomPostfix()}`,
 };
+const callNumberOption = searchHoldingsOptions[4];
+const hridOption = searchHoldingsOptions[7];
+const uuidOption = searchHoldingsOptions[8];
 
 describe('Inventory', () => {
   describe('Holdings', () => {
@@ -45,13 +51,21 @@ describe('Inventory', () => {
               {
                 holdingsTypeId: testData.holdingTypeId,
                 permanentLocationId: testData.locationId,
+                callNumber: testData.callNumber,
               },
             ],
             items: [],
+          }).then((createdInstance) => {
+            testData.testInstanceIds = createdInstance;
+            testData.createdHoldings = createdInstance.holdings[0];
+
+            cy.getHoldings({
+              limit: 1,
+              query: `"id"="${testData.createdHoldings.id}"`,
+            }).then((holdings) => {
+              testData.createdHoldings.hrid = holdings[0].hrid;
+            });
           });
-        })
-        .then((specialInstanceIds) => {
-          testData.testInstanceIds = specialInstanceIds;
         });
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
@@ -82,6 +96,21 @@ describe('Inventory', () => {
         cy.wait(3000);
         InventoryInstance.waitLoading();
         InventoryInstance.verifyHoldingsAbsent(testData.locationName);
+
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.searchByParameter(
+          callNumberOption,
+          testData.createdHoldings.callNumber,
+        );
+        InventorySearchAndFilter.verifyNoRecordsFound();
+
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.searchByParameter(hridOption, testData.createdHoldings.hrid);
+        InventorySearchAndFilter.verifyNoRecordsFound();
+
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.searchByParameter(uuidOption, testData.createdHoldings.id);
+        InventorySearchAndFilter.verifyNoRecordsFound();
       },
     );
   });

@@ -100,6 +100,11 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
         );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          item.holdingHRID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          `${notes.adminOne}|${notes.adminTwo}`,
+        );
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.noteReplaceWith(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,

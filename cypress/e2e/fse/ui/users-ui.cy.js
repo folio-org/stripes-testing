@@ -18,11 +18,12 @@ describe('fse-users - UI (no data manipulation)', () => {
     `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
-      Users.waitLoading();
-      cy.getAdminUserId().then((id) => {
-        UsersSearchPane.searchByKeywords(id);
-        UsersSearchPane.openUser(id);
-        UsersCard.verifyUserCardOpened();
+      cy.getAdminToken().then(() => {
+        cy.getAdminUserId().then((id) => {
+          UsersSearchPane.searchByKeywords(id);
+          UsersSearchPane.openUser(id);
+          UsersCard.verifyUserCardOpened();
+        });
       });
     },
   );

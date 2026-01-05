@@ -254,7 +254,7 @@ export default {
     cy.do(fiscalYearResultsSection.find(Link(FYName)).click());
   },
 
-  expextFY: (FYName) => {
+  expectFY: (FYName) => {
     cy.expect(fiscalYearResultsSection.find(Link(FYName)).exists());
   },
 
@@ -298,6 +298,28 @@ export default {
     cy.expect(SelectionOption(AUName).absent());
   },
 
+  createFiscalYearWithAllFields(fiscalYear, AUName) {
+    cy.do([
+      TextField('Name*').fillIn(fiscalYear.name),
+      TextField('Code*').fillIn(fiscalYear.code),
+      TextField({ name: 'periodStart' }).fillIn(fiscalYear.periodBeginDate),
+      TextField({ name: 'periodEnd' }).fillIn(fiscalYear.periodEndDate),
+    ]);
+    // Select Acquisition Unit using native Cypress commands (downshift combobox)
+    cy.get('#fy-acq-units-input').click();
+    cy.wait(500);
+    cy.get('#fy-acq-units-input').type(AUName);
+    cy.wait(500);
+    // Click on the mark element inside dropdown item
+    cy.contains('[id*="downshift"][id*="item"]', AUName).find('mark').click();
+    cy.wait(1000);
+  },
+
+  clickSaveAndClose() {
+    cy.do(saveAndClose.click());
+    cy.wait(2000);
+  },
+
   searchByName: (name) => {
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
   },
@@ -315,6 +337,15 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+
+  getFiscalYearIdByName(fiscalYearName) {
+    return this.getViaApi({ query: `name=="${fiscalYearName}"` }).then((response) => {
+      if (response.fiscalYears && response.fiscalYears.length > 0) {
+        return response.fiscalYears[0].id;
+      }
+      return null;
+    });
   },
 
   assertAllocationToolsSubmenuAbsent() {

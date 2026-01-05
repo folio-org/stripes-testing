@@ -71,4 +71,14 @@ async function updateTestResult(api, testId, statusId, comment, defects) {
   }
 }
 
-module.exports = { getTestHistory, getTestRunResults, updateTestResult, team, status };
+async function getTestCase(api, caseId) {
+  try {
+    const response = await api.get(`get_case/${caseId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching test case ${caseId}:`, error);
+    return null;
+  }
+}
+
+module.exports = { getTestHistory, getTestRunResults, updateTestResult, getTestCase, team, status };
