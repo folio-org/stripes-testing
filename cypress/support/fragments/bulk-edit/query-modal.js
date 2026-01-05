@@ -173,6 +173,7 @@ export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
   instanceHrid: 'Instance — Instance HRID',
   instanceTitle: 'Instance — Resource title',
+  instanceLanguages: 'Instance — Languages',
   itemAccessionNumber: 'Item — Accession number',
   itemBarcode: 'Item — Barcode',
   itemCheckOutNotesNote: 'Item — Check out notes — Note',
@@ -557,14 +558,14 @@ export default {
   clickTestQuery() {
     cy.wait(1000);
     cy.do(testQueryButton.click());
-    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
+    cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
     this.runQueryDisabled();
     this.cancelDisabled(false);
   },
 
   testQuery() {
     cy.do(testQueryButton.click());
-    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
+    cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
   },
 
   verifyPreviewOfRecordsMatched() {
@@ -578,7 +579,7 @@ export default {
         .then((text) => {
           const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
           const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
-          expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
+          expect(text.startsWith(`Query returns ${totalRecords} records.`)).to.equal(true);
           expect(previewLabel).to.equal(
             `Preview of first ${Math.min(previewRecords, 100)} records.`,
           );
@@ -632,7 +633,7 @@ export default {
         .then((text) => {
           if (numberOfMatchedRecords) {
             expect(text).to.equal(
-              `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+              `Query returns ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');
