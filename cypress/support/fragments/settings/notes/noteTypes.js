@@ -20,9 +20,10 @@ const saveNoteTypeButton = Button({ id: including('clickable-save-noteTypes-') }
 const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
-const maxCountMessage = HTML({ className: including('editableListError-') });
+const errorMessageElement = HTML({ className: including('editableListError-') });
 const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
+const rowWithExactText = (noteType) => MultiColumnListRow({ content: noteType, isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 
 export default {
@@ -115,6 +116,11 @@ export default {
     this.checkNoteTypeIsDisplayed(noteType);
   },
 
+  clickCancelNoteTypeCreation(noteType) {
+    cy.do(cancelNoteTypeCreationButton.click());
+    this.checkNoteTypeIsNotDisplayed(noteType);
+  },
+
   deleteNoteType(noteType) {
     this.clickDeleteNoteType(noteType);
     ConfirmDelete.verifyDeleteMessage(noteType);
@@ -126,6 +132,11 @@ export default {
   clickEditNoteType: (noteType) => {
     cy.expect(rowWithText(noteType).exists());
     cy.do(rowWithText(noteType).find(editIcon).click());
+  },
+
+  clickEditNoteTypeExact: (noteType) => {
+    cy.expect(rowWithExactText(noteType).exists());
+    cy.do(rowWithExactText(noteType).find(editIcon).click());
   },
 
   clickDeleteNoteType: (noteType) => cy.do(rowWithText(noteType).find(deleteIcon).click()),
@@ -167,7 +178,7 @@ export default {
     cy.do(saveNoteTypeButton.click());
     cy.wait(3000);
     cy.expect(
-      maxCountMessage.has({
+      errorMessageElement.has({
         text: including('Maximum number of note types allowed is 25'),
       }),
     );
