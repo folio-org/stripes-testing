@@ -73,6 +73,7 @@ describe('Bulk-edit', () => {
                       instance: {
                         instanceTypeId,
                         title: folioInstance.title,
+                        languages: ['fin'],
                       },
                       holdings: [
                         {
@@ -153,6 +154,20 @@ describe('Bulk-edit', () => {
 
           notExpectedToFindItemBarcodes.forEach((barcode) => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(barcode);
+          });
+
+          // Step 3: Click "Show columns" above the result table > Check checkbox next to "Instance — Languages"
+          QueryModal.clickShowColumnsButton();
+          QueryModal.clickCheckboxInShowColumns(itemFieldValues.instanceLanguages);
+          QueryModal.clickShowColumnsButton();
+
+          // Step 4: "Check values of languages displayed in "Instance — Languages" column"
+          expectedItemsToFind.forEach((item) => {
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              item.barcode,
+              itemFieldValues.instanceLanguages,
+              'Finnish',
+            );
           });
         },
       );

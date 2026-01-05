@@ -165,9 +165,10 @@ describe('fse-edge', () => {
     },
   );
 
+  // TODO: add back 'edge-rtac', 'app-edge-complete' tags after fixing the test stability issue
   it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-rtac', 'app-edge-complete'] },
+    { tags: ['fse', 'api'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));

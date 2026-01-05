@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -317,8 +319,8 @@ describe('Bulk-edit', () => {
         // Step 23: Download errors (CSV)
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-          `ERROR,${marcInstance.uuid},Change note type for administrative notes is not supported for MARC Instances.`,
-          `ERROR,${marcInstance.uuid},Bulk edit of instance notes is not supported for MARC Instances.`,
+          `ERROR,${marcInstance.uuid},${ERROR_MESSAGES.ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC}`,
+          `ERROR,${marcInstance.uuid},${ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED}`,
         ]);
         BulkEditFiles.verifyCSVFileRecordsNumber(fileNames.errorsFromCommitting, 2);
 
