@@ -237,6 +237,7 @@ export default {
 
   expandAccordion(accordionName) {
     cy.do(Accordion(accordionName).clickHeader());
+    cy.wait(1000);
   },
 
   verifyJobProfileDropdownExists() {
@@ -571,6 +572,7 @@ export default {
   },
 
   clickColumnHeader(columnName) {
+    cy.wait(2000);
     cy.do(MultiColumnListHeader(columnName).click());
     cy.wait(5000);
   },
