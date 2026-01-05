@@ -9,11 +9,15 @@ import DataExportLogs from '../../../support/fragments/data-export/dataExportLog
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthoritiesDelete from '../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
+import parseMrcFileContentAndVerify, {
+  verifyMarcFieldByTag,
+  verify001FieldValue,
+  verify005FieldValue,
+  verify008FieldValue,
+} from '../../../support/utils/parseMrcFileContent';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import DateTools from '../../../support/utils/dateTools';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 
@@ -55,6 +59,10 @@ describe('Data Export', () => {
             query: `id="${authorityInstance.id}"`,
           }).then((authorities) => {
             authorityInstance.naturalId = authorities[0].naturalId;
+          });
+
+          cy.getSrsRecordsByInstanceId(authorityInstance.id).then((srsRecord) => {
+            authorityInstance.srsId = srsRecord.id;
           });
         });
 
@@ -113,26 +121,31 @@ describe('Data Export', () => {
           DataExportLogs.clickButtonWithText(exportedFileName);
 
           // Step 10: Check exported records included in the file
-          const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
           const assertionsOnMarcFileContent = [
             {
               uuid: authorityInstance.id,
               assertions: [
                 (record) => expect(record.leader).to.exist,
-                (record) => expect(record.get('001')[0].value).to.eq(authorityInstance.naturalId),
+                (record) => verify001FieldValue(record, authorityInstance.naturalId),
+                (record) => verify005FieldValue(record),
+                (record) => verify008FieldValue(record, '900423n| azannaabn          |n aaa      '),
                 (record) => {
-                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
+                  verifyMarcFieldByTag(record, '100', {
+                    ind1: ' ',
+                    ind2: ' ',
+                    subf: ['a', authorityInstance.title],
+                  });
                 },
                 (record) => {
-                  expect(record.get('008')[0].value).to.eq(
-                    '900423n| azannaabn          |n aaa      ',
-                  );
+                  verifyMarcFieldByTag(record, '999', {
+                    ind1: 'f',
+                    ind2: 'f',
+                    subfields: [
+                      ['s', authorityInstance.srsId],
+                      ['i', authorityInstance.id],
+                    ],
+                  });
                 },
-                (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
-                (record) => expect(record.get('100')[0].subf[0][1]).to.eq(authorityInstance.title),
-                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(authorityInstance.id),
               ],
             },
           ];
