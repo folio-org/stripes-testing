@@ -515,7 +515,7 @@ export default {
       .then(({ body }) => body?.pieces || []);
   },
 
-  receivePieceViaApi({ poLineId, pieces }) {
+  receivePieceViaApi({ poLineId, pieces, tenantId }) {
     return this.getPiecesViaApi(poLineId).then((allPieces) => {
       const checkInPieces = pieces.map((currentPiece) => {
         const piece = allPieces.find((p) => p.id === currentPiece.id);
@@ -546,6 +546,9 @@ export default {
           sequenceNumber: piece.sequenceNumber,
           supplement:
             currentPiece.supplement !== undefined ? currentPiece.supplement : piece.supplement,
+          ...(tenantId || currentPiece.receivingTenantId
+            ? { receivingTenantId: tenantId || currentPiece.receivingTenantId }
+            : {}),
         };
       });
 
@@ -556,6 +559,7 @@ export default {
           toBeCheckedIn: [{ poLineId, checkedIn: checkInPieces.length, checkInPieces }],
           totalRecords: checkInPieces.length,
         },
+        isDefaultSearchParamsRequired: false,
       });
     });
   },

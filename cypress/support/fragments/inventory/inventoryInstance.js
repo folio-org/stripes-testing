@@ -1534,11 +1534,11 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (oclc) => {
+  overlayWithOclc: (oclc, externalTarget = 'OCLC WorldCat') => {
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
       if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
         cy.wait(3000);
-        cy.do(singleRecordImportModal.find(importTypeSelect).choose('OCLC WorldCat'));
+        cy.do(singleRecordImportModal.find(importTypeSelect).choose(externalTarget));
         cy.wait(1500);
       }
       cy.do(
