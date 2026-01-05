@@ -65,7 +65,7 @@ Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = tr
   return cy.get('@capabs');
 });
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500) => {
   cy.okapiRequest({
     method: 'GET',
     path: `capability-sets?limit=${limit}`,
