@@ -62,6 +62,18 @@ export default {
       TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
     ]);
   },
+  addYearCaption: (year) => {
+    cy.do([
+      Button('Add year, caption').click(),
+      TextField({ name: 'yearCaption[0]' }).fillIn(year),
+    ]);
+  },
+  addFormerIdentifier: (identifier) => {
+    cy.do([
+      Button('Add former identifier').click(),
+      TextField({ name: 'formerIds[0]' }).fillIn(identifier),
+    ]);
+  },
   addNotes: (
     notes = [{ text: `Note ${getRandomPostfix()}`, noteType: 'Action note', staffOnly: false }],
   ) => {
