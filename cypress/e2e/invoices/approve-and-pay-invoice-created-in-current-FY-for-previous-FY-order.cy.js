@@ -62,11 +62,10 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     subTotal: '2',
   };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY =
-    DateTools.getCurrentDateInPreviusMonthForFiscalYearOnDDMMYYYYFormat();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnDDMMYYYY();
-  const periodStartForSecondFY = DateTools.getCurrentDateINDDMMYYYYFormat();
-  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnDDMMYYYY();
+  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
 

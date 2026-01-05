@@ -109,7 +109,9 @@ export default {
     cy.do(
       MultiColumnListCell({ content: expenseClass.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const createdByAdmin = `${DateTools.getCurrentDateINDDMMYYYYFormat()} by ${userName}`;
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
+          date: new Date(),
+        })} by ${userName}`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))
