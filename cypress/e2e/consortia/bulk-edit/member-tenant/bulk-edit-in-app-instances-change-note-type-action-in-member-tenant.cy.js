@@ -66,8 +66,7 @@ const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileNa
   true,
 );
 const errorReasonNotes = ERROR_MESSAGES.EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED;
-const errorReasonAdminNotes =
-  'Change note type for administrative notes is not supported for MARC Instances.';
+const errorReasonAdminNotes = ERROR_MESSAGES.ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC;
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
