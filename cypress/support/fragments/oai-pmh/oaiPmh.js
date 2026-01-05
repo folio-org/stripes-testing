@@ -140,6 +140,45 @@ export default {
   },
 
   /**
+   * Verify MARC control field value in a specific record identified by instanceUuid.
+   * Control fields (001-009) do not have indicators or subfields, just text content.
+   * @param {string} xmlString - The XML response as a string.
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
+   * @param {string} tag - The tag of the MARC control field to verify (e.g., "001", "003", "005", "008").
+   * @param {string} expectedValue - The expected value of the control field.
+   */
+  verifyMarcControlField(xmlString, instanceUuid, tag, expectedValue) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    const controlfields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'controlfield');
+    const controlfield = Array.from(controlfields).find(
+      (field) => field.getAttribute('tag') === tag,
+    );
+
+    if (!controlfield) {
+      throw new Error(`MARC control field ${tag} not found in record with UUID ${instanceUuid}`);
+    }
+
+    expect(
+      controlfield.textContent,
+      `Control field ${tag} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+    ).to.equal(expectedValue);
+  },
+
+  /**
    * Verify MARC field and subfield values in a specific record identified by instanceUuid.
    * Works consistently for both single-record (GetRecord) and multi-record (ListRecords) responses.
    * @param {string} xmlString - The XML response as a string.

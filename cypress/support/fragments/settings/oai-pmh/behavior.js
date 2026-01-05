@@ -58,10 +58,10 @@ export default {
    *   Possible values: "200", "500",
    */
   updateBehaviorConfigViaApi(
-    suppressedRecordsProcessing,
-    recordsSource,
-    deletedRecordsSupport,
-    errorsProcessing,
+    suppressedRecordsProcessing = 'true',
+    recordsSource = 'Inventory',
+    deletedRecordsSupport = 'persistent',
+    errorsProcessing = '200',
   ) {
     const configValue = {
       suppressedRecordsProcessing,
