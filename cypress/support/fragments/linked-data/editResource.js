@@ -116,7 +116,7 @@ export default {
   },
 
   switchToSearchTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-search']").click();
+    cy.xpath("//button[@data-testid='id-search-segment-button-authorities:search']").click();
   },
 
   switchToBrowseTabMarcAuthModal() {
@@ -172,5 +172,9 @@ export default {
     cy.xpath(`//strong[@class='heading' and contains(text(), '${profileName}')]`)
       .scrollIntoView()
       .should('be.visible');
+  },
+
+  clickCloseResourceButton() {
+    cy.xpath('//button[@data-testid="close-record-button"]').click();
   },
 };
