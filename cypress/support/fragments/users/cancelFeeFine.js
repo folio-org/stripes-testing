@@ -17,6 +17,14 @@ export default {
     cy.expect(Callout(including('has been successfully cancelled as error for ')).exists());
   },
 
+  confirmCancellation: (comment) => {
+    cy.do([
+      rootModal.find(TextArea({ name: 'comment' })).fillIn(comment),
+      rootModal.find(Button('Confirm')).click(),
+    ]);
+    cy.wait(1000);
+  },
+
   verifyCommentError: () => {
     cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(''));
     cy.expect(rootModal.find(Button('Confirm')).has({ disabled: true }));
