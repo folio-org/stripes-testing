@@ -5,11 +5,14 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
+  Modal,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
+import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-reason';
 
 const rootPane = Pane('Subject types');
+const modalWithErrorMessage = Modal('Cannot delete Subject type');
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -126,5 +129,40 @@ export default {
         });
       }),
     );
+  },
+
+  deleteSubjectType(name) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: name });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do(
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.TRASH }))
+            .click(),
+        );
+      }),
+    );
+  },
+
+  confirmDeletionOfSubjectType(name) {
+    DeleteCancelReason.waitLoadingDeleteModal('Subject type', name);
+    DeleteCancelReason.clickDelete();
+  },
+
+  verifySubjectTypeCannotBeDeleted() {
+    cy.expect(
+      modalWithErrorMessage.has({
+        content: including(
+          'This Subject type cannot be deleted, as it is in use by one or more records.',
+        ),
+      }),
+    );
+    cy.do(Button('Okay').click());
+    cy.expect(modalWithErrorMessage.absent());
   },
 };

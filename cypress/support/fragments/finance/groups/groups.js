@@ -242,4 +242,40 @@ export default {
   checkBalance({ name, value }) {
     cy.expect(summarySection.find(HTML(including(`${name} balance: ${value}`))).exists());
   },
+
+  checkZeroSearchResultsHeader() {
+    cy.xpath('//*[@id="paneHeadergroup-results-pane-subtitle"]/span').should(
+      'have.text',
+      '0 records found',
+    );
+  },
+
+  createGroupWithAcquisitionUnit(group, acquisitionUnitName) {
+    cy.wait(2000);
+    cy.do([
+      Button('Actions').click(),
+      Button('New').click(),
+      nameField.fillIn(group.name),
+      codeField.fillIn(group.code),
+    ]);
+    cy.wait(2000);
+    cy.get('[id*="downshift"][id*="toggle-button"]').click();
+    cy.wait(500);
+    cy.contains('[id*="downshift"][id*="item"]', acquisitionUnitName).click();
+    cy.wait(1000);
+    cy.do(Button('Save & close').click());
+    cy.wait(2000);
+    this.waitForGroupDetailsLoading();
+  },
+
+  createGroupWithAcquisitionUnitAndCaptureId(group, acquisitionUnitName) {
+    cy.intercept('POST', '**/finance/groups*').as('createGroupRequest');
+
+    this.createGroupWithAcquisitionUnit(group, acquisitionUnitName);
+
+    return cy.wait('@createGroupRequest').then((interception) => {
+      group.id = interception.response.body.id;
+      return group;
+    });
+  },
 };

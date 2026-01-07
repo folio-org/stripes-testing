@@ -24,7 +24,7 @@ describe('MARC', () => {
       const newFieldsArr = [
         ['245', '1', '\\', '$a Added row (must indicate)'],
         ['260', '1', '1', '$b Added row (not indicate)'],
-        ['520', '\\', '\\', '$a Added row (must indicate)'],
+        ['510', '\\', '\\', '$a Added row (must indicate)'],
         ['655', '1', '1', '$b Added row (must indicate)'],
         ['655', '2', '1', '$b Added row (not indicate)'],
         ['655', '1', '2', '$a Added row (not indicate)'],
@@ -33,7 +33,7 @@ describe('MARC', () => {
       const protectedMARCFields = [
         ['245', '*', '*', 'a', '*'],
         ['260', '1', '1', 'b', 'must indicate'],
-        ['520', '*', '*', '*', '*'],
+        ['510', '*', '*', '*', '*'],
         ['655', '1', '*', 'b', '*'],
         ['655', '*', '*', '*', 'Added row (must indicate)'],
       ];
@@ -121,7 +121,7 @@ describe('MARC', () => {
           MarcAuthority.checkInfoButton('655', 11);
           MarcAuthority.checkInfoButton('655', 14);
           MarcAuthority.checkInfoButton('245');
-          MarcAuthority.checkInfoButton('520');
+          MarcAuthority.checkInfoButton('510');
           MarcAuthority.checkInfoButton('999');
         },
       );

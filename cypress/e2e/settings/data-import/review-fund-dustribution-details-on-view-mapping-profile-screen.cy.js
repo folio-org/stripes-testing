@@ -34,7 +34,7 @@ describe('Data Import', () => {
       physicalUnitPrice: '"20"',
       quantityPhysical: '"1"',
       fundId: '"African History (AFRICAHIST)"',
-      expenseClass: '"Electronic (Elec)"',
+      expenseClass: '"Print (Prn)"',
       value: '100',
     };
 
