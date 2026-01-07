@@ -7,6 +7,8 @@ import {
   Modal,
   Pane,
   Section,
+  HTML,
+  including,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -203,5 +205,69 @@ export default {
       path: `acquisitions-units/memberships/${userId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  clickActionsButton: () => {
+    cy.do(actionsButton.click());
+  },
+
+  checkDeleteButtonDisabled: (isDisabled = true) => {
+    cy.expect(Button(including('Delete')).has({ disabled: isDisabled, visible: true }));
+  },
+
+  clickDeleteOption: () => {
+    cy.do(Button('Delete').click());
+  },
+
+  clickCancelInDeleteModal: () => {
+    cy.do(Modal('Delete acquisition unit').find(Button('Cancel')).click());
+  },
+
+  clickConfirmInDeleteModal: () => {
+    cy.do(Modal('Delete acquisition unit').find(Button('Confirm')).click());
+  },
+
+  checkAcquisitionUnitDeleted: (auName) => {
+    cy.expect(auListPane.find(Button(auName)).absent());
+  },
+
+  checkDeleteModalAppears: () => {
+    cy.expect(Modal('Delete acquisition unit').exists());
+  },
+
+  checkNoAssignedUsers: () => {
+    cy.expect(assignedUsersSection.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyNewButtonAbsent: () => {
+    cy.expect(Button('New').absent());
+  },
+
+  verifyActionsButtonAbsent: () => {
+    cy.expect(actionsButton.absent());
+  },
+
+  verifyAssignUsersButtonAbsent: () => {
+    cy.expect(findUserButton.absent());
+  },
+
+  verifyDeleteIconAbsent: () => {
+    cy.expect(assignedUsersSection.find(trashButton).absent());
+  },
+
+  collapseAll: () => {
+    cy.do(Button('Collapse all').click());
+  },
+
+  expandAll: () => {
+    cy.do(Button('Expand all').click());
+  },
+
+  verifyCollapseExpandAll: (isCollapsed = true) => {
+    if (isCollapsed) {
+      cy.expect([Button('Expand all').exists(), Button('Collapse all').absent()]);
+    } else {
+      cy.expect([Button('Collapse all').exists(), Button('Expand all').absent()]);
+    }
   },
 };
