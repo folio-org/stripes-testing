@@ -142,7 +142,7 @@ describe('Citation: MARC Authority integration', () => {
       });
       QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
       QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndCloseButton();
       cy.wait(1500);
       MarcAuthority.verifyAfterSaveAndClose();
       QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
