@@ -1,5 +1,4 @@
 import { Permissions } from '../../support/dictionary';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -53,20 +52,10 @@ describe('Check out', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       testData.folioInstances.forEach((instance) => {
-        CheckInActions.checkinItemViaApi({
-          itemBarcode: instance.barcodes[0],
-          servicePointId: testData.servicePoint.id,
-          checkInDate: new Date().toISOString(),
-        }).then(
-          () => {},
-          () => {},
-        );
-      });
-      testData.folioInstances.forEach((instance) => {
         InventoryInstances.deleteInstanceViaApi({
           instance,
           servicePoint: testData.servicePoint,
-          shouldCheckIn: false,
+          shouldCheckIn: true,
         });
       });
       Users.deleteViaApi(userData.userId);
