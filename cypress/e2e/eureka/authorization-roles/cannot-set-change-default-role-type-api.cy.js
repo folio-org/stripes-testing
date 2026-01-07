@@ -19,14 +19,18 @@ describe('Eureka', () => {
         description: `Description New Default C957370 ${randomPostfix}`,
       };
       let defaultRole;
+      let defaultRole2;
+      let defaultRole3;
 
       before('Create role, user', () => {
         cy.getAdminToken();
         cy.createAuthorizationRoleApi(regularRole.name, regularRole.description).then((role) => {
           regularRole.id = role.id;
         });
-        cy.getAuthorizationRoles({ limit: 1, query: `type=${roleTypes.default}` }).then((roles) => {
+        cy.getAuthorizationRoles({ limit: 3, query: `type=${roleTypes.default}` }).then((roles) => {
           defaultRole = roles[0];
+          defaultRole2 = roles[1];
+          defaultRole3 = roles[2];
         });
       });
 
@@ -53,7 +57,23 @@ describe('Eureka', () => {
 
             cy.updateAuthorizationRoleApi(defaultRole.id, {
               ...defaultRole,
-              type: defaultRole.regular,
+              type: roleTypes.regular,
+            }).then(({ body, status }) => {
+              expect(status).to.eq(400);
+              expect(body.errors[0].message).to.eq(defaultRoleCrudErrorMessage);
+            });
+
+            delete defaultRole2.type;
+            cy.updateAuthorizationRoleApi(defaultRole2.id, defaultRole2).then(
+              ({ body, status }) => {
+                expect(status).to.eq(400);
+                expect(body.errors[0].message).to.eq(defaultRoleCrudErrorMessage);
+              },
+            );
+
+            cy.updateAuthorizationRoleApi(defaultRole3.id, {
+              ...defaultRole3,
+              type: null,
             }).then(({ body, status }) => {
               expect(status).to.eq(400);
               expect(body.errors[0].message).to.eq(defaultRoleCrudErrorMessage);
@@ -74,6 +94,14 @@ describe('Eureka', () => {
             );
 
             cy.getAuthorizationRoleApi(defaultRole.id).then(({ body }) => {
+              expect(body.type).to.eq(roleTypes.default);
+            });
+
+            cy.getAuthorizationRoleApi(defaultRole2.id).then(({ body }) => {
+              expect(body.type).to.eq(roleTypes.default);
+            });
+
+            cy.getAuthorizationRoleApi(defaultRole3.id).then(({ body }) => {
               expect(body.type).to.eq(roleTypes.default);
             });
 
