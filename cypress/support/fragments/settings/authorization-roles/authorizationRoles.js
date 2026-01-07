@@ -116,6 +116,8 @@ const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
+export const defaultRoleCrudErrorMessage =
+  'Default role cannot be created, updated or deleted via roles API.';
 
 export default {
   capabilitiesAccordion,

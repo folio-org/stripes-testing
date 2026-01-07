@@ -183,21 +183,40 @@ Cypress.Commands.add(
   (
     name = `AT_UserRole_${getRandomPostfix()}`,
     description = `Test_Auto_Description_${getRandomPostfix()}`,
+    type = null,
+    ignoreErrors = false,
   ) => {
+    const roleBody = {
+      name,
+      description,
+    };
+    if (type) {
+      roleBody.type = type;
+    }
     cy.okapiRequest({
       method: 'POST',
       path: 'roles',
       isDefaultSearchParamsRequired: false,
-      body: {
-        name,
-        description,
-      },
+      body: roleBody,
+      failOnStatusCode: !ignoreErrors,
     }).then(({ body }) => {
       cy.wrap(body).as('role');
     });
     return cy.get('@role');
   },
 );
+
+Cypress.Commands.add('updateAuthorizationRoleApi', (roleId, requestBody) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `roles/${roleId}`,
+    body: requestBody,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  }).then((response) => {
+    return response;
+  });
+});
 
 Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({
