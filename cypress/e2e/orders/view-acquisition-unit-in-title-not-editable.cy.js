@@ -35,7 +35,7 @@ describe('Orders', () => {
       acquisitionUnit.id = auResponse.id;
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
+        permissions.inventoryAll.gui,
         permissions.uiReceivingManageAcquisitionUnits.gui,
         permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {

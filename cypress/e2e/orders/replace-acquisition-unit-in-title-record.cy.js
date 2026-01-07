@@ -29,16 +29,10 @@ describe('Orders', () => {
   before(() => {
     cy.getAdminToken();
     firstAcquisitionUnit = AcquisitionUnits.getDefaultAcquisitionUnit({
-      protectCreate: false,
-      protectRead: false,
-      protectUpdate: false,
-      protectDelete: false,
+      protectRead: true,
     });
     secondAcquisitionUnit = AcquisitionUnits.getDefaultAcquisitionUnit({
-      protectCreate: false,
-      protectRead: false,
-      protectUpdate: false,
-      protectDelete: false,
+      protectRead: true,
     });
 
     AcquisitionUnits.createAcquisitionUnitViaApi(firstAcquisitionUnit).then((firstAUResponse) => {
@@ -118,7 +112,12 @@ describe('Orders', () => {
                             (titleResponse) => {
                               title = titleResponse;
                               title.acqUnitIds = [firstAcquisitionUnit.id];
-                              Receiving.updateTitleViaApi(title);
+                              Receiving.updateTitleViaApi(title).then(() => {
+                                cy.login(user.username, user.password, {
+                                  path: TopMenu.ordersPath,
+                                  waiter: Orders.waitLoading,
+                                });
+                              });
                             },
                           );
                         });
@@ -147,10 +146,6 @@ describe('Orders', () => {
     'C430218 Replace acquisition unit in title record (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C430218'] },
     () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
       Orders.searchByParameter('PO number', order.poNumber);
       Orders.selectFromResultsList(order.poNumber);
 
@@ -181,7 +176,6 @@ describe('Orders', () => {
       );
       cy.reload();
       ReceivingDetails.waitLoading();
-      // cy.wait(4000);
 
       cy.wait(3000);
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(secondAcquisitionUnit.name, true);
