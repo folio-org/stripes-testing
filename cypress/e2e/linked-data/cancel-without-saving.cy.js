@@ -88,7 +88,7 @@ describe('Citation: cancel without saving', () => {
 
   it(
     'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'C656342', 'linked-data-editor'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();
