@@ -29,20 +29,20 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
-  defaultCommandTimeout: 51000,
-  pageLoadTimeout: 60000,
-  requestTimeout: 60000,
-  responseTimeout: 60000,
+  defaultCommandTimeout: 91000,
+  pageLoadTimeout: 180000,
+  requestTimeout: 180000,
+  responseTimeout: 180000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-bugfest-sunflower-aqa.int.aws.folio.org',
-    OKAPI_TENANT: 'fs09000003',
-    diku_login: 'folio-aqa',
-    diku_password: 'folio-aqa',
+    OKAPI_HOST: 'https://api-mobius-dr.folio.ebsco.com',
+    OKAPI_TENANT: 'cs00000001_0100',
+    diku_login: 'aqa_admin',
+    diku_password: 'FDpzt$xufSjX9EyT',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
-    ecs_env_name: 'sunflower',
+    ecs_env_name: 'mobius',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
@@ -155,7 +155,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://bugfest-sunflower-aqa.int.aws.folio.org',
+    baseUrl: 'https://mobius-dr.folio.ebsco.com',
     testIsolation: false,
   },
 });

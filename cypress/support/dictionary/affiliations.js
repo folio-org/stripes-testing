@@ -1,6 +1,13 @@
 const currentEnv = Cypress.env('ecs_env_name');
 
 export default {
+  mobius: {
+    Consortia: 'cs00000001',
+    University: 'cs00000001_0003',
+    School: 'cs00000int_0003',
+    College: 'cs00000001_0006',
+    Professional: 'cs00000int_0002',
+  },
   sunflower: {
     Consortia: 'cs00000int',
     University: 'cs00000int_0005',
@@ -23,6 +30,12 @@ export default {
 }[currentEnv];
 
 export const tenantNames = {
+  mobius: {
+    central: 'MOBIUS Office',
+    college: 'Benedictine College',
+    university: 'Park University',
+    professional: 'Professional',
+  },
   sunflower: {
     central: 'Central Office',
     college: 'College',
@@ -46,6 +59,14 @@ export const tenantNames = {
 }[currentEnv];
 
 export const tenantCodes = {
+  mobius: {
+    central: 'MCO',
+    college: 'M06',
+    university: 'M03',
+    professional: 'PROF',
+    school: 'SCHO',
+    special: 'SPE,',
+  },
   sunflower: {
     central: 'CEN',
     college: 'COL',
