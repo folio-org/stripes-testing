@@ -8,8 +8,8 @@ import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 
 let marcInstanceId;
 const marcFile = {
-  marc: 'oneMarcBib.mrc',
-  fileNameImported: `testMarcFileC375185.${getRandomPostfix()}.mrc`,
+  marc: 'marcBibFileForC375181.mrc',
+  fileNameImported: `testMarcFileC375186.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 };
 
@@ -18,7 +18,7 @@ describe('OAI-PMH', () => {
     before('create test data', () => {
       cy.getAdminToken();
       Behavior.updateBehaviorConfigViaApi(
-        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.FALSE,
         BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
         BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
         BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
@@ -37,21 +37,17 @@ describe('OAI-PMH', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(marcInstanceId);
+      Behavior.updateBehaviorConfigViaApi();
     });
 
     it(
-      'C375185 GetRecord: Verify MARC instances suppressed from discovery in case Transfer suppressed records with discovery flag (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375185'] },
+      'C375186 GetRecord: Verify MARC instances suppressed from discovery in case Skip suppressed from discovery records (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C375186', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
-          OaiPmh.verifyMarcField(
-            response,
-            marcInstanceId,
-            '999',
-            { ind1: 'f', ind2: 'f' },
-            { t: '1', i: marcInstanceId },
-          );
+          OaiPmh.verifyIdDoesNotExistError(response);
         });
       },
     );
