@@ -25,6 +25,10 @@ const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const rowWithExactText = (noteType) => MultiColumnListRow({ content: noteType, isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
+const generalButton = HTML({
+  className: including('NavListItem---fokVC'),
+  text: including('General'),
+});
 
 export default {
   createNoteTypeViaApi({
@@ -177,6 +181,10 @@ export default {
 
   checkNewButtonState(isEnabled = true) {
     cy.expect(newButton.has({ disabled: !isEnabled }));
+  },
+
+  clickGeneralButton() {
+    cy.do(generalButton.click());
   },
 
   getNoteTypeIdViaAPI(noteTypeName) {

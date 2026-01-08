@@ -4,9 +4,11 @@ import EHoldingsProviderView from '../../support/fragments/eholdings/eHoldingsPr
 import Notes from '../../support/fragments/notes/notes';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings';
 import NoteTypes from '../../support/fragments/settings/notes/noteTypes';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import SettingsPane from '../../support/fragments/settings/settingsPane';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Notes', () => {
   const testData = {
@@ -78,8 +80,10 @@ describe('Notes', () => {
       EHoldingsProviderView.waitLoading();
       NotesEholdings.verifyNoteDeletion(testData.noteTitle, testData.noteContent);
 
-      cy.visit(TopMenu.notesPath);
-      NoteTypes.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsPane.waitLoading();
+      SettingsPane.selectSettingsTab(APPLICATION_NAMES.NOTES);
+      NoteTypes.clickGeneralButton();
 
       NoteTypes.checkEditAndDeleteIcons(testData.noteType);
       NoteTypes.verifyNoteTypeIsNotAssigned(noteTypeId);
