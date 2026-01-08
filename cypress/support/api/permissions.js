@@ -137,29 +137,37 @@ Cypress.Commands.add('getUserRoleIdByNameApi', (roleName) => {
   });
 });
 
-Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, capabilityIds) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'roles/capabilities',
-    body: {
-      roleId,
-      capabilityIds: [...capabilityIds],
-    },
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'addCapabilitiesToNewRoleApi',
+  (roleId, capabilityIds, { customTimeout = null } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'roles/capabilities',
+      body: {
+        roleId,
+        capabilityIds: [...capabilityIds],
+      },
+      isDefaultSearchParamsRequired: false,
+      customTimeout,
+    });
+  },
+);
 
-Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, capabilitySetIds) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'roles/capability-sets',
-    body: {
-      roleId,
-      capabilitySetIds: [...capabilitySetIds],
-    },
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'addCapabilitySetsToNewRoleApi',
+  (roleId, capabilitySetIds, { customTimeout = null } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'roles/capability-sets',
+      body: {
+        roleId,
+        capabilitySetIds: [...capabilitySetIds],
+      },
+      isDefaultSearchParamsRequired: false,
+      customTimeout,
+    });
+  },
+);
 
 Cypress.Commands.add('deleteCapabilitiesFromRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({
@@ -370,20 +378,29 @@ Cypress.Commands.add('updateCapabilitySetsForRoleApi', (roleId, capabilitySetIds
   });
 });
 
-Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId, searchParams = { limit: 1000 }) => {
-  cy.okapiRequest({
-    path: `roles/${roleId}/capabilities`,
-    isDefaultSearchParamsRequired: false,
-    searchParams,
-  });
-});
+Cypress.Commands.add(
+  'getCapabilitiesForRoleApi',
+  (roleId, searchParams = { limit: 1000 }, { customTimeout = null } = {}) => {
+    cy.okapiRequest({
+      path: `roles/${roleId}/capabilities`,
+      isDefaultSearchParamsRequired: false,
+      searchParams,
+      customTimeout,
+    });
+  },
+);
 
-Cypress.Commands.add('getCapabilitySetsForRoleApi', (roleId) => {
-  cy.okapiRequest({
-    path: `roles/${roleId}/capability-sets`,
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'getCapabilitySetsForRoleApi',
+  (roleId, searchParams = { limit: 2000 }, { customTimeout = null } = {}) => {
+    cy.okapiRequest({
+      path: `roles/${roleId}/capability-sets`,
+      isDefaultSearchParamsRequired: false,
+      searchParams,
+      customTimeout,
+    });
+  },
+);
 
 Cypress.Commands.add('getAuthorizationRoles', (searchParams = { limit: 500 }) => {
   cy.okapiRequest({
@@ -424,7 +441,7 @@ Cypress.Commands.add('shareRoleApi', (consotiaId, { id, name, description = '' }
 
 Cypress.Commands.add(
   'shareRoleCapabilitiesApi',
-  (consortiaId, { id, name, capabilitiesArray = [] }) => {
+  (consortiaId, { id, name, capabilitiesArray = [], customTimeout = null } = {}) => {
     cy.okapiRequest({
       method: 'POST',
       path: `/consortia/${consortiaId}/sharing/roles/capabilities`,
@@ -438,13 +455,14 @@ Cypress.Commands.add(
           capabilityNames: capabilitiesArray,
         },
       },
+      customTimeout,
     });
   },
 );
 
 Cypress.Commands.add(
   'shareRoleCapabilitySetsApi',
-  (consortiaId, { id, name, capabilitySetsArray = [] }) => {
+  (consortiaId, { id, name, capabilitySetsArray = [], customTimeout = null } = {}) => {
     cy.okapiRequest({
       method: 'POST',
       path: `/consortia/${consortiaId}/sharing/roles/capability-sets`,
@@ -458,6 +476,7 @@ Cypress.Commands.add(
           capabilitySetNames: capabilitySetsArray,
         },
       },
+      customTimeout,
     });
   },
 );
@@ -487,38 +506,45 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('shareRoleWithCapabilitiesApi', ({ id, name, description = '' }) => {
-  let consortiaId;
-  let capabilities;
-  let capabilitySets;
-  cy.then(() => {
-    cy.getConsortiaId().then((consId) => {
-      consortiaId = consId;
-    });
-    cy.getCapabilitiesForRoleApi(id).then(({ body }) => {
-      capabilities = body.capabilities.map((capab) => capab.name);
-    });
-    cy.getCapabilitySetsForRoleApi(id).then(({ body }) => {
-      capabilitySets = body.capabilitySets.map((set) => set.name);
-    });
-  }).then(() => {
-    cy.shareRoleApi(consortiaId, { id, name, description }).then(() => {
-      cy.wait(3000);
-      cy.shareRoleCapabilitiesApi(consortiaId, { id, name, capabilitiesArray: capabilities }).then(
-        () => {
+Cypress.Commands.add(
+  'shareRoleWithCapabilitiesApi',
+  ({ id, name, description = '', customTimeout = null } = {}) => {
+    let consortiaId;
+    let capabilities;
+    let capabilitySets;
+    cy.then(() => {
+      cy.getConsortiaId().then((consId) => {
+        consortiaId = consId;
+      });
+      cy.getCapabilitiesForRoleApi(id, { limit: 5000 }, { customTimeout }).then(({ body }) => {
+        capabilities = body.capabilities.map((capab) => capab.name);
+      });
+      cy.getCapabilitySetsForRoleApi(id, { limit: 2000 }, { customTimeout }).then(({ body }) => {
+        capabilitySets = body.capabilitySets.map((set) => set.name);
+      });
+    }).then(() => {
+      cy.shareRoleApi(consortiaId, { id, name, description }).then(() => {
+        cy.wait(3000);
+        cy.shareRoleCapabilitiesApi(consortiaId, {
+          id,
+          name,
+          capabilitiesArray: capabilities,
+          customTimeout,
+        }).then(() => {
           cy.wait(3000);
           cy.shareRoleCapabilitySetsApi(consortiaId, {
             id,
             name,
             capabilitySetsArray: capabilitySets,
+            customTimeout,
           }).then(() => {
             cy.wait(3000);
           });
-        },
-      );
+        });
+      });
     });
-  });
-});
+  },
+);
 
 Cypress.Commands.add('verifyAssignedRolesCountForUserApi', (userId, rolesCount) => {
   return cy.recurse(

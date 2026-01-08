@@ -429,6 +429,15 @@ export default {
     );
   },
 
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action }) => {
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[table])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
+  },
+
   verifyCapabilityCheckboxChecked: (
     { table, resource, action },
     isSelected = true,
@@ -1028,11 +1037,15 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false } = {}) {
+  shareRole(roleName, { verifyModal = false, customTimeout = null } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+    if (customTimeout) {
+      cy.get('[class^="modal"][label="Confirm share to all"]', { timeout: customTimeout }).should(
+        'not.exist',
+      );
+    } else cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
     this.checkRoleCentrallyManaged(roleName, true);
   },
 
