@@ -62,7 +62,7 @@ describe('OAI-PMH', () => {
             marcInstanceId,
             '999',
             { ind1: 'f', ind2: 'f' },
-            { t: '0', i: marcInstanceId },
+            { i: marcInstanceId },
           );
           OaiPmh.verifyMarcField(
             response,

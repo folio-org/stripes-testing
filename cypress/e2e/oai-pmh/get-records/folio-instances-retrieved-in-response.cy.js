@@ -67,7 +67,7 @@ describe('OAI-PMH', () => {
             folioInstanceId,
             '999',
             { ind1: 'f', ind2: 'f' },
-            { i: folioInstanceId, t: '0' },
+            { i: folioInstanceId },
           );
           OaiPmh.verifyOaiPmhRecordHeader(response, folioInstanceId, false, true);
         });
