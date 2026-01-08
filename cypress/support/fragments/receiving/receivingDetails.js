@@ -145,8 +145,8 @@ export default {
   },
 
   verifyEditButtonIsInactive() {
-    // Check that Edit button exists and is disabled, regardless of visibility
-    cy.get('button').contains('Edit').should('be.disabled');
+    cy.do(buttons.Actions.click());
+    cy.expect(Button('Edit').has({ disabled: true }));
   },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);

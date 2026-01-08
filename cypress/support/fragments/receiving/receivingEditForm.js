@@ -2,10 +2,11 @@ import {
   Button,
   Section,
   TextField,
-  matching,
   MultiSelect,
   MultiSelectOption,
   including,
+  not,
+  matching,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -75,20 +76,16 @@ export default {
     }
   },
   selectAcquisitionUnit(acquisitionUnitName) {
-    cy.get('#title-acq-units input[type="text"]').should('be.enabled');
-    cy.get('#title-acq-units')
-      .find('button[class*="multiSelectToggleButton"]')
-      .click({ force: true });
-    cy.wait(1000);
-    cy.get('#title-acq-units input[type="text"]').should('be.enabled').type(acquisitionUnitName);
-    cy.wait(500);
+    cy.do(itemDetailsFields.acquisitionUnits.open());
+    cy.do(itemDetailsFields.acquisitionUnits.fillIn(acquisitionUnitName));
     cy.do(MultiSelectOption(acquisitionUnitName).click());
   },
   removeAcquisitionUnit(acquisitionUnitName) {
-    cy.get('#title-acq-units').find('button[icon="times"]').first().click({ force: true });
-
+    cy.do(itemDetailsFields.acquisitionUnits.find(Button({ icon: 'times' })).click());
     cy.wait(1000);
-    cy.get('#title-acq-units').should('not.contain', acquisitionUnitName);
+    cy.expect(
+      itemDetailsFields.acquisitionUnits.has({ selected: not(including(acquisitionUnitName)) }),
+    );
   },
   verifyAcquisitionUnitDisplayed(acquisitionUnitName, shouldExist = true) {
     if (shouldExist) {

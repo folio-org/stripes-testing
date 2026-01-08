@@ -96,7 +96,12 @@ describe('Orders', () => {
                         (titleResponse) => {
                           title = titleResponse;
                           title.acqUnitIds = [acquisitionUnit.id];
-                          Receiving.updateTitleViaApi(title).then(() => {});
+                          Receiving.updateTitleViaApi(title).then(() => {
+                            cy.login(user.username, user.password, {
+                              path: TopMenu.receivingPath,
+                              waiter: Receiving.waitLoading,
+                            });
+                          });
                         },
                       );
                     });
@@ -122,10 +127,6 @@ describe('Orders', () => {
     'C430217 User not assigned to Acq unit is able to view Acq unit of Title in Receiving but not edit it (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C430217'] },
     () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.receivingPath,
-        waiter: Receiving.waitLoading,
-      });
       Receiving.searchByParameter({ value: orderLine.titleOrPackage });
       Receiving.selectFromResultsList(orderLine.titleOrPackage);
       ReceivingDetails.waitLoading();
