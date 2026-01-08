@@ -267,6 +267,54 @@ export default {
   },
 
   /**
+   * Verify that specific MARC field(s) are ABSENT from the response
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
+   * @param {string|Array<string>} tags - The tag(s) of the MARC field to verify is absent (e.g., "856" or ["856", "952"])
+   * @param {Object} indicators - Optional indicators to match (e.g., { ind1: "4", ind2: "0" }). If empty, any field with the tag should be absent.
+   */
+  verifyMarcFieldAbsent(xmlString, instanceUuid, tags, indicators = {}) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    // Normalize tags to array
+    const tagArray = Array.isArray(tags) ? tags : [tags];
+
+    // Find all datafield elements within the target record
+    const datafields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'datafield');
+
+    tagArray.forEach((tag) => {
+      const matchingFields = Array.from(datafields).filter((datafield) => {
+        const matchesTag = datafield.getAttribute('tag') === tag;
+        const matchesInd1 = !indicators.ind1 || datafield.getAttribute('ind1') === indicators.ind1;
+        const matchesInd2 = !indicators.ind2 || datafield.getAttribute('ind2') === indicators.ind2;
+
+        return matchesTag && matchesInd1 && matchesInd2;
+      });
+
+      const indicatorsDesc =
+        Object.keys(indicators).length > 0 ? ` with indicators ${JSON.stringify(indicators)}` : '';
+
+      expect(
+        matchingFields.length,
+        `MARC field ${tag}${indicatorsDesc} should NOT exist in record with UUID ${instanceUuid}`,
+      ).to.equal(0);
+    });
+  },
+
+  /**
    * Verify MARC fields with the same tag and indicators, handling multiple occurrences.
    * This method can verify multiple fields with the same tag/indicators and their subfields.
    * @param {string} xmlString - The XML response as a string.
