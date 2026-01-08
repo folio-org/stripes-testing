@@ -377,8 +377,9 @@ export default {
    * @param {string} xmlString - The XML response as a string.
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {Object} fields - Object where keys are Dublin Core element names and values are expected values (e.g., { title: "Sample Title", type: "Text", language: "eng" }).
+   * @param {Array} absentFields - Array of Dublin Core element names that should NOT exist (e.g., ["relation", "coverage"]).
    */
-  verifyDublinCoreField(xmlString, instanceUuid, fields = {}) {
+  verifyDublinCoreField(xmlString, instanceUuid, fields = {}, absentFields = []) {
     const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
     const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
@@ -405,6 +406,16 @@ export default {
         element.textContent,
         `Dublin Core element "${elementName}" should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
       ).to.equal(expectedValue);
+    });
+
+    // Verify absent fields
+    absentFields.forEach((elementName) => {
+      const dcElements = metadata.getElementsByTagNameNS(dcNamespaceURI, elementName);
+
+      expect(
+        dcElements.length,
+        `Dublin Core element "${elementName}" should NOT exist in record with UUID ${instanceUuid}`,
+      ).to.equal(0);
     });
   },
 
