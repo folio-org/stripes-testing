@@ -601,4 +601,26 @@ export default {
         .null;
     }
   },
+
+  /**
+   * Verifies the OAI-PMH error response for "idDoesNotExist" error
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} expectedErrorCode - The expected error code (default: 'idDoesNotExist')
+   * @param {string} expectedErrorMessage - The expected error message (default: 'No matching identifier in repository.')
+   */
+  verifyIdDoesNotExistError(
+    xmlString,
+    expectedErrorCode = 'idDoesNotExist',
+    expectedErrorMessage = 'No matching identifier in repository.',
+  ) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const errorElement = xmlDoc.getElementsByTagName('error')[0];
+    const errorCode = errorElement.getAttribute('code');
+    const records = xmlDoc.getElementsByTagName('record');
+    const errorText = errorElement.textContent;
+
+    expect(errorCode, 'Error code should match expected value').to.equal(expectedErrorCode);
+    expect(errorText, 'Error message should match expected value').to.equal(expectedErrorMessage);
+    expect(records.length, 'No record element should exist in error response').to.equal(0);
+  },
 };
