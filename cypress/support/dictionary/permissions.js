@@ -818,6 +818,10 @@ export default {
     internal: 'ui-receiving.exportCSV',
     gui: 'Receiving: Export search results',
   },
+  uiReceivingAssignAcquisitionUnitsToNewTitle: {
+    internal: 'ui-receiving.acq-units.assignment.assign',
+    gui: 'Receiving: Assign acquisition units to new receiving title',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',

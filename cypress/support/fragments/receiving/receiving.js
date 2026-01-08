@@ -4,6 +4,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  KeyValue,
   Link,
   Modal,
   MultiColumnList,
@@ -35,6 +36,8 @@ const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
 const selectLocationsModal = Modal('Select locations');
 const pieceDetailsSection = Section({ id: 'pieceDetails' });
+const acquisitionUnitsDropdown = HTML({ id: including('acq-units-input') });
+const acquisitionUnitsDropdownItems = HTML({ id: including('downshift') });
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -614,5 +617,89 @@ export default {
         },
       });
     });
+  },
+
+  clickNewTitleOption() {
+    this.expandActionsDropdown();
+    cy.do(Button('New').click());
+  },
+
+  fillTitleLookup(titleName) {
+    cy.do([
+      Button('Title look-up').click(),
+      Modal('Select instance')
+        .find(TextField({ name: 'query' }))
+        .fillIn(titleName),
+      Modal('Select instance').find(Button('Search')).click(),
+    ]);
+    cy.wait(2000);
+    return cy
+      .then(() => Modal('Select instance')
+        .find(MultiColumnListRow({ index: 0 }))
+        .perform((element) => {
+          const titleText = element.querySelector('[class*="mclCell"]:first-child')?.textContent;
+          return titleText;
+        }))
+      .then((selectedTitle) => {
+        cy.do(
+          Modal('Select instance')
+            .find(MultiColumnListRow({ index: 0 }))
+            .click(),
+        );
+        return cy.wrap(selectedTitle);
+      });
+  },
+
+  fillPOLNumberLookup(polNumber) {
+    cy.do(Button('POL number look-up').click());
+    cy.wait(1000);
+    cy.do([
+      Modal('Select order lines')
+        .find(TextField({ id: 'input-record-search' }))
+        .fillIn(polNumber),
+      Modal('Select order lines').find(Button('Search')).click(),
+    ]);
+    cy.wait(2000);
+    cy.do(
+      Modal('Select order lines')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
+  },
+
+  checkAcquisitionUnitsDropdown(auName, shouldExist = false) {
+    cy.do(acquisitionUnitsDropdown.click());
+    cy.wait(500);
+    if (shouldExist) {
+      cy.expect(acquisitionUnitsDropdownItems.find(HTML(including(auName))).exists());
+    } else {
+      cy.expect(acquisitionUnitsDropdownItems.find(HTML(including(auName))).absent());
+    }
+    cy.get('body').click(0, 0);
+  },
+
+  clickSaveAndCloseInNewTitle(titleName, polNumber) {
+    cy.do(Button('Save & close').click());
+    if (titleName && polNumber) {
+      InteractorsTools.checkCalloutMessage(
+        `The title ${titleName} has been successfully added for PO line ${polNumber}`,
+      );
+    }
+  },
+
+  expandTitleInformationAccordion() {
+    cy.do(Accordion({ id: 'information' }).clickHeader());
+  },
+
+  verifyAcquisitionUnitsNotSpecified() {
+    cy.expect(
+      Section({ id: 'information' })
+        .find(KeyValue('Acquisition units'))
+        .has({ value: including('No value set') }),
+    );
+  },
+
+  verifyNewTitlePageOpened() {
+    cy.expect(Section({ id: 'pane-title-form' }).exists());
   },
 };

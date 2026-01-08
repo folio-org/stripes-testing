@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import {
   Button,
   TextField,
+  TextArea,
   MultiColumnListCell,
   Checkbox,
   Modal,
@@ -27,6 +28,7 @@ const auPaneDetails = Section({ id: 'pane-ac-units-details' });
 const checkboxAll = Checkbox();
 const searchButton = Button('Search');
 const nameTextField = TextField({ name: 'name' });
+const descriptionTextField = TextArea({ name: 'description' });
 
 const getDefaultAcquisitionUnit = ({
   name,
@@ -269,5 +271,45 @@ export default {
     } else {
       cy.expect([Button('Collapse all').exists(), Button('Expand all').absent()]);
     }
+  },
+
+  fillDescription: (description) => {
+    cy.do(descriptionTextField.fillIn(description));
+  },
+
+  verifyDescriptionValue: (description) => {
+    cy.expect(descriptionTextField.has({ value: description }));
+  },
+
+  verifyDescriptionInDetailsPane: (description) => {
+    cy.expect(auPaneDetails.find(HTML(including(description))).exists());
+  },
+
+  clickEditOption: () => {
+    cy.do(Button('Edit').click());
+  },
+
+  clickSaveButton: () => {
+    cy.do(saveAUButton.click());
+  },
+
+  verifyDescriptionFieldExists: () => {
+    cy.expect(descriptionTextField.exists());
+  },
+
+  verifyDescriptionFieldEmpty: () => {
+    cy.expect(descriptionTextField.has({ value: '' }));
+  },
+
+  fillName: (name) => {
+    cy.do(nameTextField.fillIn(name));
+  },
+
+  getAcquisitionUnitIdFromUrl: () => {
+    return cy.url().then((url) => {
+      const parts = url.split('/');
+      const idIndex = parts.findIndex((part) => part === 'acquisition-units') + 1;
+      return parts[idIndex];
+    });
   },
 };
