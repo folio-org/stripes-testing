@@ -12,6 +12,7 @@ import {
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -51,6 +52,20 @@ describe('Eureka', () => {
       capabilitySet.table = capabilitySet.type;
     });
 
+    let assignUser1Data;
+    let assignUser2Data;
+
+    before('Create users', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      cy.createTempUser([]).then((userProperties) => {
+        assignUser1Data = userProperties;
+      });
+      cy.createTempUser([]).then((userProperties) => {
+        assignUser2Data = userProperties;
+      });
+    });
+
     after('Delete users, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
@@ -60,10 +75,12 @@ describe('Eureka', () => {
       cy.getUserRoleIdByNameApi(testData.roleNameUpdated).then((roleId) => {
         if (roleId) cy.deleteAuthorizationRoleApi(roleId, true);
       });
+      Users.deleteViaApi(assignUser1Data.userId);
+      Users.deleteViaApi(assignUser2Data.userId);
     });
 
     it(
-      'C877077 ECS | Share the authorization role immediately after creation, and edit it right after sharing (consortia) (thunderjet)',
+      'C877077 ECS | Share an authorization role immediately after creation, edit it after sharing, and then delete it (consortia) (thunderjet)',
       { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C877077'] },
       () => {
         cy.loginAsAdmin();
@@ -129,6 +146,40 @@ describe('Eureka', () => {
         [...testData.originalCapabilitySets, ...testData.newCapabilitySets].forEach((set) => {
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
         });
+
+        SelectMembers.selectMember(tenantNames.central);
+        AuthorizationRoles.searchRole(testData.roleNameUpdated);
+        AuthorizationRoles.clickOnRoleName(testData.roleNameUpdated);
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleNameUpdated);
+
+        AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+        AuthorizationRoles.clickAssignUsersButton();
+        AuthorizationRoles.selectUserInModal(assignUser1Data.username);
+        AuthorizationRoles.selectUserInModal(assignUser2Data.username);
+        AuthorizationRoles.clickSaveInAssignModal();
+        AuthorizationRoles.checkUsersAccordion(2);
+        AuthorizationRoles.verifyAssignedUser(
+          assignUser1Data.lastName,
+          assignUser1Data.firstName,
+          true,
+        );
+        AuthorizationRoles.verifyAssignedUser(
+          assignUser2Data.lastName,
+          assignUser2Data.firstName,
+          true,
+        );
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleNameUpdated);
+
+        AuthorizationRoles.clickDeleteRole(testData.roleNameUpdated);
+        AuthorizationRoles.confirmDeleteRole(testData.roleNameUpdated);
+
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationRoles.searchRole(testData.roleNameUpdated);
+        AuthorizationRoles.checkRoleFound(testData.roleNameUpdated, false);
+
+        SelectMembers.selectMember(tenantNames.university);
+        AuthorizationRoles.searchRole(testData.roleNameUpdated);
+        AuthorizationRoles.checkRoleFound(testData.roleNameUpdated, false);
       },
     );
   });
