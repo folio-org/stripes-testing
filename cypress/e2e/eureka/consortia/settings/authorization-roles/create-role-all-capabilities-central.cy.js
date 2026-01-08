@@ -94,7 +94,7 @@ describe('Eureka', () => {
 
       it(
         'C965843 Eureka | User can create role with all capabs/sets on Central tenant (eureka)',
-        { tags: ['criticalPath', 'eureka', 'C965843'] },
+        { tags: ['criticalPathECS', 'eureka', 'C965843'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);
