@@ -43,11 +43,12 @@ export default {
       .then(({ body }) => body);
   },
 
-  deleteNoteTypeViaApi(noteTypeId) {
+  deleteNoteTypeViaApi(noteTypeId, ignoreErrors = false) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `note-types/${noteTypeId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
@@ -59,6 +60,20 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body.noteTypes);
+  },
+
+  verifyNoteTypeIsNotAssigned(noteTypeId) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'note-types',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const foundNoteType = response.body.noteTypes.find((nt) => nt.id === noteTypeId);
+        expect(foundNoteType.usage.isAssigned).to.equal(false);
+        return foundNoteType;
+      });
   },
 
   waitLoading: () => {
