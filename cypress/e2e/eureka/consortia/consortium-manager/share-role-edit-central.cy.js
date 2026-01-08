@@ -101,7 +101,6 @@ describe('Eureka', () => {
           capabSetsToAssignMembers,
         );
         cy.setTenant(Affiliations.University);
-        cy.wait(10_000);
         cy.assignCapabilitiesToExistingUser(
           testUser.userId,
           capabsToAssign,
@@ -133,7 +132,9 @@ describe('Eureka', () => {
       'C523609 ECS | Eureka | Share authorization role and edit it from central tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523609'] },
       () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.waitForAuthRefresh(() => {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        });
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         ConsortiumManagerApp.clickSelectMembers();

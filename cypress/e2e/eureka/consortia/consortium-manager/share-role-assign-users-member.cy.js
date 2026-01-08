@@ -143,7 +143,9 @@ describe('Eureka', () => {
       'C523606 ECS | Eureka | Share authorization role and assign users to it from member tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523606'] },
       () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.waitForAuthRefresh(() => {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        });
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         ConsortiumManagerApp.clickSelectMembers();
@@ -203,9 +205,14 @@ describe('Eureka', () => {
         AuthorizationRoles.closeAssignModal();
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
-        cy.login(userBData.username, userBData.password);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        cy.waitForAuthRefresh(() => {
+          cy.login(userBData.username, userBData.password);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
+        });
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -214,9 +221,11 @@ describe('Eureka', () => {
         AuthorizationRoles.closeAssignModal();
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
-        cy.login(userAData.username, userAData.password);
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.waitForAuthRefresh(() => {
+          cy.login(userAData.username, userAData.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        });
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         ConsortiumManagerApp.clickSelectMembers();

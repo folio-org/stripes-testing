@@ -34,12 +34,12 @@ describe('Eureka', () => {
       newCapabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
+          resource: 'Batch-Groups',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
+          resource: 'Finance',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
       ],
@@ -82,8 +82,10 @@ describe('Eureka', () => {
       'C877077 ECS | Share an authorization role immediately after creation, edit it after sharing, and then delete it (consortia) (thunderjet)',
       { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C877077'] },
       () => {
-        cy.loginAsAdmin();
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        });
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         SelectMembers.selectAllMembers();

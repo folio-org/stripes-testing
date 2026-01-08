@@ -103,8 +103,10 @@ describe('Eureka', () => {
       { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C850011'] },
       () => {
         cy.resetTenant();
-        cy.login(userData.username, userData.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.waitForAuthRefresh(() => {
+          cy.login(userData.username, userData.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        });
         ConsortiumManagerApp.waitLoading();
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         SelectMembers.selectAllMembers();
