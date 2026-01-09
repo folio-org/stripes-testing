@@ -668,6 +668,8 @@ export default {
 
   verifyNewTitlePageOpened() {
     cy.expect(Section({ id: 'pane-title-form' }).exists());
+  },
+
   getTitleByPoLineIdViaApi(poLineId) {
     return cy
       .okapiRequest({
