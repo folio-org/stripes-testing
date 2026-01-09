@@ -100,8 +100,8 @@ describe(
     });
 
     it(
-      'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C405555'] },
+      'C788689 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C788689'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByAuthorityControl();
