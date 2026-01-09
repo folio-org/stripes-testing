@@ -1,4 +1,13 @@
-import { Button, Section, TextField, matching } from '../../../../interactors';
+import {
+  Button,
+  Section,
+  TextField,
+  MultiSelect,
+  MultiSelectOption,
+  including,
+  not,
+  matching,
+} from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ReceivingStates from './receivingStates';
@@ -12,6 +21,7 @@ const itemDetailsFields = {
   publisher: itemDetailsSection.find(TextField({ name: 'publisher' })),
   publishedDate: itemDetailsSection.find(TextField({ name: 'publishedDate' })),
   edition: itemDetailsSection.find(TextField({ name: 'edition' })),
+  acquisitionUnits: itemDetailsSection.find(MultiSelect({ id: 'title-acq-units' })),
 };
 
 const lineDetailsFields = {
@@ -63,6 +73,27 @@ export default {
     }
     if (edition) {
       cy.do(itemDetailsFields.edition.fillIn(edition));
+    }
+  },
+  selectAcquisitionUnit(acquisitionUnitName) {
+    cy.do(itemDetailsFields.acquisitionUnits.open());
+    cy.do(itemDetailsFields.acquisitionUnits.fillIn(acquisitionUnitName));
+    cy.do(MultiSelectOption(acquisitionUnitName).click());
+  },
+  removeAcquisitionUnit(acquisitionUnitName) {
+    cy.do(itemDetailsFields.acquisitionUnits.find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
+    cy.expect(
+      itemDetailsFields.acquisitionUnits.has({ selected: not(including(acquisitionUnitName)) }),
+    );
+  },
+  verifyAcquisitionUnitDisplayed(acquisitionUnitName, shouldExist = true) {
+    if (shouldExist) {
+      cy.expect(
+        itemDetailsFields.acquisitionUnits.has({ selected: including(acquisitionUnitName) }),
+      );
+    } else {
+      cy.expect(itemDetailsFields.acquisitionUnits.has({ selected: [] }));
     }
   },
   clickCancelButton() {
