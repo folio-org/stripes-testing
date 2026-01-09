@@ -20,6 +20,7 @@ export const APPLICATION_NAMES = {
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
   LINKED_DATA_EDITOR: 'Linked Data Editor',
+  NOTES: 'Notes',
 };
 
 export const REQUEST_METHOD = {
