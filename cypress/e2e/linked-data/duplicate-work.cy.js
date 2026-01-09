@@ -13,6 +13,7 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
+import InstanceProfileModal from '../../support/fragments/linked-data/instanceProfileModal';
 
 describe('Citation: duplicate resource', () => {
   const testData = {
@@ -56,8 +57,6 @@ describe('Citation: duplicate resource', () => {
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
-    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -89,7 +88,7 @@ describe('Citation: duplicate resource', () => {
 
   it(
     'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'C624234', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
@@ -107,6 +106,8 @@ describe('Citation: duplicate resource', () => {
       // add instance
       // click on new instance button since resource was duplicated without instances
       EditResource.openNewInstanceFormViaNewInstanceButton();
+      InstanceProfileModal.waitLoading();
+      InstanceProfileModal.selectDefaultOption();
       // check that selection modal is shown with 'Monograhphs' profile selected by default
       EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);

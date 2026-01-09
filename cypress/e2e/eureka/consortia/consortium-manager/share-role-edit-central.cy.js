@@ -152,7 +152,7 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName, false);
-        AuthorizationRoles.shareRole(testData.roleName);
+        AuthorizationRoles.shareRole(testData.roleName, { verifyModal: true });
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
         testData.originalCapabilitySets.forEach((set) => {
@@ -179,9 +179,7 @@ describe('Eureka', () => {
           assignUserCentralData.firstName,
         );
 
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        }, 20_000);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleNameUpdated);
