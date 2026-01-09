@@ -73,6 +73,7 @@ describe('Bulk-edit', () => {
                       instance: {
                         instanceTypeId,
                         title: folioInstance.title,
+                        languages: ['fin'],
                       },
                       holdings: [
                         {

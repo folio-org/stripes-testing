@@ -338,6 +338,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             true,
@@ -369,7 +371,7 @@ describe('Bulk-edit', () => {
           itemBarcodes.forEach((barcode) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
               barcode,
-              [initialHeaderValues[1]],
+              initialHeaderValues,
             );
           });
           collegeItemBarcodes.forEach((barcode) => {

@@ -114,6 +114,9 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
           `WARNING,${item.holdingId},${errorMessage}`,
         ]);
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.verifyBulkEditPaneAfterRecordTypeSelected();
+        BulkEditSearchPane.verifyFirstOptionRecordIdentifierDropdown('Select record identifier');
       },
     );
   });

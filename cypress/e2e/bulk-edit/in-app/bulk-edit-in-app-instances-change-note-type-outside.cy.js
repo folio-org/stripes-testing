@@ -216,13 +216,22 @@ describe('Bulk-edit', () => {
         );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyCellWithContentAbsentsInChangesAccordion(
+          marcInstance.hrid,
+          marcInstance.instanceName,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('With note', notes.adminNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Reproduction note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Administrative note',
           `${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
         );
+        BulkEditSearchPane.verifyErrorLabel(2);
         BulkEditSearchPane.verifyReasonForError(reasonForError);
+        BulkEditSearchPane.verifyReasonForError(
+          ERROR_MESSAGES.ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC,
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
@@ -244,6 +253,7 @@ describe('Bulk-edit', () => {
             },
           ],
         );
+        BulkEditFiles.verifyCSVFileRowsRecordsNumber(changedRecordsFileName, 1);
         ExportFile.verifyFileIncludes(changedRecordsFileName, ['Reproduction note'], false);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
