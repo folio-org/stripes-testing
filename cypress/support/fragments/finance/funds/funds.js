@@ -1043,7 +1043,7 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
+    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then((fiscalYearResponse) => {
       ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
       cy.createLedgerApi({
         ...ledger,

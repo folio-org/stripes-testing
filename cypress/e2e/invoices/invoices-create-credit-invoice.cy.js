@@ -16,6 +16,7 @@ describe('Invoices', () => {
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const fund = { ...NewFund.defaultFund };
   const subtotalValue = 100;
+  const actualFiscalYearCode = `FY${new Date().getFullYear()}`;
 
   before(() => {
     cy.getAdminToken();
@@ -58,7 +59,7 @@ describe('Invoices', () => {
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
       Funds.varifyDetailsInTransaction(
-        'FY2025',
+        actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,
         'Pending payment',
@@ -75,7 +76,7 @@ describe('Invoices', () => {
       TopMenuNavigation.openAppFromDropdown('Finance');
       Funds.selectTransactionInList('Credit');
       Funds.varifyDetailsInTransactionFundTo(
-        'FY2025',
+        actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,
         'Credit',
