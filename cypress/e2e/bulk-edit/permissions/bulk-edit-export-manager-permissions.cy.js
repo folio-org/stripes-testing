@@ -121,8 +121,7 @@ const capabSetsToUnselect = [
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userUUIDsFileName}`;
 
-// Obsolete from Trillium (MODEXPW-598)
-describe.skip('Bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([])
@@ -164,8 +163,8 @@ describe.skip('Bulk-edit', () => {
     });
 
     it(
-      'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
-      { tags: [] },
+      'C788697 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C788697'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.searchByBulkEdit();
