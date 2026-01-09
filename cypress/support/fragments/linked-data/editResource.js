@@ -1,5 +1,3 @@
-import newInstance from './newInstance';
-
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
 const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
@@ -71,13 +69,11 @@ export default {
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
-    newInstance.waitLoading();
   },
 
   openNewInstanceFormViaNewInstanceButton() {
     cy.xpath(newInstanceButton).should('be.visible');
     cy.xpath(newInstanceButton).click();
-    newInstance.waitLoading();
   },
 
   setEdition(edition) {
@@ -116,7 +112,7 @@ export default {
   },
 
   switchToSearchTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-search']").click();
+    cy.xpath("//button[@data-testid='id-search-segment-button-authorities:search']").click();
   },
 
   switchToBrowseTabMarcAuthModal() {
@@ -172,5 +168,9 @@ export default {
     cy.xpath(`//strong[@class='heading' and contains(text(), '${profileName}')]`)
       .scrollIntoView()
       .should('be.visible');
+  },
+
+  clickCloseResourceButton() {
+    cy.xpath('//button[@data-testid="close-record-button"]').click();
   },
 };

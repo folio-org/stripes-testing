@@ -8,8 +8,8 @@ import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 
 let marcInstanceId;
 const marcFile = {
-  marc: 'oneMarcBib.mrc',
-  fileNameImported: `testMarcFileC375185.${getRandomPostfix()}.mrc`,
+  marc: 'marcBibFileForC375181.mrc',
+  fileNameImported: `testMarcFileC375184.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 };
 
@@ -19,39 +19,28 @@ describe('OAI-PMH', () => {
       cy.getAdminToken();
       Behavior.updateBehaviorConfigViaApi(
         BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
-        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.INVENTORY,
         BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
         BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
       );
 
-      DataImport.uploadFileViaApi(...Object.values(marcFile))
-        .then((response) => {
-          marcInstanceId = response[0].instance.id;
-        })
-        .then(() => {
-          cy.getInstanceById(marcInstanceId).then((instanceData) => {
-            instanceData.discoverySuppress = true;
-            cy.updateInstance(instanceData);
-          });
-        });
+      DataImport.uploadFileViaApi(...Object.values(marcFile)).then((response) => {
+        marcInstanceId = response[0].instance.id;
+      });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(marcInstanceId);
+      Behavior.updateBehaviorConfigViaApi();
     });
 
     it(
-      'C375185 GetRecord: Verify MARC instances suppressed from discovery in case Transfer suppressed records with discovery flag (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375185'] },
+      'C375184 NEGATIVE: GetRecord: Verify that MARC instances are not retrieved in responce (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C375184', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
-          OaiPmh.verifyMarcField(
-            response,
-            marcInstanceId,
-            '999',
-            { ind1: 'f', ind2: 'f' },
-            { t: '1', i: marcInstanceId },
-          );
+          OaiPmh.verifyIdDoesNotExistError(response);
         });
       },
     );

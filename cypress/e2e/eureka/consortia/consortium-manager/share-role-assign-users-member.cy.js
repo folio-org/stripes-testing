@@ -41,6 +41,7 @@ describe('Eureka', () => {
       CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
       CapabilitySets.consortiaSharingRolesAllItemCreate,
+      CapabilitySets.consortiaSharingRolesAllItemDelete,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
     ];
     const capabSetsToAssignCollege = [
@@ -132,7 +133,7 @@ describe('Eureka', () => {
       cy.getAdminToken();
       Users.deleteViaApi(userAData.userId);
       Users.deleteViaApi(userBData.userId);
-      cy.deleteAuthorizationRoleApi(testData.roleId);
+      cy.deleteAuthorizationRoleApi(testData.roleId, true);
       cy.setTenant(Affiliations.College);
       Users.deleteViaApi(assignUser1Data.userId);
       Users.deleteViaApi(assignUser2Data.userId);
@@ -158,9 +159,7 @@ describe('Eureka', () => {
         AuthorizationRoles.clickActionsButton(testData.roleName);
         AuthorizationRoles.checkShareToAllButtonShown(false);
 
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        }, 20_000);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
@@ -205,9 +204,7 @@ describe('Eureka', () => {
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
         cy.login(userBData.username, userBData.password);
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-        }, 20_000);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
@@ -216,6 +213,34 @@ describe('Eureka', () => {
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.closeAssignModal();
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
+
+        cy.login(userAData.username, userAData.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        ConsortiumManagerApp.clickSelectMembers();
+        SelectMembers.checkMember(tenantNames.central, true);
+        SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.saveAndClose();
+        SelectMembers.selectMember(tenantNames.central);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleName);
+        AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName);
+        AuthorizationRoles.clickDeleteRole(testData.roleName);
+        AuthorizationRoles.confirmDeleteRole(testData.roleName);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleName);
+        AuthorizationRoles.checkRoleFound(testData.roleName, false);
+
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleName);
+        AuthorizationRoles.checkRoleFound(testData.roleName, false);
       },
     );
   });

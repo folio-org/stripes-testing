@@ -124,7 +124,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'C633470', 'linked-data-editor'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -142,7 +142,7 @@ describe('Citation: MARC Authority integration', () => {
       });
       QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
       QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndCloseButton();
       cy.wait(1500);
       MarcAuthority.verifyAfterSaveAndClose();
       QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

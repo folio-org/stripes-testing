@@ -55,7 +55,7 @@ describe('Citation: LDE permissions', () => {
 
   it(
     'C651426 [User journey] LDE - non-monograph format (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'C651426', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance and limit search to MARC type
       InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.MARC);

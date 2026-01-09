@@ -1,5 +1,6 @@
 import { LOAN_TYPE_NAMES, LOCATION_NAMES, MATERIAL_TYPE_NAMES } from '../../../support/constants';
 import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -35,7 +36,12 @@ describe('OAI-PMH', () => {
   describe('Get records', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;

@@ -678,6 +678,24 @@ export default {
 
   verifyNewTitlePageOpened() {
     cy.expect(Section({ id: 'pane-title-form' }).exists());
+  getTitleByPoLineIdViaApi(poLineId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/titles',
+        searchParams: {
+          query: `poLineId==${poLineId}`,
+        },
+      })
+      .then(({ body }) => (body?.titles?.length > 0 ? body.titles[0] : null));
+  },
+
+  updateTitleViaApi(title) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `orders/titles/${title.id}`,
+      body: title,
+    });
   },
 
   getExistingInstanceTitle() {

@@ -821,6 +821,9 @@ export default {
   uiReceivingAssignAcquisitionUnitsToNewTitle: {
     internal: 'ui-receiving.acq-units.assignment.assign',
     gui: 'Receiving: Assign acquisition units to new receiving title',
+  uiReceivingManageAcquisitionUnits: {
+    internal: 'ui-receiving.acq-units.assignment.manage',
+    gui: 'Receiving: Manage acquisition units',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
