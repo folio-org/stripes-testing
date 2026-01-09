@@ -44,6 +44,7 @@ describe('Eureka', () => {
       CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
       CapabilitySets.consortiaSharingRolesAllItemCreate,
+      CapabilitySets.consortiaSharingRolesAllItemDelete,
       CapabilitySets.capabilities,
       CapabilitySets.roleCapabilitySets,
     ];
@@ -99,15 +100,13 @@ describe('Eureka', () => {
     });
 
     it(
-      'C850011 ECS | Duplicated authorization role can be shared (consortia) (thunderjet)',
+      'C850011 ECS | Duplicated authorization role can be shared and deleted (consortia) (thunderjet)',
       { tags: ['extendedPathECS', 'thunderjet', 'eureka', 'C850011'] },
       () => {
         cy.resetTenant();
-        cy.waitForAuthRefresh(() => {
-          cy.login(userData.username, userData.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-          ConsortiumManagerApp.waitLoading();
-        }, 20_000);
+        cy.login(userData.username, userData.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.waitLoading();
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         SelectMembers.selectAllMembers();
         ConsortiumManagerApp.verifyMembersSelected(2);
@@ -146,6 +145,19 @@ describe('Eureka', () => {
           AuthorizationRoles.verifyCapabilityCheckboxChecked(capab);
         });
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+
+        SelectMembers.selectMember(tenantNames.central);
+        AuthorizationRoles.searchRole(duplicateRoleNamePart);
+        AuthorizationRoles.clickOnRoleName(including(duplicateRoleNamePart));
+        AuthorizationRoles.checkUserInGeneralInformation(CONSORTIA_SYSTEM_USER);
+        AuthorizationRoles.checkRoleCentrallyManaged(including(duplicateRoleNamePart));
+
+        AuthorizationRoles.clickDeleteRole(including(duplicateRoleNamePart));
+        AuthorizationRoles.confirmDeleteRole(including(duplicateRoleNamePart));
+
+        SelectMembers.selectMember(tenantNames.college);
+        AuthorizationRoles.searchRole(duplicateRoleNamePart);
+        AuthorizationRoles.checkRoleFound(including(duplicateRoleNamePart), false);
       },
     );
   });
