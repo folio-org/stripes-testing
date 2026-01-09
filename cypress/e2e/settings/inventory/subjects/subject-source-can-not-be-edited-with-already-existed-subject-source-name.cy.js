@@ -26,6 +26,9 @@ describe('Inventory', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        cy.getAdminUserDetails().then((admin) => {
+          testData.adminUser = admin.username;
+        });
         SubjectSources.createViaApi({
           source: firstLocalSubjectSource.source,
           name: firstLocalSubjectSource.name,
@@ -62,6 +65,11 @@ describe('Inventory', () => {
         "C543864 Check that Subject source can't be edited with already existed subject source name (folijet)",
         { tags: ['extendedPath', 'folijet', 'C543864'] },
         () => {
+          SubjectSources.verifySubjectSourceExists(
+            firstLocalSubjectSource.name,
+            firstLocalSubjectSource.source,
+            testData.adminUser,
+          );
           SubjectSources.editSubjectSourceName(
             firstLocalSubjectSource.name,
             secondLocalSubjectSource.name,
