@@ -184,8 +184,8 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.languages);
           QueryModal.verifySelectedField(instanceFieldValues.languages);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.fillInValueMultiselect('cze');
-          QueryModal.fillInValueMultiselect('por');
+          QueryModal.fillInValueMultiselect('Czech');
+          QueryModal.fillInValueMultiselect('Portuguese');
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 
