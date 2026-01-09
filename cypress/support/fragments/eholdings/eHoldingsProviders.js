@@ -39,6 +39,18 @@ const tagsSection = Section({ id: 'providerShowTags' });
 const closeButton = Button({ icon: 'times' });
 
 export default {
+  getProvidersViaApi: ({ count = 1 } = {}) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `eholdings/providers?filter[name]=*&page=1&count=${count}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.data || [];
+      });
+  },
+
   waitLoading: () => {
     cy.expect(
       resultSection
