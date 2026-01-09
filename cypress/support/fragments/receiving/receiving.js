@@ -4,7 +4,6 @@ import {
   Accordion,
   Button,
   Checkbox,
-  KeyValue,
   Link,
   Modal,
   MultiColumnList,
@@ -19,6 +18,7 @@ import {
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import ReceivingDetails from './receivingDetails';
 
@@ -633,32 +633,17 @@ export default {
       Modal('Select instance').find(Button('Search')).click(),
     ]);
     cy.wait(2000);
-    return cy
-      .then(() => Modal('Select instance')
+    cy.do(
+      Modal('Select instance')
         .find(MultiColumnListRow({ index: 0 }))
-        .perform((element) => {
-          const titleText = element.querySelector('[class*="mclCell"]:first-child')?.textContent;
-          return titleText;
-        }))
-      .then((selectedTitle) => {
-        cy.do(
-          Modal('Select instance')
-            .find(MultiColumnListRow({ index: 0 }))
-            .click(),
-        );
-        return cy.wrap(selectedTitle);
-      });
+        .click(),
+    );
   },
 
   fillPOLNumberLookup(polNumber) {
     cy.do(Button('POL number look-up').click());
     cy.wait(1000);
-    cy.do([
-      Modal('Select order lines')
-        .find(TextField({ id: 'input-record-search' }))
-        .fillIn(polNumber),
-      Modal('Select order lines').find(Button('Search')).click(),
-    ]);
+    SelectOrderLinesModal.searchByName(polNumber);
     cy.wait(2000);
     cy.do(
       Modal('Select order lines')
@@ -691,15 +676,24 @@ export default {
     cy.do(Accordion({ id: 'information' }).clickHeader());
   },
 
-  verifyAcquisitionUnitsNotSpecified() {
-    cy.expect(
-      Section({ id: 'information' })
-        .find(KeyValue('Acquisition units'))
-        .has({ value: including('No value set') }),
-    );
-  },
-
   verifyNewTitlePageOpened() {
     cy.expect(Section({ id: 'pane-title-form' }).exists());
+  },
+
+  getExistingInstanceTitle() {
+    return cy
+      .okapiRequest({
+        path: 'inventory/instances',
+        searchParams: {
+          query: 'title="*" sortby title',
+          limit: 100,
+        },
+      })
+      .then((response) => {
+        const simpleInstance = response.body.instances.find(
+          (inst) => /^[a-zA-Z0-9\s]+$/.test(inst.title) && inst.title.length < 50,
+        );
+        return simpleInstance?.title || response.body.instances[0]?.title || 'Default Title';
+      });
   },
 };

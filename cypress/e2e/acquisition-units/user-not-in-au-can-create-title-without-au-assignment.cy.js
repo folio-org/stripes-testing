@@ -12,6 +12,7 @@ import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../suppo
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../support/fragments/receiving/receiving';
+import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 
 describe('Acquisition Units', () => {
@@ -27,11 +28,15 @@ describe('Acquisition Units', () => {
   let user;
   let servicePointId;
   let location;
-  let orderLineTitle;
+  let instanceTitle;
   let orderLineNumber;
 
   before(() => {
     cy.getAdminToken();
+
+    Receiving.getExistingInstanceTitle().then((title) => {
+      instanceTitle = title;
+    });
 
     AcquisitionUnits.createAcquisitionUnitViaApi({
       name: defaultAcquisitionUnit.name,
@@ -126,15 +131,15 @@ describe('Acquisition Units', () => {
 
       Receiving.checkAcquisitionUnitsDropdown(defaultAcquisitionUnit.name, false);
 
-      Receiving.fillTitleLookup('*').then((selectedTitle) => {
-        orderLineTitle = selectedTitle;
-      });
+      Receiving.fillTitleLookup(instanceTitle);
       Receiving.fillPOLNumberLookup(orderLineNumber);
 
-      Receiving.clickSaveAndCloseInNewTitle(orderLineTitle, orderLineNumber);
+      Receiving.clickSaveAndCloseInNewTitle(instanceTitle, orderLineNumber);
 
       Receiving.expandTitleInformationAccordion();
-      Receiving.verifyAcquisitionUnitsNotSpecified();
+      ReceivingDetails.checkReceivingDetails({
+        information: [{ key: 'Acquisition units', value: 'No value set' }],
+      });
     },
   );
 });
