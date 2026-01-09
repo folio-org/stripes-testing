@@ -926,8 +926,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466323 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466323'] },
+      'C794531 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794531'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
@@ -1048,8 +1048,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468142 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468142'] },
+      'C794534 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794534'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
@@ -1167,8 +1167,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468141'] },
+      'C794532 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794532'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1284,8 +1284,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468145'] },
+      'C794535 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794535'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1401,8 +1401,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468140 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468140'] },
+      'C794533 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794533'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1518,8 +1518,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468146 Select non-exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468146'] },
+      'C794536 Select non-exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C794536'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,

@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423528 Create a new MARC authority record with "Local" authority file selected (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C423528'] },
+        'C813601 Create a new MARC authority record with "Local" authority file selected (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C813601'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);

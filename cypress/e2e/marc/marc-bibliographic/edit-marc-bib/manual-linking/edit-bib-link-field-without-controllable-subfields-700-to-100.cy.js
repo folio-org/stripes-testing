@@ -27,7 +27,7 @@ describe('MARC', () => {
           authorityField100Content: `$a AT_C773208_MarcAuthority_${randomPostfix}`,
           bibField700Content: '$e letterer. $j not important value $2 tes34',
           authorityHeading: `AT_C773208_MarcAuthority_${randomPostfix}`,
-          searchQuery: 'not important value',
+          searchQuery: '',
           browseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
           contributorAccordion: 'Contributor',
         };
