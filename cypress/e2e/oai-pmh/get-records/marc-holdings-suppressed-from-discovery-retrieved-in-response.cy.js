@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
 import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -31,7 +32,12 @@ describe('OAI-PMH', () => {
   describe('Get records', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
 
       cy.createTempUser([
         permissions.inventoryAll.gui,
@@ -75,6 +81,7 @@ describe('OAI-PMH', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(marcInstance.id);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${marcHoldingsFile.editedFileName}`);
