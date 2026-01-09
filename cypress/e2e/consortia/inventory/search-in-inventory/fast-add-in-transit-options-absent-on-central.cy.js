@@ -8,9 +8,8 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-// import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-// import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
-// import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
+import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -18,7 +17,8 @@ describe('Inventory', () => {
       const randomPostfix = getRandomPostfix();
       const instancePrefix = `AT_C402764_Instance_${randomPostfix}`;
       const subjectPrefix = `AT_C402764_Subject_${randomPostfix}`;
-      const subjectSearchOption = 'Subject';
+      const searchQuery = '*';
+      const browseOption = 'Subjects';
       const subjectsData = [
         {
           subjectValue: `${subjectPrefix} 1 Shared Marc`,
@@ -118,7 +118,6 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventorySearchAndFilter.selectSearchOption(subjectSearchOption);
           });
       });
 
@@ -136,12 +135,57 @@ describe('Inventory', () => {
         'C402764 "New fast add record" and "In transit items report (CSV)" actions are not displayed in "Inventory" app - "Central" tenant (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire', 'C402764'] },
         () => {
-          // InventorySearchAndFilter.fillInSearchQuery(`${subjectPrefix}*`);
-          // InventorySearchAndFilter.clickSearch();
-          // sharedInstanceIndexes.forEach((instanceIndex) => {
-          //   InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-          // });
-          // InventorySearchAndFilter.checkRowsCount(sharedInstanceIndexes.length);
+          function checkOptionsShown(areShown) {
+            InventoryInstances.clickActionsButton();
+            InventoryActions.optionsAreShown(
+              [
+                InventoryActions.options.newFastAddRecord,
+                InventoryActions.options.InTransitItemsReport,
+              ],
+              areShown,
+            );
+            InventoryActions.close();
+          }
+
+          checkOptionsShown(false);
+
+          InventoryInstances.searchByTitle(searchQuery);
+          InventorySearchAndFilter.verifyResultListExists();
+          checkOptionsShown(false);
+
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.holdingsTabIsDefault();
+          checkOptionsShown(false);
+
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.itemTabIsDefault();
+          checkOptionsShown(false);
+
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.validateBrowseToggleIsSelected();
+          InventorySearchAndFilter.selectBrowseOption(browseOption);
+          InventorySearchAndFilter.checkBrowseOptionSelected(browseOption);
+
+          BrowseSubjects.waitForSubjectToAppear(subjectsData[0].subjectValue);
+          BrowseSubjects.browse(subjectsData[0].subjectValue);
+          BrowseSubjects.checkValueIsBold(subjectsData[0].subjectValue);
+          BrowseSubjects.openInstance({ name: subjectsData[0].subjectValue });
+          InventoryInstances.waitLoading();
+          checkOptionsShown(false);
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          checkOptionsShown(true);
+
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.holdingsTabIsDefault();
+          InventoryInstances.searchByTitle(searchQuery);
+          InventorySearchAndFilter.verifyResultListExists();
+          checkOptionsShown(true);
+
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.itemTabIsDefault();
+          checkOptionsShown(true);
         },
       );
     });
