@@ -15,6 +15,7 @@ import {
   Checkbox,
   Pane,
 } from '../../../../interactors';
+import { pluralize } from '../../../../scripts/helpers/tests.helper';
 
 const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
@@ -36,7 +37,7 @@ const embeddedTableHeadersMap = {
     'URL relationship',
     'URI',
     'Link text',
-    'Material specified',
+    'Materials specified',
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
@@ -578,11 +579,11 @@ export default {
         .invoke('text')
         .then((text) => {
           const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
-          const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
-          expect(text.startsWith(`Query returns ${totalRecords} records.`)).to.equal(true);
-          expect(previewLabel).to.equal(
-            `Preview of first ${Math.min(previewRecords, 100)} records.`,
-          );
+          expect(
+            text.startsWith(
+              `Query returns ${totalRecords} ${pluralize(totalRecords, 'record')}. Previewing the first ${previewRecords} ${pluralize(previewRecords, 'record')}`,
+            ),
+          ).to.equal(true);
         });
     });
   },
