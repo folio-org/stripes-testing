@@ -111,7 +111,6 @@ describe('Data Export', () => {
             },
           );
         });
-        cy.pause();
 
         // Step 3-4: Send GET request /data-export/download-record/{recordId} against Member tenant with idType=INSTANCE and save responses to .mrc files
         cy.withinTenant(Affiliations.College, () => {
