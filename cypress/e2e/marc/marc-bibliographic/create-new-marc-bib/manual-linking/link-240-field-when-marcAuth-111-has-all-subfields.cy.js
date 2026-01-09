@@ -107,8 +107,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569598 Link "240" field with all subfields (except $0) when MARC authority 111 has all subfields (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C569598'] },
+          'C736678 Link "240" field when MARC authority 111 has all subfields (spitfire)',
+          { tags: ['criticalPath', 'spitfire', 'C736678'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateLDR06And07Positions();

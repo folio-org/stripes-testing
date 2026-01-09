@@ -112,8 +112,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374159 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C374159'] },
+        'C729204 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C729204'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
           MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);

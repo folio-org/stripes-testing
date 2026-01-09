@@ -111,8 +111,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466081 Search by "Barcode" field of "Item" record is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466081'] },
+        'C729565 Search by "Barcode" field of "Item" record is case-insensitive (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C729565'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
