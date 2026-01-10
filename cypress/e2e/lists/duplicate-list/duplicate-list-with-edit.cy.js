@@ -76,6 +76,8 @@ describe('Lists', () => {
         Lists.changeQueryBoolValue(false);
         Lists.testQuery();
         Lists.runQueryAndSave();
+        // workaround
+        Lists.closeWithoutSaving();
 
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();

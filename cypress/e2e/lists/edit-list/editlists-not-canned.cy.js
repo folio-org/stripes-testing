@@ -121,7 +121,7 @@ describe('Lists', () => {
         );
         Lists.saveList();
         cy.contains('Inactive').should('be.visible');
-        cy.contains('No records found').should('be.visible');
+        cy.contains('0 records found').should('be.visible');
       },
     );
 

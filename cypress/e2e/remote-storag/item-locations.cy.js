@@ -11,14 +11,16 @@ import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId;
+const user = {};
 let sourceId;
 
 describe('Remote Storage', () => {
   before('create inventory instance', () => {
     cy.createTempUser([Permissions.inventoryAll.gui, Permissions.remoteStorageCRUD.gui]).then(
       (userProperties) => {
-        userId = userProperties.userId;
+        user.userId = userProperties.userId;
+        user.username = userProperties.username;
+        user.password = userProperties.password;
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -32,7 +34,7 @@ describe('Remote Storage', () => {
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
-              query: `username=${userProperties.username}`,
+              query: `username=${user.username}`,
             });
           })
           .then(() => {
@@ -69,17 +71,18 @@ describe('Remote Storage', () => {
                 ],
               ],
             });
-          })
-          .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.login(userProperties.username, userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventorySearchAndFilter.waitLoading,
-              });
-            });
           });
       },
     );
+  });
+
+  beforeEach(() => {
+    cy.waitForAuthRefresh(() => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventorySearchAndFilter.waitLoading,
+      });
+    });
   });
 
   after('Delete all data', () => {
@@ -92,7 +95,7 @@ describe('Remote Storage', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
-    Users.deleteViaApi(userId);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
@@ -141,6 +144,7 @@ describe('Remote Storage', () => {
       // select instance
       InventorySearchAndFilter.switchToItem();
       cy.wait(2000);
+
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
