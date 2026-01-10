@@ -88,8 +88,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422250 Verify Bulk Edit actions for electronic access fields (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422250'] },
+      'C877128 Verify Bulk Edit actions for electronic access fields (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C877128'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

@@ -23,8 +23,7 @@ const item = {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const itemMatchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 
-// Obsolete from Trillium (MODEXPW-598)
-describe.skip('Bulk-edit', () => {
+describe('Bulk-edit', () => {
   describe('Permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -75,8 +74,8 @@ describe.skip('Bulk-edit', () => {
     });
 
     it(
-      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: [] },
+      'C788694 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C788694'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

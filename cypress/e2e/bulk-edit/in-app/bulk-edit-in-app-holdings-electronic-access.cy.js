@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423494 Verify rendering Holdings electronic access properties while bulk edit Holdings electronic access (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423494'] },
+      'C877129 Verify rendering Holdings electronic access properties while bulk edit Holdings electronic access (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C877129'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

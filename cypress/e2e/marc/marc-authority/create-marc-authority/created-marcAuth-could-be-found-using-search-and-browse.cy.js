@@ -78,7 +78,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C423561 Created MARC authority record could be found using search and browse by 010, 1XX, 4XX, 5XX fields (spitfire)',
+        'C813624 Created MARC authority record could be found using search and browse by 010, 1XX, 4XX, 5XX fields (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C423561'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
