@@ -3,6 +3,8 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 
 const deletePieceModal = Modal({ id: 'delete-piece-confirmation' });
+const deletePieceModalSelector = '#delete-piece-confirmation';
+const confirmButton = Button('Confirm');
 
 const cancelButton = deletePieceModal.find(Button('Cancel'));
 const deleteHoldingsButton = deletePieceModal.find(Button('Delete Holdings and Item'));
@@ -33,6 +35,28 @@ export default {
   },
   clickDeleteItemButton({ pieceDeleted = true } = {}) {
     this.clickDeleteButton({ button: deleteItemButton, pieceDeleted });
+  },
+  clickConfirmButton({ pieceDeleted = true } = {}) {
+    cy.expect(confirmButton.has({ disabled: false }));
+    cy.do(confirmButton.click());
+
+    if (pieceDeleted) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(ReceivingStates.pieceDeletedSuccessfully)),
+      );
+    }
+  },
+  confirmDelete({ pieceDeleted = true } = {}) {
+    cy.get(deletePieceModalSelector).then(($modal) => {
+      const modalText = $modal.text();
+      if (modalText.includes('Are you sure you want to delete piece?')) {
+        this.clickConfirmButton({ pieceDeleted });
+      } else if (modalText.includes('This piece is connected to records in inventory')) {
+        this.clickDeleteItemButton({ pieceDeleted });
+      } else {
+        this.clickConfirmButton({ pieceDeleted });
+      }
+    });
   },
   clickDeleteButton({ button, pieceDeleted }) {
     cy.expect(button.has({ disabled: false }));
