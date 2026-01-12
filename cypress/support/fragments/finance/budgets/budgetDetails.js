@@ -86,4 +86,19 @@ export default {
     cy.do(budgetDetailsPaneHeader.find(Button({ icon: 'times' })).click());
     cy.expect(budgetPane.absent());
   },
+  getIncreaseInAllocationValue() {
+    return cy
+      .get('#pane-budget')
+      .find('[class*="headline"][class*="size-medium"]')
+      .invoke('text')
+      .then((text) => {
+        const value = text.trim();
+        return cy.wrap(value);
+      });
+  },
+  checkIncreaseInAllocationValue(expected) {
+    this.getIncreaseInAllocationValue().then((actual) => {
+      expect(actual).to.eq(expected);
+    });
+  },
 };
