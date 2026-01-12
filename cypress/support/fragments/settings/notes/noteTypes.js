@@ -24,7 +24,7 @@ const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 const generalButton = HTML({
-  className: including('NavListItem---fokVC'),
+  className: including('NavListItem-'),
   text: including('General'),
 });
 
