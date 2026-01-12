@@ -22,7 +22,7 @@ describe('Inventory', () => {
       const subjectSearchOption = 'Subject';
       const titleSearchOption = 'Title (all)';
       const contributorNameTypeName = 'Personal name';
-      const helbyAccordionName = 'Held by';
+      const heldbyAccordionName = 'Held by';
       const recordsData = [
         {
           contributorValue: `${contributorPrefix} 1 Shared Marc`,
@@ -220,7 +220,7 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
+            InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
           });
       });
 
