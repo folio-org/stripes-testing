@@ -2,14 +2,17 @@ import {
   Button,
   EditableListRow,
   including,
+  Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
+import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-reason';
 
 const rootPane = Pane('Subject sources');
+const modalWithErrorMessage = Modal('Cannot delete Subject source');
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -117,5 +120,40 @@ export default {
       .each(($cell) => {
         cy.wrap($cell).invoke('text').should('not.eq', name);
       });
+  },
+
+  deleteSubjectSource(name) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: name });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do(
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.TRASH }))
+            .click(),
+        );
+      }),
+    );
+  },
+
+  confirmDeletionOfSubjectSource(name) {
+    DeleteCancelReason.waitLoadingDeleteModal('Subject source', name);
+    DeleteCancelReason.clickDelete();
+  },
+
+  verifySubjectSourceCannotBeDeleted() {
+    cy.expect(
+      modalWithErrorMessage.has({
+        content: including(
+          'This Subject source cannot be deleted, as it is in use by one or more records.',
+        ),
+      }),
+    );
+    cy.do(Button('Okay').click());
+    cy.expect(modalWithErrorMessage.absent());
   },
 };

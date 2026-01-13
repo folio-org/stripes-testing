@@ -19,6 +19,7 @@ export default HTML.extend('accordion')
     open: (el) => isVisible(el.querySelector('[class^=content-region]')),
     contentHeight: (el) => el.querySelector('[class^=content-region]').offsetHeight,
     itemsAmount: (el) => el.querySelector('[class^=mclEndOfListContainer-]').getAttribute('data-end-of-list'),
+    numberOfRows: (el) => el.querySelectorAll('[class^=mclRowFormatterContainer-]').length,
     contentId: (el) => {
       const id = el.querySelector('[class^=content-region]').id;
       if (id.startsWith('accordion')) {

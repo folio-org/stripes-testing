@@ -14,7 +14,6 @@ describe(
   {
     retries: {
       runMode: 1,
-      openMode: 1,
     },
   },
   () => {
@@ -34,7 +33,7 @@ describe(
               },
               {
                 table: 'Settings',
-                resource: 'Module Agreements Enabled',
+                resource: 'Erm Settings',
                 action: 'View',
               },
             ],
@@ -75,41 +74,6 @@ describe(
                 action: 'View',
               },
               {
-                table: 'Data',
-                resource: 'Note Types Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Refdata',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Refdata Category Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Refdata Category Item',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Refdata Value Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Tags Collection',
-                action: 'View',
-              },
-              {
-                table: 'Settings',
-                resource: 'Module Agreements Enabled',
-                action: 'View',
-              },
-              {
                 table: 'Settings',
                 resource: 'Erm Settings',
                 action: 'View',
@@ -133,41 +97,56 @@ describe(
               },
               {
                 table: 'Procedural',
-                resource: 'Login Password',
+                resource: 'UI-Agreements Agreements File',
                 action: 'Execute',
               },
             ],
             newCapabilitySet: {
               table: 'Data',
-              resource: 'UI-Tags',
-              action: 'Create',
+              resource: 'Erm Titles',
+              action: 'Edit',
             },
             newCapabilitiesInSet: [
               {
                 table: 'Data',
-                resource: 'Tags Collection',
+                resource: 'Erm Titles',
                 action: 'View',
               },
               {
                 table: 'Data',
-                resource: 'Tags Item',
-                action: 'Create',
+                resource: 'Erm Titles',
+                action: 'Edit',
               },
               {
                 table: 'Data',
-                resource: 'UI-Tags',
-                action: 'Create',
+                resource: 'Erm Titles Collection',
+                action: 'View',
               },
               {
-                table: 'Settings',
-                resource: 'Module Tags Enabled',
+                table: 'Data',
+                resource: 'Erm Titles Electronic Collection',
                 action: 'View',
+              },
+              {
+                table: 'Data',
+                resource: 'Erm Titles Entitled Collection',
+                action: 'View',
+              },
+              {
+                table: 'Data',
+                resource: 'Erm Titles Item',
+                action: 'View',
+              },
+              {
+                table: 'Data',
+                resource: 'Erm Titles Item',
+                action: 'Edit',
               },
             ],
             newCapabilities: [
               {
                 table: 'Settings',
-                resource: 'Settings Developer Enabled',
+                resource: 'Licenses Settings',
                 action: 'View',
               },
             ],
@@ -177,8 +156,8 @@ describe(
                 Data: 1,
               },
               capabilities: {
-                Settings: 5,
-                Data: 17,
+                Settings: 3,
+                Data: 6,
               },
             },
             absentCapabilitySetTables: ['Procedural'],

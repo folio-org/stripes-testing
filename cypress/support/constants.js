@@ -19,6 +19,8 @@ export const APPLICATION_NAMES = {
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
+  LINKED_DATA_EDITOR: 'Linked Data Editor',
+  NOTES: 'Notes',
 };
 
 export const REQUEST_METHOD = {
@@ -393,6 +395,7 @@ export const VENDOR_NAMES = {
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
   AMAZON: 'Amazon.com',
+  MOSAIC: 'Mosaic',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
