@@ -49,23 +49,28 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 5000, ignoreDummyCapabs = true) => {
-  const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'capabilities',
-    searchParams: {
-      limit,
-      query,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    cy.wrap(body.capabilities).as('capabs');
-  });
-  return cy.get('@capabs');
-});
+Cypress.Commands.add(
+  'getCapabilitiesApi',
+  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null } = {}) => {
+    const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+    const requestData = {
+      method: 'GET',
+      path: 'capabilities',
+      searchParams: {
+        limit,
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    };
+    if (customTimeout) requestData.customTimeout = customTimeout;
+    cy.okapiRequest(requestData).then(({ body }) => {
+      cy.wrap(body.capabilities).as('capabs');
+    });
+    return cy.get('@capabs');
+  },
+);
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500) => {
   cy.okapiRequest({
     method: 'GET',
     path: `capability-sets?limit=${limit}`,
@@ -178,21 +183,40 @@ Cypress.Commands.add(
   (
     name = `AT_UserRole_${getRandomPostfix()}`,
     description = `Test_Auto_Description_${getRandomPostfix()}`,
+    type = null,
+    ignoreErrors = false,
   ) => {
+    const roleBody = {
+      name,
+      description,
+    };
+    if (type) {
+      roleBody.type = type;
+    }
     cy.okapiRequest({
       method: 'POST',
       path: 'roles',
       isDefaultSearchParamsRequired: false,
-      body: {
-        name,
-        description,
-      },
+      body: roleBody,
+      failOnStatusCode: !ignoreErrors,
     }).then(({ body }) => {
       cy.wrap(body).as('role');
     });
     return cy.get('@role');
   },
 );
+
+Cypress.Commands.add('updateAuthorizationRoleApi', (roleId, requestBody) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `roles/${roleId}`,
+    body: requestBody,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  }).then((response) => {
+    return response;
+  });
+});
 
 Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({

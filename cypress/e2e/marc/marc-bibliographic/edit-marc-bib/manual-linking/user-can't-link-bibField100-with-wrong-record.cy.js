@@ -224,6 +224,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
             MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+            MarcAuthorities.selectTitle(testData.authorityFieldValue.field150);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();

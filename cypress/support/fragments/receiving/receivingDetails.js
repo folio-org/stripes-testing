@@ -61,6 +61,28 @@ export default {
       this.checkReceivedTableContent(received);
     }
   },
+  expandTitleInformationAccordion() {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+  },
+  verifyAcquisitionUnitInTitleInformation(acquisitionUnitName, shouldExist = true) {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+    cy.wait(1000);
+    if (shouldExist) {
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Acquisition units'))
+          .has({ value: including(acquisitionUnitName) }),
+      );
+    } else {
+      cy.get('#information').within(() => {
+        cy.contains('Acquisition units').parent().should('not.contain', acquisitionUnitName);
+      });
+    }
+  },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.copyNumber) {
@@ -121,11 +143,10 @@ export default {
 
     return ReceivingEditForm;
   },
-  clickEditButton() {
-    cy.do(buttons.Edit.click());
-    ReceivingEditForm.waitLoading();
 
-    return ReceivingEditForm;
+  verifyEditButtonIsInactive() {
+    cy.do(buttons.Actions.click());
+    cy.expect(Button('Edit').has({ disabled: true }));
   },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);

@@ -115,6 +115,8 @@ describe('Organizations', () => {
         preUpdated,
         adminUser,
         adminUser,
+        adminUser,
+        adminUser,
         true,
         false,
       );
@@ -122,6 +124,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
+        adminUser,
+        adminUser,
         adminUser,
         adminUser,
         false,

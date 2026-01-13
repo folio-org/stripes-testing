@@ -45,6 +45,11 @@ describe('MARC', () => {
             bibliographicSpecId = spec.id;
 
             const field700 = spec.fields.find((f) => f.tag === testData.tag700);
+            const localField = spec.fields.find((f) => f.tag === testData.localFieldTag);
+            if (localField) {
+              // Delete local field if it exists from previous test runs
+              cy.deleteSpecificationField(localField.id, true);
+            }
             if (field700) {
               field700Id = field700.id;
               field700InitialProperties = {

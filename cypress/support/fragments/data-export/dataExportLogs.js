@@ -75,6 +75,7 @@ export default {
         });
         cy.get('[class^=downloadFile---]').contains(name).click();
       });
+    cy.wait(1000);
   },
 
   clickFileNameFromTheList(fileName) {

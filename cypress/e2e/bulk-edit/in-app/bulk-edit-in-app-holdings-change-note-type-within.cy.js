@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422004 Verify Bulk Edit actions for Holdings notes - preserve the "Staff only" flag when change note type within the group (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422004'] },
+      'C895641 Verify Bulk Edit actions for Holdings notes - preserve the "Staff only" flag when change note type within the group (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C895641'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

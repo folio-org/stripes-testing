@@ -119,7 +119,8 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              cy.resetTenant({
+              cy.resetTenant();
+              cy.loginAsAdmin({
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
                 authRefresh: true,

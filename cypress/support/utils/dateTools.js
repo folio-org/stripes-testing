@@ -63,7 +63,8 @@ export default {
 
   getCurrentDateInPreviusMonthForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth())}/${padWithZero(
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
       currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },

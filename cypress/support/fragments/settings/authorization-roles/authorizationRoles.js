@@ -113,9 +113,12 @@ const createNameErrorText = including('Role could not be created: Failed to crea
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
+const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
+export const defaultRoleCrudErrorMessage =
+  'Default role cannot be created, updated or deleted via roles API.';
 
 export default {
   capabilitiesAccordion,
@@ -969,14 +972,20 @@ export default {
     );
   },
 
-  shareRole(roleName) {
-    cy.do([
-      Pane(roleName).find(actionsButton).click(),
-      shareToAllButton.click(),
-      shareToAllModal.find(submitButton).click(),
-    ]);
+  shareRole(roleName, { verifyModal = false } = {}) {
+    cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
+    if (verifyModal) this.verifyConfirmShareModal(roleName);
+    cy.do(shareToAllModal.find(submitButton).click());
     cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
     this.checkRoleCentrallyManaged(roleName, true);
+  },
+
+  verifyConfirmShareModal(roleName) {
+    cy.expect([
+      shareToAllModal.has({ message: including(confirmShareModalText(roleName)) }),
+      shareToAllModal.find(cancelButton).exists(),
+      shareToAllModal.find(submitButton).exists(),
+    ]);
   },
 
   verifyCreateNameError: () => {

@@ -114,8 +114,8 @@ describe('Inventory', () => {
       for (let i = 0; i < 4; i++) {
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[i]);
       }
-      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[4]);
-      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[5]);
+      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[4], true);
+      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[5], true);
     });
 
     it(

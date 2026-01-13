@@ -770,10 +770,14 @@ const QueryBuilder = {
 
   changeQueryBoolValue(value) {
     let valueToSet = 'False';
-    if (value) {
+    if (value === true) {
       valueToSet = 'True';
     }
+    cy.wait(1000);
     cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
+    // cy.wait(500);
+    // cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
+    cy.wait(500);
   },
 
   verifyQueryHeader(header) {

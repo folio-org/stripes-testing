@@ -26,16 +26,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="C466296"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C466296');
 
         DataImport.uploadFileViaApi('marcFileForC466296.mrc', fileName, jobProfileToRun).then(
           (response) => {

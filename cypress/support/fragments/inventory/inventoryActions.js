@@ -1,4 +1,12 @@
-import { Button, Section, Select, TextField, Modal, or } from '../../../../interactors';
+import {
+  Button,
+  Section,
+  Select,
+  TextField,
+  Modal,
+  DropdownMenu,
+  or,
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
@@ -31,7 +39,8 @@ export default {
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
     newRequest: Button('New Request'),
-    newFastAddRecord: Button('New Fast Add Record'),
+    newFastAddRecord: Button('New fast add record'),
+    inTransitItemsReport: Button('In transit items report (CSV)'),
   },
   openNewFastAddRecordForm() {
     cy.do([
@@ -48,6 +57,12 @@ export default {
   optionsIsEnabled: (array) => {
     return array.forEach((element) => {
       cy.expect(element.is({ disabled: false }));
+    });
+  },
+  optionsAreShown: (array, isShown = true) => {
+    return array.forEach((element) => {
+      if (isShown) cy.expect(element.exists());
+      else cy.expect(element.absent());
     });
   },
 
@@ -219,5 +234,10 @@ export default {
       cy.expect(importModal.absent());
       InventoryInstance.checkExpectedMARCSource();
     });
+  },
+
+  close() {
+    cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
+    cy.expect(DropdownMenu().absent());
   },
 };
