@@ -50,21 +50,6 @@ function checkCallNumberPrefix(prefix) {
 function checkCallNumberSuffix(prefix) {
   cy.expect(KeyValue('Call number suffix').has({ value: prefix }));
 }
-// function AdditionalHoldingsKeyValue(label) {
-//   return KeyValue(label, { within: AdditionalHoldingsBlock });
-// }
-// function checkAdditionalCallNumberType(value) {
-//   cy.expect(AdditionalHoldingsKeyValue('Call number type').has({ value }));
-// }
-// function checkAdditionalCallNumber(value) {
-//   cy.expect(AdditionalHoldingsKeyValue('Call number').has({ value }));
-// }
-// function checkAdditionalCallNumberPrefix(value) {
-//   cy.expect(AdditionalHoldingsKeyValue('Call number prefix').has({ value }));
-// }
-// function checkAdditionalCallNumberSuffix(value) {
-//   cy.expect(AdditionalHoldingsKeyValue('Call number suffix').has({ value }));
-// }
 
 export const actionsMenuOptions = {
   viewSource: 'View source',
@@ -78,10 +63,6 @@ export default {
   checkCallNumber,
   checkCallNumberPrefix,
   checkCallNumberSuffix,
-  // checkAdditionalCallNumberType,
-  // checkAdditionalCallNumber,
-  // checkAdditionalCallNumberPrefix,
-  // checkAdditionalCallNumberSuffix,
   waitLoading,
   newHolding: {
     rowsCountInQuickMarcEditor: 6,
