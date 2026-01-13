@@ -39,7 +39,8 @@ export default {
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
     newRequest: Button('New Request'),
-    newFastAddRecord: Button('New Fast Add Record'),
+    newFastAddRecord: Button('New fast add record'),
+    inTransitItemsReport: Button('In transit items report (CSV)'),
   },
   openNewFastAddRecordForm() {
     cy.do([

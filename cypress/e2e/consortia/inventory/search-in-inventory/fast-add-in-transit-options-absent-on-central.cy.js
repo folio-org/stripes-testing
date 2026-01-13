@@ -116,6 +116,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
@@ -140,7 +141,7 @@ describe('Inventory', () => {
             InventoryActions.optionsAreShown(
               [
                 InventoryActions.options.newFastAddRecord,
-                InventoryActions.options.InTransitItemsReport,
+                InventoryActions.options.inTransitItemsReport,
               ],
               areShown,
             );
