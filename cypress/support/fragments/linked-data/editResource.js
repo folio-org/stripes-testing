@@ -1,5 +1,3 @@
-import newInstance from './newInstance';
-
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
 const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
@@ -71,13 +69,11 @@ export default {
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
-    newInstance.waitLoading();
   },
 
   openNewInstanceFormViaNewInstanceButton() {
     cy.xpath(newInstanceButton).should('be.visible');
     cy.xpath(newInstanceButton).click();
-    newInstance.waitLoading();
   },
 
   setEdition(edition) {

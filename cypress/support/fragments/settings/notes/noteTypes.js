@@ -25,6 +25,10 @@ const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const rowWithExactText = (noteType) => MultiColumnListRow({ content: noteType, isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
+const generalButton = HTML({
+  className: including('NavListItem---fokVC'),
+  text: including('General'),
+});
 
 export default {
   createNoteTypeViaApi({
@@ -43,11 +47,12 @@ export default {
       .then(({ body }) => body);
   },
 
-  deleteNoteTypeViaApi(noteTypeId) {
+  deleteNoteTypeViaApi(noteTypeId, ignoreErrors = false) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `note-types/${noteTypeId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
@@ -59,6 +64,20 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body.noteTypes);
+  },
+
+  verifyNoteTypeIsNotAssigned(noteTypeId) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'note-types',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const foundNoteType = response.body.noteTypes.find((nt) => nt.id === noteTypeId);
+        expect(foundNoteType.usage.isAssigned).to.equal(false);
+        return foundNoteType;
+      });
   },
 
   waitLoading: () => {
@@ -162,6 +181,10 @@ export default {
 
   checkNewButtonState(isEnabled = true) {
     cy.expect(newButton.has({ disabled: !isEnabled }));
+  },
+
+  clickGeneralButton() {
+    cy.do(generalButton.click());
   },
 
   getNoteTypeIdViaAPI(noteTypeName) {

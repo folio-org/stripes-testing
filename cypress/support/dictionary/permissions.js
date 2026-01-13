@@ -818,6 +818,14 @@ export default {
     internal: 'ui-receiving.exportCSV',
     gui: 'Receiving: Export search results',
   },
+  uiReceivingAssignAcquisitionUnitsToNewTitle: {
+    internal: 'ui-receiving.acq-units.assignment.assign',
+    gui: 'Receiving: Assign acquisition units to new receiving title',
+  },
+  uiReceivingManageAcquisitionUnits: {
+    internal: 'ui-receiving.acq-units.assignment.manage',
+    gui: 'Receiving: Manage acquisition units',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',
@@ -1138,6 +1146,10 @@ export default {
     gui: 'Settings (Organizations): View settings',
   },
   // Settings
+  uiSettingsAcquisitionUnitsView: {
+    internal: 'ui-acquisition-units.settings.view',
+    gui: 'Settings (acquisition units): View acquisition units',
+  },
   uiSettingsAcquisitionUnitsViewEditCreateDelete: {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
