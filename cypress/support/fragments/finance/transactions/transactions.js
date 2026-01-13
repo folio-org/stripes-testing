@@ -1,5 +1,6 @@
 import {
   Link,
+  Button,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -11,6 +12,8 @@ import TransactionDetails from './transactionDetails';
 
 const transactionResultsPane = Section({ id: 'transaction-results-pane' });
 const transactionResultsList = MultiColumnList({ id: 'transactions-list' });
+const nextButton = Button('Next');
+const previousButton = Button('Previous');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -54,5 +57,13 @@ export default {
 
     cy.get('#finance-module-display button[icon=times]').first().click();
     cy.wait(4000);
+  },
+
+  clickNextPagination() {
+    cy.do(nextButton.click());
+  },
+
+  clickPreviousPagination() {
+    cy.do(previousButton.click());
   },
 };
