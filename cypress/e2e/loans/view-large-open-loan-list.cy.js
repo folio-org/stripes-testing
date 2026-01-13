@@ -40,7 +40,7 @@ describe('Loans', () => {
         UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.user.userId);
 
         cy.wrap(testData.folioInstances[0].items).each((item, index) => {
-          if (index % 50 === 0) {
+          if (index % 25 === 0) {
             cy.getAdminToken();
           }
           cy.wait(100);
@@ -79,7 +79,7 @@ describe('Loans', () => {
 
     it(
       'C451618 Check that user with 200+ open loans (Same instance, but different holdings) can see all Loan details (vega)',
-      { tags: ['extendedPath', 'vega', 'C451618'] },
+      { tags: ['extendedPath', 'vega', 'C451618', 'long'] },
       () => {
         const loanIndexNearEnd = 205;
 
