@@ -50,6 +50,21 @@ function checkCallNumberPrefix(prefix) {
 function checkCallNumberSuffix(prefix) {
   cy.expect(KeyValue('Call number suffix').has({ value: prefix }));
 }
+// function AdditionalHoldingsKeyValue(label) {
+//   return KeyValue(label, { within: AdditionalHoldingsBlock });
+// }
+// function checkAdditionalCallNumberType(value) {
+//   cy.expect(AdditionalHoldingsKeyValue('Call number type').has({ value }));
+// }
+// function checkAdditionalCallNumber(value) {
+//   cy.expect(AdditionalHoldingsKeyValue('Call number').has({ value }));
+// }
+// function checkAdditionalCallNumberPrefix(value) {
+//   cy.expect(AdditionalHoldingsKeyValue('Call number prefix').has({ value }));
+// }
+// function checkAdditionalCallNumberSuffix(value) {
+//   cy.expect(AdditionalHoldingsKeyValue('Call number suffix').has({ value }));
+// }
 
 export const actionsMenuOptions = {
   viewSource: 'View source',
@@ -63,6 +78,10 @@ export default {
   checkCallNumber,
   checkCallNumberPrefix,
   checkCallNumberSuffix,
+  // checkAdditionalCallNumberType,
+  // checkAdditionalCallNumber,
+  // checkAdditionalCallNumberPrefix,
+  // checkAdditionalCallNumberSuffix,
   waitLoading,
   newHolding: {
     rowsCountInQuickMarcEditor: 6,
@@ -141,6 +160,11 @@ export default {
   checkFormerHoldingsId: (value) => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: (value) => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: (expectedPolicy) => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
+  checkRetentionPolicy: (expectedPolicy) => cy.expect(KeyValue('Retention policy', { value: expectedPolicy }).exists()),
+  checkAcquisitionMethod: (expectedMethod) => cy.expect(KeyValue('Acquisition method', { value: expectedMethod }).exists()),
+  checkOrderFormat: (expectedFormat) => cy.expect(KeyValue('Order format', { value: expectedFormat }).exists()),
+  checkReceiptStatus: (expectedStatus) => cy.expect(KeyValue('Receipt status', { value: expectedStatus }).exists()),
+
   checkURIIsNotEmpty: () => cy.expect(
     electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
@@ -308,6 +332,30 @@ export default {
     checkCallNumberPrefix(callNumberPrefix);
     checkCallNumberSuffix(callNumberSuffix);
   },
+  checkAdditionalHoldingsCallNumber: ({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+  }) => {
+    cy.get('h3:contains("Additional holdings call numbers")')
+      .parent()
+      .within(() => {
+        const checkField = (label, value) => {
+          if (value) {
+            cy.get('[class^="kvLabel"]')
+              .filter((index, el) => el.innerText.trim() === label)
+              .parent()
+              .find('[data-test-kv-value="true"]')
+              .should('contain', value);
+          }
+        };
+        checkField('Call number type', callNumberType);
+        checkField('Call number prefix', callNumberPrefix);
+        checkField('Call number', callNumber);
+        checkField('Call number suffix', callNumberSuffix);
+      });
+  },
   checkTitle: (title) => {
     cy.expect(holdingsRecordViewSection.find(HTML(including(title))).exists());
   },
@@ -368,6 +416,21 @@ export default {
 
   checkReceivingHistoryAccordionForCentralTenant(receiptDate, source) {
     this.checkReceivingHistoryForTenant('central', receiptDate, source);
+  },
+  checkReceivingHistoryValues: ({ enumeration, chronology }) => {
+    const receivingHistorySection = Section({ id: 'receiving-history-accordion' });
+    const list = receivingHistorySection.find(MultiColumnList());
+
+    if (enumeration) {
+      cy.expect(
+        list.find(MultiColumnListCell({ column: 'Enumeration', content: enumeration })).exists(),
+      );
+    }
+    if (chronology) {
+      cy.expect(
+        list.find(MultiColumnListCell({ column: 'Chronology', content: chronology })).exists(),
+      );
+    }
   },
 
   checkNotesByType(

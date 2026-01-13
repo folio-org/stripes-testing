@@ -47,6 +47,21 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 const saveAndKeepEditingButton = footerPane.find(Button('Save & keep editing'));
 const holdingsTypeSelect = Select({ id: 'additem_holdingstype' });
 const numberOfItemsField = TextField('Number of items');
+const addAdditionalCallNumberButton = Button('Add additional call number');
+const additionalCallNumberTypeSelect = Select({ name: 'additionalCallNumbers[0].typeId' });
+const additionalCallNumberPrefixField = TextArea({ id: 'additem_prefix_0' });
+const additionalCallNumberField = TextArea({ id: 'additem_callnumber_0' });
+const additionalCallNumberSuffixField = TextArea({ id: 'additem_suffix_0' });
+const illPolicySelect = Select({ name: 'illPolicyId' });
+const digitizationPolicyField = TextArea({ id: 'edit_digitizationpolicy' });
+const retentionPolicyField = TextArea({ id: 'edit_retentionpolicy' });
+const acquisitionMethodField = TextField({ name: 'acquisitionMethod' });
+const orderFormatField = TextField({ name: 'acquisitionFormat' });
+const receiptStatusField = TextField({ name: 'receiptStatus' });
+const addAddReceivingHistoryButton = Button('Add receiving history');
+const publicDisplayCheckbox = Checkbox('Public display');
+const enumerationField = TextArea({ ariaLabel: 'Enumeration' });
+const chronologyField = TextArea({ ariaLabel: 'Chronology' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -186,6 +201,102 @@ export default {
   },
   fillCallNumber(callNumberValue) {
     cy.do(callNumberField.fillIn(callNumberValue));
+  },
+  fillAdditionalCallNumber(callNumberValue) {
+    cy.do(additionalCallNumberField.fillIn(callNumberValue));
+  },
+  fillAdditionalCallNumberPrefix(callNumberPrefix) {
+    cy.do(additionalCallNumberPrefixField.fillIn(callNumberPrefix));
+  },
+  fillAdditionalCallNumberSuffix(callNumberSuffix) {
+    cy.do(additionalCallNumberSuffixField.fillIn(callNumberSuffix));
+  },
+  chooseAdditionalCallNumberType(type) {
+    cy.do(additionalCallNumberTypeSelect.choose(type));
+  },
+  addAdditionalCallNumberValues({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+  }) {
+    cy.do(addAdditionalCallNumberButton.click());
+    cy.expect(additionalCallNumberField.exists());
+    if (callNumber !== undefined) {
+      this.fillAdditionalCallNumber(callNumber);
+    }
+    if (callNumberType !== undefined) {
+      this.chooseAdditionalCallNumberType(callNumberType);
+    }
+    if (callNumberPrefix !== undefined) {
+      this.fillAdditionalCallNumberPrefix(callNumberPrefix);
+    }
+    if (callNumberSuffix !== undefined) {
+      this.fillAdditionalCallNumberSuffix(callNumberSuffix);
+    }
+  },
+  fillInNumberOfItems(numberOfItems) {
+    cy.do(numberOfItemsField.fillIn(numberOfItems));
+  },
+  chooseIllPolicy(policy) {
+    cy.do(illPolicySelect.choose(policy));
+  },
+  fillDigitizationPolicy(policy) {
+    cy.do(digitizationPolicyField.fillIn(policy));
+  },
+  fillRetentionPolicy(policy) {
+    cy.do(retentionPolicyField.fillIn(policy));
+  },
+  fillPolicyFields({ illPolicy, digitizationPolicy, retentionPolicy }) {
+    if (illPolicy !== undefined) {
+      this.chooseIllPolicy(illPolicy);
+    }
+    if (digitizationPolicy !== undefined) {
+      this.fillDigitizationPolicy(digitizationPolicy);
+    }
+    if (retentionPolicy !== undefined) {
+      this.fillRetentionPolicy(retentionPolicy);
+    }
+  },
+  fillAcquisitionMethod(method) {
+    cy.do(acquisitionMethodField.fillIn(method));
+  },
+  fillOrderFormat(format) {
+    cy.do(orderFormatField.fillIn(format));
+  },
+  fillReceiptStatus(status) {
+    cy.do(receiptStatusField.fillIn(status));
+  },
+  fillAcquisitionFields({ acquisitionMethod, orderFormat, receiptStatus }) {
+    if (acquisitionMethod !== undefined) {
+      this.fillAcquisitionMethod(acquisitionMethod);
+    }
+    if (orderFormat !== undefined) {
+      this.fillOrderFormat(orderFormat);
+    }
+    if (receiptStatus !== undefined) {
+      this.fillReceiptStatus(receiptStatus);
+    }
+  },
+  markAsPublicDisplay() {
+    cy.do(publicDisplayCheckbox.click());
+  },
+  fillEnumeration(enumeration) {
+    cy.do(enumerationField.fillIn(enumeration));
+  },
+  fillChronology(chronology) {
+    cy.do(chronologyField.fillIn(chronology));
+  },
+  addReceivingHistoryValues({ enumeration, chronology }) {
+    cy.do(addAddReceivingHistoryButton.click());
+    cy.expect(publicDisplayCheckbox.exists());
+    this.markAsPublicDisplay();
+    if (enumeration !== undefined) {
+      this.fillEnumeration(enumeration);
+    }
+    if (chronology !== undefined) {
+      this.fillChronology(chronology);
+    }
   },
   verifyNoCalloutErrorMessage() {
     cy.expect(Callout({ type: calloutTypes.error }).absent());
