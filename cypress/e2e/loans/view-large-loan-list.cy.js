@@ -21,9 +21,7 @@ describe('Loans', () => {
       user: {},
     };
 
-    before('Create test data', function () {
-      this.timeout(300000);
-
+    before('Create test data', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
@@ -39,7 +37,7 @@ describe('Loans', () => {
         UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.user.userId);
 
         cy.wrap(testData.folioInstances).each((instance, index) => {
-          if (index % 50 === 0) {
+          if (index % 25 === 0) {
             cy.getAdminToken();
           }
           cy.wait(100);
@@ -77,7 +75,7 @@ describe('Loans', () => {
 
     it(
       'C451617 Check that user with 200+ open loans (different instances) can see all Loan details (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega', 'C451617'] },
+      { tags: ['extendedPath', 'vega', 'C451617', 'long'] },
       () => {
         const loanIndexNearEnd = 205;
 
