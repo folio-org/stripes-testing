@@ -69,6 +69,10 @@ export default {
   expandActionsDropdown() {
     cy.do(receivingResultsSection.find(actionsButton).click());
   },
+  openNewTitleForm() {
+    this.expandActionsDropdown();
+    cy.do(Button('New').click());
+  },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(Button(label).has(conditions));
