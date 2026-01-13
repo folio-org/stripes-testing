@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -6,8 +7,8 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
 
 describe('orders: Test PO filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -29,7 +30,6 @@ describe('orders: Test PO filters', () => {
   let orderSuffixId;
 
   before(() => {
-    cy.clearLocalStorage();
     cy.getAdminToken();
     SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
       orderPrefixId = prefixId;
@@ -58,10 +58,9 @@ describe('orders: Test PO filters', () => {
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.ordersPath);
-        });
+
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
         Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
@@ -93,8 +92,9 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C6718 Test the PO filters with open Order [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6718'] },
       () => {
+        cy.wait(3000);
         filter.filterActions();
         Orders.checkSearchResults(orderNumber);
         Orders.resetFilters();

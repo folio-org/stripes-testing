@@ -253,7 +253,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C359186: "Planned" budget status is updating to "Active" during FY rollover (based on "Expended") (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C359186'] },
+    { tags: ['extendedPath', 'thunderjet', 'C359186'] },
     () => {
       FinanceHelp.searchByName(testData.ledger.name);
       Ledgers.selectLedger(testData.ledger.name);

@@ -66,9 +66,9 @@ describe('Prepare test data', () => {
 
     return cy.wrap(null).then(() => {
       const budgetPromises = fundCodes.map((code) => {
-        return FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
+        return FiscalYears.getViaApi({ query: 'code="FY2026"' }).then((resp) => {
           if (!resp.fiscalYears?.[0]) {
-            throw new Error('FY2025 fiscal year not found');
+            throw new Error('FY2026 fiscal year not found');
           }
 
           return Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {

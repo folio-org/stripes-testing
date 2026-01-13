@@ -56,7 +56,7 @@ describe('Orders', () => {
 
     it(
       'C670 Change the PO number setting from editable to non-editable, then create a couple POs to test it (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C670'] },
       () => {
         Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
           order.id = orderId;
@@ -64,9 +64,10 @@ describe('Orders', () => {
         });
       },
     );
+
     it(
       'C15493 Allow users to edit PO number (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C15493'] },
       () => {
         Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
           order.id = orderId;

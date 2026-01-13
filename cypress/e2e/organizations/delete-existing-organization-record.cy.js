@@ -34,7 +34,7 @@ describe('Organizations', () => {
 
   it(
     'C674 Delete existing organization record (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C674'] },
     () => {
       // Step 1: Open organization from "Preconditions" details pane
       Organizations.searchByParameters('Name', organization.name);

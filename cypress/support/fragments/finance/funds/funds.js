@@ -1030,7 +1030,7 @@ export default {
     cy.do([searchField.fillIn(fundName), Button('Search').click()]);
   },
 
-  createFundViaUI(fund) {
+  createFundViaApiAndUi(fund) {
     const ledger = {
       id: uuid(),
       name: `autotest_ledger_${getRandomPostfix()}`,
@@ -1043,7 +1043,7 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
+    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2026"' }).then((fiscalYearResponse) => {
       ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
       cy.createLedgerApi({
         ...ledger,

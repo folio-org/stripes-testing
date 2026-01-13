@@ -140,7 +140,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C359604 Make more than one preview for one ledger and same fiscal year with "Test rollover", check test rollover results (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C359604'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

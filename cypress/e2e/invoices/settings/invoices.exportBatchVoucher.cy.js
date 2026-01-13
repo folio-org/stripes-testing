@@ -58,7 +58,7 @@ describe('Invoices', () => {
         batchGroupConfiguration.batchGroupId = response.id;
       });
       SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
-      Funds.createFundViaUI(fund).then(() => {
+      Funds.createFundViaApiAndUi(fund).then(() => {
         Funds.addBudget(100);
       });
       invoiceLine.subTotal = -subtotalValue;
@@ -73,7 +73,7 @@ describe('Invoices', () => {
 
     it(
       'C10943 Run batch voucher export manually (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'broken'] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLine(invoiceLine);

@@ -90,7 +90,7 @@ describe('Funds', () => {
 
   it(
     'C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C380708'] },
     () => {
       Funds.cancelCreatingFundWithTransfers(thirdFund, defaultLedger.name, firstFund, secondFund);
     },

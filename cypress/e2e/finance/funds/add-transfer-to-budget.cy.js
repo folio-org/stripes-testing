@@ -71,7 +71,7 @@ describe('Transactions', () => {
 
   it(
     'C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C6650'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

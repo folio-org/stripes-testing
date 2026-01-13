@@ -86,7 +86,7 @@ describe('Acquisition Units', () => {
 
   it(
     'C374168 Acquisition unit restrictions for "Fiscal year" records (View, Edit, Create, Delete options are active) when user is assigned to acquisition unit (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C374168'] },
     () => {
       FinanceHelp.searchByAll(firstFiscalYear.name);
       FiscalYears.selectFisacalYear(firstFiscalYear.name);

@@ -64,7 +64,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C374185 Delete Institution (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C374185'] },
     () => {
       // #1 Select "Institutions" option in "Location setup" section on "Tenant" pane
       cy.visit(SettingsMenu.tenantInstitutionsPath);

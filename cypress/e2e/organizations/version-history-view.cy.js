@@ -6,8 +6,10 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import VersionHistorySection from '../../support/fragments/inventory/versionHistorySection';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Organizations', () => {
   const organization = {
@@ -29,15 +31,13 @@ describe('Organizations', () => {
   let preUpdated;
   let afterUpdated;
   let lastUpdate;
+  let adminUser;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+    cy.getAdminToken();
+    cy.getAdminUserDetails().then((admin) => {
+      adminUser = admin.username;
     });
-
     Organizations.createInterfaceViaApi(organizationInterface).then((interfaceId) => {
       organizationInterface.id = interfaceId;
     });
@@ -51,8 +51,11 @@ describe('Organizations', () => {
         organization.id = organizationResponse;
       });
     });
-    cy.wait(30000);
-
+    cy.wait(7000);
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+    });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganizationInCurrentPage(organization.name);
     Organizations.getLastUpdateTime().then((time) => {
@@ -65,7 +68,7 @@ describe('Organizations', () => {
     Organizations.getLastUpdateTime().then((time) => {
       afterUpdated = time.replace(' ', ', ');
     });
-    cy.visit(TopMenu.agreementsPath);
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);
     Agreements.createAndCheckFields(defaultAgreement);
     cy.wait(4000);
     InteractorsTools.checkCalloutMessage(calloutMessage);
@@ -75,25 +78,24 @@ describe('Organizations', () => {
     InteractorsTools.checkCalloutMessage(colloutMessage2);
 
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+
+      cy.login(user.username, user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+      Organizations.waitLoading();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
-      authRefresh: true,
-    });
-    Agreements.selectRecord(defaultAgreement.name);
-    Agreements.deleteAgreement();
+    cy.getAdminToken();
+    Agreements.getIdViaApi({ limit: 1000, query: `"name"=="${defaultAgreement.name}"` }).then(
+      (id) => {
+        Agreements.deleteViaApi(id);
+      },
+    );
     Organizations.deleteContactViaApi(contactPeople.id);
     Organizations.deletePrivilegedContactsViaApi(privilegedContact.id);
     Organizations.deleteOrganizationViaApi(organization.id);
@@ -102,7 +104,7 @@ describe('Organizations', () => {
 
   it(
     'C663330 Version history view for Organizations',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C663330'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
@@ -111,8 +113,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
-        'folio-aqa',
-        'folio-aqa',
+        adminUser,
+        adminUser,
         true,
         false,
       );
@@ -120,8 +122,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
-        'folio-aqa',
-        'folio-aqa',
+        adminUser,
+        adminUser,
         false,
         true,
       );

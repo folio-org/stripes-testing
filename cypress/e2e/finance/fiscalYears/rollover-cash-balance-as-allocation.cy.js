@@ -203,7 +203,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C376601 Rollover cash balance as allocation ("Allocation" option is active) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C376601'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

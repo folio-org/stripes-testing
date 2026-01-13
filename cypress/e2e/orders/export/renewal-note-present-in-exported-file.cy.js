@@ -60,7 +60,7 @@ describe('Orders', () => {
 
     it(
       'C353977 "Renewal note"  field is added to .csv export file (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C353977'] },
       () => {
         // Search for the order from Preconditions
         Orders.searchByParameter('PO number', testData.order.poNumber);

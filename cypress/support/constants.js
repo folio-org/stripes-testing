@@ -19,6 +19,7 @@ export const APPLICATION_NAMES = {
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
+  ORGANIZATIONS: 'Organizations',
 };
 
 export const REQUEST_METHOD = {

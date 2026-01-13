@@ -94,7 +94,7 @@ describe('Orders', () => {
 
     it(
       'C343213 Receive pieces for package order (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C343213'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

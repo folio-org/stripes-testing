@@ -178,7 +178,7 @@ describe('Invoices', () => {
 
   it(
     'C446075 Approve & pay invoice with more than 50 invoice lines (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C446075'] },
     () => {
       // Click on Invoice number link
       Invoices.searchByNumber(invoice.invoiceNumber);
