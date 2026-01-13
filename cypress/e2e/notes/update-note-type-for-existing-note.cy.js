@@ -81,7 +81,6 @@ describe('Notes', () => {
       NoteTypes.saveNoteType(testData.updatedNoteType);
       NoteTypes.checkNoteTypeIsDisplayed(testData.updatedNoteType);
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
       cy.visit(`/eholdings/providers/${providerId}`);
       NotesEholdings.waitLoading();
 
