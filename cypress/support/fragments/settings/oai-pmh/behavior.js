@@ -8,6 +8,44 @@ const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing');
 const recordSourceDropdown = Select('Record source');
 const saveButton = Button('Save');
 
+export const BEHAVIOR_SETTINGS_OPTIONS_UI = {
+  DELETED_RECORDS_SUPPORT: {
+    PERSISTENT: 'Persistent',
+    NO: 'No',
+    TRANSIENT: 'Transient',
+  },
+  SUPPRESSED_RECORDS_PROCESSING: {
+    TRANSFER: 'Transfer suppressed records with discovery flag value',
+    SKIP: 'Skip suppressed from discovery records',
+  },
+  RECORD_SOURCE: {
+    SOURCE_RECORD_STORAGE: 'Source records storage',
+    INVENTORY: 'Inventory',
+    SOURCE_RECORD_STORAGE_AND_INVENTORY: 'Source records storage and Inventory',
+  },
+};
+
+export const BEHAVIOR_SETTINGS_OPTIONS_API = {
+  DELETED_RECORDS_SUPPORT: {
+    PERSISTENT: 'persistent',
+    NO: 'no',
+    TRANSIENT: 'transient',
+  },
+  SUPPRESSED_RECORDS_PROCESSING: {
+    TRUE: true,
+    FALSE: false,
+  },
+  RECORD_SOURCE: {
+    SOURCE_RECORD_STORAGE: 'Source record storage',
+    INVENTORY: 'Inventory',
+    SOURCE_RECORD_STORAGE_AND_INVENTORY: 'Source record storage and Inventory',
+  },
+  ERRORS_PROCESSING: {
+    OK_200: '200',
+    SERVER_ERROR_500: '500',
+  },
+};
+
 export default {
   verifyBehaviorPane(disabled = false) {
     const hasValue = true;
@@ -31,6 +69,12 @@ export default {
   pickFromRecordSourceDropdown(option) {
     cy.wait(2000);
     cy.do(recordSourceDropdown.choose(option));
+    cy.wait(2000);
+  },
+
+  pickSuppressedRecordsProcessing(option) {
+    cy.wait(2000);
+    cy.do(suppressedRecordsProcessingDropdown.choose(option));
     cy.wait(2000);
   },
 
@@ -58,10 +102,10 @@ export default {
    *   Possible values: "200", "500",
    */
   updateBehaviorConfigViaApi(
-    suppressedRecordsProcessing,
-    recordsSource,
-    deletedRecordsSupport,
-    errorsProcessing,
+    suppressedRecordsProcessing = true,
+    recordsSource = 'Source record storage',
+    deletedRecordsSupport = 'persistent',
+    errorsProcessing = '200',
   ) {
     const configValue = {
       suppressedRecordsProcessing,

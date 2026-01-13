@@ -19,6 +19,7 @@ import Affiliations, { tenantNames } from '../../support/dictionary/affiliations
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import InstanceProfileModal from '../../support/fragments/linked-data/instanceProfileModal';
 
 describe('Citation: create instance in central tenant + holdings in member', () => {
   const testData = {
@@ -62,8 +63,6 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
-    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -106,6 +105,8 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       EditResource.waitLoading();
       // add new instance
       EditResource.openNewInstanceFormViaActions();
+      InstanceProfileModal.waitLoading();
+      InstanceProfileModal.selectDefaultOption();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();

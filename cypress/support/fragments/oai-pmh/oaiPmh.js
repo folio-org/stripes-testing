@@ -140,6 +140,45 @@ export default {
   },
 
   /**
+   * Verify MARC control field value in a specific record identified by instanceUuid.
+   * Control fields (001-009) do not have indicators or subfields, just text content.
+   * @param {string} xmlString - The XML response as a string.
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
+   * @param {string} tag - The tag of the MARC control field to verify (e.g., "001", "003", "005", "008").
+   * @param {string} expectedValue - The expected value of the control field.
+   */
+  verifyMarcControlField(xmlString, instanceUuid, tag, expectedValue) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    const controlfields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'controlfield');
+    const controlfield = Array.from(controlfields).find(
+      (field) => field.getAttribute('tag') === tag,
+    );
+
+    if (!controlfield) {
+      throw new Error(`MARC control field ${tag} not found in record with UUID ${instanceUuid}`);
+    }
+
+    expect(
+      controlfield.textContent,
+      `Control field ${tag} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+    ).to.equal(expectedValue);
+  },
+
+  /**
    * Verify MARC field and subfield values in a specific record identified by instanceUuid.
    * Works consistently for both single-record (GetRecord) and multi-record (ListRecords) responses.
    * @param {string} xmlString - The XML response as a string.
@@ -224,6 +263,54 @@ export default {
         subfield,
         `Subfield "${subfieldCode}" should NOT exist in ${tag} field of record with UUID ${instanceUuid}`,
       ).to.be.undefined;
+    });
+  },
+
+  /**
+   * Verify that specific MARC field(s) are ABSENT from the response
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
+   * @param {string|Array<string>} tags - The tag(s) of the MARC field to verify is absent (e.g., "856" or ["856", "952"])
+   * @param {Object} indicators - Optional indicators to match (e.g., { ind1: "4", ind2: "0" }). If empty, any field with the tag should be absent.
+   */
+  verifyMarcFieldAbsent(xmlString, instanceUuid, tags, indicators = {}) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    // Normalize tags to array
+    const tagArray = Array.isArray(tags) ? tags : [tags];
+
+    // Find all datafield elements within the target record
+    const datafields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'datafield');
+
+    tagArray.forEach((tag) => {
+      const matchingFields = Array.from(datafields).filter((datafield) => {
+        const matchesTag = datafield.getAttribute('tag') === tag;
+        const matchesInd1 = !indicators.ind1 || datafield.getAttribute('ind1') === indicators.ind1;
+        const matchesInd2 = !indicators.ind2 || datafield.getAttribute('ind2') === indicators.ind2;
+
+        return matchesTag && matchesInd1 && matchesInd2;
+      });
+
+      const indicatorsDesc =
+        Object.keys(indicators).length > 0 ? ` with indicators ${JSON.stringify(indicators)}` : '';
+
+      expect(
+        matchingFields.length,
+        `MARC field ${tag}${indicatorsDesc} should NOT exist in record with UUID ${instanceUuid}`,
+      ).to.equal(0);
     });
   },
 
@@ -338,8 +425,9 @@ export default {
    * @param {string} xmlString - The XML response as a string.
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {Object} fields - Object where keys are Dublin Core element names and values are expected values (e.g., { title: "Sample Title", type: "Text", language: "eng" }).
+   * @param {Array} absentFields - Array of Dublin Core element names that should NOT exist (e.g., ["relation", "coverage"]).
    */
-  verifyDublinCoreField(xmlString, instanceUuid, fields = {}) {
+  verifyDublinCoreField(xmlString, instanceUuid, fields = {}, absentFields = []) {
     const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
     const metadata = targetRecord.getElementsByTagName('metadata')[0];
 
@@ -366,6 +454,16 @@ export default {
         element.textContent,
         `Dublin Core element "${elementName}" should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
       ).to.equal(expectedValue);
+    });
+
+    // Verify absent fields
+    absentFields.forEach((elementName) => {
+      const dcElements = metadata.getElementsByTagNameNS(dcNamespaceURI, elementName);
+
+      expect(
+        dcElements.length,
+        `Dublin Core element "${elementName}" should NOT exist in record with UUID ${instanceUuid}`,
+      ).to.equal(0);
     });
   },
 
@@ -550,5 +648,27 @@ export default {
       expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
         .null;
     }
+  },
+
+  /**
+   * Verifies the OAI-PMH error response for "idDoesNotExist" error
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} expectedErrorCode - The expected error code (default: 'idDoesNotExist')
+   * @param {string} expectedErrorMessage - The expected error message (default: 'No matching identifier in repository.')
+   */
+  verifyIdDoesNotExistError(
+    xmlString,
+    expectedErrorCode = 'idDoesNotExist',
+    expectedErrorMessage = 'No matching identifier in repository.',
+  ) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const errorElement = xmlDoc.getElementsByTagName('error')[0];
+    const errorCode = errorElement.getAttribute('code');
+    const records = xmlDoc.getElementsByTagName('record');
+    const errorText = errorElement.textContent;
+
+    expect(errorCode, 'Error code should match expected value').to.equal(expectedErrorCode);
+    expect(errorText, 'Error message should match expected value').to.equal(expectedErrorMessage);
+    expect(records.length, 'No record element should exist in error response').to.equal(0);
   },
 };
