@@ -9,7 +9,7 @@ describe('Lists', () => {
     let userData = {};
     const listData = {
       name: `C446123-${getTestEntityValue('list')}`,
-      recordType: 'Purchase order lines',
+      recordType: 'Purchase order lines with titles',
       status: 'Active',
       visibility: 'Shared',
     };
@@ -20,6 +20,8 @@ describe('Lists', () => {
         Permissions.listsEdit.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.uiOrganizationsView.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
       ]).then((userProperties) => {
         userData = userProperties;
       });

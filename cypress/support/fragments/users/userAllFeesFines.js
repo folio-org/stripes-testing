@@ -60,7 +60,8 @@ export default {
   goToClosedFeesFines: () => cy.do(Button({ id: 'closed-accounts' }).click()),
   goToAllFeeFines: () => cy.do(Button({ id: 'all-accounts' }).click()),
   createFeeFine: () => {
-    cy.do(Button('Actions').click());
+    cy.do(HTML({ id: 'paneHeaderpane-account-listing' }).find(Button('Actions')).click());
+    cy.wait(500);
     cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
   },
   waitLoading: () => cy.expect(HTML('All fees/fines for ').exists()),

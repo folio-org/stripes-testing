@@ -954,6 +954,10 @@ export default {
     internal: 'ui-orders.settings.order-templates.delete',
     gui: 'Settings (Orders): Can view, edit, delete Order Templates',
   },
+  ordersStorageAcquisitionMethodsCollectionGet: {
+    internal: 'orders-storage.acquisition-methods.collection.get',
+    gui: 'acquisition-methods-collection get',
+  },
   // Finance
   uiFinanceFinanceViewGroup: {
     internal: 'ui-finance.group.view',

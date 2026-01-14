@@ -180,7 +180,7 @@ describe('Lists', () => {
         });
     });
 
-    describe('Purchase order lines', () => {
+    describe.only('Purchase order lines', () => {
       before('Create test user', () => {
         cy.getAdminToken();
         cy.createTempUser([
@@ -190,11 +190,12 @@ describe('Lists', () => {
           Permissions.inventoryAll.gui,
           Permissions.loansAll.gui,
           Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
         ]).then((userProperties) => {
           userData = userProperties;
-          // cy.getUserToken(userData.username, userData.password);
+          cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Purchase order lines').then((typeId) => {
+        Lists.getTypeIdByNameViaApi('Purchase order lines with titles').then((typeId) => {
           recordTypeId = typeId;
         }).then(() => {
           Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {

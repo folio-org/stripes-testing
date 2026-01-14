@@ -61,7 +61,6 @@ describe('Lists', () => {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
-          Lists.resetAllFilters();
           Lists.openNewListPane();
           Lists.setName(listData.name);
           Lists.setDescription(listData.name);
@@ -70,20 +69,20 @@ describe('Lists', () => {
           Lists.saveList();
           Lists.verifyListIsSaved(listData.name);
           Lists.closeListDetailsPane();
-          cy.wait(3000);
           // User B logs in to make sure that 'Shared' list is visible
           cy.login(secondUser.username, secondUser.password, {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
+          Lists.resetAllFilters();
           Lists.selectSharedLists();
           Lists.verifyListIsPresent(listData.name);
-          cy.wait(2000);
           // User A logs in to make the list 'Private'
           cy.login(firstUser.username, firstUser.password, {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
+          Lists.resetAllFilters();
           Lists.selectSharedLists();
           Lists.selectList(listData.name);
           Lists.openActions();
@@ -91,12 +90,12 @@ describe('Lists', () => {
           Lists.selectVisibility('Private');
           Lists.saveList();
           Lists.closeListDetailsPane();
-          cy.wait(3000);
           // User B logs in to make sure that 'Private' list is not visible
           cy.login(secondUser.username, secondUser.password, {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
+          Lists.resetAllFilters();
           Lists.selectPrivateLists();
           Lists.verifyListIsNotPresent(listData.name);
         },
@@ -110,7 +109,6 @@ describe('Lists', () => {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
-          Lists.resetAllFilters();
           Lists.openNewListPane();
           Lists.setName(listData.name);
           Lists.setDescription(listData.name);
@@ -119,26 +117,26 @@ describe('Lists', () => {
           Lists.saveList();
           Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
           Lists.closeListDetailsPane();
-          cy.wait(3000);
           // User B logs in to make sure that 'Shared' list is not visible
           cy.login(secondUser.username, secondUser.password, {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
+          Lists.resetAllFilters();
           Lists.verifyListIsNotPresent(listData.name);
-          cy.wait(2000);
           // User A logs in to make the list 'Shared'
           cy.login(firstUser.username, firstUser.password, {
             path: TopMenu.listsPath,
             waiter: Lists.waitLoading,
           });
+          Lists.resetAllFilters();
+          Lists.selectPrivateLists();
           Lists.openList(listData.name);
           Lists.openActions();
           Lists.editList();
           Lists.selectVisibility('Shared');
           Lists.saveList();
           Lists.closeListDetailsPane();
-          cy.wait(3000);
           // User B logs in to make sure that 'Shared' list is visible
           cy.login(secondUser.username, secondUser.password, {
             path: TopMenu.listsPath,

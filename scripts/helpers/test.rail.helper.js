@@ -33,6 +33,47 @@ async function getTestHistory(api, caseId, runId) {
   }
 }
 
+async function getCaseHistory(api, caseId) {
+  try {
+    const response = await api.get(`get_history_for_case/${caseId}`, {
+      params: {
+        limit: 20,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching test history:', error);
+    return { results: [] };
+  }
+}
+
+async function getAllTestCases(api, projectId) {
+  async function getCases(offset) {
+    const response = await api.get(`get_cases/${projectId}`, {
+      params: {
+        offset,
+        limit: 250,
+      },
+    });
+    return response.data;
+  }
+
+  const tests = [];
+  try {
+    let offset = 0;
+    let resp;
+    do {
+      resp = await getCases(offset);
+      tests.push(...resp.cases);
+      offset += resp.size;
+      console.log(`${new Date().toISOString()} Fetched ${offset} test cases...`);
+    } while (resp._links.next != null);
+  } catch (error) {
+    console.error('Error fetching test cases:', error);
+  }
+  return tests;
+}
+
 async function getTestRunResults(api, runId) {
   async function getTest(offset) {
     const response = await api.get(`get_tests/${runId}`, {
@@ -71,4 +112,4 @@ async function updateTestResult(api, testId, statusId, comment, defects) {
   }
 }
 
-module.exports = { getTestHistory, getTestRunResults, updateTestResult, team, status };
+module.exports = { getAllTestCases, getTestHistory, getCaseHistory, getTestRunResults, updateTestResult, team, status };
