@@ -44,7 +44,9 @@ Cypress.Commands.add(
         cy.visit(path);
 
         // Todo: find the way to wrap interactor to cy chainable object
+        cy.allure().logCommandSteps(false);
         cy.inputCredentialsAndLogin(username, password);
+        cy.allure().logCommandSteps(true);
         // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
         // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
         // https://docs.cypress.io/api/commands/wrap#Requirements
