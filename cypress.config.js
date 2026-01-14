@@ -55,6 +55,8 @@ module.exports = defineConfig({
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: false,
+    sanityCheck:
+      '{"username": "", "password": "", "centralTenant": {"id": "", "name": ""}, "memberTenant": {"id": "", "name": ""}}',
   },
   reporterOptions: reportportalOptions,
   e2e: {
