@@ -15,7 +15,6 @@ describe('Inventory', () => {
         const randomPostfix = getRandomPostfix();
         const notExistingTitle = `AT_C402328_NotExistingTitle_${randomPostfix}`;
         const sharedAccordionName = 'Shared';
-        const heldbyAccordionName = 'Held by';
         const sharedInstances = InventoryInstances.generateFolioInstances({
           count: 1,
           holdingsCount: 0,
@@ -55,6 +54,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               InventorySearchAndFilter.validateSearchTabIsDefault();
@@ -77,7 +77,6 @@ describe('Inventory', () => {
           () => {
             function searchAndCheckSharedFacet() {
               InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, true);
-              InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
 
               InventorySearchAndFilter.clickAccordionByName(sharedAccordionName);
               InventorySearchAndFilter.verifyAccordionByNameExpanded(sharedAccordionName, true);
