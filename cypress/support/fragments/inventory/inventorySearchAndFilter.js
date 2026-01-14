@@ -1739,4 +1739,19 @@ export default {
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
   },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = paneFilterSection
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      multiSelect.select([
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ]),
+    );
+  },
 };
