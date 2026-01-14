@@ -39,7 +39,7 @@ describe('Consortia', () => {
 
   it(
     'C380505 View a users affiliations accordion in the third details pane (consortia) (thunderjet)',
-    { tags: ['smokeECS', 'thunderjet'] },
+    { tags: ['smokeECS', 'thunderjet', 'C380505'] },
     () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);

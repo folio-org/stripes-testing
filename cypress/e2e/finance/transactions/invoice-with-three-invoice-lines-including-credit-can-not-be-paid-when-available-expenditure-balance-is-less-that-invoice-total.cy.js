@@ -217,7 +217,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C496167 Invoice with three invoice lines (including credit) can NOT be paid when available expenditure balance is less that invoice total  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496167'] },
     () => {
       Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);

@@ -135,7 +135,7 @@ describe('Finance › Ledgers', () => {
 
   it(
     'C502956 "Credited" columns are displayed in budget export .csv file (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C502956'] },
     () => {
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);

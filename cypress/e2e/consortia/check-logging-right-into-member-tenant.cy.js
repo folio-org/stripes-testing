@@ -28,7 +28,7 @@ describe('Consortia', () => {
 
   it(
     'C387506 User created in Member tenant is logging right into Member tenant (consortia) (thunderjet)',
-    { tags: ['smokeECS', 'thunderjet'] },
+    { tags: ['smokeECS', 'thunderjet', 'C387506'] },
     () => {
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
     },

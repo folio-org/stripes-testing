@@ -104,7 +104,7 @@ describe('Organizations', () => {
 
   it(
     'C663330 Version history view for Organizations',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C663330'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

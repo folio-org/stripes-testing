@@ -46,7 +46,7 @@ describe('Consortia', () => {
 
     it(
       'C386869 "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet'] },
+      { tags: ['criticalPathECS', 'thunderjet', 'C386869'] },
       () => {
         ConsortiumManager.verifyConsortiumManagerOnPage();
         ConsortiumManager.switchActiveAffiliationExists();

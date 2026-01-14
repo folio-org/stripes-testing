@@ -64,7 +64,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C514909 Rollover complete message does not appear when current fiscal year lapses for a ledger (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C514909'] },
     () => {
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);

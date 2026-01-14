@@ -36,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C345297 Keyboard Shortcut. Access to drop down menu (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'C345297'] },
       () => {
         InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 

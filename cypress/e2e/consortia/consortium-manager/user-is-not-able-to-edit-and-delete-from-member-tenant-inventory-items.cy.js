@@ -102,7 +102,7 @@ describe('Consortium manager', () => {
 
       it(
         'C401725 ser is NOT able to edit and delete from member tenant "Inventory - Items" settings shared via "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C401725'] },
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.itemNoteTypesPath);

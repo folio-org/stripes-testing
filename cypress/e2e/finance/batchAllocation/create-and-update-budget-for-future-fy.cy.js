@@ -98,7 +98,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C651433 Create new budget for future FY on batch allocation screen, accessed from Ledger (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C651433'] },
     () => {
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);

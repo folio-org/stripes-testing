@@ -30,7 +30,7 @@ describe('Organizations', () => {
 
   it(
     'C422053 Print organization details pane (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C422053'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

@@ -176,7 +176,7 @@ describe('Finance', () => {
 
   it(
     'C494339 Encumbrance has "0" amount when related order was closed and paid invoice was cancelled (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C494339'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

@@ -49,7 +49,7 @@ describe('Consortia', () => {
 
     it(
       'C397333 User with "Consortium manager: Can view existing settings" permission and active affiliation in "Central" tenant has access to "Consortium manager" app (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet'] },
+      { tags: ['criticalPathECS', 'thunderjet', 'C397333'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();

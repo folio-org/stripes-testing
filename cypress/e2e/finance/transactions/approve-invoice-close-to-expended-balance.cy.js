@@ -234,7 +234,7 @@ describe('Finance', () => {
 
     it(
       'C449367 Invoice can be approved when balance is close to the expended available balance (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C449367'] },
       () => {
         Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
         Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);

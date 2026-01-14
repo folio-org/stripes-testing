@@ -143,7 +143,7 @@ describe('Receiving', () => {
 
   it(
     'C464323 Leaving "Display to public" false with checked "Display on holdings" option when receiving a piece (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C464323'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
