@@ -108,8 +108,8 @@ describe('Orders', () => {
   });
 
   it(
-    'C423401: Removing donor record from PO line after removing fund distribution (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C423401 Removing donor record from PO line after removing fund distribution (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'C423401'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

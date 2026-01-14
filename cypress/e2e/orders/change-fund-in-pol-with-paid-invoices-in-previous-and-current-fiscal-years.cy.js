@@ -225,7 +225,7 @@ describe('Orders', () => {
 
   it(
     'C404376 Change fund distribution when PO line has related paid invoices in previous and current fiscal years (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C404376'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

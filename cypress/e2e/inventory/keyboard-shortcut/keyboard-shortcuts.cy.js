@@ -51,7 +51,7 @@ describe('Inventory', () => {
 
     it(
       'C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'broken'] },
+      { tags: ['smoke', 'thunderjet', 'C345298'] },
       () => {
         InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 

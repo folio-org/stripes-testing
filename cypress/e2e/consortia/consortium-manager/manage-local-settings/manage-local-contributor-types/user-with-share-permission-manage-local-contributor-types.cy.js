@@ -1,27 +1,27 @@
 import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
-  settingsItems,
   messages,
+  settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ContributorTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/contributorTypesConsortiumManager';
 import ConfirmCreate from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ContributorTypes from '../../../../../support/fragments/settings/inventory/instances/contributorTypes';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
-import Permissions from '../../../../../support/dictionary/permissions';
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {

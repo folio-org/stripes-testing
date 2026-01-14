@@ -62,7 +62,7 @@ describe('Orders', () => {
 
     it(
       'C353989 A user can select existing order when creating an order from instance record (Thunderjet)(TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C353989'] },
       () => {
         InventorySearchAndFilter.byKeywords(testData.instanceName);
         InventoryInstance.checkInstanceTitle(testData.instanceName);

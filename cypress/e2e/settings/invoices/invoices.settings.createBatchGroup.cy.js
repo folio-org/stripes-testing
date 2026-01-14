@@ -17,7 +17,7 @@ describe('ui-invoices-settings: Batch Group creation', () => {
 
   it(
     'C343345 Create and edit Batch groups (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C343345'] },
     () => {
       SettingsInvoices.waitBatchGroupsLoading();
       SettingsInvoices.createNewBatchGroup(batchGroup);

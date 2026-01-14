@@ -139,7 +139,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
 
   it(
     'C347897 Approve invoice with both payment and credit (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C347897'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       cy.wait(2000);

@@ -66,7 +66,7 @@ describe('Orders', () => {
 
   it(
     'C407655 Open order when ledger has separate acquisition unit (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C407655'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -102,7 +102,7 @@ describe('Invoices', () => {
 
   it(
     'C400612 Initial encumbrance amount remains the same as it was before payment after cancelling one of related paid invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C400612'] },
     () => {
       updateInvoiceStatusAndLogin({ invoice: testData.invoices[1], status: INVOICE_STATUSES.PAID });
 

@@ -1,16 +1,16 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
-import getRandomPostfix from '../../support/utils/stringTools';
 import { CAPABILITY_ACTIONS, CAPABILITY_TYPES } from '../../support/constants';
-import Organizations from '../../support/fragments/organizations/organizations';
-import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Permissions from '../../support/dictionary/permissions';
 import Orders from '../../support/fragments/orders/orders';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import ConfirmDeleteOrganizationModal from '../../support/fragments/organizations/modals/confirmDeleteOrganizationModal';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
   before('Enable Banking Information', () => {
@@ -69,8 +69,8 @@ describe('Organizations', () => {
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
       ])
         .then((createdUserProperties) => {
           userA = createdUserProperties;
@@ -171,8 +171,8 @@ describe('Organizations', () => {
         Organizations.resetFilters();
       });
       cy.createTempUser([
-        permissions.uiOrganizationsViewEditCreate.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
       ]).then((secondUserProperties) => {
         C423504User = secondUserProperties;
       });
@@ -232,8 +232,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsViewEditDelete.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditDelete.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.waitForAuthRefresh(() => {
@@ -322,12 +322,12 @@ describe('Organizations', () => {
           Organizations.closeDetailsPane();
         },
       );
-      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+      cy.createTempUser([Permissions.uiOrdersView.gui]).then((secondUserProperties) => {
         C423432User = secondUserProperties;
       });
       cy.createTempUser([
-        permissions.uiOrdersView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.waitForAuthRefresh(() => {
@@ -466,7 +466,7 @@ describe('Organizations', () => {
         Organizations.addBankingInformation(bankingInformation);
         Organizations.closeDetailsPane();
       });
-      cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
+      cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui])
         .then((u) => {
           userA = u;
           role.name = userA.username;
@@ -589,8 +589,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -649,8 +649,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
-        permissions.uiFinanceViewFiscalYear.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
+        Permissions.uiFinanceViewFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
       });
@@ -716,8 +716,8 @@ describe('Organizations', () => {
         },
       );
       cy.createTempUser([
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
       ]).then((secondUserProperties) => {
         C423504User = secondUserProperties;
       });
@@ -773,7 +773,7 @@ describe('Organizations', () => {
 
     before('Create user', () => {
       cy.getAdminToken();
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.waitForAuthRefresh(() => {
@@ -831,8 +831,8 @@ describe('Organizations', () => {
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -877,7 +877,7 @@ describe('Organizations', () => {
         bankingInformation.organizationId = orgId;
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
-      cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.organizationsPath,
@@ -937,22 +937,22 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
-        permissions.uiOrganizationsInterfaceUsernamesAndPasswordsView.gui,
-        permissions.uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete.gui,
-        permissions.uiOrganizationsManageAcquisitionUnits.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
-        permissions.uiOrganizationsViewEditCreate.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
-        permissions.uiOrganizationsViewEditDelete.gui,
-        permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
-        permissions.uiSettingsOrganizationsCanViewOnlySettings.gui,
+        Permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
+        Permissions.uiOrganizationsInterfaceUsernamesAndPasswordsView.gui,
+        Permissions.uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete.gui,
+        Permissions.uiOrganizationsManageAcquisitionUnits.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditDelete.gui,
+        Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+        Permissions.uiSettingsOrganizationsCanViewOnlySettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

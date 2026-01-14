@@ -195,7 +195,7 @@ describe('Invoices', () => {
 
   it(
     'C396373 Save invoice fiscal year after adding adjustment on invoice level if FY was undefined and pay against previous FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C396373'] },
     () => {
       Invoices.createRolloverInvoiceWithAjustmentAndFund(
         invoice,

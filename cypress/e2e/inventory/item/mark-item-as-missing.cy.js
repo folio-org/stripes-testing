@@ -93,7 +93,7 @@ describe('Inventory', () => {
 
     it(
       'C714 Mark an item as Missing (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C714'] },
+      { tags: ['smoke', 'folijet', 'C714', 'shiftLeft'] },
       () => {
         MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach((item) => {

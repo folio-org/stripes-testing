@@ -89,7 +89,7 @@ describe('Data Import', () => {
 
     it(
       'C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C343338', 'eurekaPhase1'] },
+      { tags: ['smoke', 'folijet', 'C343338', 'shiftLeft'] },
       () => {
         // create Field mapping profile
         cy.wait(2000);

@@ -235,7 +235,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C357580 Budget summary and Encumbrances updated correctly when editing POL with related invoice after rollover of fiscal year (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1', 'C357580'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'C357580'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);

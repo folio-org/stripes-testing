@@ -73,7 +73,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C374179 Delete Campus (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C374179'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

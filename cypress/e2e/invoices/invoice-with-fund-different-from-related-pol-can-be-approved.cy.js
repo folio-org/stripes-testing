@@ -139,7 +139,7 @@ describe('Invoices', () => {
 
   it(
     'C378895 An invoice with fund distribution different from related PO line can be approved (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C378895'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
