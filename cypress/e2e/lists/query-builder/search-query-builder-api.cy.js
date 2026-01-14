@@ -180,7 +180,7 @@ describe('Lists', () => {
         });
     });
 
-    describe.only('Purchase order lines', () => {
+    describe('Purchase order lines', () => {
       before('Create test user', () => {
         cy.getAdminToken();
         cy.createTempUser([
