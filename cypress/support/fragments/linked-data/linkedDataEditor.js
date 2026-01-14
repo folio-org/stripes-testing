@@ -7,7 +7,7 @@ import SearchAndFilter from './searchAndFilter';
 import ComparisonForm from './comparisonForm';
 
 const searchSection = "//div[@class='item-search-content']";
-const actionsButton = "//button[@data-testid='search-view-actions-dropdown']";
+const actionsButton = "//button[@data-testid='resources-actions-dropdown']";
 const newResourceButton = "//button[contains(@data-testid,'newResource')]";
 const compareSelectedButton = "//button[contains(@data-testid,'compareSelected')]";
 const searchSelect = "//select[@id='id-search-select']";

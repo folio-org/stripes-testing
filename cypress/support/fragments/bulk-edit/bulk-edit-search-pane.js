@@ -173,6 +173,8 @@ export const ERROR_MESSAGES = {
   MISSING_SRS_RECORD: 'SRS record associated with the instance is missing.',
   MULTIPLE_SRS_RECORDS_ASSOCIATED:
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
+  ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC:
+    'Change note type for administrative notes is not supported for MARC Instances.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
@@ -306,6 +308,12 @@ export default {
 
   verifyBulkEditPaneItems() {
     cy.expect(bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists());
+  },
+
+  verifyBulkEditPaneAfterRecordTypeSelected() {
+    this.verifyBulkEditPaneItems();
+    this.actionsIsAbsent();
+    cy.expect(bulkEditPane.find(HTML('Select a record identifier.')).exists());
   },
 
   verifySetCriteriaPaneItems(query = true, logs = true) {
@@ -861,6 +869,19 @@ export default {
     });
   },
 
+  verifyVisibleErrors(allowedIdentifiers, errorTemplate, expectedCount = 10) {
+    for (let i = 0; i < expectedCount; i++) {
+      errorsAccordion
+        .find(MultiColumnListRow({ indexRow: `row-${i}` }))
+        .find(MultiColumnListCell({ column: 'Record identifier' }))
+        .content()
+        .then((identifier) => {
+          expect(allowedIdentifiers).to.include(identifier);
+          this.verifyErrorByIdentifier(identifier, errorTemplate(identifier));
+        });
+    }
+  },
+
   verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
       errorsAccordion
@@ -1383,11 +1404,27 @@ export default {
   },
 
   verifyPaneRecordsCount(value) {
-    cy.expect(bulkEditPane.find(HTML(`${value} records matched`)).exists());
+    const recordCount = parseInt(value, 10);
+    if (recordCount === 0) {
+      cy.expect(matchedAccordion.absent());
+    } else {
+      cy.expect([
+        matchedAccordion.has({ numberOfRows: recordCount }),
+        bulkEditPane.find(HTML(`${value} records matched`)).exists(),
+      ]);
+    }
   },
 
   verifyPaneRecordsChangedCount(value) {
-    cy.expect(bulkEditPane.find(HTML(`${value} records changed`)).exists());
+    const recordCount = parseInt(value, 10);
+    if (recordCount === 0) {
+      cy.expect(changesAccordion.absent());
+    } else {
+      cy.expect([
+        changesAccordion.has({ numberOfRows: recordCount }),
+        bulkEditPane.find(HTML(`${value} records changed`)).exists(),
+      ]);
+    }
   },
 
   verifyFileNameHeadLine(fileName) {

@@ -37,6 +37,7 @@ import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
 import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -106,6 +107,9 @@ const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
 const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
+const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
+const URI_CHAR_LIMIT = 8192;
+const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -264,7 +268,6 @@ export default {
 
   bySource(source) {
     cy.do(sourceAccordion.clickHeader());
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
@@ -511,12 +514,8 @@ export default {
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
-      cy.wait(500),
-      searchButton.focus(),
-      cy.wait(500),
-      searchButton.click(),
-      cy.wait(1000),
     ]);
+    cy.do(searchButton.click());
   },
 
   switchToItem: () => {
@@ -927,8 +926,25 @@ export default {
     cy.do([browseSearchInputField.fillIn(searchValue)]);
   },
 
-  fillInSearchQuery(searchValue) {
-    cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+  fillInSearchQuery(searchValue, { directInput = false } = {}) {
+    if (directInput) {
+      /*
+        Required for very large queries - usual methods too slow (test may hang for 1+ mins).
+        Setting input value directly, without simulating user input.
+        Using native input value setter to trigger input event correctly.
+      */
+      cy.get('#input-inventory-search').then(($textarea) => {
+        const textarea = $textarea[0];
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLTextAreaElement.prototype,
+          'value',
+        ).set;
+        nativeInputValueSetter.call(textarea, searchValue);
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    } else {
+      cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+    }
   },
 
   browseSearch(searchValue) {
@@ -1469,6 +1485,20 @@ export default {
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
 
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([multiSelect.find(MultiSelectOption(including(fullValue))).exists()]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+  },
+
   verifyCheckboxesWithCountersExistInAccordion(accordionName) {
     cy.expect(
       Accordion(accordionName)
@@ -1653,5 +1683,60 @@ export default {
   verifyNumberOfSelectedOptionsInMultiSelectFilter(accordionName, selectedCount) {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
     cy.expect(multiSelect.has({ selectedCount }));
+  },
+
+  resizeSearchInputField(height, width) {
+    cy.do(inventorySearchAndFilter.resize(height, width));
+  },
+
+  verifySearchInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(inventorySearchAndFilter.has({ height }));
+    if (width !== null) cy.expect(inventorySearchAndFilter.has({ width }));
+  },
+
+  resizeBrowseInputField(height, width) {
+    cy.do(browseSearchInputField.resize(height, width));
+  },
+
+  verifyBrowseInputFieldSize(height = null, width = null) {
+    if (height !== null) cy.expect(browseSearchInputField.has({ height }));
+    if (width !== null) cy.expect(browseSearchInputField.has({ width }));
+  },
+
+  checkClearIconShownInBrowseField(isShown = true) {
+    if (isShown) cy.expect(browseSearchInputField.find(clearIcon).exists());
+    else cy.expect(browseSearchInputField.find(clearIcon).absent());
+  },
+
+  focusOnBrowseField() {
+    cy.do(browseSearchInputField.focus());
+  },
+
+  verifyBrowseResultListExists(isExist = true) {
+    cy.expect(isExist ? anyBrowseResultList.exists() : anyBrowseResultList.absent());
+  },
+
+  verifyUriCharLimitMessageAndCallout() {
+    cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
+    InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
+  },
+
+  verifyNoCheckboxesInAccordion(accordionName) {
+    cy.expect([
+      Accordion(accordionName).find(Checkbox()).absent(),
+      Accordion(accordionName).find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  verifySharedIconForResult: (title, isShared = true) => {
+    const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
+    if (isShared) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
+    const option = Accordion(accordionName).find(Checkbox(optionName));
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
   },
 };

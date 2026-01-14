@@ -2,11 +2,14 @@ import uuid from 'uuid';
 import {
   Button,
   TextField,
+  TextArea,
   MultiColumnListCell,
   Checkbox,
   Modal,
   Pane,
   Section,
+  HTML,
+  including,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -25,6 +28,7 @@ const auPaneDetails = Section({ id: 'pane-ac-units-details' });
 const checkboxAll = Checkbox();
 const searchButton = Button('Search');
 const nameTextField = TextField({ name: 'name' });
+const descriptionTextField = TextArea({ name: 'description' });
 
 const getDefaultAcquisitionUnit = ({
   name,
@@ -156,6 +160,7 @@ export default {
     cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
   },
+
   getAcquisitionUnitViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -201,6 +206,110 @@ export default {
       method: 'DELETE',
       path: `acquisitions-units/memberships/${userId}`,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  clickActionsButton: () => {
+    cy.do(actionsButton.click());
+  },
+
+  checkDeleteButtonDisabled: (isDisabled = true) => {
+    cy.expect(Button(including('Delete')).has({ disabled: isDisabled, visible: true }));
+  },
+
+  clickDeleteOption: () => {
+    cy.do(Button('Delete').click());
+  },
+
+  clickCancelInDeleteModal: () => {
+    cy.do(Modal('Delete acquisition unit').find(Button('Cancel')).click());
+  },
+
+  clickConfirmInDeleteModal: () => {
+    cy.do(Modal('Delete acquisition unit').find(Button('Confirm')).click());
+  },
+
+  checkAcquisitionUnitDeleted: (auName) => {
+    cy.expect(auListPane.find(Button(auName)).absent());
+  },
+
+  checkDeleteModalAppears: () => {
+    cy.expect(Modal('Delete acquisition unit').exists());
+  },
+
+  checkNoAssignedUsers: () => {
+    cy.expect(assignedUsersSection.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyNewButtonAbsent: () => {
+    cy.expect(Button('New').absent());
+  },
+
+  verifyActionsButtonAbsent: () => {
+    cy.expect(actionsButton.absent());
+  },
+
+  verifyAssignUsersButtonAbsent: () => {
+    cy.expect(findUserButton.absent());
+  },
+
+  verifyDeleteIconAbsent: () => {
+    cy.expect(assignedUsersSection.find(trashButton).absent());
+  },
+
+  collapseAll: () => {
+    cy.do(Button('Collapse all').click());
+  },
+
+  expandAll: () => {
+    cy.do(Button('Expand all').click());
+  },
+
+  verifyCollapseExpandAll: (isCollapsed = true) => {
+    if (isCollapsed) {
+      cy.expect([Button('Expand all').exists(), Button('Collapse all').absent()]);
+    } else {
+      cy.expect([Button('Collapse all').exists(), Button('Expand all').absent()]);
+    }
+  },
+
+  fillDescription: (description) => {
+    cy.do(descriptionTextField.fillIn(description));
+  },
+
+  verifyDescriptionValue: (description) => {
+    cy.expect(descriptionTextField.has({ value: description }));
+  },
+
+  verifyDescriptionInDetailsPane: (description) => {
+    cy.expect(auPaneDetails.find(HTML(including(description))).exists());
+  },
+
+  clickEditOption: () => {
+    cy.do(Button('Edit').click());
+  },
+
+  clickSaveButton: () => {
+    cy.do(saveAUButton.click());
+  },
+
+  verifyDescriptionFieldExists: () => {
+    cy.expect(descriptionTextField.exists());
+  },
+
+  verifyDescriptionFieldEmpty: () => {
+    cy.expect(descriptionTextField.has({ value: '' }));
+  },
+
+  fillName: (name) => {
+    cy.do(nameTextField.fillIn(name));
+  },
+
+  getAcquisitionUnitIdFromUrl: () => {
+    return cy.url().then((url) => {
+      const parts = url.split('/');
+      const idIndex = parts.findIndex((part) => part === 'acquisition-units') + 1;
+      return parts[idIndex];
     });
   },
 };

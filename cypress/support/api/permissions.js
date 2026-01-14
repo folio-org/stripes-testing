@@ -70,7 +70,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1000) => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500) => {
   cy.okapiRequest({
     method: 'GET',
     path: `capability-sets?limit=${limit}`,

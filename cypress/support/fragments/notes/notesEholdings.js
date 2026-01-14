@@ -6,12 +6,17 @@ import {
   TextField,
   RichEditor,
   HTML,
+  Select,
+  KeyValue,
 } from '../../../../interactors';
 
 const notesSection = Section({ id: 'providerShowNotes' });
+const noteViewSection = Section({ id: 'pane-note-view' });
 const createButton = Button({ id: 'note-create-button' });
+const assignUnassignButton = Button({ id: 'note-assign-button' });
 const titleField = TextField('Note title*');
 const detailsField = RichEditor({ id: 'note-details-field' });
+const noteTypeSelect = Select({ name: 'type' });
 const submitButton = Button({ type: 'submit' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
@@ -21,9 +26,22 @@ const sortByTitleButton = Button({ id: 'clickable-list-column-titleanddetails' }
 
 export default {
   waitLoading: () => cy.expect(notesSection.exists()),
+  waitNoteViewLoading: () => cy.expect(noteViewSection.exists()),
+  verifyNotesAccordionButtons: () => {
+    cy.expect([assignUnassignButton.exists(), createButton.exists()]);
+  },
   createNote: (title, details) => {
     cy.do([
       createButton.click(),
+      titleField.fillIn(title),
+      detailsField.fillIn(details),
+      submitButton.click(),
+    ]);
+  },
+  createNoteWithType: (title, details, noteType) => {
+    cy.do([
+      createButton.click(),
+      noteTypeSelect.choose(noteType),
       titleField.fillIn(title),
       detailsField.fillIn(details),
       submitButton.click(),
@@ -74,5 +92,17 @@ export default {
       detailsField.fillIn(newDetails),
       submitButton.click(),
     ]);
+  },
+  clickAssignUnassignButton: () => {
+    cy.do(assignUnassignButton.click());
+  },
+  verifyNoteInList: (title) => {
+    cy.expect(notesSection.find(HTML(including(title))).exists());
+  },
+  verifyNoteNotInList: (title) => {
+    cy.expect(notesSection.find(HTML(including(title))).absent());
+  },
+  verifyNoteViewNoteType: (expectedNoteType) => {
+    cy.expect(noteViewSection.find(KeyValue('Note type')).has({ value: expectedNoteType }));
   },
 };

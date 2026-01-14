@@ -35,7 +35,7 @@ const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
-
+const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoices' }));
 const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
 
 const iconTimes = Button({ icon: 'times' });
@@ -250,6 +250,41 @@ export default {
       cy.expect(polListingAccordion.has({ text: including('The list contains no items') }));
     }
   },
+
+  checkAccordionColumnItem(rowIndex, columnName, value) {
+    cy.expect(
+      relatedInvoicesSection
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: including(value) }),
+    );
+  },
+
+  checkRelatedInvoicesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.invoiceNumber) {
+        this.checkAccordionColumnItem(index, 'Invoice #', record.invoiceNumber);
+      }
+      if (record.fiscalYear) {
+        this.checkAccordionColumnItem(index, 'Fiscal year', record.fiscalYear);
+      }
+      if (record.invoiceDate) {
+        this.checkAccordionColumnItem(index, 'Invoice date', record.invoiceDate);
+      }
+      if (record.vendorCode) {
+        this.checkAccordionColumnItem(index, 'Vendor code', record.vendorCode);
+      }
+      if (record.vendorInvoiceNumber) {
+        this.checkAccordionColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNumber);
+      }
+      if (record.status) {
+        this.checkAccordionColumnItem(index, 'Status', record.status);
+      }
+      if (record.invoiceAmount) {
+        this.checkAccordionColumnItem(index, 'Invoice amount', record.invoiceAmount);
+      }
+    });
+  },
+
   checkIsItemsInInventoryCreated(title, location) {
     openPolDetails(title);
     OrderLines.openInstance();
@@ -296,5 +331,24 @@ export default {
 
   openInvoice(number) {
     cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
+  },
+
+  updateEncumbrances() {
+    this.expandActionsDropdown();
+    cy.do(Button('Update encumbrances').click());
+  },
+
+  checkApiErrorResponse(
+    interception,
+    { expectedStatus, expectedErrorCode, expectedErrorMessage } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedErrorCode) {
+      expect(interception.response.body.errors[0].code).to.equal(expectedErrorCode);
+    }
+    if (expectedErrorMessage) {
+      expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
+    }
   },
 };

@@ -148,6 +148,15 @@ export default {
     );
   },
 
+  verifyItemCheckedOut(itemBarcode) {
+    const trimmedBarcode = itemBarcode.trim();
+    cy.expect(
+      MultiColumnList({ id: 'list-items-checked-out' })
+        .find(HTML(including(trimmedBarcode)))
+        .exists(),
+    );
+  },
+
   confirmMultipieceCheckOut(barcode) {
     cy.do(modal.find(Button('Check out')).click());
     cy.expect(
@@ -296,6 +305,15 @@ export default {
 
   verifyFeeFinesOwed(amount) {
     cy.expect(KeyValue({ value: including(amount) }).exists());
+  },
+
+  verifyOpenLoansCount(expectedCount) {
+    cy.expect(
+      userPane
+        .find(KeyValue('Open loans'))
+        .find(HTML(including(`${expectedCount}`)))
+        .exists(),
+    );
   },
 
   waitLoading() {

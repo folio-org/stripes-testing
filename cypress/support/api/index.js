@@ -49,3 +49,4 @@ import './linkedDataEditor';
 import './oa';
 import './smtp';
 import './aoi-pmh';
+import './timers';

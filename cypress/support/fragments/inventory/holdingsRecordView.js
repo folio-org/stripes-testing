@@ -141,6 +141,11 @@ export default {
   checkFormerHoldingsId: (value) => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: (value) => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: (expectedPolicy) => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
+  checkRetentionPolicy: (expectedPolicy) => cy.expect(KeyValue('Retention policy', { value: expectedPolicy }).exists()),
+  checkAcquisitionMethod: (expectedMethod) => cy.expect(KeyValue('Acquisition method', { value: expectedMethod }).exists()),
+  checkOrderFormat: (expectedFormat) => cy.expect(KeyValue('Order format', { value: expectedFormat }).exists()),
+  checkReceiptStatus: (expectedStatus) => cy.expect(KeyValue('Receipt status', { value: expectedStatus }).exists()),
+
   checkURIIsNotEmpty: () => cy.expect(
     electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
@@ -308,6 +313,30 @@ export default {
     checkCallNumberPrefix(callNumberPrefix);
     checkCallNumberSuffix(callNumberSuffix);
   },
+  checkAdditionalHoldingsCallNumber: ({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+  }) => {
+    cy.get('h3:contains("Additional holdings call numbers")')
+      .parent()
+      .within(() => {
+        const checkField = (label, value) => {
+          if (value) {
+            cy.get('[class^="kvLabel"]')
+              .filter((index, el) => el.innerText.trim() === label)
+              .parent()
+              .find('[data-test-kv-value="true"]')
+              .should('contain', value);
+          }
+        };
+        checkField('Call number type', callNumberType);
+        checkField('Call number prefix', callNumberPrefix);
+        checkField('Call number', callNumber);
+        checkField('Call number suffix', callNumberSuffix);
+      });
+  },
   checkTitle: (title) => {
     cy.expect(holdingsRecordViewSection.find(HTML(including(title))).exists());
   },
@@ -331,6 +360,58 @@ export default {
     cy.expect(
       Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
     );
+  },
+
+  checkReceivingHistoryForTenant(tenantName, receiptDate, source) {
+    const accordionConfigs = {
+      member: {
+        sectionId: 'receiving-history-accordion',
+        listId: 'college-receiving-history-list',
+      },
+      central: {
+        sectionId: 'central-receivings-accordion',
+        listId: 'consortium-receiving-history-list',
+      },
+    };
+
+    const config = accordionConfigs[tenantName];
+    const receivingHistoryList = Section({ id: config.sectionId }).find(
+      MultiColumnList({ id: config.listId }),
+    );
+
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Receipt date', content: receiptDate }))
+        .exists(),
+    );
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Source', content: source }))
+        .exists(),
+    );
+  },
+
+  checkReceivingHistoryAccordionForMemberTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('member', receiptDate, source);
+  },
+
+  checkReceivingHistoryAccordionForCentralTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('central', receiptDate, source);
+  },
+  checkReceivingHistoryValues: ({ enumeration, chronology }) => {
+    const receivingHistorySection = Section({ id: 'receiving-history-accordion' });
+    const list = receivingHistorySection.find(MultiColumnList());
+
+    if (enumeration) {
+      cy.expect(
+        list.find(MultiColumnListCell({ column: 'Enumeration', content: enumeration })).exists(),
+      );
+    }
+    if (chronology) {
+      cy.expect(
+        list.find(MultiColumnListCell({ column: 'Chronology', content: chronology })).exists(),
+      );
+    }
   },
 
   checkNotesByType(

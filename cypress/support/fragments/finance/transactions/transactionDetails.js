@@ -40,4 +40,18 @@ export default {
   openSourceInTransactionDetails(source) {
     cy.do(transactionDetailSection.find(Link(source)).click());
   },
+
+  checkEncumbranceApiResponse(
+    interception,
+    { expectedStatus, expectedEncumbranceStatus, expectedOrderStatus } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedEncumbranceStatus) {
+      expect(interception.response.body.encumbrance.status).to.equal(expectedEncumbranceStatus);
+    }
+    if (expectedOrderStatus) {
+      expect(interception.response.body.encumbrance.orderStatus).to.equal(expectedOrderStatus);
+    }
+  },
 };

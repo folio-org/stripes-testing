@@ -19,6 +19,8 @@ export const APPLICATION_NAMES = {
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
+  LINKED_DATA_EDITOR: 'Linked Data Editor',
+  NOTES: 'Notes',
 };
 
 export const REQUEST_METHOD = {
@@ -393,6 +395,7 @@ export const VENDOR_NAMES = {
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
   AMAZON: 'Amazon.com',
+  MOSAIC: 'Mosaic',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
@@ -1022,6 +1025,12 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};
+
+export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
+  INSTANCES: 'Default instances export job profile',
+  HOLDINGS: 'Default holdings export job profile',
+  AUTHORITY: 'Default authority export job profile',
 };
 
 export const AUTHORIZATION_POLICY_TYPES = {

@@ -226,6 +226,10 @@ export default {
     internal: 'ui-inventory.holdings.edit',
     gui: 'Inventory: View, create, edit holdings',
   },
+  uiInventoryViewCreateHoldings: {
+    internal: 'ui-inventory.holdings.create',
+    gui: 'Inventory: View, create holdings',
+  },
   uiInventoryViewCreateEditInstances: {
     internal: 'ui-inventory.instance.edit',
     gui: 'Inventory: View, create, edit instances',
@@ -370,6 +374,10 @@ export default {
   inventoryStorageInstancesBatchUpdate: {
     internal: 'inventory-storage.instances.batch.synchronous.post',
     gui: 'Inventory-Storage Instances Batch Synchronous',
+  },
+  inventoryStorageItemsBatchUpdate: {
+    internal: 'inventory-storage.items.batch.post',
+    gui: 'inventory storage - create or update a number of items',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
@@ -810,6 +818,14 @@ export default {
     internal: 'ui-receiving.exportCSV',
     gui: 'Receiving: Export search results',
   },
+  uiReceivingAssignAcquisitionUnitsToNewTitle: {
+    internal: 'ui-receiving.acq-units.assignment.assign',
+    gui: 'Receiving: Assign acquisition units to new receiving title',
+  },
+  uiReceivingManageAcquisitionUnits: {
+    internal: 'ui-receiving.acq-units.assignment.manage',
+    gui: 'Receiving: Manage acquisition units',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',
@@ -1134,6 +1150,10 @@ export default {
     gui: 'Settings (Organizations): View settings',
   },
   // Settings
+  uiSettingsAcquisitionUnitsView: {
+    internal: 'ui-acquisition-units.settings.view',
+    gui: 'Settings (acquisition units): View acquisition units',
+  },
   uiSettingsAcquisitionUnitsViewEditCreateDelete: {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',

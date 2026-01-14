@@ -18,6 +18,7 @@ import {
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import ReceivingDetails from './receivingDetails';
 
@@ -35,6 +36,8 @@ const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
 const selectLocationsModal = Modal('Select locations');
 const pieceDetailsSection = Section({ id: 'pieceDetails' });
+const acquisitionUnitsDropdown = HTML({ id: including('acq-units-input') });
+const acquisitionUnitsDropdownItems = HTML({ id: including('downshift') });
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -515,7 +518,7 @@ export default {
       .then(({ body }) => body?.pieces || []);
   },
 
-  receivePieceViaApi({ poLineId, pieces }) {
+  receivePieceViaApi({ poLineId, pieces, tenantId }) {
     return this.getPiecesViaApi(poLineId).then((allPieces) => {
       const checkInPieces = pieces.map((currentPiece) => {
         const piece = allPieces.find((p) => p.id === currentPiece.id);
@@ -546,6 +549,9 @@ export default {
           sequenceNumber: piece.sequenceNumber,
           supplement:
             currentPiece.supplement !== undefined ? currentPiece.supplement : piece.supplement,
+          ...(tenantId || currentPiece.receivingTenantId
+            ? { receivingTenantId: tenantId || currentPiece.receivingTenantId }
+            : {}),
         };
       });
 
@@ -556,7 +562,158 @@ export default {
           toBeCheckedIn: [{ poLineId, checkedIn: checkInPieces.length, checkInPieces }],
           totalRecords: checkInPieces.length,
         },
+        isDefaultSearchParamsRequired: false,
       });
     });
+  },
+
+  getTitleByPoLineNumberViaApi(poLineNumber) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/titles',
+        searchParams: {
+          query: `(((poLine.poLineNumber==*${poLineNumber}*)))`,
+        },
+      })
+      .then(({ body }) => body?.titles?.[0]);
+  },
+
+  parsePOLformatToPieceFormat(format) {
+    switch (format) {
+      case 'Physical Resource':
+        return 'Physical';
+      case 'Electronic Resource':
+        return 'Electronic';
+      case 'P/E Mix':
+        return 'Physical';
+      case 'Other':
+        return 'Other';
+      default:
+        return 'Physical';
+    }
+  },
+
+  addPieceViaApi(
+    { poLineId, poLineNumber, format, holdingId, searchParams = {} },
+    otherParams = {},
+  ) {
+    return this.getTitleByPoLineNumberViaApi(poLineNumber).then((titleResponse) => {
+      const titleId = titleResponse.id;
+      const sequenceNumber = titleResponse.sequenceNumber;
+      return cy.okapiRequest({
+        method: 'POST',
+        path: 'orders/pieces',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          poLineId,
+          titleId,
+          format: this.parsePOLformatToPieceFormat(format),
+          holdingId: holdingId || null,
+          sequenceNumber,
+          receiptDate: titleResponse.expectedReceiptDate ? titleResponse.expectedReceiptDate : '',
+          ...otherParams,
+        },
+      });
+    });
+  },
+
+  clickNewTitleOption() {
+    this.expandActionsDropdown();
+    cy.do(Button('New').click());
+  },
+
+  fillTitleLookup(titleName) {
+    cy.do([
+      Button('Title look-up').click(),
+      Modal('Select instance')
+        .find(TextField({ name: 'query' }))
+        .fillIn(titleName),
+      Modal('Select instance').find(Button('Search')).click(),
+    ]);
+    cy.wait(2000);
+    cy.do(
+      Modal('Select instance')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
+  },
+
+  fillPOLNumberLookup(polNumber) {
+    cy.do(Button('POL number look-up').click());
+    cy.wait(1000);
+    SelectOrderLinesModal.searchByName(polNumber);
+    cy.wait(2000);
+    cy.do(
+      Modal('Select order lines')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
+  },
+
+  checkAcquisitionUnitsDropdown(auName, shouldExist = false) {
+    cy.do(acquisitionUnitsDropdown.click());
+    cy.wait(500);
+    if (shouldExist) {
+      cy.expect(acquisitionUnitsDropdownItems.find(HTML(including(auName))).exists());
+    } else {
+      cy.expect(acquisitionUnitsDropdownItems.find(HTML(including(auName))).absent());
+    }
+    cy.get('body').click(0, 0);
+  },
+
+  clickSaveAndCloseInNewTitle(titleName, polNumber) {
+    cy.do(Button('Save & close').click());
+    if (titleName && polNumber) {
+      InteractorsTools.checkCalloutMessage(
+        `The title ${titleName} has been successfully added for PO line ${polNumber}`,
+      );
+    }
+  },
+
+  expandTitleInformationAccordion() {
+    cy.do(Accordion({ id: 'information' }).clickHeader());
+  },
+
+  verifyNewTitlePageOpened() {
+    cy.expect(Section({ id: 'pane-title-form' }).exists());
+  },
+
+  getTitleByPoLineIdViaApi(poLineId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'orders/titles',
+        searchParams: {
+          query: `poLineId==${poLineId}`,
+        },
+      })
+      .then(({ body }) => (body?.titles?.length > 0 ? body.titles[0] : null));
+  },
+
+  updateTitleViaApi(title) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `orders/titles/${title.id}`,
+      body: title,
+    });
+  },
+
+  getExistingInstanceTitle() {
+    return cy
+      .okapiRequest({
+        path: 'inventory/instances',
+        searchParams: {
+          query: 'title="*" sortby title',
+          limit: 100,
+        },
+      })
+      .then((response) => {
+        const simpleInstance = response.body.instances.find(
+          (inst) => /^[a-zA-Z0-9\s]+$/.test(inst.title) && inst.title.length < 50,
+        );
+        return simpleInstance?.title || response.body.instances[0]?.title || 'Default Title';
+      });
   },
 };

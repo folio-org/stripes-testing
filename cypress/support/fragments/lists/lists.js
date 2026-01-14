@@ -920,13 +920,13 @@ const QueryBuilder = {
       const text = $element.text();
       const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
       const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
-      expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
+      expect(text.startsWith(`Query returns ${totalRecords} records.`)).to.equal(true);
       expect(previewLabel).to.equal(`Preview of first ${Math.min(previewRecords, 100)} records.`);
     });
   },
 
   getNumberOfRows() {
-    const searchTerm = 'Query would return ';
+    const searchTerm = 'Query returns ';
     cy.contains(searchTerm).should('be.visible');
     return cy.xpath(`.//h3[starts-with(., "${searchTerm}")]`).then(($element) => {
       cy.wrap(true).then(() => {

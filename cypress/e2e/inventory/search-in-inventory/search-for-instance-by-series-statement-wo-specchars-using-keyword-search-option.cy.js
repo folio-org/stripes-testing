@@ -21,15 +21,15 @@ const testData = {
     'Philippine Question & books No 10',
     'Philippine Question / books No 10',
     'Philippine Question\\ books No 10',
+    'Philippine Question ? books No 10',
     'Philippine Question books No 10;',
     '...Philippine Question books No 10"',
+    '. Philippine Question books No 10  ',
     '(Philippine Question) books No 10',
   ],
 
   negativeSearchQueries: [
     'Philippinequestion Books No 10',
-    'Philippine Question ? books No 10"',
-    '. Philippine Question books No 10  ',
     'Philippine Question New books No 10',
     'P.Q. books No 10',
   ],

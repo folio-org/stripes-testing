@@ -4,7 +4,6 @@ import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   AdvancedSearch,
-  MultiSelectMenu,
   AdvancedSearchRow,
   Button,
   Callout,
@@ -15,6 +14,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
   PaneContent,
@@ -24,21 +24,21 @@ import {
   TextArea,
   TextField,
   TextInput,
-  or,
   and,
+  or,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';
+import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import parseMrkFile from '../../utils/parseMrkFile';
 import getRandomPostfix from '../../utils/stringTools';
 import CheckinActions from '../check-in-actions/checkInActions';
+import QuickMarcEditor from '../quickMarcEditor';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
-import QuickMarcEditor from '../quickMarcEditor';
-import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -1708,5 +1708,22 @@ export default {
   verifyColumnHeaderSortableButNotSorted(headerName, isSortable = true) {
     const targetHeader = inventoriesList.find(MultiColumnListHeader(headerName));
     cy.expect(targetHeader.has({ sortable: isSortable }));
+  },
+
+  checkIfInstanceHasHoldingsApi(instanceId, hasHoldings = true) {
+    cy.getHoldings({ query: `instanceId==${instanceId}` }).then((holdings) => {
+      if (hasHoldings) {
+        cy.expect(holdings.length).to.be.greaterThan(0);
+      } else {
+        cy.expect(holdings.length).to.equal(0);
+      }
+    });
+  },
+
+  checkAllFoundInstancesHaveHoldings(haveHoldings = true) {
+    cy.get('a[id^="record-title-"]').each(($instanceLink) => {
+      const instanceId = $instanceLink.attr('id').replace('record-title-', '');
+      this.checkIfInstanceHasHoldingsApi(instanceId, haveHoldings);
+    });
   },
 };

@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Pane, Button, Select, Checkbox, NavListItem, Modal } from '../../../../../interactors';
+import { Button, Checkbox, Modal, NavListItem, Pane, Select } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button('Save');
@@ -174,8 +174,7 @@ export default {
             id: uuid(),
           };
         }).then(() => {
-          const newValue = { ...JSON.parse(config.value), ...newSettings };
-          config.value = JSON.stringify(newValue);
+          config.value = { ...config.value, ...newSettings };
 
           cy.okapiRequest({
             method: 'POST',
