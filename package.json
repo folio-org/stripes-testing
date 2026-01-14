@@ -40,7 +40,7 @@
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.25.4",
     "@cypress/grep": "^4.0.1",
-    "@cypress/request": "2.88.7",
+    "@cypress/request": "3.0.0",
     "@cypress/webpack-batteries-included-preprocessor": "^3.0.5",
     "@cypress/webpack-preprocessor": "^5.4.4",
     "@folio/eslint-config-stripes": "^8.0.0",
