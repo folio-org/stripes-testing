@@ -107,7 +107,7 @@ describe('Lists', () => {
         Lists.selectStatus('Active');
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.openActions();
         Lists.exportList();
         Lists.openActions();
@@ -151,7 +151,7 @@ describe('Lists', () => {
         cy.get('button:contains("Test query")').click();
         cy.wait(7000);
         cy.get('button:contains("Run query & save")').click();
-        cy.wait(9000);
+        cy.wait(1000);
         Lists.openActions();
         Lists.cancelRefresh();
         cy.contains(

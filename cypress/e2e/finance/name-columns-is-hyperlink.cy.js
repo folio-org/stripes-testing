@@ -68,7 +68,7 @@ describe('Finance', () => {
       FinanceHelp.clickFiscalYearButton();
       FiscalYears.waitLoading();
       FiscalYears.searchByName(defaultFiscalYear.name);
-      FiscalYears.expextFY(defaultFiscalYear.name);
+      FiscalYears.expectFY(defaultFiscalYear.name);
 
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYearDetails.verifyFiscalYearName(defaultFiscalYear.name);

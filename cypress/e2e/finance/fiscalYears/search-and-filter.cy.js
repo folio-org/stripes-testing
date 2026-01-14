@@ -47,7 +47,7 @@ describe('Fiscal Year', () => {
       // Search and Filter Fiscal Year
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.selectAcquisitionUnitFilter('No acquisition unit');
-      FiscalYears.expextFY(defaultFiscalYear.name);
+      FiscalYears.expectFY(defaultFiscalYear.name);
     },
   );
 });
