@@ -21,7 +21,7 @@ describe('ui-invoices-settings: Batch Group creation', { retries: { runMode: 1 }
 
   it(
     'C15857 Create edit and delete Expense classes (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C15857'] },
     () => {
       SettingsFinance.waitExpenseClassesLoading();
       SettingsFinance.createNewExpenseClass(expenseClass);

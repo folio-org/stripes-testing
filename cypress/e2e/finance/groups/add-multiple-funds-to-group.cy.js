@@ -94,7 +94,7 @@ describe('Groups', () => {
 
   it(
     'C347878 Add multiple funds to a group with plugin  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C347878'] },
     () => {
       FinanceHelp.searchByName(defaultGroup.name);
       Groups.selectGroup(defaultGroup.name);

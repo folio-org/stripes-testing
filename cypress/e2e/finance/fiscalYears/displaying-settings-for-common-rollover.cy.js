@@ -160,7 +160,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C376605 Displaying FY rollover settings for common rollover (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C376605'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

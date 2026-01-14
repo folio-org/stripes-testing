@@ -159,7 +159,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C692072 Search and filter pane on Batch allocation logs screen (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C692072'] },
     () => {
       BatchEditBudget.openBatchAllocationLogsFromLedgerList();
       BatchEditBudget.filterLogsByFiscalYear(fiscalYear1.code);

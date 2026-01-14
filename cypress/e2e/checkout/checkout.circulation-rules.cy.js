@@ -211,7 +211,7 @@ describe('Check out: Circulation rules', () => {
 
   it(
     'C593 Check out: (Testing circulation rules) - perform check-out for rule with nested attributes/policies (critical) (vega)',
-    { tags: ['critical', 'vega', 'C593'] },
+    { tags: ['criticalPath', 'vega', 'C593'] },
     () => {
       // Step 1: Enter user barcode and scan patron
       CheckOutActions.checkOutUser(userData.barcode, userData.personal.lastname);

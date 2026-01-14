@@ -40,7 +40,7 @@ describe('Data Import', () => {
 
     it(
       'C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C359207'] },
+      { tags: ['criticalPath', 'folijet', 'C359207', 'shiftLeft'] },
       () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file

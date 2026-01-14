@@ -57,7 +57,7 @@ describe('Organizations', () => {
 
   it(
     'C423690 Add privileged donor information in Organization (NOT a vendor) record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423690'] },
     () => {
       TopMenuNavigation.navigateToApp('Organizations');
       Organizations.searchByParameters('Name', organization.name);

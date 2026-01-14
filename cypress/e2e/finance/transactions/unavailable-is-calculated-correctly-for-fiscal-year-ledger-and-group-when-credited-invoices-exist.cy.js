@@ -294,7 +294,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C502962 "Unavailable" is calculated correctly for fiscal year, ledger and group when credited invoices exist (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C502962'] },
     () => {
       FinanceHelp.searchByName(defaultFiscalYear.name);
       FiscalYears.selectFY(defaultFiscalYear.name);

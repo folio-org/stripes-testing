@@ -30,7 +30,6 @@ describe('orders: Test PO filters', () => {
   let orderSuffixId;
 
   before(() => {
-    cy.clearLocalStorage();
     cy.getAdminToken();
     SettingsOrders.createPrefixViaApi(order.poNumberPrefix).then((prefixId) => {
       orderPrefixId = prefixId;
@@ -38,7 +37,6 @@ describe('orders: Test PO filters', () => {
     SettingsOrders.createSuffixViaApi(order.poNumberSuffix).then((suffixId) => {
       orderSuffixId = suffixId;
     });
-
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -51,15 +49,16 @@ describe('orders: Test PO filters', () => {
     });
     cy.getBookMaterialType().then((materialType) => {
       orderLine.physical.materialType = materialType.id;
-      cy.loginAsAdmin();
-      cy.getAdminToken();
+
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
+
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
           orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
           orderLine.purchaseOrderId = order.id;
           cy.createOrderLineApi(orderLine);
         });
+        cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
         Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
@@ -92,8 +91,9 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C6718 Test the PO filters with open Order [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6718', 'shiftLeft'] },
       () => {
+        cy.wait(3000);
         filter.filterActions();
         Orders.checkSearchResults(orderNumber);
         Orders.resetFilters();

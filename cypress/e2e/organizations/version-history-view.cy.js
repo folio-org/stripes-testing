@@ -1,23 +1,29 @@
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import Agreements from '../../support/fragments/agreements/agreements';
-import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import permissions from '../../support/dictionary/permissions';
 import VersionHistorySection from '../../support/fragments/inventory/versionHistorySection';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
+  let user;
+  let preUpdated;
+  let afterUpdated;
+  let lastUpdate;
+  let adminUser;
   const organization = {
-    ...newOrganization.defaultUiOrganizations,
+    ...NewOrganization.defaultUiOrganizations,
     isDonor: true,
     privilegedContacts: [],
     isVendor: false,
   };
-  const privilegedContact = { ...newOrganization.defaultContact };
-  const organizationInterface = { ...newOrganization.defaultInterface };
+  const privilegedContact = { ...NewOrganization.defaultContact };
+  const organizationInterface = { ...NewOrganization.defaultInterface };
   const contactPeople = {
     firstName: `AT_FN_${getRandomPostfix()}_2`,
     lastName: `AT_LN_${getRandomPostfix()}_2`,
@@ -25,17 +31,11 @@ describe('Organizations', () => {
   const defaultAgreement = { ...NewAgreement.getdefaultAgreement() };
   const calloutMessage = `Agreement created: ${defaultAgreement.name}`;
   const colloutMessage2 = `Agreement updated: ${defaultAgreement.name}`;
-  let user;
-  let preUpdated;
-  let afterUpdated;
-  let lastUpdate;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+    cy.getAdminToken();
+    cy.getAdminUserDetails().then((admin) => {
+      adminUser = admin.personal;
     });
 
     Organizations.createInterfaceViaApi(organizationInterface).then((interfaceId) => {
@@ -51,8 +51,11 @@ describe('Organizations', () => {
         organization.id = organizationResponse;
       });
     });
-    cy.wait(30000);
+    cy.wait(7000);
 
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORGANIZATIONS);
+    Organizations.waitLoading();
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganizationInCurrentPage(organization.name);
     Organizations.getLastUpdateTime().then((time) => {
@@ -65,7 +68,7 @@ describe('Organizations', () => {
     Organizations.getLastUpdateTime().then((time) => {
       afterUpdated = time.replace(' ', ', ');
     });
-    cy.visit(TopMenu.agreementsPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.AGREEMENTS);
     Agreements.createAndCheckFields(defaultAgreement);
     cy.wait(4000);
     InteractorsTools.checkCalloutMessage(calloutMessage);
@@ -75,24 +78,24 @@ describe('Organizations', () => {
     InteractorsTools.checkCalloutMessage(colloutMessage2);
 
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+
+      cy.login(user.username, user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATION);
+      Organizations.waitLoading();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
-    });
-    Agreements.selectRecord(defaultAgreement.name);
-    Agreements.deleteAgreement();
+    cy.getAdminToken();
+    Agreements.getIdViaApi({ limit: 1000, query: `"name"=="${defaultAgreement.name}"` }).then(
+      (id) => {
+        Agreements.deleteViaApi(id);
+      },
+    );
     Organizations.deleteContactViaApi(contactPeople.id);
     Organizations.deletePrivilegedContactsViaApi(privilegedContact.id);
     Organizations.deleteOrganizationViaApi(organization.id);
@@ -101,7 +104,7 @@ describe('Organizations', () => {
 
   it(
     'C663330 Version history view for Organizations',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C663330'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
@@ -110,8 +113,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        adminUser.firstName,
+        adminUser.lastName,
         true,
         false,
       );
@@ -119,8 +122,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        adminUser.firstName,
+        adminUser.lastName,
         false,
         true,
       );

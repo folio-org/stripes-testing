@@ -51,7 +51,7 @@ describe('Orders', () => {
 
   it(
     'C423436 Populate claiming interval in PO line from Organization record for ongoing order (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423436'] },
     () => {
       // Go to order from "Preconditions" details pane
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

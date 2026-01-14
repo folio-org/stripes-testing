@@ -49,7 +49,7 @@ describe('Orders', () => {
 
   it(
     'C163929 Test acquisition unit restrictions for Order records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C163929'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

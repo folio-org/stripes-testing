@@ -66,7 +66,7 @@ describe('Inventory', () => {
 
     it(
       'C196761 Instance record: holdings accordion display (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C196761', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C196761'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.folioInstances[0].instanceTitle);

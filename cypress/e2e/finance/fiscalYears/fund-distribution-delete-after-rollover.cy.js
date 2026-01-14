@@ -165,7 +165,7 @@ describe('Finance › Fiscal Year Rollover', () => {
 
   it(
     'C451634 Fund distribution of PO line can be deleted after rollover (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C451634'] },
     () => {
       Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', orderNumber);

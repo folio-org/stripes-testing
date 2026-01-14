@@ -147,7 +147,7 @@ describe('Orders', () => {
 
   it(
     'C375962 Order (line) linked to Invoice can not be deleted (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C375962'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

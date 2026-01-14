@@ -47,7 +47,7 @@ describe('Finance › Settings (Finance)', () => {
 
   it(
     'C6651 Create and assign Fund types (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C6651'] },
     () => {
       SettingsFinance.clickNewButton();
       SettingsFinance.fillTypeName('');

@@ -90,7 +90,7 @@ describe('Consortia', () => {
 
         it(
           'C411703 Delete shared setting is successful in some of the selected member libraries (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411703'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();

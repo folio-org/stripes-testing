@@ -242,7 +242,7 @@ describe('Data Import', () => {
 
       it(
         'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
-        { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C350944'] },
+        { tags: ['criticalPath', 'folijet', 'C350944', 'shiftLeft'] },
         () => {
           // create mapping profiles
           createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);

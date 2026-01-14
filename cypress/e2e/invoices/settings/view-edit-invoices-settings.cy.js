@@ -47,7 +47,7 @@ describe('Invoices', () => {
 
     it(
       'C422073 User is able to view and edit invoices settings but not able to edit batch group credentials  with "Settings (Invoices): Batch group usernames and passwords: view" permission (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C422073'] },
       () => {
         SettingsInvoices.selectAdjustments();
         SettingsInvoices.checkNewButtonExists();

@@ -30,7 +30,7 @@ describe('Orders', () => {
 
     it(
       'C466279 Add tokens to routing list configuration (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C466279'] },
       () => {
         ListConfiguration.edit();
         ListConfiguration.clickOnAddTokensInBody();

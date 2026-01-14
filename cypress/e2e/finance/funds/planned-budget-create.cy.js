@@ -46,7 +46,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C353528 User is not able to create planned budget if upcoming fiscal year does not exist (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353528'] },
     () => {
       Funds.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

@@ -1,5 +1,5 @@
-import permissions from '../../support/dictionary/permissions';
 import { APPLICATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -9,10 +9,10 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
@@ -68,7 +68,6 @@ describe('Export Manager', () => {
 
       before(() => {
         cy.getAdminToken();
-
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -111,15 +110,15 @@ describe('Export Manager', () => {
         // Need to wait while first job will be runing
         cy.wait(60000);
         cy.createTempUser([
-          permissions.uiOrdersView.gui,
-          permissions.uiOrdersCreate.gui,
-          permissions.uiOrdersEdit.gui,
-          permissions.uiOrdersApprovePurchaseOrders.gui,
-          permissions.uiOrganizationsViewEditCreate.gui,
-          permissions.uiOrganizationsView.gui,
-          permissions.uiExportOrders.gui,
-          permissions.exportManagerAll.gui,
-          permissions.exportManagerDownloadAndResendFiles.gui,
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersCreate.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiOrdersApprovePurchaseOrders.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.uiOrganizationsView.gui,
+          Permissions.uiExportOrders.gui,
+          Permissions.exportManagerAll.gui,
+          Permissions.exportManagerDownloadAndResendFiles.gui,
         ]).then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -150,7 +149,7 @@ describe('Export Manager', () => {
 
       it(
         'C347885 Check view for jobs on Export Manager page (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'thunderjet', 'C347885'] },
         () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

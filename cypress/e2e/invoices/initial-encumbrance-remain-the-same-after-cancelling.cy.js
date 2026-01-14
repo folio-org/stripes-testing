@@ -84,7 +84,7 @@ describe('Invoices', () => {
 
   it(
     'C399092 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C399092'] },
     () => {
       // Open invoice from precondition
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

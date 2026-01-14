@@ -11,7 +11,7 @@ describe('Ledgers', () => {
 
   it(
     'C4053 Create a new ledger (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C4053', 'shiftLeft'] },
     () => {
       const defaultLedger = NewLedger.defaultLedger;
 
