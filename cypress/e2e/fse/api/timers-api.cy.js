@@ -13,7 +13,10 @@ describe('fse-timers', () => {
       cy.getTimers().then((response) => {
         cy.expect(response.status).to.eq(200);
         cy.log('total records: ' + response.body.totalRecords);
-        cy.expect(response.body.totalRecords).to.be.at.least(Cypress.env('CYPRESS_TIMERS_NUMBER'));
+        cy.log('timers expected number:' + Cypress.env('CYPRESS_TIMERS_NUMBER'));
+        cy.expect(response.body.totalRecords).to.be.at.least(
+          Number(Cypress.env('CYPRESS_TIMERS_NUMBER')),
+        );
         // Check that each timer descriptor has enabled = true
         response.body.timerDescriptors.forEach((timer) => {
           cy.wrap(timer.enabled).should('be.true');
