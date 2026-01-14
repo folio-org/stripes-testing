@@ -39,7 +39,7 @@ describe('Organizations', () => {
 
   it(
     'C677 Search an alternate organization name (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C677'] },
     () => {
       Organizations.searchByParameters('Alias', organization.aliases[0].value);
       Organizations.checkSearchResults(organization);

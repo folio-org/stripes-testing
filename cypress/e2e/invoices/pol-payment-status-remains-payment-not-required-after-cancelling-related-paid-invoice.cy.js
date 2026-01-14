@@ -163,7 +163,7 @@ describe('Invoices', () => {
 
   it(
     'C466210 POL payment status remains "Payment not required" after cancelling related paid invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466210'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);

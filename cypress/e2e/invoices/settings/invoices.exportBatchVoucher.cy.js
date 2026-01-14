@@ -73,7 +73,7 @@ describe('Invoices', () => {
 
     it(
       'C10943 Run batch voucher export manually (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'C10943'] },
       () => {
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLine(invoiceLine);

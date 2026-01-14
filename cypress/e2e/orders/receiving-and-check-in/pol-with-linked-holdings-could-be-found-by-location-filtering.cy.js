@@ -243,7 +243,7 @@ describe('Receiving', () => {
 
   it(
     'C466170 Order line with linked Holdings could be found by "Location" filtering facet on "Receiving" pane (thunderjet) (TaaS)',
-    { tags: ['smokeBroken', 'thunderjet'] },
+    { tags: ['smokeBroken', 'thunderjet', 'C466170'] },
     () => {
       Receiving.clearSearchField();
       Receiving.selectLocationInFilters(location.name);

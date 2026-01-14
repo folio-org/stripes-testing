@@ -179,7 +179,7 @@ describe('Invoices', () => {
 
   it(
     'C466208 POL payment status is changed to "Partially paid" after cancelling one of related paid invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466208'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);

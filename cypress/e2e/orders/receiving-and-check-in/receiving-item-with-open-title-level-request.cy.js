@@ -124,7 +124,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C402758 Receiving an item with open title level request (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C402758'] },
     () => {
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

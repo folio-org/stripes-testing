@@ -51,7 +51,7 @@ describe('Finance › Ledgers', () => {
 
   it(
     'C356408 All common column headings include a record name in budget export .csv file (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C356408'] },
     () => {
       Ledgers.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

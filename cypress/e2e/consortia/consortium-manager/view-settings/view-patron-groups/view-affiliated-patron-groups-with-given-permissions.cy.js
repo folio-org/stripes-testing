@@ -126,7 +126,7 @@ describe('Consortium manager', () => {
 
       it(
         'C407753 User with "Consortium manager: Can view existing settings" permission is able to view the list of patron groups of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C407753'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user753.username, testData.user753.password);
@@ -226,7 +226,7 @@ describe('Consortium manager', () => {
 
       it(
         'C407754 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of patron groups of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C407754'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user754.username, testData.user754.password);

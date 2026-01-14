@@ -37,7 +37,7 @@ describe('Fund type view', () => {
 
   it(
     'C409416 A user with "Settings (Finance): View settings" permission can only view appropriate settings (Thunderjet)(TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C409416'] },
     () => {
       SettingsFinance.verifyItemInFinancePanel();
       SettingsFinance.verifyItemInDetailPanel();

@@ -112,7 +112,7 @@ describe('Inventory', () => {
 
       it(
         'C411665 Shared instance can be created for linked instance record when order line is connected to "Shared instance" (Member tenant) (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C411665'] },
         () => {
           Orders.searchByParameter('PO number', testData.order.poNumber);
           Orders.selectFromResultsList(testData.order.poNumber);

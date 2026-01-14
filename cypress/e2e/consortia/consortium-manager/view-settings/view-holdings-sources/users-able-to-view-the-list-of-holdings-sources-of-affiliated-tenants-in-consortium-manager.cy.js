@@ -257,7 +257,7 @@ describe('Consortium manager', () => {
 
       it(
         'C648472 User with "Consortium manager: Can share settings to all members" permission is able to view the list of holdings sources of affiliated tenants in "Consortium manager" app (Consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C648472'] },
         () => {
           cy.resetTenant();
           cy.login(tempUserC648472.username, tempUserC648472.password);

@@ -23,7 +23,7 @@ describe('Organizations', () => {
 
   it(
     'C353532 Organizations search style and position of pagination (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353532'] },
     () => {
       Organizations.verifySearchAndFilterPane();
       Organizations.selectActiveStatus();
