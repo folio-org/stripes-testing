@@ -267,7 +267,6 @@ export default {
 
   bySource(source) {
     cy.do(sourceAccordion.clickHeader());
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
@@ -1687,5 +1686,24 @@ export default {
   verifyUriCharLimitMessageAndCallout() {
     cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
     InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
+  },
+
+  verifyNoCheckboxesInAccordion(accordionName) {
+    cy.expect([
+      Accordion(accordionName).find(Checkbox()).absent(),
+      Accordion(accordionName).find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  verifySharedIconForResult: (title, isShared = true) => {
+    const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
+    if (isShared) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
+    const option = Accordion(accordionName).find(Checkbox(optionName));
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
   },
 };

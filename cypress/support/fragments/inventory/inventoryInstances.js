@@ -1709,4 +1709,21 @@ export default {
     const targetHeader = inventoriesList.find(MultiColumnListHeader(headerName));
     cy.expect(targetHeader.has({ sortable: isSortable }));
   },
+
+  checkIfInstanceHasHoldingsApi(instanceId, hasHoldings = true) {
+    cy.getHoldings({ query: `instanceId==${instanceId}` }).then((holdings) => {
+      if (hasHoldings) {
+        cy.expect(holdings.length).to.be.greaterThan(0);
+      } else {
+        cy.expect(holdings.length).to.equal(0);
+      }
+    });
+  },
+
+  checkAllFoundInstancesHaveHoldings(haveHoldings = true) {
+    cy.get('a[id^="record-title-"]').each(($instanceLink) => {
+      const instanceId = $instanceLink.attr('id').replace('record-title-', '');
+      this.checkIfInstanceHasHoldingsApi(instanceId, haveHoldings);
+    });
+  },
 };
