@@ -3,7 +3,6 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 
 const deletePieceModal = Modal({ id: 'delete-piece-confirmation' });
-const deletePieceModalSelector = '#delete-piece-confirmation';
 const confirmButton = Button('Confirm');
 
 const cancelButton = deletePieceModal.find(Button('Cancel'));
@@ -47,11 +46,8 @@ export default {
     }
   },
   confirmDelete({ pieceDeleted = true } = {}) {
-    cy.get(deletePieceModalSelector).then(($modal) => {
-      const modalText = $modal.text();
-      if (modalText.includes('Are you sure you want to delete piece?')) {
-        this.clickConfirmButton({ pieceDeleted });
-      } else if (modalText.includes('This piece is connected to records in inventory')) {
+    cy.then(() => deletePieceModal.text()).then((modalText) => {
+      if (modalText.includes('This piece is connected to records in inventory')) {
         this.clickDeleteItemButton({ pieceDeleted });
       } else {
         this.clickConfirmButton({ pieceDeleted });

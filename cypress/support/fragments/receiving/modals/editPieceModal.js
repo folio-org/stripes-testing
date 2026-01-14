@@ -79,13 +79,9 @@ export default {
     cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
     cy.expect(deleteButton.exists());
   },
-  clickDeleteButton({ verifyModalView = false } = {}) {
+  clickDeleteButton() {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-
-    if (verifyModalView) {
-      DeletePieceModal.verifyModalView();
-    }
 
     return DeletePieceModal;
   },

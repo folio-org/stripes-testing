@@ -856,15 +856,6 @@ export default {
     cy.expect(HTML(including('The list contains no items')).exists());
   },
 
-  verifyItemNotInHolding(holdingLocation, itemBarcode) {
-    cy.wait(2000);
-    cy.expect(
-      Accordion({ label: including(`Holdings: ${holdingLocation}`) })
-        .find(MultiColumnListCell({ column: 'Item: barcode', content: itemBarcode }))
-        .absent(),
-    );
-  },
-
   checkNotesByType(
     noteTypeRowIndex,
     columnHeader,

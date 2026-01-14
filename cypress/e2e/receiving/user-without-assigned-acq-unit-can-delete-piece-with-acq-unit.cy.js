@@ -29,7 +29,6 @@ describe('Receiving', () => {
     let user;
     let acquisitionUnit;
     let location;
-    let instance;
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -43,12 +42,6 @@ describe('Receiving', () => {
 
       AcquisitionUnits.createAcquisitionUnitViaApi(acquisitionUnit).then((auResponse) => {
         acquisitionUnit.id = auResponse.id;
-
-        InventoryInstance.createInstanceViaApi({
-          instanceTitle,
-        }).then((instanceData) => {
-          instance = instanceData.instanceData;
-        });
 
         cy.createTempUser([
           permissions.inventoryAll.gui,
@@ -80,11 +73,7 @@ describe('Receiving', () => {
                       ...BasicOrderLine.defaultOrderLine,
                       id: uuid(),
                       purchaseOrderId: orderResponse.id,
-                      instanceId: instance.instanceId,
                       titleOrPackage: instanceTitle,
-                      checkinItems: false,
-                      receiptStatus: 'Pending',
-                      paymentStatus: 'Pending',
                       cost: {
                         listUnitPrice: 100.0,
                         currency: 'USD',
@@ -145,7 +134,6 @@ describe('Receiving', () => {
       Organizations.deleteOrganizationViaApi(organization.id);
       Users.deleteViaApi(user.userId);
       AcquisitionUnits.deleteAcquisitionUnitViaApi(acquisitionUnit.id);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
     });
 
     it(
@@ -178,6 +166,7 @@ describe('Receiving', () => {
         InventoryInstance.waitInventoryLoading();
 
         cy.wait(2000);
+        InventoryInstance.verifyNumberOfItemsInHoldingByName(location.name, 1);
         InventoryInstance.checkHoldingsTableContent({
           name: location.name,
           records: [{}],

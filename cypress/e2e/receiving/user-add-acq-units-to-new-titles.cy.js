@@ -171,7 +171,7 @@ describe('Receiving', () => {
       'C430259 User included in Acq unit is able to add Acq units to new Titles with appropriate permissions (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C430259'] },
       () => {
-        Receiving.openNewTitleForm();
+        Receiving.clickNewTitleOption();
         ReceivingEditForm.waitLoading();
 
         ReceivingEditForm.verifyAcquisitionUnitsInDropdown([
@@ -195,7 +195,7 @@ describe('Receiving', () => {
         cy.wait(1000);
         ReceivingDetails.verifyAcquisitionUnitInTitleInformation(firstAcquisitionUnit.name, true);
 
-        Receiving.openNewTitleForm();
+        Receiving.clickNewTitleOption();
         ReceivingEditForm.waitLoading();
 
         ReceivingEditForm.verifyAcquisitionUnitsInDropdown([
