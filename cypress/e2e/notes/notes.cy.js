@@ -33,24 +33,35 @@ describe('Note creation', () => {
       Permissions.uiNotesItemDelete.gui,
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+      testData.deletedUserProperties2 = createdUserProperties;
+    });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
+    cy.createTempUser([
+      Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
+      Permissions.uiNotesItemEdit.gui,
+      Permissions.uiNotesItemDelete.gui,
+      Permissions.moduleeHoldingsEnabled.gui,
+    ]).then((createdUserProperties) => {
+      testData.userProperties = createdUserProperties;
     });
   });
 
   after('Deleting data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(testData.deletedUserProperties.userId);
+    Users.deleteViaApi(testData.deletedUserProperties2.userId);
   });
 
   it(
     'C1296 Create a note (spitfire)',
     { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1296'] },
     () => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
       NotesEholdings.openNoteView(note.title);
@@ -63,6 +74,10 @@ describe('Note creation', () => {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,
     };
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: urlToEholdings,
+      waiter: NotesEholdings.waitLoading,
+    });
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.editNote(note.title, newNote.title, newNote.details);
     NotesEholdings.verifyNoteTitle(newNote.title);
@@ -74,6 +89,10 @@ describe('Note creation', () => {
     'C16992 View a note (spitfire)',
     { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16992'] },
     () => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
       NotesEholdings.openNoteView(note.title);
@@ -112,17 +131,21 @@ describe('Note creation', () => {
         details: `Edited details ${getRandomPostfix()}`,
       };
 
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
 
-      cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
+      cy.login(testData.deletedUserProperties2.username, testData.deletedUserProperties2.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
       });
       NotesEholdings.editNote(note.title, editedNote.title, editedNote.details);
       NotesEholdings.verifyNoteTitle(editedNote.title);
       cy.getAdminToken();
-      Users.deleteViaApi(testData.deletedUserProperties.userId);
+      Users.deleteViaApi(testData.deletedUserProperties2.userId);
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: urlToEholdings,
@@ -141,6 +164,10 @@ describe('Note creation', () => {
       note.titleSecond = '2 Title';
       note.addDetails = `Test details ${getRandomPostfix()}`;
 
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: urlToEholdings,
+        waiter: NotesEholdings.waitLoading,
+      });
       NotesEholdings.createNote(note.titleFirst, note.addDetails);
       NotesEholdings.createNote(note.titleSecond, note.addDetails);
 
@@ -157,6 +184,10 @@ describe('Note creation', () => {
   it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'C1300'] }, () => {
     note.addDetails = `Test details ${getRandomPostfix()}`;
 
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: urlToEholdings,
+      waiter: NotesEholdings.waitLoading,
+    });
     NotesEholdings.createNote(note.title, note.addDetails);
     NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
     NotesEholdings.openNoteView(note.title, note.addDetails);
