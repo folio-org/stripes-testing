@@ -16,14 +16,23 @@ export default {
   waitLoading() {
     cy.expect(deletePieceModal.exists());
   },
-  verifyModalView() {
-    cy.expect([
-      deletePieceModal.has({ header: 'Delete piece' }),
-      deletePieceModal.has({ message: content }),
-      cancelButton.has({ disabled: false, visible: true }),
-      deleteHoldingsButton.has({ disabled: false, visible: true }),
-      deleteItemButton.has({ disabled: false, visible: true }),
-    ]);
+  verifyModalView(lsLastPiece = true) {
+    if (lsLastPiece) {
+      cy.expect([
+        deletePieceModal.has({ header: 'Delete piece' }),
+        deletePieceModal.has({ message: content }),
+        cancelButton.has({ disabled: false, visible: true }),
+        deleteHoldingsButton.has({ disabled: false, visible: true }),
+        deleteItemButton.has({ disabled: false, visible: true }),
+      ]);
+    } else {
+      cy.expect([
+        deletePieceModal.has({ header: 'Delete piece' }),
+        deletePieceModal.has({ message: 'Are you sure you want to delete piece?' }),
+        cancelButton.has({ disabled: false, visible: true }),
+        confirmButton.has({ disabled: false, visible: true }),
+      ]);
+    }
   },
   clickCancelButton() {
     cy.do(cancelButton.click());

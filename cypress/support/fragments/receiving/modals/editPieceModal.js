@@ -75,14 +75,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  openDeleteDropdown() {
-    cy.do(Button({ dataTestID: 'dropdown-trigger-button' }).click());
-    cy.expect(deleteButton.exists());
-  },
-  clickDeleteButton() {
+  clickDeleteButton({ isLastPiece = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-
+    DeletePieceModal.verifyModalView(isLastPiece);
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {

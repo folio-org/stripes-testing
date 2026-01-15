@@ -151,8 +151,8 @@ describe('Receiving', () => {
         ReceivingDetails.openEditPieceModal({ row: 0 });
         EditPieceModal.waitLoading();
 
-        EditPieceModal.openDeleteDropdown();
-        EditPieceModal.clickDeleteButton();
+        Receiving.openDropDownInEditPieceModal();
+        EditPieceModal.clickDeleteButton({ isLastPiece: false });
 
         DeletePieceModal.confirmDelete({ pieceDeleted: true });
 
