@@ -1,4 +1,4 @@
-import { HTML, including, not } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -18,7 +18,6 @@ const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
 const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
-const matchCriterionSelect = Select({ name: 'profile.matchDetails[0].matchCriterion' });
 const nameTextField = TextField('Name*');
 const closeButton = Button('Close');
 
@@ -173,10 +172,6 @@ function fillStaticValue(staticValue, recordValue) {
   }
 }
 
-function selectMatchCriterion(matchCriterion) {
-  cy.do(matchCriterionSelect.choose(matchCriterion));
-}
-
 function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
   cy.do(criterionValueTypeList.select(existingRecordOption));
@@ -208,7 +203,6 @@ export default {
   optionsList,
   fillName,
   selectExistingRecordType,
-  selectMatchCriterion,
   fillQualifierInIncomingPart,
   fillQualifierInExistingPart,
   selectExistingRecordField,
@@ -225,7 +219,6 @@ export default {
     profileName,
     incomingRecordFields,
     existingRecordFields,
-    matchCriterion,
     existingRecordType,
     instanceOption,
     holdingsOption,
@@ -239,7 +232,6 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      selectMatchCriterion(matchCriterion);
       fillExistingRecordFields(existingRecordFields.field, 'field');
       fillExistingRecordFields(existingRecordFields.in1, 'in1');
       fillExistingRecordFields(existingRecordFields.in2, 'in2');
@@ -261,7 +253,6 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      selectMatchCriterion(matchCriterion);
       fillExistingRecordFields(existingRecordFields.field, 'field');
       fillExistingRecordFields(existingRecordFields.in1, 'in1');
       fillExistingRecordFields(existingRecordFields.in2, 'in2');
@@ -297,7 +288,6 @@ export default {
     profileName,
     existingRecordType,
     incomingRecordFields,
-    matchCriterion,
     existingRecordOption,
   }) => {
     fillName(profileName);
@@ -306,14 +296,12 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-    selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
   },
 
   fillMatchProfileWithStaticValue({
     profileName,
     incomingStaticValue,
-    matchCriterion,
     existingRecordOption,
     existingRecordType,
     incomingStaticRecordValue,
@@ -322,7 +310,6 @@ export default {
     cy.wait(1000);
     selectExistingRecordType(existingRecordType);
     fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
-    selectMatchCriterion(matchCriterion);
     cy.wait(1000);
     selectExistingRecordField(existingRecordOption);
   },
@@ -330,7 +317,6 @@ export default {
   fillMatchProfileWithStaticValueAndComparePartValue({
     profileName,
     incomingRecordFields,
-    matchCriterion,
     existingRecordOption,
     existingRecordType,
     compareValue,
@@ -347,7 +333,6 @@ export default {
     cy.wait(2000);
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
     fillOnlyComparePartOfTheValueInIncomingSection(compareValue);
-    selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
     fillQualifierInExistingComparisonPart(compareValueInComparison);
   },
@@ -381,7 +366,6 @@ export default {
     existingRecordType,
     incomingRecordFields,
     existingRecordFields,
-    matchCriterion,
     qualifierType,
     qualifierValue,
   }) {
@@ -390,7 +374,6 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
-    selectMatchCriterion(matchCriterion);
     fillExistingRecordFields(existingRecordFields.field, 'field');
     fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
     fillQualifierInExistingPart(qualifierType, qualifierValue);
@@ -401,7 +384,6 @@ export default {
     existingRecordType,
     incomingRecordFields,
     existingRecordOption,
-    matchCriterion,
     qualifierType,
     qualifierValue,
   }) {
@@ -412,7 +394,6 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
-    selectMatchCriterion(matchCriterion);
     // wait for list will be loaded
     cy.wait(2000);
     selectExistingRecordField(existingRecordOption);
@@ -457,7 +438,6 @@ export default {
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
                 },
-                matchCriterion: 'EXACTLY_MATCHES',
               },
             ],
             existingRecordType: recordType,
@@ -686,13 +666,6 @@ export default {
       'contain',
       'You are comparing\nto this record',
     );
-  },
-  verifyMatchCriterionNotContains: (value) => {
-    cy.expect(matchCriterionSelect.has({ value: not(value) }));
-    cy.get('#match-criteria').should(($element) => {
-      const content = $element.text();
-      expect(content).to.not.include(value);
-    });
   },
   verifyIncomingRecordsDropdown: (...names) => {
     cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
