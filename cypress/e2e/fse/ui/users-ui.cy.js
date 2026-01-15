@@ -4,6 +4,14 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
 
 describe('fse-users - UI (no data manipulation)', () => {
+  let adminId;
+  before(() => {
+    cy.getAdminToken();
+    cy.getAdminUserId().then((id) => {
+      adminId = id;
+    });
+  });
+
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -16,15 +24,11 @@ describe('fse-users - UI (no data manipulation)', () => {
 
   it(
     `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'users'] },
+    { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
-      cy.getAdminToken().then(() => {
-        cy.getAdminUserId().then((id) => {
-          UsersSearchPane.searchByKeywords(id);
-          UsersSearchPane.openUser(id);
-          UsersCard.verifyUserCardOpened();
-        });
-      });
+      UsersSearchPane.searchByKeywords(adminId);
+      UsersSearchPane.openUser(adminId);
+      UsersCard.verifyUserCardOpened();
     },
   );
 });
