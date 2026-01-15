@@ -43,7 +43,7 @@ describe('Data Import', () => {
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
-        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query:',
+        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions',
     };
     const marcFileNames = [
       {
