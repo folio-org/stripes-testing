@@ -62,7 +62,7 @@ describe('Funds', () => {
 
   it(
     'C15858 Add expense class to budget (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C15858'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
       FinanceHelp.searchByName(defaultFund.name);

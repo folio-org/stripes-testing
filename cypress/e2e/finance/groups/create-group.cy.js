@@ -12,7 +12,7 @@ describe('Groups', () => {
 
   it(
     'C4054 Create a new fund group (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C4054'] },
     () => {
       Groups.createDefaultGroup(defaultGroup);
       Groups.checkCreatedGroup(defaultGroup);

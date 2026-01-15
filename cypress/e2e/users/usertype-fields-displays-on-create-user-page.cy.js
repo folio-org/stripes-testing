@@ -73,7 +73,7 @@ describe('Users', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C410760'] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndCloseIsDisabled(true);

@@ -255,7 +255,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449368 Invoice can NOT be paid when invoice amount exceeding remaining allowed expenditures (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C449368'] },
     () => {
       Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);

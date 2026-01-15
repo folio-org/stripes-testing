@@ -60,7 +60,7 @@ describe('Finance', () => {
 
     it(
       'C422212 Remove donor from fund (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C422212'] },
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);

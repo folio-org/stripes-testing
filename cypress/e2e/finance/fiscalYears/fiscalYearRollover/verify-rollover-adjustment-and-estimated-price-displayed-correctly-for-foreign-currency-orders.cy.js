@@ -145,7 +145,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C514851 Verify rollover adjustment and estimated price displayed correctly for foreign currency orders (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C514851'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

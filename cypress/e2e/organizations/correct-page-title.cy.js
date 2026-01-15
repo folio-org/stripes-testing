@@ -47,7 +47,7 @@ describe('Organizations', () => {
 
   it(
     'C451606 Correct page title when Organization details pane is opened (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C451606'] },
     () => {
       Organizations.verifyNoResultMessage(resetFiltersMessage);
       Organizations.searchByParameters('Name', organizations[0].name);

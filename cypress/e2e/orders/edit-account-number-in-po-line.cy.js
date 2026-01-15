@@ -50,7 +50,7 @@ describe('Orders', () => {
 
   it(
     'C358545 A user can select account number when creating/editing PO line (Organization-vendor has more than one active account number) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C358545'] },
     () => {
       // Click on order from Preconditions
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

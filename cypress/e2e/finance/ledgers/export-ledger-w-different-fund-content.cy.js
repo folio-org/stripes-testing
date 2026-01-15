@@ -112,7 +112,7 @@ describe('Finance', () => {
 
     it(
       'C350963 User can export Ledger with different Funds content (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C350963'] },
       () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledgers.first.name);

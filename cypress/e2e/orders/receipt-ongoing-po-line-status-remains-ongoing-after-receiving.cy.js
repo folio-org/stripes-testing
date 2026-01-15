@@ -140,7 +140,7 @@ describe('Orders', () => {
 
   it(
     'C423418 Receipt ongoing PO line status remains “Ongoing” after receiving (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423418'] },
     () => {
       Orders.resetFiltersIfActive();
       Orders.searchByParameter('PO number', firstOrderNumber);

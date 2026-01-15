@@ -57,7 +57,7 @@ describe('Orders', () => {
 
   it(
     'C353575 Renewal note field is prefilled in POL when create order from specific template (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353575'] },
     () => {
       // Click "Actions" button on "Orders" pane and select "New" option
       const OrderEditForm = Orders.clickCreateNewOrder();

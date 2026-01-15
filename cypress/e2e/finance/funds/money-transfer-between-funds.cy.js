@@ -102,7 +102,7 @@ describe('Finance', () => {
 
     it(
       'C535516 Money transfer between funds from different ledgers is successful if budget "From" already has 0.00 money allocation (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C535516'] },
       () => {
         Funds.searchByName(fundB.name);
         Funds.selectFund(fundB.name);

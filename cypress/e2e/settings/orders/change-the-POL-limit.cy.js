@@ -87,7 +87,7 @@ describe('Orders', () => {
 
     it(
       'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C668'] },
       () => {
         OrderLinesLimit.setPOLLimit(2);
         Orders.searchByParameter('PO number', orderNumber);

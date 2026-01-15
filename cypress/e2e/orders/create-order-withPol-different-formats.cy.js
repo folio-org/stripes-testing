@@ -74,7 +74,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C658 Create an order and at least one order line for format = electronic resource  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C658'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
@@ -89,7 +89,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C659 Create an order and at least one order line for format = physical resource with multiple copies  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C659'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
@@ -104,7 +104,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C661 Create an order and at least one order line for format = other  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C661'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

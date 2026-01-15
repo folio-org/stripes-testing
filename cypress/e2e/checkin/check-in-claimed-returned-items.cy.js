@@ -1,7 +1,7 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -10,7 +10,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
@@ -98,7 +97,7 @@ describe('Check in', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser([permissions.checkinAll.gui, permissions.loansView.gui], patronGroup.name)
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.loansView.gui], patronGroup.name)
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -130,6 +129,10 @@ describe('Check in', () => {
             );
           });
         });
+
+        cy.login(userData.username, userData.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
       });
   });
 
@@ -156,11 +159,6 @@ describe('Check in', () => {
     'C10974 Check In: claimed returned items (vega)',
     { tags: ['criticalPath', 'vega', 'C10974'] },
     () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
-      });
-
       const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
 
       CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);

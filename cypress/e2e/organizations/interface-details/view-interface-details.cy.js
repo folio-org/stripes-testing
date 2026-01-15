@@ -36,9 +36,13 @@ describe('Organizations --> Interface details', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C1325 View interface details (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.checkInterfaceIsAdd(defaultInterface);
-  });
+  it(
+    'C1325 View interface details (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C1325'] },
+    () => {
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.checkInterfaceIsAdd(defaultInterface);
+    },
+  );
 });

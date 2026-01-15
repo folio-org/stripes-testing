@@ -32,7 +32,7 @@ describe('Organizations', () => {
   ].forEach((searcher) => {
     it(
       'C6712 Test the Organizations app searches (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6712'] },
       () => {
         Organizations.searchByParameters(searcher.parameter, searcher.value);
         Organizations.checkSearchResults(organization);

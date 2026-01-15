@@ -64,7 +64,7 @@ describe('Organizations', () => {
 
   it(
     'C422163 Check pagination in "Add donors" popup (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C422163'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

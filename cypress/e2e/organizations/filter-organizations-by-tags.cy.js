@@ -67,7 +67,7 @@ describe('Organizations', () => {
 
   it(
     'C6711 Filter Organizations by tags (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C6711'] },
     () => {
       Organizations.selectTagFilter(tag1.name);
       Organizations.checkSearchResults(organization1.name);

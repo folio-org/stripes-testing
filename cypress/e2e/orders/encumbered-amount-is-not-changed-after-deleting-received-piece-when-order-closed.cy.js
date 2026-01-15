@@ -142,7 +142,7 @@ describe('Orders', () => {
 
   it(
     'C375985 Encumbered amount is not changed after deleting received piece when related approved invoice exists and order is closed (thunderjet) (TaaS)',
-    { tags: ['extendedPathBroken', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C375985'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

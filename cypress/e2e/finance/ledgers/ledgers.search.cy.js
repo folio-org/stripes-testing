@@ -73,7 +73,7 @@ describe(
 
     it(
       'C4061 Test the search and filter options for ledgers (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C4061'] },
       () => {
         TopMenuNavigation.navigateToApp('Finance');
 

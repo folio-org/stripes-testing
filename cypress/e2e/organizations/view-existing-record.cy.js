@@ -27,7 +27,7 @@ describe('Organizations', () => {
 
   it(
     'C672 View existing organization record (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C672'] },
     () => {
       Organizations.selectActiveStatus();
       Organizations.checkOrganizationFilter();

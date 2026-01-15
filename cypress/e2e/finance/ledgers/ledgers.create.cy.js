@@ -9,21 +9,17 @@ describe('Ledgers', () => {
     cy.loginAsAdmin({ path: TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
   });
 
-  it(
-    'C4053 Create a new ledger (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-    () => {
-      const defaultLedger = NewLedger.defaultLedger;
+  it('C4053 Create a new ledger (thunderjet)', { tags: ['smoke', 'thunderjet', 'C4053'] }, () => {
+    const defaultLedger = NewLedger.defaultLedger;
 
-      Ledgers.createDefaultLedger(defaultLedger);
-      Ledgers.checkCreatedLedgerName(defaultLedger);
-      Ledgers.deleteLedgerViaActions(defaultLedger);
+    Ledgers.createDefaultLedger(defaultLedger);
+    Ledgers.checkCreatedLedgerName(defaultLedger);
+    Ledgers.deleteLedgerViaActions(defaultLedger);
 
-      // should not create new ledger if mandatory fields are not filled
-      const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
-      Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
-      FinanceHelp.searchByName(testLedgerName);
-      Ledgers.checkZeroSearchResultsHeader();
-    },
-  );
+    // should not create new ledger if mandatory fields are not filled
+    const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
+    Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
+    FinanceHelp.searchByName(testLedgerName);
+    Ledgers.checkZeroSearchResultsHeader();
+  });
 });

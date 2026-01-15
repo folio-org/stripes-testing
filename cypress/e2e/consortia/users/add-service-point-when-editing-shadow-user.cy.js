@@ -56,7 +56,7 @@ describe('Users', () => {
 
   it(
     'C422215 Add service point when editing shadow user (consortia) (thunderjet)',
-    { tags: ['criticalPathECS', 'thunderjet'] },
+    { tags: ['criticalPathECS', 'thunderjet', 'C422215'] },
     () => {
       cy.login(testData.user1.username, testData.user1.password, {
         path: TopMenu.usersPath,

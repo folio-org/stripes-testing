@@ -93,7 +93,7 @@ describe('orders: Receiving and Check-in', () => {
   // TODO: Need to find solution to delete all data, because now i cant delete location and user
   it(
     'C374134 Copy number applies to the item when receiving through "Quick receive" option (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C374134'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

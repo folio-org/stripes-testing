@@ -152,7 +152,7 @@ describe('Finance', () => {
 
   it(
     'C436931 Unrelease encumbrance related to open One-time order with invoice in "Approved" status (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C436931'] },
     () => {
       TopMenuNavigation.navigateToApp('Finance');
       Funds.clickOnFundsTab();

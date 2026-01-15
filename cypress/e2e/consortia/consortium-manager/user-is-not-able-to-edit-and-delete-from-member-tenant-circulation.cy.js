@@ -113,7 +113,7 @@ describe('Consortium manager', () => {
 
       it(
         'C400666 User is NOT able to edit and delete from member tenant "Circulation" settings shared via "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C400666'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user400666.username, testData.user400666.password);

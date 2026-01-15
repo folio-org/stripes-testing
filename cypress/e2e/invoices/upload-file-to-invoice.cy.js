@@ -52,7 +52,7 @@ describe('Invoices', () => {
   it(
     'C15856 Upload file to invoice (thunderjet) (TaaS)',
     {
-      tags: ['criticalPath', 'thunderjet'],
+      tags: ['criticalPath', 'thunderjet', 'C15856'],
     },
     () => {
       // Create an invoice

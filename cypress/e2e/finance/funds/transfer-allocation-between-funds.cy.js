@@ -95,7 +95,7 @@ describe('Finance', () => {
 
     it(
       'C374183 Money transfer between funds is successful if it results in negative available amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C374183'] },
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
@@ -164,7 +164,7 @@ describe('Finance', () => {
 
     it(
       'C375066 Money transfer between funds is successful if budget "From" already has negative available amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375066'] },
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
@@ -223,7 +223,7 @@ describe('Finance', () => {
 
     it(
       'C375067 Money transfer between funds is successful if budget "To" already has negative available amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375067'] },
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);
@@ -282,7 +282,7 @@ describe('Finance', () => {
 
     it(
       'C375068 Money transfer between funds is successful if budget "From" already has 0.00 money allocation (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375068'] },
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);

@@ -77,7 +77,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C411576 Ledger summary calculation after allocation movement to 0 budget (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C411576'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

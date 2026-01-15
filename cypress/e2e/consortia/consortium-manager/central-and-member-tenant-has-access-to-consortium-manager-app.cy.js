@@ -38,7 +38,7 @@ describe('Consortia', () => {
 
     it(
       'C397335 User with "Consortium manager: Can share settings to all members" permission and active affiliations in "Central" and "Member" tenants has access to "Consortium manager" app (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet'] },
+      { tags: ['criticalPathECS', 'thunderjet', 'C397335'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
