@@ -141,7 +141,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C648502 Download allocation worksheet (CSV) from Ledger view (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C648502'] },
     () => {
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);

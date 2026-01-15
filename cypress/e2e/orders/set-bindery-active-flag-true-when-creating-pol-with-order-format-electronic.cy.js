@@ -91,7 +91,7 @@ describe('Orders', () => {
 
   it(
     'C468201 Set "Bindery active" flag true when changing Order format from "Electronic" to "Physical" in existing POL (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468201'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

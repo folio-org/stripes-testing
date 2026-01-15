@@ -155,7 +155,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C496150 Correct "Financial summary" values when encumbered amount exceeds available amount (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496150'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

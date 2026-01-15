@@ -46,7 +46,7 @@ describe('Settings (Orders) - Order template categories', () => {
 
   it(
     'C736696 Create, edit and delete PO template category in Settings (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C736696'] },
+    { tags: ['criticalPath', 'thunderjet', 'C736696'] },
     () => {
       OrderTemplateCategories.startNewCategory();
       OrderTemplateCategories.triggerEmptyValidation();

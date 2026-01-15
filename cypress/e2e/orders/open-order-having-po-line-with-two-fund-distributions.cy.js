@@ -143,7 +143,7 @@ describe('Orders', () => {
 
   it(
     'C407711 Open order having PO line with two fund distributions related to different ledgers and same fiscal year after executing rollover (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C407711'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

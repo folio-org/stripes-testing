@@ -77,7 +77,7 @@ describe('Export Manager', () => {
 
       it(
         'C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'thunderjet', 'C350601'] },
         () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

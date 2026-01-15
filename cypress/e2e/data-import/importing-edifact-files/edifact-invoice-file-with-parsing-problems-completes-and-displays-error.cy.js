@@ -86,7 +86,7 @@ describe('Data Import', () => {
 
     it(
       'C377019 Confirm an EDIFACT invoice file with parsing problems completes and displays an error (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C377019', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C377019'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);

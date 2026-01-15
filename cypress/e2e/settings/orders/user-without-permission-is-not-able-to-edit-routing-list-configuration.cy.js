@@ -30,7 +30,7 @@ describe('Orders', () => {
 
     it(
       'C466273 A user without " Settings (Orders): Can view and edit all settings" permission is not able to edit routing list configuration (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C466273'] },
       () => {
         ListConfiguration.editIsDisabled();
         ListConfiguration.preview();

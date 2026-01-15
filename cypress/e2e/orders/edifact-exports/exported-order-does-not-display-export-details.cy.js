@@ -142,7 +142,7 @@ describe('orders: Edifact export', () => {
 
   it(
     'C350550 NOT exported order DOES NOT display export details (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350550'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

@@ -47,7 +47,7 @@ describe('Orders', () => {
 
   it(
     'C663 Create an order and at least one order line for an ongoing order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C663', 'shiftLeft'] },
     () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;

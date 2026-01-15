@@ -395,4 +395,25 @@ export default {
       .and('contain.text', 'Account type must be unique.');
     cy.get('button[id^="clickable-save-bankingAccountTypes"]').should('be.disabled');
   },
+
+  enableBankingInformationViaApi(response) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `organizations-storage/settings/${response.settings[0].id}`,
+      body: response.settings[0],
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getBankingInformationStatusViaApi: () => {
+    return cy
+      .okapiRequest({
+        path: 'organizations-storage/settings',
+        searchParams: {
+          query: 'key=BANKING_INFORMATION_ENABLED',
+          limit: '1',
+        },
+      })
+      .then(({ body }) => body);
+  },
 };

@@ -88,7 +88,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375232 Create new holdings for already existing location when creating an order line (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C375232'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       Orders.selectOrderByPONumber(testData.order.poNumber);

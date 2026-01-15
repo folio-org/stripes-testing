@@ -174,7 +174,7 @@ describe('Orders', () => {
 
   it(
     'C451533 Order line with linked Holdings could be found by "Location" filtering facet on "Order lines" pane (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C451533'] },
     () => {
       OrderLines.resetFiltersIfActive();
       OrderLines.selectLocationInFilters(location.name);

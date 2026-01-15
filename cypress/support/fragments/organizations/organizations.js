@@ -1195,6 +1195,7 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
+    cy.wait(2000);
   },
 
   changeOrganizationStatus: (status) => {
@@ -1983,6 +1984,7 @@ export default {
       TextField({ name: 'bankingInformation[1].bankAccountNumber' }).fillIn(
         bankingInformation.accountNumber,
       ),
+      Checkbox({ name: 'bankingInformation[1].isPrimary' }).click(),
     ]);
     cy.do(saveAndClose.click());
     cy.wait(4000);
@@ -2021,7 +2023,7 @@ export default {
       .find('button[data-test-repeatable-field-remove-item-button]')
       .click();
     cy.do(saveAndClose.click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   checkBankingInformationAddButtonIsDisabled: () => {

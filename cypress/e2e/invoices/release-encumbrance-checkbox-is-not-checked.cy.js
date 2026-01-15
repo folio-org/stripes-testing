@@ -68,7 +68,7 @@ describe('Invoices', () => {
 
   it(
     'C389582 "Release encumbrance" checkbox is NOT checked after creating new blank invoice line (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C389582'] },
     () => {
       // Open invoice by clicking on its "Vendor invoice number" link on "Invoices" pane
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

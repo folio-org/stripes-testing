@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -77,7 +77,6 @@ describe('Export Manager', () => {
 
       before(() => {
         cy.getAdminToken();
-
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -147,7 +146,7 @@ describe('Export Manager', () => {
           });
         });
 
-        cy.createTempUser([permissions.exportManagerAll.gui]).then((userProperties) => {
+        cy.createTempUser([Permissions.exportManagerAll.gui]).then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
             path: TopMenu.exportManagerOrganizationsPath,
@@ -173,7 +172,7 @@ describe('Export Manager', () => {
 
       it(
         'C377045 Sorting by export method does not reset search results (thunderjet) (TaaS)',
-        { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['extendedPathFlaky', 'thunderjet', 'C377045'] },
         () => {
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchBySuccessful();
