@@ -3,6 +3,7 @@ import {
   Section,
   KeyValue,
   including,
+  not,
   MultiColumnListCell,
   Link,
   PaneHeader,
@@ -23,6 +24,7 @@ const titleInformationSection = receivingDetailsSection.find(Section({ id: 'info
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
+const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
@@ -78,9 +80,26 @@ export default {
           .has({ value: including(acquisitionUnitName) }),
       );
     } else {
-      cy.get('#information').within(() => {
-        cy.contains('Acquisition units').parent().should('not.contain', acquisitionUnitName);
-      });
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Acquisition units'))
+          .has({ value: not(including(acquisitionUnitName)) }),
+      );
+    }
+  },
+  verifyAcquisitionUnitNotSpecified() {
+    cy.expect(
+      titleInformationSection.find(KeyValue('Acquisition units')).has({ value: 'No value set-' }),
+    );
+  },
+  closeDetailsPane() {
+    cy.do(receinvingDetailsHeader.find(Button({ icon: 'times' })).click());
+  },
+  verifyExpectedRecordsCount(expectedCount) {
+    if (expectedCount === 0) {
+      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+    } else {
+      cy.get(expectedRowsSelector).should('have.length', expectedCount);
     }
   },
   checkExpectedTableContent(records = []) {
