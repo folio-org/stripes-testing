@@ -157,7 +157,7 @@ describe('Finance', () => {
 
   it(
     'C436932 Unrelease encumbrance related to open Ongoing order with invoice in "Fully paid" status (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C436932'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

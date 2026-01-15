@@ -64,7 +64,7 @@ describe('Lists', () => {
           Lists.queryBuilderActions();
           Lists.openActions();
           Lists.verifyEditListButtonIsDisabled();
-          Lists.viewUpdatedList();
+          Lists.waitForCompilingToComplete();
           Lists.closeListDetailsPane();
         },
       );
@@ -86,7 +86,7 @@ describe('Lists', () => {
           Lists.selectStatus(listData.status[0]);
           Lists.buildQuery();
           Lists.queryBuilderActions();
-          Lists.viewUpdatedList();
+          Lists.waitForCompilingToComplete(4000);
           Lists.openActions();
           Lists.exportList();
           Lists.openActions();
@@ -112,7 +112,7 @@ describe('Lists', () => {
           Lists.selectStatus(listData.status[0]);
           Lists.buildQuery();
           Lists.queryBuilderActions();
-          Lists.viewUpdatedList();
+          Lists.waitForCompilingToComplete();
           Lists.closeListDetailsPane();
           Lists.openList(listData.name);
           Lists.openActions();

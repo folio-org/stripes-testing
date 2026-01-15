@@ -93,7 +93,7 @@ describe('Organizations', () => {
 
   it(
     'C688767 Create claiming integration, edit, duplicate and delete duplicated integration (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C688767'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);

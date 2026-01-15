@@ -1,4 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
@@ -14,7 +14,7 @@ describe('Acquisition Units', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.createTempUser([permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui]).then(
+    cy.createTempUser([Permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui]).then(
       (userProperties) => {
         user = userProperties;
 

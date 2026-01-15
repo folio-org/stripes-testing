@@ -68,7 +68,7 @@ describe('Lists', () => {
         Lists.openList(listData.name);
 
         // Step 2: Check the structure of the lists details page
-        Lists.verifyRecordsNumber('0');
+        Lists.verifyRecordsNumber('No');
         Lists.closeListDetailsPane();
         Lists.openList(listData.name);
 

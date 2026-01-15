@@ -32,7 +32,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
 
   it(
     'C10938 FOLIO Batch group is created by system and can only be edited (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C10938'] },
     () => {
       systemBatchGroup.name = systemBatchGroupName;
       systemBatchGroup.description = systemBatchGroupDescription;

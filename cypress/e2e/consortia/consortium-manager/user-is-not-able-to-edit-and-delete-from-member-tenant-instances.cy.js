@@ -206,7 +206,7 @@ describe('Consortium manager', () => {
 
       it(
         'C400671 User is NOT able to edit and delete from member tenant "Inventory - Instances" settings shared via "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C400671'] },
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.alternativeTitleTypes);

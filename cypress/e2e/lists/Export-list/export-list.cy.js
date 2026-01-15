@@ -56,7 +56,7 @@ describe('Lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.openActions();
         Lists.exportList();
         Lists.verifySuccessCalloutMessage(
@@ -107,7 +107,7 @@ describe('Lists', () => {
         Lists.queryBuilderActions();
         Lists.openActions();
         Lists.verifyExportListButtonIsDisabled();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
       },
     );
 
@@ -126,7 +126,7 @@ describe('Lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.openActions();
         Lists.editList();
         Lists.openActions();
@@ -193,7 +193,7 @@ describe('Lists', () => {
         cy.get('button:contains("Test query")').click();
         cy.wait(4000);
         cy.get('button:contains("Run query & save")').click();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.openActions();
         Lists.editList();
         Lists.openActions();

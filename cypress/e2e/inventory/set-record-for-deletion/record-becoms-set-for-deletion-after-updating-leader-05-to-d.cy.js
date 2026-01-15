@@ -9,6 +9,7 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -130,6 +131,7 @@ describe('Inventory', () => {
 
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          DataExportLogs.waitLoading();
           ExportFile.downloadExportedMarcFileWithRecordHrid(
             expectedRecordHrid,
             marcFile.exportedFileName,

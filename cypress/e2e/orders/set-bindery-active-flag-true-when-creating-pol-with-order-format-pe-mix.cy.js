@@ -91,7 +91,7 @@ describe('Orders', () => {
 
   it(
     'C468200 Set "Bindery active" flag true when creating a POL with Order format = "P/E Mix" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468200'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

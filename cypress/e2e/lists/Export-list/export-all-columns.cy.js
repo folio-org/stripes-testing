@@ -79,13 +79,43 @@ describe('Lists', () => {
             `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
           );
           Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
-          Lists.checkDownloadedFile(listData.name, '"User - Active"');
-          Lists.checkDownloadedFile(listData.name, '"User - User UUID"');
-          Lists.checkDownloadedFile(listData.name, '"User - Username"');
-          Lists.checkDownloadedFile(listData.name, '"User - Type"');
-          Lists.checkDownloadedFile(listData.name, '"User - Updated by user UUID"');
-          Lists.checkDownloadedFile(listData.name, '"User - Updated date"');
-          Lists.checkDownloadedFile(listData.name, '"User - Created date"');
+          Lists.checkDownloadedFileArray(listData.name, [
+            'User - Active',
+            'User - Address',
+            'User - Barcode',
+            'User - Created by user UUID',
+            'User - Date of birth',
+            'User - Department names',
+            'User - Department UUIDs',
+            'User - Email',
+            'User - Enrollment date',
+            'User - Expiration date',
+            'User - External system ID',
+            'User - First name',
+            'User - Last name',
+            'User - Last name, first name',
+            'User - Middle name',
+            'User - Mobile phone',
+            'User - Phone',
+            'User - Preferred contact type',
+            'User - Preferred first name',
+            'User - Pronouns',
+            'User - Proxy for',
+            'User - Tags tag list',
+            'User - Type',
+            'User - Updated by user UUID',
+            'User - User created date',
+            'User - User updated date',
+            'User - User UUID',
+            'User - Username',
+            'Patron group - Name',
+            'User created by - Email',
+            'User created by - Last name, first name',
+            'User created by - Username',
+            'User updated by - Email',
+            'User updated by - Last name, first name',
+            'User updated by - Username',
+          ]);
         },
       );
     },

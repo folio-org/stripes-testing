@@ -92,7 +92,7 @@ describe('Orders', () => {
 
   it(
     'C369069 Edit open order with two product IDs and approve related invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C369069'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

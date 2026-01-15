@@ -134,7 +134,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C423548 Check possible actions for piece in "Received" status when edit piece (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423548'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

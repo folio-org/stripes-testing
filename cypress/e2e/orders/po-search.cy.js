@@ -45,7 +45,7 @@ describe('orders: Test PO search', () => {
 
   it(
     'C6717 Test the PO searches (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C6717', 'shiftLeft'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;

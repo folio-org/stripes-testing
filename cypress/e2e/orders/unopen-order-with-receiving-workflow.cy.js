@@ -104,7 +104,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
 
     it(
       'C377037 Select "Delete Holdings and items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C377037'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -130,7 +130,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
 
     it(
       'C377040 Select "Delete items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C377040'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -200,7 +200,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
 
     it(
       'C377041 Select "Keep Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C377041'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -236,7 +236,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
 
     it(
       'C377042 Select "Delete Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C377042'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

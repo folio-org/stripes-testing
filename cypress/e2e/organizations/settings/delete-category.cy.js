@@ -30,8 +30,12 @@ describe('Organizations: Settings (Organizations)', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C367989 Delete category (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    SettingsOrganizations.selectCategories();
-    SettingsOrganizations.deleteCategory(category);
-  });
+  it(
+    'C367989 Delete category (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C367989'] },
+    () => {
+      SettingsOrganizations.selectCategories();
+      SettingsOrganizations.deleteCategory(category);
+    },
+  );
 });

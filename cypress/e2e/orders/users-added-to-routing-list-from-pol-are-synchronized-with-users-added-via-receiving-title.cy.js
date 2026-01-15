@@ -162,7 +162,7 @@ describe('Receiving', () => {
 
   it(
     'C471488 Users added to Routing list from POL are synchronized with users added via Receiving title (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C471488'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

@@ -30,7 +30,7 @@ describe('Acquisition Units', () => {
 
     it(
       'C6728 Create acquisitions unit (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C6728'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

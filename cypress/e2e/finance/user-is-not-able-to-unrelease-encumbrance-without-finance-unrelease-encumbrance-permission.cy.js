@@ -152,7 +152,7 @@ describe('Finance', () => {
 
   it(
     'C436934 User is not able to Unrelease encumbrance without "Finance: Unrelease encumbrance" permission (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C436934'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

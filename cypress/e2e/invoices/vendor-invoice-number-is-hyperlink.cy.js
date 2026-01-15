@@ -78,8 +78,8 @@ describe('Invoices', () => {
   });
 
   it(
-    'C369085 - Invoices | Results List | Verify that value in "Vendor invoice number" column is hyperlink (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C369085 Invoices | Results List | Verify that value in "Vendor invoice number" column is hyperlink (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'C369085'] },
     () => {
       Invoices.selectStatusFilter(INVOICE_STATUSES.OPEN);
       InvoiceView.verifyInvoicesList();

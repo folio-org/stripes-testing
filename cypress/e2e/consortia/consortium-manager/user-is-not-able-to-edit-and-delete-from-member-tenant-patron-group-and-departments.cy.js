@@ -72,7 +72,10 @@ describe('Consortium manager', () => {
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.collegeLocalDepartment);
-          PatronGroups.createViaApi(testData.collegeLocalPatronGroup.name, testData.collegeLocalPatronGroup.description).then((response) => {
+          PatronGroups.createViaApi(
+            testData.collegeLocalPatronGroup.name,
+            testData.collegeLocalPatronGroup.description,
+          ).then((response) => {
             testData.collegeLocalPatronGroup.id = response;
           });
           cy.resetTenant();
@@ -84,7 +87,10 @@ describe('Consortium manager', () => {
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.universityLocalDepartment);
-          PatronGroups.createViaApi(testData.universityLocalPatronGroup.name, testData.universityLocalPatronGroup.description).then((response) => {
+          PatronGroups.createViaApi(
+            testData.universityLocalPatronGroup.name,
+            testData.universityLocalPatronGroup.description,
+          ).then((response) => {
             testData.universityLocalPatronGroup.id = response;
           });
           cy.resetTenant();
@@ -104,7 +110,7 @@ describe('Consortium manager', () => {
 
       it(
         'C400669 User is NOT able to edit and delete from member tenant "Users" settings shared via "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C400669'] },
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.patronGroups);

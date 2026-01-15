@@ -73,7 +73,7 @@ describe('Export Manager', () => {
 
     it(
       'C377048 Setting "daily" scheduling on 12 PM for new export Integration (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C377048'] },
       () => {
         // Click on the "Name" link for Organization
         Organizations.searchByParameters('Name', testData.organization.name);

@@ -27,7 +27,7 @@ describe('Orders', () => {
 
   it(
     'C660 Create an order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C660', 'shiftLeft'] },
     () => {
       Orders.createOrder(order);
       Orders.checkCreatedOrder(order);

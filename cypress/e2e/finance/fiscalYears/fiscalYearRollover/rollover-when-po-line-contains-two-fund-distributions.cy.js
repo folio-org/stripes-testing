@@ -152,7 +152,7 @@ describe('Finance', () => {
 
     it(
       'C397990 Rollover when PO line contains two fund distributions related to different ledgers and same fiscal year (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C397990'] },
       () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledgers.first.name);

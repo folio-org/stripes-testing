@@ -28,7 +28,7 @@ describe('Inventory', () => {
 
     it(
       'C598 Create new instance with add "New" (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C598'] },
+      { tags: ['smoke', 'folijet', 'C598', 'shiftLeft'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(instanceTitle);

@@ -154,7 +154,7 @@ describe('Receiving', () => {
 
   it(
     'C464324 Making "Display to public" checkbox visible on Holdings for already received piece with "Display on holdings" = false (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'C464324'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

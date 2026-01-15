@@ -25,16 +25,17 @@ describe('Data Import', () => {
     const instances = [
       {
         title:
-          'Gender and colonialism : a psychological analysis of oppression and liberation / Geraldine Moane',
+          'C11120 Gender and colonialism : a psychological analysis of oppression and liberation / Geraldine Moane',
         edition: 'Rev. ed.',
       },
       {
         title:
-          'Phytoplankton pigments in oceanography : guidelines to modern methods / edited by S.W. Jeffrey, R.F.C. Mantoura, and S.W. Wright.',
+          'C11120 Phytoplankton pigments in oceanography : guidelines to modern methods / edited by S.W. Jeffrey, R.F.C. Mantoura, and S.W. Wright.',
         edition: '2nd ed.',
       },
       {
-        title: 'Principles of ecology in plant production / Thomas R. Sinclair and Albert Weiss.',
+        title:
+          'C11120 Principles of ecology in plant production / Thomas R. Sinclair and Albert Weiss.',
         edition: '2nd ed.',
       },
     ];

@@ -268,7 +268,6 @@ export default {
 
   bySource(source) {
     cy.do(sourceAccordion.clickHeader());
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
@@ -1720,5 +1719,39 @@ export default {
   verifyUriCharLimitMessageAndCallout() {
     cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
     InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
+  },
+
+  verifyNoCheckboxesInAccordion(accordionName) {
+    cy.expect([
+      Accordion(accordionName).find(Checkbox()).absent(),
+      Accordion(accordionName).find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  verifySharedIconForResult: (title, isShared = true) => {
+    const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
+    if (isShared) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
+    const option = Accordion(accordionName).find(Checkbox(optionName));
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
+  },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = paneFilterSection
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      multiSelect.select([
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ]),
+    );
   },
 };

@@ -55,7 +55,7 @@ describe('Funds', () => {
 
   it(
     'C434074 Existing Fund must have locations added to make it "Restricted by location" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C434074'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
