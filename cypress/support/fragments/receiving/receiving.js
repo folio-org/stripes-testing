@@ -137,6 +137,10 @@ export default {
     cy.expect(receivingResultsSection.find(MultiColumnListCell(POL)).exists());
   },
 
+  checkTitleInReceivingList: (title) => {
+    cy.expect(receivingResultsSection.find(MultiColumnListCell(title)).exists());
+  },
+
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
