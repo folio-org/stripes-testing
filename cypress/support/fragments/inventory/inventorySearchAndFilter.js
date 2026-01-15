@@ -1484,6 +1484,20 @@ export default {
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
 
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([multiSelect.find(MultiSelectOption(including(fullValue))).exists()]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+  },
+
   verifyCheckboxesWithCountersExistInAccordion(accordionName) {
     cy.expect(
       Accordion(accordionName)
@@ -1705,5 +1719,20 @@ export default {
     const option = Accordion(accordionName).find(Checkbox(optionName));
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
+  },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = paneFilterSection
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      multiSelect.select([
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ]),
+    );
   },
 };
