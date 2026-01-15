@@ -10,7 +10,6 @@ import {
   Section,
   TextField,
 } from '../../../../../interactors';
-import { add } from 'date-fns';
 
 const customFieldsPane = Pane('Custom fields');
 const editCustomFieldsPane = Pane('Edit custom fields');
