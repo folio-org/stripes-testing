@@ -1,3 +1,4 @@
+import { enableProfilePictures } from '../../../support/fragments/users/profilePicture';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
@@ -23,12 +24,7 @@ describe('Users', () => {
       { tags: ['smoke', 'volaris', 'C514930'] },
       () => {
         cy.getAdminToken();
-        cy.getConfigurationsEntry().then((respBody) => {
-          if (respBody.enabled === false) {
-            respBody.enabled = true;
-            cy.updateConfigurationsEntry(respBody.id, respBody);
-          }
-        });
+        enableProfilePictures();
         cy.loginAsAdmin({
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,

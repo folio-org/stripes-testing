@@ -1,17 +1,17 @@
-Cypress.Commands.add('getConfigurationsEntry', () => {
+Cypress.Commands.add('getProfilePictureSetting', () => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'users/configurations/entry',
+    path: 'users/settings/entries?query=(key=="PROFILE_PICTURE_CONFIG")',
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     return body;
   });
 });
 
-Cypress.Commands.add('updateConfigurationsEntry', (entryId, updatedBody) => {
+Cypress.Commands.add('updateProfilePictureSetting', (entryId, updatedBody) => {
   cy.okapiRequest({
     method: 'PUT',
-    path: `users/configurations/entry/${entryId}`,
+    path: `users/settings/entries/${entryId}`,
     body: updatedBody,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
