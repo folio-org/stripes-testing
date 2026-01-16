@@ -15,7 +15,6 @@ describe('Inventory', () => {
         const randomPostfix = getRandomPostfix();
         const instanceTitlePrefix = `AT_C466235_Instance_${randomPostfix}`;
         const staffSuppressAccordionName = 'Staff suppress';
-        const heldbyAccordionName = 'Held by';
         const instancesData = [
           {
             staffSuppressed: false,
@@ -74,6 +73,7 @@ describe('Inventory', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 InventorySearchAndFilter.validateSearchTabIsDefault();
@@ -159,17 +159,14 @@ describe('Inventory', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
-            InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             checkInstanceTab();
 
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.holdingsTabIsDefault();
-            InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             checkHoldingsOrItemTab();
 
             InventorySearchAndFilter.switchToItem();
             InventorySearchAndFilter.itemTabIsDefault();
-            InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             checkHoldingsOrItemTab();
           },
         );
