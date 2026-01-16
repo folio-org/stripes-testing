@@ -13,7 +13,12 @@ function titleContainsId(title, testCaseIds) {
   return false;
 }
 
+function pluralize(count, singular, plural = `${singular}s`) {
+  return count === 1 ? singular : plural;
+}
+
 module.exports = {
   removeRootPath,
   titleContainsId,
+  pluralize,
 };

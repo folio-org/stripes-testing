@@ -17,8 +17,9 @@ describe('Inventory', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
-        const instancePrefix = `AT_C423638_Instance_${randomPostfix}`;
+        const instancePrefix = `AT_C423641_Instance_${randomPostfix}`;
         const locationAccordionName = 'Holdings permanent location';
+        const heldbyAccordionName = 'Held by';
         const instancesData = [
           {
             instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
@@ -66,17 +67,12 @@ describe('Inventory', () => {
         before('Create user, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
+          cy.setTenant(Affiliations.College);
           cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
             .then((userProperties) => {
               user = userProperties;
-              cy.assignAffiliationToUser(Affiliations.College, user.userId);
-              cy.assignAffiliationToUser(Affiliations.University, user.userId);
 
-              cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(user.userId, [
-                Permissions.uiInventoryViewInstances.gui,
-              ]);
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423638');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423641');
               cy.getLocations({
                 limit: 3,
                 query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
@@ -90,11 +86,17 @@ describe('Inventory', () => {
                 materialTypeIds[Affiliations.College] = res.id;
               });
 
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, user.userId);
+              cy.assignPermissionsToExistingUser(user.userId, [
+                Permissions.uiInventoryViewInstances.gui,
+              ]);
+
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(user.userId, [
                 Permissions.uiInventoryViewInstances.gui,
               ]);
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423638');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423641');
               cy.getLocations({
                 limit: 3,
                 query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
@@ -110,7 +112,7 @@ describe('Inventory', () => {
             })
             .then(() => {
               cy.resetTenant();
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423638');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423641');
 
               cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then(
                 (instanceTypes) => {
@@ -176,14 +178,14 @@ describe('Inventory', () => {
               });
             })
             .then(() => {
-              cy.resetTenant();
+              cy.setTenant(Affiliations.College);
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              InventorySearchAndFilter.switchToHoldings();
-              InventorySearchAndFilter.holdingsTabIsDefault();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              InventorySearchAndFilter.switchToItem();
+              InventorySearchAndFilter.itemTabIsDefault();
             });
         });
 
@@ -191,19 +193,19 @@ describe('Inventory', () => {
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
+          Users.deleteViaApi(user.userId);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
           cy.setTenant(Affiliations.University);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
           cy.resetTenant();
-          Users.deleteViaApi(user.userId);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
         });
 
         it(
-          'C423638 Locations from all existing tenants displays in "Holdings permanent location" facet of search pane in "Inventory" app opened from "Central" tenant (Instance|Holdings|Items tabs) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C423638'] },
+          'C423641 Locations from all existing tenants displays in "Holdings permanent location" facet of search Item pane in "Inventory" app opened from "Member" tenant (consortia) (spitfire)',
+          { tags: ['extendedPathECS', 'spitfire', 'C423641'] },
           () => {
             const usedLocations = [
               locations[Affiliations.College][0].name,
@@ -216,36 +218,19 @@ describe('Inventory', () => {
               locations[Affiliations.University][2].name,
             ];
 
-            function verifyLocationFacetOptions() {
-              InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-              InventorySearchAndFilter.clickSearch();
-              InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
-              instanceTitles.forEach((title) => {
-                InventorySearchAndFilter.verifySearchResult(title);
-              });
-              usedLocations.forEach((locationName) => {
-                InventorySearchAndFilter.verifyOptionAvailableMultiselect(
-                  locationAccordionName,
-                  locationName,
-                );
-              });
-              notUsedLocations.forEach((locationName) => {
-                InventorySearchAndFilter.verifyOptionAvailableMultiselect(
-                  locationAccordionName,
-                  locationName,
-                  false,
-                );
-              });
-
-              InventorySearchAndFilter.selectEcsLocationFilterOption(
-                locationAccordionName,
-                locations[Affiliations.University][1].name,
-                tenantNames.university,
-              );
-              InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-              InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
-              InventoryInstance.waitLoading();
-            }
+            InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
+            InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);
+            InventorySearchAndFilter.verifyAccordionByNameExpanded(heldbyAccordionName, true);
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              heldbyAccordionName,
+              tenantNames.college,
+              false,
+            );
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              heldbyAccordionName,
+              tenantNames.university,
+              false,
+            );
 
             InventorySearchAndFilter.clickAccordionByName(locationAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationAccordionName, true);
@@ -255,8 +240,8 @@ describe('Inventory', () => {
 
             InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
               locationAccordionName,
-              locations[Affiliations.College][0].name,
-              locations[Affiliations.College][0].name,
+              locations[Affiliations.University][0].name,
+              locations[Affiliations.University][0].name,
             );
 
             InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
@@ -265,17 +250,34 @@ describe('Inventory', () => {
               '',
             );
 
-            verifyLocationFacetOptions();
+            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
+            InventorySearchAndFilter.clickSearch();
+            InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+            instanceTitles.forEach((title) => {
+              InventorySearchAndFilter.verifySearchResult(title);
+            });
+            usedLocations.forEach((locationName) => {
+              InventorySearchAndFilter.verifyOptionAvailableMultiselect(
+                locationAccordionName,
+                locationName,
+              );
+            });
+            notUsedLocations.forEach((locationName) => {
+              InventorySearchAndFilter.verifyOptionAvailableMultiselect(
+                locationAccordionName,
+                locationName,
+                false,
+              );
+            });
 
-            InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.itemTabIsDefault();
-            InventorySearchAndFilter.verifyResultPaneEmpty();
-            InventorySearchAndFilter.checkSearchQueryText('');
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(locationAccordionName, false);
-            InventorySearchAndFilter.clickAccordionByName(locationAccordionName);
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(locationAccordionName, true);
-
-            verifyLocationFacetOptions();
+            InventorySearchAndFilter.selectEcsLocationFilterOption(
+              locationAccordionName,
+              locations[Affiliations.University][1].name,
+              tenantNames.university,
+            );
+            InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+            InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
+            InventoryInstance.waitLoading();
           },
         );
       });
