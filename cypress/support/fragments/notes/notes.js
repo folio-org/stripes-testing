@@ -3,7 +3,14 @@ import { REQUEST_METHOD } from '../../constants';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 
 const defaultNote = ({ typeId, agreementId }, noteType = 'agreements') => {
-  const linkType = { agreements: 'agreement', eholdings: 'provider' }[noteType];
+  const linkType = {
+    agreements: 'agreement',
+    eholdings: 'provider',
+    users: 'user',
+    licenses: 'license',
+    courses: 'course',
+    requests: 'request',
+  }[noteType];
   return {
     domain: noteType,
     typeId,
