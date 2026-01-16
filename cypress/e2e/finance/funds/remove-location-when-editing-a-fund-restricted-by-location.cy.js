@@ -59,7 +59,7 @@ describe('Funds', () => {
 
   it(
     'C423441 Remove location when editing a fund restricted by location (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423441'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

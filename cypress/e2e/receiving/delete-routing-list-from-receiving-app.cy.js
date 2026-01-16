@@ -150,7 +150,7 @@ describe('Receiving', () => {
 
   it(
     'C468209 Delete routing list from "Receiving" app (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468209'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

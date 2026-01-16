@@ -61,7 +61,7 @@ describe('Orders', () => {
 
   it(
     'C353987 A user can create and open new order and PO line from instance record (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353987'] },
     () => {
       // Click on instance from preconditions
       InventoryInstances.searchByTitle(testData.instance.instanceTitle);

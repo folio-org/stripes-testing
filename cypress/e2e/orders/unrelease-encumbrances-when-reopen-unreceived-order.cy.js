@@ -167,7 +167,7 @@ describe('Orders', () => {
 
   it(
     'C358539 Unrelease encumbrances when reopen unreceived ongoing order with related paid invoice (Release encumbrance =true) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C358539'] },
     () => {
       /* Orders app */
       Orders.searchByParameter('PO number', orderNumber);

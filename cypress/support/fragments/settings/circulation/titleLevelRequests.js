@@ -127,6 +127,7 @@ export default {
         }).then(() => {
           const newValue = { ...JSON.parse(config.value), ...newSettings };
           config.value = JSON.stringify(newValue);
+
           cy.okapiRequest({
             method: 'POST',
             path: 'configurations/entries',

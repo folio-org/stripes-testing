@@ -122,7 +122,7 @@ describe('Finance', () => {
 
     it(
       'C375283 Available balance at the fiscal year level is calculated correctly if one of the related fund has negative amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375283'] },
       () => {
         // Click on "Fiscal year #1" link on "Fiscal year" pane
         FinanceHelper.searchByName(fiscalYear.name);

@@ -38,7 +38,7 @@ describe('Organizations --> Interface details', () => {
 
   it(
     'C1326 Delete interface details (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C1326'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

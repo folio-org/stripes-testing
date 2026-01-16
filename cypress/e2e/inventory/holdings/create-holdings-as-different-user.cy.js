@@ -64,7 +64,7 @@ describe('Inventory', () => {
 
       it(
         'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
-        { tags: ['smoke', 'folijet', 'shiftLeft', 'C1294', 'eurekaPhase1'] },
+        { tags: ['smoke', 'folijet', 'C1294', 'shiftLeft'] },
         () => {
           cy.wait(2000);
           const InventoryNewInstance = InventoryInstances.addNewInventory();

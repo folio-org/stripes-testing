@@ -66,7 +66,7 @@ describe('Organizations', () => {
 
   it(
     'C350762 User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C350762', 'shiftLeft'] },
     () => {
       // Found and edit created organization
       Organizations.searchByParameters('Name', organization.name);

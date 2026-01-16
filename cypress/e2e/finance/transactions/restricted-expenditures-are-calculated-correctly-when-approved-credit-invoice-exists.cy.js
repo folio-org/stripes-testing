@@ -243,7 +243,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C496158 Restricted expenditures are calculated correctly when approved credit invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496158'] },
     () => {
       Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);

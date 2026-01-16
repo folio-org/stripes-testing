@@ -14,7 +14,7 @@ describe('Funds', () => {
 
   it(
     'C4052 Create a new fund (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C4052', 'shiftLeft'] },
     () => {
       Funds.createFundViaUI(fund).then((createdLedger) => {
         createdLedgerId = createdLedger.id;

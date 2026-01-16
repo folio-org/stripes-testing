@@ -43,7 +43,7 @@ describe('Consortia', () => {
 
     it(
       'C397336 User with "Consortium manager: Can create, edit and remove settings" permission and active affiliations in "Central" and "Member" tenants has access to "Consortium manager" app (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet'] },
+      { tags: ['criticalPathECS', 'thunderjet', 'C397336'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();

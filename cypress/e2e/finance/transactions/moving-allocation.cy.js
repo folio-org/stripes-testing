@@ -79,7 +79,7 @@ describe('Finance', () => {
 
     it(
       'C375175 Moving allocation is NOT successful if money was moved from fund having NO current budget (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C375175'] },
       () => {
         FinanceHelper.searchByName(toFund.name);
         Funds.selectFund(toFund.name);

@@ -85,7 +85,7 @@ describe('Finance: Groups', () => {
 
   it(
     'C442904 Increase allocation for group financial summary is displayed correctly (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C442904'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

@@ -84,8 +84,8 @@ describe('Orders', () => {
   });
 
   it(
-    'C422251: Adding donor information to a new PO line (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    'C422251 Adding donor information to a new PO line (thunderjet) (TaaS)',
+    { tags: ['criticalPath', 'thunderjet', 'C422251'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

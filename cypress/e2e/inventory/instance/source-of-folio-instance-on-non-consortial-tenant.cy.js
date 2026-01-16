@@ -47,7 +47,7 @@ describe('Inventory', () => {
 
       it(
         'C402776 (NON-CONSORTIA) Verify the Source of a FOLIO Instance on non-consortial tenant (folijet) (TaaS)',
-        { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C402776'] },
+        { tags: ['criticalPath', 'folijet', 'C402776', 'shiftLeft'] },
         () => {
           InventorySearchAndFilter.verifyPanesExist();
           InventorySearchAndFilter.instanceTabIsDefault();

@@ -83,7 +83,7 @@ describe('Lists', () => {
       {
         name: `C411806-${getTestEntityValue('list')}-6`,
         description: `C411806-${getTestEntityValue('desc')}-6`,
-        recordType: 'Purchase order lines',
+        recordType: 'Purchase order lines with titles',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
@@ -112,7 +112,7 @@ describe('Lists', () => {
         'Loans',
         'Items',
         'Users',
-        'Purchase order lines',
+        'Purchase order lines with titles',
         'Holdings',
         'Instances',
         'Organizations',
@@ -128,6 +128,7 @@ describe('Lists', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.uiOrganizationsView.gui,
+        Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
       ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;

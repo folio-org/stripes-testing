@@ -97,7 +97,7 @@ describe('Invoices', () => {
 
     it(
       'C353222 Negative: Run batch export from full screen view with NO Voucher export permission (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C353222'] },
       () => {
         // Search "Vendor invoice number" from precondition
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

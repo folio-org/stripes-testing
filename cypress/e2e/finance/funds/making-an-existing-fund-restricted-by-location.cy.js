@@ -54,7 +54,7 @@ describe('Funds', () => {
 
   it(
     'C423530 Marking Fund as restricted by location when create a fund (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423530'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

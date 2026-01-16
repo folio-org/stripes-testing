@@ -46,7 +46,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C648520 "Allocation tools" submenu is not available in "Actions" menu on "Fiscal year" and "Fund" panes (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C648520'] },
     () => {
       FiscalYears.searchByName(fiscalYear.name);
       FiscalYears.selectFisacalYear(fiscalYear.name);

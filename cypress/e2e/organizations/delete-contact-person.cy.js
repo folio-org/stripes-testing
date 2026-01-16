@@ -36,15 +36,19 @@ describe('Organizations', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C729 Delete a contact person (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.editOrganization();
-    Organizations.openContactPeopleSectionInEditCard();
-    Organizations.deleteContactFromContactPeople();
-    Organizations.saveOrganization();
-    Organizations.varifySaveOrganizationCalloutMessage(organization);
-    Organizations.openContactPeopleSection();
-    Organizations.checkContactSectionIsEmpty();
-  });
+  it(
+    'C729 Delete a contact person (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C729'] },
+    () => {
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.editOrganization();
+      Organizations.openContactPeopleSectionInEditCard();
+      Organizations.deleteContactFromContactPeople();
+      Organizations.saveOrganization();
+      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.openContactPeopleSection();
+      Organizations.checkContactSectionIsEmpty();
+    },
+  );
 });

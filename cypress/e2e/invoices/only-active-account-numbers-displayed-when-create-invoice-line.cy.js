@@ -79,7 +79,7 @@ describe('Invoices', () => {
 
   it(
     'C413346 Only active account numbers are displayed in dropdown list when create invoice line (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C413346'] },
+    { tags: ['criticalPath', 'thunderjet', 'C413346'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

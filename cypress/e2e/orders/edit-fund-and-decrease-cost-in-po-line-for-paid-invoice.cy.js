@@ -129,7 +129,7 @@ describe('Orders', () => {
 
   it(
     'C404443 Editing fund distribution and decreasing cost in PO line when related Paid invoice exists ("Release encumbrance" option in invoice line is NOT active) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C404443'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

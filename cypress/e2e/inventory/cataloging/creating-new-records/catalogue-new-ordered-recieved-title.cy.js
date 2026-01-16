@@ -157,7 +157,7 @@ describe('Inventory', () => {
 
       it(
         'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-        { tags: ['smoke', 'folijet', 'shiftLeft', 'C3506'] },
+        { tags: ['smoke', 'folijet', 'C3506', 'shiftLeft'] },
         () => {
           InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();

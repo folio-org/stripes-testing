@@ -40,7 +40,7 @@ describe('Organizations', () => {
 
   it(
     'C369086 Organizations | Results List | Verify that value in "Name" column is hyperlink (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C369086'] },
     () => {
       // Check "Active" checkbox in "Organizations status" accordion on "Search & filter" pane
       Organizations.selectActiveStatus();

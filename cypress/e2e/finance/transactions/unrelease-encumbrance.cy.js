@@ -150,7 +150,7 @@ describe('Finance', () => {
 
     it(
       'C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C375105'] },
+      { tags: ['criticalPath', 'thunderjet', 'C375105'] },
       () => {
         FinanceHelp.searchByName(defaultFund.name);
         Funds.selectFund(defaultFund.name);

@@ -75,7 +75,7 @@ describe('Invoices', () => {
 
   it(
     'C353572 Saving invoice line from POL with inactive budget (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353572'] },
     () => {
       // Click "Actions" button, Select "New" option
       // Fill in all the required fields with valid data, Click "Save" button

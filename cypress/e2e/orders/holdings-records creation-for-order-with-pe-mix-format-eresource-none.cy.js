@@ -107,7 +107,7 @@ describe('Orders', () => {
 
   it(
     'C402351 Holdings records creation when open order with "P/E mix" format PO line and Independent workflow, "Create inventory" in "E-resources details" = None (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C402351'] },
     () => {
       // Open Order
       Orders.resetFiltersIfActive();

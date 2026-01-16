@@ -152,7 +152,7 @@ describe('Finance', () => {
 
     it(
       'C375980 Rollover transfer amounts are included in Group and Ledger summary for Net Transfers (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375980'] },
       () => {
         FinanceHelper.searchByName(fiscalYears.next.name);
         const FiscalYearDetails = FiscalYears.selectFisacalYear(fiscalYears.next.name);
