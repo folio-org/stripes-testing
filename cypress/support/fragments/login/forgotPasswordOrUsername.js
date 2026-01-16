@@ -4,8 +4,8 @@ export default {
   waitLoadingForgotPassword: () => {
     cy.expect([
       HTML(including('Forgot password?')).exists(),
-      HTML(including('Enter email or phone')).exists(),
-      TextField({ placeholder: '' }).exists(),
+      HTML(including('Enter username, email or phone')).exists(),
+      TextField({ placeholder: 'Enter username, email or phone' }).exists(),
     ]);
   },
 
@@ -13,7 +13,7 @@ export default {
     cy.expect([
       HTML(including('Forgot username?')).exists(),
       HTML(including('Enter email or phone')).exists(),
-      TextField({ placeholder: '' }).exists(),
+      TextField({ placeholder: 'Enter email or phone' }).exists(),
     ]);
   },
 };
