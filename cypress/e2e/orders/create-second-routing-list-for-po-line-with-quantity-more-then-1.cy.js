@@ -153,7 +153,7 @@ describe('Receiving', () => {
 
   it(
     'C468148 Create second routing list for a PO line with quantity > 1 (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468148'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

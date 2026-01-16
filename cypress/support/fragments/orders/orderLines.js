@@ -335,6 +335,10 @@ export default {
     cy.expect(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).exists());
   },
 
+  verifyPackageTitleExists: (instanceTitle) => {
+    cy.expect(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).exists());
+  },
+
   backToEditingOrder: () => {
     cy.wait(4000);
     cy.do(Button({ id: 'clickable-backToPO' }).click());
@@ -2869,5 +2873,17 @@ export default {
 
   selectCurrency(currency) {
     cy.do([currencyButton.click(), SelectionOption(currency).click()]);
+  },
+
+  addPackageTitleViaApi({ title, poLineId, instanceId }) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders/titles',
+      body: {
+        title,
+        poLineId,
+        instanceId,
+      },
+    });
   },
 };

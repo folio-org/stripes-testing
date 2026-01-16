@@ -103,7 +103,7 @@ describe('Finance', () => {
 
   it(
     'C377030 "Available balance" is displayed as a negative number when running a deficit (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'C377030'] },
     () => {
       FinanceHelp.searchByName(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);

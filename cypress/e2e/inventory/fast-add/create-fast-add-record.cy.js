@@ -47,7 +47,7 @@ describe('Inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C15850', 'eurekaPhase1'] },
+      { tags: ['smoke', 'folijet', 'C15850', 'shiftLeft'] },
       () => {
         cy.intercept('POST', '/inventory/instances').as('createInstance');
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');

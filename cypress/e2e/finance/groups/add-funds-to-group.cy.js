@@ -116,7 +116,7 @@ describe('Groups', () => {
 
   it(
     'C4056 Add funds to a group (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C4056'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

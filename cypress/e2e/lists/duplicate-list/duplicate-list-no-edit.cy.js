@@ -82,7 +82,7 @@ describe('Lists', () => {
           operator: 'equals',
           value: 'True',
         });
-        Lists.closeQueryEditor();
+        Lists.cancelQueryBuilder();
 
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);

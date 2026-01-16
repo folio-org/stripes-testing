@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
     it(
       'C380582 Create new instance with "Duplicate" (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C380582', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C380582'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

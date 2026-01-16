@@ -194,7 +194,7 @@ describe('Orders', () => {
 
   it(
     'C502982 "Total credited" field is displayed in "PO summary" accordion on order details pane (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C502982'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

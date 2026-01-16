@@ -50,7 +50,7 @@ describe('Permissions', () => {
 
     it(
       'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-      { tags: ['smokeFlaky', 'thunderjet'] },
+      { tags: ['smokeFlaky', 'thunderjet', 'C375072'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password, {

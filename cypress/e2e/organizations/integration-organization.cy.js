@@ -50,7 +50,7 @@ describe('Organizations', () => {
 
   it(
     'C350758 Verify if a User can not set and edit EDI convention in Organization Integration (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C350758', 'shiftLeft'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);

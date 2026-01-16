@@ -31,7 +31,7 @@ describe('Organizations', () => {
 
   it(
     'C726 Edit contact from an organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C726'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

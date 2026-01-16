@@ -67,7 +67,7 @@ describe('Orders', () => {
 
   it(
     'C418593 Adding and editing "subscription to" date for ongoing open order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C418593'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -134,7 +134,7 @@ describe('Orders', () => {
 
   it(
     'C418597 Adding and editing "renewal date" option for ongoing open order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C418597'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -14,7 +14,7 @@ describe('Fiscal Year', () => {
 
   it(
     'C4051 Create a new fiscal year (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'C4051', 'shiftLeft'] },
     () => {
       const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);

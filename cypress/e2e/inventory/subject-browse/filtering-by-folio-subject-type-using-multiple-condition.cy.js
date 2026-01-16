@@ -62,6 +62,7 @@ describe('Inventory', () => {
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject type');
         BrowseSubjects.selectSubjectType(testData.firstConditionForFiltering);
         BrowseSubjects.selectSubjectType(testData.secondConditionForFiltering);

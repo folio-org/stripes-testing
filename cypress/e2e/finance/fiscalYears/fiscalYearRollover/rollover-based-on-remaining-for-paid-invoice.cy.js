@@ -127,7 +127,7 @@ describe('Finance', () => {
 
     it(
       'C400643 Rollover based on "Remaining" when order has related paid invoice (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C400643'] },
       () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledger.name);

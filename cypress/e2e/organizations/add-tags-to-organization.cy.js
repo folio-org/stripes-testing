@@ -41,7 +41,7 @@ describe('Organizations', () => {
 
   it(
     'C6710 Add tags to an Organization record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C6710'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

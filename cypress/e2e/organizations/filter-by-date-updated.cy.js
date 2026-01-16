@@ -56,7 +56,7 @@ describe('Organizations', () => {
 
   it(
     'C466131 Organizations can be found by "Date updated" filter (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466131'] },
     () => {
       Organizations.filterByDateUpdated(today, today);
       Organizations.searchByParameters('Name', testData.organization.name);

@@ -93,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C402354 Holdings records creation when open order with "Other" format PO line and Independent workflow (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C402354'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

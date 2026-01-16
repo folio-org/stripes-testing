@@ -65,8 +65,10 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet', 'C584533'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
+        cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject source');
         testData.subjectSources.forEach((subjectSource) => {
+          cy.wait(1000);
           BrowseSubjects.selectSubjectSource(subjectSource);
         });
         BrowseSubjects.verifySearchResult(testData.subjectSources, testData.columnName);

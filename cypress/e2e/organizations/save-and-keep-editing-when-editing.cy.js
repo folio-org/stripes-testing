@@ -1,7 +1,7 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import permissions from '../../support/dictionary/permissions';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -19,7 +19,7 @@ describe('Organizations', () => {
     Organizations.createOrganizationViaApi(org).then((response) => {
       org.id = response;
     });
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((u) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((u) => {
       user = u;
       cy.waitForAuthRefresh(() => {
         cy.login(user.username, user.password, {
@@ -38,7 +38,7 @@ describe('Organizations', () => {
 
   it(
     'C656335 Save using Save & keep editing when editing organization',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C656335'] },
     () => {
       Organizations.searchByParameters('Name', org.name);
       Organizations.selectOrganization(org.name);

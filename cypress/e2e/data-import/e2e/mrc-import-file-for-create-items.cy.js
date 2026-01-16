@@ -136,7 +136,7 @@ describe('Data Import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C343334'] },
+      { tags: ['smoke', 'folijet', 'C343334', 'shiftLeft'] },
       () => {
         // create mapping profiles
         createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);

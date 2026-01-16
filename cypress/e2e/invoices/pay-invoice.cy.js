@@ -87,27 +87,23 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C3453 Pay invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.payInvoice();
-      // check transactions after payment
-      TopMenuNavigation.navigateToApp('Finance');
-      Helper.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.openTransactions();
-      Funds.selectTransactionInList('Credit');
-      Funds.varifyDetailsInTransactionFundTo(
-        defaultFiscalYear.code,
-        '$100.00',
-        invoice.invoiceNumber,
-        'Credit',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-    },
-  );
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet', 'C3453'] }, () => {
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.payInvoice();
+    // check transactions after payment
+    TopMenuNavigation.navigateToApp('Finance');
+    Helper.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.openTransactions();
+    Funds.selectTransactionInList('Credit');
+    Funds.varifyDetailsInTransactionFundTo(
+      defaultFiscalYear.code,
+      '$100.00',
+      invoice.invoiceNumber,
+      'Credit',
+      `${defaultFund.name} (${defaultFund.code})`,
+    );
+  });
 });

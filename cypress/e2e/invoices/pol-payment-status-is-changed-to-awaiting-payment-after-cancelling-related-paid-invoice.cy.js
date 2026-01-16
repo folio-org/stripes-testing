@@ -161,7 +161,7 @@ describe('Invoices', () => {
 
   it(
     'C466207 POL payment status is changed to "Awaiting payment" after cancelling related paid invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466207'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);

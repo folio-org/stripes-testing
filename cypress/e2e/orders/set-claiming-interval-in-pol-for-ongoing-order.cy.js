@@ -103,7 +103,7 @@ describe('Orders', () => {
 
   it(
     'C423440 Set claiming interval in PO line for ongoing order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423440'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

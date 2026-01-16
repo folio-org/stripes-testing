@@ -76,7 +76,7 @@ describe('Transactions', () => {
 
   it(
     'C6705 Create encumbrance from Order  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C6705'] },
     () => {
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoWithFund(defaultFund);

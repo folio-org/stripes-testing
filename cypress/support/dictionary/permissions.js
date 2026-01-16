@@ -818,6 +818,10 @@ export default {
     internal: 'ui-receiving.exportCSV',
     gui: 'Receiving: Export search results',
   },
+  uiReceivingAssignAcquisitionUnitsToNewTitle: {
+    internal: 'ui-receiving.acq-units.assignment.assign',
+    gui: 'Receiving: Assign acquisition units to new receiving title',
+  },
   uiReceivingManageAcquisitionUnits: {
     internal: 'ui-receiving.acq-units.assignment.manage',
     gui: 'Receiving: Manage acquisition units',
@@ -965,6 +969,10 @@ export default {
   uiSettingsOrdersCanViewEditDeleteOrderTemplates: {
     internal: 'ui-orders.settings.order-templates.delete',
     gui: 'Settings (Orders): Can view, edit, delete Order Templates',
+  },
+  ordersStorageAcquisitionMethodsCollectionGet: {
+    internal: 'orders-storage.acquisition-methods.collection.get',
+    gui: 'acquisition-methods-collection get',
   },
   // Finance
   uiFinanceFinanceViewGroup: {
@@ -1142,6 +1150,10 @@ export default {
     gui: 'Settings (Organizations): View settings',
   },
   // Settings
+  uiSettingsAcquisitionUnitsView: {
+    internal: 'ui-acquisition-units.settings.view',
+    gui: 'Settings (acquisition units): View acquisition units',
+  },
   uiSettingsAcquisitionUnitsViewEditCreateDelete: {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
