@@ -147,7 +147,6 @@ export default {
         .choose('Pay'),
     );
   },
-
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
   },
@@ -161,6 +160,16 @@ export default {
   },
   verifyFeeFineCount: (rowCount) => {
     cy.expect(feeFinesList.has({ rowCount }));
+  },
+  checkRefundEllipsisDisabled: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .open(),
+    );
+    cy.get('button').contains('Refund').should('have.attr', 'disabled');
+    cy.get('body').type('{esc}');
   },
   closeFeesFinesDetails: () => cy.do(Button({ icon: 'times' }).click()),
 };
