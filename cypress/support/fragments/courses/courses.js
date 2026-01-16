@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import {
   HTML,
   Section,
@@ -71,6 +72,20 @@ export default {
       .then((response) => response.body);
   },
 
+  createLiastingViaAPI(termId) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'coursereserves/courselistings',
+        body: {
+          id: uuid(),
+          termId,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+
   retrieveDepartmentsViaAPI() {
     return cy
       .okapiRequest({
@@ -89,6 +104,16 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body.courseTypes);
+  },
+
+  retrieveTermsViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'coursereserves/terms?limit=500',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.terms);
   },
 
   retrieveCoursesViaAPI() {
