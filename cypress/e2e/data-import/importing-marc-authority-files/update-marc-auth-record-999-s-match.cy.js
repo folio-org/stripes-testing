@@ -167,7 +167,6 @@ describe('Data Import', () => {
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
         MarcAuthorities.exportSelected();
         cy.wait(1000);
-        // MarcAuthorities.checkCallout(testData.calloutMessage);
         ExportFile.downloadCSVFile(testData.csvFile, 'QuickAuthorityExport*');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
