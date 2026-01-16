@@ -5,21 +5,29 @@ import permissionsList from '../dictionary/permissions';
 import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
-  return cy.okapiRequest({
-    path: 'users',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    Cypress.env('users', body.users);
-    return body.users;
+  return cy
+    .okapiRequest({
+      path: 'users',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      Cypress.env('users', body.users);
+      return body.users;
+    });
+});
+
+Cypress.Commands.add('getUserDetailsByUsername', (username) => {
+  return cy.getUsers({ limit: 1, query: `"username"="${username}"` }).then((users) => {
+    return users[0];
   });
 });
 
 Cypress.Commands.add('getAdminUserDetails', () => {
   if (!Cypress.env('adminUserDetails')) {
-    return cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((users) => {
-      Cypress.env('adminUserDetails', users[0]);
-      return users[0];
+    return cy.getUserDetailsByUsername(Cypress.env('diku_login')).then((user) => {
+      Cypress.env('adminUserDetails', user);
+      return user;
     });
   } else {
     return Cypress.env('adminUserDetails');
@@ -204,9 +212,9 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
                   responseCapabs.body.capabilities.filter(
                     (capab) => capab.permission === permissionName,
                   ).length > 0 ||
-                  responseSets.body.capabilitySets.filter(
-                    (set) => set.permission === permissionName,
-                  ).length > 0,
+                    responseSets.body.capabilitySets.filter(
+                      (set) => set.permission === permissionName,
+                    ).length > 0,
                   `Capabilities/sets found for "${permissionName}"`,
                 ).to.be.true;
               });
@@ -298,8 +306,8 @@ Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = [
               responseCapabs.body.capabilities.filter(
                 (capab) => capab.permission === permissionName,
               ).length > 0 ||
-              responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
-                .length > 0,
+                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
+                  .length > 0,
               `Capabilities/sets found for "${permissionName}"`,
             ).to.be.true;
           });

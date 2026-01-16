@@ -162,9 +162,21 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
   isDefaultSearchParamsRequired: false,
 });
 
+const updateServicePointsViaApi = (recordId, servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
+  method: 'PUT',
+  path: `service-points-users/${recordId}`,
+  body: {
+    id: recordId || uuidv4(),
+    userId,
+    servicePointsIds: servicePointIds,
+    defaultServicePointId: defaultServicePointId || servicePointIds[0],
+  },
+  isDefaultSearchParamsRequired: false,
+});
+
 export default {
   addServicePointsViaApi,
-
+  updateServicePointsViaApi,
   openEdit() {
     cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);

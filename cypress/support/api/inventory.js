@@ -133,7 +133,7 @@ Cypress.Commands.add('getDvdMaterialType', () => {
 
 // Returns default material type, should be used in most cases, if possible
 Cypress.Commands.add('getDefaultMaterialType', () => {
-  return cy.getBookMaterialType();
+  return cy.getMaterialTypes();
 });
 
 // TODO: update tests where cypress env is still used
