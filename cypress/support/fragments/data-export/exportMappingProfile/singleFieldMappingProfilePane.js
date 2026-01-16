@@ -75,9 +75,9 @@ export default {
   verifyOnlyDuplicateOptionAvailable() {
     this.openActions();
     cy.expect([
-      editButton.has({ disabled: true }),
+      editButton.absent(),
       duplicateButton.has({ disabled: false }),
-      deleteButton.has({ disabled: true }),
+      deleteButton.absent(),
     ]);
   },
 
