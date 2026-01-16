@@ -90,10 +90,11 @@ describe('MARC', () => {
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessage);
+          MarcAuthorities.selectFirstRecord();
+          MarcAuthority.waitLoading();
           MarcAuthority.contains(
             `${testData.editedField.contentBefore} ${testData.editedField.editedContent}`,
           );
-
           // The 005 field is updated with the date and time when last changes were applied
           MarcAuthority.contains(
             new Date()
