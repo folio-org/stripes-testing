@@ -10,6 +10,7 @@ import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Integrations from '../../support/fragments/organizations/integrations/integrations';
+import { Approvals } from '../../support/fragments/settings/invoices';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -102,7 +103,6 @@ describe('Invoices', () => {
                 cy.getAcquisitionMethodsApi({
                   query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
                 }).then((params) => {
-                  // Create Integration for Organization (Precondition 3)
                   testData.integration = Integrations.getDefaultIntegration({
                     vendorId: testData.organization.id,
                     acqMethodId: params.body.acquisitionMethods[0].id,
@@ -194,39 +194,24 @@ describe('Invoices', () => {
         });
       });
     });
-
     cy.createTempUser([
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesApproveInvoices.gui,
+      permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
       });
+      Approvals.setApprovePayValue(false);
     });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    if (testData.integration?.id) {
-      Integrations.deleteIntegrationViaApi(testData.integration.id);
-    }
-    if (testData.organization?.id) {
-      Organizations.deleteOrganizationViaApi(testData.organization.id);
-    }
-    if (testData.order?.id) {
-      Orders.deleteOrderViaApi(testData.order.id);
-    }
-    if (testData.location?.id) {
-      NewLocation.deleteViaApi(testData.location.id);
-    }
-    if (testData.servicePoint?.id) {
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-    }
-    if (testData.user?.userId) {
-      Users.deleteViaApi(testData.user.userId);
-    }
+    Users.deleteViaApi(testData.user.userId);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
   });
 
   it(
@@ -265,7 +250,6 @@ describe('Invoices', () => {
 
       InvoiceLineEditFormSecond.clickSaveButton();
 
-      // Step 13: Approve invoice (Actions > Approve > Submit)
       Invoices.approveInvoice();
 
       InvoiceView.checkInvoiceDetails({
@@ -273,14 +257,27 @@ describe('Invoices', () => {
       });
 
       Invoices.closeInvoiceDetailsPane();
-
       Invoices.resetFilters();
 
       Invoices.selectStatusFilter('Open');
-      Invoices.verifySearchResult(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.firstInvoice.vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
+      });
+      Invoices.closeInvoiceDetailsPane();
+      Invoices.searchByNumber(testData.secondInvoice.vendorInvoiceNo);
+      Invoices.checkZeroSearchResultsHeader();
 
       Invoices.selectInvoiceDateFilter(previousDate, nextDate);
-      Invoices.verifySearchResult(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.firstInvoice.vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
+      });
+      Invoices.closeInvoiceDetailsPane();
+      Invoices.searchByNumber(testData.secondInvoice.vendorInvoiceNo);
+      Invoices.checkZeroSearchResultsHeader();
     },
   );
 });

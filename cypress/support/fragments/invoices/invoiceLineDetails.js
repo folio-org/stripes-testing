@@ -35,6 +35,10 @@ const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
   Section({ id: 'otherRelatedInvoiceLines' }),
 );
 
+const receivingHistorySection = Section({ id: 'invoiceLineReceivingHistory' });
+const receivingHistoryNextButton = receivingHistorySection.find(Button('Next'));
+const receivingHistoryPreviousButton = receivingHistorySection.find(Button('Previous'));
+
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
@@ -181,5 +185,30 @@ export default {
   },
   closeInvoiceLineDetailsPane: () => {
     cy.do(invoiceLineDetailsPane.find(Button({ id: 'clickable-back-to-invoice' })).click());
+  },
+  checkReceivingHistoryPaginationButtons({ nextDisabled = false, previousDisabled = false } = {}) {
+    if (nextDisabled !== undefined) {
+      cy.expect(receivingHistoryNextButton.has({ disabled: nextDisabled }));
+    }
+    if (previousDisabled !== undefined) {
+      cy.expect(receivingHistoryPreviousButton.has({ disabled: previousDisabled }));
+    }
+  },
+  clickReceivingHistoryNextButton() {
+    cy.do(receivingHistoryNextButton.click());
+  },
+  clickReceivingHistoryPreviousButton() {
+    cy.do(receivingHistoryPreviousButton.click());
+  },
+  checkReceivingHistoryTableContent({ rowCount } = {}) {
+    if (rowCount !== undefined) {
+      cy.get('#invoiceLineReceivingHistory [class*="mclRow"]').should('have.length', rowCount);
+    }
+  },
+  scrollToBottomOfReceivingHistory() {
+    cy.get('#invoiceLineReceivingHistory [class*="mclScrollable"]').scrollTo('bottom', {
+      ensureScrollable: false,
+    });
+    cy.wait(1000);
   },
 };
