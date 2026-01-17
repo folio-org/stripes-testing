@@ -166,7 +166,7 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
           testData.createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 

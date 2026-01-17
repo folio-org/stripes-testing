@@ -137,6 +137,10 @@ describe('MARC', () => {
             testData.inventoryInstanceSearchOption,
             testData.marcBibTitle,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+            InventorySearchAndFilter.verifyResultListExists();
+          });
           InventorySearchAndFilter.clickSearch();
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
