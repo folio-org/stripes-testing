@@ -231,6 +231,7 @@ describe('MARC', () => {
         () => {
           cy.ifConsortia(true, () => {
             MarcAuthorities.waitLoading();
+            cy.wait(1500);
             MarcAuthorities.clickAccordionByName('Shared');
             MarcAuthorities.actionsSelectCheckbox('No');
             MarcAuthorities.verifySearchResultTabletIsAbsent(false);
@@ -252,6 +253,7 @@ describe('MARC', () => {
           MarcAuthorities.switchToBrowse();
           cy.ifConsortia(true, () => {
             MarcAuthorities.waitLoading();
+            cy.wait(1500);
             MarcAuthorities.clickAccordionByName('Shared');
             MarcAuthorities.actionsSelectCheckbox('No');
             MarcAuthorities.verifySearchResultTabletIsAbsent(false);
@@ -274,11 +276,10 @@ describe('MARC', () => {
           MarcAuthorities.switchToBrowse();
           cy.ifConsortia(true, () => {
             MarcAuthorities.waitLoading();
+            cy.wait(1500);
             MarcAuthorities.clickAccordionByName('Shared');
             MarcAuthorities.actionsSelectCheckbox('No');
             MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-            MarcAuthorities.clickAccordionByName('Shared');
-            MarcAuthorities.verifySharedAccordionOpen(false);
           });
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[4].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[4].title);

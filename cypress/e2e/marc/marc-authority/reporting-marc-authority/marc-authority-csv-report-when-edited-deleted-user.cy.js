@@ -20,7 +20,7 @@ describe('MARC', () => {
     describe('Reporting MARC authority', () => {
       const testData = {
         searchOption: 'Keyword',
-        title: 'C378894 Drama--Genre',
+        title: 'C378894 Drama Genre',
         updatedTitle: 'C378894 Drama cinema Genre',
       };
 
