@@ -1754,4 +1754,15 @@ export default {
       ]),
     );
   },
+
+  checkClearIconShownInAccordionHeader(accordionName, isShown = true) {
+    const targetIcon = Button({
+      ariaLabel: or(
+        `Clear selected filters for "${accordionName}"`,
+        `Clear selected ${accordionName} filters`,
+      ),
+    });
+    if (isShown) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
 };

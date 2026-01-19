@@ -110,4 +110,16 @@ export default {
       );
     }
   },
+  openAcquisitionUnitsDropdown() {
+    cy.do(itemDetailsFields.acquisitionUnits.open());
+  },
+  verifyAcquisitionUnitsInDropdown(acquisitionUnits = []) {
+    this.openAcquisitionUnitsDropdown();
+    acquisitionUnits.forEach((auName) => {
+      cy.expect(MultiSelectOption(auName).exists());
+    });
+  },
+  verifySaveButtonEnabled(isEnabled = true) {
+    cy.expect(saveAndCloseButton.has({ disabled: !isEnabled }));
+  },
 };

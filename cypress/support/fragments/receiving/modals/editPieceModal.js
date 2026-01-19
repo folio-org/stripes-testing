@@ -75,11 +75,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton() {
+  clickDeleteButton({ isLastPiece = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView();
-
+    DeletePieceModal.verifyModalView(isLastPiece);
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
