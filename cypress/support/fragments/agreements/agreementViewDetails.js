@@ -55,6 +55,8 @@ const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
 const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
 const noteTypeDropdown = Select({ name: 'type' });
 const agreementLineFilter = Button({ id: 'clickable-nav-agreementLines' });
+const notesAccordionToggleButton = Button({ id: 'accordion-toggle-button-notes' });
+const notesAccordionSection = Section({ id: 'notes' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -114,6 +116,10 @@ export default {
         .click(),
     );
     cy.expect(rootSection.find(newNoteButton).exists());
+  },
+
+  expandNotesSection() {
+    cy.do(rootSection.find(notesSection).find(notesAccordionToggleButton).click());
   },
 
   openInternalContactsSection() {
@@ -461,5 +467,17 @@ export default {
 
   openAgreementLineFilter() {
     cy.do(agreementLineFilter.click());
+  },
+
+  verifyNoteInList(noteTitle) {
+    cy.expect(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).exists(),
+    );
+  },
+
+  clickNoteInList(noteTitle) {
+    cy.do(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).click(),
+    );
   },
 };

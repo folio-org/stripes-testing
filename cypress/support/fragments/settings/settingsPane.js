@@ -24,6 +24,7 @@ export const rootPane = Section({ id: 'controlled-vocab-pane' });
 export const paneContent = HTML({ id: 'controlled-vocab-pane-content' });
 export const addButton = rootPane.find(Button('+ New'));
 export const table = rootPane.find(EditableList());
+export const notesNavItem = NavListItem('Notes');
 
 const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
   // filter index implemented based on parent-child relations.

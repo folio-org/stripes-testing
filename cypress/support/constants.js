@@ -22,6 +22,7 @@ export const APPLICATION_NAMES = {
   LINKED_DATA_EDITOR: 'Linked Data Editor',
   NOTES: 'Notes',
   ORGANIZATIONS: 'Organizations',
+  COURSES: 'Courses',
 };
 
 export const REQUEST_METHOD = {
