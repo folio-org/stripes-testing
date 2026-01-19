@@ -46,14 +46,14 @@ describe('Notes', () => {
         .then((userProperties) => {
           testData.user = userProperties;
 
-          return UserEdit.addServicePointViaApi(
+          UserEdit.addServicePointViaApi(
             testData.servicePoint.id,
             testData.user.userId,
             testData.servicePoint.id,
           );
         })
         .then(() => {
-          return NoteTypes.getNoteTypesViaApi();
+          NoteTypes.getNoteTypesViaApi();
         })
         .then((noteTypes) => {
           testData.noteTypeId = noteTypes[0].id;
@@ -102,12 +102,12 @@ describe('Notes', () => {
             .then((terms) => {
               testData.termId = terms[0].id;
 
-              return Courses.createLiastingViaAPI(testData.termId);
+              Courses.createListingViaAPI(testData.termId);
             })
             .then((courseListing) => {
               testData.courseListingId = courseListing.id;
 
-              return Courses.retrieveDepartmentsViaAPI();
+              Courses.retrieveDepartmentsViaAPI();
             })
             .then((departments) => {
               testData.departmentId = departments.id;
@@ -118,7 +118,7 @@ describe('Notes', () => {
                 courseListingId: testData.courseListingId,
               };
 
-              return Courses.createCourseViaAPI(defaultCourse);
+              Courses.createCourseViaAPI(defaultCourse);
             })
             .then((course) => {
               testData.course = course;
@@ -127,7 +127,7 @@ describe('Notes', () => {
                 { typeId: testData.noteTypeId, agreementId: testData.course.id },
                 'courses',
               );
-              return Notes.createViaApi(courseNote);
+              Notes.createViaApi(courseNote);
             })
             .then((note) => {
               testData.notes.courseNote = note;

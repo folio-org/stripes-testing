@@ -72,7 +72,7 @@ export default {
       .then((response) => response.body);
   },
 
-  createLiastingViaAPI(termId) {
+  createListingViaAPI(termId) {
     return cy
       .okapiRequest({
         method: 'POST',
