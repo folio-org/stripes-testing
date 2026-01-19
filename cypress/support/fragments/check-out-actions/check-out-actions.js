@@ -59,7 +59,7 @@ export default {
     return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(including(personal.lastname + ', '))).exists(),
+      userPane.find(Link(including(personal.lastname || personal.lastName + ', '))).exists(),
       userPane.find(Link(barcode)).exists(),
     ]);
   },
