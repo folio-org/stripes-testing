@@ -58,6 +58,7 @@ const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccessSection' })
 const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
 const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
+const notesAccordionSection = Section({ id: 'notesAccordion' });
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
@@ -255,6 +256,18 @@ export default {
 
   openNotesSection() {
     cy.do(Accordion({ id: 'notesAccordion' }).clickHeader());
+  },
+
+  verifyNoteInList(noteTitle) {
+    cy.expect(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).exists(),
+    );
+  },
+
+  clickNoteInList(noteTitle) {
+    cy.do(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).click(),
+    );
   },
 
   openCustomFieldsSection() {
