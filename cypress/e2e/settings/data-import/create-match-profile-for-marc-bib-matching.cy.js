@@ -152,7 +152,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -186,7 +185,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -220,7 +218,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -254,7 +251,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
