@@ -101,6 +101,7 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
     // Budget, Fund, Ledger, and FiscalYear cannot be deleted because they have related transactions from paid invoice
+    Approvals.setApprovePayValue(false);
   });
 
   it(

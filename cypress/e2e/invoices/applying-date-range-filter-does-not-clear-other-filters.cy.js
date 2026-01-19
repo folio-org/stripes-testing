@@ -10,7 +10,6 @@ import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Integrations from '../../support/fragments/organizations/integrations/integrations';
-import { Approvals } from '../../support/fragments/settings/invoices';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -197,14 +196,12 @@ describe('Invoices', () => {
     cy.createTempUser([
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesApproveInvoices.gui,
-      permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
       });
-      Approvals.setApprovePayValue(false);
     });
   });
 

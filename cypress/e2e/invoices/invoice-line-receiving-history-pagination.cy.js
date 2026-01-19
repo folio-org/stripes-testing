@@ -1,8 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
 import Invoices from '../../support/fragments/invoices/invoices';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
@@ -17,32 +13,11 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
 import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const testData = {
-    organization: {
-      ...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: `account_C350520_${getRandomPostfix()}`,
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'autotest_account',
-          notes: '',
-          paymentMethod: 'EFT',
-        },
-      ],
-    },
-    fiscalYear: {},
-    ledger: {},
-    fund: {},
-    budget: {},
+    organization: NewOrganization.defaultUiOrganizations,
     order: {},
     orderLine: {},
     invoice: {},
@@ -54,139 +29,87 @@ describe('Invoices', () => {
   before('Create test data', () => {
     cy.getAdminToken();
 
-    FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYearResponse) => {
-      testData.fiscalYear = fiscalYearResponse;
-      testData.ledger = {
-        ...Ledgers.defaultUiLedger,
-        fiscalYearOneId: testData.fiscalYear.id,
-      };
+    Organizations.createOrganizationViaApi(testData.organization).then((organizationResponse) => {
+      testData.organization.id = organizationResponse;
 
-      Ledgers.createViaApi(testData.ledger).then((ledgerResponse) => {
-        testData.ledger.id = ledgerResponse.id;
-        testData.fund = {
-          ...Funds.defaultUiFund,
-          ledgerId: testData.ledger.id,
-        };
+      ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint()).then((response) => {
+        testData.servicePoint = response.body;
 
-        Funds.createViaApi(testData.fund).then((fundResponse) => {
-          testData.fund = fundResponse.fund;
-          testData.budget = {
-            ...Budgets.getDefaultBudget(),
-            fiscalYearId: testData.fiscalYear.id,
-            fundId: testData.fund.id,
-            allocated: 1000,
-          };
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.servicePoint.id)).then(
+          (location) => {
+            testData.location = location;
 
-          Budgets.createViaApi(testData.budget).then((budgetResponse) => {
-            testData.budget.id = budgetResponse.id;
+            cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+              const materialTypeId = materialType.id;
 
-            Organizations.createOrganizationViaApi(testData.organization).then(
-              (organizationResponse) => {
-                testData.organization.id = organizationResponse;
+              cy.getAcquisitionMethodsApi({ query: 'value="Purchase"' }).then(({ body }) => {
+                const acquisitionMethodId = body.acquisitionMethods[0].id;
 
-                ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint()).then(
-                  (response) => {
-                    testData.servicePoint = response.body;
+                const order = {
+                  ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+                  orderType: 'One-Time',
+                };
 
-                    NewLocation.createViaApi(
-                      NewLocation.getDefaultLocation(testData.servicePoint.id),
-                    ).then((location) => {
-                      testData.location = location;
+                Orders.createOrderViaApi(order).then((orderResponse) => {
+                  testData.order = orderResponse;
 
-                      cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
-                        const materialTypeId = materialType.id;
+                  const orderLine = BasicOrderLine.getDefaultOrderLine({
+                    quantity: 100,
+                    purchaseOrderId: testData.order.id,
+                    specialLocationId: testData.location.id,
+                    specialMaterialTypeId: materialTypeId,
+                    acquisitionMethod: acquisitionMethodId,
+                    checkinItems: false,
+                  });
 
-                        cy.getAcquisitionMethodsApi({ query: 'value="Purchase"' }).then(
-                          ({ body }) => {
-                            const acquisitionMethodId = body.acquisitionMethods[0].id;
+                  OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
+                    testData.orderLine = orderLineResponse;
 
-                            const order = {
-                              ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-                              orderType: 'One-Time',
-                              reEncumber: true,
-                            };
+                    Orders.updateOrderViaApi({
+                      ...testData.order,
+                      workflowStatus: ORDER_STATUSES.OPEN,
+                    }).then(() => {
+                      cy.wait(3000).then(() => {
+                        Receiving.getPiecesViaApi(testData.orderLine.id).then((pieces) => {
+                          const piecesToReceive = pieces
+                            .slice(0, 99)
+                            .map((piece) => ({ id: piece.id }));
 
-                            Orders.createOrderViaApi(order).then((orderResponse) => {
-                              testData.order = orderResponse;
+                          Receiving.receivePieceViaApi({
+                            poLineId: testData.orderLine.id,
+                            pieces: piecesToReceive,
+                          }).then(() => {
+                            cy.getBatchGroups().then((batchGroup) => {
+                              testData.invoice = {
+                                ...NewInvoice.defaultUiInvoice,
+                                vendorName: testData.organization.name,
+                                accountingCode: testData.organization.erpCode,
+                                batchGroup: batchGroup.name,
+                              };
 
-                              const orderLine = BasicOrderLine.getDefaultOrderLine({
-                                quantity: 100,
-                                purchaseOrderId: testData.order.id,
-                                specialLocationId: testData.location.id,
-                                specialMaterialTypeId: materialTypeId,
-                                fundDistribution: [
-                                  {
-                                    code: testData.fund.code,
-                                    fundId: testData.fund.id,
-                                    distributionType: 'percentage',
-                                    value: 100,
-                                  },
-                                ],
-                                acquisitionMethod: acquisitionMethodId,
-                                checkinItems: false,
+                              Invoices.createInvoiceWithInvoiceLineViaApi({
+                                vendorId: testData.organization.id,
+                                poLineId: testData.orderLine.id,
+                                batchGroupId: batchGroup.id,
+                                accountingCode: testData.organization.erpCode,
+                                subTotal: 100,
+                              }).then((invoiceResponse) => {
+                                testData.invoice = {
+                                  ...testData.invoice,
+                                  ...invoiceResponse,
+                                };
                               });
-
-                              OrderLines.createOrderLineViaApi(orderLine).then(
-                                (orderLineResponse) => {
-                                  testData.orderLine = orderLineResponse;
-
-                                  Orders.updateOrderViaApi({
-                                    ...testData.order,
-                                    workflowStatus: ORDER_STATUSES.OPEN,
-                                  }).then(() => {
-                                    cy.wait(3000).then(() => {
-                                      Receiving.getPiecesViaApi(testData.orderLine.id).then(
-                                        (pieces) => {
-                                          const piecesToReceive = pieces
-                                            .slice(0, 99)
-                                            .map((piece) => ({ id: piece.id }));
-
-                                          Receiving.receivePieceViaApi({
-                                            poLineId: testData.orderLine.id,
-                                            pieces: piecesToReceive,
-                                          }).then(() => {
-                                            cy.getBatchGroups().then((batchGroup) => {
-                                              testData.invoice = {
-                                                ...NewInvoice.defaultUiInvoice,
-                                                vendorName: testData.organization.name,
-                                                accountingCode: testData.organization.erpCode,
-                                                batchGroup: batchGroup.name,
-                                              };
-
-                                              Invoices.createInvoiceWithInvoiceLineViaApi({
-                                                vendorId: testData.organization.id,
-                                                poLineId: testData.orderLine.id,
-                                                fiscalYearId: testData.fiscalYear.id,
-                                                batchGroupId: batchGroup.id,
-                                                fundDistributions:
-                                                  testData.orderLine.fundDistribution,
-                                                accountingCode: testData.organization.erpCode,
-                                                subTotal: 100,
-                                              }).then((invoiceResponse) => {
-                                                testData.invoice = {
-                                                  ...testData.invoice,
-                                                  ...invoiceResponse,
-                                                };
-                                              });
-                                            });
-                                          });
-                                        },
-                                      );
-                                    });
-                                  });
-                                },
-                              );
                             });
-                          },
-                        );
+                          });
+                        });
                       });
                     });
-                  },
-                );
-              },
-            );
-          });
-        });
+                  });
+                });
+              });
+            });
+          },
+        );
       });
     });
 
@@ -205,8 +128,9 @@ describe('Invoices', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
+    Invoices.deleteInvoiceViaApi(testData.invoice.id);
+    Orders.deleteOrderViaApi(testData.order.id);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    // Order, Invoice, Budget, Fund, Ledger, and FiscalYear are kept for transaction integrity
   });
 
   it(
@@ -226,19 +150,21 @@ describe('Invoices', () => {
 
       InvoiceLineDetails.scrollToBottomOfReceivingHistory();
 
+      InvoiceLineDetails.checkReceivingHistoryTableContent({ startRange: 1, endRange: 50 });
       InvoiceLineDetails.checkReceivingHistoryPaginationButtons({
         nextDisabled: false,
         previousDisabled: true,
       });
 
       InvoiceLineDetails.clickReceivingHistoryNextButton();
-      InvoiceLineDetails.checkReceivingHistoryTableContent({ rowCount: 99 });
+      InvoiceLineDetails.checkReceivingHistoryTableContent({ startRange: 51, endRange: 99 });
       InvoiceLineDetails.checkReceivingHistoryPaginationButtons({
         nextDisabled: true,
         previousDisabled: false,
       });
 
       InvoiceLineDetails.clickReceivingHistoryPreviousButton();
+      InvoiceLineDetails.checkReceivingHistoryTableContent({ startRange: 1, endRange: 50 });
       InvoiceLineDetails.checkReceivingHistoryPaginationButtons({
         nextDisabled: false,
         previousDisabled: true,

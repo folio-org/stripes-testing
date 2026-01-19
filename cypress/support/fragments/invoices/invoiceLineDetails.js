@@ -200,9 +200,12 @@ export default {
   clickReceivingHistoryPreviousButton() {
     cy.do(receivingHistoryPreviousButton.click());
   },
-  checkReceivingHistoryTableContent({ rowCount } = {}) {
-    if (rowCount !== undefined) {
-      cy.get('#invoiceLineReceivingHistory [class*="mclRow"]').should('have.length', rowCount);
+  checkReceivingHistoryTableContent({ startRange, endRange } = {}) {
+    if (startRange !== undefined) {
+      cy.get('#invoiceLineReceivingHistory').should('contain', startRange);
+    }
+    if (endRange !== undefined) {
+      cy.get('#invoiceLineReceivingHistory').should('contain', endRange);
     }
   },
   scrollToBottomOfReceivingHistory() {
