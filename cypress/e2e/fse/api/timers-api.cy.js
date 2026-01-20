@@ -1,6 +1,6 @@
 // Configuration: tenant ID suffixes from _0001 to _0063
 let tenantSuffixes = [];
-if (Cypress.env('OKAPI_HOST').toLowerCase().includes('mobius')) {
+if (Cypress.env('IS_CONSORTIA')) {
   tenantSuffixes = [
     '_0001',
     '_0002',
