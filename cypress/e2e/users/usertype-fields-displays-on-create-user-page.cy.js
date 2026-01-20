@@ -80,7 +80,7 @@ describe('Users', () => {
       UserEdit.verifyCancelIsDisable(false);
       UserEdit.verifyUserInformation(['User type', 'Select user type']);
       UserEdit.verifyUserTypeItems();
-      UserEdit.chooseRequestType('Staff');
+      UserEdit.chooseUserType('Staff');
       UserEdit.verifySaveAndCloseIsDisabled(false);
       UserEdit.enterValidValueToCreateViaUi(
         userOne,

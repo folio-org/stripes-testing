@@ -102,6 +102,7 @@ describe('Users', () => {
       );
       UserEdit.setExpirationDate();
       UserEdit.fillEmailAddress('test@example.com');
+      UserEdit.chooseUserType('Patron');
       UserEdit.saveAndClose();
       UsersCard.waitLoading();
       UsersCard.verifyPronounsWrappedVisible(testData.pronouns299Chars);

@@ -357,6 +357,10 @@ describe('Patron notices', () => {
           cy.getAdminToken();
           UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
+          // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(200000);
+
           cy.login(userData.username, userData.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
@@ -369,9 +373,6 @@ describe('Patron notices', () => {
           UserLoans.renewItem(itemData.barcode, true);
           LoanDetails.checkAction(0, 'Renewed');
 
-          // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(200000);
           cy.login(userData.username, userData.password, {
             path: TopMenu.circulationLogPath,
             waiter: SearchPane.waitLoading,

@@ -116,7 +116,7 @@ const closeWithoutSavingButton = Button('Close without saving');
 const saveExternalLinkBtn = updateProfilePictureModal.find(
   Button({ id: 'save-external-link-btn' }),
 );
-const selectRequestType = Select({ id: 'type' });
+const selectUserType = Select({ id: 'type' });
 const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
 const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
@@ -310,7 +310,7 @@ export default {
   },
 
   changeUserType(type = 'Patron') {
-    cy.do(selectRequestType.choose(type));
+    cy.do(selectUserType.choose(type));
   },
 
   changePreferredContact(contact = 'Email') {
@@ -770,8 +770,8 @@ export default {
     cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
   },
 
-  chooseRequestType(requestType) {
-    cy.do(selectRequestType.choose(requestType));
+  chooseUserType(userType) {
+    cy.do(selectUserType.choose(userType));
   },
 
   resetAll() {
@@ -995,8 +995,8 @@ export default {
 
   verifyUserTypeItems() {
     cy.expect([
-      selectRequestType.has({ content: including('Patron') }),
-      selectRequestType.has({ content: including('Staff') }),
+      selectUserType.has({ content: including('Patron') }),
+      selectUserType.has({ content: including('Staff') }),
     ]);
   },
 
@@ -1089,7 +1089,7 @@ export default {
   },
 
   fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
-    if (userType) cy.do(Select({ id: 'type' }).choose(userType));
+    if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
     cy.do([
       lastNameField.fillIn(userLastName),
@@ -1393,7 +1393,7 @@ export default {
   },
 
   verifyUserTypeFieldValue(value) {
-    cy.expect(selectRequestType.has({ value }));
+    cy.expect(selectUserType.has({ value }));
   },
 
   clearExpirationDateField() {
