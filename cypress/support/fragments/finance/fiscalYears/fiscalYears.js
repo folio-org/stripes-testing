@@ -305,12 +305,10 @@ export default {
       TextField({ name: 'periodStart' }).fillIn(fiscalYear.periodBeginDate),
       TextField({ name: 'periodEnd' }).fillIn(fiscalYear.periodEndDate),
     ]);
-    // Select Acquisition Unit using native Cypress commands (downshift combobox)
     cy.get('#fy-acq-units-input').click();
     cy.wait(500);
     cy.get('#fy-acq-units-input').type(AUName);
     cy.wait(500);
-    // Click on the mark element inside dropdown item
     cy.contains('[id*="downshift"][id*="item"]', AUName).find('mark').click();
     cy.wait(1000);
   },
@@ -351,5 +349,17 @@ export default {
   assertAllocationToolsSubmenuAbsent() {
     cy.expect(Section({ id: 'allocation-tools-menu-section' }).absent());
     cy.expect(Headline('Allocation tools').absent());
+  },
+
+  fillSearchField: (name) => {
+    cy.do(searchField.fillIn(name));
+  },
+
+  clickSearchButton: () => {
+    cy.do(searchButton.click());
+  },
+
+  checkPageTitle(expectedTitle) {
+    cy.title().should('eq', expectedTitle);
   },
 };
