@@ -17,8 +17,8 @@ describe('fse-timers', () => {
       `TC196314 - Get timers for ${Cypress.env('OKAPI_HOST')} - ${tenantId}`,
       { tags: ['fse', 'api', 'timers', 'eureka-sanity'] },
       () => {
-        cy.log('ECS_TENANT_IDS: ' + ecsTenantIds);
-        cy.log('ECS_TENANT_IDS length: ' + ecsTenantIds.length);
+        cy.log('ECS_TENANT_IDS: ' + Cypress.env('ECS_TENANT_IDS'));
+        cy.log('ECS_TENANT_IDS length: ' + Cypress.env('ECS_TENANT_IDS').length);
         // Set the tenant ID for this iteration
         cy.setTenant(tenantId);
 
