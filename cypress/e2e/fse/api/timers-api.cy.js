@@ -1,5 +1,7 @@
 // Configuration: Get tenant IDs from ECS_TENANT_IDS variable or use current tenant
 const ecsTenantIds = Cypress.env('ECS_TENANT_IDS');
+cy.log('ECS_TENANT_IDS: ' + ecsTenantIds);
+cy.log('ECS_TENANT_IDS length: ' + ecsTenantIds.length);
 const tenantIds =
   ecsTenantIds && ecsTenantIds.length > 0 ? ecsTenantIds : [Cypress.env('OKAPI_TENANT')];
 
