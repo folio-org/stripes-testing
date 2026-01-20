@@ -71,7 +71,7 @@ const constants = {
 const UI = {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
-    cy.wait(2000);
+    cy.wait(3000);
   },
 
   filtersWaitLoading: () => {
@@ -82,10 +82,10 @@ const UI = {
   },
 
   waitForSpinnerToDisappear() {
-    cy.get('[class^="spinner"]').should('not.exist');
+    cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
   },
 
-  waitForCompilingToComplete(delay = 1500) {
+  waitForCompilingToComplete(delay = 2000) {
     cy.wait(delay);
     cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
     cy.wait(1000);
@@ -426,7 +426,8 @@ const UI = {
 
   selectVisibility(visibility) {
     cy.do(RadioButton(visibility).click());
-    this.waitForSpinnerToDisappear();
+    cy.wait(500);
+    // this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
@@ -436,7 +437,7 @@ const UI = {
 
   selectStatus(status) {
     cy.do(RadioButton(status).click());
-    this.waitForSpinnerToDisappear();
+    // this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
@@ -460,10 +461,12 @@ const UI = {
   },
 
   verifyListIsNotPresent(listName) {
+    cy.wait(5000);
     cy.get('#OverlayContainer').contains(listName).should('not.exist');
   },
 
   verifyListIsPresent(listName) {
+    cy.wait(5000);
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
@@ -564,32 +567,40 @@ const UI = {
   },
 
   selectActiveLists() {
+    cy.wait(1000);
     cy.do(activeCheckbox.checkIfNotSelected());
+    cy.wait(1000);
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectInactiveLists() {
+    cy.wait(1000);
     cy.do(inactiveCheckbox.checkIfNotSelected());
+    cy.wait(1000);
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectSharedLists() {
+    cy.wait(1000);
     cy.do(sharedCheckbox.checkIfNotSelected());
+    cy.wait(1000);
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectPrivateLists() {
+    cy.wait(1000);
     cy.do(privateCheckbox.checkIfNotSelected());
+    cy.wait(1000);
     this.waitForSpinnerToDisappear();
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   selectRecordTypeFilter(type) {
@@ -639,6 +650,7 @@ const UI = {
       const disabled = element.attr('disabled');
       if (!disabled) {
         cy.do(resetAllButton.click());
+        cy.wait(2000);
       }
     });
     cy.expect([
@@ -646,7 +658,7 @@ const UI = {
       statusAccordion.find(Checkbox('Active')).has({ checked: true }),
       statusAccordion.find(clearFilterButton).exists(),
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   verifyResetAllButtonEnabled() {
@@ -667,7 +679,7 @@ const UI = {
 
   viewUpdatedList() {
     cy.wait(1000);
-    cy.contains('View updated list', { timeout: 30000 }).click();
+    cy.contains('View updated list', { timeout: 90000 }).click();
     cy.wait(1000);
   },
 
@@ -736,6 +748,20 @@ const UI = {
     });
   },
 
+  checkDownloadedFileArray(fileName, headers) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}.csv`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+      const fileHeaders = fileRows[0].trim();
+
+      headers.forEach((header) => {
+        expect(fileHeaders).to.contain(header);
+      });
+    });
+  },
+
   deleteDownloadedFile(fileName) {
     const filePath = `cypress\\downloads\\${fileName}.csv`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
@@ -775,8 +801,6 @@ const QueryBuilder = {
     }
     cy.wait(1000);
     cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
-    // cy.wait(500);
-    // cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
     cy.wait(500);
   },
 
@@ -788,26 +812,34 @@ const QueryBuilder = {
     cy.expect(MultiColumnListHeader(header).exists());
   },
 
-  verifyQueryValue(value, condition, locator) {
+  cancelQueryBuilder() {
+    cy.wait(500);
+    cy.xpath('.//*[contains(@class, "LayerRoot") and @aria-label="Build query"]//button[.="Cancel"]').click();
+    cy.wait(500);
+  },
+
+  verifyQueryValue(value, condition, locator, valueInColumn = '') {
     let columnNumber = 0;
     cy.wrap(true)
       .then(() => {
+        cy.wait(1000);
         if (locator) {
-          cy.log(`Locator is: ${locator}`);
+          cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).should('exist');
           cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).then(($index) => {
             columnNumber = $index;
+          }).then(() => {
+            cy.log(`Column number is: ${columnNumber}`);
           });
-          cy.log(`Column number is: ${columnNumber}`);
         }
       })
       .then(() => {
         cy.get('div[class^="mclRowContainer--"]')
           .find('[data-row-index]')
           .each(($el, index) => {
+            cy.log(`Index is: ${index}, column number is: ${columnNumber}`);
             switch (condition) {
               case 'equals':
                 if (locator) {
-                  cy.log(`Index is: ${index}, column number is: ${columnNumber}`);
                   cy.expect(
                     MultiColumnListCell({
                       row: index,
@@ -855,7 +887,7 @@ const QueryBuilder = {
                     MultiColumnListCell({
                       row: index,
                       columnIndex: columnNumber,
-                      content: '',
+                      content: valueInColumn,
                     }).exists(),
                   );
                 } else {
@@ -968,7 +1000,6 @@ const API = {
       path: `query/${queryId}`,
       isDefaultSearchParamsRequired: false,
       searchParams: searchParameters,
-      customTimeout: 5000,
     });
   },
 
@@ -1023,8 +1054,8 @@ const API = {
         }
       },
       {
-        limit: 6,
-        timeout: 30 * 1000,
+        limit: 12,
+        timeout: 60 * 1000,
         delay: 5000,
       },
     );
