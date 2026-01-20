@@ -23,6 +23,7 @@ const itemInformationSection = Section({ id: 'item-info' });
 const requestInfoSection = Section({ id: 'request-info' });
 const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
+const staffNotesAccordionToggleButton = Button({ id: 'accordion-toggle-button-staffNotes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
 const duplicateRequestButton = Button('Duplicate');
@@ -465,5 +466,21 @@ export default {
   },
   openRequesterByBarcode(barcode = '') {
     cy.do(requesterInfoSection.find(Link(including(barcode))).click());
+  },
+
+  expandStaffNotesSection() {
+    cy.do(staffNotesAccordionToggleButton.click());
+  },
+
+  verifyNoteInList(noteTitle) {
+    cy.expect(
+      staffNotesInfoSection.find(MultiColumnListCell({ content: including(noteTitle) })).exists(),
+    );
+  },
+
+  clickNoteInList(noteTitle) {
+    cy.do(
+      staffNotesInfoSection.find(MultiColumnListCell({ content: including(noteTitle) })).click(),
+    );
   },
 };
