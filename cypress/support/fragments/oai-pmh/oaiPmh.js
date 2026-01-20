@@ -315,6 +315,64 @@ export default {
   },
 
   /**
+   * Verify that a subfield with a specific value is ABSENT in a MARC field
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
+   * @param {string} tag - The tag of the MARC field to check (e.g., "856")
+   * @param {Object} indicators - Object containing the indicators (e.g., { ind1: "4", ind2: "0" })
+   * @param {Object} absentSubfieldsWithValues - Object where keys are subfield codes and values are the values that should NOT exist
+   *   (e.g., { t: "1", u: "http://example.com" })
+   */
+  verifySubfieldWithValueAbsent(
+    xmlString,
+    instanceUuid,
+    tag,
+    indicators = {},
+    absentSubfieldsWithValues = {},
+  ) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    // Find all datafield elements within the target record
+    const datafields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'datafield');
+    const fields = Array.from(datafields).filter((datafield) => {
+      const matchesTag = datafield.getAttribute('tag') === tag;
+      const matchesInd1 = !indicators.ind1 || datafield.getAttribute('ind1') === indicators.ind1;
+      const matchesInd2 = !indicators.ind2 || datafield.getAttribute('ind2') === indicators.ind2;
+
+      return matchesTag && matchesInd1 && matchesInd2;
+    });
+
+    // Check each matching field
+    fields.forEach((field) => {
+      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
+
+      Object.entries(absentSubfieldsWithValues).forEach(([subfieldCode, absentValue]) => {
+        const matchingSubfields = Array.from(subfieldsAll).filter(
+          (sf) => sf.getAttribute('code') === subfieldCode && sf.textContent === absentValue,
+        );
+
+        expect(
+          matchingSubfields.length,
+          `Subfield "${subfieldCode}" with value "${absentValue}" should NOT exist in ${tag} field of record with UUID ${instanceUuid}`,
+        ).to.equal(0);
+      });
+    });
+  },
+
+  /**
    * Verify MARC fields with the same tag and indicators, handling multiple occurrences.
    * This method can verify multiple fields with the same tag/indicators and their subfields.
    * @param {string} xmlString - The XML response as a string.
