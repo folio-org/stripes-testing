@@ -134,7 +134,7 @@ describe('Inventory', () => {
         servicePoint: ServicePoints.getDefaultServicePoint(),
         defaultLocation: {},
       };
-      const tenants = [tenantNames.college];
+      const tenants = [Affiliations.College];
       const removeInstancesByTitle = (title) => {
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
@@ -236,6 +236,7 @@ describe('Inventory', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 InventorySearchAndFilter.switchToBrowseTab();
@@ -260,7 +261,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651512 Call number of each type which belong to Shared and Local Instances could be found by call number browse from Member tenant (consortia) (spitfire)',
+        'C651512 Call number of each type which belong to Shared Instances could be found by call number browse from Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C651512'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();

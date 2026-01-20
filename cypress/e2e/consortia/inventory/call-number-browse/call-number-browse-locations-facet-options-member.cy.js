@@ -24,7 +24,6 @@ describe('Inventory', () => {
       const instancePrefix = `AT_C423636_Instance_${randomPostfix}`;
       const callNumberValue = `AT_C423636_CallNumber_${randomPostfix}`;
       const locationAccordionName = 'Effective location (item)';
-      const heldbyAccordionName = 'Held by';
       const instancesData = [
         {
           instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
@@ -194,6 +193,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             InventorySearchAndFilter.switchToBrowseTab();
@@ -236,8 +236,6 @@ describe('Inventory', () => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue, undefined, undefined, 2);
           // wait to make sure same call number is indexed for all items in 2 instances:
           cy.wait(5000);
-
-          InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
 
           InventorySearchAndFilter.clickAccordionByName(locationAccordionName);
           InventorySearchAndFilter.verifyAccordionByNameExpanded(locationAccordionName, true);
