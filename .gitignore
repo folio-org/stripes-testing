@@ -26,3 +26,4 @@ scripts/update_permission_names/permissions_backups/*
 .github/agents/*
 
 mcp.json
+cypress/e2e/failed.cy.js
