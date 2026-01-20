@@ -140,6 +140,50 @@ export default {
   },
 
   /**
+   * Verify that datestamp element exists in the OAI-PMH header and has correct ISO 8601 format
+   * Also verifies the datestamp is approximately current (within 2 minutes)
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record
+   */
+  verifyOaiPmhHeaderDatestamp(xmlString, instanceUuid) {
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const targetHeader = targetRecord.getElementsByTagName('header')[0];
+    const datestampElement = targetHeader.getElementsByTagName('datestamp')[0];
+    const datestamp = datestampElement.textContent;
+
+    expect(datestamp).to.match(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/,
+      `Datestamp should be in format YYYY-MM-DDTHH:MM:SSZ for record with UUID ${instanceUuid}`,
+    );
+
+    // Verify datestamp is approximately current (within 2 minutes)
+    const datestampDate = new Date(datestamp);
+    const currentDate = new Date();
+    const diffInMinutes = Math.abs(currentDate - datestampDate) / (1000 * 60);
+
+    expect(
+      diffInMinutes,
+      `Datestamp should be within 2 minutes of current time for record with UUID ${instanceUuid}. Datestamp: ${datestamp}, Current: ${currentDate.toISOString()}`,
+    ).to.be.lessThan(2);
+  },
+
+  /**
+   * Verify that metadata element does NOT exist in the OAI-PMH record
+   * Used for deleted records which should only have header without metadata
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record
+   */
+  verifyMetadataAbsent(xmlString, instanceUuid) {
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    expect(
+      metadata,
+      `Metadata element should NOT exist for deleted record with UUID ${instanceUuid}`,
+    ).to.be.undefined;
+  },
+
+  /**
    * Verify MARC control field value in a specific record identified by instanceUuid.
    * Control fields (001-009) do not have indicators or subfields, just text content.
    * @param {string} xmlString - The XML response as a string.
