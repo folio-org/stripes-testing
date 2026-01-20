@@ -187,6 +187,10 @@ export default {
     cy.do(generalButton.click());
   },
 
+  verifyGeneralSectionExists() {
+    cy.expect(generalButton.exists());
+  },
+
   getNoteTypeIdViaAPI(noteTypeName) {
     return cy
       .okapiRequest({
