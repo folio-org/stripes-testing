@@ -29,16 +29,17 @@ describe('Eureka', () => {
         userA.patronGroup = groupId;
         userB.patronGroup = groupId;
         userC.patronGroup = groupId;
+        cy.ifConsortia(true, () => {
+          userB.type = 'patron';
+        });
         cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
           testData.userAId = userId;
           userIds.push(userId);
         });
-        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
-          cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-            testData.userBId = userId;
-            userIds.push(userId);
-          });
-        }
+        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
+          testData.userBId = userId;
+          userIds.push(userId);
+        });
         Users.createViaApi(userC).then((user) => {
           testData.userCId = user.id;
           userIds.push(user.id);
@@ -65,29 +66,27 @@ describe('Eureka', () => {
         }).then((responseA) => {
           expect(responseA.status).to.eq(201);
 
-          if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
-            cy.setUserPassword(
-              {
-                userId: testData.userBId,
-                password: testData.password,
-              },
-              true,
-            ).then(({ status, body }) => {
-              expect(status).to.eq(500);
-              expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
-            });
-            cy.setUserPassword(
-              {
-                username: null,
-                userId: testData.userBId,
-                password: testData.password,
-              },
-              true,
-            ).then(({ status, body }) => {
-              expect(status).to.eq(500);
-              expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
-            });
-          }
+          cy.setUserPassword(
+            {
+              userId: testData.userBId,
+              password: testData.password,
+            },
+            true,
+          ).then(({ status, body }) => {
+            expect(status).to.eq(500);
+            expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
+          });
+          cy.setUserPassword(
+            {
+              username: null,
+              userId: testData.userBId,
+              password: testData.password,
+            },
+            true,
+          ).then(({ status, body }) => {
+            expect(status).to.eq(500);
+            expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
+          });
 
           cy.setUserPassword({
             username: userC.username,

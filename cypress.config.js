@@ -155,7 +155,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org/',
     testIsolation: false,
   },
 });
