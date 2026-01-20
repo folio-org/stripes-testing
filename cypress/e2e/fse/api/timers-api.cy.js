@@ -1,10 +1,3 @@
-// Configuration: Get tenant IDs from ECS_TENANT_IDS variable or use current tenant
-const ecsTenantIds = Cypress.env('ECS_TENANT_IDS');
-cy.log('ECS_TENANT_IDS: ' + ecsTenantIds);
-cy.log('ECS_TENANT_IDS length: ' + ecsTenantIds.length);
-const tenantIds =
-  ecsTenantIds && ecsTenantIds.length > 0 ? ecsTenantIds : [Cypress.env('OKAPI_TENANT')];
-
 describe('fse-timers', () => {
   // Get token once for all tests
   before(() => {
@@ -12,6 +5,13 @@ describe('fse-timers', () => {
     cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.allure().logCommandSteps();
   });
+
+  // Configuration: Get tenant IDs from ECS_TENANT_IDS variable or use current tenant
+  const ecsTenantIds = Cypress.env('ECS_TENANT_IDS');
+  cy.log('ECS_TENANT_IDS: ' + ecsTenantIds);
+  cy.log('ECS_TENANT_IDS length: ' + ecsTenantIds.length);
+  const tenantIds =
+    ecsTenantIds && ecsTenantIds.length > 0 ? ecsTenantIds : [Cypress.env('OKAPI_TENANT')];
 
   // Run test for each tenant ID
   tenantIds.forEach((tenantId) => {
