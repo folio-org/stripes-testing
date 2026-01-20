@@ -39,20 +39,16 @@ describe('orders: Close Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it(
-    'C667 Close an existing order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-    () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        Orders.searchByParameter('PO number', poNumber);
-        Orders.selectFromResultsList(poNumber);
-        Orders.openOrder();
-        Orders.closeOrder('Cancelled');
-        Orders.closeThirdPane();
-        Orders.resetFilters();
-        Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResultsWithClosedOrder(poNumber);
-      });
-    },
-  );
+  it('C667 Close an existing order (thunderjet)', { tags: ['smoke', 'thunderjet', 'C667'] }, () => {
+    Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+      Orders.searchByParameter('PO number', poNumber);
+      Orders.selectFromResultsList(poNumber);
+      Orders.openOrder();
+      Orders.closeOrder('Cancelled');
+      Orders.closeThirdPane();
+      Orders.resetFilters();
+      Orders.selectStatusInSearch('Closed');
+      Orders.checkSearchResultsWithClosedOrder(poNumber);
+    });
+  });
 });

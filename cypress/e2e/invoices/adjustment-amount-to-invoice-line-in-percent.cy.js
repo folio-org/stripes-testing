@@ -159,7 +159,7 @@ describe('Invoices', () => {
 
   it(
     'C375999 Approve and pay invoice with added adjustment % to invoice line (not prorated, related to total as "In addition to") (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C375999'] },
     () => {
       Invoices.searchByNumber(invoice.vendorInvoiceNo);
       Invoices.selectInvoice(invoice.vendorInvoiceNo);

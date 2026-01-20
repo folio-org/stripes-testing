@@ -278,7 +278,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C399059 Test rollovers within 3 FYs when PO line contains two fund distributions related to different ledgers and same fiscal year (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C399059'] },
     () => {
       FinanceHelp.searchByName(firstLedger.name);
       Ledgers.selectLedger(firstLedger.name);

@@ -88,14 +88,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((userProperties) => {
             testData.user = userProperties;
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin({
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000)
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            })
               .then(() => {
                 InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
                 InventoryInstances.selectInstance();
@@ -130,7 +127,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
+          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1], true);
         });
 
         it(
@@ -150,7 +147,7 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(testData.tag100.rowIndex);
             QuickMarcEditor.afterDeleteNotification(testData.tag100.tag);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkDeleteModal(1);
             QuickMarcEditor.clickRestoreDeletedField();

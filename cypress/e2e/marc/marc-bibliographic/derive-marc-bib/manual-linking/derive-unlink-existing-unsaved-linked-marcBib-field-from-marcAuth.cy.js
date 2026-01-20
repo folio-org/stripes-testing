@@ -150,14 +150,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((userProperties) => {
             testData.user = userProperties;
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.user.username, testData.user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
 
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -170,7 +167,7 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.user.userId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
           testData.createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 

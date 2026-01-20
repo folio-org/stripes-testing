@@ -38,7 +38,7 @@ describe('Organizations', () => {
 
   it(
     'C656335 Save using Save & keep editing when editing organization',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C656335'] },
     () => {
       Organizations.searchByParameters('Name', org.name);
       Organizations.selectOrganization(org.name);

@@ -23,7 +23,7 @@ describe('Fiscal Year', () => {
 
   it(
     'C3452 View fiscal year details (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C3452'] },
     () => {
       FiscalYears.fiscalYearsDisplay();
       FinanceHelp.searchByName(defaultFiscalYear.name);

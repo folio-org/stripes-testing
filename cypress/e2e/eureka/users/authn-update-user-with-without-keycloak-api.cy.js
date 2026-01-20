@@ -30,8 +30,9 @@ describe('Eureka', () => {
             },
           });
         }
-        cy.ifConsortia(false, () => {
-          delete userBodies[2].username;
+        delete userBodies[2].username;
+        cy.ifConsortia(true, () => {
+          userBodies[2].type = 'patron';
         });
         userBodies.forEach((userBody, index) => {
           if (index < 3) {
@@ -92,16 +93,14 @@ describe('Eureka', () => {
             );
           });
 
-          cy.ifConsortia(false, () => {
-            cy.updateCredentials(
-              testData.invalidUsername,
-              testData.oldPassword,
-              testData.newPassword,
-              userIds[2],
-            ).then(({ status, body }) => {
-              expect(status).to.eq(500);
-              expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
-            });
+          cy.updateCredentials(
+            testData.invalidUsername,
+            testData.oldPassword,
+            testData.newPassword,
+            userIds[2],
+          ).then(({ status, body }) => {
+            expect(status).to.eq(500);
+            expect(body.errors[0].message).to.include(testData.noUsernameErrorMessage);
           });
 
           cy.updateCredentials(

@@ -94,7 +94,7 @@ describe('Orders', () => {
 
   it(
     'C354281 “Electronic” format specific fields are cleared when changing order format from "P/E Mix" to "Physical Resource" (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C354281'] },
     () => {
       // Click on the Order record from preconditions
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -109,6 +109,7 @@ const getSearchErrorText = (query) => `Search could not be processed for ${query
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
+const defaultBrowseOptionText = 'Select a browse option';
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -267,7 +268,6 @@ export default {
 
   bySource(source) {
     cy.do(sourceAccordion.clickHeader());
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
@@ -400,7 +400,7 @@ export default {
 
   verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
-      expect(elem.text()).to.include('Select a browse option');
+      expect(elem.text()).to.include(defaultBrowseOptionText);
     });
     cy.expect(browseSearchAndFilterInput.exists());
   },
@@ -1177,6 +1177,17 @@ export default {
     );
   },
 
+  verifyMultiSelectFilterOptionCountGreaterOrEqual(accordionName, optionName, minCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.then(() => multiSelect
+      .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+      .totalRecords()).then((actualCount) => {
+      expect(actualCount).to.be.at.least(minCount);
+    });
+  },
+
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
     if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
@@ -1281,7 +1292,7 @@ export default {
     }
   },
 
-  checkBrowseOptionSelected(option) {
+  checkBrowseOptionSelected(option = defaultBrowseOptionText) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
@@ -1483,6 +1494,20 @@ export default {
         multiSelect.has({ optionsCount: foundCount }),
       ]);
     } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
+  },
+
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([multiSelect.find(MultiSelectOption(including(fullValue))).exists()]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
   },
 
   verifyCheckboxesWithCountersExistInAccordion(accordionName) {
@@ -1687,5 +1712,50 @@ export default {
   verifyUriCharLimitMessageAndCallout() {
     cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
     InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
+  },
+
+  verifyNoCheckboxesInAccordion(accordionName) {
+    cy.expect([
+      Accordion(accordionName).find(Checkbox()).absent(),
+      Accordion(accordionName).find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  verifySharedIconForResult: (title, isShared = true) => {
+    const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
+    if (isShared) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
+    const option = Accordion(accordionName).find(Checkbox(optionName));
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
+  },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = paneFilterSection
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      multiSelect.select([
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ]),
+    );
+  },
+
+  checkClearIconShownInAccordionHeader(accordionName, isShown = true) {
+    const targetIcon = Button({
+      ariaLabel: or(
+        `Clear selected filters for "${accordionName}"`,
+        `Clear selected ${accordionName} filters`,
+      ),
+    });
+    if (isShown) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
   },
 };

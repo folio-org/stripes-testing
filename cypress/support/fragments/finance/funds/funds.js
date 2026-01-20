@@ -1030,7 +1030,7 @@ export default {
     cy.do([searchField.fillIn(fundName), Button('Search').click()]);
   },
 
-  createFundViaUI(fund) {
+  createFundViaApiAndUi(fund) {
     const ledger = {
       id: uuid(),
       name: `autotest_ledger_${getRandomPostfix()}`,
@@ -1043,21 +1043,23 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
-      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
-      cy.createLedgerApi({
-        ...ledger,
-      });
-      fund.ledgerName = ledger.name;
-      cy.loginAsAdmin({
-        path: TopMenu.fundPath,
-        waiter: this.waitLoading,
-      });
-      this.createFund(fund);
-      this.checkCreatedFund(fund.name);
-      cy.wrap(ledger).as('createdLedger');
-      return cy.get('@createdLedger');
-    });
+    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then(
+      (fiscalYearResponse) => {
+        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
+        fund.ledgerName = ledger.name;
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
+        this.createFund(fund);
+        this.checkCreatedFund(fund.name);
+        cy.wrap(ledger).as('createdLedger');
+        return cy.get('@createdLedger');
+      },
+    );
     return cy.get('@createdLedger');
   },
 

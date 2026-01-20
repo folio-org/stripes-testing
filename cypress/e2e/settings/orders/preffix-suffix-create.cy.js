@@ -1,5 +1,4 @@
-import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
+import Permissions from '../../../support/dictionary/permissions';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -15,14 +14,13 @@ describe('Orders', () => {
     const order = { ...NewOrder.defaultOneTimeOrder };
     const poPrefix = { ...PrefixSuffix.defaultPrefix };
     const poSuffix = { ...PrefixSuffix.defaultSuffix };
-    const orderNumber = Helper.getRandomOrderNumber();
     let user;
     let orderPrefixId;
     let orderSuffixId;
 
-    before(() => {
+    before('Create test data', () => {
       cy.getAdminToken();
-
+      SettingsOrders.setUserCanEditPONumberViaApi(true);
       Organizations.createOrganizationViaApi(organization).then((response) => {
         organization.id = response;
       });
@@ -34,9 +32,8 @@ describe('Orders', () => {
       SettingsOrders.createSuffixViaApi(poSuffix.name).then((suffixId) => {
         orderSuffixId = suffixId;
       });
-      SettingsOrders.setUserCanEditPONumberViaApi(true);
 
-      cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiOrdersCreate.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
@@ -45,7 +42,7 @@ describe('Orders', () => {
       });
     });
 
-    after(() => {
+    after('Delete test data', () => {
       cy.getAdminToken();
       SettingsOrders.setUserCanEditPONumberViaApi(false);
       Orders.deleteOrderViaApi(order.id);
@@ -58,21 +55,15 @@ describe('Orders', () => {
 
     it(
       'C671 Create prefix and suffix for purchase order (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C671'] },
       () => {
-        Orders.createOrderWithPONumberPreffixSuffix(
-          poPrefix.name,
-          poSuffix.name,
-          orderNumber,
-          order,
-          false,
-        ).then((orderId) => {
-          order.id = orderId;
-          Orders.checkCreatedOrderWithOrderNumber(
-            organization.name,
-            `${poPrefix.name}${orderNumber}${poSuffix.name}`,
-          );
-        });
+        Orders.createOrderWithPreffixSuffix(poPrefix.name, poSuffix.name, order, false).then(
+          (orderData) => {
+            order.id = orderData.id;
+
+            Orders.checkOrderNumberContainsPrefixSuffix(poPrefix.name, poSuffix.name);
+          },
+        );
       },
     );
   });

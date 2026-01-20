@@ -86,7 +86,6 @@ describe('Data Export', () => {
               cy.getMarcRecordDataViaAPI(instanceId).then((marcRecord) => {
                 marcRecord.relatedRecordVersion = 1;
                 const updatedLeader = `${marcRecord.leader.substring(0, 5)}d${marcRecord.leader.substring(6)}`;
-
                 const updatedMarcRecord = {
                   ...marcRecord,
                   leader: updatedLeader,

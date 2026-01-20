@@ -84,7 +84,7 @@ describe('Orders', () => {
 
     it(
       'C353576 Edit instance connection of POL - create inventory set to "Instance, holding" (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C353576'] },
       () => {
         // Click on the Order
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

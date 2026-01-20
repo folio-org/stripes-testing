@@ -181,8 +181,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C350646'] },
+      'C740194 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C740194'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
@@ -215,8 +215,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350757'] },
+      'C740197 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C740197'] },
       () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstance.goToMarcHoldingRecordAdding();

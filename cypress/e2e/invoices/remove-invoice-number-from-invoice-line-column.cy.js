@@ -62,7 +62,7 @@ describe('Invoices', () => {
 
   it(
     'C350949 Remove "Folio invoice number" from display in invoice line column (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350949'] },
     () => {
       // Click "Actions" button, Select "New" option
       // Fill in required fields with valid data and click "Save & close" button

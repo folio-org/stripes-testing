@@ -32,7 +32,7 @@ describe('Settings', () => {
 
   it(
     'C374196 Delete Address (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C374196'] },
     () => {
       TenantPane.selectTenant(TENANTS.ADDRESSES);
       Addresses.waitLoading();

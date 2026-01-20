@@ -100,7 +100,7 @@ describe('Export Manager', () => {
 
     it(
       'C402381 Creating default integration for "SFTP" option (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C402381'] },
       () => {
         // Click "Organizations", Select created export method in "Export method" accordion
         ExportManagerSearchPane.selectOrganizationsSearch();

@@ -98,7 +98,7 @@ describe('Invoices', () => {
 
   it(
     'C360544 Attaching file to approved invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C360544'] },
     () => {
       updateInvoiceStatusAndLogin(INVOICE_STATUSES.APPROVED);
 
@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C360546 Attaching files to paid invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C360546'] },
     () => {
       updateInvoiceStatusAndLogin(INVOICE_STATUSES.PAID);
 

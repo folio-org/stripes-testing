@@ -162,7 +162,7 @@ describe('Invoices', () => {
 
   it(
     'C466211 POL payment status remains "Ongoing" after cancelling related paid invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466211'] },
     () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);

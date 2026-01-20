@@ -49,7 +49,7 @@ describe('Organizations', () => {
 
   it(
     'C423630 Privileged Donor contacts do NOT appear in Contact Person lookups (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423630'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

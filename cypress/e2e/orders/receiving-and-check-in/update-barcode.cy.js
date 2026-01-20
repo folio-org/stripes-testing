@@ -124,7 +124,7 @@ describe('Orders', () => {
 
     it(
       'C736 Update Barcode and call number information when receiving (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C736'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

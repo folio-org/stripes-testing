@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      title: 'Chemical Engineering',
+      subject: 'Chemical Engineering',
       publicationType: 'Journal',
       titleC9240: 'Wiley Rutledge',
       label1Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ${getRandomPostfix()}`,
@@ -30,7 +30,7 @@ describe('eHoldings', () => {
         testData.C9240UserProperties = userProperties;
       });
       EHoldingsTitlesSearch.getViaApi({
-        'filter[name]': testData.title,
+        'filter[subject]': testData.subject,
         'filter[type]': testData.publicationType.toLowerCase(),
       }).then((res) => {
         testData.titleProps = res[0];
@@ -58,10 +58,10 @@ describe('eHoldings', () => {
           });
         });
         EHoldingSearch.switchToTitles();
-        EHoldingsTitlesSearch.byTitle(testData.title);
+        EHoldingsTitlesSearch.bySubject(testData.subject);
         EHoldingsTitlesSearch.byPublicationType(testData.publicationType);
         EHoldingsTitlesSearch.openTitle(testData.titleProps.attributes.name);
-        EHoldingsTitlesSearch.checkTitleInfo(testData.publicationType, testData.title);
+        EHoldingsTitlesSearch.checkTitleInfo(testData.publicationType, testData.subject);
       },
     );
 

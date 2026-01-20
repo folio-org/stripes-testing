@@ -249,7 +249,7 @@ describe('Orders', () => {
 
   it(
     'C357546 Encumbrance transaction updates when fund name is changing several times in Open ongoing order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'C357546'] },
+    { tags: ['criticalPath', 'thunderjet', 'C357546'] },
     () => {
       Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

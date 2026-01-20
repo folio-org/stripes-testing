@@ -115,7 +115,7 @@ describe('Orders', () => {
 
     it(
       'C411742: Receiving for shared instance in member tenant (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet'] },
+      { tags: ['criticalPathECS', 'thunderjet', 'C411742'] },
       () => {
         Orders.searchByParameter('PO number', testData.order.poNumber);
         Orders.selectFromResultsList(testData.order.poNumber);

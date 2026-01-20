@@ -160,7 +160,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C376978 Displaying FY rollover settings for test rollover (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C376978'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

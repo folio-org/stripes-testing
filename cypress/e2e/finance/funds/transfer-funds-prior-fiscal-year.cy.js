@@ -125,7 +125,7 @@ describe('Finance', () => {
 
     it(
       'C692240 Transferring funds in prior fiscal year and canceling allocation increase (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C692240'] },
       () => {
         Funds.searchByName(fundB.name);
         Funds.selectFund(fundB.name);

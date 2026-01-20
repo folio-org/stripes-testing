@@ -41,7 +41,7 @@ describe('Organizations', () => {
 
   it(
     'C730 Make existing organization a Vendor (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C730'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

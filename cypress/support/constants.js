@@ -19,6 +19,10 @@ export const APPLICATION_NAMES = {
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
+  LINKED_DATA_EDITOR: 'Linked Data Editor',
+  NOTES: 'Notes',
+  ORGANIZATIONS: 'Organizations',
+  COURSES: 'Courses',
 };
 
 export const REQUEST_METHOD = {
@@ -636,7 +640,7 @@ export const INVENTORY_LDR_FIELD_TYPE_DROPDOWN = {
   G: 'g - Projected medium',
   I: 'i - Nonmusical sound recording',
   J: 'j - Musical sound recording',
-  K: 'k - Two-dimensional nonprojectable graphic',
+  K: 'k - Two-dimensional nonprojectable  graphic',
   M: 'm - Computer file',
   O: 'o - Kit',
   P: 'p - Mixed materials',

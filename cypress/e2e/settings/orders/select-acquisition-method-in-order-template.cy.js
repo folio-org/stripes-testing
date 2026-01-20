@@ -41,7 +41,7 @@ describe('Orders', () => {
 
     it(
       'C350602 Select Acquisition Method in Order Template (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C350602'] },
       () => {
         OrderTemplate.clickNewOrderTemplateButton();
         OrderTemplate.fillTemplateInformationWithAcquisitionMethod(

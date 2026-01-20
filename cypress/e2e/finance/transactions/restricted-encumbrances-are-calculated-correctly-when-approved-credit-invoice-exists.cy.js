@@ -228,7 +228,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C496164 Restricted encumbrances are calculated correctly when approved credit invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496164'] },
     () => {
       Orders.searchByParameter('PO number', secondOrderNumber);
       Orders.selectFromResultsList(secondOrderNumber);

@@ -73,7 +73,9 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
+        cy.wait(7000);
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
+        cy.wait(5000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
         BrowseSubjects.openInstance(testData.subject);
         InventoryInstances.selectInstance();

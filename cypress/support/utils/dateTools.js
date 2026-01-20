@@ -475,7 +475,7 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 2;
-    const ampm = hours >= 12 ? 'P' : 'A';
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;

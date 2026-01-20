@@ -254,4 +254,32 @@ export default {
     cy.do(submitButton.click());
     cy.expect(addTitleToCustomPackageModal.absent());
   },
+
+  changeResourceSelectionStatusViaApi({ resourceId, isSelected = true } = {}) {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `/eholdings/resources/${resourceId}`,
+    }).then((response) => {
+      const resourceData = response.body.data;
+      if (resourceData) {
+        const payload = {
+          data: {
+            id: resourceId,
+            type: 'resources',
+            attributes: {
+              ...resourceData.attributes,
+              customCoverages: [],
+              isSelected,
+            },
+          },
+        };
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `/eholdings/resources/${resourceId}`,
+          body: payload,
+          contentTypeHeader: 'application/vnd.api+json',
+        });
+      }
+    });
+  },
 };

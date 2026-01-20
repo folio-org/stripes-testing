@@ -52,7 +52,7 @@ describe('Consortia', () => {
 
   it(
     'C388532 "Affiliation" accordion and "Affiliation" dropdown in "User permissions" accordion are NOT displayed when tenant is NOT a part of Consortia (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'C388532'] },
     () => {
       UsersSearchPane.searchByUsername(user.username);
       UsersSearchPane.openUser(user.username);

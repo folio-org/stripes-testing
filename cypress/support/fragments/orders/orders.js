@@ -1,12 +1,11 @@
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
-  Card,
   Callout,
   calloutTypes,
+  Card,
   Checkbox,
-  HTML,
-  including,
   KeyValue,
   Link,
   Modal,
@@ -305,11 +304,10 @@ export default {
     });
   },
 
-  createOrderWithPONumberPreffixSuffix(poPreffix, poSuffix, poNumber, order, isManual = false) {
+  createOrderWithPreffixSuffix(poPreffix, poSuffix, order, isManual = false) {
     cy.do([actionsButton.click(), newButton.click()]);
     cy.wait(3000);
     cy.do([
-      TextField({ name: 'poNumber' }).fillIn(poNumber),
       Select({ name: 'poNumberPrefix' }).choose(poPreffix),
       Select({ name: 'poNumberSuffix' }).choose(poSuffix),
     ]);
@@ -319,7 +317,7 @@ export default {
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
-      return response.body.id;
+      return response.body;
     });
   },
 
@@ -365,7 +363,7 @@ export default {
       .and('have.text', zeroResultsFoundText);
   },
 
-  createOrderWithAU(order, AUName, poNumber, isApproved = false) {
+  createOrderWithAU(order, AUName, isApproved = false) {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
@@ -414,6 +412,11 @@ export default {
   },
   checkCreatedOrderWithOrderNumber(organization, orderNumber) {
     this.checkOrderDetails({ organization, orderNumber });
+  },
+  checkOrderNumberContainsPrefixSuffix(poPrefix, poSuffix) {
+    [poPrefix, poSuffix].forEach((value) => {
+      cy.expect(KeyValue('PO number', { value: including(value) }).exists());
+    });
   },
 
   selectFromResultsList(number) {

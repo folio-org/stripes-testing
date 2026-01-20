@@ -73,7 +73,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -91,12 +91,20 @@ describe('Inventory', () => {
         });
       });
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
+      cy.ifConsortia(true, () => {
+        InventorySearchAndFilter.byShared('No');
+      });
       InventoryInstances.searchByTitle(testData.instanceRecords[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       InventoryInstance.verifyAndClickLinkIcon(testData.tag);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
+      cy.ifConsortia(true, () => {
+        MarcAuthorities.clickAccordionByName('Shared');
+        MarcAuthorities.actionsSelectCheckbox('No');
+      });
       InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
       MarcAuthoritiesSearch.selectExcludeReferencesFilter();
       InventoryInstance.clickLinkButton();
@@ -114,7 +122,7 @@ describe('Inventory', () => {
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.recordIDs[0]);
       InventoryInstance.deleteInstanceViaApi(testData.recordIDs[1]);
-      MarcAuthority.deleteViaAPI(testData.recordIDs[2]);
+      MarcAuthority.deleteViaAPI(testData.recordIDs[2], true);
     });
 
     it(

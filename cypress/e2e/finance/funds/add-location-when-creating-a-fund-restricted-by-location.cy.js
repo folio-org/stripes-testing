@@ -54,7 +54,7 @@ describe('Funds', () => {
 
   it(
     'C423579 Add location when creating a fund restricted by location (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423579'] },
     () => {
       Funds.newFund();
       Funds.fillInRequiredFields(defaultfund);

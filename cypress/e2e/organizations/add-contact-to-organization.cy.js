@@ -38,7 +38,7 @@ describe('Organizations: Add new contact and assign to an organization record', 
 
   it(
     'C725 Add new contact and assign to an organization record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C725'] },
     () => {
       Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.selectOrganization(testData.organization.name);

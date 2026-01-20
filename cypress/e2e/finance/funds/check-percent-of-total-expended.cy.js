@@ -244,7 +244,7 @@ describe('Finance › Funds', () => {
 
   it(
     'C440081 Check "Percent of total expended" displaying (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C440081'] },
     () => {
       Groups.searchByName(group.name);
       Groups.selectGroup(group.name);

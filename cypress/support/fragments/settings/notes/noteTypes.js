@@ -2,6 +2,7 @@ import uuid from 'uuid';
 
 import {
   Button,
+  HTML,
   MultiColumnListRow,
   Pane,
   PaneSet,
@@ -22,6 +23,10 @@ const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
+const generalButton = HTML({
+  className: including('NavListItem-'),
+  text: including('General'),
+});
 
 export default {
   createNoteTypeViaApi({
@@ -40,11 +45,12 @@ export default {
       .then(({ body }) => body);
   },
 
-  deleteNoteTypeViaApi(noteTypeId) {
+  deleteNoteTypeViaApi(noteTypeId, ignoreErrors = false) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `note-types/${noteTypeId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
@@ -149,6 +155,10 @@ export default {
 
   checkNewButtonState(isEnabled = true) {
     cy.expect(newButton.has({ disabled: !isEnabled }));
+  },
+
+  clickGeneralButton() {
+    cy.do(generalButton.click());
   },
 
   getNoteTypeIdViaAPI(noteTypeName) {

@@ -49,7 +49,7 @@ describe('Organizations --> Interface details', () => {
 
   it(
     'C3455 Verify that password is masked by default (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C3455'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
