@@ -3,7 +3,6 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Requests from '../../../support/fragments/requests/requests';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -86,21 +85,17 @@ describe('Finance', () => {
         cy.wait(500);
         InteractorsTools.checkCalloutMessage('New tag created');
 
-        Funds.verifyTagsPaneSubHeader(1);
-        Requests.verifyAssignedTags(newTagName);
+        Funds.verifyTagsPaneElements(1, [newTagName]);
         Funds.verifyTagsCount(1);
 
         Funds.closeTagsPane();
         Funds.verifyTagsCount(1);
 
         Funds.openTagsPane();
-        Funds.verifyTagsPaneSubHeader(1);
-        Requests.verifyAssignedTags(newTagName);
+        Funds.verifyTagsPaneElements(1, [newTagName]);
 
         Funds.selectExistingTag(existingTag.label);
-        Funds.verifyTagsPaneSubHeader(2);
-        Requests.verifyAssignedTags(newTagName);
-        Requests.verifyAssignedTags(existingTag.label);
+        Funds.verifyTagsPaneElements(2, [newTagName, existingTag.label]);
         Funds.verifyTagsCount(2);
       },
     );

@@ -23,6 +23,7 @@ import {
   SelectionList,
   SelectionOption,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -1592,25 +1593,25 @@ export default {
     cy.wait(1000);
   },
 
-  verifyTagsPaneIsOpened: () => {
-    cy.expect(tagsPane.exists());
-  },
-
   verifyTagsCount: (count) => {
     cy.expect(tagsButton.find(HTML(including(String(count)))).exists());
   },
 
-  verifyTagsPaneSubHeader: (count) => {
+  verifyTagsPaneElements: (count = 0, tags = []) => {
     const text = count === 1 ? '1 Tag' : `${count} Tags`;
-    cy.expect(tagsPane.find(HTML(including(text))).exists());
-  },
-
-  verifyTagsPaneElements: () => {
-    cy.expect([
+    const expectations = [
       tagsPane.exists(),
-      tagsPane.find(HTML(including('0 Tags'))).exists(),
+      tagsPane.find(HTML(including(text))).exists(),
       tagsMultiSelect.exists(),
-    ]);
+    ];
+
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        expectations.push(tagsPane.find(ValueChipRoot(tag)).exists());
+      });
+    }
+
+    cy.expect(expectations);
   },
 
   addNewTag: (tagName) => {
