@@ -109,6 +109,7 @@ const getSearchErrorText = (query) => `Search could not be processed for ${query
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
+const defaultBrowseOptionText = 'Select a browse option';
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -399,7 +400,7 @@ export default {
 
   verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
-      expect(elem.text()).to.include('Select a browse option');
+      expect(elem.text()).to.include(defaultBrowseOptionText);
     });
     cy.expect(browseSearchAndFilterInput.exists());
   },
@@ -1176,6 +1177,17 @@ export default {
     );
   },
 
+  verifyMultiSelectFilterOptionCountGreaterOrEqual(accordionName, optionName, minCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.then(() => multiSelect
+      .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+      .totalRecords()).then((actualCount) => {
+      expect(actualCount).to.be.at.least(minCount);
+    });
+  },
+
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
     if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
@@ -1280,7 +1292,7 @@ export default {
     }
   },
 
-  checkBrowseOptionSelected(option) {
+  checkBrowseOptionSelected(option = defaultBrowseOptionText) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
