@@ -1,7 +1,9 @@
 // Configuration: Get tenant IDs from ECS_TENANT_IDS variable or use current tenant
 const ecsTenantIds = Cypress.env('ECS_TENANT_IDS');
 const tenantIds =
-  ecsTenantIds && ecsTenantIds.length > 0 ? ecsTenantIds : [Cypress.env('OKAPI_TENANT')];
+  ecsTenantIds && ecsTenantIds.trim().length > 0
+    ? ecsTenantIds.split(',').map((id) => id.trim())
+    : [Cypress.env('OKAPI_TENANT')];
 
 describe('fse-timers', () => {
   // Get token once for all tests
@@ -17,8 +19,6 @@ describe('fse-timers', () => {
       `TC196314 - Get timers for ${Cypress.env('OKAPI_HOST')} - ${tenantId}`,
       { tags: ['fse', 'api', 'timers', 'eureka-sanity'] },
       () => {
-        cy.log('ECS_TENANT_IDS: ' + Cypress.env('ECS_TENANT_IDS'));
-        cy.log('ECS_TENANT_IDS length: ' + Cypress.env('ECS_TENANT_IDS').length);
         // Set the tenant ID for this iteration
         cy.setTenant(tenantId);
 
