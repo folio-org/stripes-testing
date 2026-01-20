@@ -131,6 +131,7 @@ describe('Data Export', () => {
           );
 
           // Step 5: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
+          cy.getUserToken(user.username, user.password);
           DataExportLogs.clickButtonWithText(exportedFileName);
 
           // Step 6: Check exported records included in the file
