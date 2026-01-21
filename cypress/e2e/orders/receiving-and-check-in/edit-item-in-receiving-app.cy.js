@@ -1,12 +1,13 @@
 import moment from 'moment';
 
 import { Permissions } from '../../../support/dictionary';
-import { NewOrder, Orders, BasicOrderLine } from '../../../support/fragments/orders';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import { Receivings } from '../../../support/fragments/receiving';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import ReceivingEditForm from '../../../support/fragments/receiving/receivingEditForm';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -103,7 +104,7 @@ describe('Orders', () => {
         });
 
         // Click "Edit" button on the third pane
-        const ReceivingEditForm = ReceivingDetails.clickEditButton();
+        ReceivingDetails.editReceivingItem();
         ReceivingEditForm.checkReceivingFormContent({
           itemDetails: { title: testData.orderLine.titleOrPackage },
           lineDetails: { poLineNumber: `${testData.order.poNumber}-1` },

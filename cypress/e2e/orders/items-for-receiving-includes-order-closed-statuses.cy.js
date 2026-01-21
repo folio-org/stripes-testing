@@ -1,5 +1,5 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
-import permissions from '../../support/dictionary/permissions';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -12,11 +12,11 @@ import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
@@ -50,108 +50,106 @@ describe('Orders', () => {
     let orderNumber;
     let effectiveLocationServicePoint;
     let location;
+    let user;
 
     before(() => {
-      cy.clearLocalStorage();
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading, authRefresh: true });
-      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(
-          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-        ).then((locationResponse) => {
-          location = locationResponse;
-          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-            organization.id = organizationsResponse;
-            order.vendor = organizationsResponse;
-          });
-          cy.createOrderApi(order).then((response) => {
-            orderNumber = response.body.poNumber;
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            Orders.createPOLineViaActions();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-            OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-              'Purchase',
-              locationResponse.name,
-              '4',
-            );
-            OrderLines.backToEditingOrder();
-            Orders.openOrder();
-            OrderLines.selectPOLInOrder(0);
-            OrderLines.cancelPOL();
-            OrderLines.openInstance();
-            InventoryInstance.openHoldingsAccordion(location.name);
-            // Need to wait,while instance will be loaded
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(5000);
-            InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-            InventoryItems.edit();
-            ItemRecordEdit.addBarcode(barcodeForFirstItem);
-            ItemRecordEdit.saveAndClose();
-            // Need to wait,while instance will be saved
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(5000);
-            InventoryItems.closeItemInHeader();
-            InventoryInstance.openHoldingsAccordion(location.name);
-            InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-            InventoryItems.edit();
-            ItemRecordEdit.addBarcode(barcodeForSecondItem);
-            ItemRecordEdit.saveAndClose();
-            // Need to wait,while instance will be saved
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(5000);
-            InventoryItems.closeItemInHeader();
-            InventoryInstance.openHoldingsAccordion(location.name);
-            InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-            InventoryItems.edit();
-            ItemRecordEdit.addBarcode(barcodeForThirdItem);
-            ItemRecordEdit.saveAndClose();
-            // Need to wait,while instance will be saved
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(5000);
-            InventoryItems.closeItemInHeader();
-            InventoryInstance.openHoldingsAccordion(location.name);
-            InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-            InventoryItems.edit();
-            ItemRecordEdit.addBarcode(barcodeForFourItem);
-            ItemRecordEdit.saveAndClose();
-            // Need to wait,while instance will be saved
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(5000);
-            InventoryItems.closeItemInHeader();
-          });
+      cy.getAdminToken();
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints;
 
-          TopMenuNavigation.navigateToApp('Check in');
-          SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-          SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
-          // Need to wait,while Checkin page will be loaded in same location
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000);
-          CheckInActions.checkInItemGui(barcodeForFirstItem);
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(6000);
-          CheckInActions.checkInItemGui(barcodeForSecondItem);
-          cy.wait(6000);
-        });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (relocationResp) => {
+            location = relocationResp;
+
+            Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+              organization.id = organizationsResponse;
+              order.vendor = organizationsResponse;
+            });
+            cy.createOrderApi(order).then((response) => {
+              orderNumber = response.body.poNumber;
+
+              cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+              Orders.searchByParameter('PO number', orderNumber);
+              Orders.selectFromResultsList(orderNumber);
+              Orders.createPOLineViaActions();
+              OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+              cy.pause();
+              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+                'Purchase',
+                location.name,
+                '4',
+              );
+              OrderLines.backToEditingOrder();
+              Orders.openOrder();
+              OrderLines.selectPOLInOrder(0);
+              OrderLines.cancelPOL();
+              OrderLines.openInstance();
+              InventoryInstance.openHoldingsAccordion(location.name);
+              cy.wait(5000);
+              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+              InventoryItems.edit();
+              ItemRecordEdit.addBarcode(barcodeForFirstItem);
+              ItemRecordEdit.saveAndClose();
+              cy.wait(5000);
+              InventoryItems.closeItemInHeader();
+              InventoryInstance.openHoldingsAccordion(location.name);
+              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+              InventoryItems.edit();
+              ItemRecordEdit.addBarcode(barcodeForSecondItem);
+              ItemRecordEdit.saveAndClose();
+              cy.wait(5000);
+              InventoryItems.closeItemInHeader();
+              InventoryInstance.openHoldingsAccordion(location.name);
+              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+              InventoryItems.edit();
+              ItemRecordEdit.addBarcode(barcodeForThirdItem);
+              ItemRecordEdit.saveAndClose();
+              cy.wait(5000);
+              InventoryItems.closeItemInHeader();
+              InventoryInstance.openHoldingsAccordion(location.name);
+              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+              InventoryItems.edit();
+              ItemRecordEdit.addBarcode(barcodeForFourItem);
+              ItemRecordEdit.saveAndClose();
+              cy.wait(5000);
+              InventoryItems.closeItemInHeader();
+            });
+
+            TopMenuNavigation.navigateToApp('Check in');
+            SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+            SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
+            cy.wait(2000);
+            CheckInActions.checkInItemGui(barcodeForFirstItem);
+            cy.wait(6000);
+            CheckInActions.checkInItemGui(barcodeForSecondItem);
+            cy.wait(6000);
+          },
+        );
       });
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
+        user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.receivingPath,
           waiter: Receiving.waitLoading,
-          authRefresh: true,
         });
       });
     });
 
-    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+    after('delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      Organizations.deleteOrganizationViaApi(organization.id);
+    });
 
+    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
     it(
       'C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)',
-      { tags: ['criticalPathBroken', 'thunderjet', 'C368044'] },
+      { tags: ['criticalPath', 'thunderjet', 'C368044'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Receiving.selectLinkFromResultsList();

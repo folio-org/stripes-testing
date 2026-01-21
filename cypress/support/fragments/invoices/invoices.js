@@ -411,8 +411,6 @@ export default {
       SelectionOption(fiscalYear).click(),
       invoiceDateField.fillIn(invoice.invoiceDate),
       vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
-    ]);
-    cy.do([
       batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
       invoicePaymentMethodSelect.choose('EFT'),

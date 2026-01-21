@@ -61,7 +61,7 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
-  getCurrentDateInPreviusMonthForFiscalYearOnUIEdit: () => {
+  getCurrentDateInPreviousMonthForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() - 1);
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
@@ -69,10 +69,11 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
-  getCurrentDateInPreviusMonthForFiscalYearOnDDMMYYYYFormat: () => {
+  getCurrentDateInPreviousMonthForFiscalYearOnDDMMYYYYFormat: () => {
     const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() - 1);
     return `${padWithZero(currentDate.getDate())}/${padWithZero(
-      currentDate.getMonth(),
+      currentDate.getMonth() + 1,
     )}/${currentDate.getFullYear()}`;
   },
 
@@ -217,12 +218,12 @@ export default {
     );
   },
 
-  getDayTomorrowDateForFiscalYearOnDDMMYYYYFormat: () => {
+  getDayTomorrowDateForFiscalYearOnMMDDYYYYFormat: () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return (
-      `${padWithZero(tomorrow.getDate())}/` +
       `${padWithZero(tomorrow.getMonth() + 1)}/` +
+      `${padWithZero(tomorrow.getDate())}/` +
       `${tomorrow.getFullYear()}`
     );
   },
@@ -249,7 +250,7 @@ export default {
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
-  getPreviousDayDateForFiscalYearOnDDMMYYYY: () => {
+  getPreviousDayDateForFiscalYearOnMMDDYYYY: () => {
     const currentDate = new Date();
     let day = currentDate.getDate() - 1;
     let month = currentDate.getMonth() + 1;
@@ -260,7 +261,7 @@ export default {
       month = lastMonth.getMonth() + 1;
       day = lastMonth.getDate() + day;
     }
-    return `${padWithZeroDay(day)}/${padWithZeroDay(month)}/${year}`;
+    return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getTwoPreviousDaysDateForFiscalYear: () => {
@@ -290,7 +291,7 @@ export default {
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
-  getTwoPreviousDaysDateForFiscalYearOnDDMMYYYYFormat: () => {
+  getTwoPreviousDaysDateForFiscalYearOnMMDDYYYYFormat: () => {
     const currentDate = new Date();
     let day = currentDate.getDate() - 2;
     let month = currentDate.getMonth() + 1;
@@ -308,7 +309,7 @@ export default {
         day = prevMonth.getDate() + day;
       }
     }
-    return `${padWithZeroDay(day)}/${padWithZeroDay(month)}/${year}`;
+    return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getThreePreviousDaysDateForFiscalYear: () => {

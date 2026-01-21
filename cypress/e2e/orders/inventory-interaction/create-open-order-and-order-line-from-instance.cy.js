@@ -48,7 +48,6 @@ describe('Orders', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
-        authRefresh: true,
       });
     });
   });
@@ -81,7 +80,7 @@ describe('Orders', () => {
         { label: 'Add POL', conditions: { disabled: true } },
       ]);
 
-      OrderEditForm.getOrderNumberFromForm().then((poNumber) => {
+      OrderEditForm.getOrderNumber().then((poNumber) => {
         testData.poNumber = poNumber;
 
         // Fill in all the mandatory fields

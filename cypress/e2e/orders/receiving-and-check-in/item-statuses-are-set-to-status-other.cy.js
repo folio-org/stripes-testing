@@ -1,6 +1,7 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, VENDOR_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -10,40 +11,26 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
+    let user;
+    let orderNumber;
+    let circ2LocationServicePoint;
+    let circ1LocationServicePoint;
+    let location;
+    const organization = {};
     const order = {
       ...NewOrder.defaultOneTimeOrder,
       approved: true,
-    };
-    const organization = {
-      ...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: getRandomPostfix(),
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'TestAccout1',
-          notes: '',
-          paymentMethod: 'Cash',
-        },
-      ],
     };
     const instance = {
       title: `AT_C367972_folio instance-${getRandomPostfix()}`,
@@ -56,162 +43,137 @@ describe('Orders', () => {
     const barcodeForSixthItem = `6${Helper.getRandomBarcode()}`;
     const barcodeForSeventhItem = `7${Helper.getRandomBarcode()}`;
 
-    let user;
-    let orderNumber;
-    let circ2LocationServicePoint;
-    let circ1LocationServicePoint;
-    let location;
-
     before(() => {
       cy.getAdminToken();
-
       ServicePoints.getCircDesk2ServicePointViaApi().then((sp1) => {
         circ2LocationServicePoint = sp1;
         ServicePoints.getCircDesk1ServicePointViaApi().then((sp2) => {
           circ1LocationServicePoint = sp2;
-          NewLocation.createViaApi(
-            NewLocation.getDefaultLocation(circ2LocationServicePoint.id),
-          ).then((locationResponse) => {
-            location = locationResponse;
-            Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-              organization.id = organizationsResponse;
-              order.vendor = organizationsResponse;
-            });
 
-            cy.getInstanceTypes({ limit: 1 })
-              .then((instanceTypeData) => {
-                instance.instanceTypeId = instanceTypeData[0].id;
-              })
-              .then(() => {
-                cy.createInstance({
-                  instance: {
-                    instanceTypeId: instance.instanceTypeId,
-                    title: instance.title,
-                  },
-                }).then((instanceId) => {
-                  instance.id = instanceId;
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+            (locationResp) => {
+              location = locationResp;
+
+              Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
+                (organizationsResponse) => {
+                  organization.id = organizationsResponse.id;
+                  order.vendor = organizationsResponse.id;
+                },
+              );
+
+              cy.getInstanceTypes({ limit: 1 })
+                .then((instanceTypeData) => {
+                  instance.instanceTypeId = instanceTypeData[0].id;
+                })
+                .then(() => {
+                  cy.createInstance({
+                    instance: {
+                      instanceTypeId: instance.instanceTypeId,
+                      title: instance.title,
+                    },
+                  }).then((instanceId) => {
+                    instance.id = instanceId;
+                  });
                 });
+
+              cy.loginAsAdmin();
+              TopMenuNavigation.openAppFromDropdown('Orders');
+              Orders.selectOrdersPane();
+              cy.createOrderApi(order).then((response) => {
+                orderNumber = response.body.poNumber;
+                Orders.searchByParameter('PO number', orderNumber);
+                Orders.selectFromResultsList(orderNumber);
+                Orders.createPOLineViaActions();
+                OrderLines.selectRandomInstanceInTitleLookUP(instance.title, 0);
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+                  'Purchase',
+                  locationResp.name,
+                  '7',
+                );
+                OrderLines.backToEditingOrder();
+                Orders.openOrder();
+                OrderLines.selectPOLInOrder(0);
+                OrderLines.openInstance();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                cy.wait(5000);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForFirstItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForSecondItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForThirdItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForFourItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForFifthItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForSixthItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                InventoryItems.edit();
+                ItemRecordEdit.addBarcode(barcodeForSeventhItem);
+                ItemRecordEdit.saveAndClose();
+                cy.wait(5000);
+                InventoryItems.closeItemInHeader();
               });
 
-            cy.loginAsAdmin();
-            TopMenuNavigation.openAppFromDropdown('Orders');
-            Orders.selectOrdersPane();
-            cy.createOrderApi(order).then((response) => {
-              orderNumber = response.body.poNumber;
-              Orders.searchByParameter('PO number', orderNumber);
-              Orders.selectFromResultsList(orderNumber);
-              Orders.createPOLineViaActions();
-              OrderLines.selectRandomInstanceInTitleLookUP(instance.title, 0);
-              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-                'Purchase',
-                locationResponse.name,
-                '7',
-              );
-              OrderLines.backToEditingOrder();
-              Orders.openOrder();
-              OrderLines.selectPOLInOrder(0);
-              OrderLines.openInstance();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              // Need to wait,while instance will be loaded
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForFirstItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForSecondItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForThirdItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForFourItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForFifthItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForSixthItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-              InventoryInstance.openHoldingsAccordion(location.name);
-              InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              InventoryItems.edit();
-              ItemRecordEdit.addBarcode(barcodeForSeventhItem);
-              ItemRecordEdit.saveAndClose();
-              // Need to wait,while instance will be saved
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(5000);
-              InventoryItems.closeItemInHeader();
-            });
-
-            SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
-            SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
-            TopMenuNavigation.navigateToApp('Check in');
-            // Need to wait,while Checkin page will be loaded in same location
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000);
-            CheckInActions.checkInItemGui(barcodeForFirstItem);
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(6000);
-            CheckInActions.checkInItemGui(barcodeForSecondItem);
-            cy.wait(6000);
-            SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
-            SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
-            TopMenuNavigation.navigateToApp('Check in');
-            // Need to wait,while Checkin page will be loaded in same location
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000);
-            CheckInActions.checkInItemGui(barcodeForThirdItem);
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            ConfirmItemInModal.confirmInTransitModal();
-            cy.wait(6000);
-            CheckInActions.checkInItemGui(barcodeForFourItem);
-            ConfirmItemInModal.confirmInTransitModal();
-            cy.wait(6000);
-          });
+              TopMenuNavigation.navigateToApp('Check in');
+              CheckInActions.waitLoading();
+              CheckInActions.checkInItemGui(barcodeForFirstItem);
+              cy.wait(3000);
+              CheckInActions.checkInItemGui(barcodeForSecondItem);
+              SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
+              SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
+              CheckInActions.waitLoading();
+              CheckInActions.checkInItemGui(barcodeForThirdItem);
+              cy.wait(2000);
+              ConfirmItemInModal.confirmInTransitModal();
+              cy.wait(3000);
+              CheckInActions.checkInItemGui(barcodeForFourItem);
+              cy.wait(3000);
+              ConfirmItemInModal.confirmInTransitModal();
+              SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
+              SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
+            },
+          );
         });
       });
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.receivingPath,
           waiter: Receiving.waitLoading,
@@ -225,12 +187,9 @@ describe('Orders', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    //     // TODO: Need to find solution to delete all data, because now i cant delete location and user
-    //     // TODO: also need to delete service points
-
     it(
       'C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)',
-      { tags: ['criticalPathBroken', 'thunderjet', 'C367971'] },
+      { tags: ['criticalPath', 'thunderjet', 'C367971'] },
       () => {
         Receiving.searchByParameter({ parameter: 'Keyword', value: instance.title });
         Receiving.selectFromResultsList(instance.title);
@@ -258,7 +217,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForThirdItem,
-          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Online`,
+          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 1`,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);
@@ -266,7 +225,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForFourItem,
-          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Online`,
+          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 1`,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);

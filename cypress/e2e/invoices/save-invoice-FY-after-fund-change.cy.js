@@ -1,4 +1,5 @@
-import permissions from '../../support/dictionary/permissions';
+import { LOCATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -12,8 +13,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -55,63 +54,71 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY =
-    DateTools.getCurrentDateInPreviusMonthForFiscalYearOnDDMMYYYYFormat();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnDDMMYYYY();
-  const periodStartForSecondFY = DateTools.getCurrentDateINDDMMYYYYFormat();
-  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnDDMMYYYY();
-  const periodStartForThirdFY = DateTools.getCurrentDateINDDMMYYYYFormat();
-  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnDDMMYYYY();
-  const periodStartForFirstFY2 = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
+  const periodStartForFirstFY = DateTools.getCurrentDateInPreviousMonthForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
+  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY2 = DateTools.getCurrentDateInPreviousMonthForFiscalYearOnUIEdit();
   const periodEndForFirstFY2 = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   let user;
   let orderNumber;
-  let servicePointId;
   let location;
 
   before(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.expenseClassesPath,
-      waiter: SettingsFinance.waitExpenseClassesLoading,
-      authRefresh: true,
-    });
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
-
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          TopMenuNavigation.openAppFromDropdown('Finance');
-          FinanceHelp.selectFundsNavigation();
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addExpensesClass(firstExpenseClass.name);
-          Funds.closeBudgetDetails();
-          Funds.closeFundDetails();
-        });
-
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
-        });
-
+    cy.getAdminToken()
+      .then(() => {
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
           invoice.accountingCode = organization.erpCode;
+          defaultOrder.vendor = organization.name;
+
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+            location = res;
+          });
           cy.getBatchGroups().then((batchGroup) => {
             invoice.batchGroup = batchGroup.name;
           });
+
+          FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+            firstFiscalYear.id = firstFiscalYearResponse.id;
+            defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+              defaultLedger.id = ledgerResponse.id;
+              defaultFund.ledgerId = defaultLedger.id;
+              Funds.createViaApi(defaultFund).then((fundResponse) => {
+                defaultFund.id = fundResponse.fund.id;
+              });
+            });
+          });
+          secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
+          thirdFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '3';
+
+          FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
+            secondFiscalYear.id = secondFiscalYearResponse.id;
+          });
+          FiscalYears.createViaApi(thirdFiscalYear).then((thirdFiscalYearResponse) => {
+            thirdFiscalYear.id = thirdFiscalYearResponse.id;
+          });
         });
-        defaultOrder.vendor = organization.name;
+      })
+      .then(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.expenseClassesPath,
+          waiter: SettingsFinance.waitExpenseClassesLoading,
+        });
+        SettingsFinance.createNewExpenseClass(firstExpenseClass);
+        TopMenuNavigation.openAppFromDropdown('Finance');
+        FinanceHelp.selectFundsNavigation();
+        FinanceHelp.searchByName(defaultFund.name);
+        Funds.selectFund(defaultFund.name);
+        Funds.addBudget(allocatedQuantity);
+        Funds.editBudget();
+        Funds.addExpensesClass(firstExpenseClass.name);
+        Funds.closeBudgetDetails();
+        Funds.closeFundDetails();
+
         TopMenuNavigation.openAppFromDropdown('Orders');
         Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
@@ -129,64 +136,51 @@ describe('Invoices', () => {
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
+          TopMenuNavigation.openAppFromDropdown('Finance');
+          FinanceHelp.selectLedgersNavigation();
+          FinanceHelp.searchByName(defaultLedger.name);
+          Ledgers.selectLedger(defaultLedger.name);
+          Ledgers.rollover();
+          Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
+            secondFiscalYear.code,
+            'None',
+            'Allocation',
+          );
+
+          FinanceHelp.selectFiscalYearsNavigation();
+          FinanceHelp.searchByName(firstFiscalYear.name);
+          FiscalYears.selectFY(firstFiscalYear.name);
+          FiscalYears.editFiscalYearDetails();
+          FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+            periodStartForFirstFY,
+            periodEndForFirstFY,
+          );
+          FinanceHelp.searchByName(secondFiscalYear.name);
+          FiscalYears.selectFY(secondFiscalYear.name);
+          FiscalYears.editFiscalYearDetails();
+          FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+            periodStartForSecondFY,
+            periodEndForSecondFY,
+          );
         });
-
-        secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-        thirdFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '3';
-        FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-          secondFiscalYear.id = secondFiscalYearResponse.id;
-        });
-
-        FiscalYears.createViaApi(thirdFiscalYear).then((thirdFiscalYearResponse) => {
-          thirdFiscalYear.id = thirdFiscalYearResponse.id;
-        });
-
-        TopMenuNavigation.openAppFromDropdown('Finance');
-        FinanceHelp.selectLedgersNavigation();
-
-        FinanceHelp.searchByName(defaultLedger.name);
-        Ledgers.selectLedger(defaultLedger.name);
-        Ledgers.rollover();
-        Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
-          secondFiscalYear.code,
-          'None',
-          'Allocation',
-        );
       });
-    });
-
-    FinanceHelp.selectFiscalYearsNavigation();
-    FinanceHelp.searchByName(firstFiscalYear.name);
-    FiscalYears.selectFY(firstFiscalYear.name);
-    FiscalYears.editFiscalYearDetails();
-    FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-      periodStartForFirstFY,
-      periodEndForFirstFY,
-    );
-    FinanceHelp.searchByName(secondFiscalYear.name);
-    FiscalYears.selectFY(secondFiscalYear.name);
-    FiscalYears.editFiscalYearDetails();
-    FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-      periodStartForSecondFY,
-      periodEndForSecondFY,
-    );
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewEditFiscalYear.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
+      Permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiFinanceViewLedger.gui,
+      Permissions.uiFinanceViewEditFiscalYear.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
       user = userProperties;
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
-        authRefresh: true,
       });
     });
   });
@@ -198,7 +192,7 @@ describe('Invoices', () => {
 
   it(
     'C388645 Save invoice fiscal year after fund distribution change if FY was undefined and pay invoice against previous FY (thunderjet) (TaaS)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C388645'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388645'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

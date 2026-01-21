@@ -1,22 +1,21 @@
-import { ORDER_STATUSES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import OrderLineDetails from '../../../support/fragments/orders/orderLineDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const firstOrder = {
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -24,81 +23,76 @@ describe('Orders', () => {
     reEncumber: true,
   };
   const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+    instanceName: `AT_C374120_Instance_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
   let orderNumber;
-  let servicePointId;
   let location;
   let instance;
 
   before(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-      authRefresh: true,
-    });
-    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
-      if (settings?.length !== 0) {
-        InventoryInteractions.setInstanceMatchingSetting({
-          ...settings[0],
-          value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+    cy.getAdminToken()
+      .then(() => {
+        InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
+          if (settings?.length !== 0) {
+            InventoryInteractions.setInstanceMatchingSetting({
+              ...settings[0],
+              value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+            });
+          }
         });
-      }
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          location = res;
+        });
+        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+          organization.id = responseOrganizations;
+          order.vendor = organization.name;
+        });
+        const instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+          (instanceResponse) => {
+            instance = instanceResponse;
+          },
+        );
+      })
+      .then(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
+        Orders.createApprovedOrderForRollover(order, true).then((orderResponse) => {
+          order.id = orderResponse.id;
+          orderNumber = orderResponse.poNumber;
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
+          OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
+        });
       });
-    });
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    firstOrder.vendor = organization.name;
-    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-      (instanceResponse) => {
-        instance = instanceResponse;
-      },
-    );
-    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
-    });
 
     cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
+      Permissions.uiInventoryViewInstances.gui,
+      Permissions.uiOrdersApprovePurchaseOrders.gui,
+      Permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+
+      cy.login(user.username, user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-      authRefresh: true,
-    });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    cy.wait(4000);
-    Orders.deleteOrderViaApi(firstOrder.id);
+    cy.getAdminToken();
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    NewLocation.deleteViaApi(location.id);
     Users.deleteViaApi(user.userId);
   });
 
@@ -109,14 +103,17 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.editPOL();
+      OrderLineDetails.openOrderLineEditForm();
       OrderLines.openPageConnectedInstance();
       InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
-      cy.visit(TopMenu.ordersPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.editPOL();
+      OrderLineDetails.openOrderLineEditForm();
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.cancelRemoveInstanceConnectionModal();
       OrderLines.cancelEditingPOL();

@@ -33,7 +33,7 @@ describe('Inventory', () => {
         });
       });
       cy.loginAsAdmin();
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
     });
 
