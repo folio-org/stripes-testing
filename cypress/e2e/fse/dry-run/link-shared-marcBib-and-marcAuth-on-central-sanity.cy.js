@@ -1,16 +1,16 @@
-import TopMenu from '../../../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../../../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
-import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthorityBrowse from '../../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import getRandomPostfix from '../../../../../../support/utils/stringTools';
-import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
-import { parseSanityParameters } from '../../../../../../support/utils/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthorityBrowse from '../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { parseSanityParameters } from '../../../support/utils/users';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -90,7 +90,7 @@ describe('MARC', () => {
 
         it(
           'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C422141'] },
+          { tags: ['dryRunECS', 'spitfire', 'C422141'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password, {

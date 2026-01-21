@@ -1,15 +1,15 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { parseSanityParameters } from '../../support/utils/users';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import TopMenu from '../../../support/fragments/topMenu';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
+import { parseSanityParameters } from '../../../support/utils/users';
 // eslint-disable-next-line no-unused-vars
-import UserEdit from '../../support/fragments/users/userEdit';
+import UserEdit from '../../../support/fragments/users/userEdit';
 
 describe('Check out', () => {
   const { user, memberTenant } = parseSanityParameters();
@@ -107,7 +107,7 @@ describe('Check out', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['sanity', 'vega', 'C356772'] },
+    { tags: ['dryRun', 'vega', 'C356772'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.checkOutPath,

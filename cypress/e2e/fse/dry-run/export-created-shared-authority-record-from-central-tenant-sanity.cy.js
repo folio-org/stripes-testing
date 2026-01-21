@@ -63,7 +63,7 @@ describe('Data Export', () => {
 
     it(
       'C436898 C436899 Export of created Shared MARC authority record from Central and Member tenant (consortia) (spitfire)',
-      { tags: ['sanity', 'C436898', 'C436899'] },
+      { tags: ['dryRunECS', 'C436898', 'C436899'] },
       () => {
         cy.resetTenant();
         cy.login(user.username, user.password, {

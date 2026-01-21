@@ -1,17 +1,17 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
-import { parseSanityParameters } from '../../support/utils/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { parseSanityParameters } from '../../../support/utils/users';
 
 describe('Check in', () => {
   describe('End to end scenarios', () => {
@@ -139,7 +139,7 @@ describe('Check in', () => {
       }
     });
 
-    it('C347631 Check in: Basic check in (vega)', { tags: ['sanity', 'vega', 'C347631'] }, () => {
+    it('C347631 Check in: Basic check in (vega)', { tags: ['dryRun', 'vega', 'C347631'] }, () => {
       cy.login(user.username, user.password, {
         path: TopMenu.checkInPath,
         waiter: CheckInActions.waitLoading,

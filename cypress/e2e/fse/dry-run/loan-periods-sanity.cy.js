@@ -1,19 +1,19 @@
 import uuid from 'uuid';
 
-import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../support/constants';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
-import UserEdit from '../../support/fragments/users/userEdit';
-import DateTools from '../../support/utils/dateTools';
-import { parseSanityParameters } from '../../support/utils/users';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../../support/constants';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import DateTools from '../../../support/utils/dateTools';
+import { parseSanityParameters } from '../../../support/utils/users';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const { user, memberTenant } = parseSanityParameters();
 let materialTypes;
@@ -162,7 +162,7 @@ describe('Circulation log', () => {
       Locations.deleteViaApi(testData.defaultLocation);
     });
 
-    it('C645 Test "Days" loan period (vega) (TaaS)', { tags: ['sanity', 'C645'] }, () => {
+    it('C645 Test "Days" loan period (vega) (TaaS)', { tags: ['dryRun', 'C645'] }, () => {
       cy.login(user.username, user.password, {
         path: TopMenu.checkOutPath,
         waiter: CheckOutActions.waitLoading,
