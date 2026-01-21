@@ -183,7 +183,7 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            cy.resetTenant();
+            cy.setTenant(Affiliations.College);
             CallNumberBrowseSettings.assignCallNumberTypesViaApi({
               name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
               callNumberTypes: [],

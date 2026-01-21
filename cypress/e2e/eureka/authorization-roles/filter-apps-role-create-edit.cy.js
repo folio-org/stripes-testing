@@ -50,13 +50,14 @@ describe('Eureka', () => {
 
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.editRoleId, testData.capabIds);
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
-        }, 20_000);
-        AuthorizationRoles.waitContentLoading();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
+        });
+        // Workaround for STCOM-1476
+        cy.document().then((doc) => {
+          doc.documentElement.style.zoom = '110%';
+        });
       });
 
       after('Delete user and roles', () => {

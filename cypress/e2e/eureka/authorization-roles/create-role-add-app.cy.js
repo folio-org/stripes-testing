@@ -66,8 +66,8 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 8,
-            Settings: 3,
+            Data: 12,
+            Settings: 4,
             Procedural: 3,
           },
         },
@@ -87,14 +87,10 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.settingsAuthorizationRoles,
-              waiter: AuthorizationRoles.waitContentLoading,
-            });
-            cy.reload();
-            AuthorizationRoles.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.settingsAuthorizationRoles,
+            waiter: AuthorizationRoles.waitContentLoading,
+          });
         });
       });
 
