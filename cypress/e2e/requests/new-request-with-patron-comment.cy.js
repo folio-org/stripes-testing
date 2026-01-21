@@ -13,7 +13,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Requests', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
-  const user = {};
   const testData = {};
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,
@@ -21,22 +20,16 @@ describe('Requests', () => {
   let requestUserData;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
-          user.barcode = users[0].barcode;
-        });
-      })
-      .then(() => {
-        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-          testData.servicePoint = servicePoint;
-          testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances,
-            location: { id: testData.locationId },
-          });
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        testData.servicePoint = servicePoint;
+        testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances,
+          location: { id: testData.locationId },
         });
       });
+    });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
@@ -77,7 +70,7 @@ describe('Requests', () => {
       NewRequest.enterItemInfo(folioInstances[0].barcodes[0]);
       NewRequest.enterRequestAndPatron('Test patron comment');
       NewRequest.enterRequesterInfoWithRequestType({
-        requesterBarcode: user.barcode,
+        requesterBarcode: requestUserData.barcode,
         pickupServicePoint: 'Circ Desk 1',
       });
       NewRequest.saveRequestAndClose();

@@ -22,7 +22,10 @@ describe('eHoldings', () => {
 
     before('Create user, login as admin & set custom coverage', () => {
       cy.getAdminToken();
-
+      EHoldingsTitle.changeResourceSelectionStatusViaApi({
+        resourceId: testData.resourcePath.split('/').pop(),
+        isSelected: true,
+      });
       EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourcePath.split('/').pop(), {
         customCoverages: [
           {

@@ -392,6 +392,7 @@ export default {
       invoiceDateField.fillIn(invoice.invoiceDate),
       vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
+    cy.wait(2000);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       batchGroupSelection.open(),
@@ -588,11 +589,11 @@ export default {
   },
 
   selectVendorOnUi: (organizationName) => {
-    cy.do([
-      Button('Organization look-up').click(),
-      SearchField({ id: searchInputId }).fillIn(organizationName),
-      searchButton.click(),
-    ]);
+    cy.do(Button('Organization look-up').click());
+    cy.wait(2000);
+    cy.expect(SearchField({ id: searchInputId }).exists());
+    cy.expect(SearchField({ id: searchInputId }).has({ visible: true }));
+    cy.do([SearchField({ id: searchInputId }).fillIn(organizationName), searchButton.click()]);
     FinanceHelper.selectFromResultsList();
   },
 

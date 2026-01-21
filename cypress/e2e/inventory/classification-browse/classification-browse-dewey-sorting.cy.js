@@ -120,6 +120,11 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkBrowseOptionSelected(
             BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.toggleAccordionByName('Shared');
+            InventorySearchAndFilter.selectOptionInExpandedFilter('Shared', 'No');
+            InventorySearchAndFilter.verifyBrowseResultListExists();
+          });
           InventorySearchAndFilter.browseSearch(classificationNumber);
           BrowseClassifications.verifySearchResultsTable();
           // The exact match should be highlighted

@@ -96,8 +96,6 @@ describe('Inventory', () => {
             cy.loginAsAdmin();
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.waitContentLoading();
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
           for (let i = 0; i < testData.instanceRecords.length; i++) {
             cy.ifConsortia(true, () => {
@@ -143,14 +141,11 @@ describe('Inventory', () => {
       'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375224'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
 
         InventorySearchAndFilter.selectBrowseSubjects();
         BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);

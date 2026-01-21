@@ -25,4 +25,7 @@ scripts/update_permission_names/permissions_backups/*
 .github/copilot-instructions.md
 .github/agents/*
 
+*_automated_tests.json
+
 mcp.json
+cypress/e2e/failed.cy.js

@@ -24,4 +24,8 @@ export default {
     SearchAndFilterLicenses.search(license.name);
     cy.expect(MultiColumnListCell(license.name).exists());
   },
+
+  selectRecord(licenseName) {
+    cy.do(MultiColumnListCell({ content: licenseName }).click());
+  },
 };
