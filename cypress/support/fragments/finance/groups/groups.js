@@ -11,6 +11,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Pane,
+  PaneHeader,
   Checkbox,
   MultiColumnListHeader,
   SelectionOption,
@@ -277,5 +278,29 @@ export default {
       group.id = interception.response.body.id;
       return group;
     });
+  },
+
+  checkPageTitle(expectedTitle) {
+    cy.title().should('eq', expectedTitle);
+  },
+
+  closeDetailsPane() {
+    cy.do(
+      PaneHeader({ id: 'paneHeaderpane-group-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  clickResetAll() {
+    cy.do(resetButton.click());
+  },
+
+  verifySearchFieldIsEmpty() {
+    cy.expect(searchField.has({ value: '' }));
+  },
+
+  filterByStatus(statusName) {
+    cy.do([Button({ text: 'Status' }).click(), Checkbox({ name: statusName }).click()]);
   },
 };
