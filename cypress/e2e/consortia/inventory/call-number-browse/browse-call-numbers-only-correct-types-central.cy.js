@@ -2,7 +2,6 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { CallNumberTypes } from '../../../../support/fragments/settings/inventory/instances/callNumberTypes';
 import Users from '../../../../support/fragments/users/users';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -131,10 +130,9 @@ describe('Inventory', () => {
       };
 
       const testData = {
-        servicePoint: ServicePoints.getDefaultServicePoint(),
         defaultLocation: {},
       };
-      const tenants = [tenantNames.college];
+      const tenants = [Affiliations.College];
       const removeInstancesByTitle = (title) => {
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
@@ -260,7 +258,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651512 Call number of each type which belong to Shared and Local Instances could be found by call number browse from Member tenant (consortia) (spitfire)',
+        'C651512 Call number of each type which belong to Shared Instances could be found by call number browse from Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C651512'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
