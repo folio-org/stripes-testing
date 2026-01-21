@@ -25,6 +25,7 @@ const usersPath = '/users';
 const checkInPath = '/checkin';
 const checkOutPath = '/checkout';
 const receivingPath = '/receiving';
+const claimingPath = '/claiming';
 const bulkEditPath = '/bulk-edit';
 const exportManagerPath = '/export-manager';
 const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
@@ -87,6 +88,7 @@ export default {
   checkInPath,
   checkOutPath,
   receivingPath,
+  claimingPath,
   bulkEditPath,
   exportManagerPath,
   exportManagerOrganizationsPath,
