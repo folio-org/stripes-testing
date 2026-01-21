@@ -27,7 +27,7 @@ describe('Inventory', () => {
         updatedField245: {
           tag: '245',
           content:
-            '$a King Kong (1933) $h [electronic resource] : $b shooting script / $e script story by Merian C. Cooper and Edgar Wallace ; screenplay by Ruth Rose and James Ashmore Creelman.',
+            '$a King Kong (1933) $h [electronic resource] : $c shooting script / $e script story by Merian C. Cooper and Edgar Wallace ; screenplay by Ruth Rose and James Ashmore Creelman.',
         },
       };
       const changesModalData = [
@@ -41,7 +41,7 @@ describe('Inventory', () => {
           action: VersionHistorySection.fieldActions.EDITED,
           field: '245',
           from: '10 $a King Kong (1933) $h [electronic resource] : $b shooting script / $c script story by Merian C. Cooper and Edgar Wallace ; screenplay by Ruth Rose and James Ashmore Creelman.',
-          to: '10 $a King Kong (1933) $h [electronic resource] : $b shooting script / $e script story by Merian C. Cooper and Edgar Wallace ; screenplay by Ruth Rose and James Ashmore Creelman.',
+          to: '10 $a King Kong (1933) $h [electronic resource] : $c shooting script / $e script story by Merian C. Cooper and Edgar Wallace ; screenplay by Ruth Rose and James Ashmore Creelman.',
         },
         {
           action: VersionHistorySection.fieldActions.REMOVED,
