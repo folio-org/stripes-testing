@@ -297,14 +297,28 @@ export default {
     linkText,
     materialsSpecified,
     urlPublicNote,
+    rowNumber = 1,
   }) {
     cy.do(addElectronicAccessBtn.click());
-    if (relationshipType) cy.do(Select('Relationship').choose(relationshipType));
-    if (uri) cy.do(TextArea({ ariaLabel: 'URI' }).fillIn(uri));
-    if (linkText) cy.do(TextArea({ ariaLabel: 'Link text' }).fillIn(linkText));
-    if (materialsSpecified) {
-      cy.do(TextArea({ ariaLabel: 'Materials specified' }).fillIn(materialsSpecified));
+
+    const targetRow = RepeatableFieldItem({ index: rowNumber });
+
+    if (relationshipType) {
+      cy.do(targetRow.find(Select('Relationship')).choose(relationshipType));
     }
-    if (urlPublicNote) cy.do(TextArea({ ariaLabel: 'URL public note' }).fillIn(urlPublicNote));
+    if (uri) {
+      cy.do(targetRow.find(TextArea({ ariaLabel: 'URI' })).fillIn(uri));
+    }
+    if (linkText) {
+      cy.do(targetRow.find(TextArea({ ariaLabel: 'Link text' })).fillIn(linkText));
+    }
+    if (materialsSpecified) {
+      cy.do(
+        targetRow.find(TextArea({ ariaLabel: 'Materials specified' })).fillIn(materialsSpecified),
+      );
+    }
+    if (urlPublicNote) {
+      cy.do(targetRow.find(TextArea({ ariaLabel: 'URL public note' })).fillIn(urlPublicNote));
+    }
   },
 };
