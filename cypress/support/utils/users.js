@@ -14,6 +14,14 @@ export const getFullName = (user) => {
   return fullName;
 };
 
+const parseAdminParams = () => {
+  return {
+    user: { username: Cypress.env('diku_login'), password: Cypress.env('diku_password') },
+    centralTenant: { id: Cypress.env('OKAPI_TENANT'), name: 'aqa tenant' },
+    memberTenant: { id: Cypress.env('OKAPI_TENANT'), name: 'aqa tenant' },
+  };
+};
+
 /**
  * Parses sanity check parameters from Cypress environment variables.
  *
@@ -47,9 +55,11 @@ export const parseSanityParameters = () => {
       'Sanity check parameters are not valid JSON\n Use format:\n {"username": "", "password": "", "centralTenant": {"id": "", "name": ""}, "memberTenant": {"id": "", "name": ""}}',
     );
   }
-  return {
-    user: { username: parsedParams.username, password: parsedParams.password },
-    centralTenant: parsedParams.centralTenant,
-    memberTenant: parsedParams.memberTenant,
-  };
+  return (
+    parseAdminParams() || {
+      user: { username: parsedParams.username, password: parsedParams.password },
+      centralTenant: parsedParams.centralTenant,
+      memberTenant: parsedParams.memberTenant,
+    }
+  );
 };
