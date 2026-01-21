@@ -496,14 +496,21 @@ export default {
 
         if (subfield.length === 0) {
           throw new Error(
-            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
+            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}`,
           );
         }
 
-        // For multiple subfields with same code, verify the first one
+        // Fail if there are multiple subfields with the same code
+        if (subfield.length > 1) {
+          throw new Error(
+            `Multiple subfields "${subfieldCode}" (${subfield.length}) found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}. Expected exactly one.`,
+          );
+        }
+
+        // Verify the single subfield value
         expect(
           subfield[0].textContent,
-          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex + 1} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
         ).to.equal(expectedValue);
       });
 
