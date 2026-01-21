@@ -31,7 +31,7 @@ describe('Citation: create work', () => {
 
   it(
     'C624167 [User journey] LDE - Create new work only from blank workform (citation)',
-    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'C624167', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // open new resource form
       LinkedDataEditor.openNewResourceForm();

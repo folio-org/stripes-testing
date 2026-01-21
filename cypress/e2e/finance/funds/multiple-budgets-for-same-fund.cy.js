@@ -80,7 +80,7 @@ describe('Finance', () => {
 
     it(
       'C353527 Allow user to create multiple planned budgets (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'thunderjet', 'C353527'] },
       () => {
         // Open Fund from Preconditions
         FinanceHelper.searchByName(fund.name);

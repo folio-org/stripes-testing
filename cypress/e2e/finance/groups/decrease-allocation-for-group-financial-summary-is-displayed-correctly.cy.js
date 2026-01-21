@@ -90,7 +90,7 @@ describe('Finance: Groups', () => {
 
   it(
     'C445994 Decrease allocation for group financial summary is displayed correctly (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C445994'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

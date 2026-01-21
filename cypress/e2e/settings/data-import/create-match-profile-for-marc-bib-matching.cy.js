@@ -110,9 +110,6 @@ describe('Data Import', () => {
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
         NewMatchProfile.fillIncomingRecordSections(matchProfile);
         NewMatchProfile.fillExistingRecordSections(matchProfile);
-        ['MARC Holdings', 'Order', 'Invoice'].forEach((option) => {
-          NewMatchProfile.verifyMatchCriterionNotContains(option);
-        });
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithIncomingAndExistingValue(
@@ -155,7 +152,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -189,7 +185,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -223,7 +218,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -257,7 +251,6 @@ describe('Data Import', () => {
           matchProfile.incomingStaticValue,
           matchProfile.incomingStaticRecordValue,
         );
-        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();

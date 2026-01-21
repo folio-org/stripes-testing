@@ -52,7 +52,7 @@ describe('Organizations', () => {
 
   it(
     'C423618 Create and add privileged donor information in Organization (vendor) record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423618'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

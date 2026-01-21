@@ -37,7 +37,7 @@ describe('Organizations', () => {
 
   it(
     'C709267: Create and edit autosuggested fields on create and edit organization pages',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C709267'] },
     () => {
       Organizations.newOrganization();
       Organizations.fillInInfoNewOrganization(organization);

@@ -111,8 +111,6 @@ describe('Citation: MARC Authority integration', () => {
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
-    cy.setPrefferedProfileForUser();
   });
 
   beforeEach(() => {
@@ -124,7 +122,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'C633470', 'linked-data-editor'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -142,7 +140,7 @@ describe('Citation: MARC Authority integration', () => {
       });
       QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
       QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndCloseButton();
       cy.wait(1500);
       MarcAuthority.verifyAfterSaveAndClose();
       QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

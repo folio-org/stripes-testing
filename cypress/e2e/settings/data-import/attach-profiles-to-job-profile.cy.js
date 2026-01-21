@@ -131,7 +131,7 @@ describe('Data Import', () => {
 
     it(
       'C11139 Attaching match and action profiles to a job profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C11139', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C11139'] },
       () => {
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);

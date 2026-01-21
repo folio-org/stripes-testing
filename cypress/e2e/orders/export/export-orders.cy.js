@@ -117,7 +117,7 @@ describe('Orders', () => {
 
     it(
       'C196749 Export orders based on orders search (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C196749'] },
       () => {
         Orders.waitLoading();
         Orders.selectOpenStatusFilter();

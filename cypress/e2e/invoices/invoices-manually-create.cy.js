@@ -38,7 +38,7 @@ describe(
 
     it(
       'C2299 Manually Create Invoice (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C2299', 'shiftLeft'] },
       () => {
         Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);

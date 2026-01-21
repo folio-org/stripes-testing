@@ -47,7 +47,7 @@ describe('Invoices', () => {
 
     it(
       'C422074 User is able to view and edit all invoices settings including batch group credentials with "Settings (Invoices): Batch group usernames and passwords: view and edit" permission (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C422074'] },
       () => {
         SettingsInvoices.selectAdjustments();
         SettingsInvoices.checkNewButtonExists();

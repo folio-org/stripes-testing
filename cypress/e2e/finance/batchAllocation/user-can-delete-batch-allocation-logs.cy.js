@@ -203,7 +203,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C651498 User can delete Batch allocation logs (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C651498'] },
     () => {
       BatchEditBudget.openBatchAllocationLogsFromLedgerList();
       BatchEditBudget.clickActionsButton();

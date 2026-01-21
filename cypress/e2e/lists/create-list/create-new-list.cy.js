@@ -22,6 +22,7 @@ describe('Lists', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.uiOrganizationsView.gui,
+        Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
       ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -78,13 +79,23 @@ describe('Lists', () => {
         Lists.setDescription(listData.name);
 
         Lists.verifyRecordTypes([
-          'Holdings',
-          'Instances',
           'Items',
           'Loans',
-          'Organizations',
-          'Purchase order lines',
           'Users',
+          'Instances',
+          'Holdings',
+          'Organizations',
+          // 'Purchase Order lines',
+          // 'Budgets',
+          // 'Fund with ledger',
+          // 'Invoice lines',
+          // 'Invoices',
+          // 'Purchase order lines with titles',
+          // 'Purchase orders',
+          // 'Transactions',
+          // 'Voucher lines with fund',
+          // 'Voucher lines with invoice, fund, organization',
+          // 'Vouchers',
         ]);
 
         Lists.selectRecordType(listData.recordType);

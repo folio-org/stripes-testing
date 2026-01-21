@@ -69,7 +69,7 @@ describe('Orders', () => {
 
     it(
       'C737 Validate when receiving a piece that the item status is updated from "On order" (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C737'] },
       () => {
         TopMenuNavigation.navigateToApp('Orders');
         Orders.selectOrdersPane();

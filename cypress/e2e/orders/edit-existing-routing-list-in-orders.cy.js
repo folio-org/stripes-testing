@@ -153,7 +153,7 @@ describe('Receiving', () => {
 
   it(
     'C468149 Edit existing routing list in "Orders" app (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468149'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

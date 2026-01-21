@@ -83,7 +83,7 @@ describe('Data Import', () => {
 
     it(
       'C375103 Verify the empty SRS column when importing EDIFACT files (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375103', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C375103'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

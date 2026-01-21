@@ -85,7 +85,7 @@ describe('Citation: duplicate resource', () => {
 
   it(
     'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'C624280', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

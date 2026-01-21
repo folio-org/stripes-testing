@@ -65,7 +65,9 @@ describe('MARC', () => {
           Logs.waitFileIsImported(fileName);
           Logs.checkJobStatus(fileName, 'Completed');
           Logs.openFileDetails(fileName);
+          cy.intercept('GET', '/authority-storage/authorities*').as('getAuthorityData');
           Logs.goToTitleLink('Chemistry, Organic');
+          cy.wait('@getAuthorityData').its('response.statusCode').should('eq', 200);
           cy.wait(3000);
           Logs.checkAuthorityLogJSON([
             '"sourceFileId":',

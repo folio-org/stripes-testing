@@ -49,7 +49,7 @@ describe('Funds', () => {
 
   it(
     'C163928 Test acquisition unit restrictions for Fund records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C163928'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

@@ -15,7 +15,7 @@ describe('Orders', () => {
 
     it(
       'C347633 Create Acquisition method (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C347633'] },
       () => {
         AcquisitionMethods.newAcquisitionMethod();
         AcquisitionMethods.fillAcquisitionMethodName(acquisitionMethodName);

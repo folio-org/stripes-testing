@@ -191,7 +191,7 @@ describe('Orders', () => {
 
   it(
     'C627242 Unopen ongoing order with multiple funds in PO line (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C627242'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();

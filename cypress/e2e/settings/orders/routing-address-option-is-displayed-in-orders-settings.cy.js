@@ -32,7 +32,7 @@ describe('Orders', () => {
 
     it(
       'C466206 "Routing address" option is displayed in "Orders" settings (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C466206'] },
       () => {
         RoutingAddress.selectAddressType('Home');
         RoutingAddress.save();

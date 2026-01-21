@@ -41,8 +41,8 @@ describe('Orders', () => {
     });
 
     it(
-      'C353991 - Warning message appears when creating order from instance record and select not existing order (Thunderjet)(TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      'C353991 Warning message appears when creating order from instance record and select not existing order (Thunderjet)(TaaS)',
+      { tags: ['extendedPath', 'thunderjet', 'C353991'] },
       () => {
         InventorySearchAndFilter.switchToInstance();
         InventorySearchAndFilter.byKeywords(item.instanceName);

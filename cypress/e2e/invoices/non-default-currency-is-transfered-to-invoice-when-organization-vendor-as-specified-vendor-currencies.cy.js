@@ -51,7 +51,7 @@ describe('Invoices', () => {
 
   it(
     'C451451 Non-default currency is transferred to Invoice when Organization-vendor has specified "Vendor currencies" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C451451'] },
     () => {
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });
       InvoiceEditForm.fillInvoiceFields({

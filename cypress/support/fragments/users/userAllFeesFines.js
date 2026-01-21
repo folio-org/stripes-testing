@@ -60,7 +60,8 @@ export default {
   goToClosedFeesFines: () => cy.do(Button({ id: 'closed-accounts' }).click()),
   goToAllFeeFines: () => cy.do(Button({ id: 'all-accounts' }).click()),
   createFeeFine: () => {
-    cy.do(Button('Actions').click());
+    cy.do(HTML({ id: 'paneHeaderpane-account-listing' }).find(Button('Actions')).click());
+    cy.wait(500);
     cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
   },
   createFeeFineViaActionsButton: () => {
@@ -146,7 +147,6 @@ export default {
         .choose('Pay'),
     );
   },
-
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
   },
@@ -160,6 +160,16 @@ export default {
   },
   verifyFeeFineCount: (rowCount) => {
     cy.expect(feeFinesList.has({ rowCount }));
+  },
+  checkRefundEllipsisDisabled: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .open(),
+    );
+    cy.get('button').contains('Refund').should('have.attr', 'disabled');
+    cy.get('body').type('{esc}');
   },
   closeFeesFinesDetails: () => cy.do(Button({ icon: 'times' }).click()),
 };

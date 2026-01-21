@@ -5,20 +5,20 @@ import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
-  settingsItems,
   messages,
+  settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import FormatsConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
 import ConfirmCreate from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Formats from '../../../../../support/fragments/settings/inventory/instances/formats';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 // import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import Permissions from '../../../../../support/dictionary/permissions';
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';

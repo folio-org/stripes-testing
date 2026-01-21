@@ -74,7 +74,7 @@ describe('Invoices', () => {
 
   it(
     'C350389 Test purchase order line plugin search (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C350389'] },
     () => {
       Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);

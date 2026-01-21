@@ -33,6 +33,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const quantityOfItems = '17';
+    const filePath = 'marcFileForC375989.mrc';
     const marcFileName = `C375989 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C375989 Test Order mapping profile ${getRandomPostfix()}`,
@@ -112,7 +113,7 @@ describe('Data Import', () => {
 
     it(
       'C375989 Verify the importing of eBook orders with open status (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C375989', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'folijet', 'C375989'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
@@ -132,7 +133,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC375989.mrc', marcFileName);
+        DataImport.uploadFile(filePath, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
