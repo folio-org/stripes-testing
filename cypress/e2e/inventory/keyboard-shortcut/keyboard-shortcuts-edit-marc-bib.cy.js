@@ -67,6 +67,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(createdRecordId);
         InventoryInstances.selectInstanceById(createdRecordId);
         InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
 
         InventoryKeyboardShortcuts.pressHotKey(InventoryHotkeys.hotKeys.editMarc);
         QuickMarcEditor.waitLoading();

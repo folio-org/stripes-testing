@@ -50,9 +50,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(createdRecordId);
         InventoryInstances.selectInstanceById(createdRecordId);
         InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
 
         InventoryKeyboardShortcuts.pressHotKey(InventoryHotkeys.hotKeys.editMarc);
-        cy.wait(3000); // wait to ensure that nothing happens
+        cy.wait(5000); // wait to be sure that QuickMarc window has not been opened
         InventoryInstance.waitLoading();
         InventorySearchAndFilter.waitLoading();
       },
