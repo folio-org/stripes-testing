@@ -3,21 +3,45 @@ const { parseGrep, shouldTestRun } = require('@cypress/grep/src/utils');
 const globby = require('globby');
 const fs = require('fs');
 const { getTestNames } = require('find-test-names');
+const { argv } = require('node:process');
 
-const grepTags = 'testSmoke';
+let numberOfThreads = 1;
+let grepTags = '';
+let envVars = '';
+
+// print process.argv
+argv.forEach((val, index) => {
+  console.log(`${index}: ${val}`);
+  if (val.includes('tags=')) {
+    grepTags = val.replace('tags=', '');
+  }
+  if (val.includes('threads=')) {
+    numberOfThreads = Number(val.replace('threads=', ''));
+  }
+  if (val.includes('env=')) {
+    envVars = val.replace('env=', '');
+  }
+});
+
+if (grepTags === '') {
+  throw new Error('No tags provided. Use tags=<tag1 tag2 ...> to specify tags to run.');
+}
+
+console.log(`\nNumber of threads: ${numberOfThreads}`);
+console.log(`Environment variables: ${envVars}`);
+console.log(`Tags: ${grepTags}\n`);
 
 const parsedGrep = parseGrep(null, grepTags);
 
 const specFiles = globby.sync('cypress/e2e/**/*.cy.js');
 const testIds = [];
 
-let numberOfThreads = 3;
 const chunks = [];
 
-if (process.env.threads) {
-  console.log('Threads from env: ' + process.env.threads);
-  numberOfThreads = Number(process.env.threads);
-}
+// if (process.env.threads) {
+//   console.log('Threads from env: ' + process.env.threads);
+//   numberOfThreads = Number(process.env.threads);
+// }
 
 specFiles.forEach((specFile) => {
   const text = fs.readFileSync(specFile, { encoding: 'utf8' });
@@ -43,13 +67,15 @@ if (numberOfThreads > 1) {
     }
     chunks.push(chunk);
   }
+} else {
+  chunks.push(testIds);
 }
 const fileJson = {};
 fileJson.workers = [];
 
-console.log(`Number of chunks: ${chunks.length}\n`);
+console.log(`\nNumber of chunks: ${chunks.length}\n`);
 chunks.forEach((chunk, index) => {
-  const parsedChunk = `--env grepTags='${chunk.join(' ')}'`;
+  const parsedChunk = `--env ${envVars ? envVars + ',' : ''}grepTags='${chunk.join(' ')}'`;
   fileJson.workers.push(parsedChunk);
   console.log(`Chunk #${index + 1}: `, chunk.length);
   console.log(parsedChunk + '\n');
