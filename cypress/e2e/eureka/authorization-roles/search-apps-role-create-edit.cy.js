@@ -60,10 +60,6 @@ describe('Eureka', () => {
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
         });
-        // Workaround for STCOM-1476
-        cy.document().then((doc) => {
-          doc.documentElement.style.zoom = '110%';
-        });
       });
 
       after('Delete user and role', () => {
