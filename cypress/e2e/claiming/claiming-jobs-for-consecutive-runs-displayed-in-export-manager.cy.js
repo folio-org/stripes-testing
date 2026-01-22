@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import Permissions from '../../support/dictionary/permissions';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -13,15 +12,33 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Claiming from '../../support/fragments/claiming/claiming';
 import Receiving from '../../support/fragments/receiving/receiving';
+import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
 import { ORDER_STATUSES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 
 describe('Claiming', () => {
   const testData = {
     organization: {
       ...NewOrganization.defaultUiOrganizations,
-      name: `AutotestOrg_C692165_${getRandomPostfix()}`,
+      name: `AutotestOrg_C692237_${getRandomPostfix()}`,
+      accounts: [
+        {
+          accountNo: getRandomPostfix(),
+          accountStatus: 'Active',
+          acqUnitIds: [],
+          appSystemNo: '',
+          description: 'Main library account',
+          libraryCode: 'COB',
+          libraryEdiCode: getRandomPostfix(),
+          name: 'TestAccount1',
+          notes: '',
+          paymentMethod: 'Cash',
+        },
+      ],
     },
+    integrationName: `AutotestIntegration_C692237_${getRandomPostfix()}`,
+    pieces: [],
   };
 
   before('Create test data', () => {
@@ -30,6 +47,7 @@ describe('Claiming', () => {
     ServicePoints.getViaApi()
       .then((servicePoints) => {
         testData.servicePointId = servicePoints[0].id;
+
         NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.servicePointId)).then(
           (location) => {
             testData.location = location;
@@ -57,12 +75,12 @@ describe('Claiming', () => {
                     Orders.createOrderViaApi(orderData).then((orderResponse) => {
                       testData.order = orderResponse;
                       testData.orderNumber = orderResponse.poNumber;
+                      testData.polTitle = `Autotest_POL_C692237_${getRandomPostfix()}`;
 
                       const orderLineData = {
                         ...BasicOrderLine.defaultOrderLine,
-                        id: uuid(),
                         purchaseOrderId: testData.order.id,
-                        titleOrPackage: `Autotest_POL_${getRandomPostfix()}`,
+                        titleOrPackage: testData.polTitle,
                         claimingActive: true,
                         claimingInterval: 1,
                         checkinItems: false,
@@ -70,13 +88,13 @@ describe('Claiming', () => {
                         cost: {
                           listUnitPrice: 10.0,
                           currency: 'USD',
-                          quantityPhysical: 1,
+                          quantityPhysical: 2,
                         },
                         locations: [
                           {
                             locationId: testData.location.id,
-                            quantity: 1,
-                            quantityPhysical: 1,
+                            quantity: 2,
+                            quantityPhysical: 2,
                           },
                         ],
                         acquisitionMethod: testData.acquisitionMethod,
@@ -85,6 +103,16 @@ describe('Claiming', () => {
                           materialType: testData.materialType.id,
                           materialSupplier: testData.organization.id,
                           volumes: [],
+                        },
+                        vendorDetail: {
+                          instructions: '',
+                          vendorAccount: testData.organization.accounts[0].accountNo,
+                          referenceNumbers: [
+                            {
+                              refNumber: `VendorRef_${getRandomPostfix()}`,
+                              refNumberType: 'Vendor order reference number',
+                            },
+                          ],
                         },
                       };
 
@@ -98,12 +126,13 @@ describe('Claiming', () => {
                           cy.wait(3000);
 
                           Receiving.getPiecesViaApi(testData.orderLine.id).then((pieces) => {
-                            if (pieces && pieces.length > 0) {
-                              testData.piece = pieces[0];
-                              Pieces.updateOrderPieceViaApi({
-                                ...testData.piece,
+                            if (pieces && pieces.length >= 2) {
+                              testData.pieces = pieces;
+                              const updatePromises = pieces.map((piece) => Pieces.updateOrderPieceViaApi({
+                                ...piece,
                                 receivingStatus: 'Late',
-                              });
+                              }));
+                              cy.wrap(Promise.all(updatePromises));
                             }
                           });
                         });
@@ -117,8 +146,30 @@ describe('Claiming', () => {
         );
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiClaimingView.gui]).then((userProperties) => {
+        // Claiming integration creation via API is not supported (POST /data-export-spring/configs
+        // returns 400 for CLAIMS_CSV_EXPORT type), so using UI approach with admin credentials.
+        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+        Organizations.searchByParameters('Name', testData.organization.name);
+        Organizations.selectOrganization(testData.organization.name);
+        Organizations.addIntegration();
+        Organizations.fillIntegrationInformationWithoutSchedulingWithDifferentInformation({
+          integrationName: testData.integrationName,
+          integrationDescription: 'Autotest claiming integration',
+          integrationType: 'Claiming',
+        });
+        Organizations.fillIntegrationInformationWithoutSchedulingWithDifferentInformation({
+          transmissionMethod: 'File download',
+          fileFormat: 'CSV',
+        });
+        Organizations.saveOrganization();
+        cy.createTempUser([
+          Permissions.uiClaimingView.gui,
+          Permissions.exportManagerAll.gui,
+          Permissions.uiReceivingViewEditCreate.gui,
+          Permissions.exportManagerDownloadAndResendFiles.gui,
+        ]).then((userProperties) => {
           testData.user = userProperties;
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.claimingPath,
             waiter: Claiming.waitLoading,
@@ -129,24 +180,63 @@ describe('Claiming', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Orders.deleteOrderViaApi(testData.order.id);
-    Organizations.deleteOrganizationViaApi(testData.organization.id);
-    Users.deleteViaApi(testData.user.userId);
+    if (testData.order?.id) {
+      Orders.deleteOrderViaApi(testData.order.id);
+    }
+    if (testData.organization?.id) {
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+    }
+    if (testData.user?.userId) {
+      Users.deleteViaApi(testData.user.userId);
+    }
   });
 
   it(
-    'C692165 User without receiving-view capabilities cannot view list of pieces (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C692165'] },
+    'C692237 Claiming jobs for different consecutive runs are displayed in "Export manager" (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C692237'] },
     () => {
       Claiming.checkClaimingPaneIsDisplayed();
-      Claiming.verifyMessageDisplayed('No results found. Please check your filters.');
-      Claiming.verifyPiecesCount(0);
+      Claiming.searchByTitle(testData.polTitle);
+      Claiming.verifyPiecesWithTitleDisplayed(testData.polTitle, 2);
 
-      Claiming.expandActionsDropdown();
-      Claiming.checkActionsMenuOptionExists('Group by organization', false);
-      Claiming.checkActionsMenuOptionExists('Send claim', false);
-      Claiming.checkActionsMenuOptionExists('Delay claim', false);
-      Claiming.checkActionsMenuOptionExists('Unreceivable', false);
+      Claiming.selectPieceByRowIndex(0);
+      Claiming.sendClaim();
+      InteractorsTools.checkCalloutMessage(
+        'Claims are currently being processed. Please check Export manager for job status.',
+      );
+      cy.wait(3000);
+
+      TopMenu.openExportManagerApp();
+      ExportManagerSearchPane.waitLoading();
+      ExportManagerSearchPane.selectOrganizationsSearch();
+      ExportManagerSearchPane.selectExportMethod(testData.integrationName);
+      cy.wait(5000);
+      ExportManagerSearchPane.verifyJobDataInResults(
+        [testData.integrationName, 'Successful'],
+        true,
+      );
+      ExportManagerSearchPane.verifyJobsCountInResults(1);
+
+      TopMenu.openClaimingApp();
+      Claiming.waitLoading();
+      Claiming.checkClaimingPaneIsDisplayed();
+      Claiming.searchByTitle(testData.polTitle);
+      Claiming.verifyPiecesWithTitleDisplayed(testData.polTitle, 1);
+
+      Claiming.selectPieceByRowIndex(0);
+      Claiming.sendClaim();
+      InteractorsTools.checkCalloutMessage(
+        'Claims are currently being processed. Please check Export manager for job status.',
+      );
+      cy.wait(3000);
+
+      TopMenu.openExportManagerApp();
+      cy.wait(5000);
+      ExportManagerSearchPane.verifyJobDataInResults(
+        [testData.integrationName, 'Successful'],
+        true,
+      );
+      ExportManagerSearchPane.verifyJobsCountInResults(2);
     },
   );
 });
