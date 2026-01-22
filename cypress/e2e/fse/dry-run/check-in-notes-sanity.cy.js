@@ -27,7 +27,8 @@ describe('Check in', () => {
   let defaultLocation = null;
 
   before('Creating test data', () => {
-    cy.getAdminToken();
+    cy.setTenant(memberTenant.id);
+    cy.getUserToken(user.username, user.password);
     cy.then(() => {
       cy.getUserDetailsByUsername(user.username)
         .then((details) => {
@@ -89,7 +90,8 @@ describe('Check in', () => {
   });
 
   after('Deleting test data', () => {
-    cy.getAdminToken();
+    cy.setTenant(memberTenant.id);
+    cy.getUserToken(user.username, user.password);
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: servicePoint.id,
