@@ -118,6 +118,10 @@ describe('Eureka', () => {
               expect(body.type).to.eq(roleTypes.default);
             });
 
+            cy.getAuthorizationRoleApi(defaultRole4.id).then(({ body }) => {
+              expect(body.type).to.eq(roleTypes.default);
+            });
+
             cy.getAuthorizationRoleApi(regularRole.id).then(({ body }) => {
               expect(body.type).to.eq(roleTypes.regular);
             });
