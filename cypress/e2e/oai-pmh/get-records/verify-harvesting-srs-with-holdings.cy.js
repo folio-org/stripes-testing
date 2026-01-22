@@ -9,6 +9,7 @@ import {
 } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -29,7 +30,12 @@ describe('OAI-PMH', () => {
     before('Create test data and configure behavior', () => {
       cy.getAdminToken();
 
-      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
 
       // Fetch electronic access relationship IDs
       const relationshipQueries = [
