@@ -22,6 +22,25 @@ const parseAdminParams = () => {
   };
 };
 
+const parseCustomParams = (sanityParams) => {
+  let parsedParams = null;
+  if (!sanityParams) {
+    throw new Error('Sanity check parameters are not set in Cypress environment variables');
+  }
+  try {
+    parsedParams = JSON.parse(sanityParams);
+  } catch (e) {
+    throw new Error(
+      'Sanity check parameters are not valid JSON\n Use format:\n {"username": "", "password": "", "centralTenant": {"id": "", "name": ""}, "memberTenant": {"id": "", "name": ""}}',
+    );
+  }
+  return {
+    user: { username: parsedParams.username, password: parsedParams.password },
+    centralTenant: parsedParams.centralTenant,
+    memberTenant: parsedParams.memberTenant,
+  };
+};
+
 /**
  * Parses sanity check parameters from Cypress environment variables.
  *
@@ -44,22 +63,9 @@ const parseAdminParams = () => {
  */
 export const parseSanityParameters = () => {
   const sanityParams = Cypress.env('sanityCheck');
-  let parsedParams = null;
-  if (!sanityParams) {
-    throw new Error('Sanity check parameters are not set in Cypress environment variables');
+  if (sanityParams === 'defaultAdmin') {
+    return parseAdminParams();
+  } else {
+    return parseCustomParams(sanityParams);
   }
-  try {
-    parsedParams = JSON.parse(sanityParams);
-  } catch (e) {
-    throw new Error(
-      'Sanity check parameters are not valid JSON\n Use format:\n {"username": "", "password": "", "centralTenant": {"id": "", "name": ""}, "memberTenant": {"id": "", "name": ""}}',
-    );
-  }
-  return (
-    parseAdminParams() || {
-      user: { username: parsedParams.username, password: parsedParams.password },
-      centralTenant: parsedParams.centralTenant,
-      memberTenant: parsedParams.memberTenant,
-    }
-  );
 };
