@@ -44,7 +44,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375186 GetRecord: Verify MARC instances suppressed from discovery in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375186', 'nonParallel'] },
+      { tags: ['extendedPathFlaky', 'firebird', 'C375186', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
           OaiPmh.verifyIdDoesNotExistError(response);
