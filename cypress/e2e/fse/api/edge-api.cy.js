@@ -197,6 +197,11 @@ describe('fse-edge', () => {
     `TC195958 - edge-dematic EMS integration verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-dematic', 'app-edge-complete'] },
     () => {
+      // skip this test for bugfest env as it contains incorrect data causing test failures
+      if (Cypress.env('EDGE_HOST') && Cypress.env('EDGE_HOST').includes('bugfest')) {
+        cy.log('Skipping test for bugfest environment');
+        return;
+      }
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.getAllRemoteStorageConfigurations().then((remoteConfigurations) => {
