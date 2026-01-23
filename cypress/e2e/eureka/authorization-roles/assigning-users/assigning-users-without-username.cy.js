@@ -43,6 +43,9 @@ describe('Eureka', () => {
             testData.userBGroup = Cypress.env('userGroups')[1].group;
             testData.userCGroup = Cypress.env('userGroups')[2].group;
             delete userBodies[0].username;
+            cy.ifConsortia(true, () => {
+              userBodies[0].type = 'patron';
+            });
             cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
               testData.userAId = userId;
               userIds.push(userId);
@@ -68,12 +71,10 @@ describe('Eureka', () => {
                 capabsToAssign,
                 capabSetsToAssign,
               );
-              cy.waitForAuthRefresh(() => {
-                cy.login(testData.tempUser.username, testData.tempUser.password, {
-                  path: TopMenu.settingsAuthorizationRoles,
-                  waiter: AuthorizationRoles.waitContentLoading,
-                });
-              }, 20_000);
+              cy.login(testData.tempUser.username, testData.tempUser.password, {
+                path: TopMenu.settingsAuthorizationRoles,
+                waiter: AuthorizationRoles.waitContentLoading,
+              });
             });
           });
         });
