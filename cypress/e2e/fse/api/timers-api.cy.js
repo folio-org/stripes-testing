@@ -32,6 +32,9 @@ describe('fse-timers', () => {
           );
           // Check that each timer descriptor has enabled = true
           response.body.timerDescriptors.forEach((timer) => {
+            if (!timer.enabled) {
+              cy.log(`Timer with moduleName "${timer.moduleName}" is disabled (enabled: false)`);
+            }
             cy.wrap(timer.enabled).should('be.true');
           });
         });
