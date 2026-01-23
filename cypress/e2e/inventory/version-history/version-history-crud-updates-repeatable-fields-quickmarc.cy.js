@@ -308,8 +308,8 @@ describe('Inventory', () => {
             cy.wait(500);
           });
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
-          QuickMarcEditor.checkAfterSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
 
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();

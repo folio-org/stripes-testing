@@ -205,7 +205,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               cy.wait(1000);
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -285,7 +285,7 @@ describe('MARC', () => {
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             rowIndexOfLinkedFields.forEach((linkedField) => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkedField);
             });

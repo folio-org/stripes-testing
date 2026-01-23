@@ -273,7 +273,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingFieldContent(fields[0].rowIndex, fields[0].newContent);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.viewSource();

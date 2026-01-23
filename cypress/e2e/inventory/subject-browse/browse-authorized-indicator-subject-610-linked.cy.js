@@ -74,7 +74,7 @@ describe('Inventory', () => {
         MarcAuthority.contains(authorityHeading);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.login(user.username, user.password, {
@@ -134,7 +134,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
         QuickMarcEditor.confirmUnlinkingField();
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
         InventorySearchAndFilter.switchToBrowseTab();
