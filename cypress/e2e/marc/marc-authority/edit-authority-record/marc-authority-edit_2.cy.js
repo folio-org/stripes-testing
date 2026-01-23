@@ -87,7 +87,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
           });
           MarcAuthority.changeTag(rowIndexTag1XX, '110');
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.edit();
 
           MarcAuthority.addNewField(rowIndexTag1XX, '100', '$a test');

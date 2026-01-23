@@ -109,7 +109,7 @@ describe('MARC', () => {
             testData.authority.field100NewValue,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR05and17and18);
 
           Object.values(AUTHORITY_LDR_FIELD_STATUS_DROPDOWN).forEach((dropdownOption) => {
@@ -135,7 +135,7 @@ describe('MARC', () => {
             AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
             AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.A,
           );
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(0, errorInvalidLDR17and18);
 
           QuickMarcEditor.selectFieldsDropdownOption(
@@ -152,8 +152,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(
             AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.PUNCT,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.ELVL);
           QuickMarcEditor.verifyDropdownValueOfLDRIsValid(

@@ -127,7 +127,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData));
 
             // Step 8: Click on the "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.url().then((url) => {
               createdInstanceId = url.split('/')[5].split('?')[0];

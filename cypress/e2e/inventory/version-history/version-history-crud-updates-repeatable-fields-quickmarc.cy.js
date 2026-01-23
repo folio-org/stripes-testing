@@ -308,7 +308,7 @@ describe('Inventory', () => {
             cy.wait(500);
           });
           cy.wait(3000);
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
 
           InventoryInstance.viewSource();

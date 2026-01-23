@@ -119,7 +119,6 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(83);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             cy.wait(4000);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             // need to wait until fields will be deleted
             cy.wait(1500);

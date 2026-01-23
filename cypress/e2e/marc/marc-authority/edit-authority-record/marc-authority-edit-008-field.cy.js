@@ -245,7 +245,7 @@ describe('MARC', () => {
           });
 
           MarcAuthority.select008DropdownsIfOptionsExist(dropdownSelections);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.contains(testData.editedDropdownOptions);
         },
       );

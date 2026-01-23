@@ -203,8 +203,6 @@ describe('MARC', () => {
             });
             QuickMarcEditor.addNewField('700', '$a smth $0 3052044', 9);
             QuickMarcEditor.updateExistingField('610', '$0 n93094742');
-            cy.wait(1000);
-            QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
 

@@ -260,7 +260,7 @@ describe('MARC', () => {
             6,
           );
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
 
           QuickMarcEditor.verifyTextBoxValueInField(

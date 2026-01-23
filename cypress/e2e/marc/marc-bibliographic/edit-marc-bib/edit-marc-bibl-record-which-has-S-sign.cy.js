@@ -92,10 +92,29 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(fieldValue.tag, fieldValue.newValue);
           QuickMarcEditor.checkButtonsEnabled();
 
-          // 4 Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          // 4 Add new fields by clicking on "+" icon and fill it as specified
+          QuickMarcEditor.addEmptyFields(18);
+          QuickMarcEditor.addEmptyFields(19);
+          QuickMarcEditor.addEmptyFields(20);
+          cy.wait(1000);
+          // QuickMarcEditor.addValuesToExistingField(18, '700', testData.field7XXOne);
+          // QuickMarcEditor.addValuesToExistingField(19, '710', testData.field7XXTwo);
+          // QuickMarcEditor.addValuesToExistingField(20, '711', testData.field7XXThree);
+
+          // 5 Click on the "Save & keep editing" button
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkContentByTag('100', '$a A{dollar}AP Rocky $c (Rapper), $d 1988-');
+          QuickMarcEditor.checkContentByTag(
+            '245',
+            '$a C451561Long. Live. A{dollar}AP $h [sound recording] / $c A{dollar}AP Rocky.',
+          );
+          QuickMarcEditor.checkContent('$a upper case first code test', 19);
+          QuickMarcEditor.checkContentByTag('710', '$a upper case $b not First $c Code $d TEST');
+          QuickMarcEditor.checkContentByTag('711', '$b A $a P $b p');
+          cy.wait(3000);
+
+          // 6 Close "quickMARC" pane
+          QuickMarcEditor.pressCancel();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(paneHeader);
           InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
           InstanceRecordView.verifyResourceTitle(instanceTitle);

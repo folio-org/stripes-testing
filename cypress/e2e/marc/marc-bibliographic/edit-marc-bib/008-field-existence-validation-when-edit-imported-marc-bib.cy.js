@@ -153,13 +153,11 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.deleteValuesIn008Boxes();
-          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.pressSaveAndClose();
           cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait('@recordUpdated').then(() => {

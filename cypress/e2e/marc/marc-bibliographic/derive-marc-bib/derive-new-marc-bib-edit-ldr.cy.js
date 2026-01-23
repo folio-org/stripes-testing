@@ -342,7 +342,9 @@ describe('MARC', () => {
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
             set.tag008Fields();
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndCloseDerive();
+
             InventoryInstance.waitInstanceRecordViewOpened(title);
           });
 

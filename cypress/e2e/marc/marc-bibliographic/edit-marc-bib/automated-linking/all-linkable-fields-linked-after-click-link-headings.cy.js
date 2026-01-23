@@ -288,6 +288,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.checkButtonsEnabled();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');

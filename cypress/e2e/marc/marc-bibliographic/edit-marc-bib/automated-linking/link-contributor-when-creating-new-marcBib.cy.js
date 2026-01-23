@@ -150,6 +150,8 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);

@@ -154,7 +154,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.marcTitle);
 
           InventoryInstance.editMarcBibliographicRecord();

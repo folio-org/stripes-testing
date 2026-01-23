@@ -185,6 +185,7 @@ describe('MARC', () => {
               fieldsToUpdate[1].seventhBox,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(4000);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Contributor',

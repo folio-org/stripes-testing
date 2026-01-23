@@ -135,7 +135,6 @@ describe('MARC', () => {
             // 5 Click "Save & close" button
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             // 6 Click on the "Actions" in the third pane → Select "View source" option
             // Source view of edited record is opened in a new pane

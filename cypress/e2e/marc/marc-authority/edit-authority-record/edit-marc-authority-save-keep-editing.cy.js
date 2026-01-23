@@ -147,7 +147,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save edits and verify view updated
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -160,7 +160,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -174,7 +174,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save deletion and verify modal
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.closeAllCallouts();
@@ -189,7 +189,7 @@ describe('MARC', () => {
 
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
 
@@ -199,7 +199,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save field reordering and verify view updated
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -216,7 +216,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save and close edit view
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.editedFieldsC360092[0].content);
           MarcAuthority.contains(testData.editedFieldsC360092[1].content);
@@ -240,8 +240,6 @@ describe('MARC', () => {
             testData.editedFieldC360093.tag,
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
@@ -261,8 +259,6 @@ describe('MARC', () => {
             testData.editedFieldC360093.tag,
             `${subfieldPrefix}${testData.editedFieldC360093.secondContent}`,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkContent(
             `${subfieldPrefix} ${testData.editedFieldC360093.secondContent}`,

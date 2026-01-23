@@ -132,7 +132,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth111);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.verifyAlternativeTitle(
@@ -146,7 +146,6 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth111);
             QuickMarcEditor.verifyIconsAfterUnlinking(11);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
             // need to wait until the instance will be updated

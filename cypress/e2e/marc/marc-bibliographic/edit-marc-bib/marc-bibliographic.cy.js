@@ -95,7 +95,7 @@ describe('MARC', () => {
             QuickMarcEditor.addRow();
             QuickMarcEditor.checkInitialContent();
             const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // Wait for the content to be loaded.
             cy.wait(4000);
@@ -166,7 +166,7 @@ describe('MARC', () => {
               testRecord.content,
               testRecord.tag,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(expectedInSourceRow);
@@ -186,8 +186,6 @@ describe('MARC', () => {
 
               QuickMarcEditor.deletePenaltField().then((deletedTag) => {
                 const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.deleteConfirmationPresented();
                 QuickMarcEditor.confirmDelete();

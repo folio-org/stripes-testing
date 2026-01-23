@@ -13,7 +13,6 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import { Callout } from '../../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -148,9 +147,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.expect(Callout({ type: 'warning' }).exists());
             cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,
