@@ -79,16 +79,14 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
-        }, 20_000);
+
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
+        });
       });
     });
 

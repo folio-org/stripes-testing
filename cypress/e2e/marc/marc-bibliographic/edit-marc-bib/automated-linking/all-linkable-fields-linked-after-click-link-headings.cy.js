@@ -244,8 +244,6 @@ describe('MARC', () => {
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             fields.forEach((field) => {
               InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -289,8 +287,6 @@ describe('MARC', () => {
               '$a Coates, Ta-Nehisi, $eauthor. $0 n2008001084',
             );
             QuickMarcEditor.checkButtonsEnabled();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
