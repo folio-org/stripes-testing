@@ -68,6 +68,7 @@ describe('Inventory', () => {
         cy.login(userC476698.username, userC476698.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.validateSearchTabIsDefault();
         InventorySearchAndFilter.instanceTabIsDefault();
@@ -91,6 +92,7 @@ describe('Inventory', () => {
         cy.login(userC476699.username, userC476699.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.validateSearchTabIsDefault();
         InventorySearchAndFilter.instanceTabIsDefault();
