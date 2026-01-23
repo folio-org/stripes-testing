@@ -91,7 +91,7 @@ describe('MARC', () => {
             testData.tag240FieldIndex,
             testData.tag240,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.waitForAuthRefresh(() => {
@@ -135,7 +135,7 @@ describe('MARC', () => {
 
         QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedAuthorityValue);
         cy.wait(1000);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+        QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();

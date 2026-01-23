@@ -155,8 +155,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.field130.tag130);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
@@ -214,7 +214,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);
             InventoryInstance.viewSource();

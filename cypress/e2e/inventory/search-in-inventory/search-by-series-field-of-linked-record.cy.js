@@ -132,7 +132,7 @@ describe('Inventory', () => {
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySeriesStatement(0, including(testData.seriesStatement[i]));
         InventoryInstances.resetAllFilters();
       }

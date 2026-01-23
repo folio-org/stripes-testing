@@ -85,7 +85,7 @@ describe('MARC', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 

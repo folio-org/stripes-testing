@@ -104,8 +104,6 @@ describe('MARC', () => {
               marcBibRecordData.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -154,9 +152,7 @@ describe('MARC', () => {
             marcAuthRecordData.newTag010Value,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(marcAuthRecordData.callOut);
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyNumberOfTitles(

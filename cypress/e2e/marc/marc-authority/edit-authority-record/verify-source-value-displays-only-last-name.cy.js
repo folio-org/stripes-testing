@@ -121,7 +121,6 @@ describe('MARC', () => {
 
         // Step 7: Click on the "Save & close" button
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthority.waitLoading();
 

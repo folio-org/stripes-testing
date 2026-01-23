@@ -192,8 +192,6 @@ describe('Data Import', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -245,8 +243,6 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });

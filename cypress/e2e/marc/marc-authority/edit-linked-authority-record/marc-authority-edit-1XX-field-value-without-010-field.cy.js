@@ -94,9 +94,8 @@ describe('MARC', () => {
                 linkingTagAndValue.tag,
                 linkingTagAndValue.rowIndex,
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-              cy.wait(3_000);
             });
           })
           .then(() => {

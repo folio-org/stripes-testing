@@ -80,11 +80,12 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -102,14 +103,15 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.closeCallout();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+            }, 20_000);
           });
       });
 
@@ -140,12 +142,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.new010FieldValue);
           cy.wait(2000);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 

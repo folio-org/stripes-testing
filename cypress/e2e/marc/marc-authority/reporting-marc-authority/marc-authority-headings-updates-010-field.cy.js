@@ -120,7 +120,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           });
 
@@ -150,8 +150,6 @@ describe('MARC', () => {
           QuickMarcEditor.waitLoading();
 
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
