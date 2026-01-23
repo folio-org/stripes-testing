@@ -15,5 +15,6 @@ export default {
     find: '{ctrl}F',
     moveToPreviousSubfield: '{ctrl}[',
     moveToNextSubfield: '{ctrl}]',
+    editMarc: '{ctrl}{shift}E',
   },
 };
