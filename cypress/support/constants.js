@@ -23,6 +23,7 @@ export const APPLICATION_NAMES = {
   NOTES: 'Notes',
   ORGANIZATIONS: 'Organizations',
   COURSES: 'Courses',
+  RECEIVING: 'Receiving',
 };
 
 export const REQUEST_METHOD = {

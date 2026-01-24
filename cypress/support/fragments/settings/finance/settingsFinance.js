@@ -141,14 +141,14 @@ export default {
     );
   },
 
-  checkFundType: (fundType) => {
+  checkFundType: (fundTypeName) => {
     cy.do(
-      MultiColumnListCell({ content: fundType.name }).perform((element) => {
+      MultiColumnListCell({ content: fundTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: fundType.name }),
+            .has({ content: fundTypeName }),
         );
       }),
     );

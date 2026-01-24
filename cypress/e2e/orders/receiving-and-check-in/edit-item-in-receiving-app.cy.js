@@ -1,13 +1,11 @@
 import moment from 'moment';
-
+import { LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import { Receivings } from '../../../support/fragments/receiving';
 import ReceivingEditForm from '../../../support/fragments/receiving/receivingEditForm';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -16,7 +14,6 @@ describe('Orders', () => {
     const today = moment().format('YYYY/MM/DD');
     const testData = {
       organization: NewOrganization.getDefaultOrganization(),
-      servicePoint: ServicePoints.getDefaultServicePoint(),
       materialType: MaterialTypes.getDefaultMaterialType(),
       location: {},
       order: {},
@@ -25,13 +22,11 @@ describe('Orders', () => {
 
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
-        ServicePoints.createViaApi(testData.servicePoint).then(() => {
-          testData.location = Locations.getDefaultLocation({
-            servicePointId: testData.servicePoint.id,
-          }).location;
-
-          Locations.createViaApi(testData.location);
-        });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResponse) => {
+            testData.location = locationResponse;
+          },
+        );
 
         Organizations.createOrganizationViaApi(testData.organization).then(() => {
           MaterialTypes.createMaterialTypeViaApi(testData.materialType);
@@ -63,7 +58,6 @@ describe('Orders', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.receivingPath,
           waiter: Receivings.waitLoading,
-          authRefresh: true,
         });
       });
     });
@@ -72,10 +66,7 @@ describe('Orders', () => {
       cy.getAdminToken().then(() => {
         Organizations.deleteOrganizationViaApi(testData.organization.id);
         Orders.deleteOrderViaApi(testData.order.id);
-        InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-        Locations.deleteViaApi(testData.location);
         MaterialTypes.deleteViaApi(testData.materialType.id);
-        ServicePoints.deleteViaApi(testData.servicePoint.id);
         Users.deleteViaApi(testData.user.userId);
       });
     });

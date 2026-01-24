@@ -36,12 +36,12 @@ describe('Fund type view', () => {
   });
 
   it(
-    'C409416 A user with "Settings (Finance): View settings" permission can only view appropriate settings (Thunderjet)(TaaS)',
+    'C409416 A user with "Settings (Finance): View settings" permission can only view appropriate settings (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet', 'C409416'] },
     () => {
       SettingsFinance.verifyItemInFinancePanel();
       SettingsFinance.verifyItemInDetailPanel();
-      SettingsFinance.checkFundType(newFundTypes);
+      SettingsFinance.checkFundType(newFundTypes.name);
       SettingsFinance.checkEditDeleteIcon(newFundTypes);
       SettingsFinance.clickExpenseClass();
       SettingsFinance.verifyItemInDetailPanel();

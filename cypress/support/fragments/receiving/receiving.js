@@ -41,6 +41,7 @@ const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
+const resetButton = Button('Reset all');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -707,6 +708,17 @@ export default {
           (inst) => /^[a-zA-Z0-9\s]+$/.test(inst.title) && inst.title.length < 50,
         );
         return simpleInstance?.title || response.body.instances[0]?.title || 'Default Title';
+      });
+  },
+  resetFilters: () => {
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
+        }
       });
   },
 };
