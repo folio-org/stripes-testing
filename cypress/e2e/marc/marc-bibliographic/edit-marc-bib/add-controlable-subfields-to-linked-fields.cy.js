@@ -76,7 +76,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -91,7 +90,7 @@ describe('MARC', () => {
             testData.tag240FieldIndex,
             testData.tag240,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.waitForAuthRefresh(() => {
@@ -135,11 +134,12 @@ describe('MARC', () => {
 
         QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedAuthorityValue);
         cy.wait(1000);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+        QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+        QuickMarcEditor.confirmUpdateLinkedBibs(1);
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
 
         InventoryInstance.editMarcBibliographicRecord();
