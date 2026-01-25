@@ -63,7 +63,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.visit(TopMenu.dataImportPath);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -79,6 +78,7 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
@@ -93,8 +93,6 @@ describe('MARC', () => {
                 linkingTagAndValues.tag,
                 linkingTagAndValues.rowIndex,
               );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -123,8 +121,6 @@ describe('MARC', () => {
 
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.checkPresentedText(testData.instanceTitleAfterUpdate);

@@ -63,6 +63,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle(instanceRecordId);
         InventoryInstances.selectInstanceById(instanceRecordId);
@@ -134,7 +135,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
         QuickMarcEditor.confirmUnlinkingField();
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
         InventorySearchAndFilter.switchToBrowseTab();

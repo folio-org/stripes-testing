@@ -178,8 +178,6 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });
@@ -221,8 +219,6 @@ describe('Data Import', () => {
           // waiter needed for the fileds to be linked.
           cy.wait(1000);
         });
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
