@@ -75,7 +75,7 @@ describe('Inventory', () => {
         MarcAuthority.contains(authorityHeading);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.login(user.username, user.password, {

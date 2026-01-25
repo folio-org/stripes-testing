@@ -136,7 +136,6 @@ describe('MARC', () => {
         cy.wait(1000);
         QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
         QuickMarcEditor.confirmUpdateLinkedBibs(1);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();

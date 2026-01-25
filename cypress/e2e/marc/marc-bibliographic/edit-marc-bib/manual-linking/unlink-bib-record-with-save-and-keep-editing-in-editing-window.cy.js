@@ -120,8 +120,7 @@ describe('MARC', () => {
               );
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
-              QuickMarcEditor.closeCallout();
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
               cy.login(userData.username, userData.password, {
                 path: TopMenu.inventoryPath,
