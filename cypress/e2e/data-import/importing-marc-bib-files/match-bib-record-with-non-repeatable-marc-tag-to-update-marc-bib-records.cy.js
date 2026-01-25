@@ -188,7 +188,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
 
-        cy.login(userProperties.username, userProperties.password, { authRefresh: true });
+        cy.login(userProperties.username, userProperties.password);
       });
     });
 

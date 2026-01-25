@@ -38,7 +38,9 @@ import SelectInstanceModal from './modals/selectInstanceModal';
 import selectLocationModal from './modals/selectLocationModal';
 import OrderLineDetails from './orderLineDetails';
 
-const addRoutingListButton = Button('Add routing list');
+const addRoutingListButton = Section({ id: 'routing-list-menu-actions' }).find(
+  Button('Add routing list'),
+);
 const routingListSection = Section({ id: 'routing-list' });
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
@@ -2766,7 +2768,7 @@ export default {
   },
 
   addRoutingListIsDisabled() {
-    cy.expect(addRoutingListButton.is({ disabled: true }));
+    cy.expect(addRoutingListButton.has({ disabled: true }));
   },
 
   clickActionsButtonInRoutingList() {
@@ -2873,6 +2875,18 @@ export default {
         title,
         poLineId,
         instanceId,
+      },
+    });
+  },
+
+  createRoutingListViaApi(userIds, routingListName, polId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders/routing-lists',
+      body: {
+        userIds,
+        name: routingListName,
+        poLineId: polId,
       },
     });
   },

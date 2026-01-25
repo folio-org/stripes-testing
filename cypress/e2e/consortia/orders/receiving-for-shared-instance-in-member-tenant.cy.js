@@ -1,52 +1,86 @@
-import Permissions from '../../../support/dictionary/permissions';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { NewOrder, Orders } from '../../../support/fragments/orders';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import Receiving from '../../../support/fragments/receiving/receiving';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
   describe('Consortium (Orders)', () => {
-    const randomPostfix = getRandomPostfix();
-    const instancePrefix = `C411683-B Instance ${randomPostfix}`;
-    const subjectPrefix = `C411683-B Subject ${randomPostfix}`;
     const testData = {
-      collegeHoldings: [],
-      universityHoldings: [],
-      sharedInstance: {
-        title: `${instancePrefix} Shared`,
-        subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
-      },
-      sharedAccordionName: 'Shared',
-      subjectBrowseoption: 'Subjects',
+      sharedInstance: {},
       organization: NewOrganization.getDefaultOrganization(),
       order: {},
       user: {},
     };
-    let location;
-    let servicePointId;
-    let secondInstanceHRID;
 
     before('Create user, data', () => {
       cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi({
-        instanceTitle: testData.sharedInstance.title,
-      }).then((instanceData) => {
-        testData.sharedInstance.id = instanceData.instanceData.instanceId;
-        cy.getInstanceHRID(instanceData.instanceData.instanceId).then(
-          (secondInstanceHRIDResponse) => {
-            secondInstanceHRID = secondInstanceHRIDResponse;
+      InventoryInstance.createInstanceViaApi().then((response) => {
+        testData.sharedInstance = response.instanceData;
+
+        cy.getInstanceHRID(response.instanceData.instanceId).then((hrid) => {
+          testData.instanceHRID = hrid;
+        });
+
+        cy.setTenant(Affiliations.College);
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResp) => {
+            Organizations.createOrganizationViaApi(testData.organization).then(() => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                cy.getAcquisitionMethodsApi({
+                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                }).then((auResp) => {
+                  testData.order = NewOrder.getDefaultOngoingOrder({
+                    vendorId: testData.organization.id,
+                  });
+                  const orderLine = {
+                    ...BasicOrderLine.defaultOrderLine,
+                    titleOrPackage: testData.sharedInstance.instanceTitle,
+                    instanceId: testData.sharedInstance.instanceId,
+                    cost: {
+                      listUnitPrice: 10.0,
+                      currency: 'USD',
+                      discountType: 'percentage',
+                      quantityPhysical: 1,
+                      poLineEstimatedPrice: 10.0,
+                    },
+                    acquisitionMethod: auResp.body.acquisitionMethods[0].id,
+                    locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                    physical: {
+                      createInventory: 'Instance, Holding, Item',
+                      materialType: mtypeResp.id,
+                      volumes: [],
+                    },
+                  };
+
+                  Orders.createOrderViaApi(testData.order).then((orderResponse) => {
+                    testData.order = orderResponse;
+                    orderLine.purchaseOrderId = orderResponse.id;
+
+                    OrderLines.createOrderLineViaApi(orderLine);
+                    Orders.updateOrderViaApi({
+                      ...orderResponse,
+                      workflowStatus: ORDER_STATUSES.OPEN,
+                    });
+                  });
+                });
+              });
+            });
           },
         );
       });
+      cy.resetTenant();
+
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.userProperties = userProperties;
 
@@ -57,46 +91,15 @@ describe('Orders', () => {
           Permissions.uiOrdersEdit.gui,
           Permissions.uiReceivingViewEditCreate.gui,
         ]);
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
-        });
-        Organizations.createOrganizationViaApi(testData.organization)
-          .then(() => {
-            testData.order = NewOrder.getDefaultOngoingOrder({
-              vendorId: testData.organization.id,
-            });
+        cy.resetTenant();
 
-            Orders.createOrderViaApi(testData.order).then((orderResponse) => {
-              testData.order = orderResponse;
-              cy.setTenant(Affiliations.College);
-              cy.loginAsCollegeAdmin({
-                path: TopMenu.ordersPath,
-                waiter: Orders.waitLoading,
-              });
-              Orders.searchByParameter('PO number', testData.order.poNumber);
-              Orders.selectFromResultsList(testData.order.poNumber);
-              OrderLines.addPOLine();
-              OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-              OrderLines.backToEditingOrder();
-              Orders.openOrder();
-            });
-          })
-          .then(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-              cy.visit(TopMenu.ordersPath);
-            });
-          });
+        cy.login(testData.userProperties.username, testData.userProperties.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       });
     });
 
@@ -104,28 +107,25 @@ describe('Orders', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.instanceId);
       cy.setTenant(Affiliations.College);
-      Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      cy.resetTenant();
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
     });
 
     it(
-      'C411742: Receiving for shared instance in member tenant (consortia) (thunderjet)',
+      'C411742 Receiving for shared instance in member tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'C411742'] },
       () => {
         Orders.searchByParameter('PO number', testData.order.poNumber);
         Orders.selectFromResultsList(testData.order.poNumber);
         Orders.receiveOrderViaActions();
-        Receiving.selectFromResultsList(testData.sharedInstance.title);
+        Receiving.selectFromResultsList(testData.sharedInstance.instanceTitle);
         Receiving.selectPieceByIndexInExpected();
         Receiving.quickReceiveInEditPieceModal();
         Receiving.selectInstanceInReceive();
-        InventoryInstance.checkInstanceTitle(testData.sharedInstance.title);
-        InventoryInstance.checkInstanceHrId(secondInstanceHRID);
+        InventoryInstance.checkInstanceTitle(testData.sharedInstance.instanceTitle);
+        InventoryInstance.checkInstanceHrId(testData.instanceHRID);
       },
     );
   });
