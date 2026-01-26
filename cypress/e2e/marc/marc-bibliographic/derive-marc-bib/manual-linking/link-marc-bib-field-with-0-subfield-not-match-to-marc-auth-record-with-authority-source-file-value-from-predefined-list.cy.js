@@ -90,8 +90,6 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        cy.reload();
-        InventoryInstances.waitContentLoading();
       }, 20_000);
     });
   });

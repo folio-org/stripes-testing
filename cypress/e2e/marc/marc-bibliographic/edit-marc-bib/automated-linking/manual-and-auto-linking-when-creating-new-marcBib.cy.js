@@ -230,7 +230,6 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventorySearchAndFilter.switchToBrowseTab();

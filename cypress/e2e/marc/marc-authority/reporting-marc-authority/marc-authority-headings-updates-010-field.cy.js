@@ -121,6 +121,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
           });
 

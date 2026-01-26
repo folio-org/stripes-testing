@@ -224,6 +224,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -273,6 +274,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(createdRecordsIDs[1]);
             InventoryInstances.selectInstance();
@@ -288,7 +290,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.checkButtonsEnabled();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');

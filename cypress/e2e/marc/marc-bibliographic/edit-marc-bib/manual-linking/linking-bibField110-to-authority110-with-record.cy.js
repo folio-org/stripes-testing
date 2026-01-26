@@ -97,8 +97,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -134,7 +132,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag110);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib110LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributorWithMarcAppLink(
               0,
@@ -166,7 +163,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib110UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

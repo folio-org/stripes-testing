@@ -63,6 +63,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle(instanceRecordId);
         InventoryInstances.selectInstanceById(instanceRecordId);

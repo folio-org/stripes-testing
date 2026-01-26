@@ -76,7 +76,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -139,7 +138,7 @@ describe('MARC', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
 
         InventoryInstance.editMarcBibliographicRecord();

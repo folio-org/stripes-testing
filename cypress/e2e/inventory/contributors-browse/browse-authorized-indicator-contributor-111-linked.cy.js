@@ -63,6 +63,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle(instanceRecordId);
         InventoryInstances.selectInstanceById(instanceRecordId);
@@ -82,8 +83,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
       });

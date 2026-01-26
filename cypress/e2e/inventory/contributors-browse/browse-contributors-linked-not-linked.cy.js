@@ -56,29 +56,34 @@ describe('Inventory', () => {
         }));
 
         cy.wrap(Promise.all(uploadPromises)).then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIconByIndex(26);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(testData.contributorName);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag010,
-            `$a ${marcFiles[1].naturalId}`,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000).then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIconByIndex(26);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.searchResults(testData.contributorName);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag010,
+              `$a ${marcFiles[1].naturalId}`,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
       });
