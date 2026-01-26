@@ -146,8 +146,6 @@ describe('Claiming', () => {
         );
       })
       .then(() => {
-        // Claiming integration creation via API is not supported (POST /data-export-spring/configs
-        // returns 400 for CLAIMS_CSV_EXPORT type), so using UI approach with admin credentials.
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
         Organizations.searchByParameters('Name', testData.organization.name);
         Organizations.selectOrganization(testData.organization.name);
