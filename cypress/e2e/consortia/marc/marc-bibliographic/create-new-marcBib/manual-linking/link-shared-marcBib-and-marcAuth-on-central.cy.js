@@ -163,7 +163,7 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$e writer',
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdRecordsID.push(id);

@@ -48,10 +48,7 @@ describe('MARC', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
+                authRefresh: true,
               });
               InventoryInstances.searchByTitle(testData.instanceID);
             });
@@ -76,7 +73,7 @@ describe('MARC', () => {
               const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
                 QuickMarcEditor.getFreeTags()[1],
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.contains(expectedInSourceRow);
@@ -119,7 +116,7 @@ describe('MARC', () => {
             cy.reload();
             QuickMarcEditor.waitLoading();
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-              QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.viewSource();
               InventoryViewSource.notContains(deletedTag);
@@ -186,7 +183,7 @@ describe('MARC', () => {
 
               QuickMarcEditor.deletePenaltField().then((deletedTag) => {
                 const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
                 QuickMarcEditor.deleteConfirmationPresented();
                 QuickMarcEditor.confirmDelete();
 

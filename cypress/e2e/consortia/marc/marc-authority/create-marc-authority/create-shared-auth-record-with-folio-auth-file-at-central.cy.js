@@ -85,7 +85,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('100', `$a ${testData.marcValue}`, 3);
 
           // Step 4: Try to save, expect error for missing 010
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Record cannot be saved without 010 field.');
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
 
@@ -94,7 +94,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag('010', `$a ${created010}`);
 
           // Step 6: Save successfully
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
           MarcAuthority.contains(`001\t.*${created010}`, { regexp: true });

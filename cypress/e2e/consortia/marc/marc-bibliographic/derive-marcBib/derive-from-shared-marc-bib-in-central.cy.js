@@ -69,6 +69,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
@@ -92,15 +93,11 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.checkPresentedText(testData.instanceTitle);
 
-          cy.waitForAuthRefresh(() => {
-            InventoryInstance.deriveNewMarcBib();
-            QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
-            QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
-            QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
-          }, 20_000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2500);
-          QuickMarcEditor.pressSaveAndClose();
+          InventoryInstance.deriveNewMarcBibRecord();
+          QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
+          QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
+          QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkSharedTextInDetailView();
@@ -122,9 +119,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView();
             InventoryInstance.checkExpectedMARCSource();

@@ -173,7 +173,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldsData[1]));
             QuickMarcEditor.closeAllCallouts();
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceId = id;

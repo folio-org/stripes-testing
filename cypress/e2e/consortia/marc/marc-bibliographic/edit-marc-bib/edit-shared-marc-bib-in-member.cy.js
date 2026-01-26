@@ -83,7 +83,7 @@ describe('MARC', () => {
             InventoryInstance.checkInstanceTitle(testData.title);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentCentral);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -96,7 +96,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentCentral);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentMember);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentMember);
