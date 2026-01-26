@@ -104,11 +104,6 @@ describe('OAI-PMH', () => {
         response.forEach((record, index) => {
           marcInstance[`holdingsId${index + 1}`] = record.holding.id;
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
       });
     });
 
@@ -168,7 +163,10 @@ describe('OAI-PMH', () => {
         });
 
         // Steps 4: Add item with 5 electronic access types to 2 holdings
-        cy.getUserToken(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

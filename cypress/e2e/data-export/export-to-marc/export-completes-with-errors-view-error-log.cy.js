@@ -236,7 +236,9 @@ describe('Data Export', () => {
             `"Instance UUID": "${testData.file2.instance.uuid}"`,
             `"Instance HRID": "${testData.file2.instance.hrid}"`,
             `"Instance Title": "${testData.file2.instance.title}"`,
-            `"Inventory record link": ${Cypress.config('baseUrl')}/inventory/view/${testData.file2.instance.uuid}`,
+            new RegExp(
+              `"Inventory record link": (${Cypress.config('baseUrl')})?/inventory/view/${testData.file2.instance.uuid}`,
+            ),
           ];
 
           file2Errors.forEach((error) => {

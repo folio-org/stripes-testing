@@ -312,7 +312,9 @@ describe('Data Export', () => {
             `"Instance UUID": "${testData.marcInstance.uuid}"`,
             `"Instance HRID": "${testData.marcInstance.hrid}"`,
             `"Instance Title": "${testData.marcInstance.title}"`,
-            `"Inventory record link": /inventory/view/${testData.marcInstance.uuid}`,
+            new RegExp(
+              `"Inventory record link": (${Cypress.config('baseUrl')})?/inventory/view/${testData.marcInstance.uuid}`,
+            ),
           ];
 
           errorMessages.forEach((error) => {
@@ -320,7 +322,7 @@ describe('Data Export', () => {
           });
 
           const errorPattern = new RegExp(
-            `${formattedDateUpToHours}.*ERROR Record is too long to be a valid MARC binary record.*which is more thatn 99999 bytes`,
+            `${formattedDateUpToHours}.*ERROR Record is too long to be a valid MARC binary record, it's length would be \\d+ which is more thatn 99999 bytes`,
           );
           DataExportLogs.verifyErrorTextInErrorLogsPane(errorPattern);
         });
