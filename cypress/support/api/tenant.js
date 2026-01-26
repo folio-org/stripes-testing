@@ -28,7 +28,7 @@ Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
 
 Cypress.Commands.add('getApplicationsForTenantApi', (tenantName, idOnly = true) => {
   cy.okapiRequest({
-    path: `entitlements/${tenantName}/applications?limit=50`,
+    path: `entitlements/${tenantName}/applications?limit=200`,
     isDefaultSearchParamsRequired: false,
   }).then((response) => {
     if (idOnly) return response.body.applicationDescriptors.map((descriptor) => descriptor.id);
