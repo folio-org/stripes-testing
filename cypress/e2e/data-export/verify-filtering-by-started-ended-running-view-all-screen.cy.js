@@ -13,6 +13,7 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES } from '../../support/constants';
 
 let user;
 const emptyFileName = 'empty.csv';
@@ -22,7 +23,7 @@ const currentDate = DateTools.getCurrentDateForFiscalYear();
 const yesterday = DateTools.getPreviousDayDateForFiscalYear();
 const dayAfterTomorrow = DateTools.getDayAfterTomorrowDateForFiscalYear();
 const exportRecordType = 'instance';
-const defaultJobProfile = 'Default instances export job profile';
+const defaultJobProfile = DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.INSTANCES;
 const validationMessages = {
   pleaseEnterStartDate: 'Please enter a start date',
   pleaseEnterEndDate: 'Please enter an end date',
@@ -55,6 +56,12 @@ describe('Data Export', () => {
           for (let i = 0; i < 4; i++) {
             ExportFile.exportFileViaApi(emptyFileName);
           }
+
+          ExportFile.exportFileViaApi(
+            emptyFileName,
+            'authority',
+            DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.AUTHORITY,
+          );
 
           // Create CSV file with instance UUID for valid export
           FileManager.createFile(`cypress/fixtures/${validFileName}`, instanceData.instanceId);

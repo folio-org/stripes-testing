@@ -154,35 +154,35 @@ describe('OAI-PMH', () => {
               field.indicators,
               field.subfields,
             );
-            OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
-              response,
-              marcInstance.id,
-              '856',
-              { ind1: '4', ind2: ' ' },
-              [
-                {
-                  u: 'empty_value_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-                {
-                  u: 'No_display_constant_generated_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-
-                {
-                  u: 'No_information_provided_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-              ],
-              3,
-            );
           });
+
+          OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
+            response,
+            marcInstance.id,
+            '856',
+            { ind1: '4', ind2: ' ' },
+            [
+              {
+                u: 'empty_value_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+              {
+                u: 'No_display_constant_generated_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+              {
+                u: 'No_information_provided_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+            ],
+            3,
+          );
         });
       },
     );
