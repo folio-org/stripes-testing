@@ -312,4 +312,25 @@ export default {
       return parts[idIndex];
     });
   },
+
+  verifyAssignedUsersAccordion: () => {
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+
+  verifyAssignedUsersTableContainsText: (content, usePartialMatch = true) => {
+    const cellContent = usePartialMatch ? including(content) : content;
+    cy.expect(assignedUsersSection.find(MultiColumnListCell({ content: cellContent })).exists());
+  },
+
+  verifyEditAUPage: (auName) => {
+    cy.expect(Pane({ title: including(`Edit: ${auName}`) }).exists());
+  },
+
+  closeEditAUPage: () => {
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyFocusOnDetailsPane: (auName) => {
+    cy.expect(auPaneDetails.find(HTML(including(auName))).exists());
+  },
 };

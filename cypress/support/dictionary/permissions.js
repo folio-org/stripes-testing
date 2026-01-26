@@ -801,6 +801,10 @@ export default {
   },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
+  uiClaimingView: {
+    internal: 'ui-claims.claiming.view',
+    gui: 'Claims: View claims',
+  },
   // Receiving
   uiReceivingView: {
     internal: 'ui-receiving.view',
