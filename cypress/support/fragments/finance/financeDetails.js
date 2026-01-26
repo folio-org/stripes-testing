@@ -150,6 +150,9 @@ export default {
   checkFundsDetails(funds = []) {
     this.checkTableContent({ section: fundsSection, items: funds });
   },
+  checkFundAbsent(fundName) {
+    cy.expect(fundsSection.find(MultiColumnListCell({ content: fundName })).absent());
+  },
   openItemDetails({ section, name }) {
     cy.do(section.find(MultiColumnListCell({ content: name })).click());
   },
