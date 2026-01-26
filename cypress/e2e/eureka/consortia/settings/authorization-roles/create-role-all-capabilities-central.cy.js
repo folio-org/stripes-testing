@@ -6,6 +6,7 @@ import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../../../support/con
 import CapabilitySets from '../../../../../support/dictionary/capabilitySets';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { tenantNames } from '../../../../../support/dictionary/affiliations';
+import { Affiliations } from '../../../../../support/dictionary';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -70,8 +71,12 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
 
-          cy.getCapabilitySetsApi().then((capabSets) => {
-            capabilitySetsCount = capabSets.length;
+          cy.getApplicationsForTenantApi(Affiliations.Consortia, true).then((appIds) => {
+            cy.getCapabilitySetsApi(2000, {
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabSets) => {
+              capabilitySetsCount = capabSets.length;
+            });
           });
 
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);

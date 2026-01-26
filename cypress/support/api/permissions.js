@@ -70,11 +70,14 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500) => {
+Cypress.Commands.add('getCapabilitySetsApi', (limit = 1500, { query } = {}) => {
+  const searchParams = { limit };
+  if (query) searchParams.query = query;
   cy.okapiRequest({
     method: 'GET',
-    path: `capability-sets?limit=${limit}`,
+    path: 'capability-sets',
     isDefaultSearchParamsRequired: false,
+    searchParams,
   }).then(({ body }) => {
     cy.wrap(body.capabilitySets).as('capabSets');
   });
