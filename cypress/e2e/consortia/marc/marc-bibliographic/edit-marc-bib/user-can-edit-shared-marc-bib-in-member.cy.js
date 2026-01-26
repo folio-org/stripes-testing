@@ -103,11 +103,10 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
             authRefresh: true,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -115,9 +114,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
           QuickMarcEditor.moveFieldUp(17);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           InventoryInstance.verifyLastUpdatedSource(
@@ -125,24 +122,24 @@ describe('MARC', () => {
             users.userAProperties.lastName,
           );
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.checkInstanceTitle(testData.tag245Content);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
-            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
-            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
-            InventoryViewSource.close();
-          }, 20_000);
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.checkInstanceTitle(testData.tag245Content);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+          InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
+          InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
+          InventoryViewSource.close();
+
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

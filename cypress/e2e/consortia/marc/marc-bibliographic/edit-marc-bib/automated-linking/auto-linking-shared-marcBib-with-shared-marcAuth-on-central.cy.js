@@ -39,7 +39,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a Johnson, Samuel, $d 1709-1784',
-            '',
+            '$x Criticism and interpretation.',
             '$0 http://id.loc.gov/authorities/names/n78095825C400663',
             '',
           ],
@@ -178,9 +178,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.deleteField(4);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(2500);
             QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
