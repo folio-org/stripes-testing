@@ -527,7 +527,6 @@ describe('Data Export', () => {
         currentDate,
       );
       DataExportViewAllLogs.clickApplyButton(accordionNames.ENDED_RUNNING);
-      DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
       DataExportViewAllLogs.clickJobProfileDropdown();
       DataExportViewAllLogs.selectFilterOption(DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.AUTHORITY);
       DataExportViewAllLogs.verifyLogsTable();
@@ -584,7 +583,6 @@ describe('Data Export', () => {
         accordionNames.ENDED_RUNNING,
         fieldNames.TO,
       );
-      DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
       DataExportViewAllLogs.verifySelectedValueInJobProfileDropdown('Select control');
       DataExportViewAllLogs.verifyErrorsInExportCheckbox('No', false);
       DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
