@@ -393,6 +393,7 @@ describe('Data Export', () => {
       // Step 16: Click "or choose button" in "Drag and drop" area of "Jobs" pane => Upload any .csv file
       ExportFile.uploadFile(instanceFiles.single);
       ExportFile.exportWithDefaultJobProfile(instanceFiles.single);
+      cy.wait(2000); // Wait for the export job to be created
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
       cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
         const { jobExecutions } = response.body;

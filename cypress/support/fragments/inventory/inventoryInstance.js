@@ -942,6 +942,14 @@ export default {
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
   },
 
+  verifyItemRowAbsentInHoldingAccordion(holding) {
+    cy.expect(
+      Accordion({ label: including(`Holdings: ${holding}`) })
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .absent(),
+    );
+  },
+
   moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false } = {}) {
     if (shouldOpen) {
       openHoldings(fromHolding, toHolding);

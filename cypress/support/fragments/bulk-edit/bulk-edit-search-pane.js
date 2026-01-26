@@ -1436,7 +1436,7 @@ export default {
   },
 
   waitingFileDownload() {
-    cy.wait(3000);
+    cy.wait(5000);
   },
 
   dragAndDropAreaExists(exists) {
