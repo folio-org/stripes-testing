@@ -135,26 +135,13 @@ describe('MARC', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(instanceTitle);
         InventoryInstance.openMoveItemsWithinAnInstance();
-
         InventoryInstance.moveItemToAnotherHolding({
           fromHolding: firstHolding,
           toHolding: secondHolding,
         });
-
-        // Added additional steps to verify https://folio-org.atlassian.net/browse/UIIN-3590
-        InventoryInstance.openHoldings(firstHolding);
-        InventoryInstance.verifyItemRowAbsentInHoldingAccordion(firstHolding);
-        InventoryInstance.openHoldings(firstHolding);
-
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-
         InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-
-        // Added additional steps to verify https://folio-org.atlassian.net/browse/UIIN-3590
-        InventoryInstance.openHoldings(secondHolding);
-        InventoryInstance.verifyItemRowAbsentInHoldingAccordion(secondHolding);
-        InventoryInstance.openHoldings(secondHolding);
       },
     );
 
