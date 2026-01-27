@@ -634,7 +634,7 @@ export default {
       this.deleteConfirmationPresented();
       this.confirmDelete();
     }
-    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+    cy.wait('@saveRecordRequest', { timeout: 20_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },

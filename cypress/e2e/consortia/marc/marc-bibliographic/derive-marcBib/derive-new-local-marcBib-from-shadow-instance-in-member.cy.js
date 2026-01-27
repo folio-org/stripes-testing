@@ -102,7 +102,16 @@ describe('MARC', () => {
       let collegeSourceId;
 
       before('Create users, data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+
+        [Affiliations.Consortia, Affiliations.College, Affiliations.University].forEach(
+          (tenant) => {
+            cy.withinTenant(tenant, () => {
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
+            });
+          },
+        );
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -233,9 +242,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyEnabledLinkHeadingsButton();
           QuickMarcEditor.verifyTagFieldAfterLinking(...linked700Field);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...notLinked710Field);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
           InventoryInstance.checkSharedTextInDetailView(false);

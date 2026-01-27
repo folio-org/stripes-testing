@@ -60,7 +60,7 @@ describe('MARC', () => {
           }).then((records) => {
             records.forEach((record) => {
               if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
+                MarcAuthority.deleteViaAPI(record.id, true);
               }
             });
           });
