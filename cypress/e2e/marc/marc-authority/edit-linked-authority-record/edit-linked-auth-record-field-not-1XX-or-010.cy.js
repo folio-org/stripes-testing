@@ -54,7 +54,8 @@ describe('MARC', () => {
 
       before('Creating user, importing and linking records', () => {
         // make sure there are no duplicate authority records in the system
-        cy.getAdminToken().then(() => {
+        cy.getAdminToken();
+        cy.then(() => {
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374160"' }).then(
             (records) => {
               records.forEach((record) => {
@@ -65,7 +66,6 @@ describe('MARC', () => {
             },
           );
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -110,12 +110,14 @@ describe('MARC', () => {
               );
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
+            })
+            .then(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
+              });
             });
-        });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-          authRefresh: true,
         });
       });
 
