@@ -400,7 +400,7 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.intercept(`records-editor/records?externalId=${instanceID[0]}`).as('recordUpdated');
           InventoryInstance.editMarcBibliographicRecord();

@@ -304,7 +304,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -342,7 +341,7 @@ describe('MARC', () => {
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
             set.tag008Fields();
 
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
             InventoryInstance.waitInstanceRecordViewOpened(title);
