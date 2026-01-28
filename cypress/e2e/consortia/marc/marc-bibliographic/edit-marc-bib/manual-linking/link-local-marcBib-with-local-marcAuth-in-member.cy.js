@@ -42,13 +42,13 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC405560.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC405560.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405560.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC405560.${getRandomPostfix()}.mrc`,
             propertyName: 'authority',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },

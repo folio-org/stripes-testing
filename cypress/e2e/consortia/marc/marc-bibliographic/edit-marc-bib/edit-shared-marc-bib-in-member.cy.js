@@ -31,7 +31,7 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileC624269.mrc',
-            fileName: `AT_C405513_testMarcFile.${getCurrentTimestamp()}.mrc`,
+            fileName: `AT_C624269_testMarcFile.${getCurrentTimestamp()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
           },
