@@ -96,7 +96,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(6, testData.tag511);
 
           cy.intercept(/\/search\/authorities\?.*AT_C375092_AuthRef/).as('getAuthorities');
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.waitLoading();
           MarcAuthority.contains(`${testData.tag511}\t`);
 

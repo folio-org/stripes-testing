@@ -107,7 +107,7 @@ describe('MARC', () => {
         QuickMarcEditor.updateExistingField('', testData.tag004value);
         QuickMarcEditor.updateTagNameToLockedTag(6, '004');
         QuickMarcEditor.checkFourthBoxEditable(6, false);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
 
         // Verify error message for multiple 004 fields
         QuickMarcEditor.checkErrorMessage(6, testData.errorMessage);

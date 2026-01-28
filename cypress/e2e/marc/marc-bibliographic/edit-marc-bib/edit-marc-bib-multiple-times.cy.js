@@ -132,12 +132,9 @@ describe('MARC', () => {
             // *The "Save & close" button stays clickable.
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #11 Click on the "Save & close" button.
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
-            QuickMarcEditor.pressSaveAndClose();
             // *The success saving message is displayed.
             // *Detail record opened in the third pane.
-            QuickMarcEditor.confirmDelete();
+            QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
             QuickMarcEditor.checkAfterSaveAndClose();
             // #12 Verify that changes are saved by clicking on the "Action" button and choose the "View source" option.
             InventoryInstance.viewSource();

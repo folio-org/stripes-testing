@@ -50,9 +50,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName('008', '00');
           QuickMarcEditor.checkEmptyContent('00');
           QuickMarcEditor.deleteFieldByTagAndCheck('00');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Field 008 is required.');
           QuickMarcEditor.undoDelete();
           QuickMarcEditor.updateExistingTagName('00', '008');

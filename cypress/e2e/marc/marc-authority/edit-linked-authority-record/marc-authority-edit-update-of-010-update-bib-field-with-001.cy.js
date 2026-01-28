@@ -111,7 +111,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -158,8 +158,6 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.tag010NewValue);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.verifyAreYouSureModal(testData.areYouSureModalMessage);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);

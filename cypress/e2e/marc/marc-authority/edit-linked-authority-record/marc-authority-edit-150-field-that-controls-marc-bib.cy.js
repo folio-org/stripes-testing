@@ -103,7 +103,7 @@ describe('MARC', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
@@ -146,11 +146,11 @@ describe('MARC', () => {
           cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag100);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
@@ -158,15 +158,15 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag130);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag151);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag155);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag149);

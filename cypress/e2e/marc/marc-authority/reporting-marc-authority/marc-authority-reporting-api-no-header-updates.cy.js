@@ -86,8 +86,6 @@ describe('MARC', () => {
               cy.loginAsAdmin();
               cy.visit(TopMenu.inventoryPath);
               InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -100,9 +98,7 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 17);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
           });
@@ -117,6 +113,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
       });
@@ -140,15 +137,11 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 

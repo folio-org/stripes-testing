@@ -88,11 +88,12 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((userProperties) => {
             testData.user = userProperties;
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
-            })
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000)
               .then(() => {
                 InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
                 InventoryInstances.selectInstance();
@@ -107,7 +108,7 @@ describe('MARC', () => {
                   linkingTagAndValue.tag,
                   linkingTagAndValue.rowIndex,
                 );
-                QuickMarcEditor.saveAndCloseWithValidationWarnings();
+                QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               })
               .then(() => {
@@ -116,8 +117,6 @@ describe('MARC', () => {
                     path: TopMenu.inventoryPath,
                     waiter: InventoryInstances.waitContentLoading,
                   });
-                  cy.reload();
-                  InventoryInstances.waitContentLoading();
                 }, 20_000);
               });
           });
@@ -146,8 +145,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
             QuickMarcEditor.deleteField(testData.tag100.rowIndex);
             QuickMarcEditor.afterDeleteNotification(testData.tag100.tag);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(3000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkDeleteModal(1);
             QuickMarcEditor.clickRestoreDeletedField();

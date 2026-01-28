@@ -30,7 +30,7 @@ describe('MARC', () => {
         message: 'Fail: Field 1XX is non-repeatable and required.Help',
       },
       '110_2': { index: 9 },
-      900: { index: 12, message: 'Warn: Field is undefined.' },
+      900: { index: 12 },
     };
 
     before(() => {
@@ -86,10 +86,9 @@ describe('MARC', () => {
           MarcAuthority.edit();
 
           MarcAuthority.updateDataByRowIndex(fields['110_1'].index, fields['110_1'].newValue);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessageForField(fields['110_1'].index, fields['110_1'].message);
-          QuickMarcEditor.checkWarningMessageForField(fields['900'].index, fields[900].message);
 
           QuickMarcEditor.updateExistingTagValue(fields['110_2'].index, ' ');
           QuickMarcEditor.deleteField(fields['110_2'].index);

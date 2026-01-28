@@ -76,7 +76,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
             }, 20_000);
             InventoryInstances.waitContentLoading();
           });
@@ -101,8 +100,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
           QuickMarcEditor.moveFieldUp(17);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);

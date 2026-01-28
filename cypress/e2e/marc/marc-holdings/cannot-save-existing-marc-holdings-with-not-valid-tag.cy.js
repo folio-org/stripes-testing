@@ -88,7 +88,7 @@ describe('MARC', () => {
 
         QuickMarcEditor.updateExistingTagValue(testData.rowIndex, testData.newTagValue);
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(testData.rowIndex, testData.errorMessage);
         QuickMarcEditor.closeAllCallouts();
         QuickMarcEditor.closeWithoutSavingAfterChange();

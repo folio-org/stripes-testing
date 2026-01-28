@@ -74,7 +74,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag245, testData.tag650);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.closeAllCallouts();
 
@@ -84,9 +84,9 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(15, testData.tag245);
           QuickMarcEditor.updateExistingFieldContent(15, testData.updatedValue);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(15, testData.nonRepeatableError);
-          QuickMarcEditor.verifyValidationCallout(17, 1);
+          QuickMarcEditor.verifyValidationCallout(0, 1);
         },
       );
     });

@@ -83,7 +83,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkDropdownMarkedAsInvalid(tags.tag008, positionWithInvalid);
           });
           QuickMarcEditor.updateExistingField(tags.tag245, testData.tag245Content);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           [
             boxes.tag008Dtst,
             boxes.tag008Conf,
@@ -104,7 +104,7 @@ describe('MARC', () => {
               QuickMarcEditor.checkDropdownMarkedAsInvalid(tags.tag008, positionWithInvalid);
             },
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           [boxes.tag008Conf, boxes.tag008Fest, boxes.tag008Indx, boxes.tag008Litf].forEach(
             (positionWithInvalid) => {
               QuickMarcEditor.checkErrorMessage(3, testData.tag008ErrorText(positionWithInvalid));
@@ -126,7 +126,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkDropdownMarkedAsInvalid(tags.tag008, position, false);
           });
           QuickMarcEditor.update008TextFields(boxes.tag008Ctry, testData.updatedCtryValue);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(3, testData.ctryErrorText);
         },
       );

@@ -21,7 +21,6 @@ describe('MARC', () => {
       };
       const updatedTitle = `${title} UPD`;
       const errorPrefix = 'Fail:';
-      const warningPrefix = 'Warn:';
       const new245IndicatorValues = ['\\', '1'];
 
       const marcInstanceFields = [
@@ -89,8 +88,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(4, errorPrefix);
-          QuickMarcEditor.checkErrorMessage(4, warningPrefix);
-          QuickMarcEditor.verifyValidationCallout(1, 2);
+          QuickMarcEditor.verifyValidationCallout(0, 2);
           QuickMarcEditor.verifyNo245TagCallout();
           QuickMarcEditor.closeAllCallouts();
 
@@ -102,10 +100,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(tags.invalidTag, tags.tag245);
 
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, warningPrefix);
-          QuickMarcEditor.verifyValidationCallout(1, 0);
-          QuickMarcEditor.verifyTagBoxIsFocused(4);
-          QuickMarcEditor.closeAllCallouts();
 
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditingDerive();

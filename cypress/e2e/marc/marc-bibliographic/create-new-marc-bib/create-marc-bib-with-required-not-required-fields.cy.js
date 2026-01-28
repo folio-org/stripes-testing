@@ -223,7 +223,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag981, testData.field981.indicators[1], 1);
 
           // Step 5: Click on the "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
 
           // Verify success saving toast notification is displayed
           QuickMarcEditor.checkCallout(including(testData.successMessage));

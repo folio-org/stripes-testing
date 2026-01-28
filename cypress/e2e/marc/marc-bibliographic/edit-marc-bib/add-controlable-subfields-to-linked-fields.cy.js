@@ -107,7 +107,7 @@ describe('MARC', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+      MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
     });
 
     it(
@@ -134,8 +134,7 @@ describe('MARC', () => {
 
         QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedAuthorityValue);
         cy.wait(1000);
-        QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-        QuickMarcEditor.confirmUpdateLinkedBibs(1);
+        QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();

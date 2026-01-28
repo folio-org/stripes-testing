@@ -83,7 +83,7 @@ describe('MARC', () => {
           });
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.login(testData.userProperties.username, testData.userProperties.password, {

@@ -53,13 +53,13 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 1);
 
           QuickMarcEditor.addNewField(testData.tagLDR, '', 4);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
 
           QuickMarcEditor.updateExistingTagValue(5, '');
           QuickMarcEditor.deleteField(5);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             instanceId = id;

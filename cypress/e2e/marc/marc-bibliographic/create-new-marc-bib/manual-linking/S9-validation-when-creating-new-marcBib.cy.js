@@ -120,9 +120,8 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 test',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -132,9 +131,8 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -147,9 +145,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
             cy.wait(500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -159,9 +156,8 @@ describe('MARC', () => {
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             cy.wait(500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
               '$9 is an invalid subfield for linkable bibliographic fields.',
@@ -177,7 +173,6 @@ describe('MARC', () => {
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);

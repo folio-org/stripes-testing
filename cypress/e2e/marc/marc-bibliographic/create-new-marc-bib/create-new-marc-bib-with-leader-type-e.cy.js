@@ -119,8 +119,6 @@ describe('MARC', () => {
 
           // 6 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           // 7 Click on "Actions" button in third pane → Select "Edit MARC bibliographic record" option

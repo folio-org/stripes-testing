@@ -86,7 +86,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(6, tag008);
 
           // Step 4: Try to save and check for error message
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, errorNonRepeatable);
           // The pane should still be open
           QuickMarcEditor.checkRecordStatusNew();

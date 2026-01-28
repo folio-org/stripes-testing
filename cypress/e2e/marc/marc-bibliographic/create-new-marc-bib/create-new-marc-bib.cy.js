@@ -98,8 +98,6 @@ describe('MARC', () => {
             `$a ${testData.fieldContents.tag240Content}`,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           InventoryInstance.getId().then((id) => {

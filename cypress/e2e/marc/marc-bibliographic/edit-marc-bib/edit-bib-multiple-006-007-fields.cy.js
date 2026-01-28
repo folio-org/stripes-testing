@@ -103,7 +103,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
 
           testData.fields006.forEach((field) => {

@@ -98,8 +98,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.editMarcBibliographicRecord();
@@ -114,8 +112,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(16, testData.tag650);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.editMarcBibliographicRecord();
@@ -129,8 +125,6 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(17, testData.tag650);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.waitForAuthRefresh(() => {

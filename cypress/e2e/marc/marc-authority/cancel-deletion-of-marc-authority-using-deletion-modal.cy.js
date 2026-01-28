@@ -20,7 +20,7 @@ describe('MARC', () => {
         fileName: `testMarcFileC367928.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
-        authorityTitle: '*',
+        authorityTitle: 'Erbil, H. Yıldırım',
       };
 
       let createdAuthorityID;

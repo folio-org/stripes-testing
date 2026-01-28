@@ -100,7 +100,7 @@ describe('MARC', () => {
         QuickMarcEditor.addNewField('0', '$a test2', 6);
         QuickMarcEditor.checkContent('$a test2', 7);
         QuickMarcEditor.deleteFieldAndCheck(6, '040');
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
         QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.waitLoading();

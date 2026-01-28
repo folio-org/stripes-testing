@@ -179,7 +179,7 @@ describe('Data Import', () => {
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
 
@@ -197,10 +197,7 @@ describe('Data Import', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
-        });
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          MarcAuthorities.waitLoading();
+          authRefresh: true,
         });
       });
     });

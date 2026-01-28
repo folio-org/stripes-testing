@@ -161,7 +161,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.fieldValues.field009, currentRowIndex);
 
           // Step 6: Click "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
 
           // Verify successful save and pane closure
           InventoryInstance.waitLoading();

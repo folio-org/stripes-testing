@@ -128,7 +128,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, testData.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600LinkedFieldValues);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(
               0,
@@ -157,7 +157,7 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib600UnlinkedFieldValues[0]);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

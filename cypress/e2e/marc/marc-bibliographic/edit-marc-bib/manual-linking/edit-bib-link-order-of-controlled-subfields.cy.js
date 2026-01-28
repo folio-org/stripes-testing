@@ -303,7 +303,7 @@ describe('MARC', () => {
               testData.subfieldsToAdd.seventhBox,
             );
 
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
 
             QuickMarcEditor.verifyTagFieldAfterLinking(

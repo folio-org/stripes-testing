@@ -60,7 +60,7 @@ describe('MARC', () => {
           }).then((records) => {
             records.forEach((record) => {
               if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
+                MarcAuthority.deleteViaAPI(record.id, true);
               }
             });
           });
@@ -98,7 +98,8 @@ describe('MARC', () => {
           newFieldsArr.forEach((field, index) => {
             MarcAuthority.addNewField(10 + index, field[0], field[3], field[1], field[2]);
           });
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {

@@ -127,7 +127,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240LinkedFieldValues);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.verifyAlternativeTitle(

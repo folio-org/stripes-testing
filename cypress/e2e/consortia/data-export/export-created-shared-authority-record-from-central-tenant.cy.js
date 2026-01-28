@@ -64,6 +64,7 @@ describe('Data Export', () => {
         cy.login(users.username, users.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         }).then(() => {
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
@@ -100,9 +101,7 @@ describe('Data Export', () => {
           );
         });
         QuickMarcEditor.checkContentByTag('001', authorityIdentifier);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         MarcAuthority.verifyAfterSaveAndClose();
 
         MarcAuthorities.closeMarcViewPane();

@@ -89,10 +89,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           MarcAuthority.deleteTag(8);
           MarcAuthority.deleteTag(8);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           MarcAuthorities.waitLoading();
         },
       );

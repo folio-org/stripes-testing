@@ -90,16 +90,13 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-          })
-          .then(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
-            });
           });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
       });
 
       after('Deleting user, data', () => {
@@ -128,7 +125,7 @@ describe('MARC', () => {
             testData.tag010,
             `$a ${testData.updated010FieldValue}`,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
 
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
           MarcAuthorities.checkResultList([testData.updated155FieldValue]);

@@ -63,7 +63,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(testData.tag008, '', 4);
           MarcAuthority.select008DropdownsIfOptionsExist(dropdownOptions, 5);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
       );

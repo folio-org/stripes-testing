@@ -65,13 +65,11 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.simulateSlowNetwork('**/records-editor/validate', 5000);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.verifySlowInternetConnectionModal();
 
           cy.wait('@slowNetworkRequest');
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
 
           QuickMarcEditor.checkCallout(testData.successMessage);
           cy.wait(2000);

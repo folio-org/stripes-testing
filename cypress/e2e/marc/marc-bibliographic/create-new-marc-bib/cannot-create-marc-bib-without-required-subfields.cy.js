@@ -40,7 +40,6 @@ describe('MARC', () => {
           field245SubfieldA: "Fail: Subfield 'a' is required.",
           field245SubfieldL: "Fail: Subfield 'l' is required.",
           field981SubfieldA: "Fail: Subfield 'a' is required.",
-          field981SubfieldB: "Warn: Subfield 'b' is undefined.",
         },
         expectedWarningCount: 1,
         expectedFailCount: 3,
@@ -235,11 +234,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag981, '\\', 1);
 
           // Step 6: First save attempt - verify inline errors and callout
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyValidationCallout(
-            testData.expectedWarningCount,
-            testData.expectedFailCount,
-          );
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.verifyValidationCallout(null, testData.expectedFailCount);
           QuickMarcEditor.closeAllCallouts();
 
           // Verify inline error messages for field 245
@@ -252,11 +248,6 @@ describe('MARC', () => {
             including(testData.expectedErrors.field245SubfieldL),
           );
 
-          // Verify inline error messages for field 981
-          QuickMarcEditor.checkWarningMessageForFieldByTag(
-            testData.tag981,
-            including(testData.expectedErrors.field981SubfieldB),
-          );
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tag981,
             including(testData.expectedErrors.field981SubfieldA),
@@ -266,11 +257,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
           // Step 7: Second save attempt - same errors
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyValidationCallout(
-            testData.expectedWarningCount,
-            testData.expectedFailCount,
-          );
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.verifyValidationCallout(null, testData.expectedFailCount);
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
@@ -282,11 +270,8 @@ describe('MARC', () => {
           cy.wait(1000);
 
           // Step 9: Third save attempt - same errors (empty subfields still fail)
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyValidationCallout(
-            testData.expectedWarningCount,
-            testData.expectedFailCount,
-          );
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.verifyValidationCallout(null, testData.expectedFailCount);
           QuickMarcEditor.closeAllCallouts();
 
           // Verify errors persist with empty subfields

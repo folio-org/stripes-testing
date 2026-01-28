@@ -94,9 +94,8 @@ describe('MARC', () => {
                 linkingTagAndValue.tag,
                 linkingTagAndValue.rowIndex,
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-              cy.wait(3_000);
             });
           })
           .then(() => {
@@ -129,17 +128,11 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag111, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();

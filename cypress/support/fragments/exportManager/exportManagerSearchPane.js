@@ -12,6 +12,7 @@ import {
   PaneHeader,
   KeyValue,
   MultiColumnListRow,
+  and,
 } from '../../../../interactors';
 import ExportDetails from './exportDetails';
 
@@ -388,13 +389,10 @@ export default {
   },
 
   verifyJobDataInResults(expectedValuesArray) {
-    expectedValuesArray.forEach((expectedValue) => {
-      cy.expect(
-        exportJobsList
-          .find(MultiColumnListRow({ index: 0 }))
-          .has({ content: including(expectedValue) }),
-      );
-    });
+    const contentMatchers = expectedValuesArray.map((value) => including(value));
+    cy.expect(
+      exportJobsList.find(MultiColumnListRow({ content: and(...contentMatchers) })).exists(),
+    );
   },
 
   verifyJobDataInDetailView(expectedValuesObject) {

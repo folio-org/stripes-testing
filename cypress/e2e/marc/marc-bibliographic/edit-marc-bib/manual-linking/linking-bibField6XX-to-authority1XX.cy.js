@@ -288,8 +288,6 @@ describe('MARC', () => {
               );
             });
 
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(3000);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutUpdatedRecord);
             bib6XXAfterLinkingToAuth1XX.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(

@@ -76,7 +76,7 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.waitForAuthRefresh(() => {
@@ -84,8 +84,6 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
-          cy.reload();
-          MarcAuthorities.waitLoading();
         }, 20_000);
       });
     });

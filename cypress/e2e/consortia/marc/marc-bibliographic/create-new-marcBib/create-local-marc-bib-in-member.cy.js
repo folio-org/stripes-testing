@@ -77,7 +77,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            InventoryInstances.waitContentLoading();
           }, 20_000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstance.newMarcBibRecord();
@@ -91,7 +90,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(4, newField.tag, newField.content);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceID.push(id);

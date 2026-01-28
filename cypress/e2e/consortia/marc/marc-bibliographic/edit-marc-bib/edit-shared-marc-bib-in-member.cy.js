@@ -31,7 +31,7 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileC624269.mrc',
-            fileName: `AT_C405513_testMarcFile.${getCurrentTimestamp()}.mrc`,
+            fileName: `AT_C624269_testMarcFile.${getCurrentTimestamp()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
           },
@@ -83,7 +83,7 @@ describe('MARC', () => {
             InventoryInstance.checkInstanceTitle(testData.title);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentCentral);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -96,7 +96,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentCentral);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentMember);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentMember);

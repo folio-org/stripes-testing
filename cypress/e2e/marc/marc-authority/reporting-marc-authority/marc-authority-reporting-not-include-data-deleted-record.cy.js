@@ -133,7 +133,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -162,7 +162,7 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
           QuickMarcEditor.closeAllCallouts();
 
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading2);
@@ -172,7 +172,7 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptLinkedBibModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
           MarcAuthority.delete();
           QuickMarcEditor.confirmDeletingRecord();
 

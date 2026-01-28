@@ -112,8 +112,6 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             })
             .then(() => {
@@ -153,8 +151,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(11, testData.tag100);
             QuickMarcEditor.deleteField(11);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.clickRestoreDeletedField();

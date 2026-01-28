@@ -97,11 +97,9 @@ describe('MARC', () => {
               cy.login(users.userProperties.username, users.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                cy.waitForAuthRefresh(() => {
-                  cy.reload();
-                }, 30_000);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -139,8 +137,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
             QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();

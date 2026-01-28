@@ -6,6 +6,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -60,9 +64,16 @@ describe('MARC', () => {
       const updatedTitle = `${testData.instanceTitle} UPD`;
       const user = {};
       let createdInstanceId;
+      let specId;
 
       before('Create test data', () => {
         cy.getAdminToken();
+
+        getBibliographicSpec().then((spec) => {
+          specId = spec.id;
+          toggleAllUndefinedValidationRules(specId, { enable: true });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
@@ -85,13 +96,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
       });
 
       it(
         'C543837 Indicator boxes validation during deriving of MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543837'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543837'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);
@@ -105,7 +117,7 @@ describe('MARC', () => {
             const errorCount = item.warning ? 1 : 2;
             QuickMarcEditor.updateIndicatorValue(testData.tag245, item.values[0], 0);
             QuickMarcEditor.updateIndicatorValue(testData.tag245, item.values[1], 1);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(warningCount, errorCount);
             if (item.error) QuickMarcEditor.checkErrorMessageForFieldByTag(testData.tag245, item.error);
             if (item.warning) QuickMarcEditor.checkWarningMessageForFieldByTag(testData.tag245, item.warning);
@@ -123,7 +135,7 @@ describe('MARC', () => {
               ...item.values,
             );
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(8, 0);
           [testData.tag245, testData.tag600, testData.tag610].forEach((tag) => {
             QuickMarcEditor.checkWarningMessageForFieldByTag(
@@ -136,7 +148,7 @@ describe('MARC', () => {
             `${testData.indicatorWarningText(0, 'a')}${testData.indicatorWarningText(1, 'z')}`,
           );
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InstanceRecordView.verifyInstanceIsOpened(updatedTitle);
           InventoryInstance.editMarcBibliographicRecord();

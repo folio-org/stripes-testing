@@ -127,7 +127,6 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       QuickMarcEditor.checkCallout('Field 700 has been linked to a MARC authority record.');
       QuickMarcEditor.pressSaveAndClose();
       cy.wait(1500);
-      QuickMarcEditor.pressSaveAndClose();
       InventoryInstances.verifyInstanceDetailsView();
       QuickMarcEditor.checkCallout('Record created.');
       InventoryInstance.verifyContributorWithMarcAppLink(2, 1, marcAuthData.tag100Value);

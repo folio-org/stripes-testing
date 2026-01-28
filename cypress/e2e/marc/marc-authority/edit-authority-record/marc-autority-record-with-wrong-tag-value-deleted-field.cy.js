@@ -74,14 +74,10 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
           MarcAuthority.deleteTag(7);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorThreeCharacterMarcTag);
           MarcAuthority.changeTag(5, '040');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyConfirmModal();
         },
       );

@@ -87,8 +87,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(`${marcAuthority.tag010Value}`, 4);
 
           // Step 5: Click "Save & close" without 1XX field
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.expectedErrorMessage);
+          QuickMarcEditor.closeAllCallouts();
 
           // Step 6: Add new empty field
           QuickMarcEditor.addEmptyFields(4);
@@ -99,7 +100,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(testData.tag100, '$a ');
 
           // Step 8: Click "Save & close" with 1XX field but with $a
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.expectedErrorMessage);
           QuickMarcEditor.closeAllCallouts();
 
@@ -107,7 +108,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingFieldContent(5, '');
 
           // Step 10: Click "Save & close" with empty 1XX field
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.expectedErrorMessage);
         },
       );

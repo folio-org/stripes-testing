@@ -190,7 +190,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');
             QuickMarcEditor.verifyTagFieldAfterLinking(...fieldAfterUpdate);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Contributor',

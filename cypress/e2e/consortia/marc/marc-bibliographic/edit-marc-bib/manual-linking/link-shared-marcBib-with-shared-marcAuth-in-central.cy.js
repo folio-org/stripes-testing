@@ -199,9 +199,7 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(

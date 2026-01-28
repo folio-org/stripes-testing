@@ -90,8 +90,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -110,9 +108,7 @@ describe('MARC', () => {
             testData.tag655,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
+          QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -127,8 +123,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
         });
@@ -156,11 +150,11 @@ describe('MARC', () => {
           cy.wait(2000);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag100);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(7, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(7, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
@@ -168,11 +162,11 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(7, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag130);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(7, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag150);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(7, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag151);

@@ -32,7 +32,9 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
@@ -72,8 +74,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
       });
@@ -98,9 +98,7 @@ describe('MARC', () => {
           MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
           MarcAuthority.addNewField(3, newField.tag, newField.content);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);

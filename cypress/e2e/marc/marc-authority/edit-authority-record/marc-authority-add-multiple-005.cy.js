@@ -68,7 +68,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkFourthBoxEditable(5, false);
 
           // Step 4: Try to save and check for error messages
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, nonRepeatableErrorText);
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },

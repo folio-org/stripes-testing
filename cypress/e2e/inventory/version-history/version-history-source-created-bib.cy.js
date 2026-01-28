@@ -32,16 +32,16 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.lastName = user.personal.lastName;
-              testData.firstName = user.personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
-          cy.loginAsAdmin();
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          });
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.instanceTitle}`);
@@ -55,8 +55,6 @@ describe('Inventory', () => {
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
-            cy.reload();
             InventoryInstances.waitContentLoading();
           }, 20_000);
           InventoryInstances.searchByTitle(testData.instanceTitle);

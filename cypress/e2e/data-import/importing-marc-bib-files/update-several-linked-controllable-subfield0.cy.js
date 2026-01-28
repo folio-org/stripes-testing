@@ -146,8 +146,6 @@ describe('Data Import', () => {
           });
           QuickMarcEditor.clickArrowDownButton(75);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 

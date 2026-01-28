@@ -67,7 +67,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyDropdownsShownInField(5, true);
 
           // Step 4: Try to save and check for error messages
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(errorText);
           QuickMarcEditor.waitLoading();
         },

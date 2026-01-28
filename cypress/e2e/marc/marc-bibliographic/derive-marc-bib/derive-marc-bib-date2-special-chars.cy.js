@@ -83,7 +83,7 @@ describe('MARC', () => {
             testData.date2,
           );
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAfterDerivedMarcBibSave();
           InstanceRecordView.verifyInstanceIsOpened(`${testData.instanceTitle} DRV`);
           InstanceRecordView.verifyDates(

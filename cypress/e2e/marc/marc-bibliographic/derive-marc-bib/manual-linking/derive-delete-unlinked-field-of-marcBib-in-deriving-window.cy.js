@@ -116,8 +116,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000).then(() => {
               InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -132,16 +130,15 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
           });
         });
 
@@ -167,8 +164,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.deleteField(11);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck('1');
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();

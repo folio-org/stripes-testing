@@ -120,6 +120,7 @@ describe('MARC', () => {
               );
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
+              QuickMarcEditor.closeCallout();
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
               cy.login(userData.username, userData.password, {
@@ -164,7 +165,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
             QuickMarcEditor.clickSaveAndKeepEditing();
-
+            QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
 
             QuickMarcEditor.clickLinkIconInTagField(testData.tag100RowIndex);

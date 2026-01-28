@@ -119,7 +119,6 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(12, field245Value);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle('Crossfire DERIVED');
             InventoryInstance.verifyContributorAbsent('C380760 Coates, Ta-Nehisi');

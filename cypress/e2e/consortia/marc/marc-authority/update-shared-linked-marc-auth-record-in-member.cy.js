@@ -184,7 +184,7 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
-                QuickMarcEditor.saveAndCloseWithValidationWarnings();
+                QuickMarcEditor.pressSaveAndCloseButton();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -226,9 +226,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
           cy.visit(TopMenu.inventoryPath);

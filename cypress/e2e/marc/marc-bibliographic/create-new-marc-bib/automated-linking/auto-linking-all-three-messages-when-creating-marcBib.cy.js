@@ -95,6 +95,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -205,8 +206,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             // Step 8: Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
-            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.url().then((url) => {
               createdInstanceId = url.split('/')[5].split('?')[0];

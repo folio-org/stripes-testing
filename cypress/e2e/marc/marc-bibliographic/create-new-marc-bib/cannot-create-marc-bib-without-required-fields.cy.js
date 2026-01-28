@@ -132,7 +132,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkTagAbsent(testData.tag980);
 
           // Step 6: Click "Save & close" and verify error messages
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           testData.requiredFieldErrors.forEach((errorMessage) => {
             QuickMarcEditor.checkCallout(errorMessage);

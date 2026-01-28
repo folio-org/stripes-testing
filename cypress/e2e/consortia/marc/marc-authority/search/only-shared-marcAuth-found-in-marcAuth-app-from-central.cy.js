@@ -33,13 +33,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcAuthFileForC410739-Shared.mrc',
-          fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC410739.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'Central Office',
         },
         {
           marc: 'marcAuthFileForC410739-Local.mrc',
-          fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC410739.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           tenant: 'College',
         },

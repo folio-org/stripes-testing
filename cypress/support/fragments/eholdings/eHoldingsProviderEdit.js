@@ -36,8 +36,7 @@ export default {
     return cy
       .then(() => proxySelect.value())
       .then((selectedProxy) => {
-        API.getProxyTypesByApi().then((proxyTypes) => {
-          const availableProxies = proxyTypes.map((proxyType) => proxyType.attributes.name);
+        cy.getEholdingsProxiesViaAPI().then((availableProxies) => {
           const notSelectedProxy = availableProxies.filter(
             (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
           )[1];

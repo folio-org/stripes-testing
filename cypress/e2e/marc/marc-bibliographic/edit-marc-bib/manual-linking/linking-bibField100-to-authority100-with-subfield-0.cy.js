@@ -128,8 +128,6 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n2008001084',
               '',
             );
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
 
             InventoryInstance.clickViewAuthorityIconDisplayedInTagField(testData.tag100);

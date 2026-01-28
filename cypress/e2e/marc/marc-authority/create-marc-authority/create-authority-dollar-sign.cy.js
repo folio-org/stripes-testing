@@ -104,7 +104,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(field.content, 4 + index);
           });
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           fieldContentsAfterSave.forEach((field, index) => {
             QuickMarcEditor.checkContent(field.content, 4 + index);

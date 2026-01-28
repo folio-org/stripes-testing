@@ -15,7 +15,6 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -232,12 +231,11 @@ describe('Inventory', () => {
                   .find((key) => Affiliations[key] === instance.instanceTenant)
                   .toLowerCase();
                 cy.setTenant(instance.instanceTenant);
-                cy.createSimpleMarcBibViaAPI(instance.title);
-                QuickMarcEditor.getCreatedMarcBib(instance.title).then((bib) => {
-                  createdInstanceIds[targetTenant].push(bib.id);
+                cy.createSimpleMarcBibViaAPI(instance.title).then((bibId) => {
+                  createdInstanceIds[targetTenant].push(bibId);
                   testData.instances[
                     testData.instances.findIndex((inst) => inst.title === instance.title)
-                  ].instanceId = bib.id;
+                  ].instanceId = bibId;
                 });
               });
           });

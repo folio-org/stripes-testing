@@ -108,14 +108,15 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field);
             QuickMarcEditor.closeCallout();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+            }, 20_000);
           });
         });
       });
@@ -144,12 +145,7 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(4);
           QuickMarcEditor.afterDeleteNotification(testData.tag010);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyConfirmModal();
-
-          QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkCallout(testData.calloutMessage);
           MarcAuthorities.verifyMarcViewPaneIsOpened();
 

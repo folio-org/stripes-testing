@@ -193,14 +193,15 @@ describe('Data Import', () => {
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-          authRefresh: true,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+        }, 20_000);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
       });
     });

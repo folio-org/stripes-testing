@@ -181,10 +181,7 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           QuickMarcEditor.checkTagAbsent('');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-          QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndClose();
         },
       );
@@ -307,7 +304,7 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           cy.wait(3000);
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();

@@ -135,7 +135,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
 
           // #5 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
           QuickMarcEditor.closeAllCallouts();
 

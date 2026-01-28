@@ -104,8 +104,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.deleteField(11);
         QuickMarcEditor.deleteField(12);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
+        QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();

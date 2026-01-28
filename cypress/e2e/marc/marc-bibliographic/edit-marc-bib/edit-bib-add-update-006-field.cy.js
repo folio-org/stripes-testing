@@ -90,7 +90,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTextBoxValueInField(testData.tags.tag006, box.label, box.value);
           });
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           InventoryInstance.viewSource();

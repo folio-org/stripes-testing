@@ -102,20 +102,18 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.updateExistingTagValue(5, '');
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag10);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tagABC);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag100);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {

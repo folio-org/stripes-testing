@@ -98,7 +98,7 @@ describe('MARC', () => {
           cy.intercept(/\/search\/authorities\?.*AT_C375091_Reference_Heading/).as(
             'getAuthorities',
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.waitLoading();
           MarcAuthority.contains(`${testData.tag410}\t`);
 

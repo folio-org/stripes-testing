@@ -80,11 +80,12 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -105,11 +106,12 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-              authRefresh: true,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+            }, 20_000);
           });
       });
 

@@ -1,7 +1,5 @@
-import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -17,7 +15,6 @@ describe('MARC', () => {
         tag100: '100',
       };
       let user;
-      const LC_NAME_AUTHORITY_FILE = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -54,18 +51,16 @@ describe('MARC', () => {
           MarcAuthorities.waitLoading();
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
-          MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
 
           QuickMarcEditor.addNewField(testData.tag010, testData.authorityFileValue, 3);
           QuickMarcEditor.checkContent(testData.authorityFileValue, 4);
           QuickMarcEditor.addNewField(testData.tag100, testData.tag100Content, 4);
           QuickMarcEditor.checkContent(testData.tag100Content, 5);
 
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.expectedErrorMessage);
-          QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.discardChangesWithEscapeKey(4);
           QuickMarcEditor.cancelEditConfirmationPresented();
+          QuickMarcEditor.closeModalWithEscapeKey();
+          MarcAuthorities.waitLoading();
         },
       );
     });

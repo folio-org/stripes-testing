@@ -45,7 +45,6 @@ describe('MARC', () => {
             failInvalidSubfield:
               'Fail: $9 is an invalid subfield for linkable bibliographic fields.',
             failNonRepeatable: "Fail: Subfield '9' is non-repeatable.",
-            subfieldUndefined: "Warn: Subfield '9' is undefined.",
             saveSuccess: 'Record updated',
           },
           authorityIconText: 'Linked to MARC authority',
@@ -210,7 +209,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 3: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
@@ -250,7 +249,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 9: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag700,
               testData.messages.failInvalidSubfield,
@@ -277,7 +276,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
             // Step 12: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag100,
               testData.messages.failInvalidSubfield,
@@ -300,7 +299,7 @@ describe('MARC', () => {
             );
 
             // Step 15: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(
               testData.fieldIndexes.tag100,
               testData.messages.failInvalidSubfield,
@@ -337,19 +336,6 @@ describe('MARC', () => {
             );
 
             // Step 19: Click "Save & close" button
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.verifyValidationCallout();
-            QuickMarcEditor.closeAllCallouts();
-            QuickMarcEditor.checkErrorMessage(
-              testData.fieldIndexes.tag040,
-              testData.messages.subfieldUndefined,
-            );
-            QuickMarcEditor.checkErrorMessage(
-              testData.fieldIndexes.tag337,
-              testData.messages.subfieldUndefined,
-            );
-
-            // Step 20: Click "Save & close" button again
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             QuickMarcEditor.closeAllCallouts();
@@ -399,7 +385,7 @@ describe('MARC', () => {
             );
 
             // Step 23: Click "Save & close" button two times (ignore warn errors)
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             // Step 24: View source

@@ -80,7 +80,7 @@ describe('Inventory', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
 
           // Step 2: Share the local instance
           InventoryInstance.shareInstance();

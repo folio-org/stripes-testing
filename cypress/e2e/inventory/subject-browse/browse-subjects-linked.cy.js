@@ -86,6 +86,7 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
+
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

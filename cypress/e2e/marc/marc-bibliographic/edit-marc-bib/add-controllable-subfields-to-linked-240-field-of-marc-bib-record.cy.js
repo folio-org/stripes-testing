@@ -61,11 +61,12 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-            authRefresh: true,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000).then(() => {
             InventorySearchAndFilter.selectSearchOptions(
               testData.searchOption,
               testData.marcBibTitle,
@@ -85,14 +86,15 @@ describe('MARC', () => {
             });
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-            authRefresh: true,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000);
         });
       });
 

@@ -79,8 +79,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -94,8 +92,6 @@ describe('MARC', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -113,8 +109,6 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
-            cy.reload();
-            MarcAuthorities.waitLoading();
           }, 20_000);
         });
       });
@@ -146,49 +140,49 @@ describe('MARC', () => {
             testData.tagsForChanging[1],
             testData.tagsForChanging[0],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[0],
             testData.tagsForChanging[2],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[2],
             testData.tagsForChanging[4],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[4],
             testData.tagsForChanging[5],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[5],
             testData.tagsForChanging[6],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[6],
             testData.tagsForChanging[7],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[7],
             testData.tagsForChanging[3],
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
@@ -197,7 +191,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag110, testData.tag110changedContent);
-          QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterDeletingSubfield);

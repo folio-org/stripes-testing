@@ -150,7 +150,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(testData.tags.tag009, testData.fieldValues.field009);
 
           // Step 6: Click "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
 
@@ -162,7 +162,7 @@ describe('MARC', () => {
           // Step 7: Click on the "Actions" button in the third pane >> Select "Edit MARC bibliographic record" option
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
+          QuickMarcEditor.checkPaneheaderContains('MARC record');
 
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);
           QuickMarcEditor.checkContentByTag(testData.tags.tag004, testData.fieldValues.field004);

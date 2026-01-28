@@ -133,7 +133,7 @@ describe('MARC', () => {
           let previousTagValue = testData.tag100;
           testData.newTagValues.forEach((newTagValue) => {
             QuickMarcEditor.updateExistingTagName(previousTagValue, newTagValue);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(testData.tag100Index, testData.errorText);
             QuickMarcEditor.verifyValidationCallout(0, 1);
             QuickMarcEditor.closeAllCallouts();
@@ -147,7 +147,7 @@ describe('MARC', () => {
             testData.tag100,
             `${testData.authority100FieldContent} ${testData.subfieldT}`,
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(testData.tag100Index, testData.tSubfieldErrorText);
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },

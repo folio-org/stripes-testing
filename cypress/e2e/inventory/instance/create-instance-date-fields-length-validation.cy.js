@@ -24,6 +24,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         },
       );
@@ -77,6 +78,9 @@ describe('Inventory', () => {
 
         InstanceRecordEdit.fillDates(testData.date1set[6], testData.date2set[6]);
         InventoryNewInstance.clickSaveCloseButton();
+        InventoryInstance.waitInstanceRecordViewOpened();
+        InventoryInstances.waitContentLoading();
+
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);

@@ -121,7 +121,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.verifyAfterSaveAndClose();
             QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.newAuthorityHeaderText);
             MarcAuthority.getId().then((id) => {
@@ -165,7 +165,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n00776439',
               '',
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordionContributor,

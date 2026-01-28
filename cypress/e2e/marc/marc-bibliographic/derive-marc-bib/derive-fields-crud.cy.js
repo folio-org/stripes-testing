@@ -112,9 +112,7 @@ describe('MARC', () => {
           QuickMarcEditor.moveFieldUp(13);
           QuickMarcEditor.verifyTagValue(13, tags.tag100);
           QuickMarcEditor.verifyTagValue(14, tags.tag245);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();
           // Verify The "245" MARC field is displayed above the "100 field.

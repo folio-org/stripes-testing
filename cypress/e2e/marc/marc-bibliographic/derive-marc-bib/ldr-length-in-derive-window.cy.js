@@ -66,8 +66,6 @@ describe('MARC', () => {
           QuickMarcEditor.fillInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxNewValue);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAfterDerivedMarcBibSave();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyLDRPositionsDefaultValues('records[0].content.ELvl', 'u', false);
