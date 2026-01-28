@@ -341,6 +341,7 @@ Cypress.Commands.add('getItems', (searchParams) => {
   cy.okapiRequest({
     path: 'inventory/items',
     searchParams,
+    isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     Cypress.env('items', body.items);
     return body.items[0];
@@ -352,6 +353,7 @@ Cypress.Commands.add('updateItemViaApi', (item) => {
     method: 'PUT',
     path: `inventory/items/${item.id}`,
     body: { ...item },
+    isDefaultSearchParamsRequired: false,
   }).then(({ body }) => body);
 });
 

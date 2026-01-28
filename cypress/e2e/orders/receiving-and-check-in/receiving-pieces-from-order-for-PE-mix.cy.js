@@ -56,7 +56,6 @@ describe('Orders', () => {
                   },
                   eresource: {
                     createInventory: 'Instance, Holding',
-                    // accessProvider: 'd0fb5aa0-cdf1-11e8-a8d5-f2801f1b9fd1',
                   },
                   physical: {
                     createInventory: 'Instance, Holding, Item',

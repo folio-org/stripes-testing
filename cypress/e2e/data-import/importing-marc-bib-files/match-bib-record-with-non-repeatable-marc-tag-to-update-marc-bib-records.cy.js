@@ -235,7 +235,6 @@ describe('Data Import', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.importWithOclc(testData.oclcNumber);
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        cy.pause();
         InstanceRecordView.addHoldings();
         InventoryNewHoldings.waitLoading();
         InventoryNewHoldings.fillPermanentLocation(testData.holdings.holdingsPermanentLocation);

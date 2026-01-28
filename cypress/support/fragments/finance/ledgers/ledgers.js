@@ -1255,7 +1255,6 @@ export default {
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(6000);
-    cy.pause();
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
     if (returnId) {

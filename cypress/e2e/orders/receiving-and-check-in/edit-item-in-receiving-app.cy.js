@@ -1,12 +1,12 @@
 import moment from 'moment';
-import { LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import { Receivings } from '../../../support/fragments/receiving';
 import ReceivingEditForm from '../../../support/fragments/receiving/receivingEditForm';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
@@ -55,10 +55,9 @@ describe('Orders', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.receivingPath,
-          waiter: Receivings.waitLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
+        Receivings.waitLoading();
       });
     });
 

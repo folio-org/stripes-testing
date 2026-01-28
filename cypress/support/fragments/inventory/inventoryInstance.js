@@ -1675,6 +1675,15 @@ export default {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 
+  checkItemStatusByBarcode: (barcode, expectedStatus) => {
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((barcodeCell) => {
+        const row = barcodeCell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('div[class^="mclCell-"]').should('contain.text', expectedStatus);
+      });
+  },
+
   verifySharedIcon(row = 0) {
     cy.expect(
       paneResultsSection

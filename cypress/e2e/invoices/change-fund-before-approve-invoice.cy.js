@@ -37,8 +37,8 @@ describe('Invoices', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const ledger = { ...Ledgers.defaultUiLedger };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const firstBudget = {
@@ -54,27 +54,26 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = organization.id;
+      invoice.accountingCode = organization.erpCode;
+      invoice.vendorName = organization.name;
+      Object.assign(
+        vendorPrimaryAddress,
+        organization.addresses.find((address) => address.isPrimary === true),
+      );
+      invoice.batchGroup = 'FOLIO';
     });
-    invoice.accountingCode = organization.erpCode;
-    invoice.vendorName = organization.name;
-    Object.assign(
-      vendorPrimaryAddress,
-      organization.addresses.find((address) => address.isPrimary === true),
-    );
-    invoice.batchGroup = 'FOLIO';
-    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
-      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+    FiscalYears.createViaApi(fiscalYear).then((defaultFiscalYearResponse) => {
+      fiscalYear.id = defaultFiscalYearResponse.id;
       firstBudget.fiscalYearId = defaultFiscalYearResponse.id;
       secondBudget.fiscalYearId = defaultFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
+      ledger.fiscalYearOneId = fiscalYear.id;
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        firstFund.ledgerId = ledger.id;
+        secondFund.ledgerId = ledger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
