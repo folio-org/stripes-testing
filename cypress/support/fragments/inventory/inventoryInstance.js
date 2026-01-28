@@ -828,6 +828,11 @@ export default {
     return ItemRecordEdit;
   },
 
+  clickAddItemByHoldingId({ holdingId, instanceTitle = '' } = {}) {
+    cy.do(Button({ id: `clickable-new-item-${holdingId}` }).click());
+    ItemRecordEdit.waitLoading(instanceTitle);
+  },
+
   fillItemRequiredFields(permanentLoanType = 'Can circulate', materialType = 'book') {
     cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
     cy.do(Select({ id: 'additem_loanTypePerm' }).choose(permanentLoanType));
@@ -935,6 +940,14 @@ export default {
       MultiColumnListRow({ indexRow: indexRowNumber }),
     );
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
+  },
+
+  verifyItemRowAbsentInHoldingAccordion(holding) {
+    cy.expect(
+      Accordion({ label: including(`Holdings: ${holding}`) })
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .absent(),
+    );
   },
 
   moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false } = {}) {

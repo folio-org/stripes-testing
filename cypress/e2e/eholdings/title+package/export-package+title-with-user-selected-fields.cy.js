@@ -23,8 +23,8 @@ describe('eHoldings', () => {
       fileName: `C356770autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
       selectedStatus: 'Selected',
-      packageExportFields: ['Custom Coverage', 'Agreements', 'Notes'],
-      titleExportFields: ['Contributors', 'Custom label', 'Description'],
+      packageExportFields: ['Custom Coverage', 'Agreements', 'Notes', 'Package Name'],
+      titleExportFields: ['Contributors', 'Custom label', 'Description', 'Title name'],
       title: 'AAHE-ERIC/Higher Education Research Report',
     };
     const calloutMessage =
@@ -33,12 +33,14 @@ describe('eHoldings', () => {
     const dataToVerifyInCSVFile = [
       'Custom Coverage',
       'Agreements',
-      'Package Name',
+      'Package Note',
       'Contributors',
-      'Title name',
+      'Custom Value 1',
       'Description',
-      'AAHE-ERIC/Higher Education Research Report',
-      'Wiley Online Library',
+      'Package Name',
+      'Title Name',
+      testData.packageName,
+      testData.title,
     ];
 
     before('Creating user, logging in', () => {
@@ -64,6 +66,7 @@ describe('eHoldings', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     it(
@@ -114,10 +117,9 @@ describe('eHoldings', () => {
             eHoldingsResourceView.verifyPackagesResourceExportedFileName,
             testData.fileMask,
             ExportManagerSearchPane.verifyContentOfExportFile,
-            ...dataToVerifyInCSVFile,
+            dataToVerifyInCSVFile,
           );
         });
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       },
     );
   });

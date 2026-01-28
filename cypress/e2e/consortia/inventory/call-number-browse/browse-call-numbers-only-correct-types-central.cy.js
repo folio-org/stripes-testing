@@ -2,7 +2,6 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { CallNumberTypes } from '../../../../support/fragments/settings/inventory/instances/callNumberTypes';
 import Users from '../../../../support/fragments/users/users';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -131,7 +130,6 @@ describe('Inventory', () => {
       };
 
       const testData = {
-        servicePoint: ServicePoints.getDefaultServicePoint(),
         defaultLocation: {},
       };
       const tenants = [Affiliations.College];

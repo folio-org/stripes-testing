@@ -66,6 +66,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventoryInstances.searchByTitle(instanceRecordId);
         InventoryInstances.selectInstanceById(instanceRecordId);
@@ -77,7 +78,7 @@ describe('Inventory', () => {
         MarcAuthority.contains(authorityHeading);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(bibTag);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         cy.waitForAuthRefresh(() => {
@@ -85,8 +86,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
       });
@@ -140,7 +139,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInFieldByTag(bibTag);
         QuickMarcEditor.confirmUnlinkingField();
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, false);
 
