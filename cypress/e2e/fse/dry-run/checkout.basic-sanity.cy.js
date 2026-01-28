@@ -115,7 +115,7 @@ describe('Check out', () => {
       });
 
       cy.wait(4000);
-      CheckOutActions.checkOutUser(user.barcode, user.username);
+      CheckOutActions.checkOutUser(user.barcode);
       CheckOutActions.checkUserInfo({ ...user });
       CheckOutActions.checkOutItem(itemData.barcode);
       CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);

@@ -92,7 +92,7 @@ describe('Service Points Switching for Check In', () => {
     cy.setTenant(memberTenant.id);
     cy.getUserToken(user.username, user.password);
 
-    if (testData.folioInstances?.[0]) {
+    if (testData.folioInstances?.[0] && testData.servicePointA) {
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
         servicePoint: testData.servicePointA,
