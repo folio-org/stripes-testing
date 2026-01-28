@@ -45,51 +45,54 @@ describe('MARC', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      ]).then((createdUserProperties) => {
-        user.userAProperties = createdUserProperties;
+      ])
+        .then((createdUserProperties) => {
+          user.userAProperties = createdUserProperties;
 
-        marcFiles.forEach((marcFile) => {
-          cy.login(user.userAProperties.username, user.userAProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            Logs.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
+          marcFiles.forEach((marcFile) => {
+            cy.login(user.userAProperties.username, user.userAProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            }).then(() => {
+              DataImport.verifyUploadState();
+              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+              JobProfiles.waitLoadingList();
+              JobProfiles.search(marcFile.jobProfileToRun);
+              JobProfiles.runImportFile();
+              Logs.waitFileIsImported(marcFile.fileName);
+              Logs.checkStatusOfJobProfile('Completed');
+              Logs.openFileDetails(marcFile.fileName);
+              for (let i = 0; i < marcFile.numOfRecords; i++) {
+                Logs.getCreatedItemsID(i).then((link) => {
+                  createdAuthorityIDs.push(link.split('/')[5]);
+                });
+              }
+            });
+          });
+        })
+        .then(() => {
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+            Permissions.uiUsersCheckTransactions.gui,
+            Permissions.uiUsersDelete.gui,
+            Permissions.uiUserEdit.gui,
+            Permissions.uiUsersView.gui,
+          ]).then((createdUserProperties) => {
+            user.userBProperties = createdUserProperties;
+          });
+
+          cy.createTempUser([
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            user.userCProperties = createdUserProperties;
           });
         });
-      });
-
-      cy.createTempUser([
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.uiUsersCheckTransactions.gui,
-        Permissions.uiUsersDelete.gui,
-        Permissions.uiUserEdit.gui,
-        Permissions.uiUsersView.gui,
-      ]).then((createdUserProperties) => {
-        user.userBProperties = createdUserProperties;
-      });
-
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      ]).then((createdUserProperties) => {
-        user.userCProperties = createdUserProperties;
-      });
     });
 
     after('Deleting created user', () => {

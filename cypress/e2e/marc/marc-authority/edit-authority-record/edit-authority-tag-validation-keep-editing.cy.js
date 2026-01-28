@@ -82,7 +82,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(testData.tag400Index, tagValue);
             QuickMarcEditor.checkButtonsEnabled();
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            QuickMarcEditor.verifyValidationCallout(2, 1);
+            QuickMarcEditor.verifyValidationCallout(0, 1);
             QuickMarcEditor.closeAllCallouts();
             QuickMarcEditor.checkErrorMessage(
               testData.tag400Index,

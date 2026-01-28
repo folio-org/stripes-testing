@@ -87,7 +87,7 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(field.tag);
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkDeleteModal(3);
           QuickMarcEditor.clickRestoreDeletedField();
 
