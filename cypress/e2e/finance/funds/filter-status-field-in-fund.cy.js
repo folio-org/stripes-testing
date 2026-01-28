@@ -40,14 +40,11 @@ describe('Funds', () => {
     cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.fundPath,
-            waiter: Funds.waitLoading,
-          });
-          cy.reload();
-          Funds.waitLoading();
-        }, 20_000);
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
       },
     );
   });

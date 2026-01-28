@@ -351,4 +351,12 @@ export default {
       expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
     }
   },
+  selectPOLInOrder: (index = 0) => {
+    cy.do(
+      polListingAccordion
+        .find(MultiColumnListRow({ index }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .click(),
+    );
+  },
 };

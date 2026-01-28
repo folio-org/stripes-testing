@@ -1,21 +1,15 @@
-import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import { APPLICATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import { Budgets, FiscalYears, Funds, Ledgers } from '../../support/fragments/finance';
+import { Invoices, NewInvoice } from '../../support/fragments/invoices';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -43,8 +37,8 @@ describe('Invoices', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const ledger = { ...Ledgers.defaultUiLedger };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const firstBudget = {
@@ -60,27 +54,26 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = organization.id;
+      invoice.accountingCode = organization.erpCode;
+      invoice.vendorName = organization.name;
+      Object.assign(
+        vendorPrimaryAddress,
+        organization.addresses.find((address) => address.isPrimary === true),
+      );
+      invoice.batchGroup = 'FOLIO';
     });
-    invoice.accountingCode = organization.erpCode;
-    invoice.vendorName = organization.name;
-    Object.assign(
-      vendorPrimaryAddress,
-      organization.addresses.find((address) => address.isPrimary === true),
-    );
-    invoice.batchGroup = 'FOLIO';
-    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
-      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+    FiscalYears.createViaApi(fiscalYear).then((defaultFiscalYearResponse) => {
+      fiscalYear.id = defaultFiscalYearResponse.id;
       firstBudget.fiscalYearId = defaultFiscalYearResponse.id;
       secondBudget.fiscalYearId = defaultFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
+      ledger.fiscalYearOneId = fiscalYear.id;
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        firstFund.ledgerId = ledger.id;
+        secondFund.ledgerId = ledger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
@@ -100,24 +93,25 @@ describe('Invoices', () => {
     });
 
     cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersView.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.invoiceSettingsAll.gui,
+      Permissions.uiOrdersCreate.gui,
+      Permissions.uiOrdersApprovePurchaseOrders.gui,
+      Permissions.uiOrdersEdit.gui,
+      Permissions.uiOrdersView.gui,
+      Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
+
       cy.login(user.username, user.password, {
         path: TopMenu.settingsInvoiveApprovalPath,
         waiter: SettingsInvoices.waitApprovalsLoading,
-        authRefresh: true,
       });
-
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
@@ -137,18 +131,22 @@ describe('Invoices', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       Orders.closeThirdPane();
-      Orders.resetFilters();
-      TopMenuNavigation.navigateToApp('Invoices');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLinePOLLookUp(orderNumber);
-      TopMenuNavigation.navigateToApp('Orders');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeFundInPOL(secondFund);
       cy.wait(3000);
-      TopMenuNavigation.navigateToApp('Invoices');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.approveInvoice();

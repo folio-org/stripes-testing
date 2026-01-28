@@ -90,7 +90,7 @@ describe('Data Import', () => {
 
     it(
       'C353625 Check import summary table with "Created" action for invoice record (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C353625', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C353625'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

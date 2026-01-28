@@ -110,6 +110,7 @@ export default {
     );
   },
   verifyListIsSortedInAlphabeticalOrder: () => {
+    cy.wait(1000);
     getFileExtensionNames().then((cells) => {
       cy.expect(cells).to.deep.equal(cells.sort());
     });

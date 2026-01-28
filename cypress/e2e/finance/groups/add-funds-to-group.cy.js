@@ -1,16 +1,17 @@
-import permissions from '../../../support/dictionary/permissions';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Groups from '../../../support/fragments/finance/groups/groups';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import TopMenu from '../../../support/fragments/topMenu';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import {
+  Budgets,
+  FinanceHelper,
+  FiscalYears,
+  Funds,
+  Groups,
+  Ledgers,
+} from '../../../support/fragments/finance';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-
-Cypress.on('uncaught:exception', () => false);
 
 describe('Groups', () => {
   const firstFund = { ...Funds.defaultUiFund };
@@ -21,8 +22,8 @@ describe('Groups', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const ledger = { ...Ledgers.defaultUiLedger };
   const firstGroup = { ...Groups.defaultUiGroup };
   const secondGroup = {
     name: `autotest_group_2_${getRandomPostfix()}`,
@@ -39,17 +40,17 @@ describe('Groups', () => {
   };
   let user;
 
-  before(() => {
+  before('Create test data and login', () => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      firstBudget.fiscalYearId = defaultFiscalYear.id;
-      secondBudget.fiscalYearId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(fiscalYear).then((response) => {
+      fiscalYear.id = response.id;
+      ledger.fiscalYearOneId = fiscalYear.id;
+      firstBudget.fiscalYearId = fiscalYear.id;
+      secondBudget.fiscalYearId = fiscalYear.id;
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        firstFund.ledgerId = ledger.id;
+        secondFund.ledgerId = ledger.id;
 
         Groups.createViaApi(firstGroup).then((firstGroupResponse) => {
           firstGroup.id = firstGroupResponse.id;
@@ -71,46 +72,39 @@ describe('Groups', () => {
       });
     });
     cy.createTempUser([
-      permissions.uiFinanceViewEditDeleteFundBudget.gui,
-      permissions.uiFinanceViewGroups.gui,
+      Permissions.uiFinanceViewEditDeleteFundBudget.gui,
+      Permissions.uiFinanceViewGroups.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.waitForAuthRefresh(() => {
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.fundPath,
-          waiter: Funds.waitLoading,
-        });
-        cy.reload();
-        Funds.waitLoading();
-      }, 20_000);
+
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
+      FinanceHelper.selectFundsNavigation();
+      Funds.waitLoading();
     });
   });
 
-  after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    // Need to wait some time fo delating all items
-    cy.wait(1000);
+  after('Delete test data', () => {
+    cy.getAdminToken();
+    Budgets.getBudgetViaApi({ query: `fundId="${firstFund.id}"` }).then((budgetsResponse) => {
+      budgetsResponse.budgets.forEach((budget) => {
+        Budgets.deleteViaApi(budget.id);
+      });
+    });
+    Budgets.getBudgetViaApi({ query: `fundId="${secondFund.id}"` }).then((budgetsResponse) => {
+      budgetsResponse.budgets.forEach((budget) => {
+        Budgets.deleteViaApi(budget.id);
+      });
+    });
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
-    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(1000);
+    cy.wait(2000);
     Groups.deleteGroupViaApi(firstGroup.id);
-    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(1000);
+    cy.wait(2000);
     Groups.deleteGroupViaApi(secondGroup.id);
-    Ledgers.deleteLedgerViaApi(defaultLedger.id);
-    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(1000);
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    Ledgers.deleteLedgerViaApi(ledger.id);
+    cy.wait(2000);
+    FiscalYears.deleteFiscalYearViaApi(fiscalYear.id);
     Users.deleteViaApi(user.userId);
   });
 
@@ -118,7 +112,7 @@ describe('Groups', () => {
     'C4056 Add funds to a group (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C4056'] },
     () => {
-      FinanceHelp.searchByName(firstFund.name);
+      FinanceHelper.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.addGroupToFund(firstGroup.name);
       InteractorsTools.checkCalloutMessage('Fund has been saved');
@@ -126,13 +120,14 @@ describe('Groups', () => {
       Funds.addGroupToFund(secondGroup.name);
       InteractorsTools.checkCalloutMessage('Fund has been saved');
       Funds.checkAddGroupToFund(`${firstGroup.name}, ${secondGroup.name}`);
-      cy.visit(TopMenu.groupsPath);
-      FinanceHelp.searchByName(firstGroup.name);
+
+      FinanceHelper.selectGroupsNavigation();
+      FinanceHelper.searchByName(firstGroup.name);
       Groups.selectGroup(firstGroup.name);
       Groups.addFundToGroup(secondFund.name);
       InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
       Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
-      FinanceHelp.searchByName(secondGroup.name);
+      FinanceHelper.searchByName(secondGroup.name);
       Groups.selectGroup(secondGroup.name);
       Groups.addFundToGroup(firstFund.name);
       InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');

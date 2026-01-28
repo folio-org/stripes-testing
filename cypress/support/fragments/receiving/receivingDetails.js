@@ -162,6 +162,10 @@ export default {
 
     return ReceivingEditForm;
   },
+  editReceivingItem() {
+    cy.do([buttons.Edit.click()]);
+    ReceivingEditForm.waitLoading();
+  },
 
   verifyEditButtonIsInactive() {
     cy.do(buttons.Actions.click());

@@ -9,7 +9,6 @@ import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import RenewalActions from '../../support/fragments/loans/renewals';
@@ -266,7 +265,7 @@ describe(
     });
 
     it(
-      'C570 Renewal: failure because renewal date is not in loan policy\'s due date schedule (vega)',
+      "C570 Renewal: failure because renewal date is not in loan policy's due date schedule (vega)",
       { tags: ['extendedPath', 'vega', 'system', 'C570'] },
       () => {
         // Step 1: Log in as User A (without override permission) and attempt to renew

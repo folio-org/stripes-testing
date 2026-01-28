@@ -90,8 +90,7 @@ describe('orders: Receiving and Check-in', () => {
     });
   });
 
-  //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-
+  // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
   it(
     'C374133 Copy number applies to the item when receiving through "Receive" option (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C374133'] },
