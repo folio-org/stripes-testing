@@ -1,169 +1,188 @@
-import { LOCATION_NAMES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import {
+  BudgetDetails,
+  Budgets,
+  FinanceHelper,
+  FiscalYears,
+  FundDetails,
+  LedgerRollovers,
+  Ledgers,
+  Transactions,
+} from '../../support/fragments/finance';
+import { InvoiceLineDetails, Invoices, NewInvoice } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import DateTools from '../../support/utils/dateTools';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Invoices', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_2_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getDayTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const isApprovePayEnabled = false;
+  const code = CodeTools(2);
+  const date = new Date();
+  const organization = NewOrganization.getDefaultOrganization({ isVendor: true });
+  const testData = {
+    polPrice: '25.00',
+    allocatedQuantity: '100',
+    organization,
+    expenseClass: ExpenseClasses.getDefaultExpenseClass(),
+    order: {
+      ...NewOrder.defaultOneTimeOrder,
+      vendor: organization.id,
+      reEncumber: true,
+      approved: true,
+    },
+    orderLine: {},
+    ledger: {},
+    fund: {},
+    budget: {},
+    user: {},
+    invoice: { ...NewInvoice.defaultUiInvoice, vendorName: organization.name },
   };
-  const thirdFiscalYear = {
-    name: `autotest_3_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.get5DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get7DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const randomNumber = StringTools.randomTwoDigitNumber();
+  const fiscalYears = {
+    first: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${randomNumber}01`,
+      periodStart: new Date(),
+      periodEnd: new Date(date.getFullYear() + 0, 1, 28),
+    },
+    second: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${randomNumber}02`,
+      periodStart: new Date(date.getFullYear() + 0, 2, 1),
+      periodEnd: new Date(date.getFullYear() + 0, 2, 31),
+    },
+    third: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${randomNumber}03`,
+      periodStart: new Date(date.getFullYear() + 0, 3, 1),
+      periodEnd: new Date(date.getFullYear() + 0, 3, 30),
+    },
   };
-  const defaultLedger = {
-    ...Ledgers.defaultUiLedger,
-    restrictEncumbrance: false,
-    restrictExpenditures: false,
-  };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
-    approved: true,
-    reEncumber: true,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
-  const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getCurrentDateInPreviousMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForFirstFY2 = DateTools.getCurrentDateInPreviousMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY2 = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  let user;
-  let orderNumber;
-  let location;
 
-  before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-          organization.id = responseOrganizations;
-          invoice.accountingCode = organization.erpCode;
-          defaultOrder.vendor = organization.name;
+  before('Create test data and login', () => {
+    cy.getAdminToken().then(() => {
+      cy.getBatchGroups().then((batchGroup) => {
+        testData.invoice.batchGroup = batchGroup.name;
+      });
+      ExpenseClasses.createExpenseClassViaApi(testData.expenseClass);
 
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
-            location = res;
-          });
-          cy.getBatchGroups().then((batchGroup) => {
-            invoice.batchGroup = batchGroup.name;
-          });
+      const { ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+        fiscalYear: fiscalYears.first,
+        ledger: { restrictExpenditures: false, restrictEncumbrance: false },
+        budget: {
+          allocated: 10,
+          statusExpenseClasses: [
+            {
+              status: 'Active',
+              expenseClassId: testData.expenseClass.id,
+            },
+          ],
+        },
+      });
+      testData.ledger = ledger;
+      testData.fund = fund;
+      testData.budget = budget;
 
-          FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-            firstFiscalYear.id = firstFiscalYearResponse.id;
-            defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-              defaultLedger.id = ledgerResponse.id;
-              defaultFund.ledgerId = defaultLedger.id;
-              Funds.createViaApi(defaultFund).then((fundResponse) => {
-                defaultFund.id = fundResponse.fund.id;
+      FiscalYears.createViaApi(fiscalYears.second);
+      FiscalYears.createViaApi(fiscalYears.third);
+      Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+        organization.id = orgResp;
+        testData.invoice.accountingCode = organization.erpCode;
+
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResp) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((amResp) => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                const orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  cost: {
+                    listUnitPrice: 25.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 25.0,
+                  },
+                  fundDistribution: [
+                    {
+                      code: testData.fund.code,
+                      fundId: testData.fund.id,
+                      value: 100,
+                      expenseClassId: testData.expenseClass.id,
+                    },
+                  ],
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp,
+                    volumes: [],
+                  },
+                };
+
+                Orders.createOrderViaApi(testData.order).then((orderResp) => {
+                  testData.order = orderResp;
+                  testData.orderNumber = orderResp.poNumber;
+                  orderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
+                    testData.orderLine = orderLineResponse;
+                  });
+                  Orders.updateOrderViaApi({
+                    ...orderResp,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
               });
             });
-          });
-          secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-          thirdFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '3';
-
-          FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-            secondFiscalYear.id = secondFiscalYearResponse.id;
-          });
-          FiscalYears.createViaApi(thirdFiscalYear).then((thirdFiscalYearResponse) => {
-            thirdFiscalYear.id = thirdFiscalYearResponse.id;
-          });
-        });
-      })
-      .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.expenseClassesPath,
-          waiter: SettingsFinance.waitExpenseClassesLoading,
-        });
-        SettingsFinance.createNewExpenseClass(firstExpenseClass);
-        TopMenuNavigation.openAppFromDropdown('Finance');
-        FinanceHelp.selectFundsNavigation();
-        FinanceHelp.searchByName(defaultFund.name);
-        Funds.selectFund(defaultFund.name);
-        Funds.addBudget(allocatedQuantity);
-        Funds.editBudget();
-        Funds.addExpensesClass(firstExpenseClass.name);
-        Funds.closeBudgetDetails();
-        Funds.closeFundDetails();
-
-        TopMenuNavigation.openAppFromDropdown('Orders');
-        Orders.selectOrdersPane();
-        Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
-          defaultOrder.id = firstOrderResponse.id;
-          orderNumber = firstOrderResponse.poNumber;
-          Orders.checkCreatedOrder(defaultOrder);
-          OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-            defaultFund,
-            '110',
-            '1',
-            '110',
-            location.name,
-          );
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-          TopMenuNavigation.openAppFromDropdown('Finance');
-          FinanceHelp.selectLedgersNavigation();
-          FinanceHelp.searchByName(defaultLedger.name);
-          Ledgers.selectLedger(defaultLedger.name);
-          Ledgers.rollover();
-          Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
-            secondFiscalYear.code,
-            'None',
-            'Allocation',
-          );
-
-          FinanceHelp.selectFiscalYearsNavigation();
-          FinanceHelp.searchByName(firstFiscalYear.name);
-          FiscalYears.selectFY(firstFiscalYear.name);
-          FiscalYears.editFiscalYearDetails();
-          FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-            periodStartForFirstFY,
-            periodEndForFirstFY,
-          );
-          FinanceHelp.searchByName(secondFiscalYear.name);
-          FiscalYears.selectFY(secondFiscalYear.name);
-          FiscalYears.editFiscalYearDetails();
-          FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-            periodStartForSecondFY,
-            periodEndForSecondFY,
-          );
-        });
+          },
+        );
       });
+      const rollover = LedgerRollovers.generateLedgerRollover({
+        ledger: testData.ledger,
+        fromFiscalYear: fiscalYears.first,
+        toFiscalYear: fiscalYears.second,
+        needCloseBudgets: false,
+        budgetsRollover: [
+          {
+            rolloverAllocation: true,
+            rolloverBudgetValue: 'None',
+            addAvailableTo: 'Allocation',
+          },
+        ],
+        encumbrancesRollover: [{ orderType: 'One-time', basedOn: 'InitialAmount' }],
+      });
+      LedgerRollovers.createLedgerRolloverViaApi({
+        ...rollover,
+        restrictEncumbrance: false,
+        restrictExpenditures: false,
+      });
+      FiscalYears.updateFiscalYearViaApi({
+        ...fiscalYears.first,
+        _version: 1,
+        periodStart: new Date(date.getFullYear() - 0, 0, 1),
+        periodEnd: new Date(date.getFullYear() - 0, 0, 20),
+      });
+      FiscalYears.updateFiscalYearViaApi({
+        ...fiscalYears.second,
+        _version: 1,
+        periodStart: new Date(),
+        periodEnd: fiscalYears.second.periodEnd,
+      });
+      Approvals.setApprovePayValue(isApprovePayEnabled);
+    });
 
     cy.createTempUser([
       Permissions.uiFinanceExecuteFiscalYearRollover.gui,
@@ -176,138 +195,306 @@ describe('Invoices', () => {
       Permissions.uiInvoicesPayInvoices.gui,
       Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
     });
   });
 
-  after(() => {
+  after('Delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
   });
 
   it(
     'C388645 Save invoice fiscal year after fund distribution change if FY was undefined and pay invoice against previous FY (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet', 'C388645'] },
     () => {
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
+      Invoices.createDefaultInvoiceWithoutAddress(testData.invoice);
+      Invoices.checkCreatedInvoice({
+        ...testData.invoice,
+        information: { fiscalYear: 'No value set', status: 'Open' },
+      });
+      Invoices.createInvoiceLineFromPol(testData.orderNumber, 0);
+      Invoices.checkCreatedInvoice({
+        ...testData.invoice,
+        information: { fiscalYear: fiscalYears.second.code, status: 'Open' },
+      });
       Invoices.approveInvoice();
       Invoices.selectInvoiceLine();
-      Invoices.openPageCurrentEncumbrance('$0.00');
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$0.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Released');
-      Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '($110.00)',
-        `${orderNumber}-1`,
-        'Pending payment',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.closeTransactionApp(defaultFund, secondFiscalYear);
-      Funds.closeBudgetDetails();
-      Funds.selectPreviousBudgetDetails();
-      Funds.viewTransactions();
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '($110.00)',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      InvoiceLineDetails.waitLoading();
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        { name: testData.fund.name, currentEncumbrance: '0.00' },
+      ]);
+      const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.second.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${testData.orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+          { key: 'Initial encumbrance', value: '$25.00' },
+          { key: 'Awaiting payment', value: '$25.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
+      Transactions.selectTransaction('Pending payment');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.second.code },
+          { key: 'Amount', value: '$25.00' },
+          { key: 'Source', value: testData.invoice.invoiceNumber },
+          { key: 'Type', value: 'Pending payment' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+        ],
+      });
+      Transactions.closeTransactionsPage();
+      BudgetDetails.closeBudgetDetails();
+      FundDetails.waitLoading();
+      FundDetails.checkFundDetails({
+        information: [
+          { key: 'Name', value: testData.fund.name },
+          { key: 'Code', value: testData.fund.code },
+          { key: 'Ledger', value: testData.ledger.name },
+          { key: 'Status', value: 'Active' },
+        ],
+        currentBudget: {
+          name: fiscalYears.second.code,
+          allocated: '$10.00',
+        },
+        previousBudgets: [
+          {
+            name: testData.budget.name,
+            allocated: '$10.00',
+          },
+        ],
+      });
+      FundDetails.openPreviousBudgetDetails();
+      BudgetDetails.checkBudgetDetails({
+        summary: [{ key: 'Awaiting payment', value: '$0.00' }],
+        information: [{ key: 'Name', value: `${testData.budget.name}` }],
+      });
+      BudgetDetails.clickViewTransactionsLink();
+      ['Allocation', 'Encumbrance'].forEach((transactionType) => {
+        Transactions.checkTransactionsList({
+          records: [{ type: transactionType }],
+          present: true,
+        });
+      });
+      ['Pending payment', 'Expended'].forEach((transactionType) => {
+        Transactions.checkTransactionsList({
+          records: [{ type: transactionType }],
+          present: false,
+        });
+      });
+      Transactions.selectTransaction('Encumbrance');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.first.code },
+          { key: 'Amount', value: '($25.00)' },
+          { key: 'Source', value: `${testData.orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+          { key: 'Initial encumbrance', value: '$25.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
 
-      TopMenuNavigation.navigateToApp('Finance');
-      FinanceHelp.selectLedgersNavigation();
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
+      const periodStartForFirstFY2 = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear() - 0, 0, 21) },
+        'MM/DD/YYYY',
+      );
+      const periodEndForFirstFY2 = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear() - 0, 0, 26) },
+        'MM/DD/YYYY',
+      );
+      const periodStartForThirdFY = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+      const periodEndForThirdFY = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear() + 0, 4, 31) },
+        'MM/DD/YYYY',
+      );
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
+      FinanceHelper.selectLedgersNavigation();
+      FinanceHelper.searchByName(testData.ledger.name);
+      Ledgers.selectLedger(testData.ledger.name);
       Ledgers.rollover();
-      Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
-        thirdFiscalYear.code,
+      Ledgers.fillInRolloverForOneTimeOrdersWithAllocationAndWithoutCloseBudgets(
+        fiscalYears.third.code,
         'None',
         'Allocation',
+        true,
+        true,
       );
 
-      FinanceHelp.selectFiscalYearsNavigation();
-      FinanceHelp.searchByName(secondFiscalYear.name);
-      FiscalYears.selectFY(secondFiscalYear.name);
+      FinanceHelper.selectFiscalYearsNavigation();
+      FinanceHelper.searchByName(fiscalYears.second.name);
+      FiscalYears.selectFY(fiscalYears.second.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
         periodStartForFirstFY2,
         periodEndForFirstFY2,
       );
-      FinanceHelp.searchByName(thirdFiscalYear.name);
-      FiscalYears.selectFY(thirdFiscalYear.name);
+      FinanceHelper.searchByName(fiscalYears.third.name);
+      FiscalYears.selectFY(fiscalYears.third.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
         periodStartForThirdFY,
         periodEndForThirdFY,
       );
 
-      TopMenuNavigation.navigateToApp('Invoices');
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.searchByNumber(testData.invoice.invoiceNumber);
+      Invoices.selectInvoice(testData.invoice.invoiceNumber);
       Invoices.payInvoice();
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$0.00');
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '$0.00',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Released');
-      Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
-        secondFiscalYear.code,
-        '($110.00)',
-        `${orderNumber}-1`,
-        'Payment',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.closeTransactionApp(defaultFund, secondFiscalYear);
-      Funds.closeBudgetDetails();
-      Funds.selectPreviousBudgetDetailsByFY(defaultFund, firstFiscalYear);
-      Funds.viewTransactions();
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '($110.00)',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
-      Funds.closeTransactionApp(defaultFund, firstFiscalYear);
-      Funds.closeBudgetDetails();
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
-        thirdFiscalYear.code,
-        '($110.00)',
-        `${orderNumber}-1`,
-        'Encumbrance',
-        `${defaultFund.name} (${defaultFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.second.code },
+          { key: 'Amount', value: '$0.00' },
+          { key: 'Source', value: `${testData.orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+          { key: 'Initial encumbrance', value: '$25.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$25.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
+      Transactions.selectTransaction('Payment');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.second.code },
+          { key: 'Amount', value: '$25.00' },
+          { key: 'Source', value: testData.invoice.invoiceNumber },
+          { key: 'Type', value: 'Payment' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+        ],
+      });
+      Transactions.closeTransactionsPage();
+      BudgetDetails.closeBudgetDetails();
+      FundDetails.waitLoading();
+      FundDetails.checkFundDetails({
+        information: [
+          { key: 'Name', value: testData.fund.name },
+          { key: 'Code', value: testData.fund.code },
+          { key: 'Ledger', value: testData.ledger.name },
+          { key: 'Status', value: 'Active' },
+        ],
+        currentBudget: {
+          name: fiscalYears.third.code,
+          allocated: '$10.00',
+        },
+        previousBudgets: [
+          {
+            name: fiscalYears.second.code,
+            allocated: '$10.00',
+          },
+          {
+            name: testData.budget.name,
+            allocated: '$10.00',
+          },
+        ],
+      });
+      FundDetails.openPreviousBudgetDetails(1);
+      BudgetDetails.checkBudgetDetails({
+        information: [{ key: 'Name', value: `${testData.budget.name}` }],
+        summary: [{ key: 'Expended', value: '$0.00' }],
+      });
+      BudgetDetails.clickViewTransactionsLink();
+      ['Pending payment', 'Expended'].forEach((transactionType) => {
+        Transactions.checkTransactionsList({
+          records: [{ type: transactionType }],
+          present: false,
+        });
+      });
+      Transactions.selectTransaction('Encumbrance');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.first.code },
+          { key: 'Amount', value: '$25.00' },
+          { key: 'Source', value: `${testData.orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+          { key: 'Initial encumbrance', value: '$25.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
+      Transactions.closeTransactionsPage();
+      BudgetDetails.closeBudgetDetails();
+      FundDetails.waitLoading();
+      FundDetails.checkFundDetails({
+        information: [
+          { key: 'Name', value: testData.fund.name },
+          { key: 'Code', value: testData.fund.code },
+          { key: 'Ledger', value: testData.ledger.name },
+          { key: 'Status', value: 'Active' },
+        ],
+        currentBudget: {
+          name: fiscalYears.third.code,
+          allocated: '$10.00',
+        },
+        previousBudgets: [
+          {
+            name: fiscalYears.second.code,
+            allocated: '$10.00',
+          },
+          {
+            name: testData.budget.name,
+            allocated: '$10.00',
+          },
+        ],
+      });
+      FundDetails.openCurrentBudgetDetails();
+      BudgetDetails.checkBudgetDetails({
+        information: [{ key: 'Name', value: `${testData.fund.code}-${fiscalYears.third.code}` }],
+        summary: [{ key: 'Expended', value: '$0.00' }],
+      });
+      BudgetDetails.clickViewTransactionsLink();
+      ['Allocation', 'Encumbrance'].forEach((transactionType) => {
+        Transactions.checkTransactionsList({
+          records: [{ type: transactionType }],
+          present: true,
+        });
+      });
+      ['Pending payment', 'Expended'].forEach((transactionType) => {
+        Transactions.checkTransactionsList({
+          records: [{ type: transactionType }],
+          present: false,
+        });
+      });
+      Transactions.selectTransaction('Encumbrance');
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: fiscalYears.third.code },
+          { key: 'Amount', value: '$25.00' },
+          { key: 'Source', value: `${testData.orderNumber}-1` },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Expense class', value: testData.expenseClass.name },
+          { key: 'Initial encumbrance', value: '$25.00' },
+          { key: 'Awaiting payment', value: '$0.00' },
+          { key: 'Expended', value: '$0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
     },
   );
 });

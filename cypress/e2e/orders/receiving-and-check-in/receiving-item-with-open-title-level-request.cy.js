@@ -125,6 +125,7 @@ describe('Orders', () => {
       Users.deleteViaApi(testData.user.userId);
     });
 
+    // Consortium title level requests (TLR) should be disabled for running on member tenant
     it(
       'C402758 Receiving an item with open title level request (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet', 'C402758'] },

@@ -52,13 +52,13 @@ describe('Organizations', () => {
       Organizations.fillNameField(organizationWithNewName.name);
       Organizations.saveAndKeepEditing();
       Organizations.varifySaveOrganizationCalloutMessage(organizationWithNewName);
+      cy.wait(3000);
       Organizations.selectVendor();
       Organizations.saveAndKeepEditing();
       Organizations.varifySaveOrganizationCalloutMessage(organizationWithNewName);
       Organizations.selectDonorCheckbox();
       Organizations.cancelOrganization();
       Organizations.closeWithoutSaving();
-      Organizations.closeEditingWindow();
       Organizations.checkIsaVendor(organizationWithNewName);
       Organizations.checkIsNotaDonor(organizationWithNewName);
       Organizations.getLastUpdateTime().then((time) => {

@@ -90,7 +90,7 @@ describe('Orders', () => {
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
                           createInventory: 'Instance, Holding, Item',
-                          materialType: mtypes.body.id,
+                          materialType: mtypes.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],
                         },

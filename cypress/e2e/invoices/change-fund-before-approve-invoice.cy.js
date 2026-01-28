@@ -1,21 +1,15 @@
-import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import { APPLICATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import { Budgets, FiscalYears, Funds, Ledgers } from '../../support/fragments/finance';
+import { Invoices, NewInvoice } from '../../support/fragments/invoices';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -100,24 +94,25 @@ describe('Invoices', () => {
     });
 
     cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersView.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.invoiceSettingsAll.gui,
+      Permissions.uiOrdersCreate.gui,
+      Permissions.uiOrdersApprovePurchaseOrders.gui,
+      Permissions.uiOrdersEdit.gui,
+      Permissions.uiOrdersView.gui,
+      Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.invoiceSettingsAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
+
       cy.login(user.username, user.password, {
         path: TopMenu.settingsInvoiveApprovalPath,
         waiter: SettingsInvoices.waitApprovalsLoading,
-        authRefresh: true,
       });
-
       SettingsInvoices.uncheckApproveAndPayCheckboxIfChecked();
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
@@ -137,18 +132,22 @@ describe('Invoices', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       Orders.closeThirdPane();
-      Orders.resetFilters();
-      TopMenuNavigation.navigateToApp('Invoices');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLinePOLLookUp(orderNumber);
-      TopMenuNavigation.navigateToApp('Orders');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeFundInPOL(secondFund);
       cy.wait(3000);
-      TopMenuNavigation.navigateToApp('Invoices');
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.approveInvoice();

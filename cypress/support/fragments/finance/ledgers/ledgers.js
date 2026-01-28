@@ -1203,13 +1203,21 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    restrictEncumbrance = false,
+    restrictExpenditures = false,
   ) {
-    cy.wait(4000);
+    cy.wait(2000);
     cy.do(fiscalYearSelect.click());
-    cy.wait(4000);
+    cy.wait(2000);
     // Need to wait,while date of fiscal year will be loaded
+    cy.do(fiscalYearSelect.choose(fiscalYear));
+    if (restrictEncumbrance === true) {
+      cy.do(Checkbox({ name: 'restrictEncumbrance' }).click());
+    }
+    if (restrictExpenditures === true) {
+      cy.do(Checkbox({ name: 'restrictExpenditures' }).click());
+    }
     cy.do([
-      fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'needCloseBudgets' }).click(),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
@@ -1247,6 +1255,7 @@ export default {
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(6000);
+    cy.pause();
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
     if (returnId) {
