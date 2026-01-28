@@ -246,3 +246,20 @@ export function createFieldTestDataBuilder(testCaseId) {
 
   return builder;
 }
+
+// Toggle MARC specification rules
+export function toggleAllUndefinedValidationRules(specId, { enable = true }) {
+  const undefinedRules = {
+    undefinedFieldRuleName: 'Undefined Field',
+    undefinedIndRuleName: 'Undefined Indicator Code',
+    undefinedSubfieldRuleName: 'Undefined Subfield',
+  };
+  Object.values(undefinedRules).forEach((ruleName) => {
+    cy.getSpecificationRules(specId).then(({ body }) => {
+      const ruleId = body.rules.find((rule) => rule.name === ruleName).id;
+      cy.updateSpecificationRule(specId, ruleId, {
+        enabled: enable,
+      });
+    });
+  });
+}

@@ -16,7 +16,6 @@ describe('MARC', () => {
         field1XXTwo: '$a C515004 1XX field two',
         expected1XXNonRepeatableError: 'Field 1XX is non-repeatable.',
         expectedNonRepeatableError: 'Field is non-repeatable.',
-        expectedUndefinedError: 'Field is undefined.',
         tag1: ['100', '140', '140', '110', '101', '101', '100', '140'],
         tag2: ['110', '140', '150', '150', '101', '109', '109', '109'],
         marcFile: {
@@ -103,7 +102,7 @@ describe('MARC', () => {
           });
           QuickMarcEditor.deleteField(6);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
         },
       );

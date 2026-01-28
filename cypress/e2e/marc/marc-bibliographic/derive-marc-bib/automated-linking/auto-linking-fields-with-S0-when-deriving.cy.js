@@ -214,7 +214,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);
             InventoryInstance.viewSource();

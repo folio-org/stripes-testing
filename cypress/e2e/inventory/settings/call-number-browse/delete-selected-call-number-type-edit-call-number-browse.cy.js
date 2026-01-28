@@ -40,11 +40,13 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.uiSettingsCallNumberBrowseView.gui]).then(
           (userProperties) => {
             user = userProperties;
-            cy.login(user.username, user.password, {
-              path: TopMenu.settingsPath,
-              waiter: SettingsPane.waitLoading,
+            cy.waitForAuthRefresh(() => {
+              cy.login(user.username, user.password, {
+                path: TopMenu.settingsPath,
+                waiter: SettingsPane.waitLoading,
+              });
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
             });
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
             CallNumberBrowseSettings.openCallNumberBrowse();
             CallNumberBrowseSettings.validateCallNumberBrowsePaneOpened();
           },

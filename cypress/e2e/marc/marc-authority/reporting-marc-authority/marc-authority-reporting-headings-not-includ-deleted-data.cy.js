@@ -15,6 +15,10 @@ import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -88,6 +92,10 @@ describe('MARC', () => {
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
 
+            getAuthoritySpec().then((spec) => {
+              toggleAllUndefinedValidationRules(spec.id, { enable: false });
+            });
+
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
               query: 'keyword="C380532"',
@@ -126,7 +134,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tagValue, linking.index);
             });
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -146,6 +154,7 @@ describe('MARC', () => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
               });
             });
           });

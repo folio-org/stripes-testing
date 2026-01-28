@@ -31,6 +31,7 @@ describe('Check out', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
+    InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C380718');
     // Create service point
     cy.then(() => {
       testData.servicePoint = NewServicePoint.getDefaultServicePoint();
@@ -89,7 +90,7 @@ describe('Check out', () => {
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.userA.userId);
       Users.deleteViaApi(testData.userB.userId);
-      InventoryInstances.deleteFullInstancesByTitleViaApi(testData.folioInstances[0]);
+      InventoryInstances.deleteFullInstancesByTitleViaApi(testData.folioInstances[0].instanceTitle);
     });
   });
 
@@ -104,6 +105,7 @@ describe('Check out', () => {
       cy.login(testData.userA.username, testData.userA.password, {
         path: TopMenu.usersPath,
         waiter: UsersSearchPane.waitLoading,
+        authRefresh: true,
       });
 
       // Step 1: Fill in the search box with username of "User B" and click on the "Search" button

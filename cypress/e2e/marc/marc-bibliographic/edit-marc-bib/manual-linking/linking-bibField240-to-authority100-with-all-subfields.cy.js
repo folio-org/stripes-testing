@@ -133,8 +133,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkTooltipText(28, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.tag240rowindex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.wait(2000);
             InventoryInstance.editMarcBibliographicRecord();
