@@ -3,6 +3,7 @@ import {
   including,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   Section,
   Accordion,
@@ -232,6 +233,15 @@ export default {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
         cy.expect(MultiColumnListCell(value, { row: rowNumber, columnIndex }).exists());
       }),
+    );
+  },
+
+  clickOnResultByRowIndex(rowIndex) {
+    cy.do(
+      resultList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Button())
+        .click(),
     );
   },
 };
