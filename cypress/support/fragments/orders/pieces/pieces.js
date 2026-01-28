@@ -18,4 +18,13 @@ export default {
       })
       .then(({ body }) => body);
   },
+  updateOrderPieceViaApi(piece) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `orders/pieces/${piece.id}`,
+        body: piece,
+      })
+      .then(({ body }) => body);
+  },
 };

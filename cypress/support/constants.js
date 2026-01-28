@@ -1,6 +1,7 @@
 export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
+  CLAIMING: 'Claiming',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -14,6 +15,7 @@ export const APPLICATION_NAMES = {
   ORDERS: 'Orders',
   CHECK_IN: 'Check in',
   CHECK_OUT: 'Check out',
+  RECEIVING: 'Receiving',
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',

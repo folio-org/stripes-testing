@@ -394,9 +394,10 @@ export default {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
 
-  verifyJobDataInResults(expectedValuesArray) {
+  verifyJobDataInResults(expectedValuesArray, useEdiJobsList = false) {
+    const jobsList = useEdiJobsList ? exportEdiJobsList : exportJobsList;
     cy.expect(
-      exportJobsList
+      jobsList
         .find(
           MultiColumnListRow({
             content: and(...expectedValuesArray.map((value) => including(value))),
@@ -460,5 +461,11 @@ export default {
         cy.get("[data-testid='text-link']").contains(jobId).click();
       });
     waitClick();
+  },
+
+  verifyJobsCountInResults(expectedCount) {
+    cy.then(() => exportEdiJobsList.rowCount()).then((actualCount) => {
+      expect(actualCount).to.equal(expectedCount);
+    });
   },
 };
