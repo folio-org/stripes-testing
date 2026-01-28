@@ -109,10 +109,12 @@ describe('Check out', () => {
     'C356772 An active user with barcode can Check out item (vega)',
     { tags: ['dryRun', 'vega', 'C356772'] },
     () => {
+      cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,
       });
+      cy.allure().logCommandSteps();
 
       cy.wait(4000);
       CheckOutActions.checkOutUser(user.barcode);

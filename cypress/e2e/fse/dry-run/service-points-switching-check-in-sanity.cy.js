@@ -111,10 +111,12 @@ describe('Service Points Switching for Check In', () => {
     () => {
       const firstItem = testData.folioInstances[0].items[0];
       const secondItem = testData.folioInstances[0].items[1];
+      cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.checkInPath,
         waiter: CheckInActions.waitLoading,
       });
+      cy.allure().logCommandSteps();
 
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointA.name);
       CheckInActions.checkInItemGui(firstItem.barcode);

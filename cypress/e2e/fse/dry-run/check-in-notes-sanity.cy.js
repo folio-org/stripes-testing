@@ -108,10 +108,13 @@ describe('Check in', () => {
   });
 
   it('C776 Check in: check in notes (vega) (TaaS)', { tags: ['dryRun', 'vega', 'C776'] }, () => {
+    cy.allure().logCommandSteps(false);
     cy.login(user.username, user.password, {
       path: TopMenu.checkInPath,
       waiter: CheckInActions.waitLoading,
     });
+    cy.allure().logCommandSteps();
+
     // Scan item with at least two check in notes in Check In app
     CheckInActions.checkInItemGui(itemBarcode);
     // Check in note modal appears

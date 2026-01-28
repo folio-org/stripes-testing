@@ -140,10 +140,13 @@ describe('Check in', () => {
     });
 
     it('C347631 Check in: Basic check in (vega)', { tags: ['dryRun', 'vega', 'C347631'] }, () => {
+      cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.checkInPath,
         waiter: CheckInActions.waitLoading,
       });
+      cy.allure().logCommandSteps();
+
       CheckInActions.checkInItemGui(itemData.barcode);
       CheckInPane.verifyResultCells();
       CheckInPane.checkResultsInTheRow(checkInResultsData);

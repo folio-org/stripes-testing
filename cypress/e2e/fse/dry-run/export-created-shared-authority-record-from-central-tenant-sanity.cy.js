@@ -66,10 +66,12 @@ describe('Data Export', () => {
       { tags: ['dryRunECS', 'C436898', 'C436899'] },
       () => {
         cy.resetTenant();
+        cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         });
+        cy.allure().logCommandSteps();
 
         // User logs in to member tenant by default (primary affiliation)
         // Switch to central tenant to create authority record

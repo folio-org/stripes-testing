@@ -93,10 +93,13 @@ describe('MARC', () => {
           { tags: ['dryRunECS', 'spitfire', 'C422141'] },
           () => {
             cy.resetTenant();
+            cy.allure().logCommandSteps(false);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.allure().logCommandSteps();
+
             ConsortiumManager.switchActiveAffiliation(memberTenant.name, centralTenant.name);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

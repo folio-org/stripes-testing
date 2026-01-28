@@ -163,10 +163,13 @@ describe('Circulation log', () => {
     });
 
     it('C645 Test "Days" loan period (vega) (TaaS)', { tags: ['dryRun', 'C645'] }, () => {
+      cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.checkOutPath,
         waiter: CheckOutActions.waitLoading,
       });
+      cy.allure().logCommandSteps();
+
       const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
       // Enter patron and item that meet the criteria of the circulation rule
       CheckOutActions.checkOutItemUser(user.barcode, ITEM_BARCODE);
