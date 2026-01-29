@@ -10,7 +10,6 @@ import {
   Select,
   TextField,
   TextInput,
-  or,
 } from '../../interactors';
 
 Cypress.Commands.add(
@@ -215,7 +214,7 @@ Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
   cy.expect([
     TextInput('Username').exists(),
     TextInput('Password').exists(),
-    Button({ id: or('kc-login', 'clickable-login'), disabled: or(true, false) }).exists(),
+    Button({ name: 'login' }).exists(),
   ]);
   if (Cypress.env('ecsEnabled')) {
     cy.expect(Link('Return to tenant/library selection screen').exists());
@@ -227,7 +226,7 @@ Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
     cy.do([
       TextInput('Username').fillIn(username),
       TextInput('Password').fillIn(password),
-      Button({ id: or('kc-login', 'clickable-login') }).click(),
+      Button({ name: 'login' }).click(),
     ]);
   } else {
     cy.do([
