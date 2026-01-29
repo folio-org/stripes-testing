@@ -277,7 +277,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane

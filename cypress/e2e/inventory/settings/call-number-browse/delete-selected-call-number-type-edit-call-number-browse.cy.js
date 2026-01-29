@@ -22,10 +22,6 @@ describe('Inventory', () => {
           CALL_NUMBER_TYPES_DEFAULT.LIBRARY_OF_CONGRESS_CLASSIFICATION,
         ],
       };
-      const expectedTypesDisplay = [
-        CALL_NUMBER_TYPES_DEFAULT.DEWEY_DECIMAL_CLASSIFICATION,
-        CALL_NUMBER_TYPES_DEFAULT.LIBRARY_OF_CONGRESS_CLASSIFICATION,
-      ].join('');
       const saveCalloutText = `The call number browse type ${testData.callNumberBrowseOption} was successfully updated`;
 
       before('Create test data', () => {
@@ -68,9 +64,9 @@ describe('Inventory', () => {
         { tags: ['extendedPath', 'spitfire', 'C627460'] },
         () => {
           // Verify that the browse option has pre-selected call number types
-          CallNumberBrowseSettings.validateCallNumberBrowseRowInTable(
+          CallNumberBrowseSettings.validateMultipleTypesForCallNumberBrowseRowInTable(
             testData.callNumberBrowseOption,
-            expectedTypesDisplay,
+            testData.preSelectedCallNumberTypes,
             true,
           );
 

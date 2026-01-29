@@ -94,17 +94,24 @@ export default {
     cy.expect(saveButton.has({ disabled: false }));
   },
 
-  changeProxy: () => {
+  changeProxy: ({ excludeNone = true, selectNone = false } = {}) => {
+    let newProxy;
     return cy
       .then(() => proxySelect.checkedOptionText())
       .then((selectedProxy) => {
         cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
-          const notSelectedProxy = existingProxies.filter(
+          const notSelectedProxies = existingProxies.filter(
             (existingProxy) => existingProxy !== selectedProxy,
-          )[0];
-          cy.do(proxySelect.choose(notSelectedProxy));
-          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-          return cy.wrap(notSelectedProxy);
+          );
+          if (selectNone) newProxy = notSelectedProxies.filter((proxy) => proxy.toLowerCase().includes('none'))[0];
+          else {
+            newProxy = excludeNone
+              ? notSelectedProxies.filter((proxy) => !proxy.toLowerCase().includes('none'))[0]
+              : notSelectedProxies[0];
+          }
+          cy.do(proxySelect.choose(newProxy));
+          cy.expect(proxySelect.find(HTML(including(newProxy))).exists());
+          return cy.wrap(newProxy);
         });
       });
   },

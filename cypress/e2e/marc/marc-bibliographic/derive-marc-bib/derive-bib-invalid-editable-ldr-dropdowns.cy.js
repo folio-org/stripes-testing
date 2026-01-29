@@ -165,7 +165,7 @@ describe('MARC', () => {
           });
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
           InventoryInstance.viewSource();

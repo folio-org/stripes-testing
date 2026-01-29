@@ -190,6 +190,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -234,7 +235,7 @@ describe('MARC', () => {
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(4000);
             QuickMarcEditor.checkAfterSaveAndClose();
 

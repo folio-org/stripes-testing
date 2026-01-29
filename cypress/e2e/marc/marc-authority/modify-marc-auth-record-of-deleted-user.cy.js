@@ -53,6 +53,7 @@ describe('MARC', () => {
             cy.login(user.userAProperties.username, user.userAProperties.password, {
               path: TopMenu.dataImportPath,
               waiter: DataImport.waitLoading,
+              authRefresh: true,
             }).then(() => {
               DataImport.verifyUploadState();
               DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -108,6 +109,7 @@ describe('MARC', () => {
         cy.login(user.userBProperties.username, user.userBProperties.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
         UsersSearchPane.searchByUsername(user.userAProperties.username);
         UsersSearchPane.openUser(user.userAProperties.username);
@@ -120,7 +122,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
       },
@@ -140,7 +142,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.valueAfterUpdate);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
         cy.waitForAuthRefresh(() => {
@@ -161,7 +163,7 @@ describe('MARC', () => {
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
         QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
       },

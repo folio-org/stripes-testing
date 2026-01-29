@@ -74,7 +74,7 @@ describe('Data Import', () => {
         QuickMarcEditor.updateExistingFieldContent(10, testData.new082fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(13, testData.new260fieldRecord);
         QuickMarcEditor.pressSaveAndCloseButton();
-        QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkFieldContentToEqual(
           'textarea[name="records[6].content"]',

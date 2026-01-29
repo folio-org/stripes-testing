@@ -176,8 +176,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventoryInstances.waitContentLoading();
-          cy.reload();
         }, 20_000);
 
         InventorySearchAndFilter.switchToBrowseTab();
@@ -387,6 +385,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
@@ -1763,6 +1762,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.switchToBrowseTab();
               InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();

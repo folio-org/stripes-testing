@@ -1706,9 +1706,8 @@ export default {
 
   verifyLastUpdatedSource: (userFirstName, userLastName) => {
     cy.do(Accordion('Administrative data').click());
-    cy.get('div[data-test-updated-by="true"]')
-      .find('a')
-      .should('include.text', `${userLastName}, ${userFirstName}`);
+    const expectedText = userFirstName ? `${userLastName}, ${userFirstName}` : `${userLastName}`;
+    cy.get('div[data-test-updated-by="true"]').find('a').should('include.text', expectedText);
   },
 
   verifyRecordCreatedSource: (userFirsttName, userLastName) => {
