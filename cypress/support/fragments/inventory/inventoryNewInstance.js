@@ -298,4 +298,40 @@ export default {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
     cy.expect(Selection({ value: including(statisticalCode) }).absent());
   },
+  addElectronicAccess({
+    relationshipName,
+    uri,
+    linkText,
+    materialsSpecified,
+    urlPublicNote,
+    index = 0,
+  }) {
+    const actions = [Button('Add electronic access').click()];
+
+    if (relationshipName) {
+      actions.push(
+        Select({ name: `electronicAccess[${index}].relationshipId` }).choose(relationshipName),
+      );
+    }
+    if (uri) {
+      actions.push(TextArea({ name: `electronicAccess[${index}].uri` }).fillIn(uri));
+    }
+    if (linkText) {
+      actions.push(TextArea({ name: `electronicAccess[${index}].linkText` }).fillIn(linkText));
+    }
+    if (materialsSpecified) {
+      actions.push(
+        TextArea({ name: `electronicAccess[${index}].materialsSpecification` }).fillIn(
+          materialsSpecified,
+        ),
+      );
+    }
+    if (urlPublicNote) {
+      actions.push(
+        TextArea({ name: `electronicAccess[${index}].publicNote` }).fillIn(urlPublicNote),
+      );
+    }
+
+    cy.do(actions);
+  },
 };
