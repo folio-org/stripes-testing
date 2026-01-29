@@ -21,7 +21,6 @@ describe('Inventory', () => {
       const instanceTitle = `AT_C869996_FolioInstance_${randomPostfix}`;
       const callNumberPrefix = `AT_C869996_CallNumber_${randomPostfix}`;
       const barcodePrefix = `AT_C869996_Barcode_${randomPostfix}`;
-      const heldbyAccordionName = 'Held by';
       const callNumbers = Array.from({ length: 2 }, (_, i) => `${callNumberPrefix}_${i}`);
       const barcodes = Array.from({ length: 2 }, (_, i) => `${barcodePrefix}_${i}`);
       const testData = {
@@ -141,6 +140,7 @@ describe('Inventory', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
@@ -172,7 +172,7 @@ describe('Inventory', () => {
 
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstanceById(testData.instance.instanceId);
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
 
           InstanceRecordView.openHoldingItem({
             name: testData.holdings.location.name,
@@ -182,7 +182,7 @@ describe('Inventory', () => {
             tenantNames.university,
             testData.holdings.locationUniversity.name,
           );
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyItemsCount(0, testData.holdings.location.name);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
@@ -194,7 +194,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
             BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
           );
-          InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);
 

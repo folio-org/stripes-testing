@@ -16,7 +16,6 @@ describe('Inventory', () => {
         emptyLanguageCode: '',
         nonExistentLanguageCode: 'absolutely not an existing language',
         undeterminedLanguageOption: 'Undetermined',
-        noLanguageText: '-',
       };
       const languageCodes = [testData.emptyLanguageCode, testData.nonExistentLanguageCode];
       const instanceTitles = Array.from(
@@ -50,6 +49,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventorySearchAndFilter.instanceTabIsDefault();
           });
@@ -77,7 +77,7 @@ describe('Inventory', () => {
           );
           InventorySearchAndFilter.verifyMultiSelectFilterNumberOfOptions(
             testData.languageAccordionName,
-            1,
+            2,
           );
 
           languageCodes.forEach((_, i) => {
@@ -85,18 +85,26 @@ describe('Inventory', () => {
           });
           InventorySearchAndFilter.verifyNumberOfSearchResults(languageCodes.length);
 
-          InventoryInstances.selectInstanceByTitle(instanceTitles[0]);
-          InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceTitle(instanceTitles[0]);
-          InventoryInstance.verifyInstanceLanguage(testData.noLanguageText);
-
-          InventorySearchAndFilter.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.selectMultiSelectFilterOptionByIndex(
             testData.languageAccordionName,
-            testData.undeterminedLanguageOption,
+            0,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceTitle(instanceTitles[1]);
+          InventoryInstance.verifyInstanceLanguage(testData.undeterminedLanguageOption);
+          InventorySearchAndFilter.closeInstanceDetailPane();
+
+          InventorySearchAndFilter.selectMultiSelectFilterOptionByIndex(
+            testData.languageAccordionName,
+            0,
+          );
+          InventorySearchAndFilter.verifyNumberOfSearchResults(2);
+          InventorySearchAndFilter.selectMultiSelectFilterOptionByIndex(
+            testData.languageAccordionName,
+            1,
+          );
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.waitLoading();
           InventoryInstance.verifyInstanceLanguage(testData.undeterminedLanguageOption);
         },
       );

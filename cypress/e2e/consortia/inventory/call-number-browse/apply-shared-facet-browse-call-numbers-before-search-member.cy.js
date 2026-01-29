@@ -149,6 +149,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             InventorySearchAndFilter.switchToBrowseTab();
@@ -209,7 +210,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', true);
 
           InventorySearchAndFilter.selectOptionInExpandedFilter(sharedAccordionName, 'No', false);
-          InventorySearchAndFilter.verifyBrowseResultListExists();
+          InventorySearchAndFilter.verifyBrowseResultListExists(false);
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', false);
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', false);
 
@@ -224,6 +225,7 @@ describe('Inventory', () => {
           BrowseCallNumber.clickOnResultByRowIndex(1);
           InventorySearchAndFilter.validateSearchTabIsDefault();
           InventorySearchAndFilter.verifyResultListExists();
+          cy.wait(2000);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
 
           InventorySearchAndFilter.switchToBrowseTab();

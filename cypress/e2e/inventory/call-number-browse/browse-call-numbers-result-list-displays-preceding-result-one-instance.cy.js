@@ -104,6 +104,7 @@ describe('Inventory', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -120,6 +121,7 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'spitfire', 'C380478', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        cy.getToken(user.username, user.password);
         callNumbers.forEach((callNumber) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumber);
         });

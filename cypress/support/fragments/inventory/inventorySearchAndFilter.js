@@ -1223,6 +1223,13 @@ export default {
     cy.do(multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]));
   },
 
+  selectMultiSelectFilterOptionByIndex(accordionName, optionIndex) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(multiSelect.selectByIndex(optionIndex));
+  },
+
   checkSearchButtonEnabled() {
     cy.expect(searchButton.has({ disabled: false }));
   },

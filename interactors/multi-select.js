@@ -80,6 +80,12 @@ const select = async (interactor, values) => {
   await interactor.close();
 };
 
+const selectByIndex = async (interactor, index) => {
+  await interactor.open();
+  await MultiSelectMenu().find(MultiSelectOption({ index })).click();
+  await interactor.close();
+};
+
 export default createInteractor('multi select')
   .locator((el) => {
     const filterfield = el.querySelector('[role=searchbox]');
@@ -119,5 +125,6 @@ export default createInteractor('multi select')
     filter,
     select,
     choose: select,
+    selectByIndex,
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
   });
