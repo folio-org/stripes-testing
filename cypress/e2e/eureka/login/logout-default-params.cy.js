@@ -1,13 +1,10 @@
-import { Button, Dropdown, Heading, including, TextInput, HTML, or } from '../../../../interactors';
+import { Button, Dropdown, Heading, including, TextInput, HTML } from '../../../../interactors';
 
 describe('Eureka', () => {
   describe('Login', () => {
     const usernameInput = TextInput('Username');
     const passwordInput = TextInput('Password');
-    const loginButton = Button({
-      id: or('kc-login', 'clickable-login'),
-      disabled: or(true, false),
-    });
+    const loginButton = Button({ name: 'login' });
     const welcomeMessage = Heading(including('Welcome, the Future'));
     const appButton = HTML({ className: including('navRoot-') }).find(
       Button({ id: including('app-list-item-clickable-') }),
