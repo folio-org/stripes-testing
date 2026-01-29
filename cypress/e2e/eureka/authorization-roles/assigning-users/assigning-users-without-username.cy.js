@@ -74,6 +74,7 @@ describe('Eureka', () => {
               cy.login(testData.tempUser.username, testData.tempUser.password, {
                 path: TopMenu.settingsAuthorizationRoles,
                 waiter: AuthorizationRoles.waitContentLoading,
+                authRefresh: true,
               });
             });
           });

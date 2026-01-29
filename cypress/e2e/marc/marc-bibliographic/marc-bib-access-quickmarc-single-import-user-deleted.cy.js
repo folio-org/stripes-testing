@@ -82,7 +82,7 @@ describe('MARC', () => {
 
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTitle}`);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(testData.updatedTitle);
           });

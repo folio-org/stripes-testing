@@ -122,6 +122,7 @@ describe('Data Import', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         })
           .then(() => {
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
@@ -176,6 +177,7 @@ describe('Data Import', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

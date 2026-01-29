@@ -437,6 +437,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -508,7 +509,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380569*'].forEach((title) => {
+        ['C380569'].forEach((title) => {
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
         });
 

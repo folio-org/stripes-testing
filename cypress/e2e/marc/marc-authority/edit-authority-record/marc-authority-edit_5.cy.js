@@ -87,6 +87,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
       });
@@ -136,7 +137,7 @@ describe('MARC', () => {
               );
             });
             cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
 
             MarcAuthorities.verifyLDRFieldSavedSuccessfully(
               changesSavedCallout,

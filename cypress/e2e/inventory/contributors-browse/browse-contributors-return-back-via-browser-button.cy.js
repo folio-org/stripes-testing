@@ -33,8 +33,11 @@ describe('Inventory', () => {
 
         cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
           testData.user = resUserProperties;
-          cy.login(resUserProperties.username, resUserProperties.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          cy.waitForAuthRefresh(() => {
+            cy.login(resUserProperties.username, resUserProperties.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          });
         });
       });
     });
