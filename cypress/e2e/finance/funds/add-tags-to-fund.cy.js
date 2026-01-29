@@ -71,7 +71,7 @@ describe('Finance', () => {
 
     it(
       'C6714 Add tags to a fund (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C6714'] },
+      { tags: ['extendedPath', 'thunderjet', 'C6714'] },
       () => {
         FinanceHelp.searchByName(defaultFund.name);
         Funds.selectFund(defaultFund.name);

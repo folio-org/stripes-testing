@@ -1,4 +1,4 @@
-import { Dropdown, DropdownMenu, including, Modal, NavListItem } from '../../../interactors';
+import { Dropdown, DropdownMenu, including, Modal, NavListItem, HTML } from '../../../interactors';
 
 const appContextDropdownMenu = DropdownMenu({ id: 'App_context_dropdown_menu' });
 const appContextDropdown = Dropdown(including('Application context dropdown'));
@@ -6,8 +6,17 @@ const keyboardShortcutsModal = Modal('Keyboard shortcuts');
 
 export default {
   checkAppContextDropdownMenuShown(isShown = true) {
-    if (isShown) cy.expect(appContextDropdownMenu.exists());
-    else cy.expect(appContextDropdownMenu.absent());
+    if (isShown) {
+      cy.expect([
+        appContextDropdownMenu.exists(),
+        appContextDropdown.find(HTML({ classList: including('icon-caret-up') })).exists(),
+      ]);
+    } else {
+      cy.expect([
+        appContextDropdownMenu.absent(),
+        appContextDropdown.find(HTML({ classList: including('icon-caret-down') })).exists(),
+      ]);
+    }
   },
 
   toggleAppContextDropdown() {

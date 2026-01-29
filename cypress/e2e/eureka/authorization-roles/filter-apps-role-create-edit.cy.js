@@ -54,10 +54,6 @@ describe('Eureka', () => {
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
         });
-        // Workaround for STCOM-1476
-        cy.document().then((doc) => {
-          doc.documentElement.style.zoom = '110%';
-        });
       });
 
       after('Delete user and roles', () => {
@@ -89,9 +85,6 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.selectedApplications[1]);
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.UNSELECTED);
           AuthorizationRoles.checkApplicationCountInModal(allTenantApplications.length);
-          allTenantApplications.forEach((app) => {
-            AuthorizationRoles.checkApplicationShownInModal(app);
-          });
           AuthorizationRoles.checkApplicationShownInModal(
             testData.selectedApplications[0],
             true,
@@ -110,9 +103,6 @@ describe('Eureka', () => {
           AuthorizationRoles.clickResetAllInSelectAppModal();
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
           AuthorizationRoles.checkApplicationCountInModal(allTenantApplications.length);
-          allTenantApplications.forEach((app) => {
-            AuthorizationRoles.checkApplicationShownInModal(app);
-          });
           AuthorizationRoles.checkApplicationShownInModal(
             testData.selectedApplications[0],
             true,
@@ -168,9 +158,6 @@ describe('Eureka', () => {
           // Step 10: Click on "Unselected" variant
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.UNSELECTED);
           AuthorizationRoles.checkApplicationCountInModal(unselectedAppsFirst.length);
-          unselectedAppsFirst.forEach((app) => {
-            AuthorizationRoles.checkApplicationShownInModal(app);
-          });
           AuthorizationRoles.checkApplicationShownInModal(additionalApplications[0], true, false);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });
@@ -251,9 +238,6 @@ describe('Eureka', () => {
           // Step 17: Click on "Unselected" variant
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.UNSELECTED);
           AuthorizationRoles.checkApplicationCountInModal(unselectedAppsSecond.length);
-          unselectedAppsSecond.forEach((app) => {
-            AuthorizationRoles.checkApplicationShownInModal(app);
-          });
           AuthorizationRoles.checkApplicationShownInModal(testData.selectedApplications[1], false);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });

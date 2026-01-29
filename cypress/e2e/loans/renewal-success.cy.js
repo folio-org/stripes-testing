@@ -1,10 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import {
-  CY_ENV,
-  ITEM_STATUS_NAMES,
-  LOAN_TYPE_NAMES
-} from '../../support/constants';
+import { CY_ENV, ITEM_STATUS_NAMES, LOAN_TYPE_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckoutActions from '../../support/fragments/checkout/checkout';
@@ -59,11 +55,9 @@ describe('Renewal', () => {
           sourceId = holdingsSources[0].id;
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getBookMaterialType().then(
-          (mt) => {
-            materialTypeId = mt.id;
-          },
-        );
+        cy.getBookMaterialType().then((mt) => {
+          materialTypeId = mt.id;
+        });
         cy.getRequestPolicy();
         cy.getNoticePolicy();
         cy.getOverdueFinePolicy();
@@ -192,7 +186,7 @@ describe('Renewal', () => {
     'C567 Renewal: success, from open loans (multiple items) (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C567'] },
     () => {
-      cy.intercept('GET', '/configurations/entries?*').as('getEntries');
+      cy.intercept('GET', '/settings/entries?*').as('getEntries');
       UsersSearchPane.searchByKeywords(userName);
       cy.wait('@getEntries');
       // wait few seconds, that the user will be displayed
