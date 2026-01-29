@@ -6,6 +6,7 @@ import {
   MultiColumnListRow,
   Section,
   including,
+  Checkbox,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import TransactionDetails from './transactionDetails';
@@ -39,6 +40,15 @@ export default {
       }
     });
   },
+  checkTransactionsByTypeAndAmount({ records = [] } = {}) {
+    records.forEach(({ type, amount }) => {
+      cy.get('#transactions-list [class*=mclRow-]').each(($row) => {
+        if ($row.text().includes(type)) {
+          cy.wrap($row).should('contain', amount);
+        }
+      });
+    });
+  },
   selectTransaction(type) {
     cy.do(
       transactionResultsList
@@ -65,5 +75,12 @@ export default {
 
   clickPreviousPagination() {
     cy.do(previousButton.click());
+  },
+
+  checkEncumbranceTypeFilter() {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-transactionType' }).click(),
+      Checkbox('Encumbrance').click(),
+    ]);
   },
 };
