@@ -69,7 +69,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(newTitle);
 

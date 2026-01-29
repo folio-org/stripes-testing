@@ -5,6 +5,10 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -80,9 +84,15 @@ describe('MARC', () => {
       ];
 
       let createdAuthorityId;
+      let specId;
 
       before('Create test data', () => {
         cy.getAdminToken();
+        getAuthoritySpec().then((spec) => {
+          specId = spec.id;
+          toggleAllUndefinedValidationRules(specId, { enable: true });
+        });
+
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C543841_MarcAuthority');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -110,13 +120,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         MarcAuthorities.deleteViaAPI(createdAuthorityId, true);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C543841 Indicator boxes validation during editing of MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543841'] },
+        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543841'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);
@@ -127,7 +138,7 @@ describe('MARC', () => {
           indicatorData1XX.forEach((item) => {
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[0], 0);
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[1], 1);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(...item.counts);
             if (item.error) QuickMarcEditor.checkErrorMessageForFieldByTag(testData.tag100, item.error);
             if (item.warning) QuickMarcEditor.checkWarningMessageForFieldByTag(testData.tag100, item.warning);
@@ -145,7 +156,7 @@ describe('MARC', () => {
               ...item.values,
             );
           });
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(5, 0);
           [testData.tag100, testData.tag400, testData.tag410].forEach((tag) => {
             QuickMarcEditor.checkWarningMessageForFieldByTag(

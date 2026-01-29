@@ -64,7 +64,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008BoxesCount(19);
           MarcAuthority.select008DropdownsIfOptionsExist(testData.field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForFirstFile);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           TopMenu.openDataImportApp();
           Logs.verifyInstanceStatus(0, 2);
@@ -74,7 +74,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008BoxesCount(19);
           MarcAuthority.select008DropdownsIfOptionsExist(testData.second008Field008Updated);
           QuickMarcEditor.updateExistingFieldContent(9, testData.new100fieldRecordForSecondFile);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },
       );

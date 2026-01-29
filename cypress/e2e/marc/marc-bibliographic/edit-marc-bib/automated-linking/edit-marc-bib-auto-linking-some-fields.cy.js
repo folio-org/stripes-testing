@@ -183,8 +183,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // #5 Click on the "Save & keep editing" button.
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             // #6 Go to "MARC authority" app.
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

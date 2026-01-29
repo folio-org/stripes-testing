@@ -120,7 +120,7 @@ describe('Inventory', () => {
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();
       }
@@ -145,10 +145,14 @@ describe('Inventory', () => {
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-          authRefresh: true,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20_000);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,

@@ -42,13 +42,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC407654.mrc',
-          fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC407654.${getRandomPostfix()}.mrc`,
           propertyName: 'instance',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         },
         {
           marc: 'marcAuthFileForC407654.mrc',
-          fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC407654.${getRandomPostfix()}.mrc`,
           propertyName: 'authority',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         },
@@ -138,7 +138,7 @@ describe('MARC', () => {
                 linkingTagAndValues.tag,
                 linkingTagAndValues.rowIndex,
               );
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -166,9 +166,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           cy.visit(TopMenu.inventoryPath);

@@ -71,6 +71,9 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C422153*');
+          MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('sh85095299');
+          MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('y022024');
+          MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('y022025');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -99,6 +102,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -109,7 +113,7 @@ describe('MARC', () => {
             Users.deleteViaApi(userData.userId);
           }
           createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
           if (createdInstanceId) {
             InventoryInstance.deleteInstanceViaApi(createdInstanceId);
@@ -170,17 +174,17 @@ describe('MARC', () => {
             // Verify field 650 WAS linked (single match)
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(6);
 
-            // Verify error toast notification for field 100
-            QuickMarcEditor.checkCallout(testData.errorMessage);
-
             // Verify success toast notification for field 650
             QuickMarcEditor.checkCallout(testData.successMessage);
+
+            // Verify error toast notification for field 100
+            QuickMarcEditor.checkCallout(testData.errorMessage);
 
             // Verify Link headings button is still enabled
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             // Step 8: Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             // Capture instance ID for cleanup

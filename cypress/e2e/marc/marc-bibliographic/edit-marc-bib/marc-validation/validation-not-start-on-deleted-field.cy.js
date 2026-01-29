@@ -96,12 +96,11 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(fieldValue.tag, fieldValue.newValue);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessageForField(
             fields[0].index,
             'Fail: Field 1XX is non-repeatable.Help',
           );
-          QuickMarcEditor.checkWarningMessageForField(fields[5].index, 'Warn: Field is undefined.');
           fields.forEach(({ index }) => {
             QuickMarcEditor.deleteField(index);
           });

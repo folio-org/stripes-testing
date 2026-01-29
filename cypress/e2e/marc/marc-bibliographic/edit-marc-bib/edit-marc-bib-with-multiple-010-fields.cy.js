@@ -87,7 +87,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
 
           // #7 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // #8 Change tag value of second "010" field to "011".
@@ -96,8 +96,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
           // #9 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           // #10 Click on the "Actions" >> "View source".
@@ -127,7 +125,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent('766384', 5);
 
           // # 4 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutMessage);
 
           // # 5 Click "Save & keep editng" button
@@ -140,8 +138,6 @@ describe('MARC', () => {
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
           // # 7 Click "Save & keep editing" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
         },

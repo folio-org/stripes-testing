@@ -92,10 +92,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            });
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -108,7 +104,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.createTempUser([
@@ -124,10 +120,6 @@ describe('MARC', () => {
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
               });
             });
           });
@@ -159,7 +151,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[0].rowIndex);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.secondTag700Values);
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[1].rowIndex);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.verifyContributor(2, 1, linkingTagAndValues[0].value);
           InventoryInstance.checkMarcAppIconAbsent(2);
           InventoryInstance.verifyContributor(3, 1, linkingTagAndValues[1].value);

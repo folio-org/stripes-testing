@@ -111,6 +111,7 @@ describe('Check out', () => {
       cy.login(testData.userA.username, testData.userA.password, {
         path: TopMenu.usersPath,
         waiter: UsersSearchPane.waitLoading,
+        authRefresh: true,
       });
 
       // Step 1: Scroll down to the "Notes" accordion button and click on it

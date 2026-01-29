@@ -69,7 +69,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(5, testData.tag999);
           QuickMarcEditor.checkFieldsCount(6);
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.checkInstanceTitle(updatedTitle);
           InventoryInstance.verifyLastUpdatedSource(user.firstName, user.lastName);
           InventoryInstance.verifyLastUpdatedDate();

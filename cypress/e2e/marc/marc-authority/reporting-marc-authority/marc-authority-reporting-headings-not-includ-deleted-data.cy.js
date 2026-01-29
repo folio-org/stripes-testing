@@ -15,6 +15,10 @@ import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -33,8 +37,6 @@ describe('MARC', () => {
         updatedTag100Value1:
           '$a C380532 Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         updatedTag100Value2: '$a C380532 Kerouac, Jackson, $d 1922-1969',
-        title:
-          'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
       };
 
       const marcFiles = [
@@ -90,6 +92,10 @@ describe('MARC', () => {
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
 
+            getAuthoritySpec().then((spec) => {
+              toggleAllUndefinedValidationRules(spec.id, { enable: false });
+            });
+
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
               query: 'keyword="C380532"',
@@ -128,30 +134,30 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tagValue, linking.index);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
-          });
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              Permissions.inventoryAll.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+              Permissions.exportManagerAll.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          Permissions.exportManagerAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+                authRefresh: true,
+              });
+            });
           });
-        });
       });
 
       after('Deleting user and data', () => {
@@ -172,9 +178,6 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
@@ -185,8 +188,6 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           MarcAuthority.delete();
