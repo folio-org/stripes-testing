@@ -31,10 +31,12 @@ describe('Users', () => {
   userWithSameUsername.username = testUser.username;
 
   before('Setup', () => {
+    cy.allure().logCommandSteps(false);
     cy.login(user.username, user.password, {
       path: TopMenu.usersPath,
       waiter: UsersSearchPane.waitLoading,
     });
+    cy.allure().logCommandSteps();
   });
 
   after('Cleanup', () => {

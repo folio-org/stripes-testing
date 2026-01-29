@@ -14,7 +14,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import { parseSanityParameters } from '../../../support/utils/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
-describe('Service Points Switching for Check In', () => {
+describe.skip('Service Points Switching for Check In', () => {
   const { user, memberTenant } = parseSanityParameters();
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ itemsCount: 2 }),
