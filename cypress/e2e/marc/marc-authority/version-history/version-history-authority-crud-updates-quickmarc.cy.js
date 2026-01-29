@@ -310,8 +310,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.combinedUpdate.deletedField.tag);
           cy.wait(3000);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.confirmDeletingFields();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeadingFinal);
 

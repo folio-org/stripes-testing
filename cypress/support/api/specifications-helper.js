@@ -170,15 +170,9 @@ export function createFieldWithIndicatorsAndCodes(specId, fieldData, indicatorsD
 }
 
 // Cleanup utilities
-export function cleanupField(fieldId, indicatorIds = [], codeIds = []) {
+export function cleanupField(fieldId, indicatorIds = []) {
   // Clean up in reverse order: codes -> indicators -> field
   const cleanupPromises = [];
-
-  if (codeIds.length > 0) {
-    codeIds.forEach((codeId) => {
-      cleanupPromises.push(cy.deleteSpecificationFieldIndicatorCode(codeId, false));
-    });
-  }
 
   if (indicatorIds.length > 0) {
     indicatorIds.forEach((indicatorId) => {
