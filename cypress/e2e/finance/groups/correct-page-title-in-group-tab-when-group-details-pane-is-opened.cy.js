@@ -56,7 +56,7 @@ describe('Finance', () => {
 
     it(
       'C451610 Correct page title in Group tab when Group details pane is opened ("Finance" app) (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C451610'] },
+      { tags: ['extendedPath', 'thunderjet', 'C451610'] },
       () => {
         Groups.checkPageTitle(testData.expectedTitles.default);
 
