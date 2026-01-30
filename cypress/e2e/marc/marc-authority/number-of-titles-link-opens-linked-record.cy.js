@@ -48,28 +48,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
-
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${testData.instanceTitle}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
-
-      MarcAuthorities.getMarcAuthoritiesViaApi({
-        limit: 100,
-        query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-      }).then((authorities) => {
-        if (authorities) {
-          authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
-        }
-      });
+      InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(
@@ -87,9 +67,11 @@ describe('MARC', () => {
         });
       });
 
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstances.waitContentLoading();
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+        authRefresh: true,
+      }).then(() => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -97,6 +79,10 @@ describe('MARC', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         MarcAuthoritiesSearch.selectExcludeReferencesFilter(
           REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
@@ -114,10 +100,10 @@ describe('MARC', () => {
           testData.user = createdUserProperties;
         })
         .then(() => {
-          cy.logout();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
         });
     });
@@ -139,6 +125,10 @@ describe('MARC', () => {
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter(
           REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
         );

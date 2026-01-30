@@ -92,20 +92,12 @@ describe('MARC', () => {
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
 
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380532');
+
             getAuthoritySpec().then((spec) => {
               toggleAllUndefinedValidationRules(spec.id, { enable: false });
             });
 
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C380532"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -120,8 +112,11 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -167,6 +162,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
       });
+
       it(
         'C380532 Data for "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C380532'] },

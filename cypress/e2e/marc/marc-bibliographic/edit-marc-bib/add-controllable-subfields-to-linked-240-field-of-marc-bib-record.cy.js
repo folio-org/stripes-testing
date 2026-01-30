@@ -67,12 +67,8 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
           }, 20_000).then(() => {
-            InventorySearchAndFilter.selectSearchOptions(
-              testData.searchOption,
-              testData.marcBibTitle,
-            );
-            InventorySearchAndFilter.clickSearch();
-            InventoryInstances.selectInstanceById(createdRecordIDs[0]);
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tagForLinking);
@@ -112,17 +108,13 @@ describe('MARC', () => {
         'C376598 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "111" field of "MARC authority" record) (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C376598'] },
         () => {
-          InventorySearchAndFilter.selectSearchOptions(
-            testData.searchOption,
-            testData.marcBibTitle,
-          );
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
             InventorySearchAndFilter.verifyResultListExists();
           });
-          InventorySearchAndFilter.clickSearch();
-          InventoryInstances.selectInstanceById(createdRecordIDs[0]);
+          InventorySearchAndFilter.executeSearch(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
+
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateLinkedFifthBox(17, '$n test');
           cy.wait(500); // need wait until changes appear
