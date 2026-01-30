@@ -75,12 +75,11 @@ describe('Inventory', () => {
 
         InventoryInstances.searchByTitle(createdRecordId);
         InventoryInstances.selectInstanceById(createdRecordId);
-        InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
 
         InventoryKeyboardShortcuts.pressHotKey(InventoryHotkeys.hotKeys.editMarc);
         InteractorsTools.checkCalloutErrorMessage(permissionCalloutText);
-        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventorySearchAndFilter.waitLoading();
       },
     );
