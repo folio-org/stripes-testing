@@ -1,23 +1,22 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
+import Invoices from '../../../support/fragments/invoices/invoices';
+import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import Approvals from '../../../support/fragments/settings/invoices/approvals';
-import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
-import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
-import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -44,7 +43,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const isApprovePayDisabled = false;
   let user;
   let location;
   let firstOrderNumber;
@@ -185,10 +183,10 @@ describe('Finance: Transactions', () => {
     });
 
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-      permissions.uiInvoicesPayInvoices.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -201,9 +199,6 @@ describe('Finance: Transactions', () => {
 
   after(() => {
     cy.getAdminToken();
-
-    OrderLinesLimit.setPOLLimit(1);
-    Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 

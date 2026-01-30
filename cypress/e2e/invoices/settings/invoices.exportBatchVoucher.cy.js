@@ -62,7 +62,6 @@ describe('Invoices', () => {
         Funds.addBudget(100);
       });
       invoiceLine.subTotal = -subtotalValue;
-      TopMenuNavigation.openAppFromDropdown('Invoices');
     });
 
     after('Delete storage', () => {
@@ -75,6 +74,7 @@ describe('Invoices', () => {
       'C10943 Run batch voucher export manually (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'C10943'] },
       () => {
+        TopMenuNavigation.openAppFromDropdown('Invoices');
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLine(invoiceLine);
         Invoices.addFundDistributionToLine(invoiceLine, fund);

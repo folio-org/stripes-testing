@@ -105,7 +105,7 @@ describe('Orders', () => {
       OrderLines.selectPOLInOrder();
       OrderLineDetails.openOrderLineEditForm();
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrdersPane();
@@ -122,7 +122,7 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderLines.selectPOLInOrder();
       OrderLines.openInstanceInPOL(item.instanceName);
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
     },
   );
 });

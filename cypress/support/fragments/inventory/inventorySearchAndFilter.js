@@ -1227,7 +1227,7 @@ export default {
     cy.expect(searchButton.has({ disabled: false }));
   },
 
-  varifyInstanceKeyDetails(instanceData) {
+  verifyInstanceKeyDetails(instanceData) {
     cy.wait(4000);
     cy.expect([
       Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),

@@ -18,6 +18,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
@@ -69,7 +70,7 @@ describe('Invoices', () => {
 
         cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
         cy.setTenant(Affiliations.College);
-        Approvals.setApprovePayValue(false);
+        Approvals.setApprovePayValueViaApi(false);
 
         cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
           Permissions.uiFinanceViewFundAndBudget.gui,
@@ -174,7 +175,7 @@ describe('Invoices', () => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                TopMenuNavigation.navigateToApp('Invoices');
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
               },
             );
           });

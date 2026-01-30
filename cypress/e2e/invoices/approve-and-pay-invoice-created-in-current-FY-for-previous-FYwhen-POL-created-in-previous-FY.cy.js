@@ -143,7 +143,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
           },
         );
       });
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
 
       const rollover = LedgerRollovers.generateLedgerRollover({
         ledger: testData.ledger,

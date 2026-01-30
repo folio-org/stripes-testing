@@ -236,6 +236,7 @@ export default {
       const lines = content.trim().split(/\r?\n/);
 
       const header = this.parseCsvLine(lines[0]);
+      cy.wait(2000);
       expect(header).to.deep.equal(['Fund code', 'Fund and active expense class codes']);
 
       const fileRows = lines
@@ -244,6 +245,7 @@ export default {
         .sort((a, b) => a[0].localeCompare(b[0]));
 
       const sortedExpectedRows = [...expectedRows].sort((a, b) => a[0].localeCompare(b[0]));
+      cy.wait(2000);
       expect(fileRows).to.deep.equal(sortedExpectedRows);
     });
   },

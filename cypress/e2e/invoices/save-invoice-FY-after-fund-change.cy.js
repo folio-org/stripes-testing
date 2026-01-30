@@ -181,7 +181,7 @@ describe('Invoices', () => {
         periodStart: new Date(),
         periodEnd: fiscalYears.second.periodEnd,
       });
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
     });
 
     cy.createTempUser([

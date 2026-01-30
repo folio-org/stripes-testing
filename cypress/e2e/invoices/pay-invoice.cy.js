@@ -106,7 +106,7 @@ describe('Invoices', () => {
         );
       },
     );
-    Approvals.setApprovePayValue(isApprovePayEnabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
 
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,

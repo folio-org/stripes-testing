@@ -1,23 +1,23 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
 } from '../../../support/constants';
+import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../../support/fragments/invoices/invoices';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -43,7 +43,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const isApprovePayEnabled = true;
-  const isApprovePayDisabled = false;
   let thirdInvoice;
   let firstInvoice;
   let secondInvoice;
@@ -183,7 +182,7 @@ describe('Finance: Transactions', () => {
                           subTotal: 100,
                         });
                         Invoices.createInvoiceLineViaApi(thirdInvoiceLine);
-                        Approvals.setApprovePayValue(isApprovePayEnabled);
+                        Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
                       });
                     });
                   },
@@ -212,7 +211,6 @@ describe('Finance: Transactions', () => {
 
   after(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 

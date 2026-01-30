@@ -96,7 +96,7 @@ describe('Orders', () => {
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrdersPane();
@@ -117,7 +117,7 @@ describe('Orders', () => {
         numericPart += 1;
         return numericPart.toString().padStart(match.length, '0');
       });
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
     },
   );
 });

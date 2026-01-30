@@ -153,7 +153,7 @@ export default {
   },
   createFund(fund) {
     cy.do([newButton.click()]);
-    cy.wait(8000);
+    cy.wait(2000);
     cy.do([
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),

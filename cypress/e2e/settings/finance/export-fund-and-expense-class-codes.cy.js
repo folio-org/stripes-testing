@@ -1,15 +1,15 @@
 import { Permissions } from '../../../support/dictionary';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import ExpenseClasses from '../../../support/fragments/settings/finance/expenseClasses';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import ExpenseClasses from '../../../support/fragments/settings/finance/expenseClasses';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import dateTools from '../../../support/utils/dateTools';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance', () => {
   describe('Settings Finance', () => {
@@ -169,6 +169,7 @@ describe('Finance', () => {
         SettingsFinance.checkButtonState('Export', false);
         SettingsFinance.clickExportButton();
         InteractorsTools.checkCalloutMessage('Combined code list was successfully exported.');
+
         const timestamp = dateTools.getCurrentDateTimeForFundsExpenseClasses();
         const fileName1 = `fund-codes-export-${testData.fiscalYears[0].code}-${timestamp}.csv`;
         SettingsFinance.checkExportedFundAndExpenseClassFile(fileName1, [
@@ -189,6 +190,7 @@ describe('Finance', () => {
         SettingsFinance.checkButtonState('Export', false);
         SettingsFinance.clickExportButton();
         InteractorsTools.checkCalloutMessage('Combined code list was successfully exported.');
+
         const timestamp2 = dateTools.getCurrentDateTimeForFundsExpenseClasses();
         const fileName2 = `fund-codes-export-${testData.fiscalYears[1].code}-${timestamp2}.csv`;
         SettingsFinance.checkExportedFundAndExpenseClassFile(fileName2, [

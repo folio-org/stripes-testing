@@ -125,12 +125,12 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
   before('Enable "Approve and pay in one click" option', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayEnabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
   });
 
   after('Disable "Approve and pay in one click" option', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(false);
+    Approvals.setApprovePayValueViaApi(false);
   });
 
   describe(

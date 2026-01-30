@@ -23,7 +23,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
       OpenOrder.setDuplicateCheckValue(isDuplicateCheckDisabled);
 
       Organizations.createOrganizationViaApi(testData.organization).then(() => {
@@ -58,7 +58,6 @@ describe('Orders', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(false);
     OpenOrder.setDuplicateCheckValue(false);
     testData.orders.forEach((order) => Orders.deleteOrderViaApi(order.id));
     Users.deleteViaApi(testData.user.userId);

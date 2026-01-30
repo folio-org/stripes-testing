@@ -81,7 +81,7 @@ describe('Finance: Transactions', () => {
   let location;
   const setApprovePayValue = (isEnabled = false) => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isEnabled);
+      Approvals.setApprovePayValueViaApi(isEnabled);
     });
   };
 
