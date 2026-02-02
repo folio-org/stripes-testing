@@ -74,7 +74,7 @@ describe('MARC', () => {
         QuickMarcEditor.verifyAllBoxesInARowAreDisabled(6, true, false);
 
         // Save and check for error
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(3, multiple004ErrorText);
         QuickMarcEditor.checkErrorMessage(6, multiple004ErrorText);
         QuickMarcEditor.verifyValidationCallout(0, 2);

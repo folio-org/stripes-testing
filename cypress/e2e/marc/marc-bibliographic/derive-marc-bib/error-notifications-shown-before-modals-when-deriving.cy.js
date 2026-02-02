@@ -91,23 +91,21 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag300, `${testData.tag300Value} test`);
 
           // #8 Click "Save & close" button.
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutTagMessage);
 
           // #9 Input deleted value in "LDR" field.
           QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
 
           // #10 Click "Save & close" button.
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, calloutTagMessage);
 
           // #11 Input original tag value for field updated in Step 5.
           QuickMarcEditor.updateExistingTagName('0', testData.tag022);
 
           // #12 Click "Save & close" button.
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkDeleteModal(1);
 
           // #13 Click "Restore deleted field(s)" button in modal.

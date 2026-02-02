@@ -64,23 +64,28 @@ describe('MARC', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
+      ])
+        .then((userProperties) => {
+          testData.user = userProperties;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
-        });
-
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
+          });
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -96,20 +101,16 @@ describe('MARC', () => {
             linkingTagAndValues.rowIndex,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
-        });
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
-          MarcAuthorities.waitLoading();
-        }, 20_000);
-        MarcAuthorities.switchToBrowse();
-      });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+          }, 20_000);
+          MarcAuthorities.switchToBrowse();
+        });
     });
 
     after('Deleting user, data', () => {

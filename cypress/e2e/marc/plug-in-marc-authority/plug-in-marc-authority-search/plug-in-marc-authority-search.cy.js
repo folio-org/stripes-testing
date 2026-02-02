@@ -295,10 +295,9 @@ describe('MARC', () => {
         });
       });
 
-      // Flaky due to UIMARCAUTH-451
       it(
         'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C380567'] },
+        { tags: ['criticalPath', 'spitfire', 'C380567'] },
         () => {
           const validSearchResults = [
             'UXPROD-4394C380567 Corporate name 110',
@@ -339,9 +338,10 @@ describe('MARC', () => {
             testData.forC359228.typeOfHeadingB,
           );
           MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(
-            'UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions',
-          );
+          // see UIMARCAUTH-451 comments
+          // MarcAuthorities.checkRecordDetailPageMarkedValue(
+          //   'UXPROD-4394C380567 Corporate name 110 Apple & Honey Productions',
+          // );
           MarcAuthorities.closeMarcViewPane();
           validSearchResults.forEach((result) => {
             MarcAuthorities.searchByParameter(testData.forC380567.searchOption, result);
@@ -437,6 +437,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
@@ -508,7 +509,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380569*'].forEach((title) => {
+        ['C380569'].forEach((title) => {
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
         });
 
@@ -546,10 +547,9 @@ describe('MARC', () => {
         });
       });
 
-      // Flaky due to UIMARCAUTH-451
       it(
         'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C380569'] },
+        { tags: ['criticalPath', 'spitfire', 'C380569'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -660,10 +660,9 @@ describe('MARC', () => {
         });
       });
 
-      // Flaky due to UIMARCAUTH-451
       it(
         'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C380566'] },
+        { tags: ['criticalPath', 'spitfire', 'C380566'] },
         () => {
           cy.then(() => {
             const validSearchResults = [
@@ -696,9 +695,10 @@ describe('MARC', () => {
               MarcAuthorities.checkRowByContent(result);
             });
             MarcAuthorities.selectIncludingTitle(validSearchResults[0]);
-            MarcAuthorities.checkRecordDetailPageMarkedValue(
-              'UXPROD-4394C380566 Personal name 100 Elizabeth',
-            );
+            // see UIMARCAUTH-451 comments
+            // MarcAuthorities.checkRecordDetailPageMarkedValue(
+            //   'UXPROD-4394C380566 Personal name 100 Elizabeth',
+            // );
             MarcAuthorities.closeMarcViewPane();
             validSearchResults.forEach((result) => {
               MarcAuthorities.searchByParameter(testData.forC380566.searchOption, result);

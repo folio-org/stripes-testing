@@ -230,8 +230,6 @@ describe('MARC', () => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdRecordIDs.push(id);

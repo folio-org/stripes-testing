@@ -21,7 +21,11 @@ describe('MARC', () => {
       };
 
       const openCreateViaShortcutAndCheck = () => {
-        cy.get('textarea[name="query"]').type('{alt}{n}');
+        cy.wait(1000);
+        cy.get('textarea#textarea-authorities-search')
+          .should('not.be.disabled')
+          .focus()
+          .type('{alt}{n}');
         QuickMarcEditor.checkPaneheaderContains(testData.paneheaderRegExp);
       };
 
@@ -86,8 +90,9 @@ describe('MARC', () => {
           openCreateViaShortcutAndCheck();
           closeCreateAndCheck();
 
-          MarcAuthorities.selectFirst();
+          MarcAuthorities.selectIncludingTitle(`${testData.authorityHeadingPrefix} 1`);
           MarcAuthority.waitLoading();
+          MarcAuthority.contains(`${testData.authorityHeadingPrefix} 1`);
 
           openCreateViaShortcutAndCheck();
           closeCreateAndCheck();
@@ -109,6 +114,7 @@ describe('MARC', () => {
 
           MarcAuthorities.selectTitle(`${testData.authorityHeadingPrefix} 2`);
           MarcAuthority.waitLoading();
+          MarcAuthority.contains(`${testData.authorityHeadingPrefix} 2`);
 
           openCreateViaShortcutAndCheck();
         },

@@ -114,7 +114,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(4, testData.localFieldTag, testData.localFieldContent);
 
           // Step 7: Click "Save & close" and verify error for required field 700
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(`Field ${testData.tag700} is required.`);
 
           // Step 8: Send PUT request to set field 700 required=false
@@ -132,7 +132,7 @@ describe('MARC', () => {
           });
 
           // Step 9: Click "Save & close" again (undefined field warning still present)
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           // Step 10: Send POST request to create validation rule for field 981
           cy.getAdminToken();
@@ -156,7 +156,7 @@ describe('MARC', () => {
             `$a ${testData.field245Content} - Updated`,
           );
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           InventoryInstance.getId().then((id) => {

@@ -81,7 +81,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, errorToastNotification);
           QuickMarcEditor.checkPaneheaderContains(headerText);
         },

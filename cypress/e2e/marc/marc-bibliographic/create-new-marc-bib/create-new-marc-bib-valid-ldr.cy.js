@@ -109,7 +109,7 @@ describe('MARC', () => {
             });
             cy.wait(1000);
             QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.waitInventoryLoading();

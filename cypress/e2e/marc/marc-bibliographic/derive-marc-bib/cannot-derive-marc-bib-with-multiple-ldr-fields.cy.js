@@ -68,9 +68,7 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField(testData.tagLDR, testData.LDRValue, 4);
           QuickMarcEditor.checkSubfieldsPresenceInTag008();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
         },
       );

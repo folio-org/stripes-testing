@@ -74,8 +74,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -107,7 +105,7 @@ describe('MARC', () => {
           );
           // wait for the data will be filled in.
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextAreaOfField(
             15,
@@ -119,7 +117,7 @@ describe('MARC', () => {
             'records[15].subfieldGroups.uncontrolledNumber',
             '$c 123',
           );
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
         },
       );

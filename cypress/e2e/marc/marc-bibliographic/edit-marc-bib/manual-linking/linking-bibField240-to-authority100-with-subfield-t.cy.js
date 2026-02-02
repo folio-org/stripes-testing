@@ -127,7 +127,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n83130832',
               '',
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
@@ -154,7 +154,7 @@ describe('MARC', () => {
               '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 http://id.loc.gov/authorities/names/n83130832',
             );
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

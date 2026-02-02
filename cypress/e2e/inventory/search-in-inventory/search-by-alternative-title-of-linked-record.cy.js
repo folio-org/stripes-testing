@@ -98,8 +98,6 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifyAlternativeTitle(0, 1, including(testData.alternativeTitles[i]));
         InventoryInstances.resetAllFilters();
       }

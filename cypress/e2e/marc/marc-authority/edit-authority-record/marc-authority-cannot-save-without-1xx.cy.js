@@ -43,6 +43,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
         });
@@ -68,7 +69,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(authorityFields[0].tag, '$a');
 
           // Step 3: Try to save, expect error
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorRequired1XX);
           QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.closeAllCallouts();
@@ -79,7 +80,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(authorityFields[0].tag, '');
 
           // Step 5: Try to save, expect error again
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorRequired1XX);
           QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.waitLoading();

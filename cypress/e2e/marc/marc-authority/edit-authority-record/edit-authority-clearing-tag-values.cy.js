@@ -113,7 +113,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(fieldIndex, '');
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(QuickMarcEditor.tag1XXNonRepeatableRequiredCalloutText);
           Object.entries(fieldIndexes).forEach(([key, fieldIndex]) => {
             if (key !== 'tag400') {

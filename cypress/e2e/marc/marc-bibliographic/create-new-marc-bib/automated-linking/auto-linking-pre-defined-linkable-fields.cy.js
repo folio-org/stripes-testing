@@ -187,37 +187,39 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
             Permissions.moduleDataImportEnabled.gui,
-          ]).then((createdUserProperties) => {
-            userData = createdUserProperties;
+          ])
+            .then((createdUserProperties) => {
+              userData = createdUserProperties;
 
-            cy.getUserToken(userData.username, userData.password);
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdAuthorityIDs.push(record.authority.id);
+              cy.getUserToken(userData.username, userData.password);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdAuthorityIDs.push(record.authority.id);
+                  });
                 });
               });
-            });
 
-            cy.getAdminToken();
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
+              cy.getAdminToken();
+              linkableFields.forEach((tag) => {
+                QuickMarcEditor.setRulesForField(tag, true);
+              });
 
-            nonLinkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
+              nonLinkableFields.forEach((tag) => {
+                QuickMarcEditor.setRulesForField(tag, false);
+              });
+            })
+            .then(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
+              });
             });
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
-            });
-          });
         });
 
         after('Deleting created users, Instances', () => {
@@ -275,7 +277,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane

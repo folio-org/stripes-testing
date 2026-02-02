@@ -40,14 +40,10 @@ describe('MARC', () => {
           user = createdUserProperties;
           cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
             createdRecordIDs.push(instanceId);
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
       });
@@ -76,7 +72,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag245, testData.valid245IndicatorValue, 0);
           QuickMarcEditor.updateIndicatorValue(testData.tag245, testData.valid245IndicatorValue, 1);
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.instanceTitle} UPD`);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           testData.boxesWithErrors.forEach((boxName) => {
             QuickMarcEditor.checkErrorMessage(3, testData.tag008ErrorText(boxName));
           });
@@ -92,7 +88,7 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.closeAllCallouts();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           testData.boxesWithErrors.forEach((boxName) => {
             QuickMarcEditor.checkErrorMessage(3, testData.tag008ErrorText(boxName));
           });

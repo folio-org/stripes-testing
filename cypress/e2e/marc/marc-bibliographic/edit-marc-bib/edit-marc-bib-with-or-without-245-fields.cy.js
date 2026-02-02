@@ -70,14 +70,14 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag245, '');
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessages.tagRequired);
           QuickMarcEditor.checkCallout(testData.errorMessages.field245Required);
 
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.afterDeleteNotification('');
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessages.field245Required);
 
           QuickMarcEditor.undoDelete();
@@ -90,7 +90,7 @@ describe('MARC', () => {
             10,
           );
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(11, testData.errorMessages.nonRepeatable);
         },
       );

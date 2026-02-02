@@ -170,15 +170,9 @@ export function createFieldWithIndicatorsAndCodes(specId, fieldData, indicatorsD
 }
 
 // Cleanup utilities
-export function cleanupField(fieldId, indicatorIds = [], codeIds = []) {
+export function cleanupField(fieldId, indicatorIds = []) {
   // Clean up in reverse order: codes -> indicators -> field
   const cleanupPromises = [];
-
-  if (codeIds.length > 0) {
-    codeIds.forEach((codeId) => {
-      cleanupPromises.push(cy.deleteSpecificationFieldIndicatorCode(codeId, false));
-    });
-  }
 
   if (indicatorIds.length > 0) {
     indicatorIds.forEach((indicatorId) => {
@@ -245,4 +239,21 @@ export function createFieldTestDataBuilder(testCaseId) {
   };
 
   return builder;
+}
+
+// Toggle MARC specification rules
+export function toggleAllUndefinedValidationRules(specId, { enable = true }) {
+  const undefinedRules = {
+    undefinedFieldRuleName: 'Undefined Field',
+    undefinedIndRuleName: 'Undefined Indicator Code',
+    undefinedSubfieldRuleName: 'Undefined Subfield',
+  };
+  Object.values(undefinedRules).forEach((ruleName) => {
+    cy.getSpecificationRules(specId).then(({ body }) => {
+      const ruleId = body.rules.find((rule) => rule.name === ruleName).id;
+      cy.updateSpecificationRule(specId, ruleId, {
+        enabled: enable,
+      });
+    });
+  });
 }

@@ -41,13 +41,13 @@ describe('MARC', () => {
         const marcFilesForCentral = [
           {
             marc: 'marcBibFileForC405559_1.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC405559.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
           {
             marc: 'marcAuthFileForC405559.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC405559.${getRandomPostfix()}.mrc`,
             propertyName: 'authority',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           },
@@ -56,7 +56,7 @@ describe('MARC', () => {
         const marcFilesForMember = [
           {
             marc: 'marcBibFileForC405559_2.mrc',
-            fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC405559.${getRandomPostfix()}.mrc`,
             propertyName: 'instance',
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           },
@@ -132,10 +132,7 @@ describe('MARC', () => {
                   linkingTagAndValues.rowIndex,
                 );
                 QuickMarcEditor.deleteField(4);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
+                QuickMarcEditor.pressSaveAndCloseButton();
                 QuickMarcEditor.confirmDelete();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
@@ -208,8 +205,6 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(

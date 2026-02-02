@@ -70,28 +70,30 @@ describe('MARC', () => {
             );
           });
           // Create the link between bib and authority records
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          })
-            .then(() => {
-              InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-              InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
-              InventoryInstance.waitLoading();
-              InventoryInstance.editMarcBibliographicRecord();
-              InventoryInstance.verifyAndClickLinkIconByIndex(51);
-              MarcAuthorities.switchToSearch();
-              cy.wait(1000);
-              MarcAuthorities.chooseTypeOfHeading('Genre');
-              InventoryInstance.searchResults(testData.linkingValue);
-              MarcAuthorities.clickLinkButton();
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
-              cy.wait(1000);
-            })
-            .then(() => cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            }));
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          }, 20_000).then(() => {
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+            InventoryInstance.waitLoading();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIconByIndex(51);
+            MarcAuthorities.switchToSearch();
+            cy.wait(1000);
+            MarcAuthorities.chooseTypeOfHeading('Genre');
+            InventoryInstance.searchResults(testData.linkingValue);
+            MarcAuthorities.clickLinkButton();
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -123,7 +125,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
 
           // #7 Click "Save & close" and verify error persists
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, testData.errorMultiple010Subfields);
         },
       );

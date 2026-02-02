@@ -150,7 +150,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C624349*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C624349');
 
       // create Field mapping profile
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
@@ -215,8 +215,6 @@ describe('Data Import', () => {
             cy.wait(200);
           });
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait(4000);
         });
@@ -237,7 +235,6 @@ describe('Data Import', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
-            authRefresh: true,
           });
           MarcAuthorities.waitLoading();
           MarcAuthorities.verifyDisabledSearchButton();

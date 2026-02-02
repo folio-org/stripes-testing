@@ -1223,6 +1223,13 @@ export default {
     cy.do(multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]));
   },
 
+  selectMultiSelectFilterOptionByIndex(accordionName, optionIndex) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(multiSelect.selectByIndex(optionIndex));
+  },
+
   checkSearchButtonEnabled() {
     cy.expect(searchButton.has({ disabled: false }));
   },
@@ -1757,5 +1764,11 @@ export default {
     });
     if (isShown) cy.expect(targetIcon.exists());
     else cy.expect(targetIcon.absent());
+  },
+
+  verifyMultiSelectFilterNumberOfOptions(accordionName, numberOfOptions) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.expect(multiSelect.has({ optionsCount: numberOfOptions }));
   },
 };

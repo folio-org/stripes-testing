@@ -53,6 +53,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422152*');
+          MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('n99036055');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -79,6 +80,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
@@ -138,7 +140,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             // Step 8: Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.url().then((url) => {
               createdInstanceId = url.split('/')[5].split('?')[0];

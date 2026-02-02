@@ -5,6 +5,7 @@ import {
   MultiColumnListCell,
   HTML,
   SelectionOption,
+  SelectionList,
   matching,
   not,
   or,
@@ -221,7 +222,8 @@ export default {
     const userMatcher = matching(new RegExp(`^${username}(_\\w+)?$`));
     cy.do([
       currentPane.find(selectUserDropdown).click(),
-      currentPane.find(SelectionOption(userMatcher)).click(),
+      currentPane.find(SelectionList()).filter(username),
+      currentPane.find(SelectionList()).select(userMatcher),
     ]);
     cy.wait(3000);
     this.verifySelectedUser(username, paneIndex);

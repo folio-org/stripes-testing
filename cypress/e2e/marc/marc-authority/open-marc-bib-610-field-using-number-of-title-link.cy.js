@@ -67,8 +67,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
@@ -82,8 +80,6 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
         cy.waitForAuthRefresh(() => {
@@ -91,8 +87,6 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
-          cy.reload();
-          MarcAuthorities.waitLoading();
         }, 20_000);
       });
     });
@@ -102,7 +96,7 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
       });
     });
 

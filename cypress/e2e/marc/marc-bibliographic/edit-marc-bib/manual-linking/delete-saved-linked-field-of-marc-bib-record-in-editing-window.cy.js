@@ -90,8 +90,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -106,16 +104,12 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.waitForAuthRefresh(() => {
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -141,8 +135,6 @@ describe('MARC', () => {
               linkingTagAndValue.tag,
             );
             QuickMarcEditor.checkButtonsEnabled();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
             InventoryInstance.verifyContributorAbsent(testData.contributor);

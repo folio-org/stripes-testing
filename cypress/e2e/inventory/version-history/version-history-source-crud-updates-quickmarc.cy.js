@@ -290,7 +290,7 @@ describe('Inventory', () => {
           );
           QuickMarcEditor.deleteField(testData.combinedUpdate.deletedField.index);
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndClose();
 
           InventoryInstance.viewSource();

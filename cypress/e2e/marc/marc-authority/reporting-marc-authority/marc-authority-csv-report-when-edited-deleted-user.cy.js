@@ -102,8 +102,13 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.searchResults(testData.title);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
       });
 
@@ -125,13 +130,15 @@ describe('MARC', () => {
           });
 
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.waitLoading();
           MarcAuthority.edit();
           cy.wait(2000);
 
           QuickMarcEditor.updateExistingField('155', `$a ${testData.updatedTitle}`);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 

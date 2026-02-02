@@ -97,7 +97,7 @@ describe('MARC', () => {
               testData.tag600,
               testData.tag600RowIndex,
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -108,11 +108,12 @@ describe('MARC', () => {
             ]).then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-                authRefresh: true,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.marcAuthorities,
+                  waiter: MarcAuthorities.waitLoading,
+                });
+              }, 20_000);
             });
           });
       });
@@ -148,9 +149,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(6, testData.calloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3_000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyConfirmModal();
 
           QuickMarcEditor.confirmDelete();

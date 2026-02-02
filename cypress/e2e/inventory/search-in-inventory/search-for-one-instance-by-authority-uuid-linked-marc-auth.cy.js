@@ -109,7 +109,7 @@ describe('Inventory', () => {
       MarcAuthoritiesSearch.selectExcludeReferencesFilter();
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag);
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {

@@ -140,8 +140,6 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.verifyDates(dates[0], dates[1], INSTANCE_DATE_TYPES.DISTRIBUTION);

@@ -81,16 +81,12 @@ describe('MARC', () => {
           cy.wait(2000);
           MarcAuthority.deleteTag(5);
           MarcAuthority.changeTag(6, '100');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, testData.errorMultiple1XX);
           QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
           // QuickMarcEditor.checkErrorMessage(14, testData.errorFieldNonRepitable);
           MarcAuthority.changeTag(6, '025');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
