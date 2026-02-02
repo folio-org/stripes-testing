@@ -691,9 +691,9 @@ export default {
   },
 
   /**
-   * Verifies identifier presence/absence in ListIdentifiers response and validates format and status when found.
+   * Verifies identifier presence/absence in ListIdentifiers or ListRecords response and validates format and status when found.
    * Performs comprehensive verification including identifier format validation and deletion status checking.
-   * @param {string} xmlString - The XML response as a string from ListIdentifiers request
+   * @param {string} xmlString - The XML response as a string from ListIdentifiers or ListRecords request
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
    * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
@@ -725,38 +725,36 @@ export default {
       // Verify the identifier should NOT exist (shouldBeDeleted is ignored in this case)
       expect(
         foundHeader,
-        `Identifier with UUID ${instanceUuid} should NOT be found in the ListIdentifiers response`,
+        `Identifier with UUID ${instanceUuid} should NOT be found in the OAI-PMH response`,
       ).to.be.null;
       return;
     }
 
     // Verify the identifier should exist
     if (!foundHeader) {
-      throw new Error(
-        `Identifier with UUID ${instanceUuid} not found in the ListIdentifiers response`,
-      );
+      throw new Error(`Identifier with UUID ${instanceUuid} not found in the OAI-PMH response`);
     }
 
-    // Verify the identifier format
+    // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {
       const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
       expect(
         foundIdentifier,
         `Identifier should match expected OAI format for UUID ${instanceUuid}`,
       ).to.equal(expectedIdentifier);
+
+      // Verify the deleted status (inside the promise chain to ensure proper execution order)
+      const status = foundHeader.getAttribute('status');
+
+      if (shouldBeDeleted) {
+        expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
+          'deleted',
+        );
+      } else {
+        expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
+          .null;
+      }
     });
-
-    // Verify the deleted status
-    const status = foundHeader.getAttribute('status');
-
-    if (shouldBeDeleted) {
-      expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
-        'deleted',
-      );
-    } else {
-      expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
-        .null;
-    }
   },
 
   /**
