@@ -2,7 +2,7 @@ describe('fse-edge', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
   it(
-    `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195410 - edge-erm verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
@@ -13,7 +13,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195411 - edge-ncip verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete', 'fast-check'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
@@ -49,7 +49,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195412 - edge-oai-pmh verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
@@ -60,7 +60,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195413 - edge-patron verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete', 'fast-check'] },
     () => {
       cy.allure().logCommandSteps(false);
@@ -72,7 +72,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195414 - edge-orders verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195414 - edge-orders verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-orders', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
