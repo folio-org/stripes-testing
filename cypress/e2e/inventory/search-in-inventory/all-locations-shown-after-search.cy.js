@@ -30,10 +30,19 @@ describe('Inventory', () => {
               });
               cy.getLocations({
                 limit: 2,
-                query: 'isActive=true and name<>"AT_*" and name<>"auto*"',
-              }).then(() => {
-                testData.locations = [Cypress.env('locations')[0], Cypress.env('locations')[1]];
-              });
+                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              })
+                .then(() => {
+                  testData.locations = [Cypress.env('locations')[0], Cypress.env('locations')[1]];
+                })
+                .then(() => {
+                  const locationNameForTypeAhead = testData.locations[0];
+
+                  testData.locationNameForTypeAhead = {
+                    notFullValue: locationNameForTypeAhead.name.slice(3),
+                    fullValue: `${locationNameForTypeAhead.name}`,
+                  };
+                });
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
                 testData.holdingType = res[0].id;
               });
@@ -76,8 +85,11 @@ describe('Inventory', () => {
                 });
               });
 
-              cy.login(userProperties.username, userProperties.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              cy.waitForAuthRefresh(() => {
+                cy.login(userProperties.username, userProperties.password);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+                InventoryInstances.waitContentLoading();
+              });
             });
         });
       });
@@ -155,6 +167,12 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               testData.effectiveLocationFacet,
               testData.locations[0].name,
+            );
+            InventorySearchAndFilter.resetAll();
+            InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+              testData.effectiveLocationFacet,
+              testData.locationNameForTypeAhead.notFullValue,
+              testData.locationNameForTypeAhead.fullValue,
             );
           }
 

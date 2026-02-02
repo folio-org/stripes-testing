@@ -130,6 +130,7 @@ describe('Inventory', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 InventorySearchAndFilter.instanceTabIsDefault();
                 InventorySearchAndFilter.switchToItem();
@@ -304,6 +305,11 @@ describe('Inventory', () => {
                   InventoryInstances.checkSearchResultCount('^6 records');
                   InventorySearchAndFilter.verifyNumberOfSearchResults(6);
                 });
+                InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                  testData.materialTypeAccordionName,
+                  '76761',
+                  materialTypes[0].name,
+                );
               });
             });
           });
