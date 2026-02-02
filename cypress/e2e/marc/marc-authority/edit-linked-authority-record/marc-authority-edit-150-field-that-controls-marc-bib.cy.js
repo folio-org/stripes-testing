@@ -59,16 +59,7 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="374144" and (authRefType==("Authorized" or "Auth/Ref"))',
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374144');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -97,6 +88,10 @@ describe('MARC', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
           InventoryInstance.searchResults(marcFiles[0].instanceTitle);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag150,
             testData.authority150FieldValue,

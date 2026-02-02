@@ -162,11 +162,8 @@ describe('Data Import', () => {
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
+        authRefresh: true,
       }).then(() => {
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        });
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -174,6 +171,10 @@ describe('Data Import', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
           linkingTagAndValue.tag,
@@ -224,6 +225,12 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'spitfire', 'C374187'] },
       () => {
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
+        MarcAuthorities.checkRowsCount(1);
+
         MarcAuthorities.selectAllRecords();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
         MarcAuthorities.exportSelected();
@@ -265,6 +272,11 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
+        MarcAuthorities.checkRowsCount(1);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);

@@ -139,16 +139,11 @@ describe('MARC', () => {
         'C376597 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "110" field of "MARC authority" record) (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C376597'] },
         () => {
-          InventorySearchAndFilter.selectSearchOptions(
-            testData.inventoryInstanceSearchOption,
-            testData.marcBibTitle,
-          );
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
             InventorySearchAndFilter.verifyResultListExists();
           });
-          InventorySearchAndFilter.clickSearch();
-          InventoryInstances.selectInstanceById(createdRecordIDs[0]);
+          InventorySearchAndFilter.executeSearch(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
 
           InventoryInstance.editMarcBibliographicRecord();

@@ -129,7 +129,7 @@ describe('MARC', () => {
           );
 
           // Step 6: Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, testData.errorMessages.fieldNonRepeatable);
           QuickMarcEditor.verifyValidationCallout(0, 1);
           QuickMarcEditor.checkCallout(including(testData.errorMessages.validationToast));

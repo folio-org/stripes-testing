@@ -150,7 +150,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C624349*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C624349');
 
       // create Field mapping profile
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
