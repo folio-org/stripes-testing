@@ -3349,7 +3349,7 @@ export default {
         });
       });
       cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
-        relatedRecordVersion = `${auditData.totalRecords}`;
+        relatedRecordVersion = `${auditData.totalRecords || 1}`;
       });
       authorityIds.forEach((authorityId) => {
         cy.okapiRequest({
