@@ -1777,4 +1777,10 @@ export default {
     if (isShown) cy.expect(targetIcon.exists());
     else cy.expect(targetIcon.absent());
   },
+
+  verifyMultiSelectFilterNumberOfOptions(accordionName, numberOfOptions) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.expect(multiSelect.has({ optionsCount: numberOfOptions }));
+  },
 };
