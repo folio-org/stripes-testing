@@ -85,8 +85,11 @@ describe('Inventory', () => {
                 });
               });
 
-              cy.login(userProperties.username, userProperties.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              cy.waitForAuthRefresh(() => {
+                cy.login(userProperties.username, userProperties.password);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+                InventoryInstances.waitContentLoading();
+              });
             });
         });
       });
