@@ -144,6 +144,8 @@ describe('Bulk-edit', () => {
           AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
         });
 
+        cy.wait(2000);
+        cy.logout();
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,

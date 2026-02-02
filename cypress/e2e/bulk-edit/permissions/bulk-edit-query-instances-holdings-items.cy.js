@@ -132,6 +132,7 @@ describe('Bulk-edit', () => {
 
         capabSetToUnselect.forEach((capabSet) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
+          cy.wait(2000);
         });
 
         AuthorizationRoles.clickSaveButton();
@@ -142,6 +143,7 @@ describe('Bulk-edit', () => {
         capabSetToUnselect.forEach((capabSet) => {
           AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
         });
+        cy.logout();
 
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
