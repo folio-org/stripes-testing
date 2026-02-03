@@ -25,7 +25,6 @@ import {
   Orders,
 } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
@@ -118,14 +117,14 @@ describe('Orders', () => {
                           Invoices.changeInvoiceStatusViaApi({
                             invoice: invoiceRescponse,
                             status: INVOICE_STATUSES.PAID,
+                          }).then(() => {
+                            cy.wait(4000);
+                            Orders.updateOrderViaApi({
+                              ...defaultOrderResponse,
+                              workflowStatus: ORDER_STATUSES.CLOSED,
+                              closeReason: { reason: 'Cancelled', note: '' },
+                            });
                           });
-                          cy.loginAsAdmin({
-                            path: TopMenu.ordersPath,
-                            waiter: Orders.waitLoading,
-                          });
-                          Orders.searchByParameter('PO number', orderNumber);
-                          Orders.selectFromResultsList(orderNumber);
-                          Orders.cancelOrder();
                         });
                       });
                     },
