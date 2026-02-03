@@ -66,8 +66,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375988 verb=ListIdentifiers: Verify that added Instances MARC and FOLIO are retrieved (marc21) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C375988', 'nonParallel'] },
+      'C375988 C375131 verb=ListIdentifiers: Verify that added Instances MARC and FOLIO are retrieved (marc21) (firebird)',
+      { tags: ['extendedPathFlaky', 'firebird', 'C375988', 'C375131', 'nonParallel'] },
       () => {
         // Step 8: Go to Inventory app → Select Actions → Select "+New" button
         const InventoryNewInstance = InventoryInstances.addNewInventory();
@@ -92,6 +92,9 @@ describe('OAI-PMH', () => {
             // Verify both MARC and FOLIO instances appear in response
             OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId);
             OaiPmh.verifyIdentifierInListResponse(response, folioInstanceId);
+            // Verify datestamp structure and format
+            OaiPmh.verifyOaiPmhHeaderDatestamp(response, marcInstanceId);
+            OaiPmh.verifyOaiPmhHeaderDatestamp(response, folioInstanceId);
           });
         });
       },
