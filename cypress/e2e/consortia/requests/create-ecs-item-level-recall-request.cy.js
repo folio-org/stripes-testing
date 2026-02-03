@@ -26,6 +26,7 @@ describe('Consortia Vega', () => {
   const itemStatus = ITEM_STATUS_NAMES.CHECKED_OUT;
 
   before('Create test data', () => {
+    cy.resetTenant();
     cy.getAdminToken()
       .then(() => {
         ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
@@ -67,8 +68,7 @@ describe('Consortia Vega', () => {
                 testData.instanceHRID = instance.hrid;
               })
               .then(() => {
-                cy.setTenant(Affiliations.College);
-                cy.getCollegeAdminToken().then(() => {
+                cy.setTenant(Affiliations.College).then(() => {
                   cy.getHoldingTypes({ limit: 1 }).then((res) => {
                     testData.holdingTypeId = res[0].id;
                   });
@@ -161,7 +161,7 @@ describe('Consortia Vega', () => {
       NewRequest.enterRequesterBarcode(testData.user.barcode);
       NewRequest.verifyRequesterInformation(testData.user.username, testData.user.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosePickupServicePoint(servicePoint.name);
+      NewRequest.choosePickupServicePoint(servicePoint.name);cy.pause();
       NewRequest.saveRequestAndClose();
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('requestId');

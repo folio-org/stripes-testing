@@ -9,15 +9,15 @@ require('dotenv').config();
 
 const selectedStatus = [status.Failed, status.Retest, status.Untested];
 const selectedTeams = [
-  team.Firebird,
-  team.Folijet,
-  team.Spitfire,
-  team.Thunderjet,
+  // team.Firebird,
+  // team.Folijet,
+  // team.Spitfire,
+  // team.Thunderjet,
   team.Vega,
   team.Volaris,
-  team.Corsair,
-  team.Eureka,
-  team.Citation,
+  // team.Corsair,
+  // team.Eureka,
+  // team.Citation,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
@@ -88,7 +88,7 @@ function parseCommand() {
           }
         })
         .then(() => {
-          const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
+          const parsedCommand = `--spec "${filteredFiles.join(',')}"\n`;
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
             // To print test cases IDs (NOT FILTERED!!!)

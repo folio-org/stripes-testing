@@ -87,11 +87,6 @@ describe('Title Level Request', () => {
         testData.user.userId,
         testData.userServicePoint.id,
       );
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-        authRefresh: true,
-      });
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: testData.instanceId,
@@ -102,6 +97,11 @@ describe('Title Level Request', () => {
         requesterId: testData.user.userId,
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+          authRefresh: true,
+        });
       });
     });
   });

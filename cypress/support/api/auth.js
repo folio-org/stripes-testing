@@ -56,7 +56,7 @@ Cypress.Commands.add('getAdminToken', () => {
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
-  cy.getToken(adminUsernames.college, Cypress.env('diku_password'));
+  cy.getToken('ecs_0001_admin', 'PasswordCollege1!');
 });
 
 Cypress.Commands.add('getUniversityAdminToken', () => {

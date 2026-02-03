@@ -34,30 +34,37 @@ export default {
 
   typeCurrentPassword(password) {
     cy.do([currentPasswordField.fillIn(password), currentPasswordField.blur()]);
+    cy.wait(500);
   },
 
   verifyCurrentPasswordMessage(message) {
     cy.expect(currentPasswordField.has({ error: message }));
+    cy.wait(500);
   },
 
   typeNewPassword(password) {
     cy.do([newPasswordField.fillIn(password), newPasswordField.blur()]);
+    cy.wait(500);
   },
 
   verifyNewPasswordMessage(message) {
     cy.expect(newPasswordField.has({ error: message }));
+    cy.wait(500);
   },
 
   typeConfirmPassword(password) {
     cy.do([confirmPasswordField.fillIn(password), confirmPasswordField.blur()]);
+    cy.wait(500);
   },
 
   verifyConfirmPasswordMessage(message) {
     cy.expect(confirmPasswordField.has({ error: message }));
+    cy.wait(500);
   },
 
   verifySaveButtonInactive() {
     cy.expect(saveButton.is({ disabled: true }));
+    cy.wait(500);
   },
 
   clearAllFields() {
@@ -69,11 +76,13 @@ export default {
       confirmPasswordField.fillIn(' '),
       confirmPasswordField.clear(),
     ]);
+    cy.wait(500);
   },
 
   saveNewPassword() {
     cy.expect(saveButton.is({ disabled: false }));
     cy.do(saveButton.click());
+    cy.wait(3000);
   },
 
   fillPasswordFields(currentPassword, newPassword, confirmPassword) {
