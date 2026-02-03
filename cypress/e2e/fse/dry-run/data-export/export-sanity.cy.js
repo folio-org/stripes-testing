@@ -3,8 +3,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { APPLICATION_NAMES } from '../../../../support/constants';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../../support/fragments/topMenu';
 import { parseSanityParameters } from '../../../../support/utils/users';
 
 let instanceId = null;
@@ -79,12 +78,11 @@ describe('Data Export', () => {
         });
 
       cy.allure().logCommandSteps(false);
-      cy.login(user.username, user.password);
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       cy.allure().logCommandSteps(true);
-    });
-
-    before('navigate to inventory', () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
     });
 
     after('delete test data', () => {
