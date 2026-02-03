@@ -156,7 +156,7 @@ describe('Inventory', () => {
           InventoryInstance.viewSource();
           InventoryViewSource.waitLoading();
 
-          InventoryViewSource.verifyFieldsOrder(testData.expectedFieldOrder);
+          InventoryViewSource.verifyFieldsOrderWithLDR(testData.expectedFieldOrder);
 
           InventoryViewSource.verifyVersionHistoryButtonShown();
           InventoryViewSource.clickVersionHistoryButton();
