@@ -644,8 +644,9 @@ export default {
             columnName === columnNames.FAILED ||
             columnName === columnNames.ID
           ) {
-            const numA = parseInt(a, 10) || 0;
-            const numB = parseInt(b, 10) || 0;
+            // Remove commas from numbers before parsing (e.g., "6,355" -> "6355")
+            const numA = parseInt(a.replace(/,/g, ''), 10) || 0;
+            const numB = parseInt(b.replace(/,/g, ''), 10) || 0;
             return sortDirection === 'ascending' ? numA - numB : numB - numA;
           }
           // Handle text columns

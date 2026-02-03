@@ -1,4 +1,5 @@
 import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
@@ -16,7 +17,12 @@ describe('OAI-PMH', () => {
   describe('Get records', () => {
     before('create test data', () => {
       cy.getAdminToken();
-      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
 
       DataImport.uploadFileViaApi(...Object.values(marcFile)).then((response) => {
         marcInstanceId = response[0].instance.id;

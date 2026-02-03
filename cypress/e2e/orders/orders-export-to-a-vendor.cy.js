@@ -85,7 +85,7 @@ describe('Export Manager', () => {
 
       it(
         'C350396 Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'thunderjet', 'C350396'] },
         () => {
           Orders.createOrder(order, true, false).then((orderId) => {
             order.id = orderId;

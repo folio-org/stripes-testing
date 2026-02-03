@@ -175,7 +175,7 @@ describe('Fiscal Year Rollover', () => {
 
   it(
     'C402327 Test rollover is blocked once common rollover has been done for given ledger and FY (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C402327'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedgerAfterRollover(defaultLedger.name);

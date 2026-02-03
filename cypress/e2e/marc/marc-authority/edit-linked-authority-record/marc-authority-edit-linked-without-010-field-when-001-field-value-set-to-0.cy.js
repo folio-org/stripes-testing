@@ -53,7 +53,7 @@ describe('MARC', () => {
             (records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             },
@@ -87,8 +87,6 @@ describe('MARC', () => {
             cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -105,8 +103,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.waitForAuthRefresh(() => {
@@ -114,8 +110,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
         });
@@ -145,8 +139,6 @@ describe('MARC', () => {
             testData.fieldForEditing.newValue,
           );
           QuickMarcEditor.checkContent(testData.fieldForEditing.newValue, 7);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthorities.checkFieldAndContentExistence(

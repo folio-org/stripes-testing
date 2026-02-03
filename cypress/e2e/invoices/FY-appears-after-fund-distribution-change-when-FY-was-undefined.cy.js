@@ -160,7 +160,7 @@ describe('Invoices', () => {
 
   it(
     'C396390 Fiscal year appears after fund distribution change when FY was undefined (for previous FY) (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C396390'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

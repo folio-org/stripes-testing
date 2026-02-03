@@ -171,7 +171,7 @@ describe('Orders', () => {
 
     it(
       'C477645 PO line details pane contains affiliation names of locations from Member tenants (consortia) (thunderjet)',
-      { tags: ['smokeECS', 'thunderjet'] },
+      { tags: ['smokeECS', 'thunderjet', 'C477645'] },
       () => {
         Orders.searchByParameter('PO number', firstOrderNumber);
         Orders.selectFromResultsList(firstOrderNumber);

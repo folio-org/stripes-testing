@@ -43,6 +43,9 @@ describe('Inventory', () => {
       const search = (option, value, isHoldingElectronic = false) => {
         testData.instances.forEach((instance) => {
           InventorySearchAndFilter.selectSearchOptions(option, '');
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.executeSearch(
             isHoldingElectronic
               ? `holdings.electronicAccess any "${instance[value]}"`

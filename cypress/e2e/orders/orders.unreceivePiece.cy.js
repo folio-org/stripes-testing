@@ -47,7 +47,7 @@ describe('orders: Unreceive piece from Order', () => {
 
   it(
     'C10925 Unreceive piece using "Actions" button (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C10925'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const enumeration = 'autotestCaption';

@@ -92,7 +92,7 @@ describe('orders: create', () => {
 
   it(
     'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C665'] },
     () => {
       Orders.resetFiltersIfActive();
       Orders.selectPendingStatusFilter();

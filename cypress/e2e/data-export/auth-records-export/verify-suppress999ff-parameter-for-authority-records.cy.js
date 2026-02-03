@@ -55,11 +55,6 @@ describe('Data Export', () => {
             marcAuthority.id = record.authority.id;
           });
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
       });
     });
 
@@ -98,7 +93,10 @@ describe('Data Export', () => {
         });
 
         // Step 3: From Data import app - Upload suppressed .mrc file and create authority record
-        cy.getUserToken(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
         DataImport.verifyUploadState();
         DataImport.uploadFileViaApi(
           exportedFileFromApiSuppressed,

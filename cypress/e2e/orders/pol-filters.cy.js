@@ -124,7 +124,7 @@ describe('orders: Test Po line filters', () => {
   ].forEach((filter) => {
     it(
       'C6720 Test the POL filters [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6720'] },
       () => {
         Orders.searchByParameter('PO line number', orderLineNumber);
         Orders.resetFilters();

@@ -14,8 +14,12 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 const holdingId = uuid();
-const title = `Filter items with status test ${Number(new Date())}`;
-const testData = {};
+const title = `AT_C11081_FolioInstance_${Number(new Date())}`;
+const testData = {
+  itemStatusAccordionName: 'Item status',
+  itemStatusNotFullValue: 'out',
+  itemStatusFullValue: 'Checked out',
+};
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -96,8 +100,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C957377 Verify item status filters retrieve items with that item status (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C957377', 'eurekaPhase1'] },
+      'C11081 Verify item status filters retrieve items with that item status (spitfire)',
+      { tags: ['smoke', 'spitfire', 'C11081'] },
       () => {
         cy.intercept('GET', '/inventory/items?*').as('getItems');
         cy.intercept('GET', '/search/instances?*').as('getInstances');
@@ -129,6 +133,11 @@ describe('Inventory', () => {
           InventorySearchAndFilter.resetAll();
           cy.expect(MultiColumnList().absent());
         });
+        InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+          testData.itemStatusAccordionName,
+          testData.itemStatusNotFullValue,
+          testData.itemStatusFullValue,
+        );
       },
     );
   });

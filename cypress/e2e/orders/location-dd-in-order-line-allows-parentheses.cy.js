@@ -54,7 +54,7 @@ describe('Orders', () => {
 
   it(
     'C367957 Orders POL location dropdown search textbox allows use of parentheses characters (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C367957'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

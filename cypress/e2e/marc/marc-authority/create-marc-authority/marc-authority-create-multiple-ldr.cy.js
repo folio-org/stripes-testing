@@ -81,7 +81,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(tag010, `$a ${localAuthFile.prefix}${naturalId}`, 4);
           QuickMarcEditor.checkContent(`$a ${localAuthFile.prefix}${naturalId}`, 5);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(errorText);
           QuickMarcEditor.checkRecordStatusNew();
         },

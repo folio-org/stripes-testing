@@ -113,7 +113,7 @@ describe('Invoices', () => {
 
   it(
     'C357020 Cancelling invoice creation from order (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C357020'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

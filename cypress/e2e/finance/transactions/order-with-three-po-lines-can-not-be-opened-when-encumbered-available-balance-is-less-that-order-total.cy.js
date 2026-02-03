@@ -174,7 +174,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C449366 Order with three PO lines can NOT be opened when encumbered available balance is less that order total (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C449366'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

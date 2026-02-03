@@ -41,11 +41,11 @@ describe('MARC', () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.field245CalloutText);
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.updateExistingField(testData.tag245, '');
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.field245CalloutText);
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },

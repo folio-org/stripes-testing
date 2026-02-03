@@ -37,26 +37,26 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  instanceIDs.push(record[marcFile.propertyName].id);
-                });
+          cy.loginAsAdmin({
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+            authRefresh: true,
+          }).then(() => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                instanceIDs.push(record[marcFile.propertyName].id);
               });
-            },
-          );
+            });
+          });
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.searchByTitle(instanceIDs[0]);
             InventoryInstances.selectInstance();
@@ -80,8 +80,6 @@ describe('MARC', () => {
             testData.tag245value1,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value1, testData.tag245rowIndex);
           QuickMarcEditor.closeUsingCrossButton();
@@ -96,8 +94,6 @@ describe('MARC', () => {
             testData.tag245rowIndex,
             testData.tag245value2,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value2, testData.tag245rowIndex);
           cy.go('back');

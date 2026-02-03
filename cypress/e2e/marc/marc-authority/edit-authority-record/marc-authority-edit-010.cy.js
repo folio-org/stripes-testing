@@ -92,9 +92,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedField.content}`, 6);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
       );

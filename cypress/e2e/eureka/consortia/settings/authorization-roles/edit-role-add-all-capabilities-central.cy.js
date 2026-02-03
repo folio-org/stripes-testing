@@ -5,7 +5,7 @@ import AuthorizationRoles from '../../../../../support/fragments/settings/author
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../../../support/constants';
 import CapabilitySets from '../../../../../support/dictionary/capabilitySets';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -71,21 +71,25 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
 
           cy.then(() => {
-            cy.getCapabilitySetsApi().then((capabSets) => {
-              capabilitySetsCount = capabSets.length;
-            });
-            cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-              testData.roleId = role.id;
-              cy.getCapabilitiesApi(2, true).then((capabs) => {
-                cy.getCapabilitySetsApi(2).then((capabSets) => {
-                  cy.addCapabilitiesToNewRoleApi(
-                    testData.roleId,
-                    capabs.map((capab) => capab.id),
-                  );
-                  cy.addCapabilitySetsToNewRoleApi(
-                    testData.roleId,
-                    capabSets.map((capabSet) => capabSet.id),
-                  );
+            cy.getApplicationsForTenantApi(Affiliations.Consortia, true).then((appIds) => {
+              cy.getCapabilitySetsApi(2000, {
+                query: `applicationId==(${appIds.join(' or ')})`,
+              }).then((capabSets) => {
+                capabilitySetsCount = capabSets.length;
+              });
+              cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+                testData.roleId = role.id;
+                cy.getCapabilitiesApi(2, true).then((capabs) => {
+                  cy.getCapabilitySetsApi(2).then((capabSets) => {
+                    cy.addCapabilitiesToNewRoleApi(
+                      testData.roleId,
+                      capabs.map((capab) => capab.id),
+                    );
+                    cy.addCapabilitySetsToNewRoleApi(
+                      testData.roleId,
+                      capabSets.map((capabSet) => capabSet.id),
+                    );
+                  });
                 });
               });
             });

@@ -35,7 +35,7 @@ import FileManager from '../../../support/utils/fileManager';
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const searchOption = 'Keyword';
-    const searchValue = 'aat423564';
+    const searchValue = 'aat42356411';
     const recordTitle = 'C423564 John Doe Sir, 1909-1965';
     const headerText = /Create a new .*MARC authority record/;
     const dropdownSelections = {
@@ -60,7 +60,7 @@ describe('Data Import', () => {
       Source: 'a',
     };
     const newFields = [
-      { previousFieldTag: '008', tag: '010', content: '$a aat423564' },
+      { previousFieldTag: '008', tag: '010', content: '$a aat42356411' },
       {
         previousFieldTag: '010',
         tag: '035',
@@ -227,7 +227,7 @@ describe('Data Import', () => {
         });
 
         // Click on the "Save & close" button
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
         MarcAuthorities.verifyViewPaneContentExists();
@@ -265,7 +265,7 @@ describe('Data Import', () => {
         ExportFile.exportWithDefaultJobProfile(csvFile, 'Default authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(exportedMarcFile);
         ExportFile.verifyFileIncludes(exportedMarcFile, [
-          'aat423564',
+          'aat42356411',
           '794564',
           'C423564 John Doe',
           'Sir,',

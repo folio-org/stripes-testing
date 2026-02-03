@@ -82,7 +82,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(`$a ${marcAuthorityHeading}`, 6);
 
           // Step 4: Try to save and check for error message
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, errorMultiple010MarcTags);
           // The pane should still be open
           QuickMarcEditor.checkRecordStatusNew();

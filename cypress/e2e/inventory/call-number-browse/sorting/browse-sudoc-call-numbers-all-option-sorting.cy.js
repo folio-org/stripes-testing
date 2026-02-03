@@ -247,6 +247,11 @@ describe('Inventory', () => {
           expectedValuesInApi.forEach((value) => {
             BrowseCallNumber.waitForCallNumberToAppear(value);
           });
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.toggleAccordionByName('Shared');
+            InventorySearchAndFilter.selectOptionInExpandedFilter('Shared', 'No');
+            InventorySearchAndFilter.verifyBrowseResultListExists();
+          });
           // Step 1: J29.2:D84
           InventorySearchAndFilter.fillInBrowseSearch(`J${randomDigits}.2:D84`);
           InventorySearchAndFilter.clickSearch();

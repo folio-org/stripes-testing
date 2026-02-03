@@ -86,12 +86,14 @@ describe('Create Recall Item level request', () => {
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
+          })
+          .then(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+              authRefresh: true,
+            });
           });
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
-          authRefresh: true,
-        });
       });
   });
 

@@ -66,7 +66,7 @@ describe('Orders', () => {
 
   it(
     'C380392 Encumbrance is released when an Order was closed automatically (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C380392'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

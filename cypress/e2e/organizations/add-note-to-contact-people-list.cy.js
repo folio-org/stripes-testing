@@ -41,7 +41,7 @@ describe('Organizations', () => {
 
   it(
     'C380642 Add a note to "Contact people" list in "Organization" app (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C380642'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

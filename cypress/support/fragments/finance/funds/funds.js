@@ -12,6 +12,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
   PaneHeader,
@@ -22,6 +23,7 @@ import {
   SelectionList,
   SelectionOption,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -86,7 +88,9 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 const unassignAllLocationsButton = Button('Unassign all locations');
 const submitButton = Button('Submit');
 const keepEditingButton = Button('Keep editing');
-
+const tagsButton = Button({ id: 'clickable-show-tags' });
+const tagsPane = Pane('Tags');
+const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
 export default {
   defaultUiFund: {
     name: `autotest_fund_${getRandomPostfix()}`,
@@ -1030,7 +1034,7 @@ export default {
     cy.do([searchField.fillIn(fundName), Button('Search').click()]);
   },
 
-  createFundViaUI(fund) {
+  createFundViaApiAndUi(fund) {
     const ledger = {
       id: uuid(),
       name: `autotest_ledger_${getRandomPostfix()}`,
@@ -1043,21 +1047,23 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then((fiscalYearResponse) => {
-      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
-      cy.createLedgerApi({
-        ...ledger,
-      });
-      fund.ledgerName = ledger.name;
-      cy.loginAsAdmin({
-        path: TopMenu.fundPath,
-        waiter: this.waitLoading,
-      });
-      this.createFund(fund);
-      this.checkCreatedFund(fund.name);
-      cy.wrap(ledger).as('createdLedger');
-      return cy.get('@createdLedger');
-    });
+    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then(
+      (fiscalYearResponse) => {
+        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
+        fund.ledgerName = ledger.name;
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
+        this.createFund(fund);
+        this.checkCreatedFund(fund.name);
+        cy.wrap(ledger).as('createdLedger');
+        return cy.get('@createdLedger');
+      },
+    );
     return cy.get('@createdLedger');
   },
 
@@ -1575,5 +1581,60 @@ export default {
   closeWithoutSaving: () => {
     cy.do(areYouSureModal.find(closeWithoutSavingButton).click());
     cy.wait(2000);
+  },
+
+  openTagsPane: () => {
+    cy.do(tagsButton.click());
+    cy.expect(tagsPane.exists());
+    cy.wait(1000);
+  },
+
+  verifyTagsCount: (count) => {
+    cy.expect(tagsButton.find(HTML(including(String(count)))).exists());
+  },
+
+  verifyTagsPaneElements: (count = 0, tags = []) => {
+    const text = count === 1 ? '1 Tag' : `${count} Tags`;
+    const expectations = [
+      tagsPane.exists(),
+      tagsPane.find(HTML(including(text))).exists(),
+      tagsMultiSelect.exists(),
+    ];
+
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        expectations.push(tagsPane.find(ValueChipRoot(tag)).exists());
+      });
+    }
+
+    cy.expect(expectations);
+  },
+
+  addNewTag: (tagName) => {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+  },
+
+  selectExistingTag: (tagName) => {
+    cy.do(tagsMultiSelect.choose(tagName));
+    cy.wait(1000);
+  },
+
+  closeTagsPane: () => {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(500);
+    cy.expect(tagsPane.absent());
   },
 };

@@ -47,7 +47,9 @@ describe('MARC', () => {
           cy.login(user.userAProperties.username, user.userAProperties.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
+            authRefresh: true,
           }).then(() => {
+            cy.getToken(user.userAProperties.username, user.userAProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
@@ -74,6 +76,7 @@ describe('MARC', () => {
         cy.login(user.userBProperties.username, user.userBProperties.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -105,7 +108,7 @@ describe('MARC', () => {
 
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.updateExistingFieldContent(14, testData.valueForUpdate);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         InventoryInstance.checkPresentedText(testData.valueAfterUpdate);
       },

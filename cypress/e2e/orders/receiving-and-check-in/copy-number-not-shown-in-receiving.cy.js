@@ -86,7 +86,7 @@ describe('Orders', () => {
 
     it(
       'C374137 "Copy number" value applied to the inventory item record is NOT shown in receiving (thunderjet) (TaaS)',
-      { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['extendedPathFlaky', 'thunderjet', 'C374137'] },
       () => {
         // Click on Instance name from PO line from preconditions
         InventoryInstances.searchByTitle(testData.orderLine.titleOrPackage);

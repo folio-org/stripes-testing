@@ -160,7 +160,7 @@ describe('Orders', () => {
 
   it(
     'C374192 Deleting fund distribution in PO line when related Open invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C374192'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

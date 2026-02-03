@@ -62,7 +62,7 @@ describe('Organizations', () => {
 
   it(
     'C466127 Organizations can be found by "Created by" filter (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466127'] },
     () => {
       Organizations.resetFiltersIfActive();
       Organizations.selectCreatedByFiler(testData.users[0].username);

@@ -56,8 +56,9 @@ describe('Eureka', () => {
               },
             });
           }
-          cy.ifConsortia(false, () => {
-            delete userBodies[1].username;
+          delete userBodies[1].username;
+          cy.ifConsortia(true, () => {
+            userBodies[1].type = 'patron';
           });
           cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
             userIds.push(userId);
@@ -169,42 +170,40 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
-        cy.ifConsortia(false, () => {
-          UsersSearchPane.searchByKeywords(
-            `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
-          );
-          UsersSearchPane.clickOnUserRowContaining(
-            `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
-          );
-          UsersCard.verifyUserLastFirstNameInCard(
-            userBodies[1].personal.lastName,
-            userBodies[1].personal.firstName,
-          );
-          UsersCard.verifyUserRolesCounter('0');
-          UserEdit.openEdit();
-          UserEdit.verifyUserRolesCounter('0');
-          UserEdit.clickUserRolesAccordion();
-          UserEdit.clickAddUserRolesButton();
-          UserEdit.verifySelectRolesModal();
-          UserEdit.selectRoleInModal(testData.roleName);
-          UserEdit.saveAndCloseRolesModal();
-          UserEdit.verifyUserRoleNames([testData.roleName]);
-          UserEdit.verifyUserRolesRowsCount(1);
-          UserEdit.saveUserEditForm();
-          UserEdit.checkPromoteUserModal(
-            userBodies[1].personal.lastName,
-            userBodies[1].personal.firstName,
-          );
-          UserEdit.clickConfirmInPromoteUserModal(false);
-          InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
-          InteractorsTools.dismissCallout(testData.errorCalloutText);
-          UserEdit.clickCancelInPromoteUserModal();
-          UsersCard.verifyUserLastFirstNameInCard(
-            userBodies[1].personal.lastName,
-            userBodies[1].personal.firstName,
-          );
-          UsersCard.verifyUserRolesCounter('0');
-        });
+        UsersSearchPane.searchByKeywords(
+          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+        );
+        UsersSearchPane.clickOnUserRowContaining(
+          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+        );
+        UsersCard.verifyUserLastFirstNameInCard(
+          userBodies[1].personal.lastName,
+          userBodies[1].personal.firstName,
+        );
+        UsersCard.verifyUserRolesCounter('0');
+        UserEdit.openEdit();
+        UserEdit.verifyUserRolesCounter('0');
+        UserEdit.clickUserRolesAccordion();
+        UserEdit.clickAddUserRolesButton();
+        UserEdit.verifySelectRolesModal();
+        UserEdit.selectRoleInModal(testData.roleName);
+        UserEdit.saveAndCloseRolesModal();
+        UserEdit.verifyUserRoleNames([testData.roleName]);
+        UserEdit.verifyUserRolesRowsCount(1);
+        UserEdit.saveUserEditForm();
+        UserEdit.checkPromoteUserModal(
+          userBodies[1].personal.lastName,
+          userBodies[1].personal.firstName,
+        );
+        UserEdit.clickConfirmInPromoteUserModal(false);
+        InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
+        InteractorsTools.dismissCallout(testData.errorCalloutText);
+        UserEdit.clickCancelInPromoteUserModal();
+        UsersCard.verifyUserLastFirstNameInCard(
+          userBodies[1].personal.lastName,
+          userBodies[1].personal.firstName,
+        );
+        UsersCard.verifyUserRolesCounter('0');
 
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.clickOnUserRowContaining(userBodies[2].username);

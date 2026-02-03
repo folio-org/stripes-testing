@@ -130,7 +130,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}" and (authRefType=="Authorized")`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });
@@ -159,14 +159,11 @@ describe('MARC', () => {
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
@@ -252,9 +249,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyRowLinked(manuallyUnlinkedFields[2].rowIndex, true);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             // #9 Click on the "Save & keep editing" button.
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
+            cy.wait(4000);
             autoLinkedFields.forEach((field, index) => {
               if (index !== notLinkedFieldRow) {
                 QuickMarcEditor.verifyRowLinked(field.rowIndex, true);

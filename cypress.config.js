@@ -35,7 +35,7 @@ module.exports = defineConfig({
   responseTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-bugfest-sunflower-aqa.int.aws.folio.org',
+    OKAPI_HOST: 'https://api-bugfest-sunflower-aqa.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
     diku_password: 'folio-aqa',

@@ -8,7 +8,7 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import TopMenu from '../../support/fragments/topMenu';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -18,7 +18,7 @@ describe('Invoices', () => {
   const subtotalValue = 100;
   const actualFiscalYearCode = `FY${new Date().getFullYear()}`;
 
-  before(() => {
+  before('Create test data and login', () => {
     cy.getAdminToken();
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
@@ -32,18 +32,19 @@ describe('Invoices', () => {
     cy.getBatchGroups().then((batchGroup) => {
       invoice.batchGroup = batchGroup.name;
     });
-    Funds.createFundViaUI(fund).then(() => {
+    Funds.createFundViaApiAndUi(fund).then(() => {
       Funds.addBudget(100);
     });
     invoiceLine.subTotal = -subtotalValue;
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-    }, 20_000);
+
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+    Invoices.waitLoading();
   });
 
   it(
     'C343209 Create, approve and pay a credit invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C343209'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);

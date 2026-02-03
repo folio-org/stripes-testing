@@ -160,7 +160,7 @@ describe('Finance', () => {
 
   it(
     'C375959 Meaningful error message appears when trying to approve invoice with related fund having only previous budget (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'C375959'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

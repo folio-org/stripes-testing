@@ -62,6 +62,10 @@ describe('Inventory', () => {
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
         BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.toggleAccordionByName('Shared');
+          InventorySearchAndFilter.selectOptionInExpandedFilter('Shared', 'No');
+        });
 
         queries.forEach((query) => {
           InventorySearchAndFilter.fillInBrowseSearch(query);

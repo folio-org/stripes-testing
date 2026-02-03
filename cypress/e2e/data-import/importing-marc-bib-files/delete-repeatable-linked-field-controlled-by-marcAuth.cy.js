@@ -164,7 +164,7 @@ describe('Data Import', () => {
             linkingTagAndValues.tag,
             linkingTagAndValues.rowIndex,
           );
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
 
@@ -211,7 +211,7 @@ describe('Data Import', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
       });
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);

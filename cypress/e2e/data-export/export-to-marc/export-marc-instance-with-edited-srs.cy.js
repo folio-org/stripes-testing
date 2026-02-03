@@ -210,7 +210,7 @@ describe('Data Export', () => {
       updatedExpectedMarcFields[index245] = ['245', '10', 'a', marcInstance.title];
 
       // Step 9: Click "Save & close" button
-      QuickMarcEditor.saveAndCloseWithValidationWarnings();
+      QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
       // Step 10: Go to "Data export" app
@@ -224,6 +224,7 @@ describe('Data Export', () => {
         'Instances',
       );
       DataExportLogs.verifyAreYouSureModalAbsent();
+      cy.wait(2000);
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
       cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
         const jobs = response.body.jobExecutions;

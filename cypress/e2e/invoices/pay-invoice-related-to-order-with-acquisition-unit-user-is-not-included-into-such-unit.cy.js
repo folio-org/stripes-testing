@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'C446069'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

@@ -20,16 +20,14 @@ describe('MARC', () => {
         const testData = {
           tag100: '100',
           tag100RowIndex: 11,
-          field100Value: '$a Chin, Staceyann, $d 1972-',
-          authorityTitle: 'Chin, Staceyann, 1972-',
-          instanceTitle:
-            'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
+          field100Value: '$a C365599 Chin, Staceyann, $d 1972-',
+          authorityTitle: 'C365599 Chin, Staceyann, 1972-',
           linked100Field: [
             11,
             '100',
             '1',
             '\\',
-            '$a Chin, Staceyann, $d 1972-',
+            '$a C365599 Chin, Staceyann, $d 1972-',
             '$e Author $e Narrator',
             '$0 http://id.loc.gov/authorities/names/n2008052404',
             '$1 http://viaf.org/viaf/24074052',
@@ -39,7 +37,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+            '$a C365599 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
           ],
           linkedIconText: 'Linked to MARC authority',
           unlinkIconText: 'Unlink from MARC Authority record',
@@ -72,16 +70,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id, true);
-                });
-              }
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365599');
 
             cy.getAdminToken().then(() => {
               marcFiles.forEach((marcFile) => {
@@ -121,7 +110,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
               QuickMarcEditor.closeCallout();
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
               cy.login(userData.username, userData.password, {
                 path: TopMenu.inventoryPath,
@@ -164,8 +153,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
             QuickMarcEditor.checkLinkButtonExist(testData.tag100);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
-
+            QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
 
             QuickMarcEditor.clickLinkIconInTagField(testData.tag100RowIndex);

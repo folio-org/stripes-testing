@@ -103,7 +103,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C648486 User can access "Batch edit budgets" screen from Ledger, edit and cancel changes (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C648486'] },
     () => {
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);

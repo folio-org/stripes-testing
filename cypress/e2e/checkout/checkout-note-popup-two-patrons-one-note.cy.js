@@ -104,6 +104,7 @@ describe('Check out', () => {
       cy.login(testData.userA.username, testData.userA.password, {
         path: TopMenu.usersPath,
         waiter: UsersSearchPane.waitLoading,
+        authRefresh: true,
       });
 
       // Step 1: Fill in the search box with username of "User B" and click on the "Search" button

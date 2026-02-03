@@ -18,20 +18,25 @@ describe('Eureka', () => {
         name: `AT_C957370_UserRole_${randomPostfix}_DefaultNew`,
         description: `Description New Default C957370 ${randomPostfix}`,
       };
+      const newNameForDefaultRole = `AT_C957370_UserRole_${randomPostfix}_DefaultRenamed`;
       let defaultRole;
       let defaultRole2;
       let defaultRole3;
+      let defaultRole4;
 
       before('Create role, user', () => {
         cy.getAdminToken();
         cy.createAuthorizationRoleApi(regularRole.name, regularRole.description).then((role) => {
           regularRole.id = role.id;
         });
-        cy.getAuthorizationRoles({ limit: 3, query: `type=${roleTypes.default}` }).then((roles) => {
-          defaultRole = roles[0];
-          defaultRole2 = roles[1];
-          defaultRole3 = roles[2];
-        });
+        cy.getAuthorizationRoles({ limit: 10, query: `type=${roleTypes.default}` }).then(
+          (roles) => {
+            defaultRole = roles[0];
+            defaultRole2 = roles[1];
+            defaultRole3 = roles[2];
+            defaultRole4 = roles[3];
+          },
+        );
       });
 
       after('Delete role, user', () => {
@@ -79,6 +84,14 @@ describe('Eureka', () => {
               expect(body.errors[0].message).to.eq(defaultRoleCrudErrorMessage);
             });
 
+            cy.updateAuthorizationRoleApi(defaultRole4.id, {
+              ...defaultRole4,
+              name: newNameForDefaultRole,
+            }).then(({ body, status }) => {
+              expect(status).to.eq(400);
+              expect(body.errors[0].message).to.eq(defaultRoleCrudErrorMessage);
+            });
+
             cy.updateAuthorizationRoleApi(regularRole.id, {
               ...regularRole,
               type: roleTypes.default,
@@ -102,6 +115,10 @@ describe('Eureka', () => {
             });
 
             cy.getAuthorizationRoleApi(defaultRole3.id).then(({ body }) => {
+              expect(body.type).to.eq(roleTypes.default);
+            });
+
+            cy.getAuthorizationRoleApi(defaultRole4.id).then(({ body }) => {
               expect(body.type).to.eq(roleTypes.default);
             });
 

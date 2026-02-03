@@ -55,7 +55,7 @@ describe('Lists', () => {
         Lists.queryBuilderActions();
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.closeListDetailsPane();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
@@ -79,7 +79,7 @@ describe('Lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.viewUpdatedList();
+        Lists.waitForCompilingToComplete();
         Lists.openActions();
         Lists.exportList();
         Lists.openActions();

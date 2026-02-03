@@ -307,6 +307,15 @@ export default {
     cy.expect(KeyValue({ value: including(amount) }).exists());
   },
 
+  verifyOpenLoansCount(expectedCount) {
+    cy.expect(
+      userPane
+        .find(KeyValue('Open loans'))
+        .find(HTML(including(`${expectedCount}`)))
+        .exists(),
+    );
+  },
+
   waitLoading() {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());

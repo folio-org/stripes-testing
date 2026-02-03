@@ -59,9 +59,6 @@ describe(
           location,
         });
       });
-      cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
-        testData.requester = users[0];
-      });
       firstItemBarcode = testData.folioInstances[0].barcodes[0];
       secondItemBarcode = testData.folioInstances[1].barcodes[0];
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
@@ -88,6 +85,10 @@ describe(
           testData.servicePoint.id,
         );
 
+        cy.createTempUser([]).then((requester) => {
+          testData.requester = requester;
+        });
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
@@ -105,10 +106,6 @@ describe(
           checkInDate: new Date().toISOString(),
         });
       });
-      UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(testData.user.userId);
-      PatronGroups.deleteViaApi(patronGroup.id);
       testData.folioInstances.forEach((item) => {
         InventoryInstances.deleteInstanceViaApi({
           instance: item,
@@ -116,6 +113,12 @@ describe(
           shouldCheckIn: true,
         });
       });
+
+      UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
+      ServicePoints.deleteViaApi(testData.servicePoint.id);
+      Users.deleteViaApi(testData.user.userId);
+      Users.deleteViaApi(testData.requester.userId);
+      PatronGroups.deleteViaApi(patronGroup.id);
 
       Locations.deleteViaApi(testData.defaultLocation);
     });

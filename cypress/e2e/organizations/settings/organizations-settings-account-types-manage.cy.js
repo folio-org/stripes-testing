@@ -45,7 +45,7 @@ describe('Banking Information', () => {
 
     it(
       'C422089 Account type name unique validation when create and edit account name (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C422089'] },
       () => {
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkBankingAccountTypesTableContent(existingAccountType.name);
@@ -92,17 +92,21 @@ describe('Banking Information', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C422088 Delete account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-      SettingsOrganizations.selectAccountTypes();
-      SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
-      SettingsOrganizations.checkNewAccountTypeButtonExists();
-      SettingsOrganizations.clickDeleteAccountType(accountType.name);
-      SettingsOrganizations.checkDeleteAccountTypeModal(accountType.name);
-      SettingsOrganizations.cancelDeleteAccountType();
-      SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
-      SettingsOrganizations.deleteAccountType(accountType);
-      SettingsOrganizations.checkAccountTypeAbsent(accountType.name);
-    });
+    it(
+      'C422088 Delete account type (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'C422088'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
+        SettingsOrganizations.checkNewAccountTypeButtonExists();
+        SettingsOrganizations.clickDeleteAccountType(accountType.name);
+        SettingsOrganizations.checkDeleteAccountTypeModal(accountType.name);
+        SettingsOrganizations.cancelDeleteAccountType();
+        SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
+        SettingsOrganizations.deleteAccountType(accountType);
+        SettingsOrganizations.checkAccountTypeAbsent(accountType.name);
+      },
+    );
   });
 
   describe('Account type - edit', () => {
@@ -132,24 +136,28 @@ describe('Banking Information', () => {
       SettingsOrganizations.deleteOrganizationAccountTypeViaApi(accountType.id);
     });
 
-    it('C422087 Edit account type (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-      SettingsOrganizations.selectAccountTypes();
-      SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
-      SettingsOrganizations.checkNewAccountTypeButtonExists();
-      SettingsOrganizations.clickEditAccountType(accountType.name);
-      SettingsOrganizations.checkEditFieldState(accountType.name);
-      SettingsOrganizations.clearAccountTypeField(accountType.name);
-      SettingsOrganizations.fillAccountTypeName(editedTypeName);
-      SettingsOrganizations.saveAccountTypeChanges();
-      SettingsOrganizations.checkBankingAccountTypesTableContent(editedTypeName);
-      SettingsOrganizations.checkRowActionButtons(editedTypeName);
-      SettingsOrganizations.clickEditAccountType(editedTypeName);
-      SettingsOrganizations.checkEditFieldState(editedTypeName);
-      SettingsOrganizations.fillAccountTypeName(tempChanges);
-      SettingsOrganizations.cancelAccountTypeChanges();
-      SettingsOrganizations.checkBankingAccountTypesTableContent(editedTypeName);
-      SettingsOrganizations.checkRowActionButtons(editedTypeName);
-    });
+    it(
+      'C422087 Edit account type (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'C422087'] },
+      () => {
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.checkBankingAccountTypesTableContent(accountType.name);
+        SettingsOrganizations.checkNewAccountTypeButtonExists();
+        SettingsOrganizations.clickEditAccountType(accountType.name);
+        SettingsOrganizations.checkEditFieldState(accountType.name);
+        SettingsOrganizations.clearAccountTypeField(accountType.name);
+        SettingsOrganizations.fillAccountTypeName(editedTypeName);
+        SettingsOrganizations.saveAccountTypeChanges();
+        SettingsOrganizations.checkBankingAccountTypesTableContent(editedTypeName);
+        SettingsOrganizations.checkRowActionButtons(editedTypeName);
+        SettingsOrganizations.clickEditAccountType(editedTypeName);
+        SettingsOrganizations.checkEditFieldState(editedTypeName);
+        SettingsOrganizations.fillAccountTypeName(tempChanges);
+        SettingsOrganizations.cancelAccountTypeChanges();
+        SettingsOrganizations.checkBankingAccountTypesTableContent(editedTypeName);
+        SettingsOrganizations.checkRowActionButtons(editedTypeName);
+      },
+    );
   });
 
   describe('Account type - is not displayed', () => {
@@ -182,7 +190,7 @@ describe('Banking Information', () => {
 
     it(
       'C422063 "Account type" setting is NOT displayed when "Bank information" option is disabled (thunderjet)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'C422063'] },
       () => {
         SettingsOrganizations.selectBankingInformation();
         SettingsOrganizations.checkenableBankingInformationIfNeeded();
@@ -246,7 +254,7 @@ describe('Banking Information', () => {
 
     it(
       'C590820: User cannot delete bank account types that is in use by one or more organizations (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'C590820'] },
       () => {
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkNewAccountTypeButtonExists();

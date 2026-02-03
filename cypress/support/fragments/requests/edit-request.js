@@ -161,7 +161,7 @@ export default {
   },
 
   openRequestEditForm() {
-    cy.wait(4000);
+    cy.wait(3000);
     cy.do(actionsButton.click());
     cy.wait(3000);
     cy.do(editRequestButton.click());

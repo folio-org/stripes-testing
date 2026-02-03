@@ -188,7 +188,7 @@ describe('Data Export', () => {
         );
 
         // Step 9: Click "Save & close" button
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
         const updatedExpectedMarcFields = [...expectedMarcFields];

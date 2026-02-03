@@ -60,9 +60,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(5, testData.tag010, `$a ${testData.tag010Values[1]}`);
 
           // #5 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, calloutMessage);
 
           // #6 Delete one of the created "010" fields.

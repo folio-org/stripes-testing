@@ -114,7 +114,6 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
             }, 20_000);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -156,8 +155,6 @@ describe('MARC', () => {
             linkingTagAndValues.seventhBox,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 
@@ -189,6 +186,12 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          cy.setTenant(Affiliations.University);
+          BrowseContributors.waitForContributorToAppear(
+            linkingTagAndValues.authorityHeading,
+            true,
+            true,
+          );
           InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
           BrowseContributors.checkAuthorityIconAndValueDisplayed(
             linkingTagAndValues.authorityHeading,

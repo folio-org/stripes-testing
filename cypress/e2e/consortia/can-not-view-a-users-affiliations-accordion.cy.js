@@ -32,7 +32,7 @@ describe('Consortia', () => {
 
   it(
     'C380507 A user without appropriate permission can not view a users affiliations accordion (consortia) (thunderjet)',
-    { tags: ['criticalPathECS', 'thunderjet'] },
+    { tags: ['criticalPathECS', 'thunderjet', 'C380507'] },
     () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);

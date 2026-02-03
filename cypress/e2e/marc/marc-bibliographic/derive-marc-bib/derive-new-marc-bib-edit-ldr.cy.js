@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
@@ -259,7 +260,7 @@ describe('MARC', () => {
         },
         // 5. k - a, b, c, d, i, m, s
         {
-          typeField: INVENTORY_LDR_FIELD_TYPE_DROPDOWN.K,
+          typeField: matching(/k - Two-dimensional nonprojectable\s+graphic/),
           blvlField: INVENTORY_LDR_FIELD_BLVL_DROPDOWN.M,
           tag008Fields: optionsFor008FieldDropdowns.option_5,
         },
@@ -303,7 +304,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });
@@ -341,7 +341,9 @@ describe('MARC', () => {
             QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
             set.tag008Fields();
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
+            QuickMarcEditor.checkAfterSaveAndCloseDerive();
+
             InventoryInstance.waitInstanceRecordViewOpened(title);
           });
 

@@ -152,7 +152,6 @@ describe('Export Manager', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.exportManagerPath,
             waiter: ExportManagerSearchPane.waitLoading,
-            authRefresh: true,
           });
         });
       });
@@ -174,7 +173,7 @@ describe('Export Manager', () => {
 
       it(
         'C377045 Sorting by export method does not reset search results (thunderjet) (TaaS)',
-        { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'thunderjet', 'C377045'] },
         () => {
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchBySuccessful();

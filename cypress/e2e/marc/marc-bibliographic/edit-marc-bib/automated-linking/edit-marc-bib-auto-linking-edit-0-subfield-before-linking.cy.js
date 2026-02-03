@@ -83,20 +83,20 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           // Making sure there are no duplicate authority records in the system before auto-linking
-          cy.getAdminToken().then(() => {
-            naturalIds.forEach((id) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 200,
-                query: `naturalId="${id}*" and authRefType=="Authorized"`,
-              }).then((records) => {
-                records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id, true);
-                });
+          cy.getAdminToken();
+          naturalIds.forEach((id) => {
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 200,
+              query: `naturalId="${id}*" and authRefType=="Authorized"`,
+            }).then((records) => {
+              records.forEach((record) => {
+                MarcAuthority.deleteViaAPI(record.id, true);
               });
             });
           });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Lesbian activists');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Lesbian authors');
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -135,7 +135,7 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
               });
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
             cy.login(userData.username, userData.password, {
@@ -204,7 +204,8 @@ describe('MARC', () => {
               '',
             );
             // #9 Click on the "Save & close" button.
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
             // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search" button.
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();

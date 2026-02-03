@@ -163,7 +163,7 @@ describe('Export Manager', () => {
 
     it(
       'C365123 Downloading the exact ".edi" file that was exported for a given export job with "Successful" status (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C365123'] },
       () => {
         cy.visit(TopMenu.exportManagerOrganizationsPath);
         ExportManagerSearchPane.selectOrganizationsSearch();

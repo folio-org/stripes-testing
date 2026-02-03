@@ -105,6 +105,7 @@ describe('Bulk-edit', () => {
   describe('Central tenant', () => {
     describe('Consortia', () => {
       before('create test data', () => {
+        cy.clearLocalStorage();
         cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
@@ -213,16 +214,27 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
             BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
             BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.REPRODUCTION_NOTE,
+            );
 
             instances.forEach((instance) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
-                instance.hrid,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+                `${params.notesInitialValue.adminUpperCase} | ${params.notesInitialValue.adminLowerCase}`,
               );
             });
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              folioInstance.hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
+              `${params.notesInitialValue.reproductionUpperCase} (staff only) | ${params.notesInitialValue.reproductionLowerCase}`,
+            );
 
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
+            BulkEditActions.openActions();
             BulkEditActions.downloadMatchedResults();
 
             instances.forEach((instance) => {

@@ -295,7 +295,7 @@ describe('Orders', () => {
 
   it(
     'C357545 Encumbrance transaction updates when fund name is changed in Open one-time order and Open invoice related to POL exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'C357545'] },
+    { tags: ['criticalPath', 'thunderjet', 'C357545'] },
     () => {
       Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

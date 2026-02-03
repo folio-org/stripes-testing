@@ -146,7 +146,7 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData));
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.getId().then((id) => {
               createdInstanceIds.push(id);

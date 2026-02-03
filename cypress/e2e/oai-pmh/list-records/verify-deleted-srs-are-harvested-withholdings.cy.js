@@ -78,7 +78,7 @@ describe('OAI-PMH', () => {
 
         // Step 4: Click on the "Save & close" button
         const dateAndTimeOfDeletion = DateTools.getCurrentDateForOaiPmh();
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         InstanceRecordView.verifyInstanceIsSetForDeletion();
 
         // Step 5: Send ListRecords request with marc21_withholdings and verify deleted record is harvested

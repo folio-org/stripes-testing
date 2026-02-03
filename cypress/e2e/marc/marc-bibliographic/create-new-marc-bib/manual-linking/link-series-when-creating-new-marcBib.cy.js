@@ -182,7 +182,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,

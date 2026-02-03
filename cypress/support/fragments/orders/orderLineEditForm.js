@@ -61,7 +61,9 @@ const ongoingInformationFields = {
 
 const costDetailsFields = {
   physicalUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPrice' })),
+  electronicUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPriceElectronic' })),
   quantityPhysical: costDetailsSection.find(TextField({ name: 'cost.quantityPhysical' })),
+  quantityElectronic: costDetailsSection.find(TextField({ name: 'cost.quantityElectronic' })),
   useSetExchangeRate: costDetailsSection.find(Checkbox({ id: 'use-set-exchange-rate' })),
   exchangeRate: costDetailsSection.find(TextField({ name: 'cost.exchangeRate' })),
   calculatedTotalAmount: costDetailsSection.find(KeyValue('Calculated total amount (Exchanged)')),
@@ -174,6 +176,17 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+      cy.wait(1000);
+    }
+    if (poLineDetails.receivingWorkflow) {
+      cy.do(Select({ name: 'checkinItems' }).choose(poLineDetails.receivingWorkflow));
+    }
+    if (poLineDetails.materialType) {
+      if (poLineDetails.orderFormat === 'Electronic resource') {
+        cy.do(Select({ name: 'eresource.materialType' }).choose(poLineDetails.materialType));
+      } else {
+        cy.do(Select({ name: 'physical.materialType' }).choose(poLineDetails.materialType));
+      }
     }
     if (poLineDetails.claimingActive) {
       cy.do(orderLineFields.claimingActive.click());
@@ -195,7 +208,9 @@ export default {
   },
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
-      cy.do(costDetailsFields[key].fillIn(value));
+      if (costDetailsFields[key]) {
+        cy.do(costDetailsFields[key].fillIn(value));
+      }
     });
   },
   fillLocationDetails(locationDetails) {
@@ -263,6 +278,34 @@ export default {
   },
   selectFundDistribution(fund, index) {
     this.selectDropDownValue('Fund ID', fund, index);
+  },
+  expandFundIdDropdown(index = 0) {
+    cy.do(
+      RepeatableFieldItem({ index })
+        .find(Selection(including('Fund ID')))
+        .open(),
+    );
+    cy.wait(1000);
+  },
+  verifyFundInDropdown(fundName, fundCode, isPresent = true) {
+    const fundOption = SelectionOption(`${fundName} (${fundCode})`);
+    if (isPresent) {
+      cy.expect(fundOption.exists());
+    } else {
+      cy.expect(fundOption.absent());
+    }
+  },
+  selectFundFromOpenDropdown(fundName, fundCode) {
+    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
+    cy.wait(1000);
+  },
+  expandLocationDropdown(index = 0) {
+    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+    cy.wait(1000);
+  },
+  selectLocationFromDropdown(locationName) {
+    cy.do(SelectionOption(including(locationName)).click());
+    cy.wait(1000);
   },
   selectExpenseClass(expenseClass, index) {
     this.selectDropDownValue('Expense class', expenseClass, index);

@@ -12,11 +12,13 @@ describe('eHoldings', () => {
   describe('Title+Package', () => {
     let user;
     const testData = {
-      packageName: 'Oxford',
+      packageName: 'Oxford Bibliographies Online',
     };
 
     before('Create test user', () => {
       cy.getAdminToken();
+      EHoldingsPackages.addPackageToHoldingsViaAPI(testData.packageName);
+
       cy.createTempUser([
         Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
         Permissions.moduleeHoldingsEnabled.gui,
@@ -26,6 +28,7 @@ describe('eHoldings', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
         });
         EHoldingSearch.switchToPackages();
       });

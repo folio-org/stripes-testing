@@ -100,7 +100,7 @@ describe('Invoices', () => {
 
   it(
     'C350952 Allow editing of subscription dates and subscription info after an invoice is approved/paid (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350952'] },
     () => {
       cy.getAdminToken();
       Approvals.setApprovePayValue(false);

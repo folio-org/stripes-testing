@@ -49,6 +49,7 @@ describe('eHoldings', () => {
         EHoldingsResourceView.goToEdit();
         EHoldingsResourceEdit.waitLoading();
 
+        cy.getToken(testData.user.username, testData.user.password);
         EHoldingsResourceEdit.changeProxy().then((newProxy) => {
           testData.firstProxy = newProxy;
           EHoldingsResourceEdit.verifyProxiedURLNotDisplayed();

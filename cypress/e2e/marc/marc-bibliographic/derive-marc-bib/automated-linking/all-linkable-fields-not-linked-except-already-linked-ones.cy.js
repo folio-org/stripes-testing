@@ -178,38 +178,36 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
-              InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
+              authRefresh: true,
+            })
+              .then(() => {
+                InventoryInstances.searchByTitle(createdRecordsIDs[0]);
+                InventoryInstances.selectInstance();
+                InventoryInstance.editMarcBibliographicRecord();
 
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
+                linkableFields.forEach((tag) => {
+                  QuickMarcEditor.setRulesForField(tag, true);
+                });
+                linkingTagAndValues.forEach((linking) => {
+                  QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+                  MarcAuthorities.switchToSearch();
+                  InventoryInstance.verifySelectMarcAuthorityModal();
+                  InventoryInstance.verifySearchOptions();
+                  InventoryInstance.searchResults(linking.value);
+                  InventoryInstance.clickLinkButton();
+                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+                });
+                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.checkAfterSaveAndClose();
+              })
+              .then(() => {
+                cy.waitForAuthRefresh(() => {
+                  cy.login(userData.username, userData.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                }, 20_000);
               });
-              linkingTagAndValues.forEach((linking) => {
-                QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                InventoryInstance.verifySearchOptions();
-                InventoryInstance.searchResults(linking.value);
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-              });
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
-              QuickMarcEditor.checkAfterSaveAndClose();
-            });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
           });
         });
 
@@ -273,7 +271,7 @@ describe('MARC', () => {
 
             QuickMarcEditor.updateExistingFieldContent(fields[0].rowIndex, fields[0].newContent);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.viewSource();

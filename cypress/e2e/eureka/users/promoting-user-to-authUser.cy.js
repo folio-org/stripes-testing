@@ -33,16 +33,18 @@ describe('Eureka', () => {
         userA.patronGroup = groupId;
         userB.patronGroup = groupId;
         userC.patronGroup = groupId;
+        cy.ifConsortia(true, () => {
+          userB.type = 'patron';
+        });
+
         cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
           testData.userAId = userId;
           userIds.push(userId);
         });
 
-        cy.ifConsortia(false, () => {
-          cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-            testData.userBId = userId;
-            userIds.push(userId);
-          });
+        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
+          testData.userBId = userId;
+          userIds.push(userId);
         });
 
         Users.createViaApi(userC).then((user) => {
@@ -73,15 +75,13 @@ describe('Eureka', () => {
           expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
         });
 
-        cy.ifConsortia(false, () => {
-          cy.checkIfUserHasKeycloakApi(testData.userBId).then(({ status, body }) => {
-            expect(status).to.eq(404);
-            expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
-          });
-          cy.promoteUserToKeycloakApi(testData.userBId, true).then(({ status, body }) => {
-            expect(status).to.eq(400);
-            expect(body.errors[0].message).to.eq(testData.noUsernameErrorMsg);
-          });
+        cy.checkIfUserHasKeycloakApi(testData.userBId).then(({ status, body }) => {
+          expect(status).to.eq(404);
+          expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
+        });
+        cy.promoteUserToKeycloakApi(testData.userBId, true).then(({ status, body }) => {
+          expect(status).to.eq(400);
+          expect(body.errors[0].message).to.eq(testData.noUsernameErrorMsg);
         });
 
         cy.promoteUserToKeycloakApi(testData.randomUuid, true).then(({ status, body }) => {

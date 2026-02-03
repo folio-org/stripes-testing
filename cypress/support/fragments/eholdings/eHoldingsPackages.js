@@ -292,6 +292,45 @@ export default {
     });
   },
 
+  addPackageToHoldingsViaAPI(packageName) {
+    const allowedAttributesProperties = [
+      'allowKbToAddTitles',
+      'contentType',
+      'isSelected',
+      'accessTypeId',
+      'isCustom',
+      'visibilityData',
+      'isFullPackage',
+      'proxy',
+      'packageToken',
+      'customCoverage',
+      'name',
+    ];
+    this.getPackageViaApi(packageName).then(({ body: { data } }) => {
+      const packageData = data[0];
+      const { attributes } = packageData;
+      Object.keys(attributes).forEach((key) => {
+        if (!allowedAttributesProperties.includes(key)) {
+          delete attributes[key];
+        }
+      });
+      attributes.isSelected = true;
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/packages/${packageData.id}`,
+        contentTypeHeader: 'application/vnd.api+json',
+        body: {
+          data: {
+            id: packageData.id,
+            type: packageData.type,
+            attributes,
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
+
   createPackageViaAPI(packageBody = defaultPackage) {
     return cy
       .okapiRequest({

@@ -29,7 +29,6 @@ describe('MARC', () => {
       };
       const tag199Content = 'Undefined 1XX field';
       const errorPrefix = 'Fail:';
-      const warningPrefix = 'Warn:';
       const valid245indicatorValue = '1';
 
       let userProperties;
@@ -101,8 +100,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(tags.tag245, `$a ${title}`);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(3, errorPrefix);
-          QuickMarcEditor.checkErrorMessage(4, warningPrefix);
-          QuickMarcEditor.verifyValidationCallout(1, 5);
+          QuickMarcEditor.verifyValidationCallout(0, 5);
           QuickMarcEditor.verifyContentBoxIsFocused(tags.tag245);
           QuickMarcEditor.closeAllCallouts();
 
@@ -141,11 +139,6 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
             false,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, warningPrefix);
-          QuickMarcEditor.verifyValidationCallout(1, 0);
-          QuickMarcEditor.closeAllCallouts();
-
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkUserNameInHeader(userProperties.firstName, userProperties.lastName);

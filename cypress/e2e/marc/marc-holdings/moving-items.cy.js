@@ -135,13 +135,11 @@ describe('MARC', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(instanceTitle);
         InventoryInstance.openMoveItemsWithinAnInstance();
-
         InventoryInstance.moveItemToAnotherHolding({
           fromHolding: firstHolding,
           toHolding: secondHolding,
         });
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-
         InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
       },
