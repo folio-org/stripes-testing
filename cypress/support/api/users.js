@@ -136,10 +136,6 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
     userProperties.username = userBody.username;
   }
 
-  if (!Cypress.env('ecsEnabled')) {
-    cy.getAdminToken();
-  }
-
   cy.getFirstUserGroupId(
     { limit: parameters.patronGroupName ? 1000 : 1 },
     parameters.patronGroupName,
