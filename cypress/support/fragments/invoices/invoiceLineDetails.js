@@ -214,4 +214,12 @@ export default {
     });
     cy.wait(1000);
   },
+  clickReceiptDateLink(rowIndex = 0) {
+    const link = receivingHistorySection
+      .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
+      .find(MultiColumnListCell({ column: 'Receipt date' }))
+      .find(Link());
+
+    cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
+  },
 };
