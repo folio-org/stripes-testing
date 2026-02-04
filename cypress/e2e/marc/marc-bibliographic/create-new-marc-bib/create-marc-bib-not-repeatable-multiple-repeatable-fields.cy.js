@@ -163,7 +163,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(9, testData.tags.tag981, testData.fieldContents.tag981Value2);
 
           // Step 6: Click on the "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(including(testData.successMessage));
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();

@@ -54,7 +54,6 @@ describe('MARC', () => {
       let createdInstanceId;
       let bibSpecId;
       let localField981Id;
-      let field245Indicator1Id;
       let field245SubfieldLId;
 
       before('Create test user and setup validation rules', () => {
@@ -89,15 +88,7 @@ describe('MARC', () => {
                   deprecated: false,
                 };
 
-                cy.createSpecificationIndicatorCode(
-                  indicator1.id,
-                  indicatorCodePayload,
-                  false,
-                ).then((codeResp) => {
-                  if (codeResp.status === 201) {
-                    field245Indicator1Id = codeResp.body.id;
-                  }
-                });
+                cy.createSpecificationIndicatorCode(indicator1.id, indicatorCodePayload, false);
               });
 
               // Setup not repeatable subfield 'l' for field 245
@@ -211,11 +202,6 @@ describe('MARC', () => {
         // Delete created instance
         if (createdInstanceId) {
           InventoryInstance.deleteInstanceViaApi(createdInstanceId);
-        }
-
-        // Cleanup validation rules
-        if (field245Indicator1Id) {
-          cy.deleteSpecificationFieldIndicatorCode(field245Indicator1Id, false);
         }
         if (field245SubfieldLId) {
           cy.deleteSpecificationFieldSubfield(field245SubfieldLId, false);

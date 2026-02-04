@@ -218,6 +218,7 @@ describe('MARC', () => {
               cy.loginAsAdmin({
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               }).then(() => {
                 InventoryInstances.searchByTitle(createdRecordsIDs[0]);
                 InventoryInstances.selectInstance();
@@ -236,8 +237,6 @@ describe('MARC', () => {
                   QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
                 });
                 QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
 
                 cy.waitForAuthRefresh(() => {
@@ -245,8 +244,6 @@ describe('MARC', () => {
                     path: TopMenu.inventoryPath,
                     waiter: InventoryInstances.waitContentLoading,
                   });
-                  cy.reload();
-                  InventoryInstances.waitContentLoading();
                 }, 20_000);
               });
             });
@@ -316,8 +313,6 @@ describe('MARC', () => {
               );
             });
             // 4 Click on the "Save & close" button.
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // 5 Scroll down to the "Subject" accordion button. "MARC authority" app icon is displayed next to each linked subject name

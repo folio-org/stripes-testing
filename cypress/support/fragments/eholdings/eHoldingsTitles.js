@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   ListItem,
@@ -132,7 +133,18 @@ export default {
         contentTypeHeader: 'application/vnd.api+json',
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body }) => body.data);
+      .then((response) => {
+        return recurse(
+          () => this.getEHoldingsTitlesByTitleNameViaApi({ titleName }),
+          (titlesBody) => titlesBody.data.length > 0,
+          {
+            timeout: 60_000,
+            delay: 1_000,
+          },
+        ).then(() => {
+          return response.body.data;
+        });
+      });
   },
 
   getEHoldingsTitlesByTitleNameViaApi({ titleName, include = 'resources' }) {

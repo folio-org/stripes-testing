@@ -112,8 +112,6 @@ describe('MARC', () => {
           QuickMarcEditor.verify008TextFields(INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2, '');
 
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.verifyDates(undefined, undefined, INSTANCE_DATE_TYPES.MULTIPLE);

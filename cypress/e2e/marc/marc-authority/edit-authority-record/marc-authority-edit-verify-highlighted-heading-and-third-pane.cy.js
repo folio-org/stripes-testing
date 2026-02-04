@@ -86,6 +86,11 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Twain, Mark');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350946');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350911');
+
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -144,8 +149,6 @@ describe('MARC', () => {
             );
             MarcAuthority.edit();
             QuickMarcEditor.updateExistingFieldContent(rowIndex, `$a ${content}${postfixC350909}`);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350909}`);
@@ -170,8 +173,6 @@ describe('MARC', () => {
                 rowIndex,
                 `$a ${content}${postfixC350911}`,
               );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
               MarcAuthority.clickSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndCloseAuthority();
               MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350911}`);
@@ -197,8 +198,6 @@ describe('MARC', () => {
             testData.editedFields[0].tag,
             `$a ${testData.editedFields[0].content}${postfixC350946}`,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(`${testData.editedFields[0].content}${postfixC350946}`);
           MarcAuthorities.switchToBrowse();
@@ -212,8 +211,6 @@ describe('MARC', () => {
             testData.editedGeographicNameField.tag,
             `$a ${testData.editedGeographicNameField.content}`,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(testData.editedGeographicNameField.content);
         },

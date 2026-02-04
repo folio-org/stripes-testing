@@ -199,11 +199,8 @@ describe('MARC', () => {
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -217,23 +214,21 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
         });
 
         beforeEach('Login to the application', () => {
+          cy.getAdminToken();
           linkableFields.forEach((tag) => {
             QuickMarcEditor.setRulesForField(tag, true);
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            InventoryInstances.waitContentLoading();
+            authRefresh: true,
           });
         });
 
@@ -319,7 +314,7 @@ describe('MARC', () => {
                 `records[${matchs.rowIndex}].content`,
               );
             });
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
 
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -360,7 +355,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.checkLinkHeadingsButton();
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               78,
               '700',

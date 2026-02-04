@@ -191,7 +191,7 @@ describe('Data Import', () => {
         InventoryInstance.searchResults(testData.authorityTitle);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority('700');
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

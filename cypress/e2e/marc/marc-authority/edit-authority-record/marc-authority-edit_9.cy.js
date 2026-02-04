@@ -114,22 +114,15 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(11);
           QuickMarcEditor.afterDeleteNotification('');
           QuickMarcEditor.afterDeleteNotification('400');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.deleteField(8);
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.afterDeleteNotification('382');
           QuickMarcEditor.afterDeleteNotification('');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.confirmDelete();
           cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.constinueWithSaveAndCheck();
           QuickMarcEditor.checkFieldAbsense('382');
         },
       );

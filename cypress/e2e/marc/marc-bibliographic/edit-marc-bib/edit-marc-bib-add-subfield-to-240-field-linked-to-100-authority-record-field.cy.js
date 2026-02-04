@@ -83,11 +83,12 @@ describe('MARC', () => {
           })
           .then(() => {});
 
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-          authRefresh: true,
-        })
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        }, 20_000)
           .then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -103,7 +104,7 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
@@ -113,11 +114,12 @@ describe('MARC', () => {
             ]).then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-                authRefresh: true,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+              }, 20_000);
             });
           });
       });
@@ -133,16 +135,11 @@ describe('MARC', () => {
         'C376594 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "100" field of "MARC authority" record) (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C376594'] },
         () => {
-          InventorySearchAndFilter.selectSearchOptions(
-            testData.inventoryInstanceSearchOption,
-            testData.marcBibTitle,
-          );
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
             InventorySearchAndFilter.verifyResultListExists();
           });
-          InventorySearchAndFilter.clickSearch();
-          InventoryInstances.selectInstanceById(createdRecordIDs[0]);
+          InventorySearchAndFilter.executeSearch(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
 
           InventoryInstance.editMarcBibliographicRecord();

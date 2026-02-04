@@ -95,33 +95,34 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          ]).then((createdUserProperties) => {
-            userData = createdUserProperties;
+          ])
+            .then((createdUserProperties) => {
+              userData = createdUserProperties;
 
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdAuthorityIDs.push(record.authority.id);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdAuthorityIDs.push(record.authority.id);
+                  });
                 });
               });
-            });
 
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
-            });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+              linkableFields.forEach((tag) => {
+                QuickMarcEditor.setRulesForField(tag, false);
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
-          });
+            })
+            .then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.login(userData.username, userData.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+              }, 20_000);
+            });
         });
 
         after('Deleting created users, Instances', () => {
@@ -162,7 +163,8 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
             });

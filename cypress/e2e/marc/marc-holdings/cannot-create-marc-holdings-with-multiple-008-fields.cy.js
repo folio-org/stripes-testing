@@ -70,7 +70,7 @@ describe('MARC', () => {
 
         QuickMarcEditor.addNewField(testData.tag008, '', 4);
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
         QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
       },

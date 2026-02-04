@@ -109,8 +109,6 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
@@ -143,8 +141,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(32, testData.tag100);
             QuickMarcEditor.deleteField(32);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.clickRestoreDeletedField();

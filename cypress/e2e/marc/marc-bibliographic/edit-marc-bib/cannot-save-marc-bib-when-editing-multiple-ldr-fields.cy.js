@@ -61,7 +61,7 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.addNewField(testData.tagLDR, testData.LDRValue, 4);
           QuickMarcEditor.checkSubfieldsPresenceInTag008();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
         },
       );

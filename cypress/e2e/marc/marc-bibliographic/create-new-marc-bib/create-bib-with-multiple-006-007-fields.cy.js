@@ -110,7 +110,7 @@ describe('MARC', () => {
           });
 
           // Step 6: Click "Save & close" button
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.title);
 

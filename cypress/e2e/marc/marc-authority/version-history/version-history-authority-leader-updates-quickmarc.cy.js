@@ -117,7 +117,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyDropdownOptionChecked(...dropdownUpdate);
           QuickMarcEditor.update008TextFields(...textUpdate);
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeading);
 

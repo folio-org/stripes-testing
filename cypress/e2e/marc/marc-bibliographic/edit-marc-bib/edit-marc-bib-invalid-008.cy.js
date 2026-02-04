@@ -73,7 +73,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tag245, testData.valid245IndicatorValue, 0);
           QuickMarcEditor.updateIndicatorValue(testData.tag245, testData.valid245IndicatorValue, 1);
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.instanceTitle} UPD`);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.verifyValidationCallout(0, 5);
           testData.boxesWithErrors.forEach((boxName) => {
@@ -84,7 +84,7 @@ describe('MARC', () => {
           QuickMarcEditor.verify008TextFields(testData.langBox, testData.invalidLangValue);
 
           QuickMarcEditor.closeAllCallouts();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(0, 6);
           testData.boxesWithErrors.forEach((boxName) => {
             QuickMarcEditor.checkErrorMessage(3, testData.tag008ErrorText(boxName));

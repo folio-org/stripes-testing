@@ -158,7 +158,7 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(existingFieldsUpdated[3].tag);
           QuickMarcEditor.afterDeleteNotification(existingFields[4].tag);
 
-          QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.deleteConfirmationPresented();
           QuickMarcEditor.restoreDeletedFields();
           QuickMarcEditor.checkContent(existingFieldsUpdated[3].content, 8);
@@ -171,7 +171,8 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(existingFieldsUpdated[3].tag);
           QuickMarcEditor.afterDeleteNotification(existingFields[4].tag);
 
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+          QuickMarcEditor.pressSaveAndCloseButton();
+          QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
           InventoryInstance.viewSource();

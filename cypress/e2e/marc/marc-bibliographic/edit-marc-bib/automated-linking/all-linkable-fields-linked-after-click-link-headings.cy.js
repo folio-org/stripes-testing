@@ -224,6 +224,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -243,8 +244,6 @@ describe('MARC', () => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(matchs.rowIndex);
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             fields.forEach((field) => {
@@ -275,6 +274,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(createdRecordsIDs[1]);
             InventoryInstances.selectInstance();
@@ -289,8 +289,6 @@ describe('MARC', () => {
               '$a Coates, Ta-Nehisi, $eauthor. $0 n2008001084',
             );
             QuickMarcEditor.checkButtonsEnabled();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');

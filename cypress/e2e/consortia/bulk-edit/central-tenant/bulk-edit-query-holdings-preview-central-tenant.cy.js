@@ -455,6 +455,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
             // Step 20: Verify only College holdings matched
+            BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
             );
@@ -533,6 +534,7 @@ describe('Bulk-edit', () => {
             ],
           );
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

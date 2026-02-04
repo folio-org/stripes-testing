@@ -25,6 +25,7 @@ describe('MARC', () => {
         fileName: `testMarcFileC380398${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
+        updatedTitlePrefix: `AT_C380398_MarcBibInstance_${getRandomPostfix()}`,
       };
       const statusDropdownOptions = Object.values(INVENTORY_LDR_FIELD_STATUS_DROPDOWN);
       const ctrlDropdownOptions = Object.values(INVENTORY_LDR_FIELD_CTRL_DROPDOWN);
@@ -130,8 +131,12 @@ describe('MARC', () => {
             QuickMarcEditor.fillInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
             QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
 
+            QuickMarcEditor.updateExistingField('245', `$a ${marcFile.updatedTitlePrefix} ${i}`);
+            QuickMarcEditor.checkContentByTag('245', `$a ${marcFile.updatedTitlePrefix} ${i}`);
+
             QuickMarcEditor.pressSaveAndClose();
-            InventoryInstance.waitInventoryLoading();
+            InventoryInstance.waitLoading();
+            InventoryInstance.checkInstanceTitle(`${marcFile.updatedTitlePrefix} ${i}`);
 
             InventoryInstance.goToEditMARCBiblRecord();
             LDRDropdownOptionSets.forEach((LDRDropdownOptionSet) => {
@@ -145,9 +150,12 @@ describe('MARC', () => {
 
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.waitLoading();
+            InventoryInstance.checkInstanceTitle(`${marcFile.updatedTitlePrefix} ${i}`);
             InventoryInstance.getId().then((id) => {
               instancesIDs.push(id);
             });
+            // waiting for UI to stabilize - otherwise Actions dropdown may close after being opened
+            cy.wait(1500);
           }
         },
       );

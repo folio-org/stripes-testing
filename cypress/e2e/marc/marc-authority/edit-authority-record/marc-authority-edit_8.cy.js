@@ -26,18 +26,7 @@ describe('MARC', () => {
       before('create test data', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
-
-          // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="C375141"',
-          }).then((records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
-            });
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375141');
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
               testData.createdAuthorityID = response[0].authority.id;
@@ -79,25 +68,15 @@ describe('MARC', () => {
           MarcAuthorities.check010FieldAbsence();
           MarcAuthority.addNewField(4, '010', '$a 123123');
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           cy.wait(4000);
           QuickMarcEditor.updateExistingField('010', '$a n90635366');
           QuickMarcEditor.checkButtonsEnabled();
-          // QuickMarcEditor.clickSaveAndKeepEditingButton();
-          // cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
-          // wait until all the saved and updated values will be loaded.
           cy.wait(4000);
           QuickMarcEditor.deleteFieldAndCheck(5, '010');
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-          QuickMarcEditor.confirmDelete();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
         },

@@ -72,7 +72,7 @@ describe('MARC', () => {
           testData.invalidTagValues.forEach((tagValue) => {
             QuickMarcEditor.updateExistingTagValue(testData.tag852Index + 1, tagValue);
             QuickMarcEditor.verifyTagValue(testData.tag852Index + 1, tagValue);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(0, 1);
             QuickMarcEditor.closeAllCallouts();
             if (tagValue.length < 3) {

@@ -122,7 +122,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${updatedTitle}`);
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyInvalidLDRValueError(testData.ldrPositions);
 
           QuickMarcEditor.selectFieldsDropdownOption(
@@ -136,7 +136,7 @@ describe('MARC', () => {
             testData.validValues.status,
           );
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyInvalidLDRValueError(testData.ldrPositions.slice(1));
 
           Object.entries(testData.ldrDropdowns)
@@ -165,7 +165,7 @@ describe('MARC', () => {
           });
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
           InventoryInstance.viewSource();

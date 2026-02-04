@@ -181,10 +181,7 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           QuickMarcEditor.checkTagAbsent('');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-          QuickMarcEditor.confirmDelete();
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndClose();
         },
       );
@@ -307,12 +304,9 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           cy.wait(3000);
           QuickMarcEditor.checkDeletingFieldsModal();
-          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.restoreDeletedFields();
           QuickMarcEditor.verifyTagValue(4, fieldData.field010.tag);
           QuickMarcEditor.checkContent(fieldData.field010.content, 4);
@@ -322,9 +316,6 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.afterDeleteNotification(fieldData.field010.tag);
           QuickMarcEditor.deleteField(31);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
-          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.clickSaveAndCloseThenCheck('2');
           QuickMarcEditor.confirmDeletingFields();
           InstanceRecordView.waitLoading();

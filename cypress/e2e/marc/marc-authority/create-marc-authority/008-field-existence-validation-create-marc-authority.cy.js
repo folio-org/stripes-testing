@@ -67,7 +67,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.deleteField(3);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.expectedErrorMessage);
         },
       );

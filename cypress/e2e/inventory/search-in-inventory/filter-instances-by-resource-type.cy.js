@@ -17,6 +17,7 @@ describe('Inventory', () => {
       };
       const createdRecordIDs = [];
       let instanceTypes;
+      let resourceTypeForTypeAhead;
       let user;
 
       before('Create user, test data', () => {
@@ -30,6 +31,12 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 200 })
             .then((types) => {
               instanceTypes = types.filter((item) => item.source === 'rdacontent');
+
+              const resourceType = instanceTypes[0];
+              resourceTypeForTypeAhead = {
+                notFullValue: resourceType.name.slice(3),
+                fullValue: resourceType.name,
+              };
             })
             .then(() => {
               for (let i = 0; i <= 10; i++) {
@@ -47,6 +54,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.instanceTabIsDefault();
             });
@@ -205,6 +213,13 @@ describe('Inventory', () => {
                         ' record',
                     );
                   });
+
+                  InventorySearchAndFilter.clearFilter(testData.resourceTypeAccordionName);
+                  InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                    testData.resourceTypeAccordionName,
+                    resourceTypeForTypeAhead.notFullValue,
+                    resourceTypeForTypeAhead.fullValue,
+                  );
                 });
               });
             });

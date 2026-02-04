@@ -65,6 +65,16 @@ describe('Inventory', () => {
                   createdRecordIDs.push(instance.instanceId);
                 });
               }
+              statisticalCodes.forEach((code, index) => {
+                statisticalCodes[index].uiOptionName =
+                  `${statisticalCodeTypes.filter((type) => type.id === code.statisticalCodeTypeId)[0].name}: ${code.code} - ${code.name}`;
+              });
+
+              const fullValue = statisticalCodes[0].uiOptionName;
+              testData.statCodeForTypeAhead = {
+                notFullValue: fullValue.slice(3),
+                fullValue,
+              };
             })
             .then(() => {
               cy.login(user.username, user.password, {
@@ -221,6 +231,12 @@ describe('Inventory', () => {
                         ' record',
                     );
                   });
+                  InventorySearchAndFilter.clearFilter(testData.statisticalCodeAccordionName);
+                  InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                    testData.statisticalCodeAccordionName,
+                    testData.statCodeForTypeAhead.notFullValue,
+                    testData.statCodeForTypeAhead.fullValue,
+                  );
                 });
               });
             });

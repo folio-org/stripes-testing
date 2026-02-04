@@ -39,7 +39,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a Johnson, Samuel, $d 1709-1784',
-            '',
+            '$x Criticism and interpretation.',
             '$0 http://id.loc.gov/authorities/names/n78095825C400663',
             '',
           ],
@@ -72,14 +72,14 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC400663.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC400663.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC400663.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC400663.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 4,
@@ -178,9 +178,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.deleteField(4);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             cy.wait(2500);
             QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();

@@ -86,8 +86,6 @@ describe('Inventory', () => {
           '\\',
         );
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         InventorySearchAndFilter.switchToBrowseTab();
@@ -106,10 +104,7 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.deleteField(11);
         QuickMarcEditor.deleteField(12);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
+        QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();

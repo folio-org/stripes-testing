@@ -158,7 +158,7 @@ describe('MARC', () => {
               testData.fieldName.seventhBox(5),
               '$b test',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(5, testData.errorCalloutMessage);
 
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.fifthBox(5), '');
@@ -169,7 +169,7 @@ describe('MARC', () => {
               testData.fieldName.seventhBox(6),
               '$f test',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(6, testData.errorCalloutMessage);
           },
         );

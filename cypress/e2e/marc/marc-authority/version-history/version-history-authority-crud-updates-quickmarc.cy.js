@@ -255,7 +255,7 @@ describe('MARC', () => {
             testData.addedField.content[1],
           );
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
 
@@ -274,14 +274,14 @@ describe('MARC', () => {
             1,
           );
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
 
           QuickMarcEditor.deleteField(testData.deletedField.index);
           QuickMarcEditor.afterDeleteNotification(testData.deletedField.tag);
           withWaitForEditor(() => {
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
           });
@@ -310,7 +310,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.combinedUpdate.deletedField.tag);
           cy.wait(3000);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings({ acceptDeleteModal: true });
+          QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeadingFinal);
 

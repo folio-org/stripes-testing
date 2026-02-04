@@ -77,8 +77,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -96,8 +94,6 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
@@ -113,8 +109,6 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
-              cy.reload();
-              MarcAuthorities.waitLoading();
             }, 20_000);
           });
         });
@@ -145,7 +139,7 @@ describe('MARC', () => {
           let previousTagValue = testData.tag111;
           testData.newTagValuesSaveAndClose.forEach((newTagValue) => {
             QuickMarcEditor.updateExistingTagName(previousTagValue, newTagValue);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
             previousTagValue = newTagValue;
           });
@@ -158,7 +152,7 @@ describe('MARC', () => {
           });
 
           QuickMarcEditor.updateExistingTagName(previousTagValue, testData.tag129);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag129, testData.tag111);

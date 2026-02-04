@@ -12,6 +12,8 @@ import {
   IconButton,
   Popover,
   including,
+  ListItem,
+  and,
 } from '../../../../../../interactors';
 import { CallNumberTypes } from './callNumberTypes';
 import InteractorsTools from '../../../../utils/interactorsTools';
@@ -70,7 +72,16 @@ const Assertions = {
   validateOptionSelectedInCallNumberTypesDropdown(itemName, option) {
     const selectedOptions = Array.isArray(option) ? option : [option];
     const targetRow = elements.getTargetRowByName(itemName);
-    cy.expect(targetRow.find(MultiSelect({ selected: selectedOptions })).exists());
+    cy.expect(
+      targetRow
+        .find(
+          MultiSelect({
+            selectedCount: selectedOptions.length,
+            selected: and(...selectedOptions.map((opt) => including(opt))),
+          }),
+        )
+        .exists(),
+    );
   },
   validateCallNumberTypesDropdownExpanded(itemName) {
     const targetRow = elements.getTargetRowByName(itemName);
@@ -92,6 +103,19 @@ const Assertions = {
       typeAssertion,
       targetRow.find(elements.editButton).exists(),
     ]);
+  },
+
+  validateMultipleTypesForCallNumberBrowseRowInTable(
+    browseName,
+    callNumberTypes,
+    areTypesPresent = true,
+  ) {
+    const targetRow = elements.getTargetRowByName(browseName);
+    cy.expect(targetRow.find(elements.editButton).exists());
+    callNumberTypes.forEach((callNumberType) => {
+      if (areTypesPresent) cy.expect(targetRow.find(ListItem({ text: callNumberType })).exists());
+      else cy.expect(targetRow.find(ListItem({ text: callNumberType })).absent());
+    });
   },
 
   validateAvailableCallNumberTypeOption(optionName) {

@@ -109,7 +109,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateLDR06And07Positions();
         QuickMarcEditor.update008TextFields('Lang', 'eng');
         QuickMarcEditor.updateExistingField('245', `$a ${editedTitle}`);
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
 
         // Step 6: Verify OAI-PMH harvesting with updated title

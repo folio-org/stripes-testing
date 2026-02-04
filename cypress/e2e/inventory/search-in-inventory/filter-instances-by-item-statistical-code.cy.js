@@ -135,6 +135,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.instanceTabIsDefault();
               InventorySearchAndFilter.switchToItem();
@@ -316,6 +317,11 @@ describe('Inventory', () => {
                     `^${testData.itemCount.toLocaleString('en-US')} record`,
                   );
                 });
+                InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                  STAT_CODE_ACCORDION,
+                  '76764',
+                  statCodeUiOptions[0],
+                );
               });
             });
           });

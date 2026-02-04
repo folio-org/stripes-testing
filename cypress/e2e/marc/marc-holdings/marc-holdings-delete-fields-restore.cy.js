@@ -112,7 +112,7 @@ describe('MARC', () => {
         QuickMarcEditor.updateExistingField(testData.tag868, `$a ${testData.tag868ValueUpdated}`);
         QuickMarcEditor.checkContentByTag(testData.tag868, `$a ${testData.tag868ValueUpdated}`);
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.deleteConfirmationPresented();
         QuickMarcEditor.restoreDeletedFields();
 

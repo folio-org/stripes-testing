@@ -194,7 +194,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(testData.tags.tag986, '\\', 1);
 
           // Step 6: Click on the "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tags.tag245,
             including(testData.errorMessages.subfieldANonRepeatable),
@@ -212,7 +212,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
 
           // Step 7: Click on the "Save & close" button again
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tags.tag245,
             including(testData.errorMessages.subfieldANonRepeatable),
@@ -236,7 +236,7 @@ describe('MARC', () => {
           );
 
           // Step 9: Click on the "Save & close" button again
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tags.tag245,
             including(testData.errorMessages.subfieldANonRepeatable),
@@ -256,7 +256,7 @@ describe('MARC', () => {
           );
 
           // Step 11: Click on the "Save & close" button again
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tags.tag245,
@@ -277,7 +277,7 @@ describe('MARC', () => {
           );
 
           // Step 13: Click on the "Save & close" button again
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessageForFieldByTag(
             testData.tags.tag245,

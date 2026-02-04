@@ -98,6 +98,7 @@ describe('Inventory', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 InventorySearchAndFilter.instanceTabIsDefault();
                 InventorySearchAndFilter.switchToHoldings();
@@ -271,6 +272,11 @@ describe('Inventory', () => {
                   InventoryInstances.checkSearchResultCount('^6 records');
                   InventorySearchAndFilter.verifyNumberOfSearchResults(6);
                 });
+                InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+                  testData.holdingsTypeAccordionName,
+                  '6753',
+                  holdingsTypes[0].name,
+                );
               });
             });
           });

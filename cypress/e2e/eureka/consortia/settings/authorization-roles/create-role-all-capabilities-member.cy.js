@@ -72,8 +72,12 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
 
-          cy.getCapabilitySetsApi().then((capabSets) => {
-            capabilitySetsCount = capabSets.length;
+          cy.getApplicationsForTenantApi(Affiliations.College, true).then((appIds) => {
+            cy.getCapabilitySetsApi(2000, {
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabSets) => {
+              capabilitySetsCount = capabSets.length;
+            });
           });
 
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);

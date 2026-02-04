@@ -40,6 +40,7 @@ describe('Inventory', () => {
         cy.login(user.userProperties.username, user.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
         InventorySearchAndFilter.selectBrowseContributors();
         BrowseContributors.waitForContributorToAppear(exactSearchName);
