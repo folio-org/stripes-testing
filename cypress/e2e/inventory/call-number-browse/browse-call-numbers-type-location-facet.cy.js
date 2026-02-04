@@ -131,6 +131,13 @@ describe('Inventory', () => {
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411749');
       CallNumberTypes.deleteCallNumberTypesLike('AT_C411749');
+      cy.wait(1000);
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
+        testData.defaultLocation.institutionId,
+        testData.defaultLocation.campusId,
+        testData.defaultLocation.libraryId,
+        testData.defaultLocation.id,
+      );
     });
 
     it(
