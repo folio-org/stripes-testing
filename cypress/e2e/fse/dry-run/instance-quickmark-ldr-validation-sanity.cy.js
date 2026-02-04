@@ -24,10 +24,12 @@ describe('MARC', () => {
           Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         });
 
+        cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.allure().logCommandSteps();
 
         InventoryActions.import();
         InventoryInstance.getId().then((id) => {

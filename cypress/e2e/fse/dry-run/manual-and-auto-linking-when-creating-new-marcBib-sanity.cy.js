@@ -114,10 +114,12 @@ describe('MARC', () => {
             });
           });
 
+          cy.allure().logCommandSteps(false);
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          cy.allure().logCommandSteps();
         });
 
         after('Cleanup', () => {

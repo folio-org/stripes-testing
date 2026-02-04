@@ -27,10 +27,12 @@ describe('MARC', () => {
             );
           })
           .then(() => {
+            cy.allure().logCommandSteps(false);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.allure().logCommandSteps();
             InventoryInstances.searchByTitle(testData.instanceID);
           });
       });

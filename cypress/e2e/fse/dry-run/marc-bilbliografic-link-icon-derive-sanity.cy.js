@@ -60,10 +60,12 @@ describe('MARC', () => {
             );
           });
 
+        cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.allure().logCommandSteps();
 
         Logs.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, 'Completed');

@@ -27,7 +27,9 @@ describe('MARC', () => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       });
 
+      cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password);
+      cy.allure().logCommandSteps();
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
       InventoryActions.import();
