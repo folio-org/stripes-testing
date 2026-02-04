@@ -162,7 +162,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
         });
       });
     });
-    Approvals.setApprovePayValue(isApprovePayEnabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
     cy.createTempUser([
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesApproveInvoices.gui,

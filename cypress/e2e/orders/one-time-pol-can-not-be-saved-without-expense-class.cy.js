@@ -79,13 +79,13 @@ describe('Orders', () => {
   });
 
   it(
-    'C402774 PO line for "Ongoing" order can not be saved when "Expense class" field is empty (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C402774'] },
+    'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet) (TaaS)',
+    { tags: ['criticalPath', 'thunderjet', 'C402773'] },
     () => {
       const NewOrderForm = Orders.clickCreateNewOrder();
       NewOrderForm.fillOrderInfoSectionFields({
         organizationName: organization.name,
-        orderType: 'Ongoing',
+        orderType: 'One-time',
       });
       NewOrderForm.getOrderNumber().then((orderNumber) => {
         testData.orderNumber = orderNumber;

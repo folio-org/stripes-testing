@@ -14,7 +14,7 @@ export default {
   getApprovalConfigViaApi() {
     return Configs.getConfigViaApi({ query: '(module==INVOICE and configName==approvals)' });
   },
-  setApprovePayValue(isApprovePayEnabled) {
+  setApprovePayValueViaApi(isApprovePayEnabled) {
     this.getApprovalConfigViaApi().then((configs) => {
       if (configs[0]) {
         Configs.updateConfigViaApi({

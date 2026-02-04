@@ -13,6 +13,7 @@ export default {
         method: 'POST',
         path: 'configurations/entries',
         body: config,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },
@@ -21,6 +22,7 @@ export default {
       method: 'PUT',
       path: `configurations/entries/${config.id}`,
       body: config,
+      isDefaultSearchParamsRequired: false,
     });
   },
   deleteConfigViaApi(config) {

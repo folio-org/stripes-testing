@@ -18,7 +18,6 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -91,6 +90,7 @@ describe('Invoices', () => {
         });
       });
     });
+    Approvals.setApprovePayValueViaApi(true);
 
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -106,17 +106,15 @@ describe('Invoices', () => {
 
       AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.settingsInvoiveApprovalPath,
-        waiter: SettingsInvoices.waitApprovalsLoading,
-      });
-      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
     });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayDisabled);
     AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);
@@ -126,8 +124,6 @@ describe('Invoices', () => {
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
     { tags: ['criticalPathBroken', 'thunderjet', 'C446069'] },
     () => {
-      TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

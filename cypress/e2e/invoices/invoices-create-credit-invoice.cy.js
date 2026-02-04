@@ -19,24 +19,26 @@ describe('Invoices', () => {
   const actualFiscalYearCode = `FY${new Date().getFullYear()}`;
 
   before('Create test data and login', () => {
-    cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
-      (organization) => {
-        invoice.accountingCode = organization.erpCode;
-        Object.assign(
-          vendorPrimaryAddress,
-          organization.addresses.find((address) => address.isPrimary === true),
-        );
-      },
-    );
-    cy.getBatchGroups().then((batchGroup) => {
-      invoice.batchGroup = batchGroup.name;
-    });
-    Funds.createFundViaApiAndUi(fund).then(() => {
-      Funds.addBudget(100);
-    });
-    invoiceLine.subTotal = -subtotalValue;
+    cy.getAdminToken().then(() => {
+      Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
+        (organization) => {
+          invoice.accountingCode = organization.erpCode;
+          Object.assign(
+            vendorPrimaryAddress,
+            organization.addresses.find((address) => address.isPrimary === true),
+          );
+        },
+      );
+      cy.getBatchGroups().then((batchGroup) => {
+        invoice.batchGroup = batchGroup.name;
+      });
+      Funds.createFundViaApiAndUi(fund).then(() => {
+        Funds.addBudget(100);
+      });
+      invoiceLine.subTotal = -subtotalValue;
 
+      Approvals.setApprovePayValueViaApi(false);
+    });
     cy.loginAsAdmin();
     TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
     Invoices.waitLoading();
@@ -48,7 +50,6 @@ describe('Invoices', () => {
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
-      Approvals.setApprovePayValue(false);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
       Invoices.approveInvoice();
       // check transactions after approve
@@ -70,7 +71,6 @@ describe('Invoices', () => {
       // pay invoice
       TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
-      Approvals.setApprovePayValue(false);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
       // check transactions after payment

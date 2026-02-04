@@ -1,22 +1,16 @@
-import { ORDER_STATUSES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { NewOrder, OrderDetails, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const firstOrder = {
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -30,16 +24,11 @@ describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
   let orderNumber;
-  let servicePointId;
   let location;
   let instance;
 
   before(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-      authRefresh: true,
-    });
+    cy.getAdminToken();
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({
@@ -48,19 +37,17 @@ describe('Orders', () => {
         });
       }
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+      location = res;
     });
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-    });
-    firstOrder.vendor = organization.name;
-    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
+      order.vendor = organization.id;
+
+      Orders.createOrderViaApi(order).then((orderResponse) => {
+        order.id = orderResponse.id;
+        orderNumber = orderResponse.poNumber;
+      });
     });
 
     const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
@@ -71,35 +58,24 @@ describe('Orders', () => {
     );
 
     cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersCreate.gui,
+      Permissions.uiInventoryViewInstances.gui,
+      Permissions.uiOrdersApprovePurchaseOrders.gui,
+      Permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-        authRefresh: true,
-      });
+
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-      authRefresh: true,
-    });
-
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    cy.wait(6000);
-    Orders.deleteOrderViaApi(firstOrder.id);
+    cy.getAdminToken();
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    NewLocation.deleteViaApi(location.id);
-
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({
@@ -108,22 +84,23 @@ describe('Orders', () => {
         });
       }
     });
-
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C374113 Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'C374113'] },
+    { tags: ['extendedPath', 'thunderjet', 'C374113'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
@@ -140,7 +117,7 @@ describe('Orders', () => {
         numericPart += 1;
         return numericPart.toString().padStart(match.length, '0');
       });
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
     },
   );
 });

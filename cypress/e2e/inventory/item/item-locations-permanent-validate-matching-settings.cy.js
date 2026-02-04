@@ -87,7 +87,7 @@ describe('Inventory', () => {
         });
 
       cy.loginAsAdmin();
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
     });
 
@@ -108,7 +108,7 @@ describe('Inventory', () => {
 
     it(
       'C633 Locations --> Permanent Location --> (Validate in Settings) (Folijet)(TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C633', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C633'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.clickAccordionByName(`Holdings: ${location.name} >`);

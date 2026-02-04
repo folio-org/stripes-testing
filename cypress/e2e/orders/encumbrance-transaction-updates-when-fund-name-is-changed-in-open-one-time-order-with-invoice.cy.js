@@ -1,30 +1,30 @@
-import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderDetails from '../../support/fragments/orders/orderDetails';
-import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import Transactions from '../../support/fragments/finance/transactions/transactions';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
   ORDER_STATUSES,
 } from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import orderLines from '../../support/fragments/orders/orderLines';
+import Permissions from '../../support/dictionary/permissions';
 import { TransactionDetails } from '../../support/fragments/finance';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Transactions from '../../support/fragments/finance/transactions/transactions';
+import Invoices from '../../support/fragments/invoices/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderDetails from '../../support/fragments/orders/orderDetails';
+import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
@@ -126,7 +126,7 @@ describe('Orders', () => {
         },
       };
 
-      return orderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
+      return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
         testData.orderLine = orderLineResponse;
 
         return Orders.updateOrderViaApi({
@@ -134,11 +134,11 @@ describe('Orders', () => {
           workflowStatus: ORDER_STATUSES.OPEN,
         }).then(() => {
           // Get the order line again to retrieve encumbrance IDs
-          return orderLines
-            .getOrderLineViaApi({ query: `id=="${orderLineResponse.id}"` })
-            .then((orderLinesArray) => {
+          return OrderLines.getOrderLineViaApi({ query: `id=="${orderLineResponse.id}"` }).then(
+            (orderLinesArray) => {
               testData.orderLine = orderLinesArray[0];
-            });
+            },
+          );
         });
       });
     });
@@ -249,9 +249,9 @@ describe('Orders', () => {
     return createFinanceData().then(() => {
       return createOrderData().then(() => {
         cy.createTempUser([
-          permissions.uiFinanceViewFundAndBudget.gui,
-          permissions.uiOrdersEdit.gui,
-          permissions.uiOrdersView.gui,
+          Permissions.uiFinanceViewFundAndBudget.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiOrdersView.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
 
@@ -301,11 +301,11 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.openOrderLineEditForm();
-      orderLines.deleteFundInPOLwithoutSave();
-      orderLines.addFundToPOLWithoutSave(0, testData.funds.second, '20');
-      orderLines.addFundToPOLWithoutSave(1, testData.funds.third, '15');
-      orderLines.addFundToPOLWithoutSave(2, testData.funds.fourth, '65');
-      orderLines.saveOrderLine();
+      OrderLines.deleteFundInPOLwithoutSave();
+      OrderLines.addFundToPOLWithoutSave(0, testData.funds.second, '20');
+      OrderLines.addFundToPOLWithoutSave(1, testData.funds.third, '15');
+      OrderLines.addFundToPOLWithoutSave(2, testData.funds.fourth, '65');
+      OrderLines.saveOrderLine();
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds.second.name,
@@ -346,8 +346,8 @@ describe('Orders', () => {
       });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrderLines();
-      orderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
-      orderLines.selectOrderline(`${testData.order.poNumber}-1`);
+      OrderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
+      OrderLines.selectOrderline(`${testData.order.poNumber}-1`);
       OrderLineDetails.openEncumbrancePane(testData.funds.third.name);
       TransactionDetails.checkTransactionDetails({
         information: [
@@ -362,8 +362,8 @@ describe('Orders', () => {
       });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrderLines();
-      orderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
-      orderLines.selectOrderline(`${testData.order.poNumber}-1`);
+      OrderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
+      OrderLines.selectOrderline(`${testData.order.poNumber}-1`);
       OrderLineDetails.openEncumbrancePane(testData.funds.fourth.name);
       TransactionDetails.checkTransactionDetails({
         information: [

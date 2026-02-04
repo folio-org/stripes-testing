@@ -20,17 +20,16 @@ describe('Requests', () => {
   let requestUserData;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-          testData.servicePoint = servicePoint;
-          testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances,
-            location: { id: testData.locationId },
-          });
+    cy.getAdminToken().then(() => {
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        testData.servicePoint = servicePoint;
+        testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances,
+          location: { id: testData.locationId },
         });
       });
+    });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;

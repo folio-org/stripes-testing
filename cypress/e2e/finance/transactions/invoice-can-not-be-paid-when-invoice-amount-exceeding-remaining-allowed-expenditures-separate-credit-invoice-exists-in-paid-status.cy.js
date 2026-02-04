@@ -244,7 +244,7 @@ describe('Finance: Transactions', () => {
 
   after(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 

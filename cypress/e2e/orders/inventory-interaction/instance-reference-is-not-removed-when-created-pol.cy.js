@@ -110,7 +110,7 @@ describe('Orders', () => {
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -124,7 +124,7 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderLines.selectPOLInOrder();
       OrderLines.openInstanceInPOL(item.instanceName);
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
+      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
     },
   );
 });

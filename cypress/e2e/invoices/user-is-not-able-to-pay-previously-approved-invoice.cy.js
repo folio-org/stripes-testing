@@ -49,7 +49,7 @@ describe('Invoices', () => {
       waiter: SettingsFinance.waitExpenseClassesLoading,
       authRefresh: true,
     });
-    Approvals.setApprovePayValue(isApprovePayDisabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayDisabled);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;

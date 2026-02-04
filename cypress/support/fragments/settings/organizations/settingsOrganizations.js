@@ -199,6 +199,19 @@ export default {
       })
       .then(({ body }) => body);
   },
+  getAccountTypeViaApi(name) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'organizations-storage/banking-account-types',
+        searchParams: {
+          query: `name=="${name}"`,
+        },
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
   createAccountTypesViaApi(types) {
     return cy
       .okapiRequest({

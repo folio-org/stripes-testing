@@ -23,6 +23,7 @@ export const APPLICATION_NAMES = {
   NOTES: 'Notes',
   ORGANIZATIONS: 'Organizations',
   COURSES: 'Courses',
+  RECEIVING: 'Receiving',
 };
 
 export const REQUEST_METHOD = {
@@ -253,6 +254,7 @@ export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
   PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  OTHER: 'Other',
 };
 
 export const RECEIPT_STATUS_SELECTED = {

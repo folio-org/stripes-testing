@@ -75,7 +75,7 @@ describe('Invoices', () => {
               cy.getBatchGroups().then((batchGroup) => {
                 invoice.batchGroup = batchGroup.name;
 
-                Approvals.setApprovePayValue(true);
+                Approvals.setApprovePayValueViaApi(true);
 
                 cy.createTempUser([
                   permissions.uiInvoicesApproveInvoices.gui,
@@ -101,7 +101,6 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
     // Budget, Fund, Ledger, and FiscalYear cannot be deleted because they have related transactions from paid invoice
-    Approvals.setApprovePayValue(false);
   });
 
   it(

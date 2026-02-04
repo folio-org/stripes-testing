@@ -1,21 +1,14 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Banking Information', () => {
-  before('Enable Banking Information', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.settingsBankingInformationPath,
-      waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-    });
-    SettingsOrganizations.checkenableBankingInformationIfNeeded();
-  });
-
-  describe('Account type - unique validation', () => {
+describe('Organizations', () => {
+  describe('Settings (Organizations)', () => {
     const existingAccountType = { ...SettingsOrganizations.defaultAccountTypes };
     const newAccountType = {
       name: `unique_type_${getRandomPostfix()}`,
@@ -25,13 +18,19 @@ describe('Banking Information', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(existingAccountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            authRefresh: true,
           });
         },
       );
@@ -68,20 +67,26 @@ describe('Banking Information', () => {
     );
   });
 
-  describe('Account type - delete', () => {
+  describe('Settings (Organizations)', () => {
     const accountType = { ...SettingsOrganizations.defaultAccountTypes };
     let user;
 
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            authRefresh: true,
           });
         },
       );
@@ -109,7 +114,7 @@ describe('Banking Information', () => {
     );
   });
 
-  describe('Account type - edit', () => {
+  describe('Settings (Organizations)', () => {
     const accountType = { ...SettingsOrganizations.defaultAccountTypes };
     const editedTypeName = `test_edited_${getRandomPostfix()}`;
     const tempChanges = `${editedTypeName}_temp`;
@@ -118,13 +123,19 @@ describe('Banking Information', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
+
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.settingsOrganizationsPath,
             waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            authRefresh: true,
           });
         },
       );
@@ -160,49 +171,7 @@ describe('Banking Information', () => {
     );
   });
 
-  describe('Account type - is not displayed', () => {
-    let user;
-    const accountType = { ...SettingsOrganizations.defaultAccountTypes };
-
-    before('Create user', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsBankingInformationPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-      });
-      SettingsOrganizations.uncheckenableBankingInformationIfChecked();
-      SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsOrganizationsPath,
-            waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            authRefresh: true,
-          });
-        },
-      );
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-    });
-
-    it(
-      'C422063 "Account type" setting is NOT displayed when "Bank information" option is disabled (thunderjet)',
-      { tags: ['extendedPath', 'thunderjet', 'C422063'] },
-      () => {
-        SettingsOrganizations.selectBankingInformation();
-        SettingsOrganizations.checkenableBankingInformationIfNeeded();
-        SettingsOrganizations.selectAccountTypes();
-        SettingsOrganizations.ensureAccountTypesExist(1);
-        SettingsOrganizations.selectBankingInformation();
-        SettingsOrganizations.uncheckenableBankingInformationIfChecked();
-      },
-    );
-  });
-
-  describe('Account type - unable to delete', () => {
+  describe('Settings (Organizations)', () => {
     let user;
     const organization = { ...NewOrganization.defaultUiOrganizations };
     const existingAccountType = { name: `autotest_type_name_${getRandomPostfix()}` };
@@ -224,48 +193,91 @@ describe('Banking Information', () => {
         bankingInformation.accountTypeId = response.id;
       });
       Organizations.createBankingInformationViaApi(bankingInformation);
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.checkenableBankingInformationIfNeeded();
 
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
-        permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsOrganizationsPath,
-            waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-            authRefresh: true,
-          });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsOrganizationsPath,
+          waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
         });
       });
     });
 
     after(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsOrganizationsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
-      });
+      cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(organization.id);
-      SettingsOrganizations.selectAccountTypes();
-      SettingsOrganizations.deleteAccountType(existingAccountType);
+      SettingsOrganizations.deleteOrganizationAccountTypeViaApi(existingAccountType.id);
       Users.deleteViaApi(user.userId);
     });
 
     it(
-      'C590820: User cannot delete bank account types that is in use by one or more organizations (thunderjet)',
+      'C590820 User cannot delete bank account types that is in use by one or more organizations (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C590820'] },
       () => {
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkNewAccountTypeButtonExists();
         SettingsOrganizations.tryToDeleteAccountTypeWhenItUnable(existingAccountType);
-        cy.visit(TopMenu.organizationsPath);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+        Organizations.waitLoading();
         Organizations.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.checkBankInformationExist(bankingInformation.bankName);
         Organizations.openBankInformationSection();
         Organizations.checkBankInformationExist(bankingInformation.bankAccountNumber);
+      },
+    );
+  });
+
+  describe('Settings (Organizations)', () => {
+    let user;
+    const accountType = { ...SettingsOrganizations.defaultAccountTypes };
+
+    before('Create user', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.settingsBankingInformationPath,
+        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      });
+      SettingsOrganizations.uncheckenableBankingInformationIfChecked();
+      SettingsOrganizations.createAccountTypesViaApi(accountType);
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsOrganizationsPath,
+            waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+          });
+        },
+      );
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C422063 "Account type" setting is NOT displayed when "Bank information" option is disabled (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet', 'C422063'] },
+      () => {
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.checkenableBankingInformationIfNeeded();
+        SettingsOrganizations.selectAccountTypes();
+        SettingsOrganizations.ensureAccountTypesExist(1);
+        SettingsOrganizations.selectBankingInformation();
+        SettingsOrganizations.uncheckenableBankingInformationIfChecked();
       },
     );
   });

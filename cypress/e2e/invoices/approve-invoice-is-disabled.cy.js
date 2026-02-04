@@ -20,7 +20,7 @@ describe('Invoices', () => {
 
   const setApprovePayValue = (isApprovePayEnabled) => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
     });
   };
 

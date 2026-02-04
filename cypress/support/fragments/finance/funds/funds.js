@@ -25,6 +25,7 @@ import {
   TextField,
   ValueChipRoot,
 } from '../../../../../interactors';
+import Headline from '../../../../../interactors/headline';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -33,7 +34,6 @@ import FinanceHelp from '../financeHelper';
 import FiscalYears from '../fiscalYears/fiscalYears';
 import FundDetails from './fundDetails';
 import FundEditForm from './fundEditForm';
-import Headline from '../../../../../interactors/headline';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -88,9 +88,11 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 const unassignAllLocationsButton = Button('Unassign all locations');
 const submitButton = Button('Submit');
 const keepEditingButton = Button('Keep editing');
+const fundResultsPane = Pane({ id: 'fund-results-pane' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
+
 export default {
   defaultUiFund: {
     name: `autotest_fund_${getRandomPostfix()}`,
@@ -110,7 +112,7 @@ export default {
     };
   },
   waitLoading: () => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+    cy.expect(fundResultsPane.exists());
   },
 
   waitLoadingTransactions: () => {
@@ -151,7 +153,7 @@ export default {
   },
   createFund(fund) {
     cy.do([newButton.click()]);
-    cy.wait(8000);
+    cy.wait(2000);
     cy.do([
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
@@ -1339,9 +1341,9 @@ export default {
     cy.wait(4000);
   },
 
-  selectFund: (FundName) => {
+  selectFund: (fundName) => {
     cy.wait(4000);
-    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.do(fundResultsPane.find(Link(fundName)).click());
     FundDetails.waitLoading();
   },
 
@@ -1442,8 +1444,8 @@ export default {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
   },
 
-  verifyFundLinkNameExists: (FundName) => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+  verifyFundLinkNameExists: (fundName) => {
+    cy.expect(fundResultsPane.find(Link(fundName)).exists());
   },
 
   openSource: (linkName) => {

@@ -141,14 +141,14 @@ export default {
     );
   },
 
-  checkFundType: (fundType) => {
+  checkFundType: (fundTypeName) => {
     cy.do(
-      MultiColumnListCell({ content: fundType.name }).perform((element) => {
+      MultiColumnListCell({ content: fundTypeName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: fundType.name }),
+            .has({ content: fundTypeName }),
         );
       }),
     );
@@ -236,6 +236,7 @@ export default {
       const lines = content.trim().split(/\r?\n/);
 
       const header = this.parseCsvLine(lines[0]);
+      cy.wait(2000);
       expect(header).to.deep.equal(['Fund code', 'Fund and active expense class codes']);
 
       const fileRows = lines
@@ -244,6 +245,7 @@ export default {
         .sort((a, b) => a[0].localeCompare(b[0]));
 
       const sortedExpectedRows = [...expectedRows].sort((a, b) => a[0].localeCompare(b[0]));
+      cy.wait(2000);
       expect(fileRows).to.deep.equal(sortedExpectedRows);
     });
   },
@@ -254,5 +256,10 @@ export default {
       path: `finance/expense-classes/${id}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  navigateToFundTypes() {
+    cy.do(fundTypesListItem.click());
+    this.waitFundTypesLoading();
   },
 };

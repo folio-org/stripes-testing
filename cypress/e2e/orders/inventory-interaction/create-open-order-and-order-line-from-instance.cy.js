@@ -1,5 +1,7 @@
+import { matching } from '../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
   ORDER_TYPES,
@@ -12,13 +14,12 @@ import {
   OrderLineEditForm,
   Orders,
 } from '../../../support/fragments/orders';
+import OrderStates from '../../../support/fragments/orders/orderStates';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OpenOrder from '../../../support/fragments/settings/orders/openOrder';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import { matching } from '../../../../interactors';
-import OrderStates from '../../../support/fragments/orders/orderStates';
 
 describe('Orders', () => {
   const testData = {
@@ -45,11 +46,9 @@ describe('Orders', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-        authRefresh: true,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
     });
   });
 
@@ -81,7 +80,7 @@ describe('Orders', () => {
         { label: 'Add POL', conditions: { disabled: true } },
       ]);
 
-      OrderEditForm.getOrderNumberFromForm().then((poNumber) => {
+      OrderEditForm.getOrderNumber().then((poNumber) => {
         testData.poNumber = poNumber;
 
         // Fill in all the mandatory fields
