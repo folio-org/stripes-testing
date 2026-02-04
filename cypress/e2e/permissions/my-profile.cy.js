@@ -13,15 +13,15 @@ describe('Permissions', () => {
     describe('My Profile', () => {
       let userData;
       let servicePointId;
-      const newPassword = generatePassword();
-      const newInvalidPassword = generatePassword();
+      const newPassword = generatePassword(12) + '!1';
+      const newInvalidPassword = generatePassword(12) + '!2';
 
       before('Preconditions', () => {
         cy.getAdminToken().then(() => {
           ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
             servicePointId = servicePoint.id;
           });
-          cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui]).then(
+          cy.createTempUser([Permissions.uiSettingsCanChangeLocalPassword.gui]).then(
             (userProperties) => {
               userData = userProperties;
               UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
