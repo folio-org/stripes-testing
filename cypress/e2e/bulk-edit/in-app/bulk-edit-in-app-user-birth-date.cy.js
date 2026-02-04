@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380585 Verify that "Birth date" field is formatted to show date only (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380585'] },
+      'C877125 Verify that "Birth date" field is formatted to show date only (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird', 'C877125'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

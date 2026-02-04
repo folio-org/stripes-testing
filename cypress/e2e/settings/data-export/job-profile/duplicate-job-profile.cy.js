@@ -49,8 +49,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350672 Verify Job profile - duplicate existing profile (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350672'] },
+      'C1003542 Verify Job profile - duplicate existing profile (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C1003542'] },
       () => {
         // Step 1: Go to the Settings - Data export
         // Step 2: Click on the "Job profile" option
