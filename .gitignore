@@ -28,3 +28,5 @@ scripts/update_permission_names/permissions_backups/*
 *_automated_tests.json
 
 mcp.json
+
+failed.cy.js
