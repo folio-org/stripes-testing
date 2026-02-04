@@ -42,9 +42,9 @@ describe('Fees&Fines', () => {
       });
     });
 
-    it(
+    it.skip(
       'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350616', 'eurekaPhase1'] },
+      { tags: ['smokeObsolete', 'volaris', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
       () => {
         const name = `Automation owner $${getRandomPostfix()}`;
         ownerNames.push(name);

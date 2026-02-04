@@ -7,13 +7,15 @@ describe('Users', () => {
       'C409509 Verify that labels are present on the input box of log in (volaris)',
       { tags: ['extendedPath', 'volaris', 'C409509', 'eurekaPhase1'] },
       () => {
-        cy.visit('/');
-        Login.openForgotPassword();
-        ForgotPasswordOrUsername.waitLoadingForgotPassword();
+        cy.clearCookies({ domain: null }).then(() => {
+          cy.visit('/');
+          Login.openForgotPassword();
+          ForgotPasswordOrUsername.waitLoadingForgotPassword();
 
-        cy.visit('/');
-        Login.openForgotUsername();
-        ForgotPasswordOrUsername.waitLoadingForgotUsername();
+          cy.visit('/');
+          Login.openForgotUsername();
+          ForgotPasswordOrUsername.waitLoadingForgotUsername();
+        });
       },
     );
   });
