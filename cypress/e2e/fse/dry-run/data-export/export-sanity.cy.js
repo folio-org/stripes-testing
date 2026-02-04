@@ -30,9 +30,6 @@ describe('Data Export', () => {
             user.barcode = details.barcode;
           });
 
-          // Defensive cleanup
-          InventoryInstances.deleteInstanceByTitleViaApi(instanceName);
-
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
