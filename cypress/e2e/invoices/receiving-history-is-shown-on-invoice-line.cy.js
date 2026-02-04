@@ -135,7 +135,19 @@ describe('Invoices', () => {
       const invoiceLineDetails = InvoiceView.selectInvoiceLine();
       invoiceLineDetails.waitLoading();
 
+      InvoiceLineDetails.checkReceivingHistoryTableContent({
+        records: [
+          {
+            displaySummary: pieceData.displaySummary,
+            copyNumber: pieceData.copyNumber,
+            enumeration: pieceData.enumeration,
+            chronology: pieceData.chronology,
+          },
+        ],
+      });
+
       InvoiceLineDetails.clickReceiptDateLink();
+
       ReceivingDetails.waitLoading();
       ReceivingDetails.checkTitlePaneIsDisplayed();
       ReceivingDetails.checkReceivedTableContent([

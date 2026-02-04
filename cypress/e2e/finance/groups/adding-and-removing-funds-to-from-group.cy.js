@@ -90,7 +90,7 @@ describe('Finance', () => {
 
         Groups.createDefaultGroupAndCaptureId(defaultGroup);
         Groups.checkCreatedGroup(defaultGroup);
-        GroupDetails.checkFundsDetails([]);
+        GroupDetails.checkFundsDetails();
 
         Groups.addLedgerToGroup(defaultLedger.name);
         InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
