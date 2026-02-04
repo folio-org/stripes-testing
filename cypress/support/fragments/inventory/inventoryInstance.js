@@ -1181,6 +1181,7 @@ export default {
             instanceId: instanceData.instanceId,
             instanceTypeId: instanceData.instanceTypeId,
             title: instanceData.instanceTitle,
+            ...instanceData,
           },
         });
       })

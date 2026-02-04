@@ -18,11 +18,11 @@ describe('Inventory', () => {
   describe('Call Number Browse', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitle = `AT_C869996_FolioInstance_${randomPostfix}`;
-      const callNumberPrefix = `AT_C869996_CallNumber_${randomPostfix}`;
-      const barcodePrefix = `AT_C869996_Barcode_${randomPostfix}`;
+      const instanceTitle = `AT_C869997_FolioInstance_${randomPostfix}`;
+      const callNumberPrefix = `AT_C869997_CallNumber_${randomPostfix}`;
+      const barcodeValue = `AT_C869997_Barcode_${randomPostfix}`;
+      const heldbyAccordionName = 'Held by';
       const callNumbers = Array.from({ length: 2 }, (_, i) => `${callNumberPrefix}_${i}`);
-      const barcodes = Array.from({ length: 2 }, (_, i) => `${barcodePrefix}_${i}`);
       const testData = {
         instance: {},
         user: {},
@@ -36,8 +36,6 @@ describe('Inventory', () => {
 
       let loanTypeId;
       let materialTypeId;
-      let loanTypeIdUniversity;
-      let materialTypeIdUniversity;
 
       before('Create test data', () => {
         cy.then(() => {
@@ -46,7 +44,7 @@ describe('Inventory', () => {
           [Affiliations.University, Affiliations.College, Affiliations.Consortia].forEach(
             (affiliation) => {
               cy.withinTenant(affiliation, () => {
-                InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869996');
+                InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869997');
               });
             },
           );
@@ -80,14 +78,14 @@ describe('Inventory', () => {
               instanceId: testData.instance.instanceId,
               permanentLocationId: testData.holdings.location.id,
               sourceId: testData.holdings.sourceId,
+              callNumber: callNumbers[0],
             }).then((holdings) => {
               InventoryItems.createItemViaApi({
                 holdingsRecordId: holdings.id,
                 materialType: { id: materialTypeId },
                 permanentLoanType: { id: loanTypeId },
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                itemLevelCallNumber: callNumbers[0],
-                barcode: barcodes[0],
+                barcode: barcodeValue,
               });
             });
           })
@@ -99,27 +97,13 @@ describe('Inventory', () => {
             }).then((res) => {
               testData.holdings.locationUniversity = res;
             });
-            cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
-              loanTypeIdUniversity = loanTypes[0].id;
-            });
-            cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
-              materialTypeIdUniversity = res.id;
-            });
           })
           .then(() => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: testData.instance.instanceId,
               permanentLocationId: testData.holdings.locationUniversity.id,
               sourceId: testData.holdings.sourceId,
-            }).then((holdings) => {
-              InventoryItems.createItemViaApi({
-                holdingsRecordId: holdings.id,
-                materialType: { id: materialTypeIdUniversity },
-                permanentLoanType: { id: loanTypeIdUniversity },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                itemLevelCallNumber: callNumbers[1],
-                barcode: barcodes[1],
-              });
+              callNumber: callNumbers[1],
             });
           })
           .then(() => {
@@ -140,7 +124,6 @@ describe('Inventory', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
@@ -152,7 +135,7 @@ describe('Inventory', () => {
         [Affiliations.University, Affiliations.College, Affiliations.Consortia].forEach(
           (affiliation) => {
             cy.withinTenant(affiliation, () => {
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869996');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869997');
             });
           },
         );
@@ -161,12 +144,10 @@ describe('Inventory', () => {
       });
 
       it(
-        'C869996 Verify that call number is still browsable after "Item" ownership update (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C869996'] },
+        'C869997 Verify that call number is browsable after ownership update of "Item" without call number to "Holdings" with call number (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C869997'] },
         () => {
-          callNumbers.forEach((callNumber) => {
-            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
-          });
+          BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0]);
 
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstanceById(testData.instance.instanceId);
@@ -174,17 +155,17 @@ describe('Inventory', () => {
 
           InstanceRecordView.openHoldingItem({
             name: testData.holdings.location.name,
-            barcode: barcodes[0],
+            barcode: barcodeValue,
           });
           ItemRecordView.updateOwnership(
             tenantNames.university,
-            testData.holdings.locationUniversity.name,
+            `${testData.holdings.locationUniversity.name} > ${callNumbers[1]}`,
           );
-          InventoryInstance.waitInstanceRecordViewOpened();
+          InstanceRecordView.waitLoading();
           InstanceRecordView.verifyItemsCount(0, testData.holdings.location.name);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
-          InstanceRecordView.verifyItemsCount(2, testData.holdings.locationUniversity.name);
+          InstanceRecordView.verifyItemsCount(1, testData.holdings.locationUniversity.name);
 
           cy.wait(60 * 1000); // per test case - "Wait 1 minute"
           InventorySearchAndFilter.switchToBrowseTab();
@@ -192,12 +173,15 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
             BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
           );
-          callNumbers.forEach((callNumber) => {
-            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
+          BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0], false);
+          BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1]);
 
-            InventorySearchAndFilter.browseSearch(callNumber);
-            BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
-          });
+          InventorySearchAndFilter.browseSearch(callNumbers[0]);
+          BrowseCallNumber.checkNonExactSearchResult(callNumbers[0]);
+
+          InventorySearchAndFilter.browseSearch(callNumbers[1]);
+          BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1]);
         },
       );
     });
