@@ -1186,12 +1186,12 @@ export default {
       })
       .then(() => ({ instanceData }));
   },
-  deleteInstanceViaApi: (id) => {
+  deleteInstanceViaApi: (id, ignoreErrors = false) => {
     cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `instance-storage/instances/${id}`,
       isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 
