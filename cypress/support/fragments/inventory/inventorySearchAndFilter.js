@@ -1775,4 +1775,20 @@ export default {
   verifyNumberOfBrowseResults(expectedNumber) {
     cy.expect(anyBrowseResultList.has({ rowCount: expectedNumber }));
   },
+
+  verifyShowColumnsCheckboxesChecked(
+    columnNames = Object.values(INVENTORY_COLUMN_HEADERS).slice(1),
+    isChecked = true,
+  ) {
+    const names = Array.isArray(columnNames) ? columnNames : [columnNames];
+    names.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).has({ checked: isChecked }));
+    });
+  },
+
+  toggleShowColumnCheckbox(columnName, isChecked = true) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    cy.wait(200);
+    this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
+  },
 };

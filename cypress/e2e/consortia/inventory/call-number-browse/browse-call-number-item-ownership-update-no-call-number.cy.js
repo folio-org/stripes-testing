@@ -21,7 +21,6 @@ describe('Inventory', () => {
       const instanceTitle = `AT_C869997_FolioInstance_${randomPostfix}`;
       const callNumberPrefix = `AT_C869997_CallNumber_${randomPostfix}`;
       const barcodeValue = `AT_C869997_Barcode_${randomPostfix}`;
-      const heldbyAccordionName = 'Held by';
       const callNumbers = Array.from({ length: 2 }, (_, i) => `${callNumberPrefix}_${i}`);
       const testData = {
         instance: {},
@@ -161,7 +160,7 @@ describe('Inventory', () => {
             tenantNames.university,
             `${testData.holdings.locationUniversity.name} > ${callNumbers[1]}`,
           );
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyItemsCount(0, testData.holdings.location.name);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
@@ -173,7 +172,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
             BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
           );
-          InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
           BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0], false);
           BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1]);
 
