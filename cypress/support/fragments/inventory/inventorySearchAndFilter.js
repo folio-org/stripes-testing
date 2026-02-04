@@ -1783,4 +1783,8 @@ export default {
     cy.do(multiSelect.open());
     cy.expect(multiSelect.has({ optionsCount: numberOfOptions }));
   },
+
+  verifyNumberOfBrowseResults(expectedNumber) {
+    cy.expect(anyBrowseResultList.has({ rowCount: expectedNumber }));
+  },
 };
