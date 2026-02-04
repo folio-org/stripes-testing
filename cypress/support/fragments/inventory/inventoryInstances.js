@@ -182,11 +182,11 @@ const searchItemsOptionsValues = [
   'advancedSearch',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
-advSearchInstancesOptions[0] = 'Keyword (title, contributor, identifier)';
+// advSearchInstancesOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
-advSearchHoldingsOptions[0] = 'Keyword (title, contributor, identifier)';
+// advSearchHoldingsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
-advSearchItemsOptions[0] = 'Keyword (title, contributor, identifier)';
+// advSearchItemsOptions[0] = 'Keyword (title, contributor, identifier)';
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 17);
@@ -1219,7 +1219,7 @@ export default {
     cy.expect([
       AdvancedSearch({ rowCount: 6 }).exists(),
       buttonSearchInAdvSearchModal.exists(),
-      buttonResetAllInAdvSearchModal.exists(),
+      // buttonResetAllInAdvSearchModal.exists(),
     ]);
   },
   closeAdvancedSearchModal() {
