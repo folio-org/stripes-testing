@@ -2,8 +2,8 @@ import { ITEM_STATUS_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../../suppo
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Users from '../../../../support/fragments/users/users';
@@ -12,17 +12,16 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitle = `AT_C869996_FolioInstance_${randomPostfix}`;
-      const callNumberPrefix = `AT_C869996_CallNumber_${randomPostfix}`;
-      const barcodePrefix = `AT_C869996_Barcode_${randomPostfix}`;
-      const callNumbers = Array.from({ length: 2 }, (_, i) => `${callNumberPrefix}_${i}`);
-      const barcodes = Array.from({ length: 2 }, (_, i) => `${barcodePrefix}_${i}`);
+      const instanceTitle = `AT_C877098_FolioInstance_${randomPostfix}`;
+      const callNumberPrefix = `AT_C877098_CallNumber_${randomPostfix}`;
+      const callNumbers = Array.from({ length: 3 }, (_, i) => `${callNumberPrefix}_${i}`);
       const testData = {
         instance: {},
         user: {},
@@ -31,13 +30,12 @@ describe('Inventory', () => {
       const userPermissions = [
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiInventoryViewCreateEditItems.gui,
+        Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiInventoryUpdateOwnership.gui,
       ];
 
       let loanTypeId;
       let materialTypeId;
-      let loanTypeIdUniversity;
-      let materialTypeIdUniversity;
 
       before('Create test data', () => {
         cy.then(() => {
@@ -46,15 +44,29 @@ describe('Inventory', () => {
           [Affiliations.University, Affiliations.College, Affiliations.Consortia].forEach(
             (affiliation) => {
               cy.withinTenant(affiliation, () => {
-                InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869996');
+                InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C877098');
               });
             },
           );
         })
           .then(() => {
             cy.resetTenant();
-            InventoryInstance.createInstanceViaApi({ instanceTitle }).then(({ instanceData }) => {
-              testData.instance = instanceData;
+            cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, [
+              {
+                tag: '008',
+                content: QuickMarcEditor.valid008ValuesInstance,
+              },
+              {
+                tag: '245',
+                content: `$a ${instanceTitle}`,
+                indicators: ['1', '1'],
+              },
+            ]).then((instanceId) => {
+              testData.instance.instanceId = instanceId;
+
+              cy.getInstanceById(testData.instance.instanceId).then((instance) => {
+                testData.instance.hrid = instance.hrid;
+              });
             });
           })
           .then(() => {
@@ -76,19 +88,43 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: testData.holdings.location.id,
-              sourceId: testData.holdings.sourceId,
-            }).then((holdings) => {
-              InventoryItems.createItemViaApi({
-                holdingsRecordId: holdings.id,
+            cy.createMarcHoldingsViaAPI(testData.instance.instanceId, [
+              {
+                content: testData.instance.hrid,
+                tag: '004',
+              },
+              {
+                content: QuickMarcEditor.defaultValid008HoldingsValues,
+                tag: '008',
+              },
+              {
+                content: `$b ${testData.holdings.location.code} $h ${callNumbers[2]}`,
+                indicators: ['\\', '\\'],
+                tag: '852',
+              },
+            ]).then((marcHoldingsId) => {
+              testData.holdings.id = marcHoldingsId;
+
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${testData.instance.instanceId}"`,
+              }).then((holdings) => {
+                testData.holdings.hrid = holdings[0].hrid;
+              });
+            });
+          })
+          .then(() => {
+            callNumbers.forEach((callNumber, index) => {
+              const itemData = {
+                holdingsRecordId: testData.holdings.id,
                 materialType: { id: materialTypeId },
                 permanentLoanType: { id: loanTypeId },
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                itemLevelCallNumber: callNumbers[0],
-                barcode: barcodes[0],
-              });
+              };
+              if (index !== 2) {
+                itemData.itemLevelCallNumber = callNumber;
+              }
+              InventoryItems.createItemViaApi(itemData);
             });
           })
           .then(() => {
@@ -98,28 +134,6 @@ describe('Inventory', () => {
               query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
             }).then((res) => {
               testData.holdings.locationUniversity = res;
-            });
-            cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
-              loanTypeIdUniversity = loanTypes[0].id;
-            });
-            cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
-              materialTypeIdUniversity = res.id;
-            });
-          })
-          .then(() => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: testData.holdings.locationUniversity.id,
-              sourceId: testData.holdings.sourceId,
-            }).then((holdings) => {
-              InventoryItems.createItemViaApi({
-                holdingsRecordId: holdings.id,
-                materialType: { id: materialTypeIdUniversity },
-                permanentLoanType: { id: loanTypeIdUniversity },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                itemLevelCallNumber: callNumbers[1],
-                barcode: barcodes[1],
-              });
             });
           })
           .then(() => {
@@ -140,7 +154,6 @@ describe('Inventory', () => {
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
@@ -152,7 +165,7 @@ describe('Inventory', () => {
         [Affiliations.University, Affiliations.College, Affiliations.Consortia].forEach(
           (affiliation) => {
             cy.withinTenant(affiliation, () => {
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C869996');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C877098');
             });
           },
         );
@@ -161,8 +174,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C869996 Verify that call number is still browsable after "Item" ownership update (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C869996'] },
+        'C877098 Verify that call numbers are still browsable after "MARC holdings" ownership update (consortia) (spitfire)',
+        { tags: ['extendedPathECS', 'spitfire', 'C877098'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);
@@ -171,20 +184,21 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstanceById(testData.instance.instanceId);
           InventoryInstance.waitInstanceRecordViewOpened();
-
-          InstanceRecordView.openHoldingItem({
-            name: testData.holdings.location.name,
-            barcode: barcodes[0],
-          });
-          ItemRecordView.updateOwnership(
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.checkHoldingRecordViewOpened();
+          HoldingsRecordView.updateOwnership(
             tenantNames.university,
+            'confirm',
+            testData.holdings.hrid,
+            tenantNames.college,
             testData.holdings.locationUniversity.name,
           );
           InventoryInstance.waitInstanceRecordViewOpened();
-          InstanceRecordView.verifyItemsCount(0, testData.holdings.location.name);
+          InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instance.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
+          InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
+          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
-          InstanceRecordView.verifyItemsCount(2, testData.holdings.locationUniversity.name);
 
           cy.wait(60 * 1000); // per test case - "Wait 1 minute"
           InventorySearchAndFilter.switchToBrowseTab();
