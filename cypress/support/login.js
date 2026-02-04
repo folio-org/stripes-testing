@@ -175,7 +175,6 @@ Cypress.Commands.add('selectTenantIfDropdown', () => {
           const targetTenantId = Tenant.get();
           cy.resetTenant();
           cy.getAdminToken();
-          //cy.selectTenantAndContinue('College');
           cy.getConsortiaStatus().then((consortiaData) => {
             cy.setTenant(consortiaData.centralTenantId);
             cy.getAllTenants().then((userTenants) => {

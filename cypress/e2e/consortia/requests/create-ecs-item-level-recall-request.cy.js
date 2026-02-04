@@ -161,7 +161,7 @@ describe('Consortia Vega', () => {
       NewRequest.enterRequesterBarcode(testData.user.barcode);
       NewRequest.verifyRequesterInformation(testData.user.username, testData.user.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosePickupServicePoint(servicePoint.name);cy.pause();
+      NewRequest.choosePickupServicePoint(servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('requestId');

@@ -144,7 +144,6 @@ describe('Consortia Vega', () => {
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('requestId');
       });
-      cy.pause();
     },
   );
 });
