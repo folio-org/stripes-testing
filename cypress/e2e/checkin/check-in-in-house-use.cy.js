@@ -69,11 +69,12 @@ describe('Check in', () => {
       }).then((request) => {
         testData.requestsId = request.body.id;
         itemBData.servicePoint = request.body.pickupServicePoint.name;
-      });
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
-        authRefresh: true,
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
+          authRefresh: true,
+        });
       });
     });
   });

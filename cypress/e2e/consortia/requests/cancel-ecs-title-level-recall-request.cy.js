@@ -81,8 +81,7 @@ describe('Consortia Vega', () => {
                 testData.instanceHRID = instance.hrid;
               })
               .then(() => {
-                cy.setTenant(Affiliations.College);
-                cy.getCollegeAdminToken().then(() => {
+                cy.setTenant(Affiliations.College).then(() => {
                   cy.getHoldingTypes({ limit: 1 }).then((res) => {
                     testData.holdingTypeId = res[0].id;
                   });

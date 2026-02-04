@@ -52,19 +52,19 @@ describe('Title level Request', () => {
         requesterId: testData.user.userId,
       }).then((request) => {
         testData.titleLevelRequestId = request.body.id;
-      });
+      }).then(() => {
+        cy.visit(TopMenu.requestsPath);
+        Requests.findCreatedRequest(testData.user.barcode);
+        Requests.selectFirstRequest(firstItem.instanceTitle);
+        RequestDetail.waitLoading();
+        Requests.cancelRequest();
+        Requests.checkRequestStatus('Closed - Cancelled');
 
-      cy.visit(TopMenu.requestsPath);
-      Requests.findCreatedRequest(testData.user.barcode);
-      Requests.selectFirstRequest(firstItem.instanceTitle);
-      RequestDetail.waitLoading();
-      Requests.cancelRequest();
-      Requests.checkRequestStatus('Closed - Cancelled');
-
-      TitleLevelRequests.disableTLRViaApi();
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+        TitleLevelRequests.disableTLRViaApi();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
       });
     });
   });

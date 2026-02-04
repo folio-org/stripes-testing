@@ -4,7 +4,7 @@ export default {
   waitLoadingForgotPassword: () => {
     cy.expect([
       HTML(including('Forgot password?')).exists(),
-      HTML(including('Enter email or phone')).exists(),
+      HTML(including('Enter username, email or phone')).exists(),
     ]);
   },
 

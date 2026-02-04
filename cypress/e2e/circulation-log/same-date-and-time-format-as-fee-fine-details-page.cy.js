@@ -81,6 +81,7 @@ describe('Circulation log', () => {
               path: TopMenu.circulationLogPath,
               waiter: SearchPane.waitLoading,
             });
+            cy.wait(5000);
           });
       });
   });
