@@ -71,6 +71,7 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
   return cy.okapiRequest({
     path: `loan-types/${loanId}`,
     method: 'DELETE',
+    failOnStatusCode: false,
   });
 });
 
