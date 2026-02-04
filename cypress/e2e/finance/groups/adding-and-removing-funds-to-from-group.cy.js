@@ -101,6 +101,7 @@ describe('Finance', () => {
         Groups.removeFundFromGroup(firstFund.name);
         InteractorsTools.checkCalloutMessage(`Fund ${firstFund.code} has been removed from group`);
         GroupDetails.checkFundAbsent(firstFund.name);
+        GroupDetails.checkFundsDetails([{ name: secondFund.name }]);
         Groups.verifyFundsCount(1);
       },
     );

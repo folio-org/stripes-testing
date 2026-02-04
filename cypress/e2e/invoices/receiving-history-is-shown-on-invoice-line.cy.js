@@ -7,6 +7,7 @@ import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Receiving from '../../support/fragments/receiving/receiving';
+import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -17,10 +18,17 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Users from '../../support/fragments/users/users';
 
 describe('Invoices', () => {
+  const pieceData = {
+    displaySummary: `autotest_displaySummary_${Date.now()}`,
+    copyNumber: `autotest_copyNumber_${Date.now()}`,
+    enumeration: `autotest_enumeration_${Date.now()}`,
+    chronology: `autotest_chronology_${Date.now()}`,
+  };
   const testData = {
     organization: NewOrganization.defaultUiOrganizations,
     order: {},
     user: {},
+    invoice: {},
   };
 
   before('Create test data', () => {
@@ -64,7 +72,15 @@ describe('Invoices', () => {
                         Receiving.getPiecesViaApi(orderLineResponse.id).then((pieces) => {
                           Receiving.receivePieceViaApi({
                             poLineId: orderLineResponse.id,
-                            pieces: [{ id: pieces[0].id }],
+                            pieces: [
+                              {
+                                id: pieces[0].id,
+                                displaySummary: pieceData.displaySummary,
+                                copyNumber: pieceData.copyNumber,
+                                enumeration: pieceData.enumeration,
+                                chronology: pieceData.chronology,
+                              },
+                            ],
                           });
                         });
                       });
@@ -76,6 +92,13 @@ describe('Invoices', () => {
           },
         );
       });
+    });
+
+    cy.getBatchGroups().then((batchGroup) => {
+      testData.invoice = {
+        ...NewInvoice.defaultUiInvoice,
+        batchGroup: batchGroup.name,
+      };
     });
 
     cy.createTempUser([
@@ -107,20 +130,22 @@ describe('Invoices', () => {
       Orders.selectFromResultsList(testData.order.poNumber);
 
       Orders.newInvoiceFromOrder();
-
-      cy.getBatchGroups().then((batchGroup) => {
-        const invoice = {
-          ...NewInvoice.defaultUiInvoice,
-          batchGroup: batchGroup.name,
-        };
-        Invoices.createInvoiceFromOrderWithoutFY(invoice);
-      });
+      Invoices.createInvoiceFromOrderWithoutFY(testData.invoice);
 
       const invoiceLineDetails = InvoiceView.selectInvoiceLine();
       invoiceLineDetails.waitLoading();
 
       InvoiceLineDetails.clickReceiptDateLink();
-      Receiving.waitLoading();
+      ReceivingDetails.waitLoading();
+      ReceivingDetails.checkTitlePaneIsDisplayed();
+      ReceivingDetails.checkReceivedTableContent([
+        {
+          displaySummary: pieceData.displaySummary,
+          copyNumber: pieceData.copyNumber,
+          enumeration: pieceData.enumeration,
+          chronology: pieceData.chronology,
+        },
+      ]);
     },
   );
 });

@@ -77,10 +77,12 @@ export default {
     cy.do(previousButton.click());
   },
 
-  checkEncumbranceTypeFilter() {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-transactionType' }).click(),
-      Checkbox('Encumbrance').click(),
-    ]);
+  expandTransactionTypeAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-transactionType' }).click());
+  },
+
+  selectTransactionTypeFilter(transactionType) {
+    this.expandTransactionTypeAccordion();
+    cy.do(Checkbox(transactionType).click());
   },
 };

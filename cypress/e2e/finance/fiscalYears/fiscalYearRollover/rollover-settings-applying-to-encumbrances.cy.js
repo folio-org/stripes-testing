@@ -164,7 +164,6 @@ describe('Finance', () => {
         Permissions.uiFinanceViewFiscalYear.gui,
         Permissions.uiFinanceViewFundAndBudget.gui,
         Permissions.uiFinanceViewLedger.gui,
-        Permissions.uiOrdersView.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -234,7 +233,7 @@ describe('Finance', () => {
 
         plannedBudgetDetails.clickViewTransactionsLink();
 
-        Transactions.checkEncumbranceTypeFilter();
+        Transactions.selectTransactionTypeFilter('Encumbrance');
         Transactions.checkTransactionsByTypeAndAmount({
           records: [{ type: 'Encumbrance', amount: '$0.00' }],
         });
