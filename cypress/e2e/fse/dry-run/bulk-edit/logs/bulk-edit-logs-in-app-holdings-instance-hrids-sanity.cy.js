@@ -1,15 +1,15 @@
-import BulkEditSearchPane from '../../../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../../../../support/fragments/topMenu';
-import FileManager from '../../../../../../support/utils/fileManager';
-import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
-import BulkEditActions from '../../../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../../../../support/fragments/bulk-edit/bulk-edit-files';
-import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
-import BulkEditLogs from '../../../../../../support/fragments/bulk-edit/bulk-edit-logs';
-import ExportFile from '../../../../../../support/fragments/data-export/exportFile';
-import { parseSanityParameters } from '../../../../../../support/utils/users';
+import BulkEditSearchPane from '../../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import FileManager from '../../../../../support/utils/fileManager';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import BulkEditActions from '../../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../../../support/fragments/bulk-edit/bulk-edit-files';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import BulkEditLogs from '../../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../../support/fragments/data-export/exportFile';
+import { parseSanityParameters } from '../../../../../support/utils/users';
 
 const { user, memberTenant } = parseSanityParameters();
 const instance = {
