@@ -12,7 +12,7 @@ describe('Inventory', () => {
     const randomPostfix = getRandomPostfix();
     const instanceTitlePrefix = `AT_C409421_FolioInstance_${randomPostfix}`;
     const advSearchOption = 'Advanced search';
-    const keywordAdvSearchOption = 'Keyword (title, contributor, identifier)';
+    const keywordAdvSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
     const subjectAdvSearchOption = 'Subject';
     const resourceTypeAccordionName = 'Resource type';
     const languageAccordionName = 'Language';
@@ -65,6 +65,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });
