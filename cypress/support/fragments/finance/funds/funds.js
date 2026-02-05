@@ -86,6 +86,7 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 const unassignAllLocationsButton = Button('Unassign all locations');
 const submitButton = Button('Submit');
 const keepEditingButton = Button('Keep editing');
+const fundResultsPane = Pane({ id: 'fund-results-pane' });
 
 export default {
   defaultUiFund: {
@@ -106,7 +107,7 @@ export default {
     };
   },
   waitLoading: () => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+    cy.expect(fundResultsPane.exists());
   },
 
   waitLoadingTransactions: () => {
@@ -1047,21 +1048,23 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then((fiscalYearResponse) => {
-      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
-      cy.createLedgerApi({
-        ...ledger,
-      });
-      fund.ledgerName = ledger.name;
-      cy.loginAsAdmin({
-        path: TopMenu.fundPath,
-        waiter: this.waitLoading,
-      });
-      this.createFund(fund);
-      this.checkCreatedFund(fund.name);
-      cy.wrap(ledger).as('createdLedger');
-      return cy.get('@createdLedger');
-    });
+    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then(
+      (fiscalYearResponse) => {
+        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
+        fund.ledgerName = ledger.name;
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
+        this.createFund(fund);
+        this.checkCreatedFund(fund.name);
+        cy.wrap(ledger).as('createdLedger');
+        return cy.get('@createdLedger');
+      },
+    );
     return cy.get('@createdLedger');
   },
 
@@ -1339,7 +1342,7 @@ export default {
 
   selectFund: (FundName) => {
     cy.wait(4000);
-    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.do(fundResultsPane.find(Link(FundName)).click());
     FundDetails.waitLoading();
   },
 
@@ -1441,7 +1444,7 @@ export default {
   },
 
   verifyFundLinkNameExists: (FundName) => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+    cy.expect(fundResultsPane.find(Link(FundName)).exists());
   },
 
   openSource: (linkName) => {

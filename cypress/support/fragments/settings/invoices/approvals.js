@@ -15,7 +15,7 @@ export default {
   getApprovalConfigViaApi() {
     return InvoiceStorageSettings.getSettingsViaApi({ key: INVOICE_APPROVALS_SETTING_KEY });
   },
-  setApprovePayValue(isApprovePayEnabled) {
+  setApprovePayValueViaApi(isApprovePayEnabled) {
     this.getApprovalConfigViaApi().then((settings) => {
       if (settings?.length !== 0) {
         InvoiceStorageSettings.updateSettingViaApi({
