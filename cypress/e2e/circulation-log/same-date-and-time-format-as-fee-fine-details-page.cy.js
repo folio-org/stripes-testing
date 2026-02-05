@@ -77,7 +77,11 @@ describe('Circulation log', () => {
                 feeFineAccount.id = feeFineAccountId;
               });
             });
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.circulationLogPath,
+              waiter: SearchPane.waitLoading,
+            });
+            cy.wait(5000);
           });
       });
   });

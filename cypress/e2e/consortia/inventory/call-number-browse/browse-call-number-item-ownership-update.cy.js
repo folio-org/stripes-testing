@@ -143,8 +143,6 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
-            cy.log(JSON.stringify(testData.holdings, null, 2));
           });
       });
 
