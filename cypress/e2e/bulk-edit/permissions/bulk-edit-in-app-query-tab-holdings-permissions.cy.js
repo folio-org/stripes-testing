@@ -137,7 +137,7 @@ describe('Bulk-edit', () => {
 
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-        cy.wait(5000); // Waiting for the role propagation
+        cy.wait(5000);
         cy.logout();
         cy.login(user.username, user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
