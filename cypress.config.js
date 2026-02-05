@@ -144,13 +144,6 @@ module.exports = defineConfig({
         delete process.env.TESTRAIL_PROJECTID;
       }
 
-      // Register after:spec handler for marking flaky tests (runFailedTests.js)
-      if (config.env.itemsFilePath) {
-        on('after:spec', async (spec, results) => {
-          await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
-        });
-      }
-
       registerReportPortalPlugin(on, config);
 
       // eslint-disable-next-line global-require
@@ -160,6 +153,14 @@ module.exports = defineConfig({
 
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
+
+      // Register after:spec handler for marking flaky tests (runFailedTests.js).
+      // MUST be registered AFTER cypress-testrail-simple/src/plugin to avoid being overwritten.
+      if (config.env.itemsFilePath) {
+        on('after:spec', async (spec, results) => {
+          await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+        });
+      }
 
       return result;
     },

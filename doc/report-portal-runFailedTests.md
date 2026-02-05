@@ -29,16 +29,12 @@ Examples:
 
 The following environment variables must be set in the `.env` file:
 
-- `RP_API_URL`: The Report Portal API endpoint (e.g., `https://report-portal.ci.folio.org/api/v1`)
-- `RP_CYPRESS_PROJECT_NAME`: The project name in Report Portal (e.g., `cypress-nightly`)
 - `CI_API_KEY`: The API token for authenticating with Report Portal
 
 Example `.env` entries:
 
 ```
-RP_API_URL=https://report-portal.ci.folio.org/api/v1
-CI_API_KEY=your-actual-token-here
-RP_CYPRESS_PROJECT_NAME=cypress-nightly
+CI_API_KEY=report-portal-token-here
 ```
 
 ## Flow Summary
@@ -74,3 +70,71 @@ RP_CYPRESS_PROJECT_NAME=cypress-nightly
 1. **`runFailedTests.js`**: Main script that orchestrates the test rerun process
 2. **`afterSpecHandler.js`**: Handler function that marks tests as flaky after each spec
 3. **`cypress.config.js`**: Conditionally registers the `after:spec` event handler
+
+### How It Works
+
+To avoid Windows command-line length limits with large datasets (222+ tests), the script uses a file-based approach:
+
+1. **Write to temp file**: The script writes `itemsToInvestigate` to a temporary JSON file
+2. **Pass file path**: Only the file path is passed through Cypress `env` (not the entire array)
+3. **Read in handler**: The `after:spec` handler reads the items from the file
+
+```javascript
+// In runFailedTests.js
+const tempFile = path.join(os.tmpdir(), `cypress-items-${Date.now()}.json`);
+fs.writeFileSync(tempFile, JSON.stringify(itemsToInvestigate, null, 2));
+
+cypressOptions.env = {
+  itemsFilePath: tempFile,
+};
+```
+
+In `cypress.config.js`, the `setupNodeEvents` function checks for the file path and registers the handler:
+
+```javascript
+if (config.env.itemsFilePath) {
+  const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler.js');
+  on('after:spec', async (spec, results) => {
+    await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+  });
+}
+```
+
+**Critical**: The `after:spec` handler **must be registered AFTER all other plugins** (especially `cypress-testrail-simple/src/plugin`) in the `setupNodeEvents` function. Many Cypress plugins register their own `after:spec` handlers and will overwrite any previously registered ones if they don't properly chain handlers. Place the flaky marker handler registration as the **last** step before returning the config to ensure it executes.
+
+This approach ensures:
+- The handler only runs when explicitly enabled by the script
+- Regular test runs are unaffected
+- Large datasets don't cause `ENAMETOOLONG` errors
+- Works reliably across all operating systems
+- Handler won't be overwritten by other plugins
+
+## Example Output
+
+```
+Launch: runNightlyCypressEurekaTests
+Team: Volaris
+Headed: false
+
+Fetching failed tests from Report Portal...
+✓ Found 222 failed test(s) to investigate
+
+Test files to rerun: 202 spec file(s)
+
+Running tests...
+
+📋 Marking 2 test(s) from cypress/e2e/circulation-log/action-buttons.cy.js as flaky...
+✓ Successfully marked 2 test(s) as flaky
+
+📋 Marking 1 test(s) from cypress/e2e/notes/item-notes.cy.js as flaky...
+✓ Successfully marked 1 test(s) as flaky
+
+📋 Marking 3 test(s) from cypress/e2e/orders/reopen-order.cy.js as flaky...
+✓ Successfully marked 3 test(s) as flaky
+
+(Tests continue...)
+
+✓ Successfully marked 6 test(s) as flaky out of 222 failed test(s)
+```
+
+The final count is calculated by querying Report Portal again after tests complete and comparing the number of "To Investigate" items before and after the test run.
