@@ -9,7 +9,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
-const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
+const setupAfterSpecChaining = require('./scripts/report-portal/setupAfterSpecChaining');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -151,41 +151,11 @@ module.exports = defineConfig({
 
       const result = await cloudPlugin(on, grepConfig);
 
-      // eslint-disable-next-line global-require
-      const testRailPlugin = require('cypress-testrail-simple/src/plugin');
-
-      // Chain after:spec handlers to ensure all handlers that wait for the after:spec are executed.
-      // Currently, only testRail plugin and flakyMarkerHandler, but this pattern allows for easy
-      // addition of more handlers in the future without conflicts.
-      if (config.env.itemsFilePath) {
-        const originalOn = on;
-        let testRailAfterSpecHandler;
-
-        // Intercept after:spec registration from TestRail plugin
-        const interceptedOn = (event, handler) => {
-          if (event === 'after:spec') {
-            testRailAfterSpecHandler = handler;
-          } else {
-            originalOn(event, handler);
-          }
-        };
-
-        // Let TestRail plugin register its handler (captured by interceptor)
-        await testRailPlugin(interceptedOn, config);
-
-        // Register combined handler that calls both
-        originalOn('after:spec', async (spec, results) => {
-          // Call TestRail handler first
-          if (testRailAfterSpecHandler) {
-            await testRailAfterSpecHandler(spec, results);
-          }
-          // Then call flaky marker handler
-          await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
-        });
-      } else {
-        // Normal flow: just register TestRail plugin
-        await testRailPlugin(on, config);
-      }
+      // Since Cypress's on() overwrites previous handlers (except for 'task' event),
+      // we need to chain after:spec handlers. All handlers that need to run after each spec
+      // (like TestRail plugin's handler and mark flaky handler) should be registered
+      // in setupAfterSpecChaining to ensure they all execute.
+      await setupAfterSpecChaining(on, config);
 
       return result;
     },
