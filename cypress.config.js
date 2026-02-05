@@ -9,6 +9,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
+const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler.js');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -141,6 +142,13 @@ module.exports = defineConfig({
       // fix for cypress-testrail-simple plugin
       if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
         delete process.env.TESTRAIL_PROJECTID;
+      }
+
+      // Register after:spec handler for marking flaky tests (runFailedTests.js)
+      if (config.env.itemsFilePath) {
+        on('after:spec', async (spec, results) => {
+          await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+        });
       }
 
       registerReportPortalPlugin(on, config);
