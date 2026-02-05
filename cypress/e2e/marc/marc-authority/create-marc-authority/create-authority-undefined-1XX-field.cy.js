@@ -6,6 +6,10 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import {
+  getAuthoritySpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -35,6 +39,8 @@ describe('MARC', () => {
         { tag: testData.tags.tag599, content: testData.undefinedFieldContent },
       ];
 
+      let specId;
+
       before('Create test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C813641_MarcAuthority');
@@ -44,6 +50,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getAuthoritySpec().then((spec) => {
+            specId = spec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile);
 
@@ -58,6 +69,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
@@ -76,7 +88,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(field.tag, field.content);
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(3, 0);
           fields.slice(1).forEach((_, index) => {
             QuickMarcEditor.checkErrorMessage(
@@ -85,7 +97,7 @@ describe('MARC', () => {
             );
           });
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.authorityHeading);
         },

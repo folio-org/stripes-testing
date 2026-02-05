@@ -68,12 +68,20 @@ describe('Eureka', () => {
           testData.user = createdUserProperties;
 
           cy.then(() => {
-            cy.getCapabilitiesApi(5000, true, { customTimeout: 60_000 }).then((capabs) => {
-              capabilitiesCount = capabs.length;
+            cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT'), true).then((appIds) => {
+              cy.getCapabilitySetsApi(2000, {
+                query: `applicationId==(${appIds.join(' or ')})`,
+              }).then((capabSets) => {
+                capabilitySetsCount = capabSets.length;
+              });
+              cy.getCapabilitiesApi(5000, true, {
+                customTimeout: 60_000,
+                query: `applicationId==(${appIds.join(' or ')})`,
+              }).then((capabs) => {
+                capabilitiesCount = capabs.length;
+              });
             });
-            cy.getCapabilitySetsApi().then((capabSets) => {
-              capabilitySetsCount = capabSets.length;
-            });
+
             cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
               testData.roleId = role.id;
               cy.getCapabilitiesApi(2, true).then((capabs) => {

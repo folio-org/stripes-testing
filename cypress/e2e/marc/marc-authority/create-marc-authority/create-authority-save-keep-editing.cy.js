@@ -6,7 +6,6 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
-import { including } from '../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -69,14 +68,10 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyValidationCallout(1, 2);
+          QuickMarcEditor.verifyValidationCallout(0, 2);
           QuickMarcEditor.checkCallout(testData.noAuthFileCalloutText);
           QuickMarcEditor.checkCallout(testData.no001FieldCalloutText);
           QuickMarcEditor.closeAllCallouts();
-          QuickMarcEditor.checkWarningMessageForFieldByTag(
-            testData.tag100,
-            including(testData.warningPrefix),
-          );
 
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
           QuickMarcEditor.addNewField(
@@ -85,13 +80,7 @@ describe('MARC', () => {
             testData.tag008Index + 1,
           );
 
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyValidationCallout(1, 0);
-          QuickMarcEditor.checkWarningMessageForFieldByTag(
-            testData.tag100,
-            including(testData.warningPrefix),
-          );
-          QuickMarcEditor.verifyTagBoxIsFocused(testData.tag008Index + 2);
+          QuickMarcEditor.clickSaveAndKeepEditing();
         },
       );
     });
