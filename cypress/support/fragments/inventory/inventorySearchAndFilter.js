@@ -276,9 +276,17 @@ export default {
     cy.wait(1000);
     cy.do(sharedAccordion.clickHeader());
     if (condititon === 'Yes') {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' })).click());
+      cy.do(
+        sharedAccordion
+          .find(Checkbox({ id: or('clickable-filter-shared-true', 'clickable-filter-shared-yes') }))
+          .click(),
+      );
     } else {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
+      cy.do(
+        sharedAccordion
+          .find(Checkbox({ id: or('clickable-filter-shared-false', 'clickable-filter-shared-no') }))
+          .click(),
+      );
     }
     cy.wait(1000);
   },

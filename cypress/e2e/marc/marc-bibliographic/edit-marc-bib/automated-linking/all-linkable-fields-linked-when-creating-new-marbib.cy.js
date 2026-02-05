@@ -253,8 +253,6 @@ describe('MARC', () => {
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.wait(1000);
             newFields.forEach((field) => {

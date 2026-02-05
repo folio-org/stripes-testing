@@ -84,10 +84,6 @@ describe('MARC', () => {
             cy.wait(1000);
             MarcAuthority.changeField('100', testData.authority.newField.title);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-
-            MarcAuthority.clickSaveAndCloseButton();
-            cy.wait(5000);
 
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
