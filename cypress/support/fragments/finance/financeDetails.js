@@ -148,7 +148,15 @@ export default {
     this.checkTableContent({ section: groupsSection, items: groups });
   },
   checkFundsDetails(funds = []) {
-    this.checkTableContent({ section: fundsSection, items: funds });
+    cy.expect(fundsSection.exists());
+    if (funds.length) {
+      this.checkTableContent({ section: fundsSection, items: funds });
+    } else {
+      cy.expect(fundsSection.find(HTML(including('The list contains no items'))).exists());
+    }
+  },
+  checkFundAbsent(fundName) {
+    cy.expect(fundsSection.find(MultiColumnListCell({ content: fundName })).absent());
   },
   openItemDetails({ section, name }) {
     cy.do(section.find(MultiColumnListCell({ content: name })).click());
