@@ -34,6 +34,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -129,6 +130,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374167*');
+      InventoryInstances.deleteFullInstancesByTitleViaApi('C374167*');
 
       // create Match profile
       NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
@@ -188,6 +190,9 @@ describe('Data Import', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           twoMarcBibsToLink.forEach((marcBib) => {
             InventoryInstances.searchByTitle(marcBib.marcBibRecord);
             cy.wait(1500);
