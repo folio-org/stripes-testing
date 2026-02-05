@@ -41,11 +41,6 @@ describe('Data Export', () => {
         cy.createSimpleMarcBibViaAPI(marcInstance.title).then((marcInstanceId) => {
           marcInstance.id = marcInstanceId;
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
       });
     });
 
@@ -74,7 +69,10 @@ describe('Data Export', () => {
         });
 
         // Step 3: From Inventory app - Export instance (MARC)
-        cy.getUserToken(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.searchByTitle(marcInstance.title);
         InventoryInstances.selectInstanceCheckboxByIndex(0);
         InventoryInstances.exportInstanceMarc();
@@ -126,6 +124,7 @@ describe('Data Export', () => {
             suppress999ff: 'true',
           }).then((body) => {
             cy.wrap(body).should('not.include', marcInstance.id);
+            cy.wrap(body).should('include', marcInstance.title);
 
             // Step 7: Save the response to .mrc file
             FileManager.createFile(`cypress/fixtures/${exportedFileFromApiSuppressed}`, body);

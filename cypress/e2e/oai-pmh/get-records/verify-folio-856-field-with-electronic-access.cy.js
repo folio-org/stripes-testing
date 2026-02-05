@@ -221,6 +221,7 @@ describe('OAI-PMH', () => {
           // Step 15: Click "Save & close" button
           HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
           InventoryInstance.waitLoading();
+          InventoryInstance.checkIsHoldingsCreated();
 
           // Step 16-17: Send OAI-PMH GetRecord request with marc21_withholdings and verify Holdings electronic access
           cy.getAdminToken();
