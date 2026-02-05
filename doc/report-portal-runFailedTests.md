@@ -89,25 +89,52 @@ cypressOptions.env = {
 };
 ```
 
-In `cypress.config.js`, the `setupNodeEvents` function checks for the file path and registers the handler:
+In `cypress.config.js`, the `setupNodeEvents` function checks for the file path and chains the handlers:
 
 ```javascript
+const testRailPlugin = require('cypress-testrail-simple/src/plugin');
+
+// Chain after:spec handlers to ensure both TestRail and flaky marker execute
 if (config.env.itemsFilePath) {
-  const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler.js');
-  on('after:spec', async (spec, results) => {
+  // Store original on function
+  const originalOn = on;
+  let testRailAfterSpecHandler;
+  
+  // Intercept after:spec registration from TestRail plugin
+  const interceptedOn = (event, handler) => {
+    if (event === 'after:spec') {
+      testRailAfterSpecHandler = handler;
+    } else {
+      originalOn(event, handler);
+    }
+  };
+  
+  // Let TestRail plugin register its handler (captured by interceptor)
+  await testRailPlugin(interceptedOn, config);
+  
+  // Register combined handler that calls both
+  originalOn('after:spec', async (spec, results) => {
+    // Call TestRail handler first
+    if (testRailAfterSpecHandler) {
+      await testRailAfterSpecHandler(spec, results);
+    }
+    // Then call flaky marker handler
     await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
   });
+} else {
+  // Normal flow: just register TestRail plugin
+  await testRailPlugin(on, config);
 }
 ```
 
-**Critical**: The `after:spec` handler **must be registered AFTER all other plugins** (especially `cypress-testrail-simple/src/plugin`) in the `setupNodeEvents` function. Many Cypress plugins register their own `after:spec` handlers and will overwrite any previously registered ones if they don't properly chain handlers. Place the flaky marker handler registration as the **last** step before returning the config to ensure it executes.
+**Handler Chaining**: Since Cypress's `on()` function **overwrites** previous handlers rather than chaining them, we use an interceptor pattern to capture the TestRail plugin's `after:spec` handler and then register a combined handler that calls both the TestRail handler and the flaky marker handler sequentially. This ensures both handlers execute without either being lost.
 
 This approach ensures:
 - The handler only runs when explicitly enabled by the script
-- Regular test runs are unaffected
+- Regular test runs are unaffected (TestRail plugin runs normally)
+- Both TestRail and flaky marker handlers execute when `itemsFilePath` is set
 - Large datasets don't cause `ENAMETOOLONG` errors
 - Works reliably across all operating systems
-- Handler won't be overwritten by other plugins
 
 ## Example Output
 

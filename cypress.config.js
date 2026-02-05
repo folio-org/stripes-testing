@@ -152,14 +152,37 @@ module.exports = defineConfig({
       const result = await cloudPlugin(on, grepConfig);
 
       // eslint-disable-next-line global-require
-      await require('cypress-testrail-simple/src/plugin')(on, config);
+      const testRailPlugin = require('cypress-testrail-simple/src/plugin');
 
-      // Register after:spec handler for marking flaky tests (runFailedTests.js).
-      // MUST be registered AFTER cypress-testrail-simple/src/plugin to avoid being overwritten.
+      // Chain after:spec handlers to ensure both TestRail and flaky marker execute
       if (config.env.itemsFilePath) {
-        on('after:spec', async (spec, results) => {
+        const originalOn = on;
+        let testRailAfterSpecHandler;
+
+        // Intercept after:spec registration from TestRail plugin
+        const interceptedOn = (event, handler) => {
+          if (event === 'after:spec') {
+            testRailAfterSpecHandler = handler;
+          } else {
+            originalOn(event, handler);
+          }
+        };
+
+        // Let TestRail plugin register its handler (captured by interceptor)
+        await testRailPlugin(interceptedOn, config);
+
+        // Register combined handler that calls both
+        originalOn('after:spec', async (spec, results) => {
+          // Call TestRail handler first
+          if (testRailAfterSpecHandler) {
+            await testRailAfterSpecHandler(spec, results);
+          }
+          // Then call flaky marker handler
           await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
         });
+      } else {
+        // Normal flow: just register TestRail plugin
+        await testRailPlugin(on, config);
       }
 
       return result;
