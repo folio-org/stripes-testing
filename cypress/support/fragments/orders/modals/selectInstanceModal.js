@@ -331,9 +331,11 @@ export default {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
     cy.do(multiSelect.open());
     cy.wait(1000);
-    cy.get('#OverlayContainer [class^=multiSelectOption-]').then((elements) => {
-      expect(elements.length).to.eq(numberOfOptions);
-    });
+    cy.get('[class^=multiSelectOption-]')
+      .filter(':visible')
+      .then((elements) => {
+        expect(elements.length).to.eq(numberOfOptions);
+      });
   },
 
   selectMultiSelectFilterOption(accordionName, optionName) {
@@ -350,9 +352,11 @@ export default {
     cy.wait(1000);
     if (isFound) {
       cy.expect(MultiSelectOption(including(value)).exists());
-      cy.get('#OverlayContainer [class^=multiSelectOption-]').then((elements) => {
-        expect(elements.length).to.eq(foundCount);
-      });
+      cy.get('[class^=multiSelectOption-]')
+        .filter(':visible')
+        .then((elements) => {
+          expect(elements.length).to.eq(foundCount);
+        });
     } else cy.expect(MultiSelectOption(including(value)).absent());
   },
 
