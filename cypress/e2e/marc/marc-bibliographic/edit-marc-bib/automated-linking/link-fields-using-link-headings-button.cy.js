@@ -165,7 +165,7 @@ describe('MARC', () => {
           [...matchingNaturalIds, ...notMatchingNaturalIds].forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
-              query: `(keyword all "${query}" or identifiers.value=="${query.naturalId}" or naturalId="${query.naturalId}")`,
+              query: `(keyword all "${query.naturalId}" or identifiers.value=="${query.naturalId}" or naturalId="${query.naturalId}")`,
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {

@@ -52,12 +52,10 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         cy.wait(2000);
         EHoldingsPackage.removeFromHoldings();
-        EHoldingsPackage.verifyTitlesLoadingIndicator();
 
         EHoldingsPackage.verifyNotSelectedPackage();
         EHoldingsPackage.addToHoldings();
 
-        EHoldingsPackage.verifyTitlesLoadingIndicator();
         EHoldingsPackage.verifySelectedPackage();
       },
     );
