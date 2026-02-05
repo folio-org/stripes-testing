@@ -19,7 +19,6 @@ describe('MARC', () => {
         tag655: '655',
         updated155FieldValue: 'Drama C374159 cinema',
         updated010FieldValue: 'gf20140262973741590',
-        autoUpdateUserName: 'FolioLast, FolioFirst',
         subjectAccordion: 'Subject',
         authorityIconText: 'Linked to MARC authority',
       };
@@ -92,18 +91,20 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+          })
+          .then(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
       });
 
       after('Deleting user, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         createdRecordIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
           else InventoryInstance.deleteInstanceViaApi(id);
         });
       });

@@ -42,6 +42,8 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('Arroyo Center');
+
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
         testData.marcFile.fileName,

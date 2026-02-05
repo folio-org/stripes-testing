@@ -5,6 +5,10 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import {
+  getBibliographicSpec,
+  toggleAllUndefinedValidationRules,
+} from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -22,6 +26,7 @@ describe('MARC', () => {
       };
 
       let createdInstanceId;
+      let specId;
 
       before('Create test data and login', () => {
         cy.createTempUser([
@@ -30,6 +35,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          getBibliographicSpec().then((bibSpec) => {
+            specId = bibSpec.id;
+            toggleAllUndefinedValidationRules(specId, { enable: true });
+          });
 
           cy.createSimpleMarcBibViaAPI(testData.title).then((instanceId) => {
             createdInstanceId = instanceId;
@@ -46,6 +56,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(testData.title);
       });
@@ -73,11 +84,11 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(testData.tags.tag199, testData.newFieldContent, 4);
           QuickMarcEditor.verifyTagValue(5, testData.tags.tag199);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(5, testData.expectedWarning);
           QuickMarcEditor.verifyValidationCallout(1, 0);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
         },
       );

@@ -46,8 +46,8 @@ describe('MARC', () => {
         {
           values: ['', '$'],
           error: testData.indicatorFailText,
-          warning: testData.indicatorWarningText(0, '\\'),
-          counts: [1, 1],
+          warning: null,
+          counts: [0, 1],
         },
         {
           values: ['#', ''],
@@ -118,7 +118,7 @@ describe('MARC', () => {
           indicatorData1XX.forEach((item) => {
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[0], 0);
             QuickMarcEditor.updateIndicatorValue(testData.tag100, item.values[1], 1);
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(...item.counts);
             if (item.error) QuickMarcEditor.checkErrorMessageForFieldByTag(testData.tag100, item.error);
             if (item.warning) QuickMarcEditor.checkWarningMessageForFieldByTag(testData.tag100, item.warning);
@@ -139,23 +139,6 @@ describe('MARC', () => {
           indicatorValuesNon1XX.forEach((field, index) => {
             QuickMarcEditor.verifyTagValue(6 + index, field.tag);
           });
-          QuickMarcEditor.pressSaveAndClose();
-
-          QuickMarcEditor.verifyValidationCallout(5, 0);
-          [testData.tag100, testData.tag400, testData.tag410].forEach((tag) => {
-            QuickMarcEditor.checkWarningMessageForFieldByTag(
-              tag,
-              testData.indicatorWarningText(0, '\\'),
-            );
-          });
-          QuickMarcEditor.checkWarningMessageForFieldByTag(
-            testData.tag511,
-            testData.indicatorWarningText(1, '7'),
-          );
-          QuickMarcEditor.checkWarningMessageForFieldByTag(
-            testData.tag630,
-            testData.fieldUndefinedWarningText,
-          );
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
