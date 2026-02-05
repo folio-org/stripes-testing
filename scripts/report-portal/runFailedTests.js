@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const { getItemsToInvestigate } = require('./services/itemService.js');
-const { LAUNCHES } = require('./constants/constants.js');
+const { getItemsToInvestigate } = require('./services/itemService');
+const { LAUNCHES } = require('./constants/constants');
 
 // Windows command line limit is ~8191 chars; use conservative threshold
 const WINDOWS_MAX_SPEC_LENGTH = 7000;

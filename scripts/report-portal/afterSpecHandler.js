@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const fs = require('fs');
-const { markTestsAsFlaky } = require('./services/itemService.js');
-const { SPEC_TYPES } = require('./constants/constants.js');
+const { markTestsAsFlaky } = require('./services/itemService');
+const { SPEC_TYPES } = require('./constants/constants');
 
 /**
  * Cypress after:spec handler that marks passed tests as flaky immediately

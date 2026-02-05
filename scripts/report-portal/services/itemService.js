@@ -1,7 +1,7 @@
-const { getLatestLaunch } = require('./launchService.js');
-const { rpClient } = require('../client.js');
-const { ITEM_V2_API, ITEM_API } = require('../constants/api.js');
-const { SPEC_TYPES } = require('../constants/constants.js');
+const { getLatestLaunch } = require('./launchService');
+const { rpClient } = require('../client');
+const { ITEM_V2_API, ITEM_API } = require('../constants/api');
+const { SPEC_TYPES } = require('../constants/constants');
 
 const LIMIT = 1000;
 const TO_INVESTIGATE_ISSUE_TYPE = 'ti001';

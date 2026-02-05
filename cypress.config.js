@@ -9,7 +9,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
-const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler.js');
+const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -154,7 +154,9 @@ module.exports = defineConfig({
       // eslint-disable-next-line global-require
       const testRailPlugin = require('cypress-testrail-simple/src/plugin');
 
-      // Chain after:spec handlers to ensure both TestRail and flaky marker execute
+      // Chain after:spec handlers to ensure all handlers that wait for the after:spec are executed.
+      // Currently, only testRail plugin and flakyMarkerHandler, but this pattern allows for easy
+      // addition of more handlers in the future without conflicts.
       if (config.env.itemsFilePath) {
         const originalOn = on;
         let testRailAfterSpecHandler;

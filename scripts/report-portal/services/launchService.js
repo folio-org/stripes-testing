@@ -1,5 +1,5 @@
-const { rpClient } = require('../client.js');
-const { LATEST_LAUNCH_API } = require('../constants/api.js');
+const { rpClient } = require('../client');
+const { LATEST_LAUNCH_API } = require('../constants/api');
 
 const getLatestLaunches = async ({ params } = {}) => {
   const { data } = await rpClient.get(LATEST_LAUNCH_API, { params });
