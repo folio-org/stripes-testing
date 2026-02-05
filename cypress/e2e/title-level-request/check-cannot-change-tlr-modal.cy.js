@@ -51,6 +51,7 @@ describe('Title Level Request', () => {
         requesterId: userData.userId,
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
+
         cy.login(userData.username, userData.password, {
           path: SettingsMenu.circulationTitleLevelRequestsPath,
           waiter: TitleLevelRequests.waitLoading,
