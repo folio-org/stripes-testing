@@ -6,7 +6,7 @@ ARG CYPRESS_VERSION='12.0.0'
 FROM cypress/factory:3.5.4
 
 WORKDIR /opt/app
-RUN npm install --save-dev cypress
+RUN npm install --save-dev cypress@12.0.0
 RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
 
 ENV DEBIAN_FRONTEND=noninteractive
