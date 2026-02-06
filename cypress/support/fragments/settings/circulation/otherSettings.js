@@ -87,7 +87,7 @@ export default {
 
   verifyOtherSettingsContainsParams(params) {
     this.getOtherSettingsViaApi().then((response) => {
-      const otherSettings = JSON.parse(response.body.configs[0].value);
+      const otherSettings = response.body.circulationSettings[0].value;
       Object.keys(params).forEach((key) => {
         expect(otherSettings[key]).to.equal(params[key]);
       });
@@ -98,7 +98,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
+        path: 'circulation/settings?query=(name==other_settings)',
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
@@ -108,38 +108,47 @@ export default {
 
   setOtherSettingsViaApi(params) {
     return this.getOtherSettingsViaApi().then((otherSettingsResp) => {
-      let config = otherSettingsResp.body.configs[0];
+      let config = otherSettingsResp.body.circulationSettings[0];
 
-      if (otherSettingsResp.body.configs.length === 0) {
+      if (otherSettingsResp.body.circulationSettings.length === 0) {
         config = {
-          value:
-            '{"audioAlertsEnabled":false,"audioTheme":"classic","checkoutTimeout":true,"checkoutTimeoutDuration":3,"prefPatronIdentifier":"barcode,username","useCustomFieldsAsIdentifiers":false,"wildcardLookupEnabled":false}',
-          module: 'CHECKOUT',
-          configName: 'other_settings',
+          value: {
+            audioAlertsEnabled: false,
+            audioTheme: 'classic',
+            checkoutTimeout: true,
+            checkoutTimeoutDuration: 3,
+            prefPatronIdentifier: 'barcode,username',
+            useCustomFieldsAsIdentifiers: false,
+            wildcardLookupEnabled: false,
+          },
+          name: 'other_settings',
           id: uuid(),
         };
 
-        const newValue = { ...JSON.parse(config.value), ...params };
-        config.value = JSON.stringify(newValue);
+        config.value = {
+          ...config.value,
+          ...params,
+        };
 
         cy.okapiRequest({
           method: 'POST',
-          path: 'configurations/entries',
+          path: 'circulation/settings',
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: config,
         });
       } else {
-        const newValue = { ...JSON.parse(config.value), ...params };
-        config.value = JSON.stringify(newValue);
+        config.value = {
+          ...config.value,
+          ...params,
+        };
 
         cy.okapiRequest({
           method: 'PUT',
-          path: `configurations/entries/${config.id}`,
+          path: `circulation/settings/${config.id}`,
           body: {
             id: config.id,
-            module: config.module,
-            configName: config.configName,
+            name: config.name,
             enabled: config.enabled,
             value: config.value,
           },
