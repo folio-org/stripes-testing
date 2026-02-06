@@ -9,9 +9,46 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
-const setupAfterSpecChaining = require('./scripts/report-portal/setupAfterSpecChaining');
+const testRailPlugin = require('cypress-testrail-simple/src/plugin');
+const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
+
+/**
+ * Chains after:spec handlers to ensure both TestRail and flaky marker handlers execute.
+ * Since Cypress's on() overwrites previous handlers (except for 'task'), we need to intercept
+ * the TestRail plugin's handler registration and combine it with the flaky marker handler.
+ */
+async function setupAfterSpecChaining(on, config) {
+  if (config.env.itemsFilePath) {
+    let testRailAfterSpecHandler;
+
+    // Intercept after:spec registration from TestRail plugin
+    const interceptedOn = (event, handler) => {
+      if (event === 'after:spec') {
+        testRailAfterSpecHandler = handler;
+      } else {
+        on(event, handler);
+      }
+    };
+
+    // Let TestRail plugin register its handler (captured by interceptor)
+    await testRailPlugin(interceptedOn, config);
+
+    // Register combined handler that calls both
+    on('after:spec', async (spec, results) => {
+      // Call TestRail handler first
+      if (testRailAfterSpecHandler) {
+        await testRailAfterSpecHandler(spec, results);
+      }
+      // Then call flaky marker handler
+      await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+    });
+  } else {
+    // Normal flow: just register TestRail plugin
+    await testRailPlugin(on, config);
+  }
+}
 
 const reportportalOptions = {
   apiKey: process.env.CI_API_KEY ? process.env.CI_API_KEY : '',
@@ -152,9 +189,8 @@ module.exports = defineConfig({
       const result = await cloudPlugin(on, grepConfig);
 
       // Since Cypress's on() overwrites previous handlers (except for 'task' event),
-      // we need to chain after:spec handlers. All handlers that need to run after each spec
-      // (like TestRail plugin's handler and mark flaky handler) should be registered
-      // in setupAfterSpecChaining to ensure they all execute.
+      // we need to ensure that all handlers that need to run on after:spec
+      // are registered in setupAfterSpecChaining to ensure they all execute.
       await setupAfterSpecChaining(on, config);
 
       return result;

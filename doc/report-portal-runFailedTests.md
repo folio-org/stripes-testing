@@ -69,8 +69,7 @@ CI_API_KEY=report-portal-token-here
 
 1. **`runFailedTests.js`**: Main script that orchestrates the test rerun process
 2. **`afterSpecHandler.js`**: Handler function that marks tests as flaky after each spec
-3. **`setupAfterSpecChaining.js`**: Chains TestRail and flaky marker `after:spec` handlers
-4. **`cypress.config.js`**: Conditionally activates the handler chaining via `setupAfterSpecChaining`
+3. **`cypress.config.js`**: Handles event registration and chains TestRail + flaky marker `after:spec` handlers
 
 ### How It Works
 
@@ -93,19 +92,40 @@ cypressOptions.env = {
 In `cypress.config.js`, the `setupNodeEvents` function checks for the file path and sets up handler chaining:
 
 ```javascript
-const setupAfterSpecChaining = require('./scripts/report-portal/setupAfterSpecChaining');
-
 // In setupNodeEvents
+async function setupAfterSpecChaining(on, config) {
+  if (config.env.itemsFilePath) {
+    let testRailAfterSpecHandler;
+
+    // Intercept after:spec registration from TestRail plugin
+    const interceptedOn = (event, handler) => {
+      if (event === 'after:spec') {
+        testRailAfterSpecHandler = handler;
+      } else {
+        on(event, handler);
+      }
+    };
+
+    // Let TestRail plugin register its handler (captured by interceptor)
+    await testRailPlugin(interceptedOn, config);
+
+    // Register combined handler that calls both
+    on('after:spec', async (spec, results) => {
+      if (testRailAfterSpecHandler) {
+        await testRailAfterSpecHandler(spec, results);
+      }
+      await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+    });
+  } else {
+    await testRailPlugin(on, config);
+  }
+}
+
+// Then call it in setupNodeEvents
 await setupAfterSpecChaining(on, config);
 ```
 
-**Handler Chaining**: Since Cypress's `on()` function **overwrites** previous handlers (except for `task` event) rather than chaining them, the `setupAfterSpecChaining` module uses an interceptor pattern to capture the TestRail plugin's `after:spec` handler and then registers a combined handler that calls both the TestRail handler and the flaky marker handler sequentially. This ensures both handlers execute without either being lost.
-
-The chaining logic in `setupAfterSpecChaining.js`:
-- When `config.env.itemsFilePath` is set, it intercepts the TestRail plugin's handler registration
-- Captures the TestRail `after:spec` handler
-- Registers a combined handler that executes both TestRail and flaky marker handlers
-- When `itemsFilePath` is not set, the TestRail plugin runs normally without modification
+**Handler Chaining**: Since Cypress's `on()` function **overwrites** previous handlers (except for `task` event) rather than chaining them, we use an interceptor pattern to capture the TestRail plugin's `after:spec` handler and then register a combined handler that calls both the TestRail handler and the flaky marker handler sequentially. This ensures both handlers execute without either being lost.
 
 This approach ensures:
 - The handler only runs when explicitly enabled by the script
