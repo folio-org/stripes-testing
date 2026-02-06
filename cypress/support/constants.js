@@ -25,6 +25,7 @@ export const APPLICATION_NAMES = {
   NOTES: 'Notes',
   ORGANIZATIONS: 'Organizations',
   COURSES: 'Courses',
+  DEVELOPER: 'Developer',
 };
 
 export const REQUEST_METHOD = {
