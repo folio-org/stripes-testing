@@ -49,6 +49,11 @@ describe('MARC', () => {
       before('Setup', () => {
         cy.setTenant(memberTenant.id);
         cy.getUserToken(user.username, user.password);
+        cy.getUserDetailsByUsername(user.username).then((details) => {
+          user.id = details.id;
+          user.personal = details.personal;
+          user.barcode = details.barcode;
+        });
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375231');
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -167,7 +172,7 @@ describe('MARC', () => {
               'Number of bibliographic records linked',
               '2',
               'Updater',
-              `${user.username}`,
+              `${user.personal.firstName}, ${user.personal.lastName}`,
             ],
           );
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
