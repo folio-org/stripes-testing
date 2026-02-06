@@ -99,6 +99,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.ordersPath,
                 waiter: Orders.waitLoading,
+                authRefresh: true,
               });
               Orders.selectOrderByPONumber(order.poNumber);
               OrderDetails.selectAddPOLine();
@@ -172,6 +173,10 @@ describe('Inventory', () => {
             false,
           );
           SelectInstanceModal.selectMultiSelectFilterOption(formatAccordionName, formats[1].name);
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+            formatAccordionName,
+            formats[1].name,
+          );
           SelectInstanceModal.verifyMultiSelectFilterOptionCount(
             formatAccordionName,
             formats[1].name,
