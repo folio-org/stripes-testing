@@ -224,7 +224,7 @@ describe('Data Export', () => {
           DataExportLogs.clickButtonWithText(exportedInMemberTenantMRCFile);
 
           // Step 13: Check exported record for local Instance from Preconditions #4 included in the file
-          const assertionsOnMarcFileContent = [
+          const assertionsOnLocalInstance = [
             {
               uuid: localInstanceIds[0],
               assertions: [
@@ -242,9 +242,66 @@ describe('Data Export', () => {
 
           parseMrcFileContentAndVerify(
             exportedInMemberTenantMRCFile,
-            assertionsOnMarcFileContent,
+            assertionsOnLocalInstance,
             localInstanceIds.length,
           );
+
+          // Step 14: Trigger the data export by clicking on the "or choose file" button at jobs panel and submitting .cql file with saved query (Step # 2)
+          ExportFileHelper.uploadFile(downloadedCQLFile);
+          ExportFileHelper.exportWithDefaultJobProfile(
+            downloadedCQLFile,
+            'Default instances',
+            'Instances',
+            '.cql',
+          );
+          DataExportLogs.verifyAreYouSureModalAbsent();
+
+          cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
+            'getInfoMember',
+          );
+          cy.wait('@getInfoMember', getLongDelay()).then((interceptResponse) => {
+            const { jobExecutions } = interceptResponse.response.body;
+            const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
+            const jobId = jobData.hrId;
+            const exportedInMemberTenantSecondMRCFile = `${downloadedCQLFile.replace('.cql', '')}-${jobData.hrId}.mrc`;
+
+            DataExportResults.verifySuccessExportResultCells(
+              exportedInMemberTenantSecondMRCFile,
+              sharedInstanceIds.length + localInstanceIds.length,
+              jobId,
+              user.username,
+              'Default instances',
+            );
+
+            // Step 15: Download the recently created file with extension .mrc by clicking on a file name hyperlink at the "Data Export" logs table
+            DataExportLogs.clickButtonWithText(exportedInMemberTenantSecondMRCFile);
+
+            // Step 16: Check exported record for shared Instances from Preconditions #4 included in the file
+            const assertionsOnSharedInstances = sharedInstanceIds.map((id) => ({
+              uuid: id,
+              assertions: [
+                (record) => expect(record.leader[5]).to.equal('d'),
+                (record) => {
+                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
+                },
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(id),
+              ],
+            }));
+
+            const assertionsOnInstances = [
+              ...assertionsOnSharedInstances,
+              ...assertionsOnLocalInstance,
+            ];
+
+            parseMrcFileContentAndVerify(
+              exportedInMemberTenantSecondMRCFile,
+              assertionsOnInstances,
+              sharedInstanceIds.length + localInstanceIds.length,
+            );
+
+            FileManager.deleteFileFromDownloadsByMask(exportedInMemberTenantSecondMRCFile);
+          });
         });
       },
     );

@@ -73,6 +73,18 @@ export default {
     cy.expect(rootSection.absent());
   },
 
+  getCardTimestamp(index = 0) {
+    return cy.get('[class*="card"]').eq(index).find('[class*="headerStart"]').invoke('text');
+  },
+
+  getTimestampFromOpenModalChanges() {
+    return cy.get('[class*="modal"]').find('[class*="headline"]').invoke('text');
+  },
+
+  verifyTimestampFormat(timestamp) {
+    expect(timestamp).to.match(changesModalHeaderDefaultRegexp);
+  },
+
   verifyVersionHistoryPane(versionsCount = 1, loadMore = false) {
     this.waitLoading();
     cy.expect(rootSection.find(closeButton).exists());
