@@ -16,13 +16,12 @@ describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C446105_Instance_${randomPostfix}`;
-      const identifierValue = `AT_C446105_Identifier_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C446108_Instance_${randomPostfix}`;
+      const subjectValue = `AT_C446108_Subject_${randomPostfix}`;
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C446105_Org_${randomPostfix}`;
-      const identifierSearchOption = 'ISBN';
+      organization.name = `AT_C446108_Org_${randomPostfix}`;
+      const subjectSearchOption = 'Subject';
       const staffSuppressAccordionName = 'Staff suppress';
-      const identifierTypeName = 'ISBN';
       const instancesData = [
         { source: INSTANCE_SOURCE_NAMES.FOLIO, isStaffSuppressed: false },
         { source: INSTANCE_SOURCE_NAMES.MARC, isStaffSuppressed: false },
@@ -41,7 +40,6 @@ describe('Inventory', () => {
       );
 
       let instanceTypeId;
-      let identifierTypeId;
       let order;
       let user;
 
@@ -49,16 +47,11 @@ describe('Inventory', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446105');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446108');
 
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
-          InventoryInstances.getIdentifierTypes({ query: `name=="${identifierTypeName}"` }).then(
-            (identifier) => {
-              identifierTypeId = identifier.id;
-            },
-          );
           Organizations.createOrganizationViaApi(organization).then(() => {
             const orderData = NewOrder.getDefaultOngoingOrder({
               vendorId: organization.id,
@@ -75,10 +68,9 @@ describe('Inventory', () => {
                   instance: {
                     instanceTypeId,
                     title: instanceTitles[index],
-                    identifiers: [
+                    subjects: [
                       {
-                        value: identifierValue,
-                        identifierTypeId,
+                        value: subjectValue,
                       },
                     ],
                     staffSuppress: data.isStaffSuppressed,
@@ -91,14 +83,14 @@ describe('Inventory', () => {
                     content: QuickMarcEditor.defaultValid008Values,
                   },
                   {
-                    tag: '020',
-                    content: `$a ${identifierValue}`,
-                    indicators: ['\\', '\\'],
-                  },
-                  {
                     tag: '245',
                     content: `$a ${instanceTitles[index]}`,
                     indicators: ['1', '1'],
+                  },
+                  {
+                    tag: '600',
+                    content: `$a ${subjectValue}`,
+                    indicators: ['\\', '\\'],
                   },
                 ]).then((instanceId) => {
                   cy.getInstanceById(instanceId).then((body) => {
@@ -125,8 +117,8 @@ describe('Inventory', () => {
               OrderDetails.selectAddPOLine();
               OrderLineEditForm.clickTitleLookUpButton();
               SelectInstanceModal.verifyModalView();
-              SelectInstanceModal.chooseSearchOption(identifierSearchOption);
-              SelectInstanceModal.checkSearchOptionSelected(identifierSearchOption);
+              SelectInstanceModal.chooseSearchOption(subjectSearchOption);
+              SelectInstanceModal.checkSearchOptionSelected(subjectSearchOption);
             });
           });
       });
@@ -140,8 +132,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446105 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "ISBN") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446105'] },
+        'C446108 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Subject") (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C446108'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(
@@ -155,7 +147,7 @@ describe('Inventory', () => {
             false,
           );
 
-          SelectInstanceModal.searchByName(identifierValue);
+          SelectInstanceModal.searchByName(subjectValue);
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
           instanceTitles.forEach((title) => {

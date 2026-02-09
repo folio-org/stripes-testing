@@ -16,13 +16,13 @@ describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C446105_Instance_${randomPostfix}`;
-      const identifierValue = `AT_C446105_Identifier_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C446107_Instance_${randomPostfix}`;
+      const identifierValue = `AT_C446107_Identifier_${randomPostfix}`;
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C446105_Org_${randomPostfix}`;
-      const identifierSearchOption = 'ISBN';
+      organization.name = `AT_C446107_Org_${randomPostfix}`;
+      const identifierSearchOption = 'LCCN, normalized';
       const staffSuppressAccordionName = 'Staff suppress';
-      const identifierTypeName = 'ISBN';
+      const identifierTypeName = 'LCCN';
       const instancesData = [
         { source: INSTANCE_SOURCE_NAMES.FOLIO, isStaffSuppressed: false },
         { source: INSTANCE_SOURCE_NAMES.MARC, isStaffSuppressed: false },
@@ -49,7 +49,7 @@ describe('Inventory', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446105');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446107');
 
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
@@ -91,7 +91,7 @@ describe('Inventory', () => {
                     content: QuickMarcEditor.defaultValid008Values,
                   },
                   {
-                    tag: '020',
+                    tag: '010',
                     content: `$a ${identifierValue}`,
                     indicators: ['\\', '\\'],
                   },
@@ -140,8 +140,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446105 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "ISBN") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446105'] },
+        'C446107 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "LCCN, normalized") (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C446107'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(

@@ -10,19 +10,17 @@ import OrderLineEditForm from '../../../../support/fragments/orders/orderLineEdi
 import OrderDetails from '../../../../support/fragments/orders/orderDetails';
 import SelectInstanceModal from '../../../../support/fragments/orders/modals/selectInstanceModal';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C446105_Instance_${randomPostfix}`;
-      const identifierValue = `AT_C446105_Identifier_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C446111_Instance_${randomPostfix}`;
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C446105_Org_${randomPostfix}`;
-      const identifierSearchOption = 'ISBN';
+      organization.name = `AT_C446111_Org_${randomPostfix}`;
       const staffSuppressAccordionName = 'Staff suppress';
-      const identifierTypeName = 'ISBN';
+      const querySearchOption = 'Query search';
       const instancesData = [
         { source: INSTANCE_SOURCE_NAMES.FOLIO, isStaffSuppressed: false },
         { source: INSTANCE_SOURCE_NAMES.MARC, isStaffSuppressed: false },
@@ -40,8 +38,6 @@ describe('Inventory', () => {
         (_, index) => !instancesData[index].isStaffSuppressed,
       );
 
-      let instanceTypeId;
-      let identifierTypeId;
       let order;
       let user;
 
@@ -49,16 +45,8 @@ describe('Inventory', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446105');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446111');
 
-          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
-            instanceTypeId = instanceTypes[0].id;
-          });
-          InventoryInstances.getIdentifierTypes({ query: `name=="${identifierTypeName}"` }).then(
-            (identifier) => {
-              identifierTypeId = identifier.id;
-            },
-          );
           Organizations.createOrganizationViaApi(organization).then(() => {
             const orderData = NewOrder.getDefaultOngoingOrder({
               vendorId: organization.id,
@@ -71,36 +59,17 @@ describe('Inventory', () => {
           .then(() => {
             instancesData.forEach((data, index) => {
               if (data.source === INSTANCE_SOURCE_NAMES.FOLIO) {
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: instanceTitles[index],
-                    identifiers: [
-                      {
-                        value: identifierValue,
-                        identifierTypeId,
-                      },
-                    ],
-                    staffSuppress: data.isStaffSuppressed,
-                  },
+                InventoryInstance.createInstanceViaApi({
+                  instanceTitle: instanceTitles[index],
+                  staffSuppress: data.isStaffSuppressed,
+                }).then(({ instanceData }) => {
+                  cy.getInstanceById(instanceData.instanceId).then((body) => {
+                    body.staffSuppress = data.isStaffSuppressed;
+                    cy.updateInstance(body);
+                  });
                 });
               } else {
-                cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, [
-                  {
-                    tag: '008',
-                    content: QuickMarcEditor.defaultValid008Values,
-                  },
-                  {
-                    tag: '020',
-                    content: `$a ${identifierValue}`,
-                    indicators: ['\\', '\\'],
-                  },
-                  {
-                    tag: '245',
-                    content: `$a ${instanceTitles[index]}`,
-                    indicators: ['1', '1'],
-                  },
-                ]).then((instanceId) => {
+                cy.createSimpleMarcBibViaAPI(instanceTitles[index]).then((instanceId) => {
                   cy.getInstanceById(instanceId).then((body) => {
                     body.staffSuppress = data.isStaffSuppressed;
                     cy.updateInstance(body);
@@ -124,9 +93,8 @@ describe('Inventory', () => {
               Orders.selectOrderByPONumber(order.poNumber);
               OrderDetails.selectAddPOLine();
               OrderLineEditForm.clickTitleLookUpButton();
-              SelectInstanceModal.verifyModalView();
-              SelectInstanceModal.chooseSearchOption(identifierSearchOption);
-              SelectInstanceModal.checkSearchOptionSelected(identifierSearchOption);
+              SelectInstanceModal.chooseSearchOption(querySearchOption);
+              SelectInstanceModal.checkSearchOptionSelected(querySearchOption);
             });
           });
       });
@@ -140,8 +108,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446105 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "ISBN") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446105'] },
+        'C446111 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Query search") (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C446111'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(
@@ -155,7 +123,7 @@ describe('Inventory', () => {
             false,
           );
 
-          SelectInstanceModal.searchByName(identifierValue);
+          SelectInstanceModal.searchByName(`title="${instanceTitlePrefix}"`);
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
           instanceTitles.forEach((title) => {

@@ -54,7 +54,7 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
-          InventoryInstances.getIdentifierTypes({ query: `name="${identifierTypeName}"` }).then(
+          InventoryInstances.getIdentifierTypes({ query: `name=="${identifierTypeName}"` }).then(
             (identifier) => {
               identifierTypeId = identifier.id;
             },
