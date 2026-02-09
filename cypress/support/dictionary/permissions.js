@@ -1313,6 +1313,10 @@ export default {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
   },
+  uiSettingsDeveloperUserLocale: {
+    internal: 'ui-developer.settings.userLocale',
+    gui: 'Settings (developer): Can edit user configuration values',
+  },
   uiSettingsTenantReadingRoomAll: {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',

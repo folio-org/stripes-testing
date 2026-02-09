@@ -54,8 +54,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10953 Create a new job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10953'] },
+      'C1003537 Create a new job profile (firebird)',
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C1003537'] },
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.openNewJobProfileForm();

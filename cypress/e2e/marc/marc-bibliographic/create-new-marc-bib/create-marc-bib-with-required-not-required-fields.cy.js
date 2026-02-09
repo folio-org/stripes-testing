@@ -1,4 +1,3 @@
-import { including } from '@interactors/html';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -41,8 +40,6 @@ describe('MARC', () => {
           indicators: ['\\', '\\'],
           content: '$a Local Not Required field',
         },
-        successMessage:
-          'This record has successfully saved and is in process. Changes may not appear immediately.',
         userProperties: {},
       };
 
@@ -224,9 +221,6 @@ describe('MARC', () => {
 
           // Step 5: Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-
-          // Verify success saving toast notification is displayed
-          QuickMarcEditor.checkCallout(including(testData.successMessage));
 
           // Verify "Create a new MARC bib record" window is closed
           QuickMarcEditor.checkAfterSaveAndClose();

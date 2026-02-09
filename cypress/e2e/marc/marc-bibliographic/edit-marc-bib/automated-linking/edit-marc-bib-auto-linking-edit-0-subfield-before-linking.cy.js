@@ -130,6 +130,9 @@ describe('MARC', () => {
               preLinkedFields.forEach((field) => {
                 QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
                 MarcAuthorities.switchToSearch();
+                cy.ifConsortia(true, () => {
+                  InventorySearchAndFilter.byShared('No');
+                });
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 InventoryInstance.searchResults(field.value);
                 InventoryInstance.clickLinkButton();

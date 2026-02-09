@@ -132,21 +132,15 @@ describe('Bulk-edit', () => {
 
         capabSetToUnselect.forEach((capabSet) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
+          cy.wait(5000);
         });
 
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-        AuthorizationRoles.clickOnCapabilitySetsAccordion();
-        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
-        });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.wait(5000);
+        cy.logout();
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
       },

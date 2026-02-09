@@ -22,7 +22,7 @@ describe('Inventory', () => {
       searchOption: 'All',
       resourceTypeAccordionName: 'Resource type',
       searchQueries: [
-        '1968',
+        '1678',
         '0007',
         '167u',
         '167b',
@@ -90,9 +90,11 @@ describe('Inventory', () => {
         .then(() => {
           cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
             testData.userId = userProperties.userId;
-            cy.login(userProperties.username, userProperties.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
+            cy.waitForAuthRefresh(() => {
+              cy.login(userProperties.username, userProperties.password);
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              InventoryInstances.waitContentLoading();
+            });
             InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               testData.resourceTypeAccordionName,

@@ -9,6 +9,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
@@ -199,6 +200,9 @@ describe('MARC', () => {
             testData.forC359206.searchOption,
             testData.forC359206.lcControlNumberA,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           MarcAuthorities.checkFieldAndContentExistence(
             '010',
             testData.forC359206.lcControlNumberA,

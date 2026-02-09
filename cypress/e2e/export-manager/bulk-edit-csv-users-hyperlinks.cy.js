@@ -16,8 +16,7 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-// Obsolete from Trillium (MODEXPW-598)
-describe.skip('Export Manager', () => {
+describe('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditCsvView.gui,
@@ -43,8 +42,8 @@ describe.skip('Export Manager', () => {
   });
 
   it(
-    'C365102 Verify hyperlink on the "JobID" column -- Local approach (firebird) (TaaS)',
-    { tags: [] },
+    'C788682 Verify hyperlink on the "JobID" column -- Local approach (firebird) (TaaS)',
+    { tags: ['extendedPath', 'firebird', 'C788682'] },
     () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

@@ -213,9 +213,11 @@ describe('Inventory', () => {
         'C477560 Other scheme call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
         { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C477560'] },
         () => {
-          cy.login(tempUser.username, tempUser.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
+          cy.waitForAuthRefresh(() => {
+            cy.login(tempUser.username, tempUser.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+          });
           // Switch to Browse tab and select Call numbers (all)
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);

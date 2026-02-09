@@ -31,7 +31,7 @@ const searchCases = [
       {
         authRef: 'Authorized',
         heading:
-          'AT_C409445 Corporate name 110 Apple & Honey Productions subb subc subd subg subn--subv--subx--suby--subz',
+          'AT_C409445 Corporate name 110 Apple & Honey Productions subb subc subd subg subn subv subx suby subz',
         type: 'Corporate Name',
       },
     ],
@@ -44,7 +44,7 @@ const searchCases = [
       {
         authRef: 'Reference',
         heading:
-          'AT_C409445 Corporate name 410 Apple and Honey Productions subb subc subd subg subn--subv--subx--suby--subz',
+          'AT_C409445 Corporate name 410 Apple and Honey Productions subb subc subd subg subn subv subx suby subz',
         type: 'Corporate Name',
       },
     ],
@@ -57,7 +57,7 @@ const searchCases = [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409445 Corporate name 510 Apple & Honey Film Corp. subb subc subd subg subn--subv--subx--suby--subz',
+          'AT_C409445 Corporate name 510 Apple & Honey Film Corp. subb subc subd subg subn subv subx suby subz',
         type: 'Corporate Name',
       },
     ],
@@ -70,7 +70,7 @@ const searchCases = [
       {
         authRef: 'Authorized',
         heading:
-          'AT_C409445 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--suby--subz',
+          'AT_C409445 Conference Name 111 Western Region Agricultural Education Research Meeting subc subd subn subq subg subv subx suby subz',
         type: 'Conference Name',
       },
     ],
@@ -83,7 +83,7 @@ const searchCases = [
       {
         authRef: 'Reference',
         heading:
-          'AT_C409445 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg--subv--subx--suby--subz',
+          'AT_C409445 Conference Name 411 Western Regional Agricultural Education Research Meeting subc subd subn subq subg subv subx suby subz',
         type: 'Conference Name',
       },
     ],
@@ -96,7 +96,7 @@ const searchCases = [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409445 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subg--subv--subx--suby--subz',
+          'AT_C409445 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subv subx suby subz subg',
         type: 'Conference Name',
       },
     ],

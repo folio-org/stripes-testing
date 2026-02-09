@@ -55,6 +55,9 @@ export default {
       rolloverButton.has({ disabled: true, visible: true }),
     ]);
   },
+  verifyCheckboxState(checkboxName, isChecked = true) {
+    cy.expect(Checkbox({ name: checkboxName }).has({ checked: isChecked }));
+  },
   fillLedgerRolloverFields({ fiscalYear, rolloverBudgets, rolloverEncumbrance }) {
     cy.do([fiscalYearSelect.click(), fiscalYearSelect.choose(fiscalYear)]);
 
