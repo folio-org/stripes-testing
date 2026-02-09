@@ -801,6 +801,10 @@ export default {
   },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
+  uiClaimingView: {
+    internal: 'ui-claims.claiming.view',
+    gui: 'Claims: View claims',
+  },
   // Receiving
   uiReceivingView: {
     internal: 'ui-receiving.view',
@@ -1219,7 +1223,7 @@ export default {
     internal: 'ui-users.settings.transfers.all',
     gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
-  uiSettingsCanChangeLoacalPassword: {
+  uiSettingsCanChangeLocalPassword: {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
   },
@@ -1320,6 +1324,10 @@ export default {
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
+  },
+  uiSettingsDeveloperUserLocale: {
+    internal: 'ui-developer.settings.userLocale',
+    gui: 'Settings (developer): Can edit user configuration values',
   },
   uiSettingsTenantReadingRoomAll: {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',

@@ -5,12 +5,15 @@ import {
   or,
   MultiColumnListCell,
   MultiColumnListRow,
+  Accordion,
 } from '../../../../interactors';
 import Courses from './courses';
 import NoteEditForm from '../notes/existingNoteEdit';
 
 const notesSection = Section({ id: 'viewCourseNotes' });
 const newNoteButton = Button({ id: 'note-create-button' });
+const notesAccordionToggleButton = Button({ id: 'accordion-toggle-button-viewCourseNotes' });
+const notesAccordionSection = Accordion({ id: 'viewCourseNotes' });
 
 export default {
   close() {
@@ -56,5 +59,21 @@ export default {
 
   openCourseNotes(row) {
     cy.do(notesSection.find(MultiColumnListRow({ indexRow: `row-${row}` })).click());
+  },
+
+  expandNotesSection() {
+    cy.do(notesAccordionToggleButton.click());
+  },
+
+  verifyNoteInList(noteTitle) {
+    cy.expect(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).exists(),
+    );
+  },
+
+  clickNoteInList(noteTitle) {
+    cy.do(
+      notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).click(),
+    );
   },
 };

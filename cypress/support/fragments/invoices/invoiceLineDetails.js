@@ -35,6 +35,10 @@ const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
   Section({ id: 'otherRelatedInvoiceLines' }),
 );
 
+const receivingHistorySection = Section({ id: 'invoiceLineReceivingHistory' });
+const receivingHistoryNextButton = receivingHistorySection.find(Button('Next'));
+const receivingHistoryPreviousButton = receivingHistorySection.find(Button('Previous'));
+
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
@@ -181,5 +185,71 @@ export default {
   },
   closeInvoiceLineDetailsPane: () => {
     cy.do(invoiceLineDetailsPane.find(Button({ id: 'clickable-back-to-invoice' })).click());
+  },
+  checkReceivingHistoryPaginationButtons({ nextDisabled = false, previousDisabled = false } = {}) {
+    if (nextDisabled !== undefined) {
+      cy.expect(receivingHistoryNextButton.has({ disabled: nextDisabled }));
+    }
+    if (previousDisabled !== undefined) {
+      cy.expect(receivingHistoryPreviousButton.has({ disabled: previousDisabled }));
+    }
+  },
+  clickReceivingHistoryNextButton() {
+    cy.do(receivingHistoryNextButton.click());
+  },
+  clickReceivingHistoryPreviousButton() {
+    cy.do(receivingHistoryPreviousButton.click());
+  },
+  checkReceivingHistoryTableContent({ startRange, endRange, records = [] } = {}) {
+    if (startRange !== undefined) {
+      cy.get('#invoiceLineReceivingHistory').should('contain', startRange);
+    }
+    if (endRange !== undefined) {
+      cy.get('#invoiceLineReceivingHistory').should('contain', endRange);
+    }
+    records.forEach((record, index) => {
+      if (record.displaySummary) {
+        cy.expect(
+          receivingHistorySection
+            .find(MultiColumnListCell({ row: index, column: 'Display summary' }))
+            .has({ content: including(record.displaySummary) }),
+        );
+      }
+      if (record.copyNumber) {
+        cy.expect(
+          receivingHistorySection
+            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.enumeration) {
+        cy.expect(
+          receivingHistorySection
+            .find(MultiColumnListCell({ row: index, column: 'Enumeration' }))
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+      if (record.chronology) {
+        cy.expect(
+          receivingHistorySection
+            .find(MultiColumnListCell({ row: index, column: 'Chronology' }))
+            .has({ content: including(record.chronology) }),
+        );
+      }
+    });
+  },
+  scrollToBottomOfReceivingHistory() {
+    cy.get('#invoiceLineReceivingHistory [class*="mclScrollable"]').scrollTo('bottom', {
+      ensureScrollable: false,
+    });
+    cy.wait(1000);
+  },
+  clickReceiptDateLink(rowIndex = 0) {
+    const link = receivingHistorySection
+      .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
+      .find(MultiColumnListCell({ column: 'Receipt date' }))
+      .find(Link());
+
+    cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
 };

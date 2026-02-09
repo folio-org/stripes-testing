@@ -78,10 +78,12 @@ describe('Title Level Request', () => {
         requesterId: userData.userId,
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
-      });
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
+
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
+          authRefresh: true,
+        });
       });
     });
   });

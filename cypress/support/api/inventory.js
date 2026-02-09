@@ -308,7 +308,7 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
   });
 });
 
-Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
+Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams, ignoreErrors = false) => {
   delete newParams.holdingsItems;
   delete newParams.bareHoldingsItems;
   delete newParams.holdingsTypeId;
@@ -316,6 +316,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
     method: 'PUT',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     body: newParams,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
