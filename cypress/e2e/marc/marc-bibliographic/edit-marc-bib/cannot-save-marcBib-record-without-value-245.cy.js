@@ -71,11 +71,11 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.error245Required);
           QuickMarcEditor.closeCallout(testData.error245Required);
           QuickMarcEditor.updateExistingField(testData.tag245, '');
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.error245Required);
         },
       );
