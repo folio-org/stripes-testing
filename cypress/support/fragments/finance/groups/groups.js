@@ -70,6 +70,17 @@ export default {
     this.waitForGroupDetailsLoading();
   },
 
+  createDefaultGroupAndCaptureId(defaultGroup) {
+    cy.intercept('POST', '**/finance/groups*').as('createGroupRequest');
+
+    this.createDefaultGroup(defaultGroup);
+
+    return cy.wait('@createGroupRequest').then((interception) => {
+      defaultGroup.id = interception.response.body.id;
+      return defaultGroup;
+    });
+  },
+
   waitForGroupDetailsLoading: () => {
     cy.do(Section({ id: 'pane-group-details' }).visible);
   },
@@ -127,6 +138,19 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: firstFundName }),
     ]);
+  },
+
+  removeFundFromGroup: (fundName) => {
+    cy.do(
+      Accordion({ id: 'fund' })
+        .find(MultiColumnListRow({ content: including(fundName), isContainer: true }))
+        .find(Button({ id: 'remove-item-button' }))
+        .click(),
+    );
+  },
+
+  verifyFundsCount: (count) => {
+    cy.expect(Accordion({ id: 'fund' }).find(MultiColumnList()).has({ rowCount: count }));
   },
 
   waitLoading: () => {

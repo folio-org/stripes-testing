@@ -171,5 +171,15 @@ export default {
     cy.get('button').contains('Refund').should('have.attr', 'disabled');
     cy.get('body').type('{esc}');
   },
+  checkErrorEllipsisDisabled: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .open(),
+    );
+    cy.get('button').contains('Error').should('have.attr', 'disabled');
+    cy.get('body').type('{esc}');
+  },
   closeFeesFinesDetails: () => cy.do(Button({ icon: 'times' }).click()),
 };
