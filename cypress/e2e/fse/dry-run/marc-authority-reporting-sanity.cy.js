@@ -172,7 +172,7 @@ describe('MARC', () => {
               'Number of bibliographic records linked',
               '2',
               'Updater',
-              `${user.personal.firstName}, ${user.personal.lastName}`,
+              `${user.personal.lastName}, ${user.personal.firstName}`,
             ],
           );
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
