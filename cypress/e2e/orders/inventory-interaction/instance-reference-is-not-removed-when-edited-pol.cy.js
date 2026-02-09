@@ -5,11 +5,9 @@ import {
   ORDER_STATUSES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import {
-  InstanceRecordView,
-  InventoryInstance,
-  InventoryInstances,
-} from '../../../support/fragments/inventory';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   BasicOrderLine,
   NewOrder,
@@ -35,52 +33,51 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-    InventoryInstance.createInstanceViaApi()
-      .then(({ instanceData }) => {
-        testData.instance = instanceData;
-      })
-      .then(() => {
-        Organizations.createOrganizationViaApi(organization).then((orgResp) => {
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-            (locationResp) => {
-              cy.getAcquisitionMethodsApi({
-                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-              }).then((amResp) => {
-                cy.getBookMaterialType().then((mtypeResp) => {
-                  const orderLine = {
-                    ...BasicOrderLine.defaultOrderLine,
-                    instanceId: testData.instance.instanceId,
-                    cost: {
-                      listUnitPrice: 20.0,
-                      currency: 'USD',
-                      discountType: 'percentage',
-                      quantityPhysical: 1,
-                      poLineEstimatedPrice: 20.0,
-                    },
-                    locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
-                    acquisitionMethod: amResp.body.acquisitionMethods[0].id,
-                    physical: {
-                      createInventory: 'Instance, Holding, Item',
-                      materialType: mtypeResp.id,
-                      materialSupplier: orgResp,
-                      volumes: [],
-                    },
-                    titleOrPackage: testData.instance.instanceTitle,
-                  };
+    InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+      testData.instance = instanceData;
 
-                  Orders.createOrderViaApi(testData.order).then((orderResp) => {
-                    testData.order.id = orderResp.id;
-                    testData.orderNumber = orderResp.poNumber;
-                    orderLine.purchaseOrderId = orderResp.id;
+      Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResp) => {
+            testData.location = locationResp;
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((amResp) => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                const orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  instanceId: testData.instance.instanceId,
+                  cost: {
+                    listUnitPrice: 20.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 20.0,
+                  },
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp,
+                    volumes: [],
+                  },
+                  titleOrPackage: testData.instance.instanceTitle,
+                };
 
-                    OrderLines.createOrderLineViaApi(orderLine);
-                  });
+                Orders.createOrderViaApi(testData.order).then((orderResp) => {
+                  testData.order.id = orderResp.id;
+                  testData.orderNumber = orderResp.poNumber;
+                  orderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(orderLine);
                 });
               });
-            },
-          );
-        });
+            });
+          },
+        );
       });
+    });
     InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
       if (settings?.length !== 0) {
         InventoryInteractions.setInstanceMatchingSetting({

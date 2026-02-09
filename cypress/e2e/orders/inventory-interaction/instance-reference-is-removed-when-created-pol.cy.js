@@ -1,7 +1,7 @@
 import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { NewOrder, OrderDetails, OrderLines, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
@@ -10,22 +10,19 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
+  const testData = {};
   const order = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-    reEncumber: true,
   };
   const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+    instanceName: `AT_C374113_instance_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
   let orderNumber;
   let location;
-  let instance;
 
   before(() => {
     cy.getAdminToken();
@@ -53,7 +50,7 @@ describe('Orders', () => {
     const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instanceResponse) => {
-        instance = instanceResponse;
+        testData.instance = instanceResponse;
       },
     );
 
@@ -75,15 +72,6 @@ describe('Orders', () => {
     cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
-      if (settings?.length !== 0) {
-        InventoryInteractions.setInstanceMatchingSetting({
-          ...settings[0],
-          value: JSON.stringify({ isInstanceMatchingDisabled: true }),
-        });
-      }
-    });
     Users.deleteViaApi(user.userId);
   });
 
@@ -96,28 +84,33 @@ describe('Orders', () => {
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+      cy.wait(2000);
+      InstanceRecordView.getAssignedHRID().then((hridBefore) => {
+        testData.hridBeforeEdit = hridBefore;
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-      Orders.selectOrdersPane();
-      Orders.waitLoading();
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
-      OrderLines.fillInInvalidDataForPublicationDate();
-      OrderLines.removeInstanceConnectionModal();
-      OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.name);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-      OrderLines.selectPOLInOrder();
-      OrderLines.openInstanceInPOL(item.instanceName);
-      instance.hrid = instance.hrid.replace(/\d+$/, (match) => {
-        let numericPart = Number(match);
-        numericPart += 1;
-        return numericPart.toString().padStart(match.length, '0');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
+        Orders.selectFromResultsList(orderNumber);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
+        OrderLines.fillInInvalidDataForPublicationDate();
+        OrderLines.removeInstanceConnectionModal();
+        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.name);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstanceInPOL(item.instanceName);
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(2000);
+        InstanceRecordView.getAssignedHRID().then((hridAfter) => {
+          testData.hridAfterEdit = hridAfter;
+
+          expect(testData.hridAfterEdit).not.to.equal(testData.hridBeforeEdit);
+        });
       });
-      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
     },
   );
 });

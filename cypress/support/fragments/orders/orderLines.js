@@ -111,6 +111,7 @@ const addDonorsModal = Modal('Add donors');
 const titleLookUpButton = Button('Title look-up');
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
+const locationLookUpButton = Button('Location look-up');
 
 // Edit form
 // PO Line details section
@@ -467,13 +468,9 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      Button('Location look-up').click(),
+      locationLookUpButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantityPhysical), saveAndCloseButton.click()]);
   },
 
@@ -496,11 +493,7 @@ export default {
     ]);
     cy.wait(4000);
     cy.do(createNewLocationButton.click());
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       Select('Create inventory*').choose('Instance, holdings, item'),
@@ -527,11 +520,9 @@ export default {
       addLocationButton.click(),
     ]);
     cy.wait(4000);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.selectLocation(locationName);
     cy.do([
-      Button('Location look-up').click(),
-      TextField({ id: 'input-record-search' }).fillIn(locationName),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(locationName)).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
@@ -655,13 +646,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -688,11 +673,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -747,11 +728,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -779,11 +756,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantity),
       quantityElectronicField.fillIn(quantity),
@@ -824,11 +797,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -868,13 +837,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -904,13 +867,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantity),
       quantityElectronicField.fillIn(quantity),
@@ -940,12 +897,10 @@ export default {
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      Button('Location look-up').click(),
-      TextField({ id: 'input-record-search' }).fillIn(location),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(location)).click(),
-      quantityPhysicalLocationField.fillIn(quantity),
+      locationLookUpButton.click(),
     ]);
+    SelectLocationModal.selectLocation(location);
+    cy.do(quantityPhysicalLocationField.fillIn(quantity));
     save();
     cy.wait(4000);
     submitOrderLine();
@@ -976,13 +931,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(location),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: location, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityElectronicField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1059,13 +1008,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1078,7 +1021,7 @@ export default {
     firstFundValue,
     secondFund,
     secondFundValueInPercentage,
-    institutionId,
+    location,
   ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -1111,11 +1054,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1169,7 +1108,7 @@ export default {
     quantity,
     expenseClass,
     value,
-    institutionId,
+    location,
   ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -1197,13 +1136,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations')
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1214,7 +1147,7 @@ export default {
     unitPrice,
     quantity,
     value,
-    institutionId,
+    location,
   ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -1241,11 +1174,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.expect(Section({ id: 'fundDistributionAccordion' }).has({ error: 'Required!' }));
   },
@@ -1481,7 +1410,7 @@ export default {
     cy.do([fundDistributionField.fillIn('100'), saveAndCloseButton.click()]);
   },
 
-  fillPolWithEuroCurrency(fund, unitPrice, quantity, institutionId) {
+  fillPolWithEuroCurrency(fund, unitPrice, quantity, location) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -1507,17 +1436,13 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
   },
 
-  fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
+  fillPolWithPLNCurrency(fund, unitPrice, quantity, location) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -1543,11 +1468,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1621,7 +1542,7 @@ export default {
     save();
   },
 
-  fillInPOLineInfoForExportWithLocation(AUMethod, institutionId) {
+  fillInPOLineInfoForExportWithLocation(AUMethod, location) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
@@ -1635,15 +1556,8 @@ export default {
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(institutionId),
-      Button('Search').click(),
     ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
-        .click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
@@ -1655,7 +1569,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, institutionId, accountNumber) {
+  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, location, accountNumber) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
@@ -1665,20 +1579,14 @@ export default {
     cy.do([
       SelectionOption(AUMethod).click(),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
-    ]);
-    cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
-    cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
+    SelectLocationModal.selectLocation(location);
+    cy.do(quantityElectronicField.fillIn(quantityElectronic));
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
@@ -1689,7 +1597,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhysicalResource(AUMethod, institutionName, quantity) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(AUMethod, location, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -1703,12 +1611,8 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionName),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionName)).click(),
-    ]);
-    cy.do([quantityPhysicalLocationField.fillIn(quantity)]);
+    SelectLocationModal.selectLocation(location);
+    cy.do(quantityPhysicalLocationField.fillIn(quantity));
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
       quantityPhysicalLocationField.has({ value: quantity }),
@@ -1724,7 +1628,7 @@ export default {
     unitPrice,
     quantity,
     value,
-    institutionId,
+    location,
   ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -1751,11 +1655,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -1773,11 +1673,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionName),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionName)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionName);
     cy.do([quantityPhysicalLocationField.fillIn(quantity)]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
@@ -1809,11 +1705,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionName),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionName)).click(),
-    ]);
+    SelectLocationModal.selectLocation(institutionName);
     cy.do([
       quantityPhysicalLocationField.fillIn(quantity),
       quantityElectronicField.fillIn(quantity),
@@ -1833,7 +1725,7 @@ export default {
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
-      Button('Location look-up').click(),
+      locationLookUpButton.click(),
       Select({ name: 'campusId' }).choose('City Campus'),
       Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
@@ -2090,14 +1982,9 @@ export default {
       addLocationButton.click(),
     ]);
     cy.wait(4000);
-    cy.do([
-      Button('Location look-up').click(),
-      TextField({ id: 'input-record-search' }).fillIn(locationName),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(locationName)).click(),
-      quantityPhysicalLocationField.fillIn(physicalQuantity),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.selectLocation(locationName);
+    cy.do([quantityPhysicalLocationField.fillIn(physicalQuantity), saveAndCloseButton.click()]);
   },
 
   changePhysicalUnitPrice: (unitPrice) => {
@@ -2700,7 +2587,7 @@ export default {
     unitPrice,
     quantity,
     value,
-    institutionId,
+    location,
     currency,
     currencyLogo,
     exchangeRate,
@@ -2730,11 +2617,7 @@ export default {
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
-      Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
-    ]);
+    SelectLocationModal.selectLocation(location);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
     cy.wait(4000);
     submitOrderLine();
@@ -2744,7 +2627,7 @@ export default {
     cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
-      Button('Location look-up').click(),
+      locationLookUpButton.click(),
       selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
       Button('Search').click(),
     ]);
@@ -2945,5 +2828,12 @@ export default {
       .find('[role="alert"]')
       .contains('Required!')
       .should('be.visible');
+  },
+
+  fillCostDetailsForPhysicalOrderType(physicalPrice, quantity) {
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+    ]);
   },
 };
