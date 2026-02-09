@@ -1657,7 +1657,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, institutionId, accountNumber) {
+  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, location, accountNumber) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
@@ -1676,9 +1676,11 @@ export default {
       createNewLocationButton.click(),
     ]);
     cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      TextField({ id: 'input-record-search' }).fillIn(location),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: location, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
     cy.expect([
@@ -2062,7 +2064,7 @@ export default {
   },
   setElectronicQuantity(quantity) {
     cy.wait(1500);
-    cy.do(quantityElectronicField.fillIn(quantity));
+    cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
     cy.expect(quantityElectronicField.has({ value: quantity }));
   },
   openCreateHoldingForLocation() {
@@ -2183,6 +2185,15 @@ export default {
   cancelEditingPOL: () => {
     cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
     cy.wait(6000);
+  },
+
+  confirmCancelingPOLChanges: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(2000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
@@ -2921,6 +2932,13 @@ export default {
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicPrice),
       quantityElectronicTextField.fillIn(quantity),
+    ]);
+  },
+
+  fillCostDetailsForPhysicalOrderType(physicalPrice, quantity) {
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalPrice),
+      quantityPhysicalTextField.fillIn(quantity),
     ]);
   },
 
