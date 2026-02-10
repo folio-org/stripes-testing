@@ -29,3 +29,7 @@ export const getRandomLetters = (count) => {
   }
   return result;
 };
+
+export const pluralize = (count, singular, plural = `${singular}s`) => {
+  return count === 1 ? singular : plural;
+};
