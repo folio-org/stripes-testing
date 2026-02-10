@@ -68,6 +68,7 @@ Cypress.Commands.add('getUserTokenOfAdminUser', () => {
 });
 
 Cypress.Commands.add('getUserToken', (username, password) => {
+  cy.allure().logCommandSteps(false);
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
@@ -85,6 +86,7 @@ Cypress.Commands.add('getUserToken', (username, password) => {
       Cypress.env('token', headers['x-okapi-token']);
     }
   });
+  cy.allure().logCommandSteps();
 });
 
 Cypress.Commands.add('logoutViaApi', () => {
