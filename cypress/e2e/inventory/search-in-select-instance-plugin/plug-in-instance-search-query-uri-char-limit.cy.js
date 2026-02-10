@@ -47,6 +47,7 @@ describe('Inventory', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.ordersPath,
             waiter: Orders.waitLoading,
+            authRefresh: true,
           });
           Orders.selectOrderByPONumber(order.poNumber);
           OrderDetails.selectAddPOLine();
@@ -64,8 +65,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C503245 Error message is displayed when search query URI request exceeds character limit (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503245'] },
+      'C503247 Select Instance plugin | Error message is displayed when search query URI request exceeds character limit (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C503247'] },
       () => {
         SelectInstanceModal.chooseSearchOption(searchOptions.query);
         SelectInstanceModal.checkSearchOptionSelected(searchOptions.query);
