@@ -15,7 +15,7 @@ import {
   Checkbox,
   Pane,
 } from '../../../../interactors';
-import { pluralize } from '../../../../scripts/helpers/tests.helper';
+import { pluralize } from '../../utils/stringTools';
 
 const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
@@ -633,8 +633,10 @@ export default {
         .invoke('text')
         .then((text) => {
           if (numberOfMatchedRecords) {
+            const recordText = pluralize(numberOfMatchedRecords, 'record');
+
             expect(text).to.equal(
-              `Query returns ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${numberOfMatchedRecords} ${recordText}:`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');
