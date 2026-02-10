@@ -13,43 +13,43 @@ import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
-} from '../../../support/constants';
-import { Permissions } from '../../../support/dictionary';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+} from '../../../../support/constants';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import ExportJobProfiles from '../../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
-} from '../../../support/fragments/settings/dataImport';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+} from '../../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
-} from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
+} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import { parseSanityParameters } from '../../../../support/utils/users';
+
+const { user, memberTenant } = parseSanityParameters();
 
 describe('Data Import', () => {
   describe('Log details', () => {
-    let user;
     const instanceHrids = [];
     const quantityOfUpdatedItems = '2';
     const quantityOfCreatedItems = '1';
@@ -240,21 +240,15 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.dataExportViewAddUpdateProfiles.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+      cy.setTenant(memberTenant.id);
+      cy.getUserToken(user.username, user.password);
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+      cy.allure().logCommandSteps(false);
+      cy.login(user.username, user.password, {
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
       });
+      cy.allure().logCommandSteps(true);
     });
 
     after('Delete test data', () => {
@@ -264,7 +258,8 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       FileManager.deleteFileFromDownloadsByMask(`*${exportedFileName}`);
       FileManager.deleteFileFromDownloadsByMask(`*${nameForCSVFile}`);
-      cy.getAdminToken().then(() => {
+      cy.setTenant(memberTenant.id);
+      cy.getUserToken(user.username, user.password).then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
@@ -282,7 +277,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        Users.deleteViaApi(user.userId);
         cy.wrap(instanceHrids).each((hrid) => {
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
             (instance) => {
@@ -297,7 +291,7 @@ describe('Data Import', () => {
 
     it(
       'C356791 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C356791'] },
+      { tags: ['dryRun', 'folijet', 'C356791'] },
       () => {
         // create mapping profiles for creating
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -385,7 +379,10 @@ describe('Data Import', () => {
         });
 
         // create Field mapping profile for export
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TopMenuNavigation.openAppFromDropdown(
+          APPLICATION_NAMES.SETTINGS,
+          APPLICATION_NAMES.DATA_EXPORT,
+        );
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
         cy.wait(10000);
@@ -395,7 +392,10 @@ describe('Data Import', () => {
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // create mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.openAppFromDropdown(
+          APPLICATION_NAMES.SETTINGS,
+          APPLICATION_NAMES.DATA_IMPORT,
+        );
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
@@ -506,7 +506,7 @@ describe('Data Import', () => {
         );
         NewJobProfile.saveAndClose();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.searchByParameter(
           'Subject',
