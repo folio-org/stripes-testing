@@ -33,7 +33,7 @@ describe('MARC', () => {
           searchOptions: {
             identifierAll: 'Identifier (all)',
           },
-          marcValue: 'C422149Radio "Vaticana". Hrvatski program',
+          marcValue: 'C422149Radio "Vaticana"',
         };
 
         const newFields = [
@@ -87,8 +87,8 @@ describe('MARC', () => {
         const createdInstanceIDs = [];
 
         before('Setup', () => {
-          cy.getAdminToken();
-          // make sure there are no duplicate authority records in the system
+          cy.setTenant(memberTenant.id);
+          cy.getUserToken(user.username, user.password);
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422149*');
           InventoryInstances.deleteFullInstancesByTitleViaApi('New title C388565');
 
@@ -101,16 +101,6 @@ describe('MARC', () => {
               response.forEach((record) => {
                 createdAuthorityIDs.push(record[marcFile.propertyName].id);
               });
-            });
-          });
-
-          cy.setTenant(memberTenant.id);
-          cy.getUserToken(user.username, user.password).then(() => {
-            // Fetch user details (REQUIRED)
-            cy.getUserDetailsByUsername(user.username).then((details) => {
-              user.id = details.id;
-              user.personal = details.personal;
-              user.barcode = details.barcode;
             });
           });
 
@@ -193,7 +183,7 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n99036055',
               '',
             );
-            cy.getAdminToken();
+
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
