@@ -1,233 +1,242 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
   INVOICE_STATUSES,
+  LOCATION_NAMES,
   ORDER_STATUSES,
 } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import Permissions from '../../../support/dictionary/permissions';
+import { Budgets, FundDetails, Funds } from '../../../support/fragments/finance';
+import Transactions from '../../../support/fragments/finance/transactions/transactions';
+import { InvoiceLineDetails, Invoices, InvoiceView } from '../../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Finance: Transactions', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const firstLedger = {
-    ...Ledgers.defaultUiLedger,
-    restrictEncumbrance: false,
-    restrictExpenditures: true,
-  };
-  const firstFund = { ...Funds.defaultUiFund };
+describe('Finance', () => {
+  describe('Transactions', () => {
+    const organization = NewOrganization.getDefaultOrganization();
+    const testData = {
+      user: {},
+      fiscalYear: {},
+      fund: {},
+      budget: {},
+      organization,
+      firstOrder: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
+      secondOrder: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
+      firstInvoice: {},
+      secondInvoice: {},
+      thirdInvoice: {},
+    };
+    const isApprovePayEnabled = true;
 
-  const firstOrder = {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
-    approved: true,
-    reEncumber: true,
-  };
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-    allowableEncumbrance: 100,
-    allowableExpenditure: 100,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const isApprovePayEnabled = true;
-  const isApprovePayDisabled = false;
-  let thirdInvoice;
-  let firstInvoice;
-  let secondInvoice;
-  let user;
-  let location;
-  let firstOrderNumber;
+    before(() => {
+      cy.getAdminToken()
+        .then(() => {
+          const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+            ledger: { restrictEncumbrance: false, restrictExpenditures: true },
+            budget: { allocated: 100, allowableEncumbrance: 100, allowableExpenditure: 100 },
+          });
+          testData.fiscalYear = fiscalYear;
+          testData.fund = fund;
+          testData.budget = budget;
 
-  before(() => {
-    cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-      firstLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(firstLedger).then((ledgerResponse) => {
-        firstLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = firstLedger.id;
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+            (locationResponse) => {
+              testData.location = locationResponse;
+            },
+          );
+          cy.getBookMaterialType().then((mtypeResponse) => {
+            testData.materialType = mtypeResponse;
+          });
+          cy.getAcquisitionMethodsApi({
+            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+          }).then((aqResponse) => {
+            testData.acquisitionMethod = aqResponse.body.acquisitionMethods[0];
+          });
+          Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+            organization.id = responseOrganizations;
+          });
+        })
+        .then(() => {
+          const orderLine = {
+            id: uuid(),
+            ...BasicOrderLine.defaultOrderLine,
+            cost: {
+              listUnitPrice: 10,
+              currency: 'USD',
+              discountType: 'percentage',
+              quantityPhysical: 1,
+              poLineEstimatedPrice: 10,
+            },
+            fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+            locations: [{ locationId: testData.location.id, quantity: 1, quantityPhysical: 1 }],
+            acquisitionMethod: testData.acquisitionMethod.id,
+            physical: {
+              createInventory: 'Instance, Holding, Item',
+              materialType: testData.materialType.id,
+              materialSupplier: organization.id,
+              volumes: [],
+            },
+          };
 
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          firstBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(firstBudget);
-          cy.getAdminToken();
+          Orders.createOrderViaApi(testData.firstOrder).then((orderResponse) => {
+            testData.firstOrder.id = orderResponse.id;
+            orderLine.purchaseOrderId = orderResponse.id;
+            testData.firstOrderNumber = orderResponse.poNumber;
 
-          cy.getLocations({ limit: 1 }).then((res) => {
-            location = res;
-
-            cy.getDefaultMaterialType().then((mtype) => {
-              cy.getAcquisitionMethodsApi({
-                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-              }).then((params) => {
-                // Prepare 2 Open Orders for Rollover
-                Organizations.createOrganizationViaApi(organization).then(
-                  (responseOrganizations) => {
-                    organization.id = responseOrganizations;
-                    firstOrder.vendor = organization.id;
-                    const firstOrderLine = {
-                      ...BasicOrderLine.defaultOrderLine,
-                      cost: {
-                        listUnitPrice: 10,
-                        currency: 'USD',
-                        discountType: 'percentage',
-                        quantityPhysical: 1,
-                        poLineEstimatedPrice: 10,
-                      },
-                      fundDistribution: [
-                        { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                      ],
-                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
-                      acquisitionMethod: params.body.acquisitionMethods[0].id,
-                      physical: {
-                        createInventory: 'Instance, Holding, Item',
-                        materialType: mtype.id,
-                        materialSupplier: responseOrganizations,
-                        volumes: [],
-                      },
-                    };
-
-                    Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                      firstOrder.id = firstOrderResponse.id;
-                      firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                      firstOrderNumber = firstOrderResponse.poNumber;
-
-                      OrderLines.createOrderLineViaApi(firstOrderLine);
-                      Orders.updateOrderViaApi({
-                        ...firstOrderResponse,
-                        workflowStatus: ORDER_STATUSES.OPEN,
-                      });
-                    });
-                    Invoices.createInvoiceWithInvoiceLineViaApi({
-                      vendorId: organization.id,
-                      fiscalYearId: defaultFiscalYear.id,
-                      fundDistributions: firstOrderLine.fundDistribution,
-                      accountingCode: organization.erpCode,
-                      releaseEncumbrance: true,
-                      subTotal: 15,
-                    }).then((invoiceResponse) => {
-                      firstInvoice = invoiceResponse;
-
-                      Invoices.changeInvoiceStatusViaApi({
-                        invoice: firstInvoice,
-                        status: INVOICE_STATUSES.APPROVED,
-                      });
-                    });
-
-                    Invoices.createInvoiceWithInvoiceLineViaApi({
-                      vendorId: organization.id,
-                      fiscalYearId: defaultFiscalYear.id,
-                      fundDistributions: firstOrderLine.fundDistribution,
-                      accountingCode: organization.erpCode,
-                      releaseEncumbrance: true,
-                      subTotal: -20,
-                    }).then((secondInvoiceResponse) => {
-                      secondInvoice = secondInvoiceResponse;
-
-                      Invoices.changeInvoiceStatusViaApi({
-                        invoice: secondInvoice,
-                        status: INVOICE_STATUSES.PAID,
-                      });
-                    });
-
-                    Invoices.createInvoiceViaApi({
-                      vendorId: organization.id,
-                      accountingCode: organization.erpCode,
-                    }).then((thirdInvoiceResponse) => {
-                      thirdInvoice = thirdInvoiceResponse;
-
-                      OrderLines.getOrderLineViaApi({
-                        query: `poLineNumber=="*${firstOrderNumber}*"`,
-                      }).then((orderLines) => {
-                        const firstInvoiceLine = Invoices.getDefaultInvoiceLine({
-                          invoiceId: thirdInvoice.id,
-                          invoiceLineStatus: thirdInvoice.status,
-                          fundDistributions: orderLines[0].fundDistribution,
-                          accountingCode: organization.erpCode,
-                          quantity: 1,
-                          subTotal: 16,
-                        });
-                        Invoices.createInvoiceLineViaApi(firstInvoiceLine);
-
-                        const secondInvoiceLine = Invoices.getDefaultInvoiceLine({
-                          invoiceId: thirdInvoice.id,
-                          invoiceLineStatus: thirdInvoice.status,
-                          fundDistributions: orderLines[0].fundDistribution,
-                          accountingCode: organization.erpCode,
-                          quantity: 1,
-                          subTotal: -10,
-                        });
-                        Invoices.createInvoiceLineViaApi(secondInvoiceLine);
-
-                        const thirdInvoiceLine = Invoices.getDefaultInvoiceLine({
-                          invoiceId: thirdInvoice.id,
-                          invoiceLineStatus: thirdInvoice.status,
-                          fundDistributions: orderLines[0].fundDistribution,
-                          accountingCode: organization.erpCode,
-                          quantity: 1,
-                          subTotal: 100,
-                        });
-                        Invoices.createInvoiceLineViaApi(thirdInvoiceLine);
-                        Approvals.setApprovePayValue(isApprovePayEnabled);
-                      });
-                    });
-                  },
-                );
-              });
+            OrderLines.createOrderLineViaApi(orderLine);
+            Orders.updateOrderViaApi({
+              ...orderResponse,
+              workflowStatus: ORDER_STATUSES.OPEN,
             });
           });
+
+          // create first invoice with invoice line (subTotal: 15$)
+          Invoices.createInvoiceWithInvoiceLineViaApi({
+            vendorId: organization.id,
+            fiscalYearId: testData.fiscalYear.id,
+            fundDistributions: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+            accountingCode: organization.erpCode,
+            releaseEncumbrance: true,
+            subTotal: 15,
+          }).then((invoiceResponse) => {
+            testData.firstInvoice = invoiceResponse;
+
+            Invoices.changeInvoiceStatusViaApi({
+              invoice: invoiceResponse,
+              status: INVOICE_STATUSES.APPROVED,
+            });
+          });
+
+          // create second invoice with invoice line (subTotal: -20$)
+          Invoices.createInvoiceWithInvoiceLineViaApi({
+            vendorId: organization.id,
+            fiscalYearId: testData.fiscalYear.id,
+            fundDistributions: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+            accountingCode: organization.erpCode,
+            releaseEncumbrance: true,
+            subTotal: -20,
+          }).then((secondInvoiceResponse) => {
+            testData.secondInvoice = secondInvoiceResponse;
+
+            Invoices.changeInvoiceStatusViaApi({
+              invoice: secondInvoiceResponse,
+              status: INVOICE_STATUSES.PAID,
+            });
+          });
+          // create third invoice with three invoice lines (subTotals: 16$, -10$, 100$)
+          cy.getBatchGroups().then((batchGroup) => {
+            Invoices.createInvoiceViaApi({
+              vendorId: testData.organization.id,
+              fiscalYearId: testData.fiscalYear.id,
+              batchGroupId: batchGroup.id,
+              accountingCode: testData.organization.erpCode,
+            }).then((invoiceResponse) => {
+              testData.thirdInvoice = invoiceResponse;
+
+              const firstInvoiceLine = {
+                invoiceId: invoiceResponse.id,
+                invoiceLineStatus: 'Open',
+                fundDistributions: [
+                  {
+                    distributionType: 'percentage',
+                    value: 100,
+                    fundId: testData.fund.id,
+                    code: testData.fund.code,
+                    encumbrance: null,
+                  },
+                ],
+                description: `Description for the first invoice line ${getRandomPostfix()}`,
+                quantity: 1,
+                subTotal: 16,
+              };
+              const secondInvoiceLine = {
+                invoiceId: invoiceResponse.id,
+                invoiceLineStatus: 'Open',
+                fundDistributions: [
+                  {
+                    distributionType: 'percentage',
+                    value: 100,
+                    fundId: testData.fund.id,
+                    code: testData.fund.code,
+                    encumbrance: null,
+                  },
+                ],
+                description: `Description for the second invoice line ${getRandomPostfix()}`,
+                quantity: 1,
+                subTotal: -10,
+              };
+              const thirdInvoiceLine = {
+                invoiceId: invoiceResponse.id,
+                invoiceLineStatus: 'Open',
+                fundDistributions: [
+                  {
+                    distributionType: 'percentage',
+                    value: 100,
+                    fundId: testData.fund.id,
+                    code: testData.fund.code,
+                    encumbrance: null,
+                  },
+                ],
+                description: `Description for the third invoice line ${getRandomPostfix()}`,
+                quantity: 1,
+                subTotal: 100,
+              };
+              Invoices.createInvoiceLineViaApi(firstInvoiceLine);
+              Invoices.createInvoiceLineViaApi(secondInvoiceLine);
+              Invoices.createInvoiceLineViaApi(thirdInvoiceLine);
+            });
+          });
+          Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
         });
+
+      cy.createTempUser([
+        Permissions.uiFinanceViewFundAndBudget.gui,
+        Permissions.uiInvoicesApproveInvoices.gui,
+        Permissions.uiInvoicesPayInvoices.gui,
+        Permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+        Invoices.waitLoading();
       });
     });
 
-    cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
     });
-  });
 
-  after(() => {
-    cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
-    Users.deleteViaApi(user.userId);
+    // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'true'
+    it(
+      'C496167 Invoice with three invoice lines (including credit) can NOT be paid when available expenditure balance is less that invoice total  (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'C496167'] },
+      () => {
+        Invoices.searchByNumber(testData.thirdInvoice.vendorInvoiceNo);
+        Invoices.selectInvoice(testData.thirdInvoice.vendorInvoiceNo);
+        InvoiceView.checkInvoiceDetails({
+          invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
+        });
+        Invoices.canNotApproveAndPayInvoice(testData.fund);
+        InvoiceView.checkInvoiceDetails({
+          invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
+        });
+        InvoiceView.selectInvoiceLine();
+        InvoiceLineDetails.openFundDetailsPane(testData.fund.name);
+        Funds.waitLoading();
+        FundDetails.viewTransactionsForCurrentBudget();
+        Transactions.waitLoading();
+        Funds.checkAbsentTransaction('Payment');
+        Funds.checkTransactionCount('Pending payment', 1);
+      },
+    );
   });
-
-  it(
-    'C496167 Invoice with three invoice lines (including credit) can NOT be paid when available expenditure balance is less that invoice total  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C496167'] },
-    () => {
-      Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
-      Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);
-      Invoices.canNotApproveAndPayInvoice(
-        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${firstFund.code}].`,
-      );
-      Invoices.selectInvoiceLineByNumber('$16.00');
-      Invoices.openPageFundInInvoiceLine(`${firstFund.name}(${firstFund.code})`);
-      Funds.viewTransactionsForCurrentBudget();
-      Funds.checkAbsentTransaction('Payment');
-    },
-  );
 });

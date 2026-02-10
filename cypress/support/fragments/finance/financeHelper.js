@@ -24,6 +24,7 @@ const fiscalYearButton = Button('Fiscal year');
 const ledgerButton = Button('Ledger');
 const groupButton = Button('Group');
 const fundButton = Button('Fund');
+const resetButton = Button('Reset all');
 
 export default {
   statusActive: 'Active',
@@ -151,5 +152,10 @@ export default {
 
   selectFundsNavigation: () => {
     cy.get('[data-test-finance-navigation-fund="true"]').click();
+  },
+
+  resetFilters: () => {
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 };

@@ -201,7 +201,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(false);
+      Approvals.setApprovePayValueViaApi(false);
       AcquisitionUnits.createAcquisitionUnitViaApi(testData.acqUnit).then(() => {
         cy.getAdminUserDetails().then((adminUser) => {
           testData.adminUserId = adminUser.id;
@@ -244,7 +244,6 @@ describe('Orders', () => {
 
   after(() => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(false);
       Users.deleteViaApi(testData.user.userId);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
