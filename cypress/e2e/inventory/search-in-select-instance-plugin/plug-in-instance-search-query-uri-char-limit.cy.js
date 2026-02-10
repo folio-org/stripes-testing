@@ -64,8 +64,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C503245 Error message is displayed when search query URI request exceeds character limit (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503245'] },
+      'C503247 Select Instance plugin | Error message is displayed when search query URI request exceeds character limit (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C503247'] },
       () => {
         SelectInstanceModal.chooseSearchOption(searchOptions.query);
         SelectInstanceModal.checkSearchOptionSelected(searchOptions.query);
