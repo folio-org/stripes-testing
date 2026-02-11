@@ -7,8 +7,8 @@ describe('Lists', () => {
   describe('Permissions', () => {
     const { user, memberTenant } = parseSanityParameters();
     const listData = {
-      name: `C411693-${getTestEntityValue('list')}`,
-      description: `C411693-${getTestEntityValue('desc')}`,
+      name: `C418649-${getTestEntityValue('list')}`,
+      description: `C418649-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -44,8 +44,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411694 C411693 Lists (Admin): All permissions (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411694', 'C411693'] },
+      'C418649 Lists (Delete): Can create, edit, refresh, and delete lists (corsair)',
+      { tags: ['dryRun', 'corsair', 'C418649'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
@@ -53,26 +53,28 @@ describe('Lists', () => {
           waiter: Lists.waitLoading,
         });
         cy.allure().logCommandSteps();
-        Lists.verifyNewButtonIsEnabled();
         Lists.verifyListIsPresent(listData.name);
-        Lists.selectActiveLists();
-        Lists.selectInactiveLists();
-        Lists.selectPrivateLists();
-        Lists.selectSharedLists();
-        Lists.selectRecordTypeFilter(listData.recordType);
-        Lists.resetAllFilters();
-
         Lists.openList(listData.name);
         Lists.openActions();
         Lists.verifyRefreshListButtonIsActive();
         Lists.verifyEditListButtonIsActive();
         Lists.verifyDuplicateListButtonIsActive();
         Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
-
+        // Lists.verifyExportListButtonDoesNotExist();
+        Lists.refreshList();
+        Lists.waitForCompilingToComplete();
+        Lists.openActions();
+        Lists.deleteList();
+        Lists.cancelDelete();
+        Lists.openActions();
         Lists.editList();
         Lists.openActions();
         Lists.verifyDeleteListButtonIsActive();
+        // Lists.verifyExportListButtonDoesNotExist();
+        Lists.deleteList();
+        Lists.confirmDelete();
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
+        Lists.verifyListIsNotPresent(listData.name);
       },
     );
   });
