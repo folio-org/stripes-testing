@@ -1602,6 +1602,11 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   OR: 'OR',
 };
 
+export const LDE_ROLES = {
+  CATALOGER: 'Cataloger',
+  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
+};
+
 export const AUTHORIZATION_ROLE_TYPES = {
   REGULAR: 'Regular',
   CONSORTIUM: 'Consortium',
