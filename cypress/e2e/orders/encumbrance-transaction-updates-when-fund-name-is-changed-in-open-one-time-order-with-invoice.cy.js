@@ -23,7 +23,7 @@ import {
   ORDER_STATUSES,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import orderLines from '../../support/fragments/orders/orderLines';
+import OrderLines from '../../support/fragments/orders/orderLines';
 import { TransactionDetails } from '../../support/fragments/finance';
 import Users from '../../support/fragments/users/users';
 
@@ -126,7 +126,7 @@ describe('Orders', () => {
         },
       };
 
-      return orderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
+      return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
         testData.orderLine = orderLineResponse;
 
         return Orders.updateOrderViaApi({
@@ -134,11 +134,11 @@ describe('Orders', () => {
           workflowStatus: ORDER_STATUSES.OPEN,
         }).then(() => {
           // Get the order line again to retrieve encumbrance IDs
-          return orderLines
-            .getOrderLineViaApi({ query: `id=="${orderLineResponse.id}"` })
-            .then((orderLinesArray) => {
+          return OrderLines.getOrderLineViaApi({ query: `id=="${orderLineResponse.id}"` }).then(
+            (orderLinesArray) => {
               testData.orderLine = orderLinesArray[0];
-            });
+            },
+          );
         });
       });
     });
@@ -301,11 +301,11 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.openOrderLineEditForm();
-      orderLines.deleteFundInPOLwithoutSave();
-      orderLines.addFundToPOLWithoutSave(0, testData.funds.second, '20');
-      orderLines.addFundToPOLWithoutSave(1, testData.funds.third, '15');
-      orderLines.addFundToPOLWithoutSave(2, testData.funds.fourth, '65');
-      orderLines.saveOrderLine();
+      OrderLines.deleteFundInPOLwithoutSave();
+      OrderLines.addFundToPOLWithoutSave(0, testData.funds.second, '20');
+      OrderLines.addFundToPOLWithoutSave(1, testData.funds.third, '15');
+      OrderLines.addFundToPOLWithoutSave(2, testData.funds.fourth, '65');
+      OrderLines.saveOrderLine();
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds.second.name,
@@ -346,8 +346,8 @@ describe('Orders', () => {
       });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrderLines();
-      orderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
-      orderLines.selectOrderline(`${testData.order.poNumber}-1`);
+      OrderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
+      OrderLines.selectOrderline(`${testData.order.poNumber}-1`);
       OrderLineDetails.openEncumbrancePane(testData.funds.third.name);
       TransactionDetails.checkTransactionDetails({
         information: [
@@ -362,8 +362,8 @@ describe('Orders', () => {
       });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrderLines();
-      orderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
-      orderLines.selectOrderline(`${testData.order.poNumber}-1`);
+      OrderLines.searchByParameter('Keyword', `${testData.order.poNumber}-1`);
+      OrderLines.selectOrderline(`${testData.order.poNumber}-1`);
       OrderLineDetails.openEncumbrancePane(testData.funds.fourth.name);
       TransactionDetails.checkTransactionDetails({
         information: [

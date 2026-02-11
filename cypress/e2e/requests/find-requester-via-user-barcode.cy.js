@@ -74,7 +74,11 @@ describe('Find requester via user barcode', () => {
         itemData.testInstanceIds = specialInstanceIds;
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.inventoryAll.gui, Permissions.checkinAll.gui])
+        cy.createTempUser([
+          Permissions.uiRequestsAll.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.checkinAll.gui,
+        ])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
