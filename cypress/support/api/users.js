@@ -17,17 +17,6 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getUserById', (userId) => {
-  return cy
-    .okapiRequest({
-      path: `users/${userId}`,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body }) => {
-      return body;
-    });
-});
-
 Cypress.Commands.add('getAdminUserDetails', () => {
   if (!Cypress.env('adminUserDetails')) {
     return cy
@@ -496,7 +485,7 @@ Cypress.Commands.add('getUserMigrations', () => {
 });
 
 Cypress.Commands.add('assignDepartmentsToExistingUser', (userId, departments = []) => {
-  cy.getUserById(userId).then((user) => {
+  Users.getUser({ id: userId }).then(({ body: user }) => {
     return cy.updateUser({
       ...user,
       departments,

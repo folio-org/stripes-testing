@@ -6,11 +6,13 @@ import { ConsortiumUtils } from '../utils';
 
 Cypress.Commands.add('getConsortiaId', (options = {}) => {
   const { force = false } = options;
-  const cached = Cypress.env('activeConsortiumId');
 
   /*
-    Consortium ID is required for most of the API calls related to consortia, so caching it will significantly reduce the number of API calls and speed up the tests.
+    Consortium ID is required for most of the API calls related to consortia, so caching it will reduce the number of API calls and speed up the tests.
+    Cypress.env() deprecated starting from Cypress 15.10.0 and should be seamlessly replaced with Cypress.expose(). See https://docs.cypress.io/api/cypress-api/env
    */
+  const cached = Cypress.env('activeConsortiumId');
+
   if (cached && !force) {
     return cy.wrap(cached);
   }
