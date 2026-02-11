@@ -55,7 +55,6 @@ describe('Inventory', () => {
               if (data.source === INSTANCE_SOURCE_NAMES.FOLIO) {
                 InventoryInstance.createInstanceViaApi({
                   instanceTitle: instanceTitles[index],
-                  staffSuppress: data.isStaffSuppressed,
                 }).then(({ instanceData }) => {
                   data.uuid = instanceData.instanceId;
                   cy.getInstanceById(instanceData.instanceId).then((body) => {
