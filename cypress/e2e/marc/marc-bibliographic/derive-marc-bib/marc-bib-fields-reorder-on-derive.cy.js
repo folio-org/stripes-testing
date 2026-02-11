@@ -159,7 +159,7 @@ describe('MARC', () => {
           InventoryInstance.viewSource();
 
           const expectedSourceOrder = [
-            '',
+            'LDR',
             '001',
             '005',
             '800',
