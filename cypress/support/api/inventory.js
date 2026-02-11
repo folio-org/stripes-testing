@@ -353,6 +353,7 @@ Cypress.Commands.add('updateItemViaApi', (item) => {
     method: 'PUT',
     path: `inventory/items/${item.id}`,
     body: { ...item },
+    isDefaultSearchParamsRequired: false,
   }).then(({ body }) => body);
 });
 

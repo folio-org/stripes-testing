@@ -1,6 +1,5 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances, {
   searchItemsOptions,
@@ -8,9 +7,10 @@ import InventoryInstances, {
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
-import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -39,17 +39,16 @@ describe('Inventory', () => {
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C715_FolioInstance');
 
       cy.then(() => {
-        cy.getLocations({
-          limit: 1,
-          query: '(isActive=true and name<>"AT_*") and name<>"autotest*"',
-        }).then((loc) => {
-          location = loc;
-        });
-        cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResponse) => {
+            location = locationResponse;
+          },
+        );
+        cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
           loanType = loanTypes[0];
         });
-        cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
-          materialType = res;
+        cy.getBookMaterialType().then((mtypes) => {
+          materialType = mtypes;
         });
       })
         .then(() => {
@@ -83,12 +82,9 @@ describe('Inventory', () => {
         (userProperties) => {
           user = userProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          });
+          cy.login(user.username, user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
         },
       );
     });

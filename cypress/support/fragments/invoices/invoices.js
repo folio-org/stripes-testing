@@ -866,13 +866,15 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(errorMessage);
   },
 
-  canNotApproveAndPayInvoice: (errorMessage) => {
+  canNotApproveAndPayInvoice: (fund) => {
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve & pay').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${fund.code}].`,
+    );
   },
 
   approveAndPayInvoice: () => {

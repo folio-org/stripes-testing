@@ -1,83 +1,70 @@
-import { ORDER_STATUSES } from '../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import TopMenu from '../../support/fragments/topMenu';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
   const testData = {
     organization,
-    servicePoint: ServicePoints.getDefaultServicePoint(),
     order: {},
     user: {},
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      Organizations.createOrganizationViaApi(testData.organization);
-
-      ServicePoints.createViaApi(testData.servicePoint)
-        .then(() => {
-          testData.location = Locations.getDefaultLocation({
-            servicePointId: testData.servicePoint.id,
-          }).location;
-
-          Locations.createViaApi(testData.location);
-        })
-        .then(() => {
-          cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
-            testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
-            testData.orderLine = {
-              ...BasicOrderLine.getDefaultOrderLine(),
-              cost: {
-                currency: 'USD',
-                discountType: 'percentage',
+    cy.getAdminToken();
+    Organizations.createOrganizationViaApi(testData.organization);
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+      (locationResponse) => {
+        cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
+          testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+          testData.orderLine = {
+            ...BasicOrderLine.getDefaultOrderLine(),
+            cost: {
+              currency: 'USD',
+              discountType: 'percentage',
+              quantityPhysical: 1,
+              quantityElectronic: 1,
+              listUnitPriceElectronic: 10,
+              listUnitPrice: 10,
+            },
+            orderFormat: 'P/E Mix',
+            eresource: {
+              createInventory: 'Instance, Holding',
+              accessProvider: testData.organization.id,
+            },
+            physical: {
+              createInventory: 'Instance, Holding, Item',
+              materialType: materialTypeId,
+            },
+            locations: [
+              {
+                locationId: locationResponse.id,
                 quantityPhysical: 1,
                 quantityElectronic: 1,
-                listUnitPriceElectronic: 10,
-                listUnitPrice: 10,
               },
-              orderFormat: 'P/E Mix',
-              eresource: {
-                createInventory: 'Instance, Holding',
-                accessProvider: testData.organization.id,
-              },
-              physical: {
-                createInventory: 'Instance, Holding, Item',
-                materialType: materialTypeId,
-              },
-              locations: [
-                {
-                  locationId: testData.location.id,
-                  quantityPhysical: 1,
-                  quantityElectronic: 1,
-                },
-              ],
-            };
+            ],
+          };
 
-            Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
-              (order) => {
-                testData.order = order;
-              },
-            );
-          });
+          Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
+            (order) => {
+              testData.order = order;
+            },
+          );
         });
-    });
+      },
+    );
 
     cy.createTempUser([Permissions.uiOrdersEdit.gui, Permissions.uiOrdersView.gui]).then(
       (userProperties) => {
         testData.user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        }, 20_000);
+
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       },
     );
   });
@@ -86,9 +73,6 @@ describe('Orders', () => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
-    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-    Locations.deleteViaApi(testData.location);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
