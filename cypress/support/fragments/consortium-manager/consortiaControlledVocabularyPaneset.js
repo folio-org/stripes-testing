@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -19,6 +20,8 @@ const newButton = Button('+ New');
 const memberLibrariesShare = Checkbox({ labelText: 'Share' });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
+const confirmDeleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
+const confirmDeleteButton = Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' });
 
 export default {
   waitLoading(panesetName) {
@@ -72,7 +75,7 @@ export default {
   },
 
   confirmDelete() {
-    cy.do(Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click());
+    cy.do(confirmDeleteButton.click());
   },
 
   verifyFieldValidatorError(errorMessage) {
@@ -215,5 +218,16 @@ export default {
   clearTextField(placeholder) {
     cy.do(TextField({ placeholder }).clear());
     cy.expect(TextField({ placeholder }).has({ value: '' }));
+  },
+
+  verifySaveButtonIsActive(isActive = true) {
+    cy.expect(saveButton.is({ disabled: !isActive }));
+  },
+
+  verifyDeleteConfirmationMessage(settingName, entityName) {
+    cy.expect(confirmDeleteModal.has({
+      header: `Delete ${settingName}`,
+      message: `The ${settingName} ${entityName} will be deleted.`,
+    }));
   },
 };

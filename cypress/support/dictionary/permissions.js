@@ -1442,7 +1442,7 @@ export default {
     details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
     details: ['obsolete'],
   },
@@ -1493,7 +1493,7 @@ export default {
   },
   // Departments
   createEditViewDepartments: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
   },
   departmentsAll: {
