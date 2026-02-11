@@ -71,6 +71,13 @@ const invoiceDateField = TextField('Invoice date*');
 const vendorInvoiceNumberField = TextField('Vendor invoice number*');
 const batchGroupSelection = Selection('Batch group*');
 const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
+const linesSequencePane = Pane({ id: 'pane-lines-sequence' });
+const invoiceLinesSequenceList = MultiColumnList({ id: 'invoice-lines-sequence' });
+const saveAndContinueButton = Button('Save & continue');
+const invoiceLinesSequenceSelector = '#invoice-lines-sequence';
+const invoiceLinesSequenceRowsSelector = '#invoice-lines-sequence [class*="mclRow--"]';
+const columnHeaderRoleSelector = '[role="columnheader"]';
+const rowInnerDataAttribute = '[data-row-inner="true"]';
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -1472,5 +1479,101 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),
     ]);
+  },
+
+  createInvoiceFromOrderWithEditSequence(invoice) {
+    cy.wait(4000);
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+    ]);
+    cy.wait(2000);
+    cy.do(saveAndContinueButton.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    cy.wait(4000);
+  },
+
+  checkEditSequenceOfInvoiceLinesPage(vendorInvoiceNumber, columns = []) {
+    cy.expect(
+      linesSequencePane.has({
+        title: including(
+          `Edit sequence of invoice lines • Vendor invoice number ${vendorInvoiceNumber}`,
+        ),
+      }),
+    );
+    cy.expect(invoiceLinesSequenceList.exists());
+
+    const columnsToCheck =
+      columns.length > 0
+        ? columns
+        : [
+          'POL number',
+          'Description',
+          'Fund code',
+          'PO status',
+          'Receipt status',
+          'Payment status',
+          'Vendor reference number',
+          'Quantity',
+          'Sub-total',
+          'Adjustments',
+          'Release encumbrance',
+          'Total',
+          'Vendor code',
+        ];
+
+    columnsToCheck.forEach((columnName) => {
+      cy.get(invoiceLinesSequenceSelector).within(() => {
+        cy.contains(columnHeaderRoleSelector, columnName).should('exist');
+      });
+    });
+  },
+
+  dragAndDropInvoiceLine(sourceIndex, targetIndex) {
+    cy.get(invoiceLinesSequenceRowsSelector).as('rows');
+
+    cy.get('@rows').eq(sourceIndex).as('sourceRow');
+    cy.get('@rows').eq(targetIndex).as('targetRow');
+
+    cy.get('@sourceRow').then(($sourceRow) => {
+      const $draggable =
+        $sourceRow.find(rowInnerDataAttribute).length > 0
+          ? $sourceRow.find(rowInnerDataAttribute)
+          : $sourceRow;
+
+      cy.wrap($draggable)
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('dragstart', { force: true });
+    });
+
+    cy.get('@targetRow').then(($targetRow) => {
+      const $droppable =
+        $targetRow.find(rowInnerDataAttribute).length > 0
+          ? $targetRow.find(rowInnerDataAttribute)
+          : $targetRow;
+
+      cy.wrap($droppable).trigger('dragover', { force: true }).trigger('drop', { force: true });
+    });
+
+    cy.get('@sourceRow').then(($sourceRow) => {
+      const $draggable =
+        $sourceRow.find(rowInnerDataAttribute).length > 0
+          ? $sourceRow.find(rowInnerDataAttribute)
+          : $sourceRow;
+
+      cy.wrap($draggable).trigger('dragend', { force: true });
+    });
+
+    cy.wait(1000);
+  },
+
+  saveAndCloseEditSequencePage() {
+    cy.do(linesSequencePane.find(Button('Save & close')).click());
+    cy.wait(4000);
   },
 };

@@ -46,6 +46,9 @@ const routingListSection = orderLineDetailsSection.find(Section({ id: 'routing-l
 const routingListAccordionButton = '#accordion-toggle-button-routing-list';
 const routingListBadgeSelector = '[class*="badge"]';
 const routingListContainer = '#routing-list';
+const relatedInvoiceLinesSection = orderLineDetailsSection.find(
+  Section({ id: 'relatedInvoiceLines' }),
+);
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -398,5 +401,49 @@ export default {
   },
   checkNoRoutingListsText() {
     cy.get(routingListContainer).should('contain.text', 'No routing lists');
+  },
+  checkRelatedInvoiceLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.vendorInvoiceNo) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.vendorInvoiceNo) }),
+        );
+      }
+      if (record.invoiceLineNumber) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.invoiceLineNumber) }),
+        );
+      }
+      if (record.fiscalYear) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: including(record.fiscalYear) }),
+        );
+      }
+      if (record.invoiceDate) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: including(record.invoiceDate) }),
+        );
+      }
+      if (record.vendorCode) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(record.vendorCode) }),
+        );
+      }
+    });
   },
 };

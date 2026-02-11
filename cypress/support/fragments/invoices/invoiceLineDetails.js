@@ -50,6 +50,11 @@ export default {
 
     return InvoiceLineEditForm;
   },
+  openPOLineFromInvoiceLine() {
+    const polNumberLink = informationSection.find(KeyValue('PO line number')).find(Link());
+
+    cy.do([polNumberLink.perform((el) => el.removeAttribute('target')), polNumberLink.click()]);
+  },
   checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
