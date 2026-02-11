@@ -100,8 +100,10 @@ const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
 const heldByAccordion = Accordion('Held by');
 const dateRangeAccordion = Accordion('Date range');
-const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
-const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const dateFromField = TextField({ name: 'startDate' });
+const dateToField = TextField({ name: 'endDate' });
+const dateRangeFromField = dateRangeAccordion.find(dateFromField);
+const dateRangeToField = dateRangeAccordion.find(dateToField);
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
@@ -217,6 +219,7 @@ export default {
   invalidDateErrorText,
   dateOrderErrorText,
   dateRangeAccordion,
+  uriCharLimitErrorText,
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
@@ -1228,7 +1231,7 @@ export default {
     cy.expect(searchButton.has({ disabled: false }));
   },
 
-  varifyInstanceKeyDetails(instanceData) {
+  verifyInstanceKeyDetails(instanceData) {
     cy.wait(4000);
     cy.expect([
       Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
@@ -1782,5 +1785,31 @@ export default {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
     cy.do(multiSelect.open());
     cy.expect(multiSelect.has({ optionsCount: numberOfOptions }));
+  },
+
+  verifyNumberOfBrowseResults(expectedNumber) {
+    cy.expect(anyBrowseResultList.has({ rowCount: expectedNumber }));
+  },
+
+  fillDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.do([
+      Accordion(dateAccordionName).find(dateFromField).fillIn(dateFrom),
+      Accordion(dateAccordionName).find(dateToField).fillIn(dateTo),
+    ]);
+    this.verifyDateFilterValues(dateAccordionName, dateFrom, dateTo);
+  },
+
+  verifyDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.expect([
+      Accordion(dateAccordionName).find(dateFromField).has({ value: dateFrom }),
+      Accordion(dateAccordionName).find(dateToField).has({ value: dateTo }),
+    ]);
+  },
+
+  checkErrorsForDateFilterFields(dateAccordionName, errorFrom, errorTo) {
+    const fromField = Accordion(dateAccordionName).find(dateFromField);
+    const toField = Accordion(dateAccordionName).find(dateToField);
+    if (errorFrom) this.verifyErrorMessageInTextField(fromField, true, errorFrom);
+    if (errorTo) this.verifyErrorMessageInTextField(toField, true, errorTo);
   },
 };

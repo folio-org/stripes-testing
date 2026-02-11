@@ -1,5 +1,12 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -9,11 +16,8 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import ReceivingEditForm from '../../support/fragments/receiving/receivingEditForm';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Orders', () => {
@@ -43,10 +47,10 @@ describe('Orders', () => {
           secondAcquisitionUnit.id = secondAUResponse.id;
 
           cy.createTempUser([
-            permissions.uiInventoryViewInstances.gui,
-            permissions.uiOrdersView.gui,
-            permissions.uiReceivingManageAcquisitionUnits.gui,
-            permissions.uiReceivingViewEditCreate.gui,
+            Permissions.uiInventoryViewInstances.gui,
+            Permissions.uiOrdersView.gui,
+            Permissions.uiReceivingManageAcquisitionUnits.gui,
+            Permissions.uiReceivingViewEditCreate.gui,
           ]).then((userProperties) => {
             user = userProperties;
 
@@ -112,12 +116,7 @@ describe('Orders', () => {
                             (titleResponse) => {
                               title = titleResponse;
                               title.acqUnitIds = [firstAcquisitionUnit.id];
-                              Receiving.updateTitleViaApi(title).then(() => {
-                                cy.login(user.username, user.password, {
-                                  path: TopMenu.ordersPath,
-                                  waiter: Orders.waitLoading,
-                                });
-                              });
+                              Receiving.updateTitleViaApi(title).then(() => {});
                             },
                           );
                         });
@@ -127,6 +126,10 @@ describe('Orders', () => {
                 });
               });
             });
+            cy.login(user.username, user.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+            Orders.selectOrdersPane();
+            Orders.waitLoading();
           });
         },
       );
@@ -148,35 +151,29 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', order.poNumber);
       Orders.selectFromResultsList(order.poNumber);
-
       Orders.receiveOrderViaActions();
       Receiving.waitLoading();
-
       Receiving.selectFromResultsList(orderLine.titleOrPackage);
       ReceivingDetails.waitLoading();
-
       ReceivingDetails.expandTitleInformationAccordion();
       cy.wait(1000);
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(firstAcquisitionUnit.name, true);
-
-      ReceivingDetails.openReceivingEditForm();
+      ReceivingDetails.editReceivingItem();
       ReceivingEditForm.waitLoading();
-
-      cy.wait(500);
+      cy.wait(1000);
       ReceivingEditForm.verifyAcquisitionUnitDisplayed(firstAcquisitionUnit.name, true);
       ReceivingEditForm.removeAcquisitionUnit(firstAcquisitionUnit.name);
       ReceivingEditForm.selectAcquisitionUnit(secondAcquisitionUnit.name);
       ReceivingEditForm.verifyAcquisitionUnitDisplayed(secondAcquisitionUnit.name, true);
+      cy.wait(1000);
       ReceivingEditForm.clickSaveButton({ itemSaved: true });
       ReceivingDetails.waitLoading();
       cy.wait(1000);
-
       InteractorsTools.checkCalloutMessage(
         `The title ${orderLine.titleOrPackage} has been successfully added for PO line ${orderLine.poLineNumber}`,
       );
       cy.reload();
       ReceivingDetails.waitLoading();
-
       cy.wait(3000);
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(secondAcquisitionUnit.name, true);
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(firstAcquisitionUnit.name, false);

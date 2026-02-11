@@ -88,9 +88,11 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 const unassignAllLocationsButton = Button('Unassign all locations');
 const submitButton = Button('Submit');
 const keepEditingButton = Button('Keep editing');
+const fundResultsPane = Pane({ id: 'fund-results-pane' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
+
 export default {
   defaultUiFund: {
     name: `autotest_fund_${getRandomPostfix()}`,
@@ -110,7 +112,7 @@ export default {
     };
   },
   waitLoading: () => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+    cy.expect(fundResultsPane.exists());
   },
 
   waitLoadingTransactions: () => {
@@ -1208,16 +1210,14 @@ export default {
   },
 
   addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
-    cy.do([
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
-      SelectionOption(firstExpenseClassName).click(),
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
-      SelectionOption(secondExpenseClassName).click(),
-    ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000);
+    [0, 1].forEach((index) => {
+      cy.do([
+        addExpenseClassButton.click(),
+        Button({ name: `statusExpenseClasses[${index}].expenseClassId` }).click(),
+        SelectionOption(index === 0 ? firstExpenseClassName : secondExpenseClassName).click(),
+      ]);
+      cy.wait(2000);
+    });
     cy.do(saveAndCloseButton.click());
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -1345,7 +1345,7 @@ export default {
 
   selectFund: (FundName) => {
     cy.wait(4000);
-    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.do(fundResultsPane.find(Link(FundName)).click());
     FundDetails.waitLoading();
   },
 
@@ -1447,7 +1447,7 @@ export default {
   },
 
   verifyFundLinkNameExists: (FundName) => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+    cy.expect(fundResultsPane.find(Link(FundName)).exists());
   },
 
   openSource: (linkName) => {

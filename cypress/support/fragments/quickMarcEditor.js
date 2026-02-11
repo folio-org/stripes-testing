@@ -1536,6 +1536,16 @@ export default {
     return newContent;
   },
 
+  updateFirstFieldByTag(tag, newContent) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+      }
+    });
+  },
+
   updateLDR06And07Positions() {
     this.selectFieldsDropdownOption('LDR', 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
     this.selectFieldsDropdownOption('LDR', 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
@@ -3349,7 +3359,7 @@ export default {
         });
       });
       cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
-        relatedRecordVersion = `${auditData.totalRecords}`;
+        relatedRecordVersion = `${auditData.totalRecords || 1}`;
       });
       authorityIds.forEach((authorityId) => {
         cy.okapiRequest({

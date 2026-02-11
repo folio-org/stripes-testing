@@ -37,6 +37,12 @@ export default {
     cy.wait(ms);
     cy.expect(receivingDetailsSection.exists());
   },
+  checkTitlePaneIsDisplayed(title) {
+    cy.expect(receivingDetailsSection.exists());
+    if (title) {
+      cy.expect(receinvingDetailsHeader.has({ text: including(title) }));
+    }
+  },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(buttons[label].has(conditions));
@@ -140,6 +146,34 @@ export default {
             .has({ content: including(record.format) }),
         );
       }
+      if (record.displaySummary) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Display summary' }))
+            .has({ content: including(record.displaySummary) }),
+        );
+      }
+      if (record.copyNumber) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.enumeration) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Enumeration' }))
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+      if (record.chronology) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Chronology' }))
+            .has({ content: including(record.chronology) }),
+        );
+      }
     });
 
     if (!records.length) {
@@ -162,7 +196,10 @@ export default {
 
     return ReceivingEditForm;
   },
-
+  editReceivingItem() {
+    cy.do([buttons.Edit.click()]);
+    ReceivingEditForm.waitLoading();
+  },
   verifyEditButtonIsInactive() {
     cy.do(buttons.Actions.click());
     cy.expect(Button('Edit').has({ disabled: true }));
