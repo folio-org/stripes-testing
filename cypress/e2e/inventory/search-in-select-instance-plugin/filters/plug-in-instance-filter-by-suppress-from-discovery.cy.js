@@ -9,44 +9,40 @@ import { NewOrganization, Organizations } from '../../../../support/fragments/or
 import OrderLineEditForm from '../../../../support/fragments/orders/orderLineEditForm';
 import OrderDetails from '../../../../support/fragments/orders/orderDetails';
 import SelectInstanceModal from '../../../../support/fragments/orders/modals/selectInstanceModal';
-import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C446111_Instance_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C476811_Instance_${randomPostfix}`;
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C446111_Org_${randomPostfix}`;
-      const staffSuppressAccordionName = 'Staff suppress';
-      const querySearchOption = 'Query search';
-      const instancesData = [
-        { source: INSTANCE_SOURCE_NAMES.FOLIO, isStaffSuppressed: false },
-        { source: INSTANCE_SOURCE_NAMES.MARC, isStaffSuppressed: false },
-        { source: INSTANCE_SOURCE_NAMES.FOLIO, isStaffSuppressed: true },
-        { source: INSTANCE_SOURCE_NAMES.MARC, isStaffSuppressed: true },
-      ];
+      organization.name = `AT_C476811_Org_${randomPostfix}`;
+      const suppressFromDiscoveryAccordionName = 'Suppress from discovery';
+      const instancesData = [{ isSuppressDiscovery: false }, { isSuppressDiscovery: true }];
       const instanceTitles = Array.from(
         { length: instancesData.length },
         (_, i) => `${instanceTitlePrefix}_${i}`,
       );
       const suppressedInstanceTitles = instanceTitles.filter(
-        (_, index) => instancesData[index].isStaffSuppressed,
+        (_, index) => instancesData[index].isSuppressDiscovery,
       );
       const notSuppressedInstanceTitles = instanceTitles.filter(
-        (_, index) => !instancesData[index].isStaffSuppressed,
+        (_, index) => !instancesData[index].isSuppressDiscovery,
       );
 
       let order;
       let user;
+      let instanceTypeId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C446111');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C476811');
 
+          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
           Organizations.createOrganizationViaApi(organization).then(() => {
             const orderData = NewOrder.getDefaultOngoingOrder({
               vendorId: organization.id,
@@ -58,30 +54,19 @@ describe('Inventory', () => {
         })
           .then(() => {
             instancesData.forEach((data, index) => {
-              if (data.source === INSTANCE_SOURCE_NAMES.FOLIO) {
-                InventoryInstance.createInstanceViaApi({
-                  instanceTitle: instanceTitles[index],
-                }).then(({ instanceData }) => {
-                  cy.getInstanceById(instanceData.instanceId).then((body) => {
-                    body.staffSuppress = data.isStaffSuppressed;
-                    cy.updateInstance(body);
-                  });
-                });
-              } else {
-                cy.createSimpleMarcBibViaAPI(instanceTitles[index]).then((instanceId) => {
-                  cy.getInstanceById(instanceId).then((body) => {
-                    body.staffSuppress = data.isStaffSuppressed;
-                    cy.updateInstance(body);
-                  });
-                });
-              }
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: instanceTitles[index],
+                  discoverySuppress: data.isSuppressDiscovery,
+                },
+              });
             });
           })
           .then(() => {
             cy.createTempUser([
               Permissions.uiInventoryViewInstances.gui,
               Permissions.uiOrdersCreate.gui,
-              Permissions.enableStaffSuppressFacet.gui,
             ]).then((userProperties) => {
               user = userProperties;
 
@@ -93,8 +78,6 @@ describe('Inventory', () => {
               Orders.selectOrderByPONumber(order.poNumber);
               OrderDetails.selectAddPOLine();
               OrderLineEditForm.clickTitleLookUpButton();
-              SelectInstanceModal.chooseSearchOption(querySearchOption);
-              SelectInstanceModal.checkSearchOptionSelected(querySearchOption);
             });
           });
       });
@@ -108,29 +91,35 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446111 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Query search") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446111'] },
+        'C476811 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C476811'] },
         () => {
-          InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
+          InventorySearchAndFilter.toggleAccordionByName(suppressFromDiscoveryAccordionName);
+          InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(
+            suppressFromDiscoveryAccordionName,
+          );
           InventorySearchAndFilter.verifyCheckboxInAccordion(
-            staffSuppressAccordionName,
+            suppressFromDiscoveryAccordionName,
             'No',
             false,
           );
           InventorySearchAndFilter.verifyCheckboxInAccordion(
-            staffSuppressAccordionName,
+            suppressFromDiscoveryAccordionName,
             'Yes',
             false,
           );
 
-          SelectInstanceModal.searchByName(`title="${instanceTitlePrefix}"`);
+          SelectInstanceModal.searchByName(instanceTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
           instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
           });
 
-          InventorySearchAndFilter.selectOptionInExpandedFilter(staffSuppressAccordionName, 'Yes');
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            suppressFromDiscoveryAccordionName,
+            'Yes',
+          );
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.verifyNumberOfSearchResults(suppressedInstanceTitles.length);
           suppressedInstanceTitles.forEach((title) => {
@@ -138,14 +127,32 @@ describe('Inventory', () => {
           });
 
           InventorySearchAndFilter.selectOptionInExpandedFilter(
-            staffSuppressAccordionName,
+            suppressFromDiscoveryAccordionName,
             'Yes',
             false,
           );
-          InventorySearchAndFilter.selectOptionInExpandedFilter(staffSuppressAccordionName, 'No');
+          InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+          instanceTitles.forEach((title) => {
+            InventorySearchAndFilter.verifySearchResult(title);
+          });
+
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            suppressFromDiscoveryAccordionName,
+            'No',
+          );
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.verifyNumberOfSearchResults(notSuppressedInstanceTitles.length);
           notSuppressedInstanceTitles.forEach((title) => {
+            InventorySearchAndFilter.verifySearchResult(title);
+          });
+
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            suppressFromDiscoveryAccordionName,
+            'No',
+            false,
+          );
+          InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+          instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
           });
         },
