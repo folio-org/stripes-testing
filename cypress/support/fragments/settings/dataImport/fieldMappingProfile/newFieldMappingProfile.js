@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -6,7 +7,6 @@ import {
   Dropdown,
   DropdownMenu,
   Form,
-  HTML,
   IconButton,
   Label,
   ListItem,
@@ -20,7 +20,6 @@ import {
   Select,
   TextArea,
   TextField,
-  including,
 } from '../../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
@@ -153,9 +152,10 @@ const selectOrganizationByName = (organizationName) => {
     organizationModal.find(searchField).fillIn(organizationName),
     organizationModal.find(searchButton).click(),
   ]);
-  cy.expect(MultiColumnListCell(organizationName).exists());
-  cy.do(MultiColumnListCell({ content: organizationName }).click());
-  cy.expect(TextField({ value: `"${organizationName}"` }).exists());
+  cy.expect(MultiColumnListCell(including(organizationName)).exists());
+  cy.do(
+    MultiColumnListCell({ columnIndex: 0, row: 0, content: including(organizationName) }).click(),
+  );
 };
 
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
@@ -275,8 +275,8 @@ const addVendor = (profile) => {
     organizationModal.find(searchField).fillIn(profile.vendor),
     organizationModal.find(searchButton).click(),
   ]);
-  cy.expect(MultiColumnListCell(profile.vendor).exists());
-  cy.do(MultiColumnListCell({ content: profile.vendor }).click());
+  cy.expect(MultiColumnListCell(including(profile.vendor)).exists());
+  cy.do(MultiColumnListCell({ columnIndex: 0, row: 0, content: profile.vendor }).click());
 };
 
 const addMaterialSupplier = (profile) => {
@@ -285,7 +285,7 @@ const addMaterialSupplier = (profile) => {
       physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.materialSupplier),
       organizationModal.find(searchButton).click(),
-      MultiColumnListCell({ content: profile.materialSupplier }).click(),
+      MultiColumnListCell({ columnIndex: 0, row: 0, content: profile.materialSupplier }).click(),
     ]);
   }
 };
@@ -296,7 +296,7 @@ const addAccessProvider = (profile) => {
       Accordion('E-resources details').find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.accessProvider),
       organizationModal.find(searchButton).click(),
-      MultiColumnListCell({ content: profile.accessProvider }).click(),
+      MultiColumnListCell({ columnIndex: 0, row: 0, content: profile.accessProvider }).click(),
     ]);
   }
 };

@@ -46,7 +46,7 @@ const openNewMappingProfileForm = () => {
   cy.do(Button('New field mapping profile').click());
 };
 const mappingProfileForDuplicate = {
-  gobi: 'GOBI monograph invoice',
+  gobi: 'Default - GOBI monograph invoice',
   harrassowitz: 'Default - Harrassowitz serials invoice',
   ebsco: 'Default - EBSCO serials invoice',
   erasmus: 'Default - Erasmus monograph invoice',
@@ -107,6 +107,7 @@ export default {
   },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);
+    cy.do(MultiColumnListCell({ columnIndex: 0, row: 0, content: defaultProfile }).click());
     duplicate();
     cy.wait(2000);
     NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
