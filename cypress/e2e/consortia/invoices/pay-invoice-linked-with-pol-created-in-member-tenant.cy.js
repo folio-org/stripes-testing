@@ -1,28 +1,24 @@
 import uuid from 'uuid';
-import Permissions from '../../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Users from '../../../support/fragments/users/users';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Orders } from '../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
   INVOICE_STATUSES,
   ORDER_STATUSES,
 } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
+import Permissions from '../../../support/dictionary/permissions';
+import { Budgets, FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance';
+import Invoices from '../../../support/fragments/invoices/invoices';
+import { BasicOrderLine, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Invoices', () => {
   describe('Consortium (Invoices)', () => {
@@ -69,7 +65,7 @@ describe('Invoices', () => {
 
         cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
         cy.setTenant(Affiliations.College);
-        Approvals.setApprovePayValue(false);
+        Approvals.setApprovePayValueViaApi(false);
 
         cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
           Permissions.uiFinanceViewFundAndBudget.gui,
@@ -174,7 +170,7 @@ describe('Invoices', () => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-                TopMenuNavigation.navigateToApp('Invoices');
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
               },
             );
           });

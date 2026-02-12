@@ -208,7 +208,7 @@ describe(
           UserEdit.clickConfirmInPromoteUserModal(false);
           InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
           InteractorsTools.dismissCallout(testData.errorCalloutText);
-          cy.intercept('GET', `*${userBodies[1].username}*`).as('searchCallB');
+          cy.intercept('GET', `*${userBodies[1].personal.lastName}*`).as('searchCallB');
           UserEdit.clickCancelInPromoteUserModal();
           cy.wait('@searchCallB').its('response.statusCode').should('eq', 200);
           UsersCard.verifyUserLastFirstNameInCard(

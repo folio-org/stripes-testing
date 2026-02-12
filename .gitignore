@@ -28,4 +28,9 @@ scripts/update_permission_names/permissions_backups/*
 *_automated_tests.json
 
 mcp.json
+<<<<<<< HEAD
 cypress/e2e/failed.cy.js
+=======
+
+failed.cy.js
+>>>>>>> bc575494a390a960992f9474da5e5df3da880869

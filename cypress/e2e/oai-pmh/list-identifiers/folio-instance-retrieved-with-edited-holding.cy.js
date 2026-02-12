@@ -1,0 +1,129 @@
+import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
+import Users from '../../../support/fragments/users/users';
+import Permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+
+let user;
+let afterHoldingCreationTimestamp;
+const folioInstance = {
+  title: `AT_C380620_FolioInstance_${getRandomPostfix()}`,
+  id: null,
+  holdingsId: null,
+};
+
+describe('OAI-PMH', () => {
+  describe('List identifiers', () => {
+    before('create test data', () => {
+      cy.getAdminToken();
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.INVENTORY,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
+
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        user = userProperties;
+
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: instanceTypes[0].id,
+              title: folioInstance.title,
+            },
+          }).then((createdInstanceData) => {
+            folioInstance.id = createdInstanceData.instanceId;
+
+            cy.getLocations().then((location) => {
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: folioInstance.id,
+                  permanentLocationId: location.id,
+                  sourceId: folioSource.id,
+                }).then((holdingsId) => {
+                  folioInstance.holdingsId = holdingsId;
+                });
+              });
+            });
+          });
+        });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
+
+        // For clear test results, it is necessary to wait to ensure that
+        // editing holdings is treated as an update to the Instance record
+        cy.wait(60_000);
+      });
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
+      Users.deleteViaApi(user.userId);
+      Behavior.updateBehaviorConfigViaApi();
+    });
+
+    it(
+      'C380620 verb=ListIdentifiers: Verify that Instance FOLIO is retrieved in case its FOLIO Holdings is edited (marc21_withholdings) (firebird)',
+      { tags: ['extendedPathFlaky', 'firebird', 'C380620', 'nonParallel'] },
+      () => {
+        afterHoldingCreationTimestamp = DateTools.getCurrentDateForOaiPmh();
+
+        // Step 1-3: Go to Inventory app and find created FOLIO instance
+        InventoryInstances.searchByTitle(folioInstance.title);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InventoryInstance.openHoldings(['']);
+
+        // Step 4-5: Verify that response doesn't initially include Instance FOLIO record
+        cy.getAdminToken();
+        OaiPmh.listIdentifiersRequest('marc21_withholdings', afterHoldingCreationTimestamp).then(
+          (response) => {
+            OaiPmh.verifyIdentifierInListResponse(response, folioInstance.id, false);
+          },
+        );
+
+        // Step 6: Click "View holdings" button
+        cy.getUserToken(user.username, user.password);
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.waitLoading();
+
+        // Step 7: Click Actions menu => click "Edit"
+        HoldingsRecordView.edit();
+        HoldingsRecordEdit.waitLoading();
+
+        // Step 8: Edit mandatory field (Permanent location) - change to a different location
+        HoldingsRecordEdit.addAdministrativeNote('Note text');
+
+        // Step 9: Click the "Save & close" button
+        HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+        HoldingsRecordView.checkHoldingRecordViewOpened();
+
+        // Step 10: Close Holdings window
+        HoldingsRecordView.close();
+        InventoryInstance.waitLoading();
+
+        // Step 11: Send ListIdentifiers request and verify Instance FOLIO is now retrieved
+        cy.getAdminToken();
+        OaiPmh.listIdentifiersRequest('marc21_withholdings', afterHoldingCreationTimestamp).then(
+          (response) => {
+            OaiPmh.verifyIdentifierInListResponse(response, folioInstance.id, true);
+          },
+        );
+      },
+    );
+  });
+});

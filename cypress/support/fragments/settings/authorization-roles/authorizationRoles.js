@@ -1098,8 +1098,11 @@ export default {
   },
 
   checkApplicationCountInModal: (count) => {
-    if (count) cy.expect(selectApplicationModal.find(MultiColumnList()).has({ rowCount: count }));
-    else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
+    if (count) {
+      cy.expect(
+        selectApplicationModal.find(MultiColumnList()).has({ ariaRowCount: `${count + 1}` }),
+      );
+    } else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
   },
 
   clickResetAllInSelectAppModal() {

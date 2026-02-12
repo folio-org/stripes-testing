@@ -13,7 +13,7 @@ describe('fse-sso - UI (no data manipulation)', () => {
     { tags: ['fse', 'ui', 'sso'] },
     () => {
       // Skip check for MCO
-      if (Cypress.env('OKAPI_HOST').toLowerCase().includes('mobius')) {
+      if (Cypress.env('IS_CONSORTIA')) {
         cy.log('Skipping SSO check for MCO tenant');
         return;
       }

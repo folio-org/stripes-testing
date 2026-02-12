@@ -13,10 +13,8 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Check out', () => {
-  const userData = {
-    group: getTestEntityValue('staff$'),
-    personal: {},
-  };
+  const patronGroup = getTestEntityValue('staff');
+  let userData = {};
   let patronGroupId = '';
 
   const itemData = {
@@ -44,7 +42,7 @@ describe('Check out', () => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
-        PatronGroups.createViaApi(userData.group).then((patronGroupResponse) => {
+        PatronGroups.createViaApi(patronGroup).then((patronGroupResponse) => {
           patronGroupId = patronGroupResponse;
         });
       })
@@ -82,14 +80,11 @@ describe('Check out', () => {
         permissions.inventoryAll.gui,
         permissions.checkoutCirculatingItems.gui,
       ],
-      userData.group,
+      patronGroup,
     )
       .then((userProperties) => {
-        userData.personal.lastname = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        userData.firstName = userProperties.firstName;
+        userData = userProperties;
+        userData.personal.lastname = userProperties.lastName;
       })
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
@@ -121,7 +116,7 @@ describe('Check out', () => {
       // without this waiter, the user will not be found by username
       cy.wait(4000);
       CheckOutActions.checkOutUser(userData.barcode, userData.username);
-      CheckOutActions.checkUserInfo(userData, userData.patronGroup);
+      CheckOutActions.checkUserInfo(userData, patronGroup);
       CheckOutActions.checkOutItem(itemData.barcode);
       CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
     },

@@ -93,7 +93,6 @@ describe('Inventory', () => {
           cy.resetTenant();
 
           cy.loginAsAdmin();
-          cy.reload();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
@@ -107,7 +106,7 @@ describe('Inventory', () => {
 
             // download exported marc file
             cy.setTenant(Affiliations.College).then(() => {
-              // use cy.getToken function to get toket for current tenant
+              // use cy.getToken function to get token for current tenant
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
               ExportFile.waitLandingPageOpened();
               ExportFile.downloadExportedMarcFileWithRecordHrid(

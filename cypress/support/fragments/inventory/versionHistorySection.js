@@ -27,6 +27,7 @@ const fieldActions = {
 const closeModalButton = Button('Close');
 const changesModalColumns = ['Action', 'Field', 'Changed from', 'Changed to'];
 const changesModalHeaderDefaultRegexp = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2} (AM|PM).*/;
+const changesModal = Modal(matching(changesModalHeaderDefaultRegexp));
 
 export default {
   fieldActions,
@@ -71,6 +72,18 @@ export default {
   clickCloseButton() {
     cy.do(rootSection.find(closeButton).click());
     cy.expect(rootSection.absent());
+  },
+
+  getCardTimestamp(index = 0) {
+    return cy.get('[class*="card"]').eq(index).find('[class*="headerStart"]').invoke('text');
+  },
+
+  getTimestampFromOpenModalChanges() {
+    return cy.get('[class*="modal"]').find('[class*="headline"]').invoke('text');
+  },
+
+  verifyTimestampFormat(timestamp) {
+    expect(timestamp).to.match(changesModalHeaderDefaultRegexp);
   },
 
   verifyVersionHistoryPane(versionsCount = 1, loadMore = false) {
@@ -157,6 +170,12 @@ export default {
     else cy.expect(targetCard.find(ListItem({ text: bullet })).absent());
   },
 
+  checkChangeByTag(tag, action, isShown = true) {
+    const bullet = `Field ${tag} (${action})`;
+    if (isShown) cy.expect(rootSection.find(ListItem({ text: bullet })).exists());
+    else cy.expect(rootSection.find(ListItem({ text: bullet })).absent());
+  },
+
   checkChangesCountForCard(index, changesCount) {
     const targetCard = rootSection.find(Card({ index }));
     cy.expect(targetCard.find(List()).has({ count: changesCount }));
@@ -197,6 +216,31 @@ export default {
     else cy.expect(targetModal.find(MultiColumnListRow({ content })).absent());
   },
 
+  checkChangeInModalWithIndicators(action, field, indicators, fromContent, toContent) {
+    const joinedIndicators = indicators.join('');
+
+    let indicatorDisplay;
+    if (joinedIndicators === '\\\\') {
+      indicatorDisplay = '   ';
+    } else if (!Number.isNaN(Number(joinedIndicators))) {
+      indicatorDisplay = joinedIndicators + ' ';
+    } else if (/^(\d)\\$/.test(joinedIndicators)) {
+      const number = joinedIndicators[0];
+      indicatorDisplay = number + '  ';
+    } else if (/^\\(\d)$/.test(joinedIndicators)) {
+      const number = joinedIndicators[1];
+      indicatorDisplay = ' ' + number + ' ';
+    } else {
+      indicatorDisplay = undefined;
+    }
+
+    const fromFull = indicatorDisplay + fromContent;
+    const toFull = indicatorDisplay + toContent;
+    const content = [action, field, fromFull, toFull].join('');
+
+    cy.expect(changesModal.find(MultiColumnListRow({ content })).exists());
+  },
+
   checkChangesCountInModal(changesCount) {
     const targetModal = Modal(matching(changesModalHeaderDefaultRegexp));
     cy.expect(targetModal.find(MultiColumnList()).has({ rowCount: changesCount }));
@@ -207,6 +251,14 @@ export default {
     if (withIcon) cy.do(targetModal.find(closeButton).click());
     else cy.do(targetModal.find(closeModalButton).click());
     cy.expect(targetModal.absent());
+  },
+
+  verifyModalScrollbar() {
+    cy.expect(changesModal.exists());
+    cy.get('[class*="modalContent-"]').then(($modalContent) => {
+      const hasScrollbar = $modalContent[0].scrollHeight > $modalContent[0].clientHeight;
+      cy.expect(hasScrollbar).to.eq(true);
+    });
   },
 
   clickOnSourceLinkInCard(index = 0) {

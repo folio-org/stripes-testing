@@ -20,7 +20,6 @@ import {
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
 describe('Finance: Transactions', () => {
@@ -65,7 +64,6 @@ describe('Finance: Transactions', () => {
     allowableExpenditure: 110,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const isApprovePayDisabled = false;
   let firstInvoice;
   let secondInvoice;
   let thirdInvoice;
@@ -254,7 +252,6 @@ describe('Finance: Transactions', () => {
 
   after(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 
@@ -264,9 +261,7 @@ describe('Finance: Transactions', () => {
     () => {
       Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);
-      Invoices.canNotApproveAndPayInvoice(
-        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${secondFund.code}].`,
-      );
+      Invoices.canNotApproveAndPayInvoice(secondFund);
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$87.00');
       Funds.varifyDetailsInTransaction(

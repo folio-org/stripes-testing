@@ -133,7 +133,7 @@ describe('Invoices', () => {
       permissions.uiInvoicesApproveInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      Approvals.setApprovePayValue(false);
+      Approvals.setApprovePayValueViaApi(false);
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,

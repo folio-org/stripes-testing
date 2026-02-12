@@ -1,23 +1,23 @@
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
-import { Permissions } from '../../support/dictionary';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import InTransit from '../../support/fragments/checkin/modals/inTransit';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
-  REQUEST_LEVELS,
-  REQUEST_TYPES,
   LOCATION_IDS,
   LOCATION_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
 } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import InTransit from '../../support/fragments/checkin/modals/inTransit';
+import Checkout from '../../support/fragments/checkout/checkout';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Requests from '../../support/fragments/requests/requests';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
 describe('Check in', () => {
@@ -67,12 +67,10 @@ describe('Check in', () => {
       }).then((request) => {
         testData.requestsId = request.body.id;
         itemBData.servicePoint = request.body.pickupServicePoint.name;
-      });
-
-      cy.waitForAuthRefresh(() => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.checkInPath,
           waiter: CheckInActions.waitLoading,
+          authRefresh: true,
         });
       });
     });

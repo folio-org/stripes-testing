@@ -15,6 +15,10 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 
 let user;
 let instanceTypeId;
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditInstances.gui,
+];
 const folioInstance = {
   title: `AT_C477607_FolioInstance_${getRandomPostfix()}`,
 };
@@ -38,30 +42,34 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
         cy.getAdminToken();
-        cy.createTempUser([
-          permissions.bulkEditEdit.gui,
-          permissions.uiInventoryViewCreateEditInstances.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
+        cy.createTempUser(userPermissions)
+          .then((userProperties) => {
+            user = userProperties;
 
-          cy.withinTenant(Affiliations.College, () => {
-            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-              instanceTypeId = instanceTypeData[0].id;
+            cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          })
+          .then(() => {
+            cy.withinTenant(Affiliations.College, () => {
+              cy.assignPermissionsToExistingUser(user.userId, userPermissions);
+              cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+                instanceTypeId = instanceTypeData[0].id;
 
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId,
-                  title: folioInstance.title,
-                },
-              }).then((createdInstanceData) => {
-                folioInstance.id = createdInstanceData.instanceId;
+                InventoryInstances.createFolioInstanceViaApi({
+                  instance: {
+                    instanceTypeId,
+                    title: folioInstance.title,
+                  },
+                }).then((createdInstanceData) => {
+                  folioInstance.id = createdInstanceData.instanceId;
 
-                cy.getInstanceById(folioInstance.id).then((instanceData) => {
-                  folioInstance.hrid = instanceData.hrid;
+                  cy.getInstanceById(folioInstance.id).then((instanceData) => {
+                    folioInstance.hrid = instanceData.hrid;
+                  });
                 });
               });
             });
-          }).then(() => {
+          })
+          .then(() => {
             FileManager.createFile(
               `cypress/fixtures/${invalidUUIDsFileName}`,
               `${folioInstance.id}\n${invalidUUID}`,
@@ -70,15 +78,15 @@ describe('Bulk-edit', () => {
               `cypress/fixtures/${invalidHRIDsFileName}`,
               `${folioInstance.hrid}\n${invalidHRID}`,
             );
+          })
+          .then(() => {
+            cy.resetTenant();
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
-
-          cy.resetTenant();
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        });
       });
 
       after('delete test data', () => {
@@ -124,9 +132,9 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaneTitleFileName(fileName);
             BulkEditSearchPane.verifyPaneRecordsCount('0 instance');
             BulkEditSearchPane.verifyFileNameHeadLine(fileName);
-            BulkEditSearchPane.verifyErrorLabel(2);
+            BulkEditSearchPane.verifyErrorLabel(identifiers.length);
             BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
-            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
+            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(identifiers.length);
 
             identifiers.forEach((identifier) => {
               BulkEditSearchPane.verifyNonMatchedResults(identifier);

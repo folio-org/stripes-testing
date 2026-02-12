@@ -22,6 +22,26 @@ describe('Eureka', () => {
         originalCapabilitiesInSets: [
           {
             table: CAPABILITY_TYPES.DATA,
+            resource: 'Locale Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Mod-Settings Entries Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Mod-Settings Global Read Stripes-Core Prefs',
+            action: CAPABILITY_ACTIONS.MANAGE,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Mod-Settings Owner Read Stripes-Core Prefs',
+            action: CAPABILITY_ACTIONS.MANAGE,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
@@ -58,6 +78,11 @@ describe('Eureka', () => {
           {
             table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Module Notes Enabled',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Stripes-Core Settings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -127,8 +152,8 @@ describe('Eureka', () => {
             Procedural: 2,
           },
           capabilities: {
-            Data: 12,
-            Settings: 2,
+            Data: 16,
+            Settings: 3,
             Procedural: 4,
           },
         },
@@ -171,12 +196,10 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
+        });
       });
 
       after('Delete user, role', () => {

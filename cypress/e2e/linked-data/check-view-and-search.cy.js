@@ -8,9 +8,13 @@ import Work from '../../support/fragments/linked-data/work';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, LDE_ROLES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: check navigation', () => {
   const testData = {
@@ -20,6 +24,7 @@ describe('Citation: check navigation', () => {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
+    roleIds: [],
   };
 
   const resourceData = {
@@ -43,6 +48,25 @@ describe('Citation: check navigation', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -63,12 +87,14 @@ describe('Citation: check navigation', () => {
       Work.deleteById(filteredInstances[0].id);
     });
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
@@ -87,7 +113,7 @@ describe('Citation: check navigation', () => {
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading();
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked Data Editor');
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.LINKED_DATA_EDITOR);
       LinkedDataEditor.waitLoading();
       // search by any title
       SearchAndFilter.searchResourceByTitle(resourceData.title);

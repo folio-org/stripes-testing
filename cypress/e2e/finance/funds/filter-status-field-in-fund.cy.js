@@ -19,7 +19,6 @@ describe('Funds', () => {
 
   before(() => {
     cy.getAdminToken();
-
     FiscalYears.createViaApi(defaultFiscalYear).then((fiscalYearResponse) => {
       defaultFiscalYear.id = fiscalYearResponse.id;
       defaultBudget.fiscalYearId = fiscalYearResponse.id;
@@ -40,14 +39,11 @@ describe('Funds', () => {
     cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.fundPath,
-            waiter: Funds.waitLoading,
-          });
-          cy.reload();
-          Funds.waitLoading();
-        }, 20_000);
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fundPath,
+          waiter: Funds.waitLoading,
+        });
       },
     );
   });

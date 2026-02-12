@@ -1,13 +1,18 @@
-import { ORDER_STATUSES } from '../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import { NewOrder, OrderLineDetails, Orders, OrderLines } from '../../support/fragments/orders';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import orderDetails from '../../support/fragments/orders/orderDetails';
-import orderLineEditForm, {
+import {
+  NewOrder,
+  OrderDetails,
+  OrderLineDetails,
+  OrderLines,
+  Orders,
+} from '../../support/fragments/orders';
+import OrderLineEditForm, {
   vendorDetailsFields,
 } from '../../support/fragments/orders/orderLineEditForm';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -48,8 +53,8 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    cy.getLocations({ limit: 1 }).then((location) => {
-      testData.location = location;
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((locationResp) => {
+      testData.location = locationResp;
     });
     InventoryInstance.createInstanceViaApi({
       instanceTitle: `Instance_${getRandomPostfix()}`,
@@ -66,10 +71,11 @@ describe('Orders', () => {
 
     cy.createTempUser([Permissions.uiOrdersCreate.gui]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
@@ -86,10 +92,10 @@ describe('Orders', () => {
     { tags: ['criticalPath', 'thunderjet', 'C411754'] },
     () => {
       Orders.selectOrderByPONumber(testData.order.poNumber);
-      orderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
+      OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
       Orders.createPOLineViaActions();
       OrderLines.fillPolByLinkTitle(testData.instance.instanceTitle);
-      orderLineEditForm.checkSelectOptions(vendorDetailsFields.accountNumber, activeAccounts);
+      OrderLineEditForm.checkSelectOptions(vendorDetailsFields.accountNumber, activeAccounts);
       OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
         'Purchase',
         testData.location.name,

@@ -94,7 +94,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375193 GetRecord: Verify Item (SRS) suppressed from discovery in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375193', 'nonParallel'] },
+      { tags: ['extendedPathFlaky', 'firebird', 'C375193', 'nonParallel'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.id);
         InventoryInstances.selectInstance();

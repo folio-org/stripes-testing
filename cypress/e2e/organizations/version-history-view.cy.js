@@ -1,29 +1,25 @@
-import { APPLICATION_NAMES } from '../../support/constants';
-import Permissions from '../../support/dictionary/permissions';
-import Agreements from '../../support/fragments/agreements/agreements';
-import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import VersionHistorySection from '../../support/fragments/inventory/versionHistorySection';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import InteractorsTools from '../../support/utils/interactorsTools';
+import Agreements from '../../support/fragments/agreements/agreements';
+import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
+import NewAgreement from '../../support/fragments/agreements/newAgreement';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import Permissions from '../../support/dictionary/permissions';
+import VersionHistorySection from '../../support/fragments/inventory/versionHistorySection';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Organizations', () => {
-  let user;
-  let preUpdated;
-  let afterUpdated;
-  let lastUpdate;
-  let adminUser;
   const organization = {
-    ...NewOrganization.defaultUiOrganizations,
+    ...newOrganization.defaultUiOrganizations,
     isDonor: true,
     privilegedContacts: [],
     isVendor: false,
   };
-  const privilegedContact = { ...NewOrganization.defaultContact };
-  const organizationInterface = { ...NewOrganization.defaultInterface };
+  const privilegedContact = { ...newOrganization.defaultContact };
+  const organizationInterface = { ...newOrganization.defaultInterface };
   const contactPeople = {
     firstName: `AT_FN_${getRandomPostfix()}_2`,
     lastName: `AT_LN_${getRandomPostfix()}_2`,
@@ -31,13 +27,17 @@ describe('Organizations', () => {
   const defaultAgreement = { ...NewAgreement.getdefaultAgreement() };
   const calloutMessage = `Agreement created: ${defaultAgreement.name}`;
   const colloutMessage2 = `Agreement updated: ${defaultAgreement.name}`;
+  let user;
+  let preUpdated;
+  let afterUpdated;
+  let lastUpdate;
+  let adminUser;
 
   before(() => {
     cy.getAdminToken();
     cy.getAdminUserDetails().then((admin) => {
-      adminUser = admin.personal;
+      adminUser = admin.username;
     });
-
     Organizations.createInterfaceViaApi(organizationInterface).then((interfaceId) => {
       organizationInterface.id = interfaceId;
     });
@@ -52,10 +52,10 @@ describe('Organizations', () => {
       });
     });
     cy.wait(7000);
-
-    cy.loginAsAdmin();
-    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORGANIZATIONS);
-    Organizations.waitLoading();
+    cy.loginAsAdmin({
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+    });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganizationInCurrentPage(organization.name);
     Organizations.getLastUpdateTime().then((time) => {
@@ -68,7 +68,7 @@ describe('Organizations', () => {
     Organizations.getLastUpdateTime().then((time) => {
       afterUpdated = time.replace(' ', ', ');
     });
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.AGREEMENTS);
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);
     Agreements.createAndCheckFields(defaultAgreement);
     cy.wait(4000);
     InteractorsTools.checkCalloutMessage(calloutMessage);
@@ -84,7 +84,7 @@ describe('Organizations', () => {
       user = userProperties;
 
       cy.login(user.username, user.password);
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATION);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
       Organizations.waitLoading();
     });
   });

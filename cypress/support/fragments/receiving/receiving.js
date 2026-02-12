@@ -38,6 +38,7 @@ const selectLocationsModal = Modal('Select locations');
 const pieceDetailsSection = Section({ id: 'pieceDetails' });
 const acquisitionUnitsDropdown = HTML({ id: including('acq-units-input') });
 const acquisitionUnitsDropdownItems = HTML({ id: including('downshift') });
+const resetButton = Button('Reset all');
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -718,6 +719,17 @@ export default {
           (inst) => /^[a-zA-Z0-9\s]+$/.test(inst.title) && inst.title.length < 50,
         );
         return simpleInstance?.title || response.body.instances[0]?.title || 'Default Title';
+      });
+  },
+  resetFilters: () => {
+    cy.get('[data-testid="reset-button"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        if (state) {
+          cy.do(resetButton.click());
+          cy.wait(500);
+          cy.expect(resetButton.is({ disabled: true }));
+        }
       });
   },
 };

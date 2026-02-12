@@ -7,6 +7,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
+  LDE_ROLES,
 } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -15,6 +16,10 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: duplicate resource', () => {
   const testData = {
@@ -26,6 +31,7 @@ describe('Citation: duplicate resource', () => {
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
+    roleIds: [],
   };
 
   const resourceData = {
@@ -49,6 +55,25 @@ describe('Citation: duplicate resource', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -72,12 +97,14 @@ describe('Citation: duplicate resource', () => {
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
     // delete duplicate instance data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
@@ -105,7 +132,7 @@ describe('Citation: duplicate resource', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitle);
       // navigate to the inventory module
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
       // Add holdings

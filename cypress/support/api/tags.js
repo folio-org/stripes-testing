@@ -19,9 +19,11 @@ Cypress.Commands.add('createTagApi', (tag) => {
   });
 });
 
-Cypress.Commands.add('deleteTagApi', (tagId) => {
+Cypress.Commands.add('deleteTagApi', (tagId, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `tags/${tagId}`,
+    failOnStatusCode: !ignoreErrors,
+    isDefaultSearchParamsRequired: false,
   });
 });

@@ -48,6 +48,7 @@ describe('fse-consortia - UI (no data manipulation)', () => {
               const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
               // get any tenant from the list, but not the first one (central)
               const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
+              cy.wait(2000);
               // switch affiliation and verify that it was switched
               ConsortiumMgr.switchActiveAffiliation(
                 primaryTenant.tenantName,

@@ -1,127 +1,136 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
+import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
-    const order = {
-      ...NewOrder.defaultOneTimeOrder,
-      approved: true,
+    const organization = NewOrganization.getDefaultOrganization();
+    const testData = {
+      organization,
+      order: {
+        ...NewOrder.getDefaultOrder({ vendorId: organization.id }),
+        orderType: 'One-Time',
+        approved: true,
+      },
+      orderLine: {},
+      user: {},
+      barcodeForFirstItem: uuid(),
+      barcodeForSecondItem: uuid(),
     };
-    const organization = {
-      ...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: getRandomPostfix(),
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'TestAccout1',
-          notes: '',
-          paymentMethod: 'Cash',
-        },
-      ],
-    };
-    const barcodeForFirstItem = Helper.getRandomBarcode();
-    const barcodeForSecondItem = Helper.getRandomBarcode();
-
-    let orderNumber;
-    let user;
-    let effectiveLocationServicePoint;
-    let location;
 
     before(() => {
       cy.getAdminToken();
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+        (locationResponse) => {
+          testData.location = locationResponse;
 
-      ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
-        effectiveLocationServicePoint = servicePoint;
-        NewLocation.createViaApi(
-          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-        ).then((locationResponse) => {
-          location = locationResponse;
-          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-            organization.id = organizationsResponse;
-            order.vendor = organizationsResponse;
-          });
+          cy.getBookMaterialType().then((mtypeResponse) => {
+            testData.materialTypeId = mtypeResponse.id;
 
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-          cy.createOrderApi(order).then((response) => {
-            orderNumber = response.body.poNumber;
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            Orders.createPOLineViaActions();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-            OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-              'Purchase',
-              locationResponse.name,
-              '2',
-            );
-            OrderLines.backToEditingOrder();
+            Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+              organization.id = organizationsResponse;
+
+              InventoryInstance.createInstanceViaApi().then((instanceData) => {
+                testData.instanceId = instanceData.instanceData.instanceId;
+                testData.instanceTitle = instanceData.instanceData.instanceTitle;
+
+                testData.orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  instanceId: testData.instanceId,
+                  cost: {
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 2,
+                    quantityElectronic: 2,
+                    listUnitPriceElectronic: 10,
+                    listUnitPrice: 10,
+                  },
+                  eresource: {
+                    createInventory: 'Instance, Holding',
+                  },
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: testData.materialTypeId,
+                  },
+                  orderFormat: 'P/E Mix',
+                  locations: [
+                    {
+                      locationId: testData.location.id,
+                      quantityPhysical: 2,
+                      quantityElectronic: 2,
+                    },
+                  ],
+                };
+
+                Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
+                  (order) => {
+                    testData.order = order;
+
+                    Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
+                  },
+                );
+              });
+            });
           });
-        });
-      });
+        },
+      );
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       });
     });
 
     after(() => {
       cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(testData.user.userId);
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Orders.deleteOrderViaApi(testData.order.id);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
     });
 
     it(
       'C738 Receiving pieces from an order for P/E MIx that is set to create Items in inventory (items for receiving includes "Order closed" statuses) (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C738'] },
       () => {
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
+        Orders.searchByParameter('PO number', testData.order.poNumber);
+        Orders.selectFromResultsList(testData.order.poNumber);
         Orders.receiveOrderViaActions();
         Receiving.selectLinkFromResultsList();
         Receiving.receiveFromExpectedSection();
-        Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
+        Receiving.receiveAllPhysicalItemsWithBarcodes(
+          testData.barcodeForFirstItem,
+          testData.barcodeForSecondItem,
+        );
         Receiving.clickOnInstance();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
+        InventoryInstance.openHoldingsAccordion(testData.location.name);
+        InventoryInstance.openItemByBarcodeAndIndex(testData.barcodeForFirstItem);
         InventoryItems.closeItem();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
+        InventoryInstance.openHoldingsAccordion(testData.location.name);
+        InventoryInstance.openItemByBarcodeAndIndex(testData.barcodeForSecondItem);
         ItemRecordView.checkItemDetails(
-          location.name,
-          barcodeForSecondItem,
+          testData.location.name,
+          testData.barcodeForSecondItem,
           ITEM_STATUS_NAMES.IN_PROCESS,
         );
-        InventoryItems.closeItem();
-        InventorySearchAndFilter.switchToItem();
       },
     );
   });

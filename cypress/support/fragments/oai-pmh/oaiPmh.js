@@ -140,6 +140,82 @@ export default {
   },
 
   /**
+   * Verify that datestamp element exists in the OAI-PMH header and has correct ISO 8601 format
+   * Also verifies the datestamp is approximately current (within 2 minutes)
+   * Works with both ListRecords/GetRecord (with <record> wrapper) and ListIdentifiers (direct <header>) responses
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record
+   */
+  verifyOaiPmhHeaderDatestamp(xmlString, instanceUuid) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    let targetHeader = null;
+
+    // Try to find header in <record> element first (ListRecords/GetRecord)
+    const records = xmlDoc.getElementsByTagName('record');
+    if (records.length > 0) {
+      for (let i = 0; i < records.length; i++) {
+        const header = records[i].getElementsByTagName('header')[0];
+        if (header) {
+          const identifier = header.getElementsByTagName('identifier')[0].textContent;
+          if (identifier.includes(instanceUuid)) {
+            targetHeader = header;
+            break;
+          }
+        }
+      }
+    } else {
+      // No records found, try direct headers (ListIdentifiers)
+      const headers = xmlDoc.getElementsByTagName('header');
+      for (let i = 0; i < headers.length; i++) {
+        const header = headers[i];
+        const identifier = header.getElementsByTagName('identifier')[0].textContent;
+        if (identifier.includes(instanceUuid)) {
+          targetHeader = header;
+          break;
+        }
+      }
+    }
+
+    if (!targetHeader) {
+      throw new Error(`Header with UUID ${instanceUuid} not found in the OAI-PMH response`);
+    }
+
+    const datestampElement = targetHeader.getElementsByTagName('datestamp')[0];
+    const datestamp = datestampElement.textContent;
+
+    expect(datestamp).to.match(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/,
+      `Datestamp should be in format YYYY-MM-DDTHH:MM:SSZ for record with UUID ${instanceUuid}`,
+    );
+
+    // Verify datestamp is approximately current (within 2 minutes)
+    const datestampDate = new Date(datestamp);
+    const currentDate = new Date();
+    const diffInMinutes = Math.abs(currentDate - datestampDate) / (1000 * 60);
+
+    expect(
+      diffInMinutes,
+      `Datestamp should be within 2 minutes of current time for record with UUID ${instanceUuid}. Datestamp: ${datestamp}, Current: ${currentDate.toISOString()}`,
+    ).to.be.lessThan(2);
+  },
+
+  /**
+   * Verify that metadata element does NOT exist in the OAI-PMH record
+   * Used for deleted records which should only have header without metadata
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record
+   */
+  verifyMetadataAbsent(xmlString, instanceUuid) {
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    expect(
+      metadata,
+      `Metadata element should NOT exist for deleted record with UUID ${instanceUuid}`,
+    ).to.be.undefined;
+  },
+
+  /**
    * Verify MARC control field value in a specific record identified by instanceUuid.
    * Control fields (001-009) do not have indicators or subfields, just text content.
    * @param {string} xmlString - The XML response as a string.
@@ -315,6 +391,64 @@ export default {
   },
 
   /**
+   * Verify that a subfield with a specific value is ABSENT in a MARC field
+   * @param {string} xmlString - The XML response as a string
+   * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
+   * @param {string} tag - The tag of the MARC field to check (e.g., "856")
+   * @param {Object} indicators - Object containing the indicators (e.g., { ind1: "4", ind2: "0" })
+   * @param {Object} absentSubfieldsWithValues - Object where keys are subfield codes and values are the values that should NOT exist
+   *   (e.g., { t: "1", u: "http://example.com" })
+   */
+  verifySubfieldWithValueAbsent(
+    xmlString,
+    instanceUuid,
+    tag,
+    indicators = {},
+    absentSubfieldsWithValues = {},
+  ) {
+    const namespaceURI = 'http://www.loc.gov/MARC21/slim';
+
+    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
+    const metadata = targetRecord.getElementsByTagName('metadata')[0];
+
+    if (!metadata) {
+      throw new Error(`Metadata not found in record with UUID ${instanceUuid}`);
+    }
+
+    const targetRecordElement = metadata.getElementsByTagNameNS(namespaceURI, 'record')[0];
+
+    if (!targetRecordElement) {
+      throw new Error(`MARC record element not found in record with UUID ${instanceUuid}`);
+    }
+
+    // Find all datafield elements within the target record
+    const datafields = targetRecordElement.getElementsByTagNameNS(namespaceURI, 'datafield');
+    const fields = Array.from(datafields).filter((datafield) => {
+      const matchesTag = datafield.getAttribute('tag') === tag;
+      const matchesInd1 = !indicators.ind1 || datafield.getAttribute('ind1') === indicators.ind1;
+      const matchesInd2 = !indicators.ind2 || datafield.getAttribute('ind2') === indicators.ind2;
+
+      return matchesTag && matchesInd1 && matchesInd2;
+    });
+
+    // Check each matching field
+    fields.forEach((field) => {
+      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
+
+      Object.entries(absentSubfieldsWithValues).forEach(([subfieldCode, absentValue]) => {
+        const matchingSubfields = Array.from(subfieldsAll).filter(
+          (sf) => sf.getAttribute('code') === subfieldCode && sf.textContent === absentValue,
+        );
+
+        expect(
+          matchingSubfields.length,
+          `Subfield "${subfieldCode}" with value "${absentValue}" should NOT exist in ${tag} field of record with UUID ${instanceUuid}`,
+        ).to.equal(0);
+      });
+    });
+  },
+
+  /**
    * Verify MARC fields with the same tag and indicators, handling multiple occurrences.
    * This method can verify multiple fields with the same tag/indicators and their subfields.
    * @param {string} xmlString - The XML response as a string.
@@ -394,14 +528,21 @@ export default {
 
         if (subfield.length === 0) {
           throw new Error(
-            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
+            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}`,
           );
         }
 
-        // For multiple subfields with same code, verify the first one
+        // Fail if there are multiple subfields with the same code
+        if (subfield.length > 1) {
+          throw new Error(
+            `Multiple subfields "${subfieldCode}" (${subfield.length}) found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}. Expected exactly one.`,
+          );
+        }
+
+        // Verify the single subfield value
         expect(
           subfield[0].textContent,
-          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex + 1} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
         ).to.equal(expectedValue);
       });
 
@@ -582,9 +723,9 @@ export default {
   },
 
   /**
-   * Verifies identifier presence/absence in ListIdentifiers response and validates format and status when found.
-   * Performs comprehensive verification including identifier format validation and deletion status checking.
-   * @param {string} xmlString - The XML response as a string from ListIdentifiers request
+   * Verifies identifier presence/absence in ListIdentifiers or ListRecords response and validates format and status when found.
+   * Performs comprehensive verification including identifier format validation, deletion status checking, and setSpec validation.
+   * @param {string} xmlString - The XML response as a string from ListIdentifiers or ListRecords request
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
    * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
@@ -616,38 +757,47 @@ export default {
       // Verify the identifier should NOT exist (shouldBeDeleted is ignored in this case)
       expect(
         foundHeader,
-        `Identifier with UUID ${instanceUuid} should NOT be found in the ListIdentifiers response`,
+        `Identifier with UUID ${instanceUuid} should NOT be found in the OAI-PMH response`,
       ).to.be.null;
       return;
     }
 
     // Verify the identifier should exist
     if (!foundHeader) {
-      throw new Error(
-        `Identifier with UUID ${instanceUuid} not found in the ListIdentifiers response`,
-      );
+      throw new Error(`Identifier with UUID ${instanceUuid} not found in the OAI-PMH response`);
     }
 
-    // Verify the identifier format
+    // Verify setSpec element
+    const setSpecElements = foundHeader.getElementsByTagName('setSpec');
+    expect(
+      setSpecElements.length,
+      `setSpec element should exist in header for UUID ${instanceUuid}`,
+    ).to.be.greaterThan(0);
+    expect(
+      setSpecElements[0].textContent,
+      `setSpec should be "all" for UUID ${instanceUuid}`,
+    ).to.equal('all');
+
+    // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {
       const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
       expect(
         foundIdentifier,
         `Identifier should match expected OAI format for UUID ${instanceUuid}`,
       ).to.equal(expectedIdentifier);
+
+      // Verify the deleted status (inside the promise chain to ensure proper execution order)
+      const status = foundHeader.getAttribute('status');
+
+      if (shouldBeDeleted) {
+        expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
+          'deleted',
+        );
+      } else {
+        expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
+          .null;
+      }
     });
-
-    // Verify the deleted status
-    const status = foundHeader.getAttribute('status');
-
-    if (shouldBeDeleted) {
-      expect(status, `Identifier should have deleted status for UUID ${instanceUuid}`).to.equal(
-        'deleted',
-      );
-    } else {
-      expect(status, `Identifier should not have deleted status for UUID ${instanceUuid}`).to.be
-        .null;
-    }
   },
 
   /**

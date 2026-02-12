@@ -18,15 +18,19 @@ export default {
   getHoldingsMarcSource: () => getHoldingSources().then(
     (holdingsSources) => holdingsSources.filter((specialSource) => specialSource.name === 'MARC')[0],
   ),
-  createHoldingRecordViaApi(holdingsRecord) {
+  createHoldingRecordViaApi(holdingsRecord, ignoreErrors = false) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'holdings-storage/holdings',
         body: holdingsRecord,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: !ignoreErrors,
       })
-      .then(({ body }) => body);
+      .then(({ status, body }) => {
+        if (ignoreErrors) return { status, body };
+        else return body;
+      });
   },
   getHoldingsRecordsViaApi(searchParams) {
     return cy

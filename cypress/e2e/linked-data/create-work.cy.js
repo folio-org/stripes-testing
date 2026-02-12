@@ -4,28 +4,57 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, LDE_ROLES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: create work', () => {
   const testData = {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     partName: `Part test name ${getRandomPostfix()}`,
     summaryNote: 'test summary note',
+    roleIds: [],
   };
+
+  before('Create test data', () => {
+    cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+  });
 
   after('Delete test data', () => {
     cy.getAdminToken();
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach(() => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.linkedDataEditor,
       waiter: LinkedDataEditor.waitLoading,
+      authRefresh: true,
     });
   });
 
@@ -57,7 +86,7 @@ describe('Citation: create work', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // check that work is not displayed in the inventory
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle, false);
       InventorySearchAndFilter.verifyNoRecordsFound();
     },

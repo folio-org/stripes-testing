@@ -17,7 +17,7 @@ export default {
 
   verifyLoanAnonymizationsContainsParams(params) {
     this.getLoanAnonymizationsViaApi().then((response) => {
-      const value = JSON.parse(response.body.configs[0].value);
+      const value = response.body.circulationSettings[0].value;
       Object.keys(params).forEach((key) => {
         expect(value.closingType[key]).to.contain(params[key]);
       });
@@ -28,7 +28,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: 'configurations/entries?query=(module==LOAN_HISTORY%20and%20configName==loan_history)',
+        path: 'circulation/settings?query=(name==loan_history)',
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
@@ -38,38 +38,49 @@ export default {
 
   setLoanAnonymizationsViaApi(params) {
     return this.getLoanAnonymizationsViaApi().then((loanAnonymizationsResp) => {
-      let config = loanAnonymizationsResp.body.configs[0];
+      let config = loanAnonymizationsResp.body.circulationSettings[0];
 
-      if (loanAnonymizationsResp.body.configs.length === 0) {
+      if (loanAnonymizationsResp.body.circulationSettings.length === 0) {
         config = {
-          value:
-            '{"closingType":{"loan":"never","feeFine":null,"loanExceptions":[]},"loan":{},"feeFine":{},"loanExceptions":[],"treatEnabled":false}',
-          module: 'LOAN_HISTORY',
-          configName: 'loan_history',
+          value: {
+            closingType: {
+              loan: 'never',
+              feeFine: null,
+              loanExceptions: [],
+            },
+            loan: {},
+            feeFine: {},
+            loanExceptions: [],
+            treatEnabled: false,
+          },
+          name: 'loan_history',
           id: uuid(),
         };
 
-        const newValue = { ...JSON.parse(config.value), ...params };
-        config.value = JSON.stringify(newValue);
+        config.value = {
+          ...config.value,
+          ...params,
+        };
 
         cy.okapiRequest({
           method: 'POST',
-          path: 'configurations/entries',
+          path: 'circulation/settings',
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: config,
         });
       } else {
-        const newValue = { ...JSON.parse(config.value), ...params };
-        config.value = JSON.stringify(newValue);
+        config.value = {
+          ...config.value,
+          ...params,
+        };
 
         cy.okapiRequest({
           method: 'PUT',
-          path: `configurations/entries/${config.id}`,
+          path: `circulation/settings/${config.id}`,
           body: {
             id: config.id,
-            module: config.module,
-            configName: config.configName,
+            name: config.name,
             enabled: config.enabled,
             value: config.value,
           },

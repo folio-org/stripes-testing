@@ -109,8 +109,8 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 10,
-            Settings: 1,
+            Data: 14,
+            Settings: 2,
             Procedural: 1,
           },
         },

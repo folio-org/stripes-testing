@@ -693,6 +693,7 @@ export default {
       method: 'DELETE',
       path: `inventory/instances/${id}/mark-deleted`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

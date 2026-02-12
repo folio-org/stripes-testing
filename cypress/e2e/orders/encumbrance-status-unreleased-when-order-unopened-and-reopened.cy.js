@@ -205,7 +205,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(false);
+    Approvals.setApprovePayValueViaApi(false);
     return createFinanceData().then(() => {
       return createOrderData().then(() => {
         cy.createTempUser([

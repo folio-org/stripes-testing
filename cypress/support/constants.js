@@ -1,6 +1,7 @@
 export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
+  CLAIMING: 'Claiming',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -14,6 +15,7 @@ export const APPLICATION_NAMES = {
   ORDERS: 'Orders',
   CHECK_IN: 'Check in',
   CHECK_OUT: 'Check out',
+  RECEIVING: 'Receiving',
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
@@ -22,6 +24,8 @@ export const APPLICATION_NAMES = {
   LINKED_DATA_EDITOR: 'Linked Data Editor',
   NOTES: 'Notes',
   ORGANIZATIONS: 'Organizations',
+  COURSES: 'Courses',
+  DEVELOPER: 'Developer',
 };
 
 export const REQUEST_METHOD = {
@@ -252,6 +256,7 @@ export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
   PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  OTHER: 'Other',
 };
 
 export const RECEIPT_STATUS_SELECTED = {
@@ -1596,6 +1601,11 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   AND: 'AND',
   NOT: 'NOT',
   OR: 'OR',
+};
+
+export const LDE_ROLES = {
+  CATALOGER: 'Cataloger',
+  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
 };
 
 export const AUTHORIZATION_ROLE_TYPES = {

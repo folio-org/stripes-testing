@@ -229,7 +229,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: 'configurations/entries?query=(module==USERS%20and%20configName==custom_fields_label)',
+        path: 'settings/entries?query=(scope==ui-users.custom-fields-label.manage and key==custom_fields_label)',
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {

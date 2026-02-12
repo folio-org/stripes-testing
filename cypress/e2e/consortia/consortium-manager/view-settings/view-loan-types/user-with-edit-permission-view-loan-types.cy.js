@@ -10,11 +10,11 @@ import ConsortiumManagerApp, {
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import LoanTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import LoanTypes from '../../../../../support/fragments/settings/inventory/items/loanTypes';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -51,61 +51,49 @@ describe('Consortia', () => {
         };
 
         before('Create test data', () => {
-          cy.getAdminToken()
-            .then(() => {
-              LoanTypesConsortiumManager.createViaApi(testData.centralSharedLoanType).then(
-                (newLoanType) => {
-                  testData.centralSharedLoanType = newLoanType;
-                },
-              );
-            })
-            .then(() => {
-              cy.resetTenant();
-              LoanTypes.createLoanTypesViaApi(testData.centralLocalLoanType).then((loanTypeId) => {
-                testData.centralLocalLoanType.id = loanTypeId;
-              });
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.College);
-              LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanType).then((loanTypeId) => {
-                testData.collegeLocalLoanType.id = loanTypeId;
-              });
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.University);
-              LoanTypes.createLoanTypesViaApi(testData.universityLocalLoanType).then(
-                (loanTypeId) => {
-                  testData.universityLocalLoanType.id = loanTypeId;
-                },
-              );
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.College);
-              cy.createTempUser([Permissions.uiCreateEditDeleteLoanTypes.gui]).then(
-                (userProperties) => {
-                  testData.user = userProperties;
-
-                  cy.resetTenant();
-                  cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-                  cy.assignPermissionsToExistingUser(testData.user.userId, [
-                    Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                    Permissions.uiCreateEditDeleteLoanTypes.gui,
-                  ]);
-                  cy.setTenant(Affiliations.University);
-                  cy.assignPermissionsToExistingUser(testData.user.userId, [
-                    Permissions.uiCreateEditDeleteLoanTypes.gui,
-                  ]);
-                },
-              );
-            })
-            .then(() => {
-              cy.resetTenant();
-              cy.login(testData.user.username, testData.user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-              // Without waiter, permissions aren't loading
-              cy.wait(10000);
+          cy.getAdminToken().then(() => {
+            LoanTypesConsortiumManager.createViaApi(testData.centralSharedLoanType).then(
+              (newLoanType) => {
+                testData.centralSharedLoanType = newLoanType;
+              },
+            );
+            LoanTypes.createLoanTypesViaApi(testData.centralLocalLoanType).then((loanTypeId) => {
+              testData.centralLocalLoanType.id = loanTypeId;
             });
+            cy.setTenant(Affiliations.College);
+            LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanType).then((loanTypeId) => {
+              testData.collegeLocalLoanType.id = loanTypeId;
+            });
+            cy.resetTenant();
+            cy.setTenant(Affiliations.University);
+            LoanTypes.createLoanTypesViaApi(testData.universityLocalLoanType).then((loanTypeId) => {
+              testData.universityLocalLoanType.id = loanTypeId;
+            });
+            cy.resetTenant();
+          });
+
+          cy.createTempUser([
+            Permissions.consortiaSettingsConsortiumManagerEdit.gui,
+            Permissions.uiCreateEditDeleteLoanTypes.gui,
+          ]).then((userProperties) => {
+            testData.user = userProperties;
+
+            cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(testData.user.userId, [
+              Permissions.uiCreateEditDeleteLoanTypes.gui,
+            ]);
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
+            cy.setTenant(Affiliations.University);
+            cy.assignPermissionsToExistingUser(testData.user.userId, [
+              Permissions.uiCreateEditDeleteLoanTypes.gui,
+            ]);
+            cy.resetTenant();
+
+            cy.login(testData.user.username, testData.user.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          });
         });
 
         after('Delete test data', () => {

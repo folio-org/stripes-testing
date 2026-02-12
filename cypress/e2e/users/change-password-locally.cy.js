@@ -16,7 +16,7 @@ describe('Users', () => {
       ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
         servicePointId = servicePoint.id;
       });
-      cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsCanChangeLocalPassword.gui]).then(
         (userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);

@@ -126,12 +126,13 @@ export default {
     return cy.get('@order');
   },
 
-  updateOrderViaApi(order) {
+  updateOrderViaApi(order, deleteHoldings = false) {
     cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
       body: order,
+      searchParams: deleteHoldings ? { deleteHoldings: true } : {},
       isDefaultSearchParamsRequired: false,
     });
   },
@@ -457,6 +458,12 @@ export default {
   checkOrderIsNotOpened: (fundCode) => {
     InteractorsTools.checkCalloutErrorMessage(
       `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
+    );
+  },
+
+  checkInvalidLocationErrorMessage: (polNumber) => {
+    InteractorsTools.checkCalloutErrorMessage(
+      `Unable to open PO. One or more funds for POL number ${polNumber} are not valid with the selected location(s)`,
     );
   },
 

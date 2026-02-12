@@ -833,6 +833,11 @@ export default {
     return ItemRecordEdit;
   },
 
+  clickAddItemByHoldingId({ holdingId, instanceTitle = '' } = {}) {
+    cy.do(Button({ id: `clickable-new-item-${holdingId}` }).click());
+    ItemRecordEdit.waitLoading(instanceTitle);
+  },
+
   fillItemRequiredFields(permanentLoanType = 'Can circulate', materialType = 'book') {
     cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
     cy.do(Select({ id: 'additem_loanTypePerm' }).choose(permanentLoanType));
@@ -1196,6 +1201,7 @@ export default {
             instanceId: instanceData.instanceId,
             instanceTypeId: instanceData.instanceTypeId,
             title: instanceData.instanceTitle,
+            ...instanceData,
           },
         });
       })
@@ -1690,6 +1696,14 @@ export default {
         .find(marcAuthorityAppIcon)
         .absent(),
     );
+  },
+  checkItemStatusByBarcode: (barcode, expectedStatus) => {
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((barcodeCell) => {
+        const row = barcodeCell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('div[class^="mclCell-"]').should('contain.text', expectedStatus);
+      });
   },
   verifyCheckedOutDate: (date) => {
     cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));

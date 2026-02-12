@@ -112,7 +112,7 @@ export default {
 
   clickTrashButtonForInstanceStatusTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .find(Button({ icon: 'trash' }))
         .click(),

@@ -99,4 +99,10 @@ export default {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
   },
+  verifySaveAndCloseButtonState({ disabled = true } = {}) {
+    cy.expect(saveAndCloseButton.has({ disabled }));
+  },
+  verifyActionsMenuState({ disabled = true } = {}) {
+    cy.expect(Button({ dataTestID: 'dropdown-trigger-button' }).has({ disabled }));
+  },
 };

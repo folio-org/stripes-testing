@@ -25,12 +25,12 @@ describe('Organizations', () => {
     });
 
     after('Delete test data', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsOrganizationsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      cy.getAdminToken();
+      SettingsOrganizations.getAccountTypeViaApi(accountType.name).then((response) => {
+        SettingsOrganizations.deleteOrganizationAccountTypeViaApi(
+          response.bankingAccountTypes[0].id,
+        );
       });
-      SettingsOrganizations.selectAccountTypes();
-      SettingsOrganizations.deleteAccountType(accountType);
       Users.deleteViaApi(user.userId);
     });
 

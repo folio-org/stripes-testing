@@ -46,7 +46,7 @@ describe('Invoices', () => {
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayDisabled);
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
