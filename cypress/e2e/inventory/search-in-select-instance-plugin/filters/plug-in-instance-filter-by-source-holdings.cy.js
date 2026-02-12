@@ -9,17 +9,16 @@ import { NewOrganization, Organizations } from '../../../../support/fragments/or
 import OrderLineEditForm from '../../../../support/fragments/orders/orderLineEditForm';
 import OrderDetails from '../../../../support/fragments/orders/orderDetails';
 import SelectInstanceModal from '../../../../support/fragments/orders/modals/selectInstanceModal';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C476816_Instance_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C476829_Instance_${randomPostfix}`;
       const sourceAccordionName = 'Source';
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C476816_Org_${randomPostfix}`;
+      organization.name = `AT_C476829_Org_${randomPostfix}`;
       const instancesData = [
         { source: INSTANCE_SOURCE_NAMES.FOLIO },
         { source: INSTANCE_SOURCE_NAMES.MARC },
@@ -31,13 +30,21 @@ describe('Inventory', () => {
 
       let order;
       let user;
+      let instanceTypeId;
+      let location;
 
       before('Create users, data', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C476816');
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C476829');
 
+          cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
+          });
+          cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((loc) => {
+            location = loc;
+          });
           Organizations.createOrganizationViaApi(organization).then(() => {
             const orderData = NewOrder.getDefaultOngoingOrder({
               vendorId: organization.id,
@@ -50,11 +57,27 @@ describe('Inventory', () => {
           .then(() => {
             instancesData.forEach((data, index) => {
               if (data.source === INSTANCE_SOURCE_NAMES.FOLIO) {
-                InventoryInstance.createInstanceViaApi({
-                  instanceTitle: instanceTitles[index],
+                InventoryInstances.createFolioInstanceViaApi({
+                  instance: {
+                    instanceTypeId,
+                    title: instanceTitles[index],
+                  },
+                  holdings: [
+                    {
+                      permanentLocationId: location.id,
+                    },
+                  ],
                 });
               } else {
-                cy.createSimpleMarcBibViaAPI(instanceTitles[index]);
+                cy.createSimpleMarcBibViaAPI(instanceTitles[index]).then((instanceId) => {
+                  cy.getInstanceById(instanceId).then((instanceData) => {
+                    cy.createSimpleMarcHoldingsViaAPI(
+                      instanceData.id,
+                      instanceData.hrid,
+                      location.code,
+                    );
+                  });
+                });
               }
             });
           })
@@ -73,22 +96,23 @@ describe('Inventory', () => {
               Orders.selectOrderByPONumber(order.poNumber);
               OrderDetails.selectAddPOLine();
               OrderLineEditForm.clickTitleLookUpButton();
-              InventorySearchAndFilter.instanceTabIsDefault();
+              InventorySearchAndFilter.switchToHoldings();
+              InventorySearchAndFilter.holdingsTabIsDefault();
             });
           });
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi(instanceTitlePrefix);
+        InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitlePrefix);
         Users.deleteViaApi(user.userId);
         Organizations.deleteOrganizationViaApi(organization.id);
         Orders.deleteOrderViaApi(order.id);
       });
 
       it(
-        'C476816 "Select Instance" plugin | Filter "Instance" records by "Source" filter (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476816'] },
+        'C476829 "Select Instance" plugin | Filter "Instance" records by "Source" filter on "Holdings" segment (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C476829'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);
