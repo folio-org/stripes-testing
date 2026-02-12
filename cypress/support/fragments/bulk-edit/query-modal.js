@@ -481,6 +481,11 @@ export default {
     cy.wait(1000);
   },
 
+  chooseValueSelectByValue(value, row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectControl"]`).select(value);
+    cy.wait(1000);
+  },
+
   fillInValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
@@ -491,6 +496,36 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
+  },
+
+  selectAllMatchingFromMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.wait(1500);
+
+    const clickNext = () => {
+      cy.get('body').then(($body) => {
+        const $unselected = $body.find(
+          '[role="listbox"]:visible [role="option"][aria-selected="false"]',
+        );
+
+        let found = false;
+        $unselected.each((i, el) => {
+          if (!found && Cypress.$(el).text().trim().includes(text)) {
+            found = true;
+            cy.wrap(el).click();
+            cy.wait(1000);
+            clickNext();
+            return false; // break the loop
+          }
+          return true; // continue the loop
+        });
+      });
+    };
+
+    clickNext();
+    cy.wait(500);
+    cy.do(buildQueryModal.click());
     cy.wait(1000);
   },
 
