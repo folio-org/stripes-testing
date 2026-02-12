@@ -240,7 +240,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                CONSORTIA_SYSTEM_USER,
+                `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`,
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
@@ -364,7 +364,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                CONSORTIA_SYSTEM_USER,
+                `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`,
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
