@@ -9,46 +9,52 @@ import { NewOrganization, Organizations } from '../../../../support/fragments/or
 import OrderLineEditForm from '../../../../support/fragments/orders/orderLineEditForm';
 import OrderDetails from '../../../../support/fragments/orders/orderDetails';
 import SelectInstanceModal from '../../../../support/fragments/orders/modals/selectInstanceModal';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       const randomPostfix = getRandomPostfix();
-      const instanceTitlePrefix = `AT_C476825_Instance_${randomPostfix}`;
+      const instanceTitlePrefix = `AT_C476833_Instance_${randomPostfix}`;
       const organization = NewOrganization.getDefaultOrganization();
-      organization.name = `AT_C476825_Org_${randomPostfix}`;
+      organization.name = `AT_C476833_Org_${randomPostfix}`;
       const suppressFromDiscoveryAccordionName = 'Suppress from discovery';
-      const instancesData = [
-        { isHoldingsSuppressDiscovery: false },
-        { isHoldingsSuppressDiscovery: true },
-      ];
+      const instancesData = [{ isItemSuppressDiscovery: false }, { isItemSuppressDiscovery: true }];
       const instanceTitles = Array.from(
         { length: instancesData.length },
         (_, i) => `${instanceTitlePrefix}_${i}`,
       );
       const suppressedInstanceTitles = instanceTitles.filter(
-        (_, index) => instancesData[index].isHoldingsSuppressDiscovery,
+        (_, index) => instancesData[index].isItemSuppressDiscovery,
       );
       const notSuppressedInstanceTitles = instanceTitles.filter(
-        (_, index) => !instancesData[index].isHoldingsSuppressDiscovery,
+        (_, index) => !instancesData[index].isItemSuppressDiscovery,
       );
 
       let order;
       let user;
       let instanceTypeId;
       let locationId;
+      let loanTypeId;
+      let materialTypeId;
 
       before('Create users, data', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C476825');
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C476833');
 
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
           cy.getLocations({ limit: 1, query: '(isActive=true and name<>"AT_*")' }).then((loc) => {
             locationId = loc.id;
+          });
+          cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
+            loanTypeId = res[0].id;
+          });
+          cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((matType) => {
+            materialTypeId = matType.id;
           });
           Organizations.createOrganizationViaApi(organization).then(() => {
             const orderData = NewOrder.getDefaultOngoingOrder({
@@ -69,7 +75,14 @@ describe('Inventory', () => {
                 holdings: [
                   {
                     permanentLocationId: locationId,
-                    discoverySuppress: data.isHoldingsSuppressDiscovery,
+                  },
+                ],
+                items: [
+                  {
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    permanentLoanType: { id: loanTypeId },
+                    materialType: { id: materialTypeId },
+                    discoverySuppress: data.isItemSuppressDiscovery,
                   },
                 ],
               });
@@ -89,8 +102,8 @@ describe('Inventory', () => {
               Orders.selectOrderByPONumber(order.poNumber);
               OrderDetails.selectAddPOLine();
               OrderLineEditForm.clickTitleLookUpButton();
-              InventorySearchAndFilter.switchToHoldings();
-              InventorySearchAndFilter.holdingsTabIsDefault();
+              InventorySearchAndFilter.switchToItem();
+              InventorySearchAndFilter.itemTabIsDefault();
             });
           });
       });
@@ -104,8 +117,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476825 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter in the "Holdings" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476825'] },
+        'C476833 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter in "Item" segment (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C476833'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(suppressFromDiscoveryAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(
