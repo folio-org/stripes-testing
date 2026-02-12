@@ -163,7 +163,13 @@ export default {
   openRequestEditForm() {
     cy.wait(3000);
     cy.do(actionsButton.click());
-    cy.wait(3000);
+    cy.wait(5000);
+    cy.get('body').then(($body) => {
+      if ($body.find('#clickable-edit-request').length === 0) {
+        cy.do(actionsButton.click());
+        cy.wait(1000);
+      }
+    });
     cy.do(editRequestButton.click());
   },
 
