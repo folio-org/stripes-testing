@@ -1280,6 +1280,15 @@ export default {
       });
   },
 
+  updateFundViaApi: (fundProperties, groupIds = []) => {
+    return cy.okapiRequest({
+      path: `finance/funds/${fundProperties.id}`,
+      body: { fund: fundProperties, groupIds },
+      method: 'PUT',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
