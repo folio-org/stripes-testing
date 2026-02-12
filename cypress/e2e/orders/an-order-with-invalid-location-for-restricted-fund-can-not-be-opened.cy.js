@@ -215,6 +215,10 @@ describe('Orders', () => {
           testData.location2.libraryId,
           testData.location2.id,
         );
+        Budgets.deleteViaApi(testData.budget.id);
+        Funds.deleteFundViaApi(testData.fund.id);
+        Ledgers.deleteLedgerViaApi(testData.ledger.id);
+        FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
         Users.deleteViaApi(testData.user.userId);
         Organizations.deleteOrganizationViaApi(testData.organization.id);
       });
