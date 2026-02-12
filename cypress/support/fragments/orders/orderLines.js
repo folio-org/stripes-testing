@@ -1360,6 +1360,21 @@ export default {
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
+  addLocationToPOLWithoutSave({ index = 0, location, physicalQuantity, electronicQuantity } = {}) {
+    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+    cy.do(SelectionOption(`${location.name} (${location.code})`).click());
+
+    if (physicalQuantity) {
+      cy.do(TextField({ name: `locations[${index}].quantityPhysical` }).fillIn(physicalQuantity));
+    }
+
+    if (electronicQuantity) {
+      cy.do(
+        TextField({ name: `locations[${index}].quantityElectronic` }).fillIn(electronicQuantity),
+      );
+    }
+  },
+
   addTwoFundsToPOLinPercent(
     fund,
     firstPercentValue,
@@ -1977,8 +1992,8 @@ export default {
     cy.get('#fundDistributionAccordion').find('button[icon="trash"]').first().click();
   },
 
-  deleteLocationsInPOL() {
-    cy.get('#location').find('button[icon="trash"]').first().click();
+  deleteLocationsInPOL(index = 0) {
+    cy.get('#location').find('button[icon="trash"]').eq(index).click();
   },
 
   addContributorToPOL: () => {
@@ -2462,6 +2477,12 @@ export default {
   checkErrorToastMessage: (message) => {
     cy.wait(4000);
     InteractorsTools.checkOneOfCalloutsContainsErrorMessage(message);
+  },
+
+  checkLocationRestrictedErrorMessage: () => {
+    InteractorsTools.checkCalloutErrorMessage(
+      'Location-restricted fund applied to invalid location',
+    );
   },
 
   checkPhysicalQuantityInLocation: (quantity) => {
