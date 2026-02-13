@@ -2348,7 +2348,7 @@ export default {
         .find(KeyValue('Quantity physical'))
         .has({ value: orderData.quantityPhysical }),
       KeyValue('Currency').has({ value: orderData.currency }),
-      KeyValue('Material supplier').has({ value: orderData.materialSupplier }),
+      KeyValue('Material supplier').has({ value: including(orderData.materialSupplier) }),
       KeyValue('Create inventory').has({ value: orderData.createInventory }),
       KeyValue('Material type').has({ value: orderData.materialType }),
     ]);

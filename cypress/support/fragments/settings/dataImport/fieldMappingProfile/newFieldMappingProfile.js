@@ -276,7 +276,9 @@ const addVendor = (profile) => {
     organizationModal.find(searchButton).click(),
   ]);
   cy.expect(MultiColumnListCell(including(profile.vendor)).exists());
-  cy.do(MultiColumnListCell({ columnIndex: 0, row: 0, content: profile.vendor }).click());
+  cy.do(
+    MultiColumnListCell({ columnIndex: 0, row: 0, content: including(profile.vendor) }).click(),
+  );
 };
 
 const addMaterialSupplier = (profile) => {
@@ -285,7 +287,11 @@ const addMaterialSupplier = (profile) => {
       physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
       organizationModal.find(searchField).fillIn(profile.materialSupplier),
       organizationModal.find(searchButton).click(),
-      MultiColumnListCell({ columnIndex: 0, row: 0, content: profile.materialSupplier }).click(),
+      MultiColumnListCell({
+        columnIndex: 0,
+        row: 0,
+        content: including(profile.materialSupplier),
+      }).click(),
     ]);
   }
 };

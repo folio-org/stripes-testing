@@ -93,12 +93,10 @@ describe('Data Import', () => {
 
         // create Action profile and link it to Field mapping profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         SettingsActionProfiles.create(actionProfile, mappingProfile.name);
         SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
@@ -106,8 +104,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
         JobProfiles.waitFileIsUploaded();

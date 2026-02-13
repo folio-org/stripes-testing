@@ -10,7 +10,6 @@ import {
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
@@ -38,6 +37,9 @@ import NewFieldMappingProfile from '../../../../support/fragments/settings/dataI
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import { SETTINGS_TABS } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import { Locations } from '../../../../support/fragments/settings/tenant/location-setup';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -50,6 +52,7 @@ const { user, memberTenant } = parseSanityParameters();
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
+    const location = {};
     const mappingProfileIds = [];
     const actionProfileIds = [];
     // file names
@@ -129,7 +132,6 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C343335 autotestMappingHoldings${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -211,6 +213,13 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        Location.createViaApi(Location.getDefaultLocation(servicePoint.id)).then(
+          (locationResponse) => {
+            Object.assign(location, locationResponse);
+          },
+        );
+      });
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
         marcBibMappingProfileForCreate,
       ).then((mappingProfileResponse) => {
@@ -314,6 +323,7 @@ describe('Data Import', () => {
           },
         );
       });
+      Locations.deleteViaApi(location);
     });
 
     const createInstanceMappingProfile = (profile) => {
@@ -329,7 +339,7 @@ describe('Data Import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.ELECTRONIC);
-      NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
+      NewFieldMappingProfile.fillPermanentLocation(`"${location.name} (${location.code})"`);
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
       NewFieldMappingProfile.addElectronicAccess(profile.typeValue, '"Resource"', '856$u');
@@ -463,7 +473,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
 
         // upload the exported marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
