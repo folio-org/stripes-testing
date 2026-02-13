@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 import FastAddNewRecord from '../../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
@@ -85,15 +85,11 @@ describe('Inventory', () => {
           // verify holdings details
           FastAddNewRecord.viewHoldings();
           FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          FastAddNewRecord.verifyPermanentLocation(
-            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
-          );
+          FastAddNewRecord.verifyPermanentLocation(LOCATION_NAMES.ANNEX_UI);
           FastAddNewRecord.closeHoldingsRecordView();
 
           // verify item details
-          InventoryInstance.openHoldings([
-            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
-          ]);
+          InventoryInstance.openHoldings([LOCATION_NAMES.ANNEX_UI]);
           InventoryInstance.openItemByBarcode(
             FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
           );

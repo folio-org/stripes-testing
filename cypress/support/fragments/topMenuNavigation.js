@@ -38,4 +38,19 @@ export default {
     if (isShown) cy.expect(AppList().find(Link(appName)).exists());
     else cy.expect(AppList().find(Link(appName)).absent());
   },
+  navigateToAppAdaptive(appName) {
+    cy.wait(2000);
+    cy.then(() => {
+      cy.get('body').then(($body) => {
+        if ($body.find(`[data-test-app-link="${appName}"]`).length > 0) {
+          cy.do(AppList().choose(appName));
+        } else {
+          cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
+          cy.wait(2000);
+          cy.do(AppList().find(Link(appName)).click());
+        }
+      });
+    });
+    cy.wait(2000);
+  },
 };

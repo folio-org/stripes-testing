@@ -28,7 +28,7 @@ describe('Inventory', () => {
       cy.getAdminToken().then(() => {
         InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
           (id) => {
-            InventoryInstance.deleteInstanceViaApi(id);
+            InventoryInstance.deleteInstanceViaApi(id, true);
           },
         );
       });
