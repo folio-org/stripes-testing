@@ -22,9 +22,9 @@ describe('Inventory', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
-        const titlePrefix = `AT_C436893_${randomPostfix}`;
+        const titlePrefix = `AT_C436894_${randomPostfix}`;
         const organization = NewOrganization.getDefaultOrganization();
-        organization.name = `AT_C436893_Org_${randomPostfix}`;
+        organization.name = `AT_C436894_Org_${randomPostfix}`;
         const testData = {
           locations: {},
           instances: {},
@@ -46,6 +46,7 @@ describe('Inventory', () => {
           Permissions.uiOrdersEdit.gui,
         ];
         const locationsAccordionName = 'Holdings permanent location';
+        const heldbyAccordionName = 'Held by';
         let loanTypeId;
         let materialTypeId;
         let order;
@@ -53,19 +54,20 @@ describe('Inventory', () => {
         before('Create test data and user', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          Organizations.createOrganizationViaApi(organization).then(() => {
-            const orderData = NewOrder.getDefaultOngoingOrder({
-              vendorId: organization.id,
-            });
-            Orders.createOrderViaApi(orderData).then((createdOrder) => {
-              order = createdOrder;
-            });
-          });
+
           cy.then(() => {
             cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
               testData.instanceTypeIdCentral = instanceTypes[0].id;
             });
             cy.setTenant(tenants.member1);
+            Organizations.createOrganizationViaApi(organization).then(() => {
+              const orderData = NewOrder.getDefaultOngoingOrder({
+                vendorId: organization.id,
+              });
+              Orders.createOrderViaApi(orderData).then((createdOrder) => {
+                order = createdOrder;
+              });
+            });
             cy.getHoldingTypes({ limit: 1, query: 'source=folio' }).then((holdingTypes) => {
               testData.holdingTypeIdMember1 = holdingTypes[0].id;
             });
@@ -158,13 +160,13 @@ describe('Inventory', () => {
                 // Create and affiliate user
                 cy.resetTenant();
                 cy.getAdminToken();
+                cy.setTenant(tenants.member1);
                 cy.createTempUser(userPermissions).then((userProps) => {
                   testData.user = userProps;
-                  cy.affiliateUserToTenant({
-                    tenantId: tenants.member1,
-                    userId: testData.user.userId,
-                    permissions: userPermissions,
-                  });
+
+                  cy.resetTenant();
+                  cy.assignPermissionsToExistingUser(testData.user.userId, userPermissions);
+
                   cy.affiliateUserToTenant({
                     tenantId: tenants.member2,
                     userId: testData.user.userId,
@@ -178,11 +180,11 @@ describe('Inventory', () => {
         after('Cleanup test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
+
+          cy.setTenant(tenants.member1);
           Users.deleteViaApi(testData.user.userId);
           Organizations.deleteOrganizationViaApi(organization.id);
           Orders.deleteOrderViaApi(order.id);
-
-          cy.setTenant(tenants.member1);
           InventoryInstances.deleteFullInstancesByTitleViaApi(titlePrefix);
           Location.deleteInstitutionCampusLibraryLocationViaApi(
             testData.locations.testLocation_member1.institutionId,
@@ -207,15 +209,15 @@ describe('Inventory', () => {
         });
 
         it(
-          'C436893 Locations with same names could be found using "Holdings permanent location" facet of "Select instance" plug-in opened from "Central" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C436893'] },
+          'C436894 Locations with same names could be found using "Holdings permanent location" facet of "Select instance" plug-in opened from "Member" tenant (consortia) (spitfire)',
+          { tags: ['extendedPathECS', 'spitfire', 'C436894'] },
           () => {
-            cy.resetTenant();
+            cy.setTenant(tenants.member1);
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.ordersPath,
               waiter: Orders.waitLoading,
             });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantDisplayNames.member1);
             Orders.selectOrderByPONumber(order.poNumber);
             OrderDetails.selectAddPOLine();
             OrderLineEditForm.clickTitleLookUpButton();
@@ -224,6 +226,16 @@ describe('Inventory', () => {
             InventorySearchAndFilter.holdingsTabIsDefault();
             SelectInstanceModal.checkTableContent();
             SelectInstanceModal.checkSearchInputCleared();
+
+            InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
+            SelectInstanceModal.selectMultiSelectFilterOption(
+              heldbyAccordionName,
+              tenantDisplayNames.member1,
+            );
+            InventorySearchAndFilter.verifyNumberOfSelectedOptionsInMultiSelectFilter(
+              heldbyAccordionName,
+              0,
+            );
 
             InventorySearchAndFilter.toggleAccordionByName(locationsAccordionName);
             SelectInstanceModal.checkOptionsWithCountersExistInAccordion(locationsAccordionName);
@@ -254,6 +266,16 @@ describe('Inventory', () => {
             InventorySearchAndFilter.itemTabIsDefault();
             SelectInstanceModal.checkTableContent();
             SelectInstanceModal.checkSearchInputCleared();
+
+            InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
+            SelectInstanceModal.selectMultiSelectFilterOption(
+              heldbyAccordionName,
+              tenantDisplayNames.member1,
+            );
+            InventorySearchAndFilter.verifyNumberOfSelectedOptionsInMultiSelectFilter(
+              heldbyAccordionName,
+              0,
+            );
 
             InventorySearchAndFilter.toggleAccordionByName(locationsAccordionName);
             SelectInstanceModal.typeValueInMultiSelectFilterFieldAndCheck(
