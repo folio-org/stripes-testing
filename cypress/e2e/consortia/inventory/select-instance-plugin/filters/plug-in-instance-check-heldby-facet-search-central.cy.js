@@ -3,46 +3,57 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
-import { INSTANCE_SOURCE_NAMES } from '../../../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../../support/constants';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import { NewOrder, Orders } from '../../../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../../../support/fragments/organizations';
+import OrderLineEditForm from '../../../../../support/fragments/orders/orderLineEditForm';
+import OrderDetails from '../../../../../support/fragments/orders/orderDetails';
+import SelectInstanceModal from '../../../../../support/fragments/orders/modals/selectInstanceModal';
+import InventoryItems from '../../../../../support/fragments/inventory/item/inventoryItems';
 
 describe('Inventory', () => {
-  describe('Search in Inventory', () => {
+  describe('Search in "Select instance" plugin', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
-        const instancePrefix = `AT_C401729_Instance_${randomPostfix}`;
-        const nonExistingTitle = `C401729_NonExistingTitle_${randomPostfix}`;
+        const instancePrefix = `AT_C402358_Instance_${randomPostfix}`;
+        const nonExistingTitle = `AT_C402358_NonExistingTitle_${randomPostfix}`;
         const heldbyAccordionName = 'Held by';
+        const sharedAccordionName = 'Shared';
+        const materialTypeAccordionName = 'Material type';
+        const bookMaterialTypeName = 'book';
+        const organization = NewOrganization.getDefaultOrganization();
+        organization.name = `AT_C402358_Org_${randomPostfix}`;
         const instancesData = [
           {
             instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
             holdingsAffiliations: [Affiliations.College, Affiliations.University],
+            itemsAreBooks: true,
           },
           {
             instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
             holdingsAffiliations: [Affiliations.College],
-          },
-          {
-            instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
-            holdingsAffiliations: [Affiliations.University],
+            itemsAreBooks: true,
           },
           {
             instanceSource: INSTANCE_SOURCE_NAMES.MARC,
             holdingsAffiliations: [Affiliations.College, Affiliations.University],
-          },
-          {
-            instanceSource: INSTANCE_SOURCE_NAMES.MARC,
-            holdingsAffiliations: [Affiliations.College],
+            itemsAreBooks: true,
           },
           {
             instanceSource: INSTANCE_SOURCE_NAMES.MARC,
             holdingsAffiliations: [Affiliations.University],
+            itemsAreBooks: false,
+          },
+          {
+            instanceSource: INSTANCE_SOURCE_NAMES.MARC,
+            holdingsAffiliations: [Affiliations.College],
+            itemsAreBooks: false,
           },
         ];
         const instanceTitles = Array.from(
@@ -63,21 +74,30 @@ describe('Inventory', () => {
           [Affiliations.University]: null,
         };
         let holdingsSourceId;
+        let loanTypeId;
+        let materialTypeId;
+        let bookMaterialTypeId;
+        let order;
 
         before('Create user, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C401729');
 
-          cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
+          cy.createTempUser([
+            Permissions.uiInventoryViewInstances.gui,
+            Permissions.uiOrdersCreate.gui,
+          ])
             .then((userProperties) => {
               user = userProperties;
 
               cy.setTenant(Affiliations.College);
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C401729');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402358');
 
               cy.setTenant(Affiliations.University);
-              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C401729');
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402358');
+
+              cy.resetTenant();
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402358');
             })
             .then(() => {
               cy.resetTenant();
@@ -116,6 +136,14 @@ describe('Inventory', () => {
                   });
                 },
               );
+              Organizations.createOrganizationViaApi(organization).then(() => {
+                const orderData = NewOrder.getDefaultOngoingOrder({
+                  vendorId: organization.id,
+                });
+                Orders.createOrderViaApi(orderData).then((createdOrder) => {
+                  order = createdOrder;
+                });
+              });
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
@@ -127,6 +155,16 @@ describe('Inventory', () => {
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 holdingsSourceId = folioSource.id;
+              });
+              cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
+                loanTypeId = loanTypes[0].id;
+              });
+              cy.getAllMaterialTypes({ limit: 200, query: 'source=folio' }).then((mtypes) => {
+                const bookTypeIndex = mtypes.findIndex(
+                  (type) => type.name === bookMaterialTypeName,
+                );
+                materialTypeId = mtypes.filter((_, index) => index !== bookTypeIndex)[0].id;
+                bookMaterialTypeId = mtypes[bookTypeIndex].id;
               });
               cy.setTenant(Affiliations.University);
               cy.getLocations({
@@ -144,6 +182,15 @@ describe('Inventory', () => {
                     instanceId: instanceData.instanceId,
                     permanentLocationId: locations[holdingsAffiliation].id,
                     sourceId: holdingsSourceId,
+                  }).then((holding) => {
+                    InventoryItems.createItemViaApi({
+                      holdingsRecordId: holding.id,
+                      materialType: {
+                        id: instanceData.itemsAreBooks ? bookMaterialTypeId : materialTypeId,
+                      },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    });
                   });
                 });
               });
@@ -151,8 +198,8 @@ describe('Inventory', () => {
             .then(() => {
               cy.resetTenant();
               cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+                path: TopMenu.ordersPath,
+                waiter: Orders.waitLoading,
               });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
@@ -170,16 +217,22 @@ describe('Inventory', () => {
           cy.resetTenant();
           Users.deleteViaApi(user.userId);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+          Organizations.deleteOrganizationViaApi(organization.id);
+          Orders.deleteOrderViaApi(order.id);
         });
 
         it(
-          'C401729 Check the "Held by" facet for search from "Central" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C401729'] },
+          'C402358 "Select instance" plugin | Check the "Held by" facet for search from "Central" tenant (consortia) (spitfire)',
+          { tags: ['extendedPathECS', 'spitfire', 'C402358'] },
           () => {
+            Orders.selectOrderByPONumber(order.poNumber);
+            OrderDetails.selectAddPOLine();
+            OrderLineEditForm.clickTitleLookUpButton();
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);
-            InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(heldbyAccordionName, true);
-            InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(heldbyAccordionName);
+            InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, false);
+            InventorySearchAndFilter.instanceTabIsDefault();
+
+            InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -191,24 +244,24 @@ describe('Inventory', () => {
               false,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
+            SelectInstanceModal.searchByName(instancePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
             instanceTitles.forEach((title) => {
               InventorySearchAndFilter.verifySearchResult(title);
             });
-            InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
-              instanceIndexesHelbyCollege.length,
+              false,
             );
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.university,
-              instanceIndexesHelbyUniversity.length,
+              false,
             );
 
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.college,
             );
@@ -223,8 +276,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(
               instanceIndexesHelbyCollege.length,
             );
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.college,
             );
@@ -237,8 +291,9 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifySearchResult(title);
             });
             InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.university,
             );
@@ -253,8 +308,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(
               instanceIndexesHelbyUniversity.length,
             );
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.college,
             );
@@ -267,13 +323,11 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifySearchResult(title);
             });
             InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
-            InventorySearchAndFilter.fillInSearchQuery(nonExistingTitle);
-            InventorySearchAndFilter.clickSearch();
-            InventorySearchAndFilter.verifyResultPaneEmpty({
-              noResultsFound: true,
-              searchQuery: nonExistingTitle,
-            });
+            SelectInstanceModal.searchByName(nonExistingTitle);
+            InventorySearchAndFilter.verifyResultListExists(false);
+            SelectInstanceModal.checkNoRecordsFound(nonExistingTitle);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -287,13 +341,12 @@ describe('Inventory', () => {
 
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.holdingsTabIsDefault();
-            InventorySearchAndFilter.verifyResultPaneEmpty();
-            InventorySearchAndFilter.checkSearchQueryText('');
+            SelectInstanceModal.checkTableContent();
+            SelectInstanceModal.checkSearchInputCleared();
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);
+            InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, false);
 
-            InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(heldbyAccordionName, true);
-            InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(heldbyAccordionName);
+            InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -305,9 +358,14 @@ describe('Inventory', () => {
               false,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.searchByName(instancePrefix);
+            instanceTitles.forEach((title) => {
+              InventorySearchAndFilter.verifySearchResult(title);
+            });
+            InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
+
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.college,
             );
@@ -322,9 +380,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(
               instanceIndexesHelbyCollege.length,
             );
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
             InventorySearchAndFilter.clearFilter(heldbyAccordionName);
-            InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(heldbyAccordionName);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -338,13 +396,19 @@ describe('Inventory', () => {
 
             InventorySearchAndFilter.switchToItem();
             InventorySearchAndFilter.itemTabIsDefault();
-            InventorySearchAndFilter.verifyResultPaneEmpty();
-            InventorySearchAndFilter.checkSearchQueryText('');
+            SelectInstanceModal.checkTableContent();
+            SelectInstanceModal.checkSearchInputCleared();
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);
+            InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, false);
 
-            InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(heldbyAccordionName, true);
-            InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(heldbyAccordionName);
+            SelectInstanceModal.searchByName(instancePrefix);
+            instanceTitles.forEach((title) => {
+              InventorySearchAndFilter.verifySearchResult(title);
+            });
+            InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
+
+            InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -356,9 +420,7 @@ describe('Inventory', () => {
               false,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            SelectInstanceModal.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.university,
             );
@@ -373,12 +435,18 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(
               instanceIndexesHelbyUniversity.length,
             );
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
 
-            InventorySearchAndFilter.fillInSearchQuery(instanceTitles[3]);
-            InventorySearchAndFilter.clickSearch();
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[3]);
-            InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-            InventoryInstance.waitLoading();
+            InventorySearchAndFilter.toggleAccordionByName(materialTypeAccordionName);
+            SelectInstanceModal.selectMultiSelectFilterOption(
+              materialTypeAccordionName,
+              bookMaterialTypeName,
+            );
+            [0, 2].forEach((instanceIndex) => {
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+            });
+            InventorySearchAndFilter.verifyNumberOfSearchResults(2);
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
@@ -389,83 +457,27 @@ describe('Inventory', () => {
               tenantNames.university,
               true,
             );
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
-              heldbyAccordionName,
-              tenantNames.college,
-              1,
-            );
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
-              heldbyAccordionName,
-              tenantNames.university,
-              1,
-            );
 
-            cy.intercept('/search/instances?*').as('getInstances1');
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
-              heldbyAccordionName,
-              tenantNames.university,
-            );
-            cy.wait('@getInstances1').its('response.statusCode').should('eq', 200);
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[3]);
+            SelectInstanceModal.searchByName(instanceTitles[2]);
+            InventorySearchAndFilter.verifySearchResult(instanceTitles[2]);
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-            InventoryInstance.waitLoading();
+            InventorySearchAndFilter.checkSharedInstancesInResultList({ instancePlugin: true });
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
-              tenantNames.university,
+              tenantNames.college,
               false,
             );
-
-            cy.intercept('/search/instances?*').as('getInstances2');
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
-              heldbyAccordionName,
-              tenantNames.college,
-            );
-            cy.wait('@getInstances2').its('response.statusCode').should('eq', 200);
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
-              tenantNames.college,
-              true,
-            );
-            InventorySearchAndFilter.verifySearchResult(instanceTitles[3]);
-            InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-            InventoryInstance.waitLoading();
-
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
-            instanceIndexesHelbyCollege.forEach((instanceIndex) => {
-              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-            });
-            InventorySearchAndFilter.verifyNumberOfSearchResults(
-              instanceIndexesHelbyCollege.length,
-            );
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-              heldbyAccordionName,
-              tenantNames.college,
+              tenantNames.university,
               true,
             );
 
-            cy.reload();
-            instanceIndexesHelbyCollege.forEach((instanceIndex) => {
-              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-            });
-            InventorySearchAndFilter.verifyNumberOfSearchResults(
-              instanceIndexesHelbyCollege.length,
-            );
-            InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);
-            InventorySearchAndFilter.verifyAccordionByNameExpanded(heldbyAccordionName, true);
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-              heldbyAccordionName,
-              tenantNames.college,
-              true,
-            );
-
-            InventoryInstances.selectInstanceByTitle(
-              instanceTitles[instanceIndexesHelbyCollege[0]],
-            );
-            InventoryInstance.waitLoading();
-
-            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-            InventorySearchAndFilter.checkSearchQueryText('');
+            cy.wait(1000);
+            SelectInstanceModal.clickResetAllButton();
+            SelectInstanceModal.checkTableContent();
+            SelectInstanceModal.checkSearchInputCleared();
+            InventorySearchAndFilter.itemTabIsDefault();
             InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
               heldbyAccordionName,
               tenantNames.college,
