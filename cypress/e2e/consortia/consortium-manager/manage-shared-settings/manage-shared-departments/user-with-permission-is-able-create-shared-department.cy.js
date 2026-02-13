@@ -45,6 +45,8 @@ const checkPermissionsLackMessage = () => {
   cy.log('Check message about lack of permissions to manage shared departments after fix of the bug with permissions (see https://folio-org.atlassian.net/browse/EUREKA-536)');
 };
 
+const lastUpdatedValue = `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`;
+
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
@@ -240,7 +242,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`,
+                lastUpdatedValue,
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
@@ -265,7 +267,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                moment().format('l'),
+                lastUpdatedValue,
                 '-',
               ],
             );
@@ -281,7 +283,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                moment().format('l'),
+                lastUpdatedValue,
                 '-',
               ],
             );
@@ -297,7 +299,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                moment().format('l'),
+                lastUpdatedValue,
                 '-',
               ],
             );
@@ -364,7 +366,7 @@ describe('Consortia', () => {
               [
                 testData.sharedDepartment.name,
                 testData.sharedDepartment.code,
-                `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`,
+                lastUpdatedValue,
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
