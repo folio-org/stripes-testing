@@ -472,6 +472,10 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },
 
+  verifyTextFieldValue(expectedValue, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(TextField()).has({ value: expectedValue }));
+  },
+
   chooseValueSelect(choice, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
@@ -479,6 +483,14 @@ export default {
         .choose(choice),
     );
     cy.wait(1000);
+  },
+
+  verifySelectedValue(expectedValue, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ content: including('Select value') }))
+        .has({ checkedOptionText: expectedValue }),
+    );
   },
 
   chooseValueSelectByValue(value, row = 0) {
@@ -497,6 +509,10 @@ export default {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
     cy.wait(1000);
+  },
+
+  verifySelectedMultiselectValue(text, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(MultiSelect()).has({ selected: text }));
   },
 
   selectAllMatchingFromMultiselect(text, row = 0) {
