@@ -15,7 +15,7 @@ describe('Inventory', () => {
     beforeEach('Creating user and "Instance" records with contributors', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
       cy.getInstanceTypes({ limit: 1 }).then((res) => {
@@ -54,7 +54,7 @@ describe('Inventory', () => {
 
     afterEach('Deleting user', () => {
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
       InventoryInstance.deleteInstanceViaApi(instanceA.id);
       InventoryInstance.deleteInstanceViaApi(instanceZ.id);

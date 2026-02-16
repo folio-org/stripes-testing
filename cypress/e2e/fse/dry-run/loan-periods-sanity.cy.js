@@ -83,7 +83,7 @@ describe('Circulation log', () => {
   describe('Loan Policies', () => {
     before('create inventory instance', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.getUserDetailsByUsername(user.username).then((userDetails) => {
         user.id = userDetails.id;
         user.barcode = userDetails.barcode;
@@ -133,7 +133,7 @@ describe('Circulation log', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       if (testData?.addedRules?.length) {
         cy.wrap(testData.addedRules).each((rule) => {
           CirculationRules.deleteRuleViaApi(rule);

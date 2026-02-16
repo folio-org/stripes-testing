@@ -33,7 +33,7 @@ describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         instanceRecord = instanceData;
@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
       });
     });

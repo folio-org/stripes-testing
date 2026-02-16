@@ -29,7 +29,7 @@ describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
@@ -66,7 +66,7 @@ describe('Bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       InventoryInstance.deleteInstanceViaApi(folioInstance.instanceId);
       InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);

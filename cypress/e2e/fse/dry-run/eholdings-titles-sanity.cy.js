@@ -114,7 +114,7 @@ describe('eHoldings', () => {
     it('C693 Create a custom title. (spitfire)', { tags: ['dryRun', 'spitfire', 'C693'] }, () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
       eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {

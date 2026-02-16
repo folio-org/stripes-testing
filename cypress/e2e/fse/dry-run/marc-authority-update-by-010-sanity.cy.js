@@ -30,7 +30,7 @@ describe('MARC', () => {
       before('Creating data', () => {
         cy.setTenant(memberTenant.id);
         cy.allure().logCommandSteps(false);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.allure().logCommandSteps();
         // make sure there are no duplicate records in the system
         querySearch.forEach((query) => {
@@ -69,7 +69,7 @@ describe('MARC', () => {
 
       after('Deleting data', () => {
         cy.allure().logCommandSteps(false);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.allure().logCommandSteps();
         SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
         if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);

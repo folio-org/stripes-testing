@@ -10,22 +10,28 @@ Cypress.Commands.add('getToken', (username, password, getServicePoint = false) =
     pathToSet = 'bl-users/login';
   }
   if (Cypress.env('eureka')) {
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'authn/login',
-      body: { username, password },
-      isDefaultSearchParamsRequired: false,
-    });
-  } else {
-    cy.okapiRequest({
-      method: 'POST',
-      path: pathToSet,
-      body: { username, password },
-      isDefaultSearchParamsRequired: false,
-      headers: {
-        'x-okapi-tenant': Tenant.get(),
+    cy.okapiRequest(
+      {
+        method: 'POST',
+        path: 'authn/login',
+        body: { username, password },
+        isDefaultSearchParamsRequired: false,
       },
-    }).then(({ body, headers }) => {
+      { log: false },
+    );
+  } else {
+    cy.okapiRequest(
+      {
+        method: 'POST',
+        path: pathToSet,
+        body: { username, password },
+        isDefaultSearchParamsRequired: false,
+        headers: {
+          'x-okapi-tenant': Tenant.get(),
+        },
+      },
+      { log: false },
+    ).then(({ body, headers }) => {
       if (getServicePoint) {
         const defaultServicePoint = body.servicePointsUser.servicePoints.find(
           ({ id }) => id === body.servicePointsUser.defaultServicePointId,
@@ -52,7 +58,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 Cypress.Commands.add('getAdminToken', () => {
   cy.clearCookies({ domain: null });
   cy.wait(2000); // Wait for cookies to be cleared
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), { log: false });
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
@@ -68,7 +74,6 @@ Cypress.Commands.add('getUserTokenOfAdminUser', () => {
 });
 
 Cypress.Commands.add('getUserToken', (username, password) => {
-  cy.allure().logCommandSteps(false);
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
@@ -76,17 +81,19 @@ Cypress.Commands.add('getUserToken', (username, password) => {
   if (Cypress.env('eureka')) {
     pathToSet = 'authn/login';
   }
-  cy.okapiRequest({
-    method: 'POST',
-    path: pathToSet,
-    body: { username, password },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ headers }) => {
+  cy.okapiRequest(
+    {
+      method: 'POST',
+      path: pathToSet,
+      body: { username, password },
+      isDefaultSearchParamsRequired: false,
+    },
+    { log: false },
+  ).then(({ headers }) => {
     if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
   });
-  cy.allure().logCommandSteps();
 });
 
 Cypress.Commands.add('logoutViaApi', () => {

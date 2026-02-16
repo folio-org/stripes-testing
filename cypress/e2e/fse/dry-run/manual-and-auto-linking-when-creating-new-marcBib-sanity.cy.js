@@ -88,7 +88,7 @@ describe('MARC', () => {
 
         before('Setup', () => {
           cy.setTenant(memberTenant.id);
-          cy.getUserToken(user.username, user.password);
+          cy.getUserToken(user.username, user.password, { log: false });
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422149*');
           InventoryInstances.deleteFullInstancesByTitleViaApi('New title C388565');
 
@@ -114,7 +114,7 @@ describe('MARC', () => {
 
         after('Cleanup', () => {
           cy.setTenant(memberTenant.id);
-          cy.getUserToken(user.username, user.password);
+          cy.getUserToken(user.username, user.password, { log: false });
           for (let i = 0; i < createdAuthorityIDs.length; i++) {
             MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
           }

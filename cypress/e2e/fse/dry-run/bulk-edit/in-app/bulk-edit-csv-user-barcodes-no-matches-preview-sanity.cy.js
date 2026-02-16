@@ -13,7 +13,7 @@ describe('Bulk-edit', () => {
 
     before('Setup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         invalidUserBarcode = getRandomPostfix();
         invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 

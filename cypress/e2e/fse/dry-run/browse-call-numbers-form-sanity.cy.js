@@ -31,7 +31,7 @@ describe('Inventory', () => {
     before('navigate to inventory', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
       cy.then(() => {
@@ -94,7 +94,7 @@ describe('Inventory', () => {
 
     after('Delete data', () => {
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);

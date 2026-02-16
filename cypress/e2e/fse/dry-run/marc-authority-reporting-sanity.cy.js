@@ -48,7 +48,7 @@ describe('MARC', () => {
 
       before('Setup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.getUserDetailsByUsername(user.username).then((details) => {
           user.id = details.id;
           user.personal = details.personal;
@@ -78,7 +78,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         if (createdAuthorityID[0]) {
           InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         }
