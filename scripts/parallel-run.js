@@ -34,7 +34,7 @@ console.log(`Tags: ${grepTags}\n`);
 const parsedGrep = parseGrep(null, grepTags);
 
 const specFiles = globby.sync('cypress/e2e/**/*.cy.js');
-const testIds = [];
+let testIds = [];
 
 const chunks = [];
 
@@ -53,9 +53,10 @@ specFiles.forEach((specFile) => {
     }
   });
 });
+testIds = testIds.flat();
 
-console.log('Matched test IDs: ', testIds.flat());
-console.log('Total matched tests: ', testIds.length);
+console.log('Matched test IDs: ', testIds);
+console.log('Matched test IDs: ', testIds);
 
 if (numberOfThreads > 1) {
   const chunkSize = Math.ceil(testIds.length / numberOfThreads);
