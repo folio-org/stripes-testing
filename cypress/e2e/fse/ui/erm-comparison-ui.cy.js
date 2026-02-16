@@ -14,7 +14,7 @@ describe('fse-erm-comparison - UI (no data manipulation)', () => {
 
   it(
     `TC195305 - verify that erm-comparison module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'folio_erm-comparisons', 'erm-comparisons'] },
+    { tags: ['fse', 'ui', 'folio_erm-comparisons', 'erm-comparisons', 'TC195305'] },
     () => {
       ErmComparison.waitLoading();
     },

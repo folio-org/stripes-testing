@@ -15,7 +15,7 @@ describe('fse-lists - UI (no data manipulation)', () => {
 
   it(
     `TC195764 - verify that lists page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'lists'] },
+    { tags: ['sanity', 'fse', 'ui', 'lists', 'TC195764'] },
     () => {
       // check filters displayed
       Lists.waitForSpinnerToDisappear();
@@ -47,7 +47,7 @@ describe('fse-lists - UI (data manipulation)', () => {
 
   it(
     `TC196049 - verify lists creation for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'lists', 'nonProd', 'fse-user-journey'] },
+    { tags: ['fse', 'ui', 'lists', 'nonProd', 'fse-user-journey', 'TC196049'] },
     () => {
       Lists.openNewListPane();
       Lists.setName(listData.name);

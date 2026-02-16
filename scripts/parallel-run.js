@@ -49,7 +49,7 @@ specFiles.forEach((specFile) => {
   testInfo.tests.forEach((info) => {
     const shouldRun = shouldTestRun(parsedGrep, null, info.tags);
     if (shouldRun) {
-      testIds.push(info.tags.filter(tag => tag.startsWith('C')));
+      testIds.push(info.tags.filter(tag => tag.startsWith('C') || tag.startsWith('TC')));
     }
   });
 });

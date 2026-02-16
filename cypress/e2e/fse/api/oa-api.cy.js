@@ -8,7 +8,7 @@ describe('fse-oa', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196025 - Get publication request by for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['oa', 'fse', 'api', 'mod-oa'] },
+    { tags: ['oa', 'fse', 'api', 'mod-oa', 'TC196025'] },
     () => {
       cy.getPublicationRequestByTerm({
         query: '&match=identifiers.publicationIdentifier&term=*',

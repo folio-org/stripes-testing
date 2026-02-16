@@ -10,7 +10,7 @@ describe('fse-sso - UI (no data manipulation)', () => {
 
   it(
     `TC195393 - verify that SSO button is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'sso'] },
+    { tags: ['fse', 'ui', 'sso', 'TC195393'] },
     () => {
       // Skip check for MCO
       if (Cypress.env('IS_CONSORTIA')) {

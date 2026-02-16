@@ -23,7 +23,7 @@ describe('fse-inventory - UI (no data manipulation)', () => {
 
   it(
     `TC195318,TC195689 - verify that inventory page is displayed, search works for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'inventory'] },
+    { tags: ['sanity', 'fse', 'ui', 'inventory', 'TC195318', 'TC195689'] },
     () => {
       cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
       cy.intercept('GET', '/search/instances?*').as('getInstances');
@@ -40,7 +40,7 @@ describe('fse-inventory - UI (no data manipulation)', () => {
 
   it(
     `TC195766 - check inventory classifications ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['ramsons', 'fse', 'ui', 'inventory'] },
+    { tags: ['ramsons', 'fse', 'ui', 'inventory', 'TC195766'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       // check classification

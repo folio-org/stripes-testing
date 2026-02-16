@@ -14,7 +14,7 @@ describe('fse-receiving - UI (no data manipulation)', () => {
 
   it(
     `TC195378 - verify that receiving page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'receiving'] },
+    { tags: ['sanity', 'fse', 'ui', 'receiving', 'TC195378'] },
     () => {
       Receiving.waitLoading();
     },

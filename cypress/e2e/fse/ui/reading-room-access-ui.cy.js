@@ -14,7 +14,7 @@ describe('fse-reading-room-access - UI (no data manipulation)', () => {
 
   it(
     `TC195705 - verify that reading-room page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'reading-room'] },
+    { tags: ['fse', 'ui', 'reading-room', 'TC195705'] },
     () => {
       ReadingRoom.checkFieldsDisplayed();
     },

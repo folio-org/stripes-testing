@@ -8,7 +8,7 @@ describe('fse-mediated-requests', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195956 - Get mediated-requests for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'mediatedRequests', 'loc'] },
+    { tags: ['fse', 'api', 'mediatedRequests', 'loc', 'TC195956'] },
     () => {
       cy.getMediatedRequests().then((mediatedRequestsResponse) => {
         cy.expect(mediatedRequestsResponse.status).to.eq(200);

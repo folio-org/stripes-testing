@@ -8,7 +8,7 @@ describe('fse-lists', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195523 - Get lists for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'lists', 'loc', 'fast-check'] },
+    { tags: ['sanity', 'fse', 'api', 'lists', 'loc', 'fast-check', 'TC195523'] },
     () => {
       cy.getLists().then((response) => {
         cy.expect(response.status).to.eq(200);
