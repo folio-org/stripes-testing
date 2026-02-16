@@ -27,10 +27,6 @@ export default {
     cy.xpath(editPage).should('be.visible');
   },
 
-  getIdFromUrl() {
-    return cy.url().then((url) => url.split('/').pop());
-  },
-
   deleteViaAPI(hubId) {
     return cy.okapiRequest({
       method: 'DELETE',
@@ -93,12 +89,9 @@ export default {
   },
 
   saveAndKeepEditing: () => {
-    // Intercept PUT request to capture Hub ID from response
     cy.intercept('PUT', '**/linked-data/resource/**').as('saveHub');
-
     cy.do(saveAndKeepEditingButton.click());
 
-    // Wait for API response, verify page, and return Hub ID
     return cy.wait('@saveHub').then((interception) => {
       cy.wait(200);
       cy.xpath(editPage).should('be.visible');
