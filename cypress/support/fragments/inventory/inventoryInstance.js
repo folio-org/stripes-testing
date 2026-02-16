@@ -798,7 +798,6 @@ export default {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
-    cy.reload();
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue(instanceHRID).value()),
