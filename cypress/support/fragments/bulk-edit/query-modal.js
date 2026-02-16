@@ -13,6 +13,7 @@ import {
   Spinner,
   TextField,
   Checkbox,
+  Calendar,
   Pane,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
@@ -130,6 +131,7 @@ export const instanceFieldValues = {
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
+  updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical codes',
@@ -452,6 +454,45 @@ export default {
     );
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [icon="calendar"]`).should('exist');
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
+  },
+
+  verifyDatePlaceholder(row = 0) {
+    cy.expect([
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .exists(),
+    ]);
+  },
+
+  openCalendar(row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Button({ icon: 'calendar' }))
+        .click(),
+    );
+  },
+
+  verifyCalendarOpenedDate(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const [month, day, year] = date.split('/');
+    const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' });
+
+    cy.expect(Calendar().has({ day, month: monthName, year }));
+  },
+
+  selectDayFromCalendar(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const day = date.split('/')[1];
+
+    cy.do(Calendar().clickDay(day));
+  },
+
+  verifySelectedDateInCalendar(date, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .has({ value: date }),
+    );
   },
 
   populateFiled(filedType, value) {
