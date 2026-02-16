@@ -18,12 +18,13 @@ describe('Patron notices', () => {
       NoticeTemplates.createViaApi(noticeTemplate);
       ServicePoints.getCircDesk1ServicePointViaApi()
         .then((servicePoint) => {
-          cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui, permissions.uiUsersView.gui]).then(
-            (userProperties) => {
-              userData = userProperties;
-              UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
-            },
-          );
+          cy.createTempUser([
+            permissions.uiCirculationSettingsNoticeTemplates.gui,
+            permissions.uiUsersView.gui,
+          ]).then((userProperties) => {
+            userData = userProperties;
+            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
+          });
         })
         .then(() => {
           cy.login(userData.username, userData.password, {

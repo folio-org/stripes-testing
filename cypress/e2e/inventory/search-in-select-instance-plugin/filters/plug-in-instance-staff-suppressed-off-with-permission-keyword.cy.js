@@ -60,7 +60,6 @@ describe('Inventory', () => {
               if (data.source === INSTANCE_SOURCE_NAMES.FOLIO) {
                 InventoryInstance.createInstanceViaApi({
                   instanceTitle: instanceTitles[index],
-                  staffSuppress: data.isStaffSuppressed,
                 }).then(({ instanceData }) => {
                   cy.getInstanceById(instanceData.instanceId).then((body) => {
                     body.staffSuppress = data.isStaffSuppressed;

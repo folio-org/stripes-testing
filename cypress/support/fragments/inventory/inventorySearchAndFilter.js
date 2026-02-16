@@ -1231,7 +1231,7 @@ export default {
     cy.expect(searchButton.has({ disabled: false }));
   },
 
-  varifyInstanceKeyDetails(instanceData) {
+  verifyInstanceKeyDetails(instanceData) {
     cy.wait(4000);
     cy.expect([
       Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
@@ -1324,10 +1324,11 @@ export default {
     );
   },
 
-  checkSharedInstancesInResultList() {
+  checkSharedInstancesInResultList({ instancePlugin = false } = {}) {
+    const childNumber = instancePlugin ? 1 : 2;
     return cy
       .get('div[class^="mclRowContainer--"]')
-      .find('[class*="mclCell-"]:nth-child(2)')
+      .find(`[class*="mclCell-"]:nth-child(${childNumber})`)
       .each(($cell) => {
         cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
       });
