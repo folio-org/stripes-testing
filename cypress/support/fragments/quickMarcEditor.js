@@ -2097,6 +2097,11 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
   },
 
+  checkDeleteButtonExistsByTag(tag, isExist = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(deleteFieldButton);
+    cy.expect(isExist ? targetButton.exists() : targetButton.absent());
+  },
+
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
   },
