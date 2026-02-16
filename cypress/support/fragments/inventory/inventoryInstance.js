@@ -1697,6 +1697,14 @@ export default {
         .absent(),
     );
   },
+  checkItemStatusByBarcode: (barcode, expectedStatus) => {
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((barcodeCell) => {
+        const row = barcodeCell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('div[class^="mclCell-"]').should('contain.text', expectedStatus);
+      });
+  },
   verifyCheckedOutDate: (date) => {
     cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
   },

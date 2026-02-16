@@ -1,5 +1,6 @@
 import { NavListItem, Pane, Section } from '../../../../../interactors';
 import Behavior from './behavior';
+import Logs from './logs';
 
 const navPaneSection = Section({ id: 'app-settings-nav-pane' });
 const oaipmhPane = Pane('OAI-PMH');
@@ -15,7 +16,7 @@ const oaiPmhSections = {
   [SECTIONS.GENERAL]: {},
   [SECTIONS.TECHNICAL]: {},
   [SECTIONS.BEHAVIOR]: Behavior,
-  [SECTIONS.LOGS]: {},
+  [SECTIONS.LOGS]: Logs,
 };
 
 export default {

@@ -9,6 +9,7 @@ import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
+  LDE_ROLES,
 } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
@@ -23,6 +24,11 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
+import Users from '../../support/fragments/users/users';
+import Permissions from '../../support/dictionary/permissions';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: MARC Authority integration', () => {
   const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
@@ -49,6 +55,7 @@ describe('Citation: MARC Authority integration', () => {
     tag001Value: 'n4332123',
     headerText: /New .*MARC authority record/,
     AUTHORIZED: 'Authorized',
+    roleIds: [],
   };
 
   const resourceData = {
@@ -94,6 +101,7 @@ describe('Citation: MARC Authority integration', () => {
     });
     // delete work
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    Users.deleteViaApi(user.userId);
   });
 
   before('Prepare MARC settings', () => {
@@ -105,6 +113,31 @@ describe('Citation: MARC Authority integration', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
+      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
@@ -114,9 +147,10 @@ describe('Citation: MARC Authority integration', () => {
   });
 
   beforeEach(() => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.marcAuthorities,
       waiter: MarcAuthorities.waitLoading,
+      authRefresh: true,
     });
   });
 
@@ -149,7 +183,7 @@ describe('Citation: MARC Authority integration', () => {
       });
       cy.wait(2000);
       // search for inventory item (created in precondition via data import) and edit it in LDE
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
       InventoryInstance.editInstanceInLde();
       PreviewResource.waitLoading();

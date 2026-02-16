@@ -1325,6 +1325,10 @@ export default {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
   },
+  uiSettingsDeveloperUserLocale: {
+    internal: 'ui-developer.settings.userLocale',
+    gui: 'Settings (developer): Can edit user configuration values',
+  },
   uiSettingsTenantReadingRoomAll: {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',
@@ -1442,7 +1446,7 @@ export default {
     details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
     details: ['obsolete'],
   },
@@ -1493,7 +1497,7 @@ export default {
   },
   // Departments
   createEditViewDepartments: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
   },
   departmentsAll: {
