@@ -11,6 +11,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import FileManager from '../../support/utils/fileManager';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
@@ -140,27 +141,7 @@ describe('Loans', () => {
     cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(overdueUser.userId, [testData.userServicePoint.id]);
 
-    // Check in the item manually to avoid circulation rules error
-    cy.okapiRequest({
-      method: 'GET',
-      path: `circulation/loans?query=(userId=="${overdueUser.userId}")`,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => {
-      if (response.body.loans && response.body.loans.length > 0) {
-        const loanId = response.body.loans[0].id;
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `circulation/loans/${loanId}`,
-          body: {
-            ...response.body.loans[0],
-            status: { name: 'Closed' },
-            action: 'checkedin',
-            checkinServicePointId: testData.userServicePoint.id,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
-      }
-    });
+    UserLoans.closeLoanViaApi(overdueUser.userId, testData.userServicePoint.id);
 
     Users.deleteViaApi(overdueUser.userId);
     Users.deleteViaApi(userData.userId);
@@ -184,8 +165,10 @@ describe('Loans', () => {
     'C779 Loans: export all overdue loans (vega)',
     { tags: ['extendedPath', 'vega', 'C779'] },
     () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.usersPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.usersPath,
+        waiter: () => cy.wait(2000),
+      });
 
       // Click "overdue loans export" from Actions menu
       UsersSearchResultsPane.exportOverdueLoans();

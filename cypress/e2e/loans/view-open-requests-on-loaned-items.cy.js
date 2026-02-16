@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES, APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -12,7 +12,7 @@ import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -161,8 +161,10 @@ describe('Loans', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password);
-      cy.visit(AppPaths.getOpenLoansPath(testData.requesters[0].userId));
+      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
+        path: AppPaths.getOpenLoansPath(testData.requesters[0].userId),
+        waiter: () => cy.wait(2000),
+      });
 
       UserLoans.checkColumnContentInTheRowByBarcode(itemBarcode, 'Requests', '2');
 
@@ -178,14 +180,14 @@ describe('Loans', () => {
       Requests.verifyRequestIsPresent(testData.requesters[2].barcode);
       Requests.verifyRequestIsAbsent(testData.requesters[3].barcode);
 
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.waitLoading();
       Requests.findCreatedRequest(testData.requesters[1].barcode);
       Requests.selectFirstRequest(testData.folioInstances[0].instanceTitle);
       RequestDetail.waitLoading();
       RequestDetail.checkRequestStatus('Open - Not yet filled');
 
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.waitLoading();
       Requests.findCreatedRequest(testData.requesters[2].barcode);
       Requests.selectFirstRequest(testData.folioInstances[0].instanceTitle);
