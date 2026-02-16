@@ -89,7 +89,7 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      OrderLinesLimit.setPOLLimitViaApi(1);
+      OrderLinesLimit.setPOLLimitViaApi();
 
       Invoices.getInvoiceViaApi({
         query: `vendorInvoiceNo="${testData.invoice.invoiceNumber}"`,
@@ -122,8 +122,25 @@ describe('Invoices', () => {
       Invoices.saveAndCloseEditSequencePage();
       InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
-        invoiceInformation: [{ key: 'Status', value: 'Open' }],
+        invoiceInformation: [
+          { key: 'Status', value: 'Open' },
+          { key: 'Total units', value: '3' },
+          { key: 'Sub-total', value: `$${(polLinePrice * 3).toFixed(2)}` },
+          { key: 'Total adjustments', value: '$0.00' },
+          { key: 'Calculated total amount', value: `$${(polLinePrice * 3).toFixed(2)}` },
+        ],
+        vendorDetails: [
+          { key: 'Vendor invoice number', value: testData.invoice.invoiceNumber },
+          { key: 'Vendor name', value: testData.organization.name },
+          { key: 'Accounting code', value: testData.organization.erpCode },
+        ],
       });
+
+      InvoiceView.checkInvoiceLinesTableContent([
+        { description: testData.orderLines[1].titleOrPackage },
+        { description: testData.orderLines[2].titleOrPackage },
+        { description: testData.orderLines[0].titleOrPackage },
+      ]);
 
       InvoiceView.selectInvoiceLine(0);
 

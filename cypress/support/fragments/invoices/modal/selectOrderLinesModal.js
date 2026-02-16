@@ -66,12 +66,19 @@ export default {
   },
   checkForDifferentVendorWarningAndConfirm() {
     cy.wait(2000);
-    cy.get('body').then(($body) => {
-      if ($body.text().includes('reference a different vendor')) {
-        cy.do(Button('Confirm').click());
-        cy.wait(2000);
-      }
-    });
+    const confirmationModal = Modal('Confirmation');
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({
+        message: including(
+          'You are adding one or more purchase order lines that reference a different vendor than the one identified on this invoice',
+        ),
+      }),
+      confirmationModal.find(Button('Cancel')).exists(),
+      confirmationModal.find(Button('Confirm')).exists(),
+    ]);
+    cy.do(confirmationModal.find(Button('Confirm')).click());
+    cy.wait(2000);
   },
   closeModal() {
     cy.do(closeButton.click());

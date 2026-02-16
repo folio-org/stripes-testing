@@ -1,5 +1,5 @@
-import uuid from 'uuid';
 import { Permissions } from '../../support/dictionary';
+import BrowseContributors from '../../support/fragments/inventory/search/browseContributors';
 import { NewInvoice, Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -19,7 +19,7 @@ describe('Invoices', () => {
       productIds: [
         {
           productId: '9781868885015',
-          productIdType: '8261054f-be78-422d-bd51-4ed9f33c3422',
+          productIdType: '',
         },
       ],
       subscriptionInterval: 0,
@@ -56,7 +56,7 @@ describe('Invoices', () => {
     contributors: [
       {
         contributor: `Autotest_Contributor_${getRandomPostfix()}`,
-        contributorNameTypeId: uuid(),
+        contributorNameTypeId: '',
       },
     ],
   };
@@ -108,6 +108,14 @@ describe('Invoices', () => {
 
           cy.getBookMaterialType().then((materialType) => {
             testData.orderLine.physical.materialType = materialType.id;
+          });
+
+          cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
+            testData.orderLine.details.productIds[0].productIdType = productIdType.id;
+          });
+
+          BrowseContributors.getContributorTypes().then((contributorTypes) => {
+            testData.orderLine.contributors[0].contributorNameTypeId = contributorTypes[0].id;
           });
 
           Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
