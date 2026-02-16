@@ -8,6 +8,7 @@ import {
   LDE_ADVANCED_SEARCH_OPTIONS,
   LDE_SEARCH_OPTIONS,
   LDE_ADVANCED_SEARCH_CONDITIONS,
+  LDE_ROLES,
 } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -15,6 +16,10 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import EditResource from '../../support/fragments/linked-data/editResource';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: cancel without saving', () => {
   const testData = {
@@ -30,6 +35,7 @@ describe('Citation: cancel without saving', () => {
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
+    roleIds: [],
   };
 
   const resourceData = {
@@ -55,6 +61,25 @@ describe('Citation: cancel without saving', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -65,6 +90,7 @@ describe('Citation: cancel without saving', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
@@ -78,9 +104,10 @@ describe('Citation: cancel without saving', () => {
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);

@@ -18,13 +18,17 @@ import ExportDetails from './exportDetails';
 
 const searchPane = Pane('Search & filter');
 const searchButton = Button({ type: 'submit' });
+const searchField = TextField({ id: 'input-record-search' });
 const userSearchResults = Pane('User Search Results');
-const startTimeAccordion = Accordion({ id: 'startTime' });
-const endTimeAccordion = Accordion({ id: 'endTime' });
-const systemAccordion = Accordion({ id: 'isSystemSource' });
+const startTimeAccordion = Accordion('Start time');
+const endTimeAccordion = Accordion('End time');
+const systemAccordion = Accordion('System');
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
 const statusAccordion = Accordion('Status');
+const integrationTypeAccordion = Accordion('Integration type');
+const exportMethodAccordion = Accordion('Export method');
+const organizationAccordion = Accordion('Organization');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -467,5 +471,104 @@ export default {
     cy.then(() => exportEdiJobsList.rowCount()).then((actualCount) => {
       expect(actualCount).to.equal(expectedCount);
     });
+  },
+
+  verifySearchButtonDisabled(isDisabled = true) {
+    cy.expect(searchButton.has({ disabled: isDisabled }));
+  },
+
+  verifySearchField(value = '') {
+    cy.expect(searchPane.find(searchField).has({ value }));
+  },
+
+  verifyResetAllButtonDisabled() {
+    cy.expect(exportFilters['Reset all'].has({ disabled: true }));
+  },
+
+  verifyStatusAccordion() {
+    cy.expect([
+      statusAccordion.has({ open: true }),
+      statusFilters.Scheduled.has({ checked: false }),
+      statusFilters['In progress'].has({ checked: false }),
+      statusFilters.Successful.has({ checked: false }),
+      statusFilters.Failed.has({ checked: false }),
+    ]);
+  },
+
+  verifyJobTypeAccordion() {
+    cy.expect([jobTypeAccordion.exists(), jobTypeAccordion.has({ open: true })]);
+    this.checkFilterOptions({
+      jobTypeFilterOption: [
+        'Authority control',
+        'Bursar',
+        'Circulation log',
+        'eHoldings',
+        'Orders (EDI)',
+        'Orders (CSV)',
+      ],
+    });
+  },
+
+  verifySystemAccordion() {
+    cy.do(systemAccordion.clickHeader());
+    cy.expect([
+      systemAccordion.has({ open: true }),
+      systemAccordion.find(Checkbox({ label: 'Yes' })).exists(),
+      systemAccordion.find(Checkbox({ label: 'No' })).exists(),
+    ]);
+  },
+
+  verifySourceAccordion() {
+    cy.do(sourceAccordion.clickHeader());
+    cy.expect([
+      sourceAccordion.has({ open: true }),
+      sourceAccordion.find(TextField()).exists(),
+      sourceAccordion.find(Button('Find User')).has({ disabled: false }),
+    ]);
+  },
+
+  verifyStartTimeAccordion() {
+    cy.do(startTimeAccordion.clickHeader());
+    cy.expect([
+      startTimeAccordion.has({ open: true }),
+      startTimeAccordion.find(startDateTextfield).exists(),
+      startTimeAccordion.find(endDateTextfield).exists(),
+      startTimeAccordion.find(applyButton).has({ disabled: false }),
+    ]);
+  },
+
+  verifyEndTimeAccordion() {
+    cy.do(endTimeAccordion.clickHeader());
+    cy.expect([
+      endTimeAccordion.has({ open: true }),
+      endTimeAccordion.find(startDateTextfield).exists(),
+      endTimeAccordion.find(endDateTextfield).exists(),
+      endTimeAccordion.find(applyButton).has({ disabled: false }),
+    ]);
+  },
+
+  verifyIntegrationTypeAccordion() {
+    cy.expect([
+      integrationTypeAccordion.has({ open: true }),
+      integrationTypeAccordion.find(Checkbox({ label: 'Claims' })).has({ checked: false }),
+      integrationTypeAccordion.find(Checkbox({ label: 'Orders' })).has({ checked: false }),
+    ]);
+  },
+
+  verifyExportMethodAccordion() {
+    cy.do(exportMethodAccordion.clickHeader());
+    cy.expect([
+      exportMethodAccordion.has({ open: true }),
+      exportMethodAccordion.find(Button({ id: 'exportConfigId-selection' })).exists(),
+    ]);
+  },
+
+  verifyOrganizationAccordion() {
+    cy.do(organizationAccordion.clickHeader());
+    cy.expect([
+      organizationAccordion.has({ open: true }),
+      organizationAccordion.find(TextField()).exists(),
+      organizationAccordion.find(Button('Organization look-up')).has({ disabled: false }),
+    ]);
   },
 };

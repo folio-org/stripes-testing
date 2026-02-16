@@ -173,7 +173,7 @@ describe('Inventory', () => {
         });
 
         it(
-          'C401729 Search for Shared/Local records by "Call number, not normalized" and "Call number, normalized" search options from "Central" tenant (consortia) (spitfire)',
+          'C401729 Check the "Held by" facet for search from "Central" tenant (consortia) (spitfire)',
           { tags: ['extendedPathECS', 'spitfire', 'C401729'] },
           () => {
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);

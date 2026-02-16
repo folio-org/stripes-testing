@@ -1536,6 +1536,16 @@ export default {
     return newContent;
   },
 
+  updateFirstFieldByTag(tag, newContent) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+      }
+    });
+  },
+
   updateLDR06And07Positions() {
     this.selectFieldsDropdownOption('LDR', 'Type', INVENTORY_LDR_FIELD_TYPE_DROPDOWN.A);
     this.selectFieldsDropdownOption('LDR', 'BLvl', INVENTORY_LDR_FIELD_BLVL_DROPDOWN.A);
@@ -2085,6 +2095,11 @@ export default {
 
   checkDeleteButtonNotExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
+  },
+
+  checkDeleteButtonExistsByTag(tag, isExist = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(deleteFieldButton);
+    cy.expect(isExist ? targetButton.exists() : targetButton.absent());
   },
 
   checkCallout(callout) {

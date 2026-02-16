@@ -1203,13 +1203,17 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    restrictEncumbrance = false,
   ) {
-    cy.wait(4000);
+    cy.wait(2000);
     cy.do(fiscalYearSelect.click());
-    cy.wait(4000);
+    cy.wait(2000);
     // Need to wait,while date of fiscal year will be loaded
+    cy.do(fiscalYearSelect.choose(fiscalYear));
+    if (restrictEncumbrance === true) {
+      cy.do(Checkbox({ name: 'restrictEncumbrance' }).click());
+    }
     cy.do([
-      fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'needCloseBudgets' }).click(),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
