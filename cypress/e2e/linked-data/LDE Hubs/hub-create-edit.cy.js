@@ -149,22 +149,15 @@ describe('LDE Hubs: Test Suite Name', () => {
       HubSearchResults.verifyEnterSearchCriteriaMessage();
 
       SearchAndFilter.selectSourceLocalOption();
-      SearchAndFilter.fillHubsSearchInput(
-        '*',
-        // hubData.variantTitle
-      );
-
-      // SearchAndFilter.fillHubsSearchInput(hubData.preferredTitle);
+      SearchAndFilter.fillHubsSearchInput(hubData.preferredTitle);
       HubSearchResults.verifyNumberOfFoundRecords(1);
       HubSearchResults.verifySearchResultsByTitle({
         creator: testData.authorityHeading,
-        title: hubData.variantTitle,
-        // title: hubData.preferredTitle,
+        title: hubData.preferredTitle,
         language: hubData.languageLabel,
         source: 'Local',
       });
-      HubSearchResults.clickEditButtonByTitle(hubData.variantTitle);
-      // HubSearchResults.clickEditButtonByTitle(hubData.preferredTitle);
+      HubSearchResults.clickEditButtonByTitle(hubData.preferredTitle);
 
       EditHubPage.waitLoading();
       EditHubPage.verifyCreatorOfHub(testData.authorityHeading);
@@ -196,7 +189,7 @@ describe('LDE Hubs: Test Suite Name', () => {
 
       HubSearchResults.verifySearchResultsByTitle({
         creator: testData.authorityHeading,
-        // title: `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
+        title: `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
         language: hubData.languageLabel,
         source: 'Local',
       });
