@@ -1,10 +1,11 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import { APPLICATION_NAMES, TARGET_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import {
+  InventoryInstance,
+  InventoryInstances,
+  InstanceRecordView,
+} from '../../../support/fragments/inventory';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import SettingsDataImport, {
@@ -138,8 +139,6 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         Object.values(fieldsForChanging).forEach((field) => InventoryEditMarcRecord.editField(field, `${field} $5 NcD`));
         InventoryEditMarcRecord.addField('580', 'Test $5 NcD');
-        InventoryEditMarcRecord.saveAndClose();
-        cy.wait(1500);
         InventoryEditMarcRecord.saveAndClose();
         cy.wait(8000);
         // overlay source bibliographic record

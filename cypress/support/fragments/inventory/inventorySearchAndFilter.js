@@ -99,8 +99,10 @@ const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
 const heldByAccordion = Accordion('Held by');
 const dateRangeAccordion = Accordion('Date range');
-const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
-const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const dateFromField = TextField({ name: 'startDate' });
+const dateToField = TextField({ name: 'endDate' });
+const dateRangeFromField = dateRangeAccordion.find(dateFromField);
+const dateRangeToField = dateRangeAccordion.find(dateToField);
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
@@ -216,6 +218,7 @@ export default {
   invalidDateErrorText,
   dateOrderErrorText,
   dateRangeAccordion,
+  uriCharLimitErrorText,
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
@@ -276,9 +279,17 @@ export default {
     cy.wait(1000);
     cy.do(sharedAccordion.clickHeader());
     if (condititon === 'Yes') {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' })).click());
+      cy.do(
+        sharedAccordion
+          .find(Checkbox({ id: or('clickable-filter-shared-true', 'clickable-filter-shared-yes') }))
+          .click(),
+      );
     } else {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
+      cy.do(
+        sharedAccordion
+          .find(Checkbox({ id: or('clickable-filter-shared-false', 'clickable-filter-shared-no') }))
+          .click(),
+      );
     }
     cy.wait(1000);
   },
@@ -1327,10 +1338,11 @@ export default {
     );
   },
 
-  checkSharedInstancesInResultList() {
+  checkSharedInstancesInResultList({ instancePlugin = false } = {}) {
+    const childNumber = instancePlugin ? 1 : 2;
     return cy
       .get('div[class^="mclRowContainer--"]')
-      .find('[class*="mclCell-"]:nth-child(2)')
+      .find(`[class*="mclCell-"]:nth-child(${childNumber})`)
       .each(($cell) => {
         cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
       });
@@ -1790,5 +1802,27 @@ export default {
     cy.do(DropdownMenu().find(Checkbox(columnName)).click());
     cy.wait(200);
     this.verifyShowColumnsCheckboxesChecked(columnName, isChecked);
+  },
+
+  fillDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.do([
+      Accordion(dateAccordionName).find(dateFromField).fillIn(dateFrom),
+      Accordion(dateAccordionName).find(dateToField).fillIn(dateTo),
+    ]);
+    this.verifyDateFilterValues(dateAccordionName, dateFrom, dateTo);
+  },
+
+  verifyDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.expect([
+      Accordion(dateAccordionName).find(dateFromField).has({ value: dateFrom }),
+      Accordion(dateAccordionName).find(dateToField).has({ value: dateTo }),
+    ]);
+  },
+
+  checkErrorsForDateFilterFields(dateAccordionName, errorFrom, errorTo) {
+    const fromField = Accordion(dateAccordionName).find(dateFromField);
+    const toField = Accordion(dateAccordionName).find(dateToField);
+    if (errorFrom) this.verifyErrorMessageInTextField(fromField, true, errorFrom);
+    if (errorTo) this.verifyErrorMessageInTextField(toField, true, errorTo);
   },
 };

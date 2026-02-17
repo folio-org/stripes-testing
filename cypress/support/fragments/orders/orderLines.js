@@ -1360,6 +1360,21 @@ export default {
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
+  addLocationToPOLWithoutSave({ index = 0, location, physicalQuantity, electronicQuantity } = {}) {
+    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+    cy.do(SelectionOption(`${location.name} (${location.code})`).click());
+
+    if (physicalQuantity) {
+      cy.do(TextField({ name: `locations[${index}].quantityPhysical` }).fillIn(physicalQuantity));
+    }
+
+    if (electronicQuantity) {
+      cy.do(
+        TextField({ name: `locations[${index}].quantityElectronic` }).fillIn(electronicQuantity),
+      );
+    }
+  },
+
   addTwoFundsToPOLinPercent(
     fund,
     firstPercentValue,
@@ -1657,7 +1672,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, institutionId, accountNumber) {
+  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, location, accountNumber) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
@@ -1676,9 +1691,11 @@ export default {
       createNewLocationButton.click(),
     ]);
     cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      TextField({ id: 'input-record-search' }).fillIn(location),
       Button('Search').click(),
-      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+      Modal('Select locations')
+        .find(MultiColumnListCell({ content: location, row: 0, columnIndex: 0 }))
+        .click(),
     ]);
     cy.do([quantityElectronicField.fillIn(quantityElectronic)]);
     cy.expect([
@@ -1975,8 +1992,8 @@ export default {
     cy.get('#fundDistributionAccordion').find('button[icon="trash"]').first().click();
   },
 
-  deleteLocationsInPOL() {
-    cy.get('#location').find('button[icon="trash"]').first().click();
+  deleteLocationsInPOL(index = 0) {
+    cy.get('#location').find('button[icon="trash"]').eq(index).click();
   },
 
   addContributorToPOL: () => {
@@ -2062,7 +2079,7 @@ export default {
   },
   setElectronicQuantity(quantity) {
     cy.wait(1500);
-    cy.do(quantityElectronicField.fillIn(quantity));
+    cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
     cy.expect(quantityElectronicField.has({ value: quantity }));
   },
   openCreateHoldingForLocation() {
@@ -2183,6 +2200,15 @@ export default {
   cancelEditingPOL: () => {
     cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
     cy.wait(6000);
+  },
+
+  confirmCancelingPOLChanges: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(2000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
@@ -2451,6 +2477,12 @@ export default {
   checkErrorToastMessage: (message) => {
     cy.wait(4000);
     InteractorsTools.checkOneOfCalloutsContainsErrorMessage(message);
+  },
+
+  checkLocationRestrictedErrorMessage: () => {
+    InteractorsTools.checkCalloutErrorMessage(
+      'Location-restricted fund applied to invalid location',
+    );
   },
 
   checkPhysicalQuantityInLocation: (quantity) => {
@@ -2921,6 +2953,13 @@ export default {
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicPrice),
       quantityElectronicTextField.fillIn(quantity),
+    ]);
+  },
+
+  fillCostDetailsForPhysicalOrderType(physicalPrice, quantity) {
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalPrice),
+      quantityPhysicalTextField.fillIn(quantity),
     ]);
   },
 

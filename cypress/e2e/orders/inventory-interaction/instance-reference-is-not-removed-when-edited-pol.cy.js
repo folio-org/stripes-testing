@@ -1,87 +1,100 @@
-import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import OrderLineDetails from '../../../support/fragments/orders/orderLineDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import {
+  BasicOrderLine,
+  NewOrder,
+  OrderDetails,
+  OrderLineDetails,
+  OrderLines,
+  Orders,
+} from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
+  const organization = NewOrganization.getDefaultOrganization();
+  const testData = {
+    organization,
+    order: {
+      ...NewOrder.getDefaultOngoingOrder({ vendorId: organization.id }),
+      approved: true,
+    },
   };
-  const item = {
-    instanceName: `AT_C374120_Instance_${getRandomPostfix()}`,
-    itemBarcode: getRandomPostfix(),
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  let user;
-  let orderNumber;
-  let location;
-  let instance;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
-          if (settings?.length !== 0) {
-            InventoryInteractions.setInstanceMatchingSetting({
-              ...settings[0],
-              value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+    cy.getAdminToken();
+    InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+      testData.instance = instanceData;
+
+      Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          (locationResp) => {
+            testData.location = locationResp;
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((amResp) => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                const orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  instanceId: testData.instance.instanceId,
+                  cost: {
+                    listUnitPrice: 20.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 20.0,
+                  },
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp,
+                    volumes: [],
+                  },
+                  titleOrPackage: testData.instance.instanceTitle,
+                };
+
+                Orders.createOrderViaApi(testData.order).then((orderResp) => {
+                  testData.order.id = orderResp.id;
+                  testData.orderNumber = orderResp.poNumber;
+                  orderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(orderLine);
+                });
+              });
             });
-          }
-        });
-        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
-          location = res;
-        });
-        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-          organization.id = responseOrganizations;
-          order.vendor = organization.name;
-        });
-        const instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-          (instanceResponse) => {
-            instance = instanceResponse;
           },
         );
-      })
-      .then(() => {
-        cy.loginAsAdmin();
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.ORDERS);
-        Orders.selectOrdersPane();
-        Orders.waitLoading();
-        Orders.createApprovedOrderForRollover(order, true).then((orderResponse) => {
-          order.id = orderResponse.id;
-          orderNumber = orderResponse.poNumber;
-          OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
-          OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
-        });
       });
+    });
+    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
+      if (settings?.length !== 0) {
+        InventoryInteractions.setInstanceMatchingSetting({
+          ...settings[0],
+          value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+        });
+      }
+    });
 
     cy.createTempUser([
       Permissions.uiInventoryViewInstances.gui,
       Permissions.uiOrdersApprovePurchaseOrders.gui,
       Permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
 
-      cy.login(user.username, user.password);
+      cy.login(testData.user.username, testData.user.password);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrdersPane();
       Orders.waitLoading();
@@ -90,39 +103,50 @@ describe('Orders', () => {
 
   after(() => {
     cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
+    Orders.deleteOrderViaApi(testData.order.id);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
+    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instance.instanceId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C374120 Instance reference is NOT removed when user does not confirm changing that will remove the instance UUID from the POL when editing PO line (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C374120'] },
     () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
+      Orders.searchByParameter('PO number', testData.orderNumber);
+      Orders.selectFromResultsList(testData.orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLineDetails.openOrderLineEditForm();
       OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+      cy.wait(2000);
+      InstanceRecordView.getAssignedHRID().then((hridBefore) => {
+        testData.hridBeforeEdit = hridBefore;
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-      Orders.selectOrdersPane();
-      Orders.waitLoading();
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder();
-      OrderLineDetails.openOrderLineEditForm();
-      OrderLines.fillInInvalidDataForPublicationDate();
-      OrderLines.cancelRemoveInstanceConnectionModal();
-      OrderLines.cancelEditingPOL();
-      Orders.backToPO();
-      Orders.openOrder();
-      OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-      OrderLines.selectPOLInOrder();
-      OrderLines.openInstanceInPOL(item.instanceName);
-      InventorySearchAndFilter.verifyInstanceKeyDetails(instance);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
+        Orders.searchByParameter('PO number', testData.orderNumber);
+        Orders.selectFromResultsList(testData.orderNumber);
+        OrderLines.selectPOLInOrder();
+        OrderLineDetails.openOrderLineEditForm();
+        OrderLines.fillInInvalidDataForPublicationDate();
+        OrderLines.cancelRemoveInstanceConnectionModal();
+        OrderLines.cancelEditingPOL();
+        OrderLines.confirmCancelingPOLChanges();
+        Orders.backToPO();
+        Orders.openOrder();
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstanceInPOL(testData.instance.instanceTitle);
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(2000);
+        InstanceRecordView.getAssignedHRID().then((hridAfter) => {
+          testData.hridAfterEdit = hridAfter;
+
+          expect(testData.hridAfterEdit).equal(testData.hridBeforeEdit);
+        });
+      });
     },
   );
 });

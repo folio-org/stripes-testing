@@ -81,8 +81,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });
@@ -118,6 +116,9 @@ describe('Inventory', () => {
         });
 
         InventoryInstances.searchByTitle('Jurassic Park And Philosophy The Truth Is Terrifying');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
       },

@@ -142,12 +142,44 @@ export default {
   /**
    * Verify that datestamp element exists in the OAI-PMH header and has correct ISO 8601 format
    * Also verifies the datestamp is approximately current (within 2 minutes)
+   * Works with both ListRecords/GetRecord (with <record> wrapper) and ListIdentifiers (direct <header>) responses
    * @param {string} xmlString - The XML response as a string
    * @param {string} instanceUuid - The instance UUID to target a specific record
    */
   verifyOaiPmhHeaderDatestamp(xmlString, instanceUuid) {
-    const targetRecord = this._findRecordInResponseByUuid(xmlString, instanceUuid);
-    const targetHeader = targetRecord.getElementsByTagName('header')[0];
+    const xmlDoc = this._parseXmlString(xmlString);
+    let targetHeader = null;
+
+    // Try to find header in <record> element first (ListRecords/GetRecord)
+    const records = xmlDoc.getElementsByTagName('record');
+    if (records.length > 0) {
+      for (let i = 0; i < records.length; i++) {
+        const header = records[i].getElementsByTagName('header')[0];
+        if (header) {
+          const identifier = header.getElementsByTagName('identifier')[0].textContent;
+          if (identifier.includes(instanceUuid)) {
+            targetHeader = header;
+            break;
+          }
+        }
+      }
+    } else {
+      // No records found, try direct headers (ListIdentifiers)
+      const headers = xmlDoc.getElementsByTagName('header');
+      for (let i = 0; i < headers.length; i++) {
+        const header = headers[i];
+        const identifier = header.getElementsByTagName('identifier')[0].textContent;
+        if (identifier.includes(instanceUuid)) {
+          targetHeader = header;
+          break;
+        }
+      }
+    }
+
+    if (!targetHeader) {
+      throw new Error(`Header with UUID ${instanceUuid} not found in the OAI-PMH response`);
+    }
+
     const datestampElement = targetHeader.getElementsByTagName('datestamp')[0];
     const datestamp = datestampElement.textContent;
 
@@ -692,7 +724,7 @@ export default {
 
   /**
    * Verifies identifier presence/absence in ListIdentifiers or ListRecords response and validates format and status when found.
-   * Performs comprehensive verification including identifier format validation and deletion status checking.
+   * Performs comprehensive verification including identifier format validation, deletion status checking, and setSpec validation.
    * @param {string} xmlString - The XML response as a string from ListIdentifiers or ListRecords request
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
@@ -734,6 +766,17 @@ export default {
     if (!foundHeader) {
       throw new Error(`Identifier with UUID ${instanceUuid} not found in the OAI-PMH response`);
     }
+
+    // Verify setSpec element
+    const setSpecElements = foundHeader.getElementsByTagName('setSpec');
+    expect(
+      setSpecElements.length,
+      `setSpec element should exist in header for UUID ${instanceUuid}`,
+    ).to.be.greaterThan(0);
+    expect(
+      setSpecElements[0].textContent,
+      `setSpec should be "all" for UUID ${instanceUuid}`,
+    ).to.equal('all');
 
     // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {

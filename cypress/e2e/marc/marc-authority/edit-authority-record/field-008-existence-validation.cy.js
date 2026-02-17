@@ -164,7 +164,7 @@ describe('MARC', () => {
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
 
           // #11 Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout(testData.calloutMessage);
 
           // #12 - #13 Response from GET request to "/records-editor/records" contains "Date Ent" property for "008" field with value equal to current date ("yymmdd" format)

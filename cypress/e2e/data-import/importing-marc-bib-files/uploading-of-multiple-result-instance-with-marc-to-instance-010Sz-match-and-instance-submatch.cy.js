@@ -139,6 +139,10 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        testData.instanceIds.forEach((id) => {
+          InstanceRecordView.markAsDeletedViaApi(id);
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         matchProfiles.forEach((profile) => {
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
@@ -146,10 +150,6 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(testData.user.userId);
-        testData.instanceIds.forEach((id) => {
-          InstanceRecordView.markAsDeletedViaApi(id);
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
       });
     });
 

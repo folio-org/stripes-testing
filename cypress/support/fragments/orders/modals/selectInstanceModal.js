@@ -5,15 +5,21 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiSelectMenu,
+  MultiSelectOption,
   TextField,
   including,
   Select,
   not,
   Accordion,
   Checkbox,
+  MultiSelect,
+  matching,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME, INVENTORY_COLUMN_HEADERS } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
+import InteractorsTools from '../../../utils/interactorsTools';
+import InventorySearchAndFilter from '../../inventory/inventorySearchAndFilter';
 
 const selectInstanceModal = Modal('Select instance');
 const searchInput = selectInstanceModal.find(TextField({ name: 'query' }));
@@ -261,8 +267,25 @@ export default {
       );
     });
   },
-  fillInSearchQuery(searchValue) {
-    cy.do([searchInput.fillIn(searchValue)]);
+  fillInSearchQuery(searchValue, { directInput = false } = {}) {
+    if (directInput) {
+      /*
+        Required for very large queries - usual methods too slow (test may hang for 1+ mins).
+        Setting input value directly, without simulating user input.
+        Using native input value setter to trigger input event correctly.
+      */
+      cy.get('[class^=textField] input[name=query]').then(($textfield) => {
+        const textfield = $textfield[0];
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          'value',
+        ).set;
+        nativeInputValueSetter.call(textfield, searchValue);
+        textfield.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    } else {
+      cy.do(searchInput.fillIn(searchValue));
+    }
   },
   focusOnSearchField() {
     cy.do(searchInput.focus());
@@ -297,5 +320,82 @@ export default {
   expandAccordion(accordionName) {
     cy.do(selectInstanceModal.find(Accordion(accordionName)).clickHeader());
     cy.expect(selectInstanceModal.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.do(selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect()).open());
+    cy.expect(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }).exists());
+  },
+
+  verifyOptionAvailableMultiselect(accordionName, optionName, isShown = true) {
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const option = MultiSelectOption(matching(escapedValue));
+    cy.do(selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect()).open());
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
+  },
+
+  verifyMultiSelectFilterNumberOfOptions(accordionName, numberOfOptions) {
+    const multiSelect = selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.wait(1000);
+    cy.expect(MultiSelectMenu({ optionCount: numberOfOptions }).exists());
+  },
+
+  selectMultiSelectFilterOption(accordionName, optionName) {
+    const multiSelect = selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))).clickSegment());
+  },
+
+  typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
+    const multiSelect = selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.fillIn(value));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect(MultiSelectOption(including(value)).exists());
+      cy.expect(MultiSelectMenu({ optionCount: foundCount }).exists());
+    } else cy.expect(MultiSelectOption(including(value)).absent());
+  },
+
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect(MultiSelectOption(including(fullValue)).exists());
+    } else cy.expect(MultiSelectOption(including(fullValue)).absent());
+  },
+
+  verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
+    const multiSelect = selectInstanceModal.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.expect(
+      MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`)), {
+        totalRecords: expectedCount,
+      }).exists(),
+    );
+  },
+
+  checkModalIncludesText(text) {
+    const value = text instanceof RegExp ? text : matching(text);
+    cy.expect(selectInstanceModal.find(HTML(value)).exists());
+  },
+
+  verifyUriCharLimitMessageAndCallout() {
+    cy.expect(
+      selectInstanceModal
+        .find(HTML({ text: InventorySearchAndFilter.uriCharLimitErrorText }))
+        .exists(),
+    );
+    InteractorsTools.checkCalloutErrorMessage(InventorySearchAndFilter.uriCharLimitErrorText);
   },
 };

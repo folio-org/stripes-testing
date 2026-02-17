@@ -1206,16 +1206,14 @@ export default {
   },
 
   addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
-    cy.do([
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
-      SelectionOption(firstExpenseClassName).click(),
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
-      SelectionOption(secondExpenseClassName).click(),
-    ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000);
+    [0, 1].forEach((index) => {
+      cy.do([
+        addExpenseClassButton.click(),
+        Button({ name: `statusExpenseClasses[${index}].expenseClassId` }).click(),
+        SelectionOption(index === 0 ? firstExpenseClassName : secondExpenseClassName).click(),
+      ]);
+      cy.wait(2000);
+    });
     cy.do(saveAndCloseButton.click());
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -1280,6 +1278,15 @@ export default {
       .then((response) => {
         return response.body;
       });
+  },
+
+  updateFundViaApi: (fundProperties, groupIds = []) => {
+    return cy.okapiRequest({
+      path: `finance/funds/${fundProperties.id}`,
+      body: { fund: fundProperties, groupIds },
+      method: 'PUT',
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({

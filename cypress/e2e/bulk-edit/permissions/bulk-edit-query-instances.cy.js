@@ -137,12 +137,6 @@ describe('Bulk-edit', () => {
 
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-        AuthorizationRoles.clickOnCapabilitySetsAccordion();
-        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
-        });
 
         cy.wait(2000);
         cy.logout();

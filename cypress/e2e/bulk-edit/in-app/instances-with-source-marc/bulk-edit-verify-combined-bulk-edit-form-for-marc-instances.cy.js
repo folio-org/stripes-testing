@@ -234,7 +234,9 @@ describe(
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
           QueryModal.fillInValueTextfield('AT_C478255');
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.clickRunQuery();
 
           // Step 28: Wait for query results and open bulk edit form

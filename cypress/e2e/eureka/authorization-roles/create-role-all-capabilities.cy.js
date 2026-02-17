@@ -67,18 +67,25 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
 
-          cy.getCapabilitiesApi(5000, true, { customTimeout: 60_000 }).then((capabs) => {
-            capabilitiesCount = capabs.length;
-          });
-          cy.getCapabilitySetsApi().then((capabSets) => {
-            capabilitySetsCount = capabSets.length;
-          });
+          cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT'), true).then((appIds) => {
+            cy.getCapabilitySetsApi(2000, {
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabSets) => {
+              capabilitySetsCount = capabSets.length;
+            });
+            cy.getCapabilitiesApi(5000, true, {
+              customTimeout: 60_000,
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabs) => {
+              capabilitiesCount = capabs.length;
+            });
 
-          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-            authRefresh: true,
+            cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
       });

@@ -51,14 +51,15 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'getCapabilitiesApi',
-  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null } = {}) => {
-    const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+  (limit = 5000, ignoreDummyCapabs = true, { customTimeout = null, query } = {}) => {
+    let constructedQuery = ignoreDummyCapabs ? 'dummyCapability==false' : '';
+    if (query) constructedQuery += constructedQuery ? ` and (${query})` : query;
     const requestData = {
       method: 'GET',
       path: 'capabilities',
       searchParams: {
         limit,
-        query,
+        query: constructedQuery,
       },
       isDefaultSearchParamsRequired: false,
     };

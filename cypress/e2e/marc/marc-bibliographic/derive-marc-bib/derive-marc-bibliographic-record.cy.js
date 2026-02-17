@@ -63,6 +63,7 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(testData.marcBibTitle);
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
+            cy.wait(1000);
           });
           InventoryInstance.selectTopRecord();
           InventoryInstance.deriveNewMarcBib();
