@@ -57,6 +57,13 @@ export default {
       });
   },
 
+  verifyNoResultsFound() {
+    cy.get('[class*="search-result-entry-container"]').should('not.exist');
+    cy.get('[class*="item-search-content"]')
+      .contains('No resource descriptions match your query')
+      .should('exist');
+  },
+
   checkSearchResultsByTitle(title) {
     cy.xpath(`//button[text()="${title}"]`).should('be.visible');
   },

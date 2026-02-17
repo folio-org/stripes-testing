@@ -255,4 +255,9 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  navigateToFundTypes() {
+    cy.do(fundTypesListItem.click());
+    this.waitFundTypesLoading();
+  },
 };

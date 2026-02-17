@@ -19,6 +19,8 @@ import {
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME, INVENTORY_COLUMN_HEADERS } from '../../../constants';
 import ChangeInstanceModal from './changeInstanceModal';
+import InteractorsTools from '../../../utils/interactorsTools';
+import InventorySearchAndFilter from '../../inventory/inventorySearchAndFilter';
 
 const selectInstanceModal = Modal('Select instance');
 const searchInput = selectInstanceModal.find(TextField({ name: 'query' }));
@@ -277,8 +279,25 @@ export default {
       );
     });
   },
-  fillInSearchQuery(searchValue) {
-    cy.do([searchInput.fillIn(searchValue)]);
+  fillInSearchQuery(searchValue, { directInput = false } = {}) {
+    if (directInput) {
+      /*
+        Required for very large queries - usual methods too slow (test may hang for 1+ mins).
+        Setting input value directly, without simulating user input.
+        Using native input value setter to trigger input event correctly.
+      */
+      cy.get('[class^=textField] input[name=query]').then(($textfield) => {
+        const textfield = $textfield[0];
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          'value',
+        ).set;
+        nativeInputValueSetter.call(textfield, searchValue);
+        textfield.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    } else {
+      cy.do(searchInput.fillIn(searchValue));
+    }
   },
   focusOnSearchField() {
     cy.do(searchInput.focus());
@@ -381,5 +400,14 @@ export default {
   checkModalIncludesText(text) {
     const value = text instanceof RegExp ? text : matching(text);
     cy.expect(selectInstanceModal.find(HTML(value)).exists());
+  },
+
+  verifyUriCharLimitMessageAndCallout() {
+    cy.expect(
+      selectInstanceModal
+        .find(HTML({ text: InventorySearchAndFilter.uriCharLimitErrorText }))
+        .exists(),
+    );
+    InteractorsTools.checkCalloutErrorMessage(InventorySearchAndFilter.uriCharLimitErrorText);
   },
 };

@@ -803,7 +803,6 @@ export default {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
-    cy.reload();
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue(instanceHRID).value()),
@@ -1696,6 +1695,14 @@ export default {
         .find(marcAuthorityAppIcon)
         .absent(),
     );
+  },
+  checkItemStatusByBarcode: (barcode, expectedStatus) => {
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((barcodeCell) => {
+        const row = barcodeCell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('div[class^="mclCell-"]').should('contain.text', expectedStatus);
+      });
   },
   verifyCheckedOutDate: (date) => {
     cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
