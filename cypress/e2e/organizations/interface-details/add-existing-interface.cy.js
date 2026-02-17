@@ -35,7 +35,7 @@ describe('Organizations --> Interface details', () => {
 
   it(
     'C1322 Add an existing interface to an Organization record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C1322'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

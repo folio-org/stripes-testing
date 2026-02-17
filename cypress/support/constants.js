@@ -1,6 +1,7 @@
 export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
+  CLAIMING: 'Claiming',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -14,11 +15,17 @@ export const APPLICATION_NAMES = {
   ORDERS: 'Orders',
   CHECK_IN: 'Check in',
   CHECK_OUT: 'Check out',
+  RECEIVING: 'Receiving',
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
   FINANCE: 'Finance',
+  LINKED_DATA_EDITOR: 'Linked Data Editor',
+  NOTES: 'Notes',
+  ORGANIZATIONS: 'Organizations',
+  COURSES: 'Courses',
+  DEVELOPER: 'Developer',
 };
 
 export const REQUEST_METHOD = {
@@ -249,6 +256,7 @@ export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
   PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  OTHER: 'Other',
 };
 
 export const RECEIPT_STATUS_SELECTED = {
@@ -1595,6 +1603,11 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   OR: 'OR',
 };
 
+export const LDE_ROLES = {
+  CATALOGER: 'Cataloger',
+  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
+};
+
 export const AUTHORIZATION_ROLE_TYPES = {
   REGULAR: 'Regular',
   CONSORTIUM: 'Consortium',
@@ -1823,3 +1836,15 @@ export const EHOLDINGS_KB_SETTINGS_TABS = {
 };
 
 export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';
+
+export const PUBLISH_COORDINATOR_STATUSES = {
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR',
+  IN_PROGRESS: 'IN_PROGRESS',
+};
+
+export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
+  CREATE: 'createSettingsPCId',
+  DELETE: 'pcId',
+  UPDATE: 'updateSettingsPCId',
+};

@@ -54,7 +54,7 @@ describe('Organizations', () => {
 
   it(
     'C359169 Next/previous pagination and bulk selection in "Add contacts" dialog (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C359169'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

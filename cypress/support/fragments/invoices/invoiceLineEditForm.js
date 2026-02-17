@@ -1,5 +1,6 @@
 import {
   Button,
+  Modal,
   Checkbox,
   SearchField,
   Section,
@@ -125,8 +126,11 @@ export default {
       cy.do(infoFields.subTotal.has({ value: invoiceLine.subTotal }));
     }
   },
-  clickCancelButton() {
+  clickCancelButton(buttonName = null) {
     cy.do(cancelButtom.click());
+    if (buttonName) {
+      cy.do(Modal('Are you sure?').find(Button(buttonName)).click());
+    }
     cy.expect(invoiceLineEditFormRoot.absent());
   },
   clickSaveButton({ invoiceLineSaved = true } = {}) {

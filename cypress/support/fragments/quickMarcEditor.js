@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { recurse } from 'cypress-recurse';
 import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
@@ -828,6 +829,24 @@ export default {
         ruleIds.forEach((ruleId) => {
           cy.setRulesForFieldViaApi(ruleId, isEnabled);
         });
+        return cy.wrap(ruleIds);
+      })
+      .then((ruleIds) => {
+        recurse(
+          () => {
+            return cy.getAllRulesViaApi();
+          },
+          (body) => {
+            const currentStatuses = body
+              .filter((rule) => ruleIds.includes(rule.id))
+              .map((rule) => rule.autoLinkingEnabled);
+            return currentStatuses.every((status) => status === isEnabled);
+          },
+          {
+            timeout: 30 * 1000,
+            delay: 1000,
+          },
+        );
       });
   },
 
@@ -999,6 +1018,16 @@ export default {
   deleteFieldByTagAndCheck: (tag) => {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+  },
+
+  deleteFirstFieldByTag(tag) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+      }
+    });
   },
 
   verifySaveAndCloseButtonEnabled(isEnabled = true) {
@@ -1515,6 +1544,16 @@ export default {
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  },
+
+  updateFirstFieldByTag(tag, newContent) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+      }
+    });
   },
 
   updateLDR06And07Positions() {
@@ -2066,6 +2105,11 @@ export default {
 
   checkDeleteButtonNotExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
+  },
+
+  checkDeleteButtonExistsByTag(tag, isExist = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(deleteFieldButton);
+    cy.expect(isExist ? targetButton.exists() : targetButton.absent());
   },
 
   checkCallout(callout) {
@@ -3330,7 +3374,7 @@ export default {
         });
       });
       cy.getInstanceAuditDataViaAPI(bibId).then((auditData) => {
-        relatedRecordVersion = `${auditData.totalRecords}`;
+        relatedRecordVersion = `${auditData.totalRecords || 1}`;
       });
       authorityIds.forEach((authorityId) => {
         cy.okapiRequest({

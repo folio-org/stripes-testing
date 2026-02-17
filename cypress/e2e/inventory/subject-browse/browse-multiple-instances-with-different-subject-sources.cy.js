@@ -72,6 +72,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
+        cy.wait(5000);
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);

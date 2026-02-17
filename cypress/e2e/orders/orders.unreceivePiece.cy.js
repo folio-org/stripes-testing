@@ -48,7 +48,7 @@ describe('Orders', () => {
 
     it(
       'C10925 Unreceive piece using "Actions" button (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C10925'] },
+      { tags: ['smoke', 'thunderjet', 'C10925', 'shiftLeft'] },
       () => {
         const barcode = Helper.getRandomBarcode();
         const enumeration = 'autotestCaption';

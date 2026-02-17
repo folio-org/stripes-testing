@@ -82,9 +82,9 @@ export const Calendar = createInteractor('calendar widget')
     ) === format(new Date(), 'yyyy-MM-dd'),
     month: (el) => el.querySelector('select').selectedOptions[0].label || '',
     year: (el) => el.querySelector('input').value,
-    day: (el) => (!el.querySelector('[class^=selected-]')
+    day: (el) => (!el.querySelector('[class*=selected-]')
       ? ''
-      : el.querySelector('[class^=selected-]').textContent),
+      : el.querySelector('[class*=selected-]').textContent),
     days: (el) => Array.from(el.querySelectorAll('td')).reduce((days, node) => {
       if (node.getAttribute('data-excluded') !== 'true') {
         if (node.querySelector('[class*=muted-]')) {

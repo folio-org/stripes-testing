@@ -19,16 +19,14 @@ describe('Data Import', () => {
       incomingRecordFields: {
         field: '001',
       },
-      existingRecordFields: {
-        field: '001',
-      },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
 
     const duplicatedMatchProfile = {
       profileName: `C2340 autotest duplicate match profile ${getRandomStringCode(8)}`,
-      matchCriterion: 'Existing value contains incoming value',
+      instanceOption: NewMatchProfile.optionsList.instanceUuid,
     };
 
     const calloutMessage = `The match profile "${duplicatedMatchProfile.profileName}" was successfully created`;
@@ -38,11 +36,12 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+        MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
       });
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-      MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
     });
 
     after('Delete test data', () => {
@@ -58,7 +57,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet', 'C2340'] },
       () => {
         MatchProfileView.duplicate();
-        NewMatchProfile.selectMatchCriterion(duplicatedMatchProfile.matchCriterion);
+        NewMatchProfile.selectExistingRecordField(duplicatedMatchProfile.instanceOption);
         NewMatchProfile.saveAndClose();
         NewMatchProfile.checkCalloutMessage(calloutErrorMessage);
         NewMatchProfile.fillName(duplicatedMatchProfile.profileName);

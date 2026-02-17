@@ -25,7 +25,7 @@ describe('Organizations', () => {
 
   it(
     'C656329 Save using Save & keep editing button when creating new organization',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C656329'] },
     () => {
       Organizations.newOrganization();
       Organizations.fillNameField('Name');

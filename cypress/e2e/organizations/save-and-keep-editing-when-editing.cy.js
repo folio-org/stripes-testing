@@ -21,11 +21,10 @@ describe('Organizations', () => {
     });
     cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((u) => {
       user = u;
-      cy.waitForAuthRefresh(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.organizationsPath,
-          waiter: Organizations.waitLoading,
-        });
+
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
       });
     });
   });

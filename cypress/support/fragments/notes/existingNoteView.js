@@ -42,4 +42,8 @@ export default {
     cy.expect(section.absent());
     AgreementViewDetails.waitLoading();
   },
+
+  verifyActionsButtonAbsent: () => {
+    cy.expect(actionsButton.absent());
+  },
 };

@@ -88,7 +88,7 @@ describe('Organizations', () => {
 
   it(
     'C434063 "Day" field on Integration edit page accepts only numbers less than "31" (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C434063'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

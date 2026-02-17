@@ -117,6 +117,15 @@ describe('Export Manager', () => {
           Permissions.uiExportOrders.gui,
           Permissions.exportManagerAll.gui,
           Permissions.exportManagerDownloadAndResendFiles.gui,
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersCreate.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiOrdersApprovePurchaseOrders.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.uiOrganizationsView.gui,
+          Permissions.uiExportOrders.gui,
+          Permissions.exportManagerAll.gui,
+          Permissions.exportManagerDownloadAndResendFiles.gui,
         ]).then((userProperties) => {
           user = userProperties;
 

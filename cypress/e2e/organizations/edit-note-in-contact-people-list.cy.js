@@ -37,7 +37,7 @@ describe('Organizations', () => {
 
   it(
     'C380639 Edit note (enter more than 30 characters) in "Contact people" list in "Organization" app (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C380639'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

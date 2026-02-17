@@ -7,7 +7,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 
-describe('orders: Test PO search', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -45,7 +45,7 @@ describe('orders: Test PO search', () => {
 
   it(
     'C6717 Test the PO searches (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C6717'] },
+    { tags: ['smoke', 'thunderjet', 'C6717', 'shiftLeft'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;

@@ -1,16 +1,20 @@
 import {
   Link,
+  Button,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   Section,
   including,
+  Checkbox,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import TransactionDetails from './transactionDetails';
 
 const transactionResultsPane = Section({ id: 'transaction-results-pane' });
 const transactionResultsList = MultiColumnList({ id: 'transactions-list' });
+const nextButton = Button('Next');
+const previousButton = Button('Previous');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -36,6 +40,15 @@ export default {
       }
     });
   },
+  checkTransactionsByTypeAndAmount({ records = [] } = {}) {
+    records.forEach(({ type, amount }) => {
+      cy.get('#transactions-list [class*=mclRow-]').each(($row) => {
+        if ($row.text().includes(type)) {
+          cy.wrap($row).should('contain', amount);
+        }
+      });
+    });
+  },
   selectTransaction(type) {
     cy.do(
       transactionResultsList
@@ -54,5 +67,22 @@ export default {
 
     cy.get('#finance-module-display button[icon=times]').first().click();
     cy.wait(4000);
+  },
+
+  clickNextPagination() {
+    cy.do(nextButton.click());
+  },
+
+  clickPreviousPagination() {
+    cy.do(previousButton.click());
+  },
+
+  expandTransactionTypeAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-transactionType' }).click());
+  },
+
+  selectTransactionTypeFilter(transactionType) {
+    this.expandTransactionTypeAccordion();
+    cy.do(Checkbox(transactionType).click());
   },
 };

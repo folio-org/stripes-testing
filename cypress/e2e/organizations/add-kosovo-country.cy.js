@@ -63,7 +63,7 @@ describe('Organizations', () => {
 
   it(
     'C630465 Add "Kosovo" to country list on organization add/edit form and filtering (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C630465'] },
     () => {
       Organizations.newOrganization();
       Organizations.fillInInfoNewOrganization(organization1);

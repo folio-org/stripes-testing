@@ -1,126 +1,125 @@
-import permissions from '../../support/dictionary/permissions';
-import NewOrder from '../../support/fragments/orders/newOrder';
+import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  VENDOR_NAMES,
+} from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import getRandomPostfix from '../../support/utils/stringTools';
-import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
-import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
-
-Cypress.on('uncaught:exception', () => false);
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
     describe('Orders Export to a Vendor', () => {
-      const order = { ...NewOrder.defaultOneTimeOrder };
-      const organization = {
-        ...NewOrganization.defaultUiOrganizations,
-        accounts: [
-          {
-            accountNo: getRandomPostfix(),
-            accountStatus: 'Active',
-            acqUnitIds: [],
-            appSystemNo: '',
-            description: 'Main library account',
-            libraryCode: 'COB',
-            libraryEdiCode: getRandomPostfix(),
-            name: 'TestAccout1',
-            notes: '',
-            paymentMethod: 'Cash',
-          },
-        ],
-      };
-      const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
-      const integartionDescription = 'Test Integation descripton1';
-      const vendorEDICodeFor1Integration = getRandomPostfix();
-      const libraryEDICodeFor1Integration = getRandomPostfix();
       let user;
-      let orderNumber = null;
+      let orderNumber;
+      let purchaseOrderId;
+      const order = {
+        id: uuid(),
+        vendor: '',
+        orderType: 'One-Time',
+        approved: true,
+        reEncumber: true,
+      };
+      const acquisitionMethodNames = [
+        ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER,
+        ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM,
+        ACQUISITION_METHOD_NAMES_IN_PROFILE.APPROVAL_PLAN,
+      ];
+      const poLines = [
+        {
+          ...BasicOrderLine.defaultOrderLine,
+          id: uuid(),
+        },
+        {
+          ...BasicOrderLine.defaultOrderLine,
+          id: uuid(),
+        },
+        {
+          ...BasicOrderLine.defaultOrderLine,
+          id: uuid(),
+        },
+      ];
 
       before(() => {
-        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
-          organization.id = organizationResponse;
-          order.vendor = organization.name;
-          order.orderType = 'One-time';
-          OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
-          Organizations.checkSearchResults(organization);
-          Organizations.selectOrganization(organization.name);
-          Organizations.addIntegration();
-          Organizations.fillIntegrationInformationWithoutScheduling(
-            integrationName,
-            integartionDescription,
-            vendorEDICodeFor1Integration,
-            libraryEDICodeFor1Integration,
-            organization.accounts[0].accountNo,
-            'Purchase',
-          );
-          InteractorsTools.checkCalloutMessage('Integration was saved');
-          OrderLinesLimit.setPOLLimitViaApi(3);
-          cy.visit(TopMenu.ordersPath);
-          order.orderType = 'Ongoing';
-          Orders.createOrder(order, true, false).then((orderId) => {
-            order.id = orderId;
-            Orders.createPOLineViaActions();
-            OrderLines.fillInPOLineInfoForExport('Purchase');
-            OrderLines.backToEditingOrder();
-            Orders.createPOLineViaActions();
-            OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
-            OrderLines.backToEditingOrder();
-            Orders.createPOLineViaActions();
-            OrderLines.fillInPOLineInfoForExport('Depository');
-            Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
-              orderNumber = response[0].poNumber;
+        cy.getAdminToken();
+        Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
+          (organization) => {
+            order.vendor = organization.id;
+
+            Orders.createOrderViaApi(order).then((orderResponse) => {
+              purchaseOrderId = orderResponse.id;
+              orderNumber = orderResponse.poNumber;
+
+              cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+                (location) => {
+                  cy.getDefaultMaterialType().then((materialType) => {
+                    acquisitionMethodNames.forEach((method, index) => {
+                      cy.getAcquisitionMethodsApi({ query: `value="${method}"` }).then((resp) => {
+                        poLines[index].locations = [
+                          {
+                            locationId: location.id,
+                            quantity: 2,
+                            quantityPhysical: 2,
+                          },
+                        ];
+                        poLines[index].acquisitionMethod = resp.body.acquisitionMethods[0].id;
+                        poLines[index].physical.materialType = materialType.id;
+                        poLines[index].purchaseOrderId = purchaseOrderId;
+                        poLines[index].physical.materialSupplier = order.vendor;
+
+                        OrderLines.createOrderLineViaApi(poLines[index]);
+                      });
+                    });
+                  });
+                },
+              );
             });
-            cy.wait(4000);
-          });
-        });
+          },
+        );
 
         cy.createTempUser([
-          permissions.uiOrdersView.gui,
-          permissions.uiOrdersCreate.gui,
-          permissions.uiOrdersEdit.gui,
-          permissions.uiOrdersApprovePurchaseOrders.gui,
-          permissions.uiOrganizationsViewEditCreate.gui,
-          permissions.uiOrganizationsView.gui,
-          permissions.uiExportOrders.gui,
-          permissions.exportManagerAll.gui,
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersCreate.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiOrdersApprovePurchaseOrders.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.uiOrganizationsView.gui,
+          Permissions.uiExportOrders.gui,
+          Permissions.exportManagerAll.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
+
+          cy.login(user.username, user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+          Orders.selectOrdersPane();
+          Orders.waitLoading();
         });
       });
 
       after(() => {
         cy.getAdminToken();
-        OrderLinesLimit.setPOLLimitViaApi(1);
         Orders.deleteOrderViaApi(order.id);
-        Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['criticalPathBroken', 'thunderjet', 'C350603'] },
+        { tags: ['criticalPath', 'thunderjet', 'C350603'] },
         () => {
           Orders.selectOrderLines();
           Orders.resetFiltersIfActive();
-          Orders.selectFilterAcquisitionMethod('Purchase');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
-          Orders.resetFilters();
-          Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
-          Orders.resetFilters();
-          Orders.selectFilterAcquisitionMethod('Depository');
-          Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
-          Orders.resetFilters();
+          acquisitionMethodNames.forEach((method, index) => {
+            Orders.selectFilterAcquisitionMethod(method);
+            Orders.checkOrderlineSearchResults(`${orderNumber}-${index + 1}`);
+            Orders.resetFilters();
+            cy.wait(2000);
+          });
         },
       );
     });

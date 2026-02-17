@@ -393,6 +393,7 @@ export default {
       invoiceDateField.fillIn(invoice.invoiceDate),
       vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
+    cy.wait(2000);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       batchGroupSelection.open(),
@@ -591,11 +592,11 @@ export default {
   },
 
   selectVendorOnUi: (organizationName) => {
-    cy.do([
-      Button('Organization look-up').click(),
-      SearchField({ id: searchInputId }).fillIn(organizationName),
-      searchButton.click(),
-    ]);
+    cy.do(Button('Organization look-up').click());
+    cy.wait(2000);
+    cy.expect(SearchField({ id: searchInputId }).exists());
+    cy.expect(SearchField({ id: searchInputId }).has({ visible: true }));
+    cy.do([SearchField({ id: searchInputId }).fillIn(organizationName), searchButton.click()]);
     FinanceHelper.selectFromResultsList();
   },
 
@@ -866,13 +867,15 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(errorMessage);
   },
 
-  canNotApproveAndPayInvoice: (errorMessage) => {
+  canNotApproveAndPayInvoice: (fund) => {
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve & pay').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${fund.code}].`,
+    );
   },
 
   approveAndPayInvoice: () => {

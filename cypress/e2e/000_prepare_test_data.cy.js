@@ -49,6 +49,13 @@ describe('Prepare test data', () => {
         pc.code = 'Prn';
         steps.push(() => ExpenseClasses.createExpenseClassViaApi(pc));
       }
+
+      if (!names.has('auto')) {
+        const pc = ExpenseClasses.getDefaultExpenseClass();
+        pc.name = 'Auto';
+        pc.code = 'Auto';
+        steps.push(() => ExpenseClasses.createExpenseClassViaApi(pc));
+      }
       return steps.reduce((p, fn) => p.then(fn), cy.wrap(null));
     });
   };
@@ -66,9 +73,10 @@ describe('Prepare test data', () => {
 
     return cy.wrap(null).then(() => {
       const budgetPromises = fundCodes.map((code) => {
-        return FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
+        return FiscalYears.getViaApi({ query: 'code="FY2026"' }).then((resp) => {
           if (!resp.fiscalYears?.[0]) {
-            throw new Error('FY2025 fiscal year not found');
+            cy.log('FY2026 fiscal year not found, skipping budget creation');
+            return null;
           }
 
           return Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
@@ -94,33 +102,31 @@ describe('Prepare test data', () => {
   };
 
   const addElectronicExpenseClassToBudget = () => {
-    return ExpenseClasses.getExpenseClassesViaApi({ query: 'name="Electronic"' }).then(
-      (ecList = []) => {
-        const expenseClassResp = ecList.find((ec) => ec.name === 'Electronic');
+    return ExpenseClasses.getExpenseClassesViaApi({ query: 'name="Auto"' }).then((ecList = []) => {
+      const expenseClassResp = ecList.find((ec) => ec.name === 'Auto');
 
-        if (!expenseClassResp) {
-          cy.log('Electronic expense class not found, skipping budget update');
+      if (!expenseClassResp) {
+        cy.log('Auto expense class not found, skipping budget update');
+        return null;
+      }
+
+      return Budgets.getBudgetViaApi({ query: 'code=EUROHIST' }).then(({ budgetResp }) => {
+        if (!budgetResp) {
+          cy.log('EUROHIST budget not found, skipping expense class assignment');
           return null;
         }
 
-        return Budgets.getBudgetViaApi({ query: 'code=EUROHIST' }).then(({ budgetResp }) => {
-          if (!budgetResp) {
-            cy.log('EUROHIST budget not found, skipping expense class assignment');
-            return null;
-          }
-
-          return Budgets.updateBudgetViaApi({
-            ...budgetResp,
-            statusExpenseClasses: [
-              {
-                status: 'Active',
-                expenseClassId: expenseClassResp.id,
-              },
-            ],
-          });
+        return Budgets.updateBudgetViaApi({
+          ...budgetResp,
+          statusExpenseClasses: [
+            {
+              status: 'Active',
+              expenseClassId: expenseClassResp.id,
+            },
+          ],
         });
-      },
-    );
+      });
+    });
   };
 
   it('001 Assign service points to admin user', { tags: ['prepareTestData', 'smoke'] }, () => {

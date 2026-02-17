@@ -1,20 +1,23 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, ORDER_STATUSES, REQUEST_TYPES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  ORDER_STATUSES,
+  REQUEST_TYPES,
+} from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders, OrderLines } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 import Requests from '../../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
@@ -82,14 +85,14 @@ describe('Orders', () => {
               });
           },
         );
-        TitleLevelRequests.enableTLRViaApi();
+        TitleLevelRequests.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: true });
       });
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiReceivingViewEditCreate.gui,
-        permissions.uiRequestsCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiRequestsCreate.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -98,10 +101,10 @@ describe('Orders', () => {
           testData.user.userId,
           testData.effectiveLocationServicePoint.id,
         );
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       });
     });
 
@@ -122,9 +125,10 @@ describe('Orders', () => {
       Users.deleteViaApi(testData.user.userId);
     });
 
+    // Consortium title level requests (TLR) should be disabled for running on member tenant
     it(
       'C402758 Receiving an item with open title level request (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'C402758'] },
       () => {
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
         OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
@@ -160,7 +164,8 @@ describe('Orders', () => {
           NewRequest.verifyRequestSuccessfullyCreated(testData.user.username);
         });
 
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.resetFilters();
         Orders.selectOrderByPONumber(testData.order.poNumber);
         OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
         OrderLines.openReceiving();

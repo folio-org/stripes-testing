@@ -1,4 +1,4 @@
-import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
+import { APPLICATION_NAMES, INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import { Budgets, FiscalYears, Funds, Ledgers } from '../../support/fragments/finance';
 import {
@@ -12,13 +12,10 @@ import { BasicOrderLine, NewOrder, OrderDetails, Orders } from '../../support/fr
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import { Approvals } from '../../support/fragments/settings/invoices';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -30,7 +27,6 @@ describe('Invoices', () => {
     allocated: 101,
   };
   const isApprovePayEnabled = true;
-  const isApprovePayDisabled = false;
   const testData = {
     acqUnit: AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true }),
     user: {},
@@ -91,6 +87,7 @@ describe('Invoices', () => {
         });
       });
     });
+    Approvals.setApprovePayValueViaApi(true);
 
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
@@ -106,27 +103,25 @@ describe('Invoices', () => {
 
       AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.settingsInvoiveApprovalPath,
-        waiter: SettingsInvoices.waitApprovalsLoading,
-      });
-      SettingsInvoices.checkApproveAndPayCheckboxIfNeeded();
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
     });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
     AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
+  // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'true'
   it(
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C446069'] },
     () => {
-      TopMenuNavigation.navigateToApp('Orders');
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
@@ -141,10 +136,10 @@ describe('Invoices', () => {
       cy.wait(1000);
       InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: true });
 
-      cy.visit(SettingsMenu.acquisitionUnitsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Acquisition units');
       AcquisitionUnits.unAssignUser(testData.user.username, testData.acqUnit.name);
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
       InvoiceView.clickApproveAndPayInvoice({ isApprovePayEnabled });

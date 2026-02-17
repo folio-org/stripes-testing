@@ -5,61 +5,63 @@ import permissions from '../../../support/dictionary/permissions';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
-describe('Organizations --> Interface details', () => {
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    interfaces: [],
-  };
-  const defaultInterface = { ...NewOrganization.defaultInterface };
-  let user;
+describe('Organizations', () => {
+  describe('Interface details', () => {
+    const organization = {
+      ...NewOrganization.defaultUiOrganizations,
+      interfaces: [],
+    };
+    const defaultInterface = { ...NewOrganization.defaultInterface };
+    let user;
 
-  before('Create user, organization, and interface', () => {
-    cy.getAdminToken();
-    Organizations.createInterfaceViaApi(defaultInterface).then((interfaceId) => {
-      defaultInterface.id = interfaceId;
-      organization.interfaces.push(interfaceId);
-    });
-    Organizations.createOrganizationViaApi(organization).then((organizationId) => {
-      organization.id = organizationId;
-    });
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
+    before('Create user, organization, and interface', () => {
+      cy.getAdminToken();
+      Organizations.createInterfaceViaApi(defaultInterface).then((interfaceId) => {
+        defaultInterface.id = interfaceId;
+        organization.interfaces.push(interfaceId);
+      });
+      Organizations.createOrganizationViaApi(organization).then((organizationId) => {
+        organization.id = organizationId;
+      });
+      cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.organizationsPath,
+          waiter: Organizations.waitLoading,
+        });
       });
     });
-  });
 
-  after('Delete test data', () => {
-    cy.getAdminToken();
-    Organizations.deleteOrganizationViaApi(organization.id);
-    Users.deleteViaApi(user.userId);
-  });
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
 
-  it(
-    'C1324 Edit interface details (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1324'] },
-    () => {
-      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
-      Organizations.selectOrganization(organization.name);
-      Organizations.openInterfaceSection();
-      Organizations.checkInterfaceIsAdd(defaultInterface);
-      Organizations.editOrganization();
-      Organizations.selectInterface(defaultInterface);
-      Organizations.clickEdit();
-      Organizations.addNoteToInterface('Note for interface');
-      Organizations.closeEditInterface();
-      Organizations.closeWithoutSaving();
-      Organizations.clickEdit();
-      Organizations.addNoteToInterface('Note for interface');
-      Organizations.closeEditInterface();
-      Organizations.keepEditingOrganization();
-      Organizations.clickSaveButton();
-      Organizations.closeInterface();
-      Organizations.closeEditOrganizationPane();
-      Organizations.checkInterfaceIsAdd(defaultInterface);
-      Organizations.checkInterfaceNoteIsAdd('Note for interface');
-    },
-  );
+    it(
+      'C1324 Edit interface details (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet', 'C1324'] },
+      () => {
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
+        Organizations.selectOrganization(organization.name);
+        Organizations.openInterfaceSection();
+        Organizations.checkInterfaceIsAdd(defaultInterface);
+        Organizations.editOrganization();
+        Organizations.selectInterface(defaultInterface);
+        Organizations.clickEdit();
+        Organizations.addNoteToInterface('Note for interface');
+        Organizations.closeEditInterface();
+        Organizations.closeWithoutSaving();
+        Organizations.clickEdit();
+        Organizations.addNoteToInterface('Note for interface');
+        Organizations.closeEditInterface();
+        Organizations.keepEditingOrganization();
+        Organizations.clickSaveButton();
+        Organizations.closeInterface();
+        Organizations.closeEditOrganizationPane();
+        Organizations.checkInterfaceIsAdd(defaultInterface);
+        Organizations.checkInterfaceNoteIsAdd('Note for interface');
+      },
+    );
+  });
 });

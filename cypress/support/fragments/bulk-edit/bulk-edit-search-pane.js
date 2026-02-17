@@ -159,6 +159,7 @@ export const ERROR_MESSAGES = {
   EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED:
     'Bulk edit of instance notes is not supported for MARC Instances.',
   NO_CHANGE_REQUIRED: 'No change in value required',
+  NO_MATCH_FOUND: 'No match found',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
   FOLIO_SOURCE_NOT_SUPPORTED_BY_MARC_BULK_EDIT:

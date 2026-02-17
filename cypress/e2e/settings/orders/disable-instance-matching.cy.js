@@ -1,41 +1,34 @@
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
+import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import TopMenu from '../../../support/fragments/topMenu';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Settings (Orders)', () => {
   describe('Instance matching', () => {
     let user;
 
     before(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsOrdersPath,
-        waiter: SettingsOrders.waitLoadingOrderSettings,
+      cy.getAdminToken();
+      InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
+        if (settings?.length !== 0) {
+          InventoryInteractions.setInstanceMatchingSetting({
+            ...settings[0],
+            value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+          });
+        }
       });
-      SettingsOrders.selectContentInGeneralOrders('Instance matching');
-      SettingsOrders.uncheckDisableInstanceMatchingIfChecked();
-      cy.wait(4000);
 
-      cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsOrdersPath,
-            waiter: SettingsOrders.waitLoadingOrderSettings,
-          });
         },
       );
     });
 
     after(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsOrdersPath,
-        waiter: SettingsOrders.waitLoadingOrderSettings,
-      });
-      SettingsOrders.selectContentInGeneralOrders('Instance matching');
-      SettingsOrders.uncheckDisableInstanceMatchingIfChecked();
-
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -43,6 +36,10 @@ describe('Settings (Orders)', () => {
       'C499700 Make "Disable instance matching" option active in order settings (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C499700'] },
       () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsOrdersPath,
+          waiter: SettingsOrders.waitLoadingOrderSettings,
+        });
         SettingsOrders.selectContentInGeneralOrders('Instance matching');
         SettingsOrders.verifyInstanceMatchingDescription();
         SettingsOrders.switchDisableInstanceMatching();

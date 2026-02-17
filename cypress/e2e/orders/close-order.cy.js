@@ -41,7 +41,7 @@ describe('orders: Close Order', () => {
 
   it(
     'C667 Close an existing order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C667'] },
+    { tags: ['smoke', 'thunderjet', 'C667', 'shiftLeft'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         Orders.searchByParameter('PO number', poNumber);

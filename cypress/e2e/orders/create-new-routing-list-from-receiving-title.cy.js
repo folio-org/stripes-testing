@@ -141,7 +141,7 @@ describe('Receiving', () => {
 
   it(
     'C468205 Create new routing list from Receiving title (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C468205'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

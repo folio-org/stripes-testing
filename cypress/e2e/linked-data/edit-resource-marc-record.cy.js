@@ -6,6 +6,7 @@ import {
   INSTANCE_SOURCE_NAMES,
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
+  LDE_ROLES,
 } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
@@ -16,6 +17,10 @@ import Work from '../../support/fragments/linked-data/work';
 import FileManager from '../../support/utils/fileManager';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: MARC Authority integration', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;
@@ -30,6 +35,7 @@ describe('Citation: MARC Authority integration', () => {
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
     edition: 'test edition',
+    roleIds: [],
   };
 
   const resourceData = {
@@ -53,6 +59,25 @@ describe('Citation: MARC Authority integration', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -76,12 +101,14 @@ describe('Citation: MARC Authority integration', () => {
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
     // delete duplicate instance data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
@@ -89,7 +116,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'C627245', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
@@ -102,7 +129,7 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.saveAndClose();
       LinkedDataEditor.waitLoading();
       // navigate to the inventory module
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       // search by LDE source and unique title
       InventoryInstances.searchBySource(source);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
@@ -124,7 +151,7 @@ describe('Citation: MARC Authority integration', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitle);
       // double check inventory
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       // search by LDE source AND title
       InventoryInstances.searchBySource(source);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);

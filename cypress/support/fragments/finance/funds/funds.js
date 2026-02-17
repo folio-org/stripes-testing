@@ -12,6 +12,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
   PaneHeader,
@@ -22,6 +23,7 @@ import {
   SelectionList,
   SelectionOption,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -86,6 +88,10 @@ const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 const unassignAllLocationsButton = Button('Unassign all locations');
 const submitButton = Button('Submit');
 const keepEditingButton = Button('Keep editing');
+const fundResultsPane = Pane({ id: 'fund-results-pane' });
+const tagsButton = Button({ id: 'clickable-show-tags' });
+const tagsPane = Pane('Tags');
+const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
 
 export default {
   defaultUiFund: {
@@ -106,7 +112,7 @@ export default {
     };
   },
   waitLoading: () => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+    cy.expect(fundResultsPane.exists());
   },
 
   waitLoadingTransactions: () => {
@@ -1047,21 +1053,23 @@ export default {
       fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
-      ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
-      cy.createLedgerApi({
-        ...ledger,
-      });
-      fund.ledgerName = ledger.name;
-      cy.loginAsAdmin({
-        path: TopMenu.fundPath,
-        waiter: this.waitLoading,
-      });
-      this.createFund(fund);
-      this.checkCreatedFund(fund.name);
-      cy.wrap(ledger).as('createdLedger');
-      return cy.get('@createdLedger');
-    });
+    FiscalYears.getViaApi({ limit: 1, query: `code=="FY${new Date().getFullYear()}"` }).then(
+      (fiscalYearResponse) => {
+        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
+        fund.ledgerName = ledger.name;
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
+        this.createFund(fund);
+        this.checkCreatedFund(fund.name);
+        cy.wrap(ledger).as('createdLedger');
+        return cy.get('@createdLedger');
+      },
+    );
     return cy.get('@createdLedger');
   },
 
@@ -1202,16 +1210,14 @@ export default {
   },
 
   addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
-    cy.do([
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
-      SelectionOption(firstExpenseClassName).click(),
-      addExpenseClassButton.click(),
-      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
-      SelectionOption(secondExpenseClassName).click(),
-    ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000);
+    [0, 1].forEach((index) => {
+      cy.do([
+        addExpenseClassButton.click(),
+        Button({ name: `statusExpenseClasses[${index}].expenseClassId` }).click(),
+        SelectionOption(index === 0 ? firstExpenseClassName : secondExpenseClassName).click(),
+      ]);
+      cy.wait(2000);
+    });
     cy.do(saveAndCloseButton.click());
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -1278,6 +1284,15 @@ export default {
       });
   },
 
+  updateFundViaApi: (fundProperties, groupIds = []) => {
+    return cy.okapiRequest({
+      path: `finance/funds/${fundProperties.id}`,
+      body: { fund: fundProperties, groupIds },
+      method: 'PUT',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
@@ -1339,7 +1354,7 @@ export default {
 
   selectFund: (FundName) => {
     cy.wait(4000);
-    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.do(fundResultsPane.find(Link(FundName)).click());
     FundDetails.waitLoading();
   },
 
@@ -1441,7 +1456,7 @@ export default {
   },
 
   verifyFundLinkNameExists: (FundName) => {
-    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+    cy.expect(fundResultsPane.find(Link(FundName)).exists());
   },
 
   openSource: (linkName) => {
@@ -1579,5 +1594,60 @@ export default {
   closeWithoutSaving: () => {
     cy.do(areYouSureModal.find(closeWithoutSavingButton).click());
     cy.wait(2000);
+  },
+
+  openTagsPane: () => {
+    cy.do(tagsButton.click());
+    cy.expect(tagsPane.exists());
+    cy.wait(1000);
+  },
+
+  verifyTagsCount: (count) => {
+    cy.expect(tagsButton.find(HTML(including(String(count)))).exists());
+  },
+
+  verifyTagsPaneElements: (count = 0, tags = []) => {
+    const text = count === 1 ? '1 Tag' : `${count} Tags`;
+    const expectations = [
+      tagsPane.exists(),
+      tagsPane.find(HTML(including(text))).exists(),
+      tagsMultiSelect.exists(),
+    ];
+
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        expectations.push(tagsPane.find(ValueChipRoot(tag)).exists());
+      });
+    }
+
+    cy.expect(expectations);
+  },
+
+  addNewTag: (tagName) => {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+  },
+
+  selectExistingTag: (tagName) => {
+    cy.do(tagsMultiSelect.choose(tagName));
+    cy.wait(1000);
+  },
+
+  closeTagsPane: () => {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(500);
+    cy.expect(tagsPane.absent());
   },
 };

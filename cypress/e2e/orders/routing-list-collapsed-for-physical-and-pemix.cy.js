@@ -159,7 +159,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   it(
     'C466242 "Routing lists" accordion is collapsed when PO line does not have related Routing lists and Order format = "Physical Resource" or "P/E Mix" (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C466242'] },
+    { tags: ['extendedPath', 'thunderjet', 'C466242'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

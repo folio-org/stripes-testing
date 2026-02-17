@@ -56,7 +56,7 @@ describe('Organizations', () => {
 
   it(
     'C728 Filter organizations by status (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C728'] },
     () => {
       // Step 1: Expand "Organizations status" accordion
       OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');

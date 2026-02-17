@@ -91,7 +91,7 @@ describe('Organizations', () => {
 
   it(
     'C466128 Organizations can be found by "Updated by" filter (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466128'] },
     () => {
       Organizations.resetFilters();
       OrganizationsSearchAndFilter.filterByUpdater(testData.users[0].username);

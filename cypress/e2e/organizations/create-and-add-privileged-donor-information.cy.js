@@ -1,13 +1,12 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
-import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let user;
-  const organization = { ...newOrganization.defaultUiOrganizations, isDonor: false };
+  const organization = { ...NewOrganization.defaultUiOrganizations, isDonor: false };
   const contact = {
     lastName: 'Doe',
     firstName: 'John',
@@ -25,11 +24,13 @@ describe('Organizations', () => {
     Organizations.createOrganizationViaApi(organization).then((orgId) => {
       organization.id = orgId;
     });
+
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
+
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
@@ -53,7 +54,7 @@ describe('Organizations', () => {
 
   it(
     'C423618 Create and add privileged donor information in Organization (vendor) record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423618'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

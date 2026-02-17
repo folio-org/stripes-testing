@@ -11,6 +11,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Pane,
+  PaneHeader,
   Checkbox,
   MultiColumnListHeader,
   SelectionOption,
@@ -67,6 +68,17 @@ export default {
       Button('Save & close').click(),
     ]);
     this.waitForGroupDetailsLoading();
+  },
+
+  createDefaultGroupAndCaptureId(defaultGroup) {
+    cy.intercept('POST', '**/finance/groups*').as('createGroupRequest');
+
+    this.createDefaultGroup(defaultGroup);
+
+    return cy.wait('@createGroupRequest').then((interception) => {
+      defaultGroup.id = interception.response.body.id;
+      return defaultGroup;
+    });
   },
 
   waitForGroupDetailsLoading: () => {
@@ -126,6 +138,19 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: firstFundName }),
     ]);
+  },
+
+  removeFundFromGroup: (fundName) => {
+    cy.do(
+      Accordion({ id: 'fund' })
+        .find(MultiColumnListRow({ content: including(fundName), isContainer: true }))
+        .find(Button({ id: 'remove-item-button' }))
+        .click(),
+    );
+  },
+
+  verifyFundsCount: (count) => {
+    cy.expect(Accordion({ id: 'fund' }).find(MultiColumnList()).has({ rowCount: count }));
   },
 
   waitLoading: () => {
@@ -277,5 +302,29 @@ export default {
       group.id = interception.response.body.id;
       return group;
     });
+  },
+
+  checkPageTitle(expectedTitle) {
+    cy.title().should('eq', expectedTitle);
+  },
+
+  closeDetailsPane() {
+    cy.do(
+      PaneHeader({ id: 'paneHeaderpane-group-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  clickResetAll() {
+    cy.do(resetButton.click());
+  },
+
+  verifySearchFieldIsEmpty() {
+    cy.expect(searchField.has({ value: '' }));
+  },
+
+  filterByStatus(statusName) {
+    cy.do([Button({ text: 'Status' }).click(), Checkbox({ name: statusName }).click()]);
   },
 };

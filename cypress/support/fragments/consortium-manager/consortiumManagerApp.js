@@ -22,13 +22,17 @@ const collapsePaneIcon = Button({ icon: 'caret-left' });
 const memberDropdownButton = Button({ id: 'consortium-member-select' });
 const memberDropdownList = SelectionList({ id: 'sl-container-consortium-member-select' });
 
+export const SHARED_SETTING_LIBRARIES = 'All';
+
 export const messages = {
   created: (name, members) => {
-    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    const libraryWord =
+      members.includes(',') || members === SHARED_SETTING_LIBRARIES ? 'libraries' : 'library';
     return `${name} was successfully created for ${members} ${libraryWord}.`;
   },
   updated: (name, members) => {
-    const libraryWord = members.includes(',') ? 'libraries' : 'library';
+    const libraryWord =
+      members.includes(',') || members === SHARED_SETTING_LIBRARIES ? 'libraries' : 'library';
     return `${name} was successfully updated for ${members} ${libraryWord}.`;
   },
   deleted: (settingName, entityName) => `The ${settingName} ${entityName} was successfully deleted`,

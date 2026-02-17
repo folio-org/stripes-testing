@@ -1,11 +1,14 @@
 import uuid from 'uuid';
-import { MultiColumnListHeader, PaneHeader } from '../../../../../interactors';
-import { REQUEST_METHOD } from '../../../constants';
 import ConsortiumManagerApp from '../consortiumManagerApp';
+import { REQUEST_METHOD } from '../../../constants';
+import Affiliations from '../../../dictionary/affiliations';
+import { MultiColumnListHeader, PaneHeader } from '../../../../../interactors';
 
 const id = uuid();
 
 export default {
+  entityName: 'department',
+
   createViaApi: (department) => {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
@@ -27,6 +30,27 @@ export default {
         return department;
       });
     });
+  },
+
+  /*
+    Create or update shared department and return its data.
+   */
+  upsertSharedViaApi: (department) => {
+    const publication = {
+      url: '/departments',
+      settingId: id,
+      payload: {
+        id,
+        ...department,
+      },
+    };
+
+    return cy
+      .sendPublishCoordinatorShareSettingPublication(publication, { method: REQUEST_METHOD.POST })
+      .then(({ publicationResults }) => {
+        return publicationResults.find((record) => record.tenantId === Affiliations.Consortia)
+          ?.response;
+      });
   },
 
   deleteViaApi: (department) => {

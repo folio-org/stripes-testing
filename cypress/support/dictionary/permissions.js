@@ -801,6 +801,10 @@ export default {
   },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
+  uiClaimingView: {
+    internal: 'ui-claims.claiming.view',
+    gui: 'Claims: View claims',
+  },
   // Receiving
   uiReceivingView: {
     internal: 'ui-receiving.view',
@@ -817,6 +821,14 @@ export default {
   uiReceivingExportSearchResults: {
     internal: 'ui-receiving.exportCSV',
     gui: 'Receiving: Export search results',
+  },
+  uiReceivingAssignAcquisitionUnitsToNewTitle: {
+    internal: 'ui-receiving.acq-units.assignment.assign',
+    gui: 'Receiving: Assign acquisition units to new receiving title',
+  },
+  uiReceivingManageAcquisitionUnits: {
+    internal: 'ui-receiving.acq-units.assignment.manage',
+    gui: 'Receiving: Manage acquisition units',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
@@ -961,6 +973,10 @@ export default {
   uiSettingsOrdersCanViewEditDeleteOrderTemplates: {
     internal: 'ui-orders.settings.order-templates.delete',
     gui: 'Settings (Orders): Can view, edit, delete Order Templates',
+  },
+  ordersStorageAcquisitionMethodsCollectionGet: {
+    internal: 'orders-storage.acquisition-methods.collection.get',
+    gui: 'acquisition-methods-collection get',
   },
   // Finance
   uiFinanceFinanceViewGroup: {
@@ -1138,6 +1154,10 @@ export default {
     gui: 'Settings (Organizations): View settings',
   },
   // Settings
+  uiSettingsAcquisitionUnitsView: {
+    internal: 'ui-acquisition-units.settings.view',
+    gui: 'Settings (acquisition units): View acquisition units',
+  },
   uiSettingsAcquisitionUnitsViewEditCreateDelete: {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
@@ -1203,7 +1223,7 @@ export default {
     internal: 'ui-users.settings.transfers.all',
     gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
-  uiSettingsCanChangeLoacalPassword: {
+  uiSettingsCanChangeLocalPassword: {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
   },
@@ -1304,6 +1324,10 @@ export default {
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
+  },
+  uiSettingsDeveloperUserLocale: {
+    internal: 'ui-developer.settings.userLocale',
+    gui: 'Settings (developer): Can edit user configuration values',
   },
   uiSettingsTenantReadingRoomAll: {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
@@ -1422,7 +1446,7 @@ export default {
     details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
     details: ['obsolete'],
   },
@@ -1473,7 +1497,7 @@ export default {
   },
   // Departments
   createEditViewDepartments: {
-    internal: 'ui-users.settings.departments.create.edit.view',
+    internal: 'ui-users.settings.departments.create-edit-view.edit',
     gui: 'Settings (Users): Can create, edit, and view departments',
   },
   departmentsAll: {

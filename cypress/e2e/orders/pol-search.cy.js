@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
-describe('orders: Test Po line search', () => {
+describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
@@ -123,7 +123,7 @@ describe('orders: Test Po line search', () => {
   // TODO: add extra TC in testrail about it
   it(
     'C6719 Test the POL searches(Only test POL name search) (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C6719'] },
+    { tags: ['smoke', 'thunderjet', 'C6719', 'shiftLeft'] },
     () => {
       Orders.searchByParameter('PO line number', orderLineNumber);
       Orders.checkOrderlineSearchResults(orderLineNumber);

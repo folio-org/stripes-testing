@@ -222,63 +222,67 @@ describe('Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
-    Ledgers.closeRolloverInfo();
-    Ledgers.selectFundInLedger(firstFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      secondFiscalYear.code,
-      '($100.00)',
-      `${firstOrderNumber}-1`,
-      'Encumbrance',
-      `${firstFund.name} (${firstFund.code})`,
-    );
-    Funds.closeTransactionDetails();
-    Funds.closePaneHeader();
-    Funds.closeBudgetDetails();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      firstFiscalYear.code,
-      '($0.00)',
-      `${firstOrderNumber}-1`,
-      'Encumbrance',
-      `${firstFund.name} (${firstFund.code})`,
-    );
-    Funds.closeTransactionDetails();
-    Funds.closePaneHeader();
-    Funds.closeBudgetDetails();
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      secondFiscalYear.code,
-      '($200.00)',
-      `${secondOrderNumber}-1`,
-      'Encumbrance',
-      `${secondFund.name} (${secondFund.code})`,
-    );
-    Funds.closeTransactionDetails();
-    Funds.closePaneHeader();
-    Funds.closeBudgetDetails();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.selectTransactionInList('Encumbrance');
-    Funds.varifyDetailsInTransaction(
-      firstFiscalYear.code,
-      '($200.00)',
-      `${secondOrderNumber}-1`,
-      'Encumbrance',
-      `${secondFund.name} (${secondFund.code})`,
-    );
-  });
+  it(
+    'C186156 Rollover Fiscal Year (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'C186156'] },
+    () => {
+      FinanceHelp.searchByName(defaultLedger.name);
+      Ledgers.selectLedger(defaultLedger.name);
+      Ledgers.rollover();
+      Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+      Ledgers.closeRolloverInfo();
+      Ledgers.selectFundInLedger(firstFund.name);
+      Funds.selectPlannedBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '($100.00)',
+        `${firstOrderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closePaneHeader();
+      Funds.closeBudgetDetails();
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($0.00)',
+        `${firstOrderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closePaneHeader();
+      Funds.closeBudgetDetails();
+      FinanceHelp.searchByName(secondFund.name);
+      Funds.selectFund(secondFund.name);
+      Funds.selectPlannedBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '($200.00)',
+        `${secondOrderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closePaneHeader();
+      Funds.closeBudgetDetails();
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($200.00)',
+        `${secondOrderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+    },
+  );
 });

@@ -36,7 +36,7 @@ describe('Organizations', () => {
 
   it(
     'C676 Assign existing contact to an organization record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C676'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

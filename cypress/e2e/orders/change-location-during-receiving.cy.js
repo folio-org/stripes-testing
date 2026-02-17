@@ -109,7 +109,7 @@ describe(
 
       it(
         'C9177 Change location during receiving (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'C9177'] },
+        { tags: ['criticalPath', 'thunderjet', 'C9177', 'shiftLeft'] },
         () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

@@ -3,7 +3,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +11,10 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: create new instance by duplicating - for a multiple instance work', () => {
   const testData = {
@@ -23,6 +27,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
+    roleIds: [],
   };
 
   const resourceData = {
@@ -46,6 +51,25 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -70,12 +94,14 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     // delete both duplicated instances data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitleUpdated);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
@@ -83,7 +109,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
 
   it(
     'C721761 [User journey] LDE - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'C721761', 'linked-data-editor'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
@@ -112,7 +138,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitleUpdated);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitleUpdated);
       // navigate to the inventory module
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitleUpdated);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
     },

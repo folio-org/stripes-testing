@@ -1,3 +1,4 @@
+import { enableProfilePictures } from '../../../support/fragments/users/profilePicture';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -14,12 +15,7 @@ describe('Users', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.getConfigurationsEntry().then((respBody) => {
-        if (respBody.enabled === false) {
-          respBody.enabled = true;
-          cy.updateConfigurationsEntry(respBody.id, respBody);
-        }
-      });
+      enableProfilePictures();
 
       // create user B
       cy.createTempUser().then((userProperties) => {

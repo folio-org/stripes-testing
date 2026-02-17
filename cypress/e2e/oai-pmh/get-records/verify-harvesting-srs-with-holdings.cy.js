@@ -9,6 +9,7 @@ import {
 } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Behavior } from '../../../support/fragments/settings/oai-pmh';
+import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../support/fragments/settings/oai-pmh/behavior';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -29,7 +30,12 @@ describe('OAI-PMH', () => {
     before('Create test data and configure behavior', () => {
       cy.getAdminToken();
 
-      Behavior.updateBehaviorConfigViaApi(true, 'Source record storage', 'persistent', '200');
+      Behavior.updateBehaviorConfigViaApi(
+        BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
+        BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
+      );
 
       // Fetch electronic access relationship IDs
       const relationshipQueries = [
@@ -148,35 +154,35 @@ describe('OAI-PMH', () => {
               field.indicators,
               field.subfields,
             );
-            OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
-              response,
-              marcInstance.id,
-              '856',
-              { ind1: '4', ind2: ' ' },
-              [
-                {
-                  u: 'empty_value_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-                {
-                  u: 'No_display_constant_generated_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-
-                {
-                  u: 'No_information_provided_URI_holding',
-                  y: 'Link text holding',
-                  3: 'Materials specified holding',
-                  z: 'Public note holding',
-                },
-              ],
-              3,
-            );
           });
+
+          OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
+            response,
+            marcInstance.id,
+            '856',
+            { ind1: '4', ind2: ' ' },
+            [
+              {
+                u: 'empty_value_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+              {
+                u: 'No_display_constant_generated_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+              {
+                u: 'No_information_provided_URI_holding',
+                y: 'Link text holding',
+                3: 'Materials specified holding',
+                z: 'Public note holding',
+              },
+            ],
+            3,
+          );
         });
       },
     );

@@ -150,7 +150,7 @@ describe('Data Import', () => {
 
     it(
       'C400649 Verify that mapping for the 856 field maintains relationship between URL and link text (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C400649'] },
+      { tags: ['criticalPath', 'folijet', 'C400649', 'shiftLeft'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

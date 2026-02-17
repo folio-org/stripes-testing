@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import Agreements from '../../support/fragments/agreements/agreements';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
@@ -5,6 +6,7 @@ import VersionHistorySection from '../../support/fragments/inventory/versionHist
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -29,6 +31,7 @@ describe('Organizations', () => {
   let preUpdated;
   let afterUpdated;
   let lastUpdate;
+  let adminUser;
 
   before(() => {
     cy.getAdminToken();
@@ -62,7 +65,7 @@ describe('Organizations', () => {
     Organizations.getLastUpdateTime().then((time) => {
       afterUpdated = time.replace(' ', ', ');
     });
-    cy.visit(TopMenu.agreementsPath);
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);
     Agreements.createAndCheckFields(defaultAgreement);
     cy.wait(4000);
     InteractorsTools.checkCalloutMessage(calloutMessage);
@@ -74,12 +77,14 @@ describe('Organizations', () => {
     cy.createTempUser([
       Permissions.uiOrganizationsViewEdit.gui,
       Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+
+      cy.login(user.username, user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+      Organizations.waitLoading();
     });
   });
 
@@ -96,7 +101,7 @@ describe('Organizations', () => {
 
   it(
     'C663330 Version history view for Organizations',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C663330'] },
     () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
@@ -105,8 +110,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        adminUser.firstName,
+        adminUser.lastName,
         true,
         false,
       );
@@ -114,8 +119,8 @@ describe('Organizations', () => {
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
-        'Diku_admin',
-        'ADMINISTRATOR',
+        adminUser.firstName,
+        adminUser.lastName,
         false,
         true,
       );
