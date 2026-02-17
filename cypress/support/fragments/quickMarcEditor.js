@@ -1020,6 +1020,16 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
+  deleteFirstFieldByTag(tag) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+      }
+    });
+  },
+
   verifySaveAndCloseButtonEnabled(isEnabled = true) {
     cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
   },
@@ -1534,6 +1544,16 @@ export default {
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  },
+
+  updateFirstFieldByTag(tag, newContent) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+      }
+    });
   },
 
   updateLDR06And07Positions() {
@@ -2085,6 +2105,11 @@ export default {
 
   checkDeleteButtonNotExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
+  },
+
+  checkDeleteButtonExistsByTag(tag, isExist = true) {
+    const targetButton = getRowInteractorByTagName(tag).find(deleteFieldButton);
+    cy.expect(isExist ? targetButton.exists() : targetButton.absent());
   },
 
   checkCallout(callout) {

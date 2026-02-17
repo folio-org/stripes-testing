@@ -1,12 +1,11 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import { Invoices, NewInvoice } from '../../../support/fragments/invoices';
 import NewInvoiceLine from '../../../support/fragments/invoices/newInvoiceLine';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../../support/fragments/invoices/vendorAddress';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import BatchGroups from '../../../support/fragments/settings/invoices/batchGroups';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import FileManager from '../../../support/utils/fileManager';
@@ -62,7 +61,6 @@ describe('Invoices', () => {
         Funds.addBudget(100);
       });
       invoiceLine.subTotal = -subtotalValue;
-      TopMenuNavigation.openAppFromDropdown('Invoices');
     });
 
     after('Delete storage', () => {
@@ -75,6 +73,7 @@ describe('Invoices', () => {
       'C10943 Run batch voucher export manually (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'C10943'] },
       () => {
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLine(invoiceLine);
         Invoices.addFundDistributionToLine(invoiceLine, fund);
