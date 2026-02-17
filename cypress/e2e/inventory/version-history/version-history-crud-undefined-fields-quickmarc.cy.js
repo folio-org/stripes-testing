@@ -12,7 +12,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 
 describe('Inventory', () => {
   describe('MARC Bibliographic', () => {
-    describe('Version history', { retries: { runMode: 1 } }, () => {
+    describe('Version history', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
         instanceTitle: `AT_C692116_MarcBibInstance_${randomPostfix}`,
