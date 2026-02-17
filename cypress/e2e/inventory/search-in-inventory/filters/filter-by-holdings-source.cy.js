@@ -80,6 +80,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.switchToHoldings();
               InventorySearchAndFilter.holdingsTabIsDefault();
@@ -199,7 +200,7 @@ describe('Inventory', () => {
                 1,
               );
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.openHoldingView();
               HoldingsRecordView.checkSource(INSTANCE_SOURCE_NAMES.MARC);
               HoldingsRecordView.close();

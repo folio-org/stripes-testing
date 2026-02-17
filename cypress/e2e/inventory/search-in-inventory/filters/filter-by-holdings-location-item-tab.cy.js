@@ -63,6 +63,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.itemTabIsDefault();
@@ -107,7 +108,7 @@ describe('Inventory', () => {
                 ),
               );
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.checkPresentedText(locations[0].name);
               InventorySearchAndFilter.closeInstanceDetailPane();
             });
@@ -132,7 +133,7 @@ describe('Inventory', () => {
                 );
               });
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventorySearchAndFilter.closeInstanceDetailPane();
             })
             .then(() => {
@@ -159,7 +160,7 @@ describe('Inventory', () => {
                   ),
                 );
                 InventoryInstances.selectInstance(0);
-                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstance.checkPresentedText(locations[1].name);
                 InventorySearchAndFilter.closeInstanceDetailPane();
               });
@@ -183,7 +184,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyNumberOfSearchResults(1);
               InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.checkPresentedText(locations[0].name);
               InventorySearchAndFilter.closeInstanceDetailPane();
 

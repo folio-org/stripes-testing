@@ -51,6 +51,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventorySearchAndFilter.instanceTabIsDefault();
             });
@@ -100,7 +101,7 @@ describe('Inventory', () => {
                 ),
               );
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.FOLIO);
               InventorySearchAndFilter.closeInstanceDetailPane();
             });
@@ -120,7 +121,7 @@ describe('Inventory', () => {
                 );
               });
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventorySearchAndFilter.closeInstanceDetailPane();
             })
             .then(() => {
@@ -143,7 +144,7 @@ describe('Inventory', () => {
                   ),
                 );
                 InventoryInstances.selectInstance(0);
-                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.MARC);
                 InventorySearchAndFilter.closeInstanceDetailPane();
               });
@@ -180,7 +181,7 @@ describe('Inventory', () => {
                 1,
               );
               InventoryInstances.selectInstance(0);
-              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.MARC);
               InventorySearchAndFilter.closeInstanceDetailPane();
 
