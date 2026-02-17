@@ -215,4 +215,25 @@ export default {
       expect(rows).to.deep.equal(expectedTagsArray);
     });
   },
+
+  verifyFieldsOrderWithLDR(expectedTagsArray) {
+    const rows = [];
+    cy.then(() => {
+      cy.get('table[class^="marc"]').within(() => {
+        cy.get('tr').each(($tr) => {
+          const tdElements = $tr.find('td');
+          if (
+            tdElements.eq(0).attr('colspan') === '4' &&
+            tdElements.eq(0).text().includes('LEADER')
+          ) {
+            rows.push('LDR');
+          } else {
+            rows.push(tdElements.eq(1).text());
+          }
+        });
+      });
+    }).then(() => {
+      expect(rows).to.deep.equal(expectedTagsArray);
+    });
+  },
 };
