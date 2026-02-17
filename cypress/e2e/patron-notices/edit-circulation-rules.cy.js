@@ -25,7 +25,6 @@ import MaterialTypes from '../../support/fragments/settings/inventory/materialTy
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { CodeMirrorHint } from '../../../interactors';
 
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
@@ -33,12 +32,14 @@ describe('Patron notices', () => {
 
     let addedCirculationRule;
     let newUserId;
+    let userData;
     const createdLoanPolicies = [];
 
     before(() => {
       cy.createTempUser([Permissions.uiCirculationViewCreateEditDelete.gui]).then(
         ({ username, password, userId }) => {
           newUserId = userId;
+          userData = { username, password };
 
           cy.getAdminToken();
 
@@ -48,8 +49,6 @@ describe('Patron notices', () => {
           RequestPolicy.createViaApi(defaultRequestPolicy);
           LostItemFeePolicy.createViaApi();
           OverdueFinePolicy.createViaApi();
-
-          cy.login(username, password);
         },
       );
     });
@@ -71,7 +70,10 @@ describe('Patron notices', () => {
 
     describe('Tests with navigation to circulation rules page', () => {
       beforeEach(() => {
-        cy.visit(SettingsMenu.circulationRulesPath);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationRulesPath,
+          waiter: () => cy.wait(2000),
+        });
       });
 
       it(
@@ -111,9 +113,6 @@ describe('Patron notices', () => {
           // Choose Patron notice policies and choose a value for that policy
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Patron notice policies');
           CirculationRules.clickCirculationRulesHintItem(NOTICE_POLICY_NAMES.SEND_NO_NOTICES);
-
-          // Navigate away without saving
-          cy.visit(SettingsMenu.circulationRulesPath);
         },
       );
 
@@ -126,13 +125,13 @@ describe('Patron notices', () => {
           CirculationRules.fillInNewLine();
 
           // Verify dropdown list of possible attributes is displayed
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Select attribute (m = Material types)
           CirculationRules.fillInCirculationRules('m ');
 
           // Verify dropdown list of values is displayed
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Select material type value from the list
           CirculationRules.clickCirculationRulesHintItem(defaultMaterialType.name);
@@ -143,19 +142,16 @@ describe('Patron notices', () => {
           CirculationRules.moveCursorFocusToTheEnd();
 
           // Verify dropdown list of policy types is displayed
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Select Loan policies type
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Loan policies');
 
           // Verify dropdown list of Loan policy values is displayed
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Select a Loan policy from the list
           CirculationRules.clickCirculationRulesHintItem(LOAN_POLICY_NAMES.EXAMPLE_LOAN);
-
-          // Navigate away without saving
-          cy.visit(SettingsMenu.circulationRulesPath);
         },
       );
 
@@ -168,13 +164,13 @@ describe('Patron notices', () => {
           CirculationRules.fillInNewLine();
 
           // Note dropdown list of criteria at start of new line
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Choose one of the criteria (m = Material types)
           CirculationRules.fillInCirculationRules('m ');
 
           // Note dropdown list of values for the criteria
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Choose one of the values
           CirculationRules.clickCirculationRulesHintItem(defaultMaterialType.name);
@@ -185,39 +181,36 @@ describe('Patron notices', () => {
           CirculationRules.moveCursorFocusToTheEnd();
 
           // Note dropdown list of policies (loan, request, patron notice, overdue fine, lost item fee)
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Choose Loan policy type and value
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Loan policies');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(LOAN_POLICY_NAMES.EXAMPLE_LOAN);
 
           // Choose Request policy type and value
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Request policies');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(REQUEST_POLICY_NAMES.ALLOW_ALL);
 
           // Choose Patron notice policy type and value
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Patron notice policies');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(NOTICE_POLICY_NAMES.SEND_NO_NOTICES);
 
           // Choose Overdue fine policy type and value
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Overdue fine policies');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(
             OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
           );
 
           // Choose Lost item fee policy type and value
           CirculationRules.clickCirculationRulesHintItemForPolicyType('Lost item fee policies');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(
             LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
           );
-
-          // DO NOT save - navigate away from the circulation rule editor
-          cy.visit(SettingsMenu.circulationRulesPath);
         },
       );
 
@@ -231,7 +224,7 @@ describe('Patron notices', () => {
           CirculationRules.fillInCirculationRules('m ');
 
           // Verify material type from preconditions displayed in the list
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultMaterialType.name);
           CirculationRules.fillInCirculationRules(': ');
           cy.wait(2000);
@@ -239,31 +232,28 @@ describe('Patron notices', () => {
 
           // Check loan policy - verify new loan policy appears in dropdown
           CirculationRules.fillInCirculationRules('l ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultLoanPolicy.name);
 
           // Check request policy - verify new request policy appears in dropdown
           CirculationRules.fillInCirculationRules('r ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultRequestPolicy.name);
 
           // Check patron notice policy - verify new notice policy appears in dropdown
           CirculationRules.fillInCirculationRules('n ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultNoticePolicy.name);
 
           // Check overdue fine policy - verify new overdue policy appears in dropdown
           CirculationRules.fillInCirculationRules('o ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultOverdueFinePolicy.name);
 
           // Check lost item fee policy - verify new lost item fee policy appears in dropdown
           CirculationRules.fillInCirculationRules('i ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultLostItemFeePolicy.name);
-
-          // Navigate away without saving
-          cy.visit(SettingsMenu.circulationRulesPath);
         },
       );
 
@@ -357,9 +347,11 @@ describe('Patron notices', () => {
           });
 
           CirculationRules.fillInCirculationRules('wrong rules');
+          cy.wait(1000);
           CirculationRules.moveCursorFocusToTheEnd();
 
           CirculationRules.saveCirculationRules();
+          cy.wait(1000);
           CirculationRules.verifyErrorMessageWrongInput();
         },
       );
@@ -370,8 +362,10 @@ describe('Patron notices', () => {
         'C655 Test ability to nest rules (vega)',
         { tags: ['extendedPath', 'vega', 'C655'] },
         () => {
-          // Navigate to circulation rules
-          cy.visit(SettingsMenu.circulationRulesPath);
+          cy.login(userData.username, userData.password, {
+            path: SettingsMenu.circulationRulesPath,
+            waiter: () => cy.wait(3000),
+          });
 
           // Clear and set up base rules
           CirculationRules.clearCirculationRules();
@@ -398,7 +392,8 @@ describe('Patron notices', () => {
 
           // Add nested rule with indentation (4 spaces)
           CirculationRules.fillInCirculationRules('    m ');
-          cy.expect(CodeMirrorHint().exists());
+          cy.wait(1000);
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultMaterialType.name);
           CirculationRules.fillInCirculationRules(': ');
           cy.wait(2000);
@@ -406,14 +401,19 @@ describe('Patron notices', () => {
 
           // Add policies for nested rule using custom policies
           CirculationRules.fillInCirculationRules('l ');
+          cy.wait(500);
           CirculationRules.clickCirculationRulesHintItem(defaultLoanPolicy.name);
           CirculationRules.fillInCirculationRules('r ');
+          cy.wait(500);
           CirculationRules.clickCirculationRulesHintItem(defaultRequestPolicy.name);
           CirculationRules.fillInCirculationRules('n ');
+          cy.wait(500);
           CirculationRules.clickCirculationRulesHintItem(defaultNoticePolicy.name);
           CirculationRules.fillInCirculationRules('o ');
+          cy.wait(500);
           CirculationRules.clickCirculationRulesHintItem(defaultOverdueFinePolicy.name);
           CirculationRules.fillInCirculationRules('i ');
+          cy.wait(500);
           CirculationRules.clickCirculationRulesHintItem(defaultLostItemFeePolicy.name);
 
           // Build the nested rule string for verification
@@ -472,8 +472,10 @@ describe('Patron notices', () => {
           // Wait for all policies to be created
           cy.wait(3000);
 
-          // Navigate to circulation rules
-          cy.visit(SettingsMenu.circulationRulesPath);
+          cy.login(userData.username, userData.password, {
+            path: SettingsMenu.circulationRulesPath,
+            waiter: () => cy.wait(2000),
+          });
 
           // Start creating a new circulation rule
           CirculationRules.moveCursorFocusToTheEnd();
@@ -481,7 +483,7 @@ describe('Patron notices', () => {
 
           // Add material type criteria
           CirculationRules.fillInCirculationRules('m ');
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
           CirculationRules.clickCirculationRulesHintItem(defaultMaterialType.name);
 
           // Add colon to move to policy selection
@@ -493,18 +495,15 @@ describe('Patron notices', () => {
           CirculationRules.fillInCirculationRules('l ');
 
           // Verify dropdown appears
-          cy.expect(CodeMirrorHint().exists());
+          CirculationRules.verifyHintExists();
 
           // Verify all loan policies are displayed (at least 20)
-          cy.get('.CodeMirror-hints .CodeMirror-hint').should('have.length.at.least', 20);
+          CirculationRules.verifyDropdownHasAtLeastItems(20);
 
           // Verify that created policies appear in the dropdown
           createdLoanPolicies.slice(0, 3).forEach((policy) => {
-            cy.get('.CodeMirror-hints').should('contain.text', policy.name);
+            CirculationRules.verifyDropdownContainsText(policy.name);
           });
-
-          // Navigate away without saving
-          cy.visit(SettingsMenu.circulationRulesPath);
         },
       );
     });
