@@ -62,7 +62,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     subTotal: '2',
   };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
+  const periodStartForFirstFY = DateTools.getCurrentDateInPreviousMonthForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
@@ -222,7 +222,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPathBroken', 'thunderjet', 'C388564'] },
     () => {
       Invoices.createRolloverInvoiceWithFY(invoice, organization.name, firstFiscalYear);
       Invoices.createInvoiceLineWithFund(invoiceLine, defaultFund);

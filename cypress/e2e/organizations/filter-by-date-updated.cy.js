@@ -18,16 +18,14 @@ const yesterday = DateTools.getFormattedDate({ date: d }, 'MM/DD/YYYY');
 
 describe('Organizations', () => {
   before('Create user and organization', () => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
-    }, 20_000);
     cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
       testData.user = user;
       NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {
         testData.organization.id = responseOrganization.id;
+      });
+      cy.loginAsAdmin({
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
       });
       Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults(testData.organization);
@@ -39,12 +37,11 @@ describe('Organizations', () => {
         name: `${testData.organization.name}-edited`,
         code: testData.organization.code,
       });
-      cy.waitForAuthRefresh(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.organizationsPath,
-          waiter: Organizations.waitLoading,
-        });
-      }, 20_000);
+
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
     });
   });
 
@@ -56,7 +53,7 @@ describe('Organizations', () => {
 
   it(
     'C466131 Organizations can be found by "Date updated" filter (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466131'] },
     () => {
       Organizations.filterByDateUpdated(today, today);
       Organizations.searchByParameters('Name', testData.organization.name);

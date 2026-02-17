@@ -49,7 +49,7 @@ describe('Orders', () => {
 
   it(
     'C664 Edit an existing PO (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C664'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,

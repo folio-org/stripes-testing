@@ -3,6 +3,7 @@ import {
   Section,
   KeyValue,
   including,
+  not,
   MultiColumnListCell,
   Link,
   PaneHeader,
@@ -23,6 +24,7 @@ const titleInformationSection = receivingDetailsSection.find(Section({ id: 'info
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
+const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
@@ -34,6 +36,12 @@ export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
     cy.expect(receivingDetailsSection.exists());
+  },
+  checkTitlePaneIsDisplayed(title) {
+    cy.expect(receivingDetailsSection.exists());
+    if (title) {
+      cy.expect(receinvingDetailsHeader.has({ text: including(title) }));
+    }
   },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -59,6 +67,45 @@ export default {
     cy.expect(receivedSection.exists());
     if (received) {
       this.checkReceivedTableContent(received);
+    }
+  },
+  expandTitleInformationAccordion() {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+  },
+  verifyAcquisitionUnitInTitleInformation(acquisitionUnitName, shouldExist = true) {
+    cy.do(
+      titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
+    );
+    cy.wait(1000);
+    if (shouldExist) {
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Acquisition units'))
+          .has({ value: including(acquisitionUnitName) }),
+      );
+    } else {
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Acquisition units'))
+          .has({ value: not(including(acquisitionUnitName)) }),
+      );
+    }
+  },
+  verifyAcquisitionUnitNotSpecified() {
+    cy.expect(
+      titleInformationSection.find(KeyValue('Acquisition units')).has({ value: 'No value set-' }),
+    );
+  },
+  closeDetailsPane() {
+    cy.do(receinvingDetailsHeader.find(Button({ icon: 'times' })).click());
+  },
+  verifyExpectedRecordsCount(expectedCount) {
+    if (expectedCount === 0) {
+      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+    } else {
+      cy.get(expectedRowsSelector).should('have.length', expectedCount);
     }
   },
   checkExpectedTableContent(records = []) {
@@ -99,6 +146,34 @@ export default {
             .has({ content: including(record.format) }),
         );
       }
+      if (record.displaySummary) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Display summary' }))
+            .has({ content: including(record.displaySummary) }),
+        );
+      }
+      if (record.copyNumber) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.enumeration) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Enumeration' }))
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+      if (record.chronology) {
+        cy.expect(
+          receivedSection
+            .find(MultiColumnListCell({ row: index, column: 'Chronology' }))
+            .has({ content: including(record.chronology) }),
+        );
+      }
     });
 
     if (!records.length) {
@@ -120,6 +195,14 @@ export default {
     ReceivingEditForm.waitLoading();
 
     return ReceivingEditForm;
+  },
+  editReceivingItem() {
+    cy.do([buttons.Edit.click()]);
+    ReceivingEditForm.waitLoading();
+  },
+  verifyEditButtonIsInactive() {
+    cy.do(buttons.Actions.click());
+    cy.expect(Button('Edit').has({ disabled: true }));
   },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);

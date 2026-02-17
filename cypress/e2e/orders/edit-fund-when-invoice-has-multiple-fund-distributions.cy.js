@@ -143,7 +143,7 @@ describe('Orders', () => {
 
   it(
     'C375227 Editing fund distribution in PO line when PO line has more than one fund distributions and related Paid invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C375227'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

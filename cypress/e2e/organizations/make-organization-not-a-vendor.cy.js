@@ -33,7 +33,7 @@ describe('Organizations', () => {
 
   it(
     'C358965 Make existing organization NOT a Vendor (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C358965'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

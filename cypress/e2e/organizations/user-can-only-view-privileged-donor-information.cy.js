@@ -55,7 +55,7 @@ describe('Organizations', () => {
 
   it(
     'C423623 A user with "Organizations: can view privileged donor information" permission can only view privileged donor information (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423623'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

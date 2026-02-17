@@ -1,110 +1,89 @@
-import permissions from '../../../support/dictionary/permissions';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
   describe('Settings (Orders)', () => {
+    const testData = {};
     const order = {
       ...NewOrder.defaultOneTimeOrder,
       approved: true,
     };
     const organization = {
       ...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: getRandomPostfix(),
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'TestAccout1',
-          notes: '',
-          paymentMethod: 'Cash',
-        },
-      ],
     };
-
-    let orderNumber;
-    let user;
-    let effectiveLocationServicePoint;
-    let location;
 
     before(() => {
       cy.getAdminToken();
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.firstInstance = instanceData;
+      });
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.secondInstance = instanceData;
+      });
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+        (locationResponse) => {
+          testData.location = locationResponse;
+        },
+      );
+      Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+        organization.id = organizationsResponse;
+        order.vendor = organizationsResponse;
 
-      ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
-        effectiveLocationServicePoint = servicePoint;
-        NewLocation.createViaApi(
-          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-        ).then((locationResponse) => {
-          location = locationResponse;
-          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-            organization.id = organizationsResponse;
-            order.vendor = organizationsResponse;
-          });
-          cy.createOrderApi(order).then((response) => {
-            orderNumber = response.body.poNumber;
-          });
+        cy.createOrderApi(order).then((response) => {
+          testData.orderNumber = response.body.poNumber;
         });
       });
+      OrderLinesLimit.setPOLLimitViaApi(2);
 
       cy.createTempUser([
-        permissions.uiOrdersCreate.gui,
-        permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
       ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       });
     });
 
     after(() => {
       cy.getAdminToken();
-      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
-      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id,
-      );
-      Users.deleteViaApi(user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.firstInstance.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.secondInstance.instanceId);
+      Users.deleteViaApi(testData.user.userId);
     });
 
+    // may be flaky due to concurrency issues because POL limit is changing in some tests
     it(
       'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C668'] },
       () => {
-        OrderLinesLimit.setPOLLimitViaApi(2);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', testData.orderNumber);
+        Orders.selectFromResultsList(testData.orderNumber);
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+        OrderLines.fillPolByLinkTitle(testData.firstInstance.instanceTitle);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
           'Purchase',
-          location.name,
+          testData.location.name,
           '4',
         );
         OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
+
+        OrderLines.fillPolByLinkTitle(testData.secondInstance.instanceTitle);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
           'Purchase',
-          location.name,
+          testData.location.name,
           '4',
         );
         OrderLines.backToEditingOrder();

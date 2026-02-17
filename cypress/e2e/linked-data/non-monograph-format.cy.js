@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  LDE_ROLES,
+} from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
@@ -6,6 +10,10 @@ import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTo
 import DataImport from '../../support/fragments/data_import/dataImport';
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: LDE permissions', () => {
   const testData = {
@@ -20,6 +28,7 @@ describe('Citation: LDE permissions', () => {
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
+    roleIds: [],
   };
 
   before('Create test data via API', () => {
@@ -31,6 +40,25 @@ describe('Citation: LDE permissions', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
@@ -44,18 +72,20 @@ describe('Citation: LDE permissions', () => {
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach(() => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
   });
 
   it(
     'C651426 [User journey] LDE - non-monograph format (citation)',
-    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'C651426', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance and limit search to MARC type
       InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.MARC);

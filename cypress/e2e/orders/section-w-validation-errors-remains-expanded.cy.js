@@ -38,7 +38,7 @@ describe('Orders', () => {
 
   it(
     'C353592 Verify if Accordion with validation errors fields remains expanded fields after "collapse all" command (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353592'] },
     () => {
       // Click "Actions" button on "Orders" pane and select "New" option
       const OrderEditForm = Orders.clickCreateNewOrder();

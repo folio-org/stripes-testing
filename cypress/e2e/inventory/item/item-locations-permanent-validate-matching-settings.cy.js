@@ -8,7 +8,6 @@ import { Locations } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -87,10 +86,9 @@ describe('Inventory', () => {
           itemData.testInstanceIds = specialInstanceIds;
         });
 
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.loginAsAdmin();
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
     });
 
     after('Delete test data', () => {
@@ -109,8 +107,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C633 Locations --> Permanent Location --> (Validate in Settings) (Folijet)(TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C633', 'eurekaPhase1'] },
+      'C633 Locations --> Permanent Location --> (Validate in Settings) (Folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet', 'C633'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.clickAccordionByName(`Holdings: ${location.name} >`);

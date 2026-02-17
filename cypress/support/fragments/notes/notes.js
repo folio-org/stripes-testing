@@ -2,15 +2,23 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../constants';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 
-const defaultNote = ({ typeId, agreementId }) => {
+const defaultNote = ({ typeId, agreementId }, noteType = 'agreements') => {
+  const linkType = {
+    agreements: 'agreement',
+    eholdings: 'provider',
+    users: 'user',
+    licenses: 'license',
+    courses: 'course',
+    requests: 'request',
+  }[noteType];
   return {
-    domain: 'agreements',
+    domain: noteType,
     typeId,
     title: `Default Note Title ${randomFourDigitNumber()}`,
     content: 'Default Note Details',
     links: [
       {
-        type: 'agreement',
+        type: linkType,
         id: agreementId,
       },
     ],
@@ -71,11 +79,12 @@ export default {
       })
       .then((response) => response.body);
   },
-  deleteViaApi(noteId) {
+  deleteViaApi(noteId, ignoreErrors = false) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `notes/${noteId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   deleteNotesForEHoldingViaApi(eHoldingId) {

@@ -46,12 +46,14 @@ describe('Lists', () => {
           Permissions.listsAll.gui,
           Permissions.uiOrdersCreate.gui,
           Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
         ]);
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
 
-        Lists.verifyRecordTypes(['Organizations', 'Purchase order lines', 'Users']);
+        Lists.verifyRecordTypes(['Organizations', 'Purchase order lines with titles', 'Users']);
 
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
@@ -75,12 +77,14 @@ describe('Lists', () => {
           Permissions.uiOrdersEdit.gui,
           Permissions.uiOrdersView.gui,
           Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
         ]);
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
 
-        Lists.verifyRecordTypes(['Organizations', 'Purchase order lines', 'Users']);
+        Lists.verifyRecordTypes(['Organizations', 'Purchase order lines with titles', 'Users']);
 
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);

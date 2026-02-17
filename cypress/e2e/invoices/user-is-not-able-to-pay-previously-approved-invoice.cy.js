@@ -46,7 +46,7 @@ describe('Invoices', () => {
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
+    Approvals.setApprovePayValueViaApi(isApprovePayDisabled);
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
@@ -128,7 +128,7 @@ describe('Invoices', () => {
 
   it(
     'C397330 User is not able to pay previously approved invoice when related order was unopened (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C397330'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

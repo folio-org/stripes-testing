@@ -133,7 +133,7 @@ describe('Invoices', () => {
       permissions.uiInvoicesApproveInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      Approvals.setApprovePayValue(false);
+      Approvals.setApprovePayValueViaApi(false);
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
@@ -148,7 +148,7 @@ describe('Invoices', () => {
 
   it(
     'C10945 Approve invoice (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C10945'] },
     () => {
       Invoices.searchByNumber(invoice.vendorInvoiceNo);
       Invoices.selectInvoice(invoice.vendorInvoiceNo);

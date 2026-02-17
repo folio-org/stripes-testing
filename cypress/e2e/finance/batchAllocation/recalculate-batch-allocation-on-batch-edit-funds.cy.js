@@ -116,7 +116,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C648530 Recalculate and save batch allocation on "Batch edit funds" window, accessed from Ledger (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C648530'] },
     () => {
       Ledgers.searchByName(ledger.name);
       Ledgers.selectLedger(ledger.name);

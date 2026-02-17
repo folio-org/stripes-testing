@@ -101,7 +101,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C374195 Delete Library (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'C374195'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

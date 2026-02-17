@@ -4,7 +4,7 @@ import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEdit
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -13,6 +13,11 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
+import InstanceProfileModal from '../../support/fragments/linked-data/instanceProfileModal';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: duplicate resource', () => {
   const testData = {
@@ -28,6 +33,7 @@ describe('Citation: duplicate resource', () => {
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
+    roleIds: [],
   };
 
   const resourceData = {
@@ -51,13 +57,30 @@ describe('Citation: duplicate resource', () => {
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
-    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -76,12 +99,14 @@ describe('Citation: duplicate resource', () => {
     // delete duplicate work data
     Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // create test data based on uploaded marc file
     LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
@@ -89,7 +114,7 @@ describe('Citation: duplicate resource', () => {
 
   it(
     'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'C624234', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
@@ -107,6 +132,8 @@ describe('Citation: duplicate resource', () => {
       // add instance
       // click on new instance button since resource was duplicated without instances
       EditResource.openNewInstanceFormViaNewInstanceButton();
+      InstanceProfileModal.waitLoading();
+      InstanceProfileModal.selectDefaultOption();
       // check that selection modal is shown with 'Monograhphs' profile selected by default
       EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
@@ -118,7 +145,7 @@ describe('Citation: duplicate resource', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueDuplicateTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueDuplicateTitle);
       // check that newly created instance is displayed in the inventory
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       // check source
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');

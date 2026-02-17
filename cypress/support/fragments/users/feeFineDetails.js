@@ -103,4 +103,25 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
     cy.wait(500);
   },
+  verifyRefundButtonState: (isEnabled) => {
+    if (isEnabled) {
+      cy.expect(Button({ id: 'refundAccountActionsHistory', disabled: false }).exists());
+    } else {
+      cy.get('button[id="refundAccountActionsHistory"]').should(($btn) => {
+        if ($btn.length > 0) {
+          expect($btn).to.have.attr('disabled');
+        }
+      });
+    }
+  },
+  verifyRefundModalMessage: () => {
+    cy.expect(HTML(including('Refunding 1 fee/fine for a total amount of')).exists());
+  },
+  verifyErrorButtonDisabled: () => {
+    cy.get('button[id="errorAccountActionsHistory"]').should(($btn) => {
+      if ($btn.length > 0) {
+        expect($btn).to.have.attr('disabled');
+      }
+    });
+  },
 };

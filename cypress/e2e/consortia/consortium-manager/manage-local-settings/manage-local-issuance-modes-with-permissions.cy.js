@@ -77,7 +77,7 @@ describe('Consortium manager', () => {
 
       it(
         'C410946 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local modes of issuance of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-        { tags: ['criticalPathECS', 'thunderjet'] },
+        { tags: ['criticalPathECS', 'thunderjet', 'C410946'] },
         () => {
           cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {

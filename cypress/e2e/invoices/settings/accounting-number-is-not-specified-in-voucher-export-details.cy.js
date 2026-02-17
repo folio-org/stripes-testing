@@ -129,7 +129,7 @@ describe('Invoices', () => {
 
     it(
       'C397985 Organization "Account number" is NOT specified in voucher export details when using default Accounting code (thunderjet) (TaaS)',
-      { tags: ['criticalPathFlaky', 'thunderjet'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C397985'] },
       () => {
         // Search invoice in the table
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

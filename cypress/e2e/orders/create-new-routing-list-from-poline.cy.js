@@ -138,7 +138,7 @@ describe('Receiving', () => {
 
   it(
     'C466265 Create new routing list from PO line (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C466265'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();

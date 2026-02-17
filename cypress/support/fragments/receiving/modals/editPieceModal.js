@@ -75,11 +75,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton() {
+  clickDeleteButton({ isLastPiece = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView();
-
+    DeletePieceModal.verifyModalView(isLastPiece);
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
@@ -99,5 +98,11 @@ export default {
     if (pieceSaved) {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
+  },
+  verifySaveAndCloseButtonState({ disabled = true } = {}) {
+    cy.expect(saveAndCloseButton.has({ disabled }));
+  },
+  verifyActionsMenuState({ disabled = true } = {}) {
+    cy.expect(Button({ dataTestID: 'dropdown-trigger-button' }).has({ disabled }));
   },
 };

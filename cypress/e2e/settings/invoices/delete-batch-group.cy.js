@@ -62,8 +62,8 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   });
 
   it(
-    'C367942: Delete Batch group (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C367942 Delete Batch group (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C367942'] },
     () => {
       SettingsInvoices.waitBatchGroupsLoading();
       SettingsInvoices.canNotDeleteBatchGroup(firstBatchGroup);

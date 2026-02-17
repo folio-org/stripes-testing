@@ -20,7 +20,6 @@ import {
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import settingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 
@@ -67,7 +66,6 @@ describe('Finance: Transactions', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const thirdInvoice = { ...NewInvoice.defaultUiInvoice };
-  const isApprovePayDisabled = false;
   let firstInvoice;
   let secondInvoice;
   let user;
@@ -253,19 +251,16 @@ describe('Finance: Transactions', () => {
 
   after(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C496166 Invoice can NOT be paid when invoice amount exceeding remaining allowed expenditures (separate credit invoice exists in "Paid" status) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496166'] },
     () => {
       Invoices.searchByNumber(thirdInvoice.invoiceNumber);
       Invoices.selectInvoice(thirdInvoice.invoiceNumber);
-      Invoices.canNotApproveAndPayInvoice(
-        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${secondFund.code}].`,
-      );
+      Invoices.canNotApproveAndPayInvoice(secondFund);
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$127.00');
       Funds.varifyDetailsInTransaction(

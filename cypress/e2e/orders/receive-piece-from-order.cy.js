@@ -83,7 +83,7 @@ describe(
 
     it(
       'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C735', 'shiftLeft'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

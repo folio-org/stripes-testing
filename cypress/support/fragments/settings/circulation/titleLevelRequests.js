@@ -112,42 +112,53 @@ export default {
   },
 
   updateTlrConfigViaApi(newSettings) {
-    cy.getConfigByName('SETTINGS', 'TLR').then((body) => {
-      let config = body.configs[0];
+    cy.getCirculationSettingsByName('TLR').then((body) => {
+      let config = body.circulationSettings[0];
 
-      if (body.configs.length === 0) {
-        cy.wrap(true).then(() => {
-          config = {
-            value:
-              '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
-            module: 'SETTINGS',
-            configName: 'TLR',
-            id: uuid(),
-          };
-        }).then(() => {
-          const newValue = { ...JSON.parse(config.value), ...newSettings };
-          config.value = JSON.stringify(newValue);
-          cy.okapiRequest({
-            method: 'POST',
-            path: 'configurations/entries',
-            isDefaultSearchParamsRequired: false,
-            failOnStatusCode: false,
-            body: config,
+      if (body.circulationSettings.length === 0) {
+        cy.wrap(true)
+          .then(() => {
+            config = {
+              value: {
+                titleLevelRequestsFeatureEnabled: true,
+                createTitleLevelRequestsByDefault: false,
+                tlrHoldShouldFollowCirculationRules: false,
+                confirmationPatronNoticeTemplateId: null,
+                cancellationPatronNoticeTemplateId: null,
+                expirationPatronNoticeTemplateId: null,
+              },
+              name: 'TLR',
+              id: uuid(),
+            };
+          })
+          .then(() => {
+            config.value = {
+              ...config.value,
+              ...newSettings,
+            };
+
+            cy.okapiRequest({
+              method: 'POST',
+              path: 'circulation/settings',
+              isDefaultSearchParamsRequired: false,
+              failOnStatusCode: false,
+              body: config,
+            });
           });
-        });
       } else {
-        const newValue = { ...JSON.parse(config.value), ...newSettings };
-        config.value = JSON.stringify(newValue);
+        config.value = {
+          ...config.value,
+          ...newSettings,
+        };
 
         cy.okapiRequest({
           method: 'PUT',
-          path: `configurations/entries/${config.id}`,
+          path: `circulation/settings/${config.id}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: {
             id: config.id,
-            module: config.module,
-            configName: config.configName,
+            name: config.name,
             enabled: true,
             value: config.value,
           },
@@ -157,38 +168,39 @@ export default {
   },
 
   updateGeneralTlrSettingViaApi(newSettings) {
-    cy.getSettingsByName('circulation', 'generalTlr').then((body) => {
+    cy.getCirculationSettingsByName('generalTlr').then((body) => {
       let config = body.items[0];
 
       if (body.items.length === 0) {
-        cy.wrap(true).then(() => {
-          config = {
-            value: {
-              titleLevelRequestsFeatureEnabled: true,
-              createTitleLevelRequestsByDefault: false,
-              tlrHoldShouldFollowCirculationRules: false,
-            },
-            scope: 'circulation',
-            key: 'generalTlr',
-            id: uuid(),
-          };
-        }).then(() => {
-          config.value = { ...config.value, ...newSettings };
+        cy.wrap(true)
+          .then(() => {
+            config = {
+              value: {
+                titleLevelRequestsFeatureEnabled: true,
+                createTitleLevelRequestsByDefault: false,
+                tlrHoldShouldFollowCirculationRules: false,
+              },
+              name: 'generalTlr',
+              id: uuid(),
+            };
+          })
+          .then(() => {
+            config.value = { ...config.value, ...newSettings };
 
-          cy.okapiRequest({
-            method: 'POST',
-            path: 'settings/entries',
-            isDefaultSearchParamsRequired: false,
-            failOnStatusCode: false,
-            body: config,
+            cy.okapiRequest({
+              method: 'POST',
+              path: 'circulation/settings',
+              isDefaultSearchParamsRequired: false,
+              failOnStatusCode: false,
+              body: config,
+            });
           });
-        });
       } else {
         config.value = { ...config.value, ...newSettings };
 
         cy.okapiRequest({
           method: 'PUT',
-          path: `settings/entries/${config.id}`,
+          path: `circulation/settings/${config.id}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: config,

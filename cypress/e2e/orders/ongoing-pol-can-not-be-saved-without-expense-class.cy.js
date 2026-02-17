@@ -1,136 +1,117 @@
-import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import { Budgets } from '../../support/fragments/finance';
+import { OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
+import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const order = {
-    ...NewOrder.defaultOngoingTimeOrder,
-    approved: true,
+  const testData = {
+    orderLineTitle: `autotest_order_line_title_${getRandomPostfix()}`,
   };
-  const firstExpenseClass = {
-    ...NewExpenseClass.defaultUiBatchGroup,
+  const organization = NewOrganization.getDefaultOrganization({ isVendor: true });
+  const expenseClass1 = { ...ExpenseClasses.getDefaultExpenseClass() };
+  const expenseClass2 = {
+    ...ExpenseClasses.getDefaultExpenseClass(),
+    name: `autotest_class_2_name_${getRandomPostfix()}`,
   };
-
-  const secondExpenseClass = {
-    ...NewExpenseClass.defaultUiBatchGroup,
-    name: `AT_Class_${getRandomPostfix()}_1`,
-    code: `${getRandomPostfix()}_1`,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
-  let user;
-  let servicePointId;
-  let location;
 
   before(() => {
     cy.getAdminToken();
+    ExpenseClasses.createExpenseClassViaApi(expenseClass1).then((ec1) => {
+      testData.expenseClass1 = ec1;
 
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+      ExpenseClasses.createExpenseClassViaApi(expenseClass2).then((ec2) => {
+        testData.expenseClass2 = ec2;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({
-            path: TopMenu.settingsFinanceExpenseClassesPath,
-            waiter: SettingsFinance.waitExpenseClassesLoading,
-          });
-          SettingsFinance.createNewExpenseClass(firstExpenseClass);
-          SettingsFinance.createNewExpenseClass(secondExpenseClass);
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addTwoExpensesClass(firstExpenseClass.name, secondExpenseClass.name);
+        const { fund } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+          budget: {
+            allocated: 100,
+            statusExpenseClasses: [
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass1.id,
+              },
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass2.id,
+              },
+            ],
+          },
         });
+        testData.fund = fund;
       });
     });
-    cy.getAdminToken();
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
     });
-    order.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((locationResp) => {
+      testData.location = locationResp;
+    });
 
     cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
+      Permissions.uiOrdersCreate.gui,
+      Permissions.uiOrdersEdit.gui,
+      Permissions.uiOrdersApprovePurchaseOrders.gui,
     ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      testData.user = userProperties;
+
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      Orders.selectOrdersPane();
+      Orders.waitLoading();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.fundPath,
-      waiter: Funds.waitLoading,
-    });
-    FinanceHelp.clickFundButton();
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.editBudget();
-    Funds.deleteAllExpenseClasses();
-    Funds.deleteBudgetViaActions();
-    Funds.deleteFundViaActions();
-    cy.visit(TopMenu.settingsFinanceExpenseClassesPath);
-    SettingsFinance.deleteExpenseClass(firstExpenseClass);
-    SettingsFinance.deleteExpenseClass(secondExpenseClass);
-    Orders.deleteOrderViaApi(order.id);
-    Users.deleteViaApi(user.userId);
+    cy.getAdminToken();
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${testData.orderNumber}"` }).then(
+      (order) => {
+        Orders.deleteOrderViaApi(order[0].id);
+      },
+    );
+    Organizations.deleteOrganizationViaApi(organization.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C402774 PO line for "Ongoing" order can not be saved when "Expense class" field is empty (thunderjet) (TaaS)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C402774'] },
     () => {
-      Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
-        order.id = firstOrderResponse.id;
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundWithoutECAndCheckRequiredField(
-          defaultFund,
-          '20',
-          '1',
-          '20',
-          location.name,
+      const NewOrderForm = Orders.clickCreateNewOrder();
+      NewOrderForm.fillOrderInfoSectionFields({
+        organizationName: organization.name,
+        orderType: 'Ongoing',
+      });
+      NewOrderForm.getOrderNumber().then((orderNumber) => {
+        testData.orderNumber = orderNumber;
+
+        NewOrderForm.clickSaveButton();
+        InteractorsTools.checkCalloutMessage(
+          `The Purchase order - ${orderNumber} has been successfully saved`,
         );
       });
+      Orders.createPOLineViaActions();
+      OrderLines.fillTitleInPOLine(testData.orderLineTitle);
+      OrderLines.fillInPOLineInfoForElectronicWithFund(
+        testData.fund,
+        '10',
+        '1',
+        '100',
+        testData.location.name,
+      );
+      OrderLines.setElectronicQuantity('1');
+      OrderLines.save();
+      OrderLines.verifyExpenseClassRequiredFieldWarningMessage();
+      OrderLines.deleteFundInPOL();
+      OrderLines.clickAddFundDistributionButton();
+      OrderLines.fillFundInPOLWithoutExpenseClass(testData.fund);
+      OrderLines.save();
+      OrderLines.verifyExpenseClassRequiredFieldWarningMessage();
     },
   );
 });

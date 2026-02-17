@@ -92,7 +92,6 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValue(false);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
     });
@@ -100,10 +99,10 @@ describe('Invoices', () => {
 
   it(
     'C350952 Allow editing of subscription dates and subscription info after an invoice is approved/paid (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350952'] },
     () => {
       cy.getAdminToken();
-      Approvals.setApprovePayValue(false);
+      Approvals.setApprovePayValueViaApi(false);
 
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[0].vendorInvoiceNo);
@@ -157,7 +156,7 @@ describe('Invoices', () => {
 
       // Activate "Approve and pay in one click"
       cy.getAdminToken();
-      Approvals.setApprovePayValue(true);
+      Approvals.setApprovePayValueViaApi(true);
 
       // Go back to "Invoices" app and open "Invoice #2" details pane
       Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);

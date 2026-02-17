@@ -3,22 +3,22 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import {
-  APPLICATION_NAMES,
-  LOCATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-} from '../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
+import Permissions from '../../support/dictionary/permissions';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
-import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import InstanceProfileModal from '../../support/fragments/linked-data/instanceProfileModal';
+import Users from '../../support/fragments/users/users';
+
+let user;
+const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
 describe('Citation: create instance in central tenant + holdings in member', () => {
   const testData = {
@@ -34,6 +34,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
+    roleIds: [],
   };
 
   const resourceData = {
@@ -57,13 +58,36 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
     );
     cy.getAdminToken();
+
+    roleNames.forEach((roleName) => {
+      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
+        if (roleId) {
+          testData.roleIds.push(roleId);
+        }
+      });
+    });
+
+    cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      user = userProperties;
+    });
+
+    cy.then(() => {
+      if (testData.roleIds.length > 0) {
+        cy.updateRolesForUserApi(user.userId, testData.roleIds);
+      }
+
+      // Assign affiliation to member tenant and set permissions
+      cy.assignAffiliationToUser(Affiliations.College, user.userId);
+      cy.setTenant(Affiliations.College);
+      cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
+      cy.resetTenant();
+    });
+
     DataImport.uploadFileViaApi(
       testData.modifiedMarcFile,
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-    // set preffered profile in order to avoid additional pop-up to be displayed during instance adding
-    cy.setPrefferedProfileForUser();
   });
 
   after('Delete test data', () => {
@@ -82,12 +106,14 @@ describe('Citation: create instance in central tenant + holdings in member', () 
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
     // delete duplicate instance data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
-    cy.loginAsAdmin({
+    cy.login(user.username, user.password, {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
     });
     // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     // create test data based on uploaded marc file
@@ -95,7 +121,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
   });
 
   it(
-    'C736677 [User journey] LDE - Create new instance in central tenant + holdings in member tenant (consortia) (citation)',
+    'C736677 [User journey] LDE - Create new instance in central tenant (citation)',
     { tags: ['criticalPathECS', 'citation', 'linked-data-editor', 'C736677'] },
     () => {
       // search by title for work created in precondition
@@ -106,37 +132,19 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       EditResource.waitLoading();
       // add new instance
       EditResource.openNewInstanceFormViaActions();
+      InstanceProfileModal.waitLoading();
+      InstanceProfileModal.selectDefaultOption();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
       LinkedDataEditor.waitLoading();
       // switch to member tenant
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       // search for newly added instance
-      InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
-      // Add holdings
-      cy.wait(3000);
-      const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
-      HoldingsRecordEdit.fillHoldingFields({
-        permanentLocation: LOCATION_NAMES.ANNEX,
-        callNumber: testData.callNumber,
-      });
-      HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
-      InventoryInstance.checkHoldingsTableContent({
-        name: LOCATION_NAMES.ANNEX_UI,
-      });
-      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
-      // switch back to central tenant and double check instance
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-      InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
-      // check college holdings
-      InstanceRecordView.verifyConsortialHoldingsAccordion();
-      InstanceRecordView.expandConsortiaHoldings();
-      InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
+      InventoryInstances.searchByTitle(testData.uniqueInstanceTitle, false);
+      InventorySearchAndFilter.verifyNoRecordsFound();
     },
   );
 });

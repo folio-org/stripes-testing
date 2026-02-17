@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Funds from '../../support/fragments/finance/funds/funds';
 import NewFund from '../../support/fragments/finance/funds/newFund';
@@ -8,7 +9,6 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import TopMenu from '../../support/fragments/topMenu';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -16,41 +16,45 @@ describe('Invoices', () => {
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const fund = { ...NewFund.defaultFund };
   const subtotalValue = 100;
+  const actualFiscalYearCode = `FY${new Date().getFullYear()}`;
 
-  before(() => {
-    cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
-      (organization) => {
-        invoice.accountingCode = organization.erpCode;
-        Object.assign(
-          vendorPrimaryAddress,
-          organization.addresses.find((address) => address.isPrimary === true),
-        );
-      },
-    );
-    cy.getBatchGroups().then((batchGroup) => {
-      invoice.batchGroup = batchGroup.name;
+  before('Create test data and login', () => {
+    cy.getAdminToken().then(() => {
+      Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
+        (organization) => {
+          invoice.accountingCode = organization.erpCode;
+          Object.assign(
+            vendorPrimaryAddress,
+            organization.addresses.find((address) => address.isPrimary === true),
+          );
+        },
+      );
+      cy.getBatchGroups().then((batchGroup) => {
+        invoice.batchGroup = batchGroup.name;
+      });
+      Funds.createFundViaApiAndUi(fund).then(() => {
+        Funds.addBudget(100);
+      });
+      invoiceLine.subTotal = -subtotalValue;
+
+      Approvals.setApprovePayValueViaApi(false);
     });
-    Funds.createFundViaUI(fund).then(() => {
-      Funds.addBudget(100);
-    });
-    invoiceLine.subTotal = -subtotalValue;
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-    }, 20_000);
+
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+    Invoices.waitLoading();
   });
 
   it(
     'C343209 Create, approve and pay a credit invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'C343209', 'shiftLeft'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
-      Approvals.setApprovePayValue(false);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
       Invoices.approveInvoice();
       // check transactions after approve
-      TopMenuNavigation.openAppFromDropdown('Finance');
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
       Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
@@ -58,7 +62,7 @@ describe('Invoices', () => {
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
       Funds.varifyDetailsInTransaction(
-        'FY2025',
+        actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,
         'Pending payment',
@@ -66,16 +70,15 @@ describe('Invoices', () => {
       );
       Funds.closeTransactionDetails();
       // pay invoice
-      TopMenuNavigation.openAppFromDropdown('Invoices');
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
       Invoices.searchByNumber(invoice.invoiceNumber);
-      Approvals.setApprovePayValue(false);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
       // check transactions after payment
-      TopMenuNavigation.openAppFromDropdown('Finance');
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
       Funds.selectTransactionInList('Credit');
       Funds.varifyDetailsInTransactionFundTo(
-        'FY2025',
+        actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,
         'Credit',

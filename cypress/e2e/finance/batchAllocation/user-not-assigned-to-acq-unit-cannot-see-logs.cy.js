@@ -127,7 +127,7 @@ describe('Finance › Batch allocation', () => {
 
   it(
     'C688780 User not assigned to Acq unit cannot see batch allocation logs associated with ledger or group with acquisition units (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C688780'] },
     () => {
       Ledgers.searchByName(ledgers[0].name);
       Ledgers.checkNoResultsMessage(

@@ -1,12 +1,12 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   let user;
-  const organization = { ...newOrganization.defaultUiOrganizations, isDonor: false };
+  const organization = { ...NewOrganization.defaultUiOrganizations, isDonor: false };
   const contact = {
     lastName: 'Doe',
     firstName: 'John',
@@ -25,8 +25,8 @@ describe('Organizations', () => {
       organization.id = orgId;
     });
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -52,7 +52,7 @@ describe('Organizations', () => {
 
   it(
     'C423618 Create and add privileged donor information in Organization (vendor) record (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423618'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

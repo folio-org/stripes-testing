@@ -40,17 +40,21 @@ describe('Organizations --> Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C731 Create new categories (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    SettingsOrganizations.selectCategories();
-    SettingsOrganizations.clickNewCategoriesButton();
-    SettingsOrganizations.fillCategoryName(categoryName);
-    SettingsOrganizations.saveCategoryChanges();
-    SettingsOrganizations.checkCategoriesTableContent(categoryName);
-    TopMenuNavigation.navigateToApp('Organizations');
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.editOrganization();
-    Organizations.openContactPeopleSection();
-    Organizations.addNewContactWithCategory(contact, categoryName);
-  });
+  it(
+    'C731 Create new categories (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C731'] },
+    () => {
+      SettingsOrganizations.selectCategories();
+      SettingsOrganizations.clickNewCategoriesButton();
+      SettingsOrganizations.fillCategoryName(categoryName);
+      SettingsOrganizations.saveCategoryChanges();
+      SettingsOrganizations.checkCategoriesTableContent(categoryName);
+      TopMenuNavigation.navigateToApp('Organizations');
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.editOrganization();
+      Organizations.openContactPeopleSection();
+      Organizations.addNewContactWithCategory(contact, categoryName);
+    },
+  );
 });

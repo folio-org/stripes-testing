@@ -170,7 +170,7 @@ describe('Invoices', () => {
 
   it(
     'C388563 Cancel invoice created in current FY and paid against previous FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388563'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

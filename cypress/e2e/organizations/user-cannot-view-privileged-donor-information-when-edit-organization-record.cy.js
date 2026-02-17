@@ -52,7 +52,7 @@ describe('Organizations', () => {
 
   it(
     'C423625 A user without  privileged donor information permission cannot view privileged donor information when edit organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423625'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

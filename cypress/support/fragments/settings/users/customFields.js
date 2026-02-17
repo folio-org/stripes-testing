@@ -210,4 +210,30 @@ export default {
   verifyEditButtonAbsent() {
     cy.expect(editNewButton.absent());
   },
+
+  // API methods
+
+  getCustomFieldsViaApi() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'custom-fields?limit=2147483647',
+        isDefaultSearchParamsRequired: false,
+        additionalHeaders: { 'x-okapi-module-id': 'mod-users-19.6.0-SNAPSHOT.369' },
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  getCustomFieldsConfigViaApi() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'settings/entries?query=(scope==ui-users.custom-fields-label.manage and key==custom_fields_label)',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
 };

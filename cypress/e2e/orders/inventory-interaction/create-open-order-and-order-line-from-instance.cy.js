@@ -1,5 +1,7 @@
+import { matching } from '../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
   ORDER_TYPES,
@@ -12,10 +14,12 @@ import {
   OrderLineEditForm,
   Orders,
 } from '../../../support/fragments/orders';
+import OrderStates from '../../../support/fragments/orders/orderStates';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OpenOrder from '../../../support/fragments/settings/orders/openOrder';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Orders', () => {
   const testData = {
@@ -42,10 +46,9 @@ describe('Orders', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
     });
   });
 
@@ -61,7 +64,7 @@ describe('Orders', () => {
 
   it(
     'C353987 A user can create and open new order and PO line from instance record (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353987'] },
     () => {
       // Click on instance from preconditions
       InventoryInstances.searchByTitle(testData.instance.instanceTitle);
@@ -93,7 +96,6 @@ describe('Orders', () => {
         OrderLineEditForm.checkButtonsConditions([
           { label: 'Cancel', conditions: { disabled: false } },
           { label: 'Save & close', conditions: { disabled: false } },
-          { label: 'Save & open order', conditions: { disabled: false } },
         ]);
 
         // Fill in all the mandatory fields, Click "Save & open order" button
@@ -107,13 +109,12 @@ describe('Orders', () => {
             quantityPhysical: '1',
           },
         });
-        OrderLineEditForm.clickSaveAndOpenOrderButton();
-
-        // Navigate to "Orders" app and search for created order
-        cy.visit(TopMenu.ordersPath);
-        Orders.selectOrderByPONumber(testData.poNumber);
-
-        // Check Order details
+        OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        Orders.openOrder();
+        InteractorsTools.checkCalloutMessage(
+          matching(new RegExp(OrderStates.orderOpenedSuccessfully)),
+        );
         OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
         OrderDetails.checkOrderLinesTableContent([
           { poLineNumber: testData.poNumber, poLineTitle: testData.instance.instanceTitle },

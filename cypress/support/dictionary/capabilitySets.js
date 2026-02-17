@@ -234,6 +234,16 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiBulkEditLogsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Logs',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  schedulerManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Scheduler',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
@@ -261,9 +271,9 @@ export default {
     resource: 'UI-Bulk-Edit Query',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
-  uiBulkEditLogsView: {
-    type: CAPABILITY_TYPES.DATA,
-    resource: 'UI-Bulk-Edit Logs',
-    action: CAPABILITY_ACTIONS.VIEW,
+  uiQuickMarcEditorDuplicate: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Quick-Marc Quick-Marc-Editor Derive',
+    action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

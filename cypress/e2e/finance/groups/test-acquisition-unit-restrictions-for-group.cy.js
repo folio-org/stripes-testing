@@ -40,7 +40,7 @@ describe('Finance: Groups', () => {
 
   it(
     'C367938 Test acquisition unit restrictions for Group records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C367938'] },
+    { tags: ['extendedPath', 'thunderjet', 'C367938'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

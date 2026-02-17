@@ -172,6 +172,7 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.instance,
           );
           FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHRID = initialInstanceHrId;
           });
@@ -230,6 +231,7 @@ describe('Data Import', () => {
           );
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
           InstanceRecordView.verifyInstancePaneExists();
+          cy.wait(3000);
           InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);
         },
       );

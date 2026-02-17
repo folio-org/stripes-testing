@@ -100,8 +100,10 @@ const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
 const heldByAccordion = Accordion('Held by');
 const dateRangeAccordion = Accordion('Date range');
-const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
-const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const dateFromField = TextField({ name: 'startDate' });
+const dateToField = TextField({ name: 'endDate' });
+const dateRangeFromField = dateRangeAccordion.find(dateFromField);
+const dateRangeToField = dateRangeAccordion.find(dateToField);
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
@@ -110,6 +112,7 @@ const getSearchErrorText = (query) => `Search could not be processed for ${query
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
+const defaultBrowseOptionText = 'Select a browse option';
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -216,6 +219,7 @@ export default {
   invalidDateErrorText,
   dateOrderErrorText,
   dateRangeAccordion,
+  uriCharLimitErrorText,
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
@@ -268,7 +272,6 @@ export default {
 
   bySource(source) {
     cy.do(sourceAccordion.clickHeader());
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
@@ -401,7 +404,7 @@ export default {
 
   verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
-      expect(elem.text()).to.include('Select a browse option');
+      expect(elem.text()).to.include(defaultBrowseOptionText);
     });
     cy.expect(browseSearchAndFilterInput.exists());
   },
@@ -1178,6 +1181,17 @@ export default {
     );
   },
 
+  verifyMultiSelectFilterOptionCountGreaterOrEqual(accordionName, optionName, minCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.then(() => multiSelect
+      .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+      .totalRecords()).then((actualCount) => {
+      expect(actualCount).to.be.at.least(minCount);
+    });
+  },
+
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
     if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
@@ -1217,7 +1231,7 @@ export default {
     cy.expect(searchButton.has({ disabled: false }));
   },
 
-  varifyInstanceKeyDetails(instanceData) {
+  verifyInstanceKeyDetails(instanceData) {
     cy.wait(4000);
     cy.expect([
       Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
@@ -1282,7 +1296,7 @@ export default {
     }
   },
 
-  checkBrowseOptionSelected(option) {
+  checkBrowseOptionSelected(option = defaultBrowseOptionText) {
     cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
 
@@ -1310,10 +1324,11 @@ export default {
     );
   },
 
-  checkSharedInstancesInResultList() {
+  checkSharedInstancesInResultList({ instancePlugin = false } = {}) {
+    const childNumber = instancePlugin ? 1 : 2;
     return cy
       .get('div[class^="mclRowContainer--"]')
-      .find('[class*="mclCell-"]:nth-child(2)')
+      .find(`[class*="mclCell-"]:nth-child(${childNumber})`)
       .each(($cell) => {
         cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
       });
@@ -1720,5 +1735,82 @@ export default {
   verifyUriCharLimitMessageAndCallout() {
     cy.expect(paneResultsSection.find(HTML({ text: uriCharLimitErrorText })).exists());
     InteractorsTools.checkCalloutErrorMessage(uriCharLimitErrorText);
+  },
+
+  verifyNoCheckboxesInAccordion(accordionName) {
+    cy.expect([
+      Accordion(accordionName).find(Checkbox()).absent(),
+      Accordion(accordionName).find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  verifySharedIconForResult: (title, isShared = true) => {
+    const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
+    if (isShared) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
+    const option = Accordion(accordionName).find(Checkbox(optionName));
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
+  },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = paneFilterSection
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      multiSelect.select([
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ]),
+    );
+  },
+
+  checkClearIconShownInAccordionHeader(accordionName, isShown = true) {
+    const targetIcon = Button({
+      ariaLabel: or(
+        `Clear selected filters for "${accordionName}"`,
+        `Clear selected ${accordionName} filters`,
+      ),
+    });
+    if (isShown) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  verifyMultiSelectFilterNumberOfOptions(accordionName, numberOfOptions) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.expect(multiSelect.has({ optionsCount: numberOfOptions }));
+  },
+
+  verifyNumberOfBrowseResults(expectedNumber) {
+    cy.expect(anyBrowseResultList.has({ rowCount: expectedNumber }));
+  },
+
+  fillDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.do([
+      Accordion(dateAccordionName).find(dateFromField).fillIn(dateFrom),
+      Accordion(dateAccordionName).find(dateToField).fillIn(dateTo),
+    ]);
+    this.verifyDateFilterValues(dateAccordionName, dateFrom, dateTo);
+  },
+
+  verifyDateFilterValues(dateAccordionName, dateFrom, dateTo) {
+    cy.expect([
+      Accordion(dateAccordionName).find(dateFromField).has({ value: dateFrom }),
+      Accordion(dateAccordionName).find(dateToField).has({ value: dateTo }),
+    ]);
+  },
+
+  checkErrorsForDateFilterFields(dateAccordionName, errorFrom, errorTo) {
+    const fromField = Accordion(dateAccordionName).find(dateFromField);
+    const toField = Accordion(dateAccordionName).find(dateToField);
+    if (errorFrom) this.verifyErrorMessageInTextField(fromField, true, errorFrom);
+    if (errorTo) this.verifyErrorMessageInTextField(toField, true, errorTo);
   },
 };
