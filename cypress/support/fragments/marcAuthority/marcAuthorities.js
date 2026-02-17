@@ -666,6 +666,20 @@ export default {
     ]);
   },
 
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+  },
+
   chooseTypeOfHeading: (headingTypes) => {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
