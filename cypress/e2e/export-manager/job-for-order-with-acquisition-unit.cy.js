@@ -1,21 +1,31 @@
-import permissions from '../../support/dictionary/permissions';
+import moment from 'moment';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import Integrations from '../../support/fragments/organizations/integrations/integrations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
     describe('Orders Export to a Vendor', () => {
-      const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
+      const now = moment();
+      const acquisitionUnit = {
+        ...AcquisitionUnits.defaultAcquisitionUnit,
+        protectDelete: true,
+        protectUpdate: true,
+        protectCreate: true,
+        protectRead: true,
+      };
       const order = {
         ...NewOrder.defaultOneTimeOrder,
         approved: true,
@@ -37,88 +47,129 @@ describe('Export Manager', () => {
           },
         ],
       };
-      const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
-      const integartionDescription = 'Test Integation descripton1';
-      const vendorEDICodeFor1Integration = getRandomPostfix();
-      const libraryEDICodeFor1Integration = getRandomPostfix();
-      let user;
-      let location;
-      let servicePointId;
-      let orderNumber;
+      const testData = {
+        user: {},
+      };
 
       before(() => {
-        cy.getAdminToken();
-        cy.createTempUser([
-          permissions.exportManagerAll.gui,
-          permissions.uiOrdersView.gui,
-          permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
-          permissions.uiOrganizationsViewEdit.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
-          cy.loginAsAdmin({
-            path: SettingsMenu.acquisitionUnitsPath,
-            waiter: AcquisitionUnits.waitLoading,
-          });
-          AcquisitionUnits.newAcquisitionUnit();
-          AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
-          AcquisitionUnits.assignAdmin();
-          AcquisitionUnits.assignUser(user.username);
-        });
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
-        });
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
-        cy.visit(TopMenu.organizationsPath);
-        Organizations.searchByParameters('Name', organization.name);
-        Organizations.checkSearchResults(organization);
-        Organizations.selectOrganization(organization.name);
-        Organizations.addIntegration();
-        Organizations.fillIntegrationInformation(
-          integrationName,
-          integartionDescription,
-          vendorEDICodeFor1Integration,
-          libraryEDICodeFor1Integration,
-          organization.accounts[0].accountNo,
-          'Purchase',
-        );
+        cy.getAdminToken().then(() => {
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
 
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          cy.visit(TopMenu.ordersPath);
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList(orderNumber);
-          Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
+            }).then((acqMethod) => {
+              cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+                (locationResp) => {
+                  MaterialTypes.createMaterialTypeViaApi(
+                    MaterialTypes.getDefaultMaterialType(),
+                  ).then((mtypes) => {
+                    const orderLine = {
+                      ...BasicOrderLine.defaultOrderLine,
+                      cost: {
+                        listUnitPrice: 20.0,
+                        currency: 'USD',
+                        discountType: 'percentage',
+                        quantityPhysical: 1,
+                        poLineEstimatedPrice: 20.0,
+                      },
+                      locations: [
+                        { locationId: locationResp.id, quantity: 1, quantityPhysical: 1 },
+                      ],
+                      acquisitionMethod: acqMethod.body.acquisitionMethods[0].id,
+                      physical: {
+                        createInventory: 'Instance, Holding, Item',
+                        materialType: mtypes.body.id,
+                        volumes: [],
+                      },
+                      automaticExport: true,
+                      vendorDetail: { vendorAccount: null },
+                    };
+                    cy.createOrderApi(order).then((orderResponse) => {
+                      testData.orderId = orderResponse.body.id;
+                      orderLine.purchaseOrderId = orderResponse.body.id;
+
+                      OrderLines.createOrderLineViaApi(orderLine);
+                      Orders.updateOrderViaApi({
+                        ...orderResponse.body,
+                        workflowStatus: ORDER_STATUSES.OPEN,
+                      }).then(() => {
+                        testData.integration = Integrations.getDefaultIntegration({
+                          vendorId: organization.id,
+                          acqMethodId: acqMethod.body.acquisitionMethods[0].id,
+                          accountNoList: [organization.accounts[0].accountNo],
+                          scheduleTime: now.utc().format('HH:mm:ss'),
+                          isDefaultConfig: true,
+                        });
+                        testData.integrationName =
+                          testData.integration.exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
+                        Integrations.createIntegrationViaApi(testData.integration);
+                      });
+                    });
+                  });
+                },
+              );
+            });
+          });
+        });
+
+        cy.createTempUser([
+          Permissions.exportManagerAll.gui,
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
+          Permissions.uiOrganizationsViewEdit.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+
+          AcquisitionUnits.createAcquisitionUnitViaApi(acquisitionUnit).then((acqUnitResponse) => {
+            acquisitionUnit.id = acqUnitResponse.id;
+
+            AcquisitionUnits.assignUserViaApi(userProperties.userId, acquisitionUnit.id).then(
+              (id) => {
+                testData.membershipUserId = id;
+              },
+            );
+            cy.getAdminUserDetails().then((adminUser) => {
+              AcquisitionUnits.assignUserViaApi(adminUser.id, acquisitionUnit.id).then((id) => {
+                testData.membershipAdminId = id;
+              });
+            });
+          });
+
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.exportManagerOrganizationsPath,
+            waiter: ExportManagerSearchPane.waitLoading,
+          });
+        });
+      });
+
+      after(() => {
+        cy.getAdminToken().then(() => {
+          Organizations.deleteOrganizationViaApi(organization.id);
+          Integrations.deleteIntegrationViaApi(testData.integration.id);
+          Orders.deleteOrderViaApi(testData.orderId);
+          AcquisitionUnits.unAssignUserViaApi(testData.membershipUserId);
+          AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
+          Users.deleteViaApi(testData.user.userId);
+          AcquisitionUnits.deleteAcquisitionUnitViaApi(acquisitionUnit.id);
         });
       });
 
       it(
         'C380640 Schedule export job for order with Acquisition unit (thunderjet) (TaaS)',
-        { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'thunderjet', 'C380640'] },
         () => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.exportManagerOrganizationsPath,
-            waiter: ExportManagerSearchPane.waitLoading,
-          });
           ExportManagerSearchPane.selectOrganizationsSearch();
-          ExportManagerSearchPane.selectExportMethod(integrationName);
-          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
+          ExportManagerSearchPane.selectExportMethod(testData.integrationName);
+          ExportManagerSearchPane.selectJobByIntegrationInList(testData.integrationName);
           ExportManagerSearchPane.rerunJob();
-          cy.reload();
+          cy.wait(7000);
           ExportManagerSearchPane.verifyResult('Successful');
           ExportManagerSearchPane.selectJob('Successful');
           ExportManagerSearchPane.verifyJobStatusInDetailView('Successful');
           ExportManagerSearchPane.verifyJobOrganizationInDetailView(organization);
-          ExportManagerSearchPane.verifyJobExportMethodInDetailView(integrationName);
+          ExportManagerSearchPane.verifyJobExportMethodInDetailView(testData.integrationName);
         },
       );
     });

@@ -1,9 +1,9 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   const organization = {
@@ -23,7 +23,7 @@ describe('Organizations', () => {
       organization.id = response;
     });
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
     Organizations.addNewDonorContact(firstContact);
@@ -32,8 +32,8 @@ describe('Organizations', () => {
     Organizations.checkDonorContactIsAdd(firstContact);
     Organizations.saveOrganization();
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -55,9 +55,9 @@ describe('Organizations', () => {
 
   it(
     'C423623 A user with "Organizations: can view privileged donor information" permission can only view privileged donor information (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C423623'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.openPrivilegedDonorInformationSection();

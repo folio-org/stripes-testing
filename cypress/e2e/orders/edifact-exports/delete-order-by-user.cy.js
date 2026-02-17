@@ -6,6 +6,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -85,7 +86,7 @@ describe('orders: Edifact export', () => {
                   path: TopMenu.organizationsPath,
                   waiter: Organizations.waitLoading,
                 });
-                Organizations.searchByParameters('Name', organization.name);
+                OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
                 Organizations.checkSearchResults(organization);
                 Organizations.selectOrganization(organization.name);
                 Organizations.addIntegration();
@@ -138,7 +139,7 @@ describe('orders: Edifact export', () => {
 
   it(
     'C350404 Verify that User can delete created Order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C350404'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

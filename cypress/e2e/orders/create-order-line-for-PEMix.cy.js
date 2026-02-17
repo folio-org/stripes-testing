@@ -36,7 +36,7 @@ describe('orders: Test PO search', () => {
 
   it(
     'C343242 Create an order line for format = P/E mix (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C343242'] },
     () => {
       cy.wait(4000);
       Orders.resetFilters();

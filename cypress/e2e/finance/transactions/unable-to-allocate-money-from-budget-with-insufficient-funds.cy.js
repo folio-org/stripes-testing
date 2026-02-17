@@ -79,7 +79,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C380517 A user can not allocate money from budget with insufficient money (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1', 'C380517'] },
+    { tags: ['extendedPath', 'thunderjet', 'C380517'] },
     () => {
       FinanceHelper.searchByName(fundA.name);
       Funds.selectFund(fundA.name);

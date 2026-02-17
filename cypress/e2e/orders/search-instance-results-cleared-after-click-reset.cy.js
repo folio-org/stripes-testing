@@ -52,7 +52,7 @@ describe('Orders', () => {
 
   it(
     'C377043 Plugin search result list is cleared and all filters are reset by clicking "Reset all" button while adding PO line to "Purchase order" (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C377043'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

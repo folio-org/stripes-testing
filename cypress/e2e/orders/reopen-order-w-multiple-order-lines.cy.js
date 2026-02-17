@@ -86,7 +86,7 @@ describe('Orders', () => {
 
   it(
     'C366113 Order can be reopened when one PO line has a fund distribution and one PO line does not (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C366113'] },
     () => {
       // Search for order and click on it
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -206,7 +206,7 @@ describe('Orders', () => {
 
   it(
     'C366114 Order can be reopened when PO lines have different fund distributions (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C366114'] },
     () => {
       // Search for order and click on it
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -137,8 +137,8 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C350976: Ledger export settings: last year Fund with budget, Economic (Active) Class, Export settings; Expense classes- None (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C350976 Ledger export settings: last year Fund with budget, Economic (Active) Class, Export settings; Expense classes- None (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'C350976'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

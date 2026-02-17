@@ -29,7 +29,7 @@ describe('Settings (Orders) - Closing purchase order reasons', () => {
 
   it(
     'C15854 Create, edit and delete closing purchase order reasons (thunderjet)',
-    { tags: ['extended', 'thunderjet', 'eurekaPhase1', 'C15854'] },
+    { tags: ['extended', 'thunderjet', 'C15854'] },
     () => {
       ClosingReasons.createClosingReason(closingReason);
       ClosingReasons.editClosingReason(closingReason, closingReasonEdited);

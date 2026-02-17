@@ -177,7 +177,7 @@ describe('ui-orders: Orders', () => {
 
   it(
     'C375290 Editing fund distribution and increasing cost in PO line when related Paid invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1', 'C375290'] },
+    { tags: ['criticalPath', 'thunderjet', 'C375290'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();

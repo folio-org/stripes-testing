@@ -1,9 +1,9 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   const organization = {
@@ -39,12 +39,12 @@ describe('Organizations', () => {
 
   it(
     'C677 Search an alternate organization name (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C677'] },
     () => {
-      Organizations.searchByParameters('Alias', organization.aliases[0].value);
+      OrganizationsSearchAndFilter.searchByParameters('Alias', organization.aliases[0].value);
       Organizations.checkSearchResults(organization);
       Organizations.resetFilters();
-      Organizations.searchByParameters('All', organization.aliases[0].value);
+      OrganizationsSearchAndFilter.searchByParameters('All', organization.aliases[0].value);
       Organizations.checkSearchResults(organization);
     },
   );

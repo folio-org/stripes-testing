@@ -160,7 +160,7 @@ describe('Invoices', () => {
 
   it(
     'C396400 Select Expense class related to Fiscal year specified in invoice (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'C396400'] },
     () => {
       // Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });

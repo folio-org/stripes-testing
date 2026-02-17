@@ -87,7 +87,7 @@ describe(
 
     it(
       'C2327 Create invoice line based on purchase order line (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C2327'] },
       () => {
         Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
           cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });

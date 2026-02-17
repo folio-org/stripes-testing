@@ -172,6 +172,7 @@ export default {
         method: 'POST',
         path: 'acquisitions-units/units',
         body: acqUnit,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },

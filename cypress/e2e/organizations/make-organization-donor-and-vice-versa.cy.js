@@ -1,6 +1,6 @@
-import permissions from '../../support/dictionary/permissions';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -13,7 +13,7 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -32,20 +32,20 @@ describe('Organizations', { retries: { runMode: 1 } }, () => {
     'C421981 Making existing Organization a Donor and vice versa (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.addDonorToOrganization();
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
-      Organizations.selectIsDonorFilter('Yes');
+      OrganizationsSearchAndFilter.filterByIsDonor('Yes');
       Organizations.selectOrganization(organization.name);
       Organizations.checkOrganizationInfo(organization);
       Organizations.editOrganization();
       Organizations.removeDonorFromOrganization();
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
-      Organizations.selectIsDonorFilter('No');
+      OrganizationsSearchAndFilter.filterByIsDonor('No');
       Organizations.selectOrganization(organization.name);
       Organizations.checkOrganizationInfo(organization);
       Organizations.resetFilters();

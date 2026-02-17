@@ -174,7 +174,7 @@ describe('Orders', () => {
 
   it(
     'C357540 Encumbrance transaction updates when fund name is changed in Open ongoing order and Open invoice related to POL exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C357540'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

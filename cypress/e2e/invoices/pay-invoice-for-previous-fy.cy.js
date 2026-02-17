@@ -175,8 +175,8 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
       });
 
       it(
-        'C388520: Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-        { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+        'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
+        { tags: ['criticalPathFlaky', 'thunderjet', 'C388520'] },
         () => {
           // Click on "PO number" link on "Orders" pane
           const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -391,7 +391,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
       it(
         'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-        { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathBroken', 'thunderjet', 'C388545'] },
         () => {
           // Click on "PO number" link on "Orders" pane
           const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

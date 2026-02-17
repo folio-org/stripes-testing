@@ -70,8 +70,8 @@ describe('Orders', () => {
   });
 
   it(
-    'C369087 - Orders| Results List | Verify that value in "PO number" and "POL number" columns are hyperlinks (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C369087 Orders| Results List | Verify that value in "PO number" and "POL number" columns are hyperlinks (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'C369087'] },
     () => {
       Orders.selectPendingStatusFilter();
       Orders.waitLoading();

@@ -3,6 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 const testData = {
   user: null,
@@ -40,7 +41,7 @@ describe('Organizations: Add new contact and assign to an organization record', 
     'C725 Add new contact and assign to an organization record (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', testData.organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
       Organizations.selectOrganization(testData.organization.name);
       Organizations.editOrganization();
       Organizations.addNewContact(testData.contact);

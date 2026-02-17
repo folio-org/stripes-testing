@@ -92,7 +92,7 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C6718 Test the PO filters with open Order [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'C6718'] },
       () => {
         filter.filterActions();
         Orders.checkSearchResults(orderNumber);

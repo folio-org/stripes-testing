@@ -1,9 +1,9 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   const orgA = {
@@ -59,46 +59,46 @@ describe('Organizations', () => {
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Step 1: Expand "Organizations status" accordion
-      Organizations.selectActiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
       Organizations.organizationIsAbsent(orgB.name);
       Organizations.organizationIsAbsent(orgC.name);
-      Organizations.searchByParameters('Name', orgA.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', orgA.name);
       Organizations.checkSearchResults(orgA);
 
       // Step 3: Filter by "Inactive" status
       Organizations.resetFilters();
-      Organizations.selectInactiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Inactive');
       Organizations.checkSearchResults(orgB);
       Organizations.organizationIsAbsent(orgA.name);
       Organizations.organizationIsAbsent(orgC.name);
 
       // Step 4: Filter by "Pending" status
       Organizations.resetFilters();
-      Organizations.selectPendingStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Pending');
       Organizations.checkSearchResults(orgC);
       Organizations.organizationIsAbsent(orgA.name);
       Organizations.organizationIsAbsent(orgB.name);
 
       // Step 5: Filter by "Active" and "Pending" statuses
-      Organizations.selectActiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
       Organizations.organizationIsAbsent(orgB.name);
-      Organizations.searchByParameters('Name', orgC.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', orgC.name);
       Organizations.checkSearchResults(orgC);
-      Organizations.searchByParameters('Name', orgA.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', orgA.name);
       Organizations.checkSearchResults(orgA);
 
       // Step 6: Filter by all statuses
-      Organizations.selectInactiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Inactive');
       Organizations.checkSearchResults(orgA);
-      Organizations.searchByParameters('Name', orgB.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', orgB.name);
       Organizations.checkSearchResults(orgB);
-      Organizations.searchByParameters('Name', orgC.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', orgC.name);
       Organizations.checkSearchResults(orgC);
 
       // Step 7: Filter by "Inactive" and "Pending" statuses
       Organizations.resetFilters();
-      Organizations.selectInactiveStatus();
-      Organizations.selectPendingStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Inactive');
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Pending');
       Organizations.checkSearchResults(orgB);
       Organizations.checkSearchResults(orgC);
       Organizations.organizationIsAbsent(orgA.name);

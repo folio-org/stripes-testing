@@ -4,6 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let user;
@@ -31,9 +32,9 @@ describe('Organizations', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Organizations.getTagByLabel(tag.name).then((tags) => {
+    Organizations.getTagByLabelViaApi(tag.name).then((tags) => {
       if (tags) tag.id = tags.id;
-      Organizations.deleteTagById(tag.id, { failOnStatusCode: false });
+      Organizations.deleteTagByIdViaApi(tag.id, { failOnStatusCode: false });
     });
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
@@ -43,7 +44,7 @@ describe('Organizations', () => {
     'C6710 Add tags to an Organization record (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyTagsCount(0);
       Organizations.organizationTagDetails();

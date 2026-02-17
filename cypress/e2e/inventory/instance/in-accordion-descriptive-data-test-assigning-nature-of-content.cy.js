@@ -33,19 +33,13 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"title"=="${testData.instance.instanceTitle}"`,
-        }).then((instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       });
     });
 
     it(
       'C9214 In Accordion Descriptive Data --> Test assigning Nature of content (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C9214', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C9214'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

@@ -60,8 +60,8 @@ describe('Organizations', () => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization1.id);
     Organizations.deleteOrganizationViaApi(organization2.id);
-    Organizations.deleteTagById(tag1.id, { failOnStatusCode: false });
-    Organizations.deleteTagById(tag2.id, { failOnStatusCode: false });
+    Organizations.deleteTagByIdViaApi(tag1.id, { failOnStatusCode: false });
+    Organizations.deleteTagByIdViaApi(tag2.id, { failOnStatusCode: false });
     Users.deleteViaApi(user.userId);
   });
 

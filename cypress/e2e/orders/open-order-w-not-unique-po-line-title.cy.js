@@ -65,7 +65,7 @@ describe('Orders', () => {
 
   it(
     'C353562 User is able to open purchase order with NOT unique PO line title when "Disable duplicate check" option is enabled (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C353562'] },
     () => {
       // Search for the Order #1 from Preconditions and click on its record
       const OrderDetails = Orders.selectOrderByPONumber(testData.orders[0].poNumber);

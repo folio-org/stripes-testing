@@ -3,6 +3,7 @@ import Users from '../../../support/fragments/users/users';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import permissions from '../../../support/dictionary/permissions';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations --> Interface details', () => {
   const organization = {
@@ -38,9 +39,9 @@ describe('Organizations --> Interface details', () => {
 
   it(
     'C1323 Edit an existing interface to an Organization record > Assign an interface type (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'C1323'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.openInterfaceSection();
       Organizations.checkInterfaceIsAdd(defaultInterface);

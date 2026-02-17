@@ -1,7 +1,7 @@
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
 import { Permissions } from '../../support/dictionary';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('Organizations', () => {
@@ -32,19 +32,19 @@ describe('Organizations', () => {
     Users.deleteViaApi(user.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
+
   [
-    { filterActions: Organizations.selectPendingStatus },
-    { filterActions: Organizations.selectNoInIsVendor },
-    { filterActions: () => Organizations.selectCountryFilter('United States') },
-    { filterActions: Organizations.selectLanguageFilter },
-    { filterActions: Organizations.selectCashInPaymentMethod },
+    { filterActions: () => OrganizationsSearchAndFilter.filterByStatus('Pending') },
+    { filterActions: () => OrganizationsSearchAndFilter.filterByCountry('United States') },
+    { filterActions: () => OrganizationsSearchAndFilter.filterByLanguage('English') },
+    { filterActions: () => OrganizationsSearchAndFilter.filterByPaymentMethod('Cash') },
   ].forEach((filter) => {
     it(
       'C6713 Test the Organizations app filters (except Tags) (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6713'] },
       () => {
         filter.filterActions();
-        Organizations.checkOrganizationFilter();
+        OrganizationsSearchAndFilter.checkSearchAndFilterPaneExists();
         Organizations.selectOrganization(organization.name);
         Organizations.checkOrganizationInfo(organization);
         Organizations.closeDetailsPane();

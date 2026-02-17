@@ -4,6 +4,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -44,7 +45,7 @@ describe('Export Manager', () => {
           order.orderType = 'One-time';
         });
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.addIntegration();
@@ -84,7 +85,7 @@ describe('Export Manager', () => {
 
       it(
         'C350396 Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'thunderjet', 'C350396'] },
         () => {
           Orders.createOrder(order, true, false).then((orderId) => {
             order.id = orderId;

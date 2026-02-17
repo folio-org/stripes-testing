@@ -307,6 +307,7 @@ export default {
   },
 
   createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
+    cy.wait(2000);
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),

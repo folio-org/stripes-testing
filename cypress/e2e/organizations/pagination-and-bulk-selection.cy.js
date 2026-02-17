@@ -1,13 +1,13 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
+import Permissions from '../../support/dictionary/permissions';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Organizations', () => {
   let user;
-  const organization = { ...newOrganization.defaultUiOrganizations };
+  const organization = { ...NewOrganization.defaultUiOrganizations };
   const contactIds = [];
 
   before('Create user, organization, and contacts', () => {
@@ -34,7 +34,7 @@ describe('Organizations', () => {
       contactIds.push(contactId);
     });
 
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -56,13 +56,13 @@ describe('Organizations', () => {
     'C359169 Next/previous pagination and bulk selection in "Add contacts" dialog (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.filterContactsByStatus('Inactive');
       Organizations.verifyPaginationInContactList();
       Organizations.resetFilters();
-      Organizations.selectActiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
       Organizations.verifyPaginationInContactList();
       Organizations.selectAllContactsOnPage();
       Organizations.verifyTotalSelected(50);

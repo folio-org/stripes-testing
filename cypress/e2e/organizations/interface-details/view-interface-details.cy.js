@@ -3,6 +3,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations --> Interface details', () => {
   let user;
@@ -36,9 +37,13 @@ describe('Organizations --> Interface details', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C1325 View interface details (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.checkInterfaceIsAdd(defaultInterface);
-  });
+  it(
+    'C1325 View interface details (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C1325'] },
+    () => {
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.checkInterfaceIsAdd(defaultInterface);
+    },
+  );
 });

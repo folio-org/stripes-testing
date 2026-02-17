@@ -1,15 +1,15 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
   let user;
   const organization = {
-    ...newOrganization.defaultUiOrganizations,
+    ...NewOrganization.defaultUiOrganizations,
     accounts: [
       {
         name: `autotest_name_${getRandomPostfix()}`,
@@ -63,7 +63,7 @@ describe('Organizations', () => {
     Organizations.createOrganizationViaApi(organization).then((orgId) => {
       organization.id = orgId;
     });
-    Organizations.searchByParameters('Name', organization.name);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
     Organizations.fillIntegrationInformationWithoutSchedulingWithDifferentInformation(
@@ -71,7 +71,7 @@ describe('Organizations', () => {
     );
     Organizations.saveOrganization();
     cy.wait(4000);
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -90,7 +90,7 @@ describe('Organizations', () => {
     'C434063 "Day" field on Integration edit page accepts only numbers less than "31" (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.selectIntegration(informationForIntegration.integrationName);
       Organizations.editIntegration();

@@ -1,16 +1,16 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
-import getRandomPostfix from '../../support/utils/stringTools';
 import { CAPABILITY_ACTIONS, CAPABILITY_TYPES } from '../../support/constants';
-import Organizations from '../../support/fragments/organizations/organizations';
-import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Permissions from '../../support/dictionary/permissions';
 import Orders from '../../support/fragments/orders/orders';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import ConfirmDeleteOrganizationModal from '../../support/fragments/organizations/modals/confirmDeleteOrganizationModal';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
   before('Enable Banking Information', () => {
@@ -69,8 +69,8 @@ describe('Organizations', () => {
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
       ])
         .then((createdUserProperties) => {
           userA = createdUserProperties;
@@ -112,7 +112,7 @@ describe('Organizations', () => {
       'C423503 A user can only view banking information with "Organizations: View banking information" permission (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.checkBankInformationExist(bankingInformation.bankName);
@@ -134,7 +134,7 @@ describe('Organizations', () => {
             });
           });
 
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.editOrganization();
@@ -162,7 +162,7 @@ describe('Organizations', () => {
       });
       Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
         firstOrganization.id = responseOrganizations;
-        Organizations.searchByParameters('Name', firstOrganization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
         Organizations.checkSearchResults(firstOrganization);
         Organizations.selectOrganization(firstOrganization.name);
         Organizations.editOrganization();
@@ -171,8 +171,8 @@ describe('Organizations', () => {
         Organizations.resetFilters();
       });
       cy.createTempUser([
-        permissions.uiOrganizationsViewEditCreate.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
       ]).then((secondUserProperties) => {
         C423504User = secondUserProperties;
       });
@@ -180,7 +180,7 @@ describe('Organizations', () => {
 
     after(() => {
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', firstOrganization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
       Organizations.editOrganization();
@@ -199,7 +199,7 @@ describe('Organizations', () => {
           path: TopMenu.organizationsPath,
           waiter: Organizations.waitLoading,
         });
-        Organizations.searchByParameters('Name', firstOrganization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
         Organizations.checkSearchResults(firstOrganization);
         Organizations.selectOrganization(firstOrganization.name);
         Organizations.checkBankInformationExist(firstBankingInformation.name);
@@ -232,8 +232,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsViewEditDelete.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditDelete.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.waitForAuthRefresh(() => {
@@ -254,7 +254,7 @@ describe('Organizations', () => {
       'C613152 Delete organization with at least one existing Banking information (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.checkBankInformationExist(bankingInformation.bankName);
@@ -303,7 +303,7 @@ describe('Organizations', () => {
       });
       Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
         firstOrganization.id = responseOrganizations;
-        Organizations.searchByParameters('Name', firstOrganization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
         Organizations.checkSearchResults(firstOrganization);
         Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
         Organizations.editOrganization();
@@ -314,7 +314,7 @@ describe('Organizations', () => {
       Organizations.createOrganizationViaApi(secondOrganization).then(
         (responseSecondOrganizations) => {
           secondOrganization.id = responseSecondOrganizations;
-          Organizations.searchByParameters('Name', secondOrganization.name);
+          OrganizationsSearchAndFilter.searchByParameters('Name', secondOrganization.name);
           Organizations.checkSearchResults(secondOrganization);
           Organizations.selectOrganizationInCurrentPage(secondOrganization.name);
           Organizations.editOrganization();
@@ -322,12 +322,12 @@ describe('Organizations', () => {
           Organizations.closeDetailsPane();
         },
       );
-      cy.createTempUser([permissions.uiOrdersView.gui]).then((secondUserProperties) => {
+      cy.createTempUser([Permissions.uiOrdersView.gui]).then((secondUserProperties) => {
         C423432User = secondUserProperties;
       });
       cy.createTempUser([
-        permissions.uiOrdersView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.waitForAuthRefresh(() => {
@@ -341,14 +341,14 @@ describe('Organizations', () => {
 
     after(() => {
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', firstOrganization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganizationInCurrentPage(firstOrganization.name);
       Organizations.editOrganization();
       Organizations.deleteBankingInformation();
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
-      Organizations.searchByParameters('Name', secondOrganization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', secondOrganization.name);
       Organizations.checkSearchResults(secondOrganization);
       Organizations.selectOrganizationInCurrentPage(secondOrganization.name);
       Organizations.editOrganization();
@@ -459,14 +459,14 @@ describe('Organizations', () => {
       });
       Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
         organization.id = responseOrganizations;
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.editOrganization();
         Organizations.addBankingInformation(bankingInformation);
         Organizations.closeDetailsPane();
       });
-      cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
+      cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui])
         .then((u) => {
           userA = u;
           role.name = userA.username;
@@ -498,7 +498,7 @@ describe('Organizations', () => {
           path: TopMenu.organizationsPath,
           waiter: Organizations.waitLoading,
         });
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.editOrganization();
@@ -524,7 +524,7 @@ describe('Organizations', () => {
           path: TopMenu.organizationsPath,
           waiter: Organizations.waitLoading,
         });
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.editOrganization();
@@ -589,8 +589,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -613,7 +613,7 @@ describe('Organizations', () => {
       'C423519 Verifying all fields and "Cancel" option while adding "Banking information" record (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.editOrganization();
@@ -649,8 +649,8 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
-        permissions.uiFinanceViewFiscalYear.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
+        Permissions.uiFinanceViewFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
       });
@@ -696,7 +696,7 @@ describe('Organizations', () => {
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
       Organizations.createOrganizationViaApi(firstOrganization).then((responseOrganizations) => {
         firstOrganization.id = responseOrganizations;
-        Organizations.searchByParameters('Name', firstOrganization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
         Organizations.checkSearchResults(firstOrganization);
         Organizations.selectOrganization(firstOrganization.name);
         Organizations.editOrganization();
@@ -707,7 +707,7 @@ describe('Organizations', () => {
       Organizations.createOrganizationViaApi(secondOrganization).then(
         (responseSecondOrganizations) => {
           secondOrganization.id = responseSecondOrganizations;
-          Organizations.searchByParameters('Name', secondOrganization.name);
+          OrganizationsSearchAndFilter.searchByParameters('Name', secondOrganization.name);
           Organizations.checkSearchResults(secondOrganization);
           Organizations.selectOrganization(secondOrganization.name);
           Organizations.editOrganization();
@@ -716,8 +716,8 @@ describe('Organizations', () => {
         },
       );
       cy.createTempUser([
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
       ]).then((secondUserProperties) => {
         C423504User = secondUserProperties;
       });
@@ -725,14 +725,14 @@ describe('Organizations', () => {
 
     after(() => {
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', firstOrganization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
       Organizations.checkSearchResults(firstOrganization);
       Organizations.selectOrganization(firstOrganization.name);
       Organizations.editOrganization();
       Organizations.deleteBankingInformation();
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
-      Organizations.searchByParameters('Name', secondOrganization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', secondOrganization.name);
       Organizations.checkSearchResults(secondOrganization);
       Organizations.selectOrganization(secondOrganization.name);
       Organizations.editOrganization();
@@ -751,7 +751,7 @@ describe('Organizations', () => {
           path: TopMenu.organizationsPath,
           waiter: Organizations.waitLoading,
         });
-        Organizations.searchByParameters('Name', firstOrganization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', firstOrganization.name);
         Organizations.checkSearchResults(firstOrganization);
         Organizations.selectOrganization(firstOrganization.name);
         Organizations.buttonNewIsAbsent();
@@ -773,7 +773,7 @@ describe('Organizations', () => {
 
     before('Create user', () => {
       cy.getAdminToken();
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.waitForAuthRefresh(() => {
@@ -831,8 +831,8 @@ describe('Organizations', () => {
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -852,7 +852,7 @@ describe('Organizations', () => {
       'C423518 A user cannot edit banking information without organization edit permission (thunderjet)',
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.checkAvailableActionsInTheActionsField();
@@ -877,7 +877,7 @@ describe('Organizations', () => {
         bankingInformation.organizationId = orgId;
         Organizations.createBankingInformationViaApi(bankingInformation);
       });
-      cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.organizationsPath,
@@ -896,13 +896,13 @@ describe('Organizations', () => {
       'C434070 Error message related to Banking information does not appear when user without Banking permissions edits Organization details (thunderjet)',
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsAbsent();
         Organizations.editOrganization();
         Organizations.selectDonorCheckbox();
         Organizations.saveOrganization();
-        Organizations.varifySaveOrganizationCalloutMessage(organization);
+        Organizations.verifySaveCalloutMessage(organization);
       },
     );
   });
@@ -937,22 +937,22 @@ describe('Organizations', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
-        permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
-        permissions.uiOrganizationsInterfaceUsernamesAndPasswordsView.gui,
-        permissions.uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete.gui,
-        permissions.uiOrganizationsManageAcquisitionUnits.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewAndEditBankingInformation.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
-        permissions.uiOrganizationsViewEdit.gui,
-        permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
-        permissions.uiOrganizationsViewEditCreate.gui,
-        permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
-        permissions.uiOrganizationsViewEditDelete.gui,
-        permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
-        permissions.uiSettingsOrganizationsCanViewOnlySettings.gui,
+        Permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsView.gui,
+        Permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
+        Permissions.uiOrganizationsInterfaceUsernamesAndPasswordsView.gui,
+        Permissions.uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete.gui,
+        Permissions.uiOrganizationsManageAcquisitionUnits.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewAndEditBankingInformation.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiOrganizationsViewEdit.gui,
+        Permissions.uiOrganizationsViewEditAndCreateBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.uiOrganizationsViewEditCreateAndDeleteBankingInformation.gui,
+        Permissions.uiOrganizationsViewEditDelete.gui,
+        Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+        Permissions.uiSettingsOrganizationsCanViewOnlySettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -972,7 +972,7 @@ describe('Organizations', () => {
       'C423547 A user can not view banking information when "Enable banking information" setting is not active (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsAbsent();
         Organizations.editOrganization();

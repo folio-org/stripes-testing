@@ -5,6 +5,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -77,7 +78,7 @@ describe('Export Manager', () => {
         order.vendor = organizationsResponse;
       });
       cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
       Organizations.addIntegration();
@@ -163,7 +164,7 @@ describe('Export Manager', () => {
 
     it(
       'C365123 Downloading the exact ".edi" file that was exported for a given export job with "Successful" status (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C365123'] },
       () => {
         cy.visit(TopMenu.exportManagerOrganizationsPath);
         ExportManagerSearchPane.selectOrganizationsSearch();

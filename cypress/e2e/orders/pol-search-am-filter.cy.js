@@ -9,6 +9,7 @@ import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -46,7 +47,7 @@ describe('Export Manager', () => {
           organization.id = organizationResponse;
           order.vendor = organization.name;
           order.orderType = 'One-time';
-          Organizations.searchByParameters('Name', organization.name);
+          OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
           Organizations.checkSearchResults(organization);
           Organizations.selectOrganization(organization.name);
           Organizations.addIntegration();
@@ -107,7 +108,7 @@ describe('Export Manager', () => {
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['criticalPathBroken', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPathBroken', 'thunderjet', 'C350603'] },
         () => {
           Orders.selectOrderLines();
           Orders.resetFiltersIfActive();

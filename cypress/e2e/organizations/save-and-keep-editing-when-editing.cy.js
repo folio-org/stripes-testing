@@ -1,7 +1,7 @@
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -19,7 +19,7 @@ describe('Organizations', () => {
     Organizations.createOrganizationViaApi(org).then((response) => {
       org.id = response;
     });
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((u) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((u) => {
       user = u;
       cy.waitForAuthRefresh(() => {
         cy.login(user.username, user.password, {
@@ -38,9 +38,9 @@ describe('Organizations', () => {
 
   it(
     'C656335 Save using Save & keep editing when editing organization',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extended', 'thunderjet', 'C656335'] },
     () => {
-      Organizations.searchByParameters('Name', org.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', org.name);
       Organizations.selectOrganization(org.name);
       Organizations.getLastUpdateTime().then((time) => {
         preUpdated = time;
@@ -51,10 +51,10 @@ describe('Organizations', () => {
       Organizations.checkRequiredFields('Name');
       Organizations.fillNameField(organizationWithNewName.name);
       Organizations.saveAndKeepEditing();
-      Organizations.varifySaveOrganizationCalloutMessage(organizationWithNewName);
+      Organizations.verifySaveCalloutMessage(organizationWithNewName);
       Organizations.selectVendor();
       Organizations.saveAndKeepEditing();
-      Organizations.varifySaveOrganizationCalloutMessage(organizationWithNewName);
+      Organizations.verifySaveCalloutMessage(organizationWithNewName);
       Organizations.selectDonorCheckbox();
       Organizations.cancelOrganization();
       Organizations.closeWithoutSaving();

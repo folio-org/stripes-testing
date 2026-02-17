@@ -1,6 +1,6 @@
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -19,7 +19,7 @@ describe('Organizations', () => {
     Organizations.createContactViaApi(contact).then((contactId) => {
       contact.id = contactId;
     });
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -38,7 +38,7 @@ describe('Organizations', () => {
     'C676 Assign existing contact to an organization record (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.addContactToOrganization(contact);

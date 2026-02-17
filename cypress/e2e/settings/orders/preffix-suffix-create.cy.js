@@ -58,7 +58,7 @@ describe('Orders', () => {
 
     it(
       'C671 Create prefix and suffix for purchase order (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C671'] },
       () => {
         Orders.createOrderWithPONumberPreffixSuffix(
           poPrefix.name,

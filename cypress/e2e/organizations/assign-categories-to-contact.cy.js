@@ -6,6 +6,7 @@ import SettingsOrganizations from '../../support/fragments/settings/organization
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const category1 = { ...SettingsOrganizations.defaultCategories };
@@ -47,7 +48,7 @@ describe('Organizations', () => {
     'C732 Assign categories to contact person (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.openContactPeopleSectionInEditCard();

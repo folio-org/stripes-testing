@@ -47,7 +47,7 @@ describe('Orders', () => {
 
     it(
       'C6725 Create order template (thunderjet)',
-      { tags: ['criticalPathFlaky', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['criticalPathFlaky', 'thunderjet', 'C6725'] },
       () => {
         OrderTemplate.clickNewOrderTemplateButton();
         OrderTemplate.fillTemplateInformationWithAcquisitionMethod(

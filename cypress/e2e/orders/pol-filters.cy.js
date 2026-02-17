@@ -11,7 +11,7 @@ import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
-describe('orders: Test Po line filters', () => {
+describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const today = new Date();
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
@@ -136,7 +136,7 @@ describe('orders: Test Po line filters', () => {
   ].forEach((filter) => {
     it(
       `C6720 Test the POL filters [except tags]: ${filter.name} (thunderjet)`,
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6720'] },
       () => {
         Orders.searchByParameter('PO line number', orderLineNumber);
         Orders.resetFilters();

@@ -118,7 +118,7 @@ describe('Orders', () => {
 
   it(
     'C423399 Deleting manually assigned donor from POL while assigned fund exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'thunderjet', 'C423399'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

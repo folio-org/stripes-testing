@@ -1,5 +1,5 @@
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('Organizations', () => {
@@ -32,9 +32,9 @@ describe('Organizations', () => {
   ].forEach((searcher) => {
     it(
       'C6712 Test the Organizations app searches (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'thunderjet', 'C6712', 'shiftLeft'] },
       () => {
-        Organizations.searchByParameters(searcher.parameter, searcher.value);
+        OrganizationsSearchAndFilter.searchByParameters(searcher.parameter, searcher.value);
         Organizations.checkSearchResults(organization);
         Organizations.resetFilters();
       },

@@ -1,9 +1,9 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   const organization = {
@@ -23,7 +23,7 @@ describe('Organizations', () => {
       organization.id = response;
     });
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
     Organizations.addNewDonorContact(firstContact);
@@ -31,7 +31,7 @@ describe('Organizations', () => {
     Organizations.addDonorContactToOrganization(firstContact);
     Organizations.checkDonorContactIsAdd(firstContact);
     Organizations.saveOrganization();
-    cy.createTempUser([permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -54,7 +54,7 @@ describe('Organizations', () => {
     'C423625 A user without  privileged donor information permission cannot view privileged donor information when edit organization record (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.removeDonorFromOrganization();

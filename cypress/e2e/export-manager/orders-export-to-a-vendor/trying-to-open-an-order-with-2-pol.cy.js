@@ -11,6 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -77,7 +78,7 @@ describe('Export Manager', () => {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
       Organizations.addIntegration();
@@ -161,7 +162,7 @@ describe('Export Manager', () => {
 
     it(
       'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'C350410', 'shiftLeft'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

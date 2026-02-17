@@ -13,100 +13,102 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('orders: Receiving and Check-in', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
-  const copyNumber = Helper.getRandomBarcode();
-
-  let orderNumber;
-  let circ2LocationServicePoint;
-  let location;
-  let orderLineTitleName;
-
-  before(() => {
-    cy.getAdminToken();
-
-    ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
-      circ2LocationServicePoint = servicePoint;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(circ2LocationServicePoint.id)).then(
-        (locationResponse) => {
-          location = locationResponse;
-          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-            organization.id = organizationsResponse;
-            order.vendor = organizationsResponse;
-          });
-
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-          cy.createOrderApi(order).then((response) => {
-            orderNumber = response.body.poNumber;
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            Orders.createPOLineViaActions();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 17);
-            OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-              'Purchase',
-              locationResponse.name,
-              '1',
-            );
-            OrderLines.backToEditingOrder();
-            OrderLines.getOrderLineViaApi({
-              query: `poLineNumber=="*${response.body.poNumber}*"`,
-            }).then((orderLines) => {
-              orderLineTitleName = orderLines[0];
-            });
-            Orders.openOrder();
-          });
+describe('Orders', () => {
+  describe('Receiving and Check-in', () => {
+    const order = {
+      ...NewOrder.defaultOneTimeOrder,
+      approved: true,
+    };
+    const organization = {
+      ...NewOrganization.defaultUiOrganizations,
+      accounts: [
+        {
+          accountNo: getRandomPostfix(),
+          accountStatus: 'Active',
+          acqUnitIds: [],
+          appSystemNo: '',
+          description: 'Main library account',
+          libraryCode: 'COB',
+          libraryEdiCode: getRandomPostfix(),
+          name: 'TestAccout1',
+          notes: '',
+          paymentMethod: 'Cash',
         },
-      );
-    });
+      ],
+    };
+    const copyNumber = Helper.getRandomBarcode();
 
-    cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-      permissions.uiOrdersView.gui,
-    ]).then((userProperties) => {
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+    let orderNumber;
+    let circ2LocationServicePoint;
+    let location;
+    let orderLineTitleName;
+
+    before(() => {
+      cy.getAdminToken();
+
+      ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
+        circ2LocationServicePoint = servicePoint;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(circ2LocationServicePoint.id)).then(
+          (locationResponse) => {
+            location = locationResponse;
+            Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+              organization.id = organizationsResponse;
+              order.vendor = organizationsResponse;
+            });
+
+            cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+            cy.createOrderApi(order).then((response) => {
+              orderNumber = response.body.poNumber;
+              Orders.searchByParameter('PO number', orderNumber);
+              Orders.selectFromResultsList(orderNumber);
+              Orders.createPOLineViaActions();
+              OrderLines.selectRandomInstanceInTitleLookUP('*', 17);
+              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+                'Purchase',
+                locationResponse.name,
+                '1',
+              );
+              OrderLines.backToEditingOrder();
+              OrderLines.getOrderLineViaApi({
+                query: `poLineNumber=="*${response.body.poNumber}*"`,
+              }).then((orderLines) => {
+                orderLineTitleName = orderLines[0];
+              });
+              Orders.openOrder();
+            });
+          },
+        );
+      });
+
+      cy.createTempUser([
+        permissions.uiInventoryViewInstances.gui,
+        permissions.uiReceivingViewEditCreate.gui,
+        permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
+
+    //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
+
+    it(
+      'C374133 Copy number applies to the item when receiving through "Receive" option (thunderjet) (TaaS)',
+      { tags: ['extendedPath', 'thunderjet', 'C374133'] },
+      () => {
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        Orders.receiveOrderViaActions();
+        Receiving.selectLinkFromResultsList();
+        Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
+        Receiving.selectInstanceInReceive(orderLineTitleName.titleOrPackage);
+        InventoryInstance.openHoldingsAccordion(location.name);
+        InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+        ItemRecordView.verifyEffectiveLocation(location.name);
+        ItemRecordView.checkCopyNumber(copyNumber);
+      },
+    );
   });
-
-  //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-
-  it(
-    'C374133 Copy number applies to the item when receiving through "Receive" option (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.receiveOrderViaActions();
-      Receiving.selectLinkFromResultsList();
-      Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
-      Receiving.selectInstanceInReceive(orderLineTitleName.titleOrPackage);
-      InventoryInstance.openHoldingsAccordion(location.name);
-      InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-      ItemRecordView.verifyEffectiveLocation(location.name);
-      ItemRecordView.checkCopyNumber(copyNumber);
-    },
-  );
 });

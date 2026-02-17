@@ -228,7 +228,7 @@ describe('Inventory', () => {
 
     it(
       'C374176 Verify the view mode of ISRI profiles (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C374176', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'folijet', 'C374176'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();

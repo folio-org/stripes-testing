@@ -14,115 +14,117 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe(
-  'orders: Receive piece from Order',
+  'Orders',
   {
     retries: {
       runMode: 1,
     },
   },
   () => {
-    let order;
-    let organization;
-    let orderLineUI;
-    let user;
-    let orderNumber;
-    let firstLocation;
-    let secondLocation;
-    const displaySummary = 'autotestCaption';
+    describe('Receiving and Check-in', () => {
+      let order;
+      let organization;
+      let orderLineUI;
+      let user;
+      let orderNumber;
+      let firstLocation;
+      let secondLocation;
+      const displaySummary = 'autotestCaption';
 
-    beforeEach(() => {
-      order = { ...NewOrder.defaultOneTimeOrder, approved: true };
-      organization = { ...NewOrganization.defaultUiOrganizations };
+      beforeEach(() => {
+        order = { ...NewOrder.defaultOneTimeOrder, approved: true };
+        organization = { ...NewOrganization.defaultUiOrganizations };
 
-      cy.getAdminToken();
+        cy.getAdminToken();
 
-      InventoryInstances.getLocations({ limit: 2 }).then((res) => {
-        [firstLocation, secondLocation] = res;
+        InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+          [firstLocation, secondLocation] = res;
 
-        cy.getDefaultMaterialType().then((mtype) => {
-          cy.getAcquisitionMethodsApi({
-            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-          }).then((params) => {
-            // Prepare 2 Open Orders for Rollover
-            Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-              organization.id = responseOrganizations;
-              order.vendor = organization.id;
-              const orderLine = {
-                ...BasicOrderLine.defaultOrderLine,
-                id: uuid(),
-                cost: {
-                  listUnitPrice: 200.0,
-                  currency: 'USD',
-                  discountType: 'percentage',
-                  quantityPhysical: 1,
-                  poLineEstimatedPrice: 200.0,
-                },
-                fundDistribution: [],
-                locations: [{ locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 }],
-                acquisitionMethod: params.body.acquisitionMethods[0].id,
-                physical: {
-                  createInventory: 'Instance, Holding, Item',
-                  materialType: mtype.id,
-                  materialSupplier: responseOrganizations,
-                  volumes: [],
-                },
-              };
-              Orders.createOrderViaApi(order).then((orderResponse) => {
-                order.id = orderResponse.id;
-                orderNumber = orderResponse.poNumber;
-                orderLine.purchaseOrderId = orderResponse.id;
-                orderLineUI = orderLine;
-                OrderLines.createOrderLineViaApi(orderLine);
-                Orders.updateOrderViaApi({
-                  ...orderResponse,
-                  workflowStatus: ORDER_STATUSES.OPEN,
+          cy.getDefaultMaterialType().then((mtype) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((params) => {
+              // Prepare 2 Open Orders for Rollover
+              Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+                organization.id = responseOrganizations;
+                order.vendor = organization.id;
+                const orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  id: uuid(),
+                  cost: {
+                    listUnitPrice: 200.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 200.0,
+                  },
+                  fundDistribution: [],
+                  locations: [{ locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: params.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtype.id,
+                    materialSupplier: responseOrganizations,
+                    volumes: [],
+                  },
+                };
+                Orders.createOrderViaApi(order).then((orderResponse) => {
+                  order.id = orderResponse.id;
+                  orderNumber = orderResponse.poNumber;
+                  orderLine.purchaseOrderId = orderResponse.id;
+                  orderLineUI = orderLine;
+                  OrderLines.createOrderLineViaApi(orderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResponse,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
                 });
               });
             });
           });
         });
-      });
 
-      cy.createTempUser([
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiReceivingViewEditCreate.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
+        cy.createTempUser([
+          permissions.uiOrdersView.gui,
+          permissions.uiOrdersEdit.gui,
+          permissions.uiInventoryViewInstances.gui,
+          permissions.uiReceivingViewEditCreate.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.ordersPath,
+              waiter: Orders.waitLoading,
+            });
           });
         });
       });
+
+      afterEach(() => {
+        cy.getAdminToken();
+        Orders.deleteOrderViaApi(order.id);
+        Organizations.deleteOrganizationViaApi(organization.id);
+        Users.deleteViaApi(user.userId);
+      });
+
+      it(
+        'C9177 Change location during receiving (thunderjet)',
+        { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'C9177'] },
+        () => {
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          // Receiving part
+          Orders.receiveOrderViaActions();
+          Receiving.selectFromResultsList(orderLineUI.titleOrPackage);
+          Receiving.receiveAndChangeLocation(0, displaySummary, secondLocation.name);
+
+          Receiving.checkReceived(0, displaySummary);
+          Receiving.selectInstanceInReceive();
+          InventoryInstance.checkInstanceTitle(orderLineUI.titleOrPackage);
+          InventoryInstance.openHoldingsAccordion(secondLocation.name);
+          InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+        },
+      );
     });
-
-    afterEach(() => {
-      cy.getAdminToken();
-      Orders.deleteOrderViaApi(order.id);
-      Organizations.deleteOrganizationViaApi(organization.id);
-      Users.deleteViaApi(user.userId);
-    });
-
-    it(
-      'C9177 Change location during receiving (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-      () => {
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        // Receiving part
-        Orders.receiveOrderViaActions();
-        Receiving.selectFromResultsList(orderLineUI.titleOrPackage);
-        Receiving.receiveAndChangeLocation(0, displaySummary, secondLocation.name);
-
-        Receiving.checkReceived(0, displaySummary);
-        Receiving.selectInstanceInReceive();
-        InventoryInstance.checkInstanceTitle(orderLineUI.titleOrPackage);
-        InventoryInstance.openHoldingsAccordion(secondLocation.name);
-        InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-      },
-    );
   },
 );

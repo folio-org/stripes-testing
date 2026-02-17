@@ -1,7 +1,8 @@
-import { HTML } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Card,
   Checkbox,
   KeyValue,
   Link,
@@ -10,30 +11,26 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
+  PaneContent,
   PaneHeader,
+  RepeatableField,
   SearchField,
   Section,
   Select,
   Selection,
-  SelectionOption,
   Spinner,
   TextArea,
   TextField,
-  including,
-  MultiSelectMenu,
-  or,
-  PaneContent,
-  Card,
-  RepeatableField,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
+import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
 import OrganizationDetails from './organizationDetails';
-import DateTools from '../../utils/dateTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -46,7 +43,6 @@ const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
 const tagButton = Button({ icon: 'tag' });
 const summarySection = Accordion({ id: summaryAccordionId });
-const searchInput = SearchField({ id: 'input-record-search' });
 const vendorEDICodeEdited = `${getRandomPostfix()}`;
 const libraryEDICodeEdited = `${getRandomPostfix()}`;
 const serverAddress = 'ftp://ftp.ci.folio.org';
@@ -82,8 +78,16 @@ const openInterfaceSectionButton = Button({
   id: 'accordion-toggle-button-interfacesSection',
 });
 const interfaceSection = Section({ id: 'interfacesSection' });
-const addInterfaceButton = Button('Add interface');
 const addInterfacesModal = Modal('Add interfaces');
+const listIntegrationConfigs = MultiColumnList({
+  id: 'list-integration-configs',
+});
+const donorCheckbox = Checkbox('Donor');
+const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
+const paymentMethodSection = Select('Payment method');
+const accountStatus = Select('Account status*');
+const tagsPane = Pane('Tags');
+const addInterfaceButton = Button('Add interface');
 const saveButton = Button('Save');
 const confirmButton = Button('Confirm');
 const searchButtonInModal = Button({ type: 'submit' });
@@ -92,76 +96,24 @@ const categoryButton = Button('Categories');
 const openintegrationDetailsSectionButton = Button({
   id: 'accordion-toggle-button-integrationDetailsSection',
 });
-const listIntegrationConfigs = MultiColumnList({
-  id: 'list-integration-configs',
-});
-const donorCheckbox = Checkbox('Donor');
-const toggleButtonIsDonor = Button({ id: 'accordion-toggle-button-isDonor' });
-const donorSection = Section({ id: 'isDonor' });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
-const privilegedDonorInformationSection = Section({ id: 'privilegedDonorInformation' });
-const toggleOrganizationStatus = Button({ id: 'accordion-toggle-button-status' });
-const toggleOrganizationTypes = Button({
-  id: 'accordion-toggle-button-org-filter-organizationTypes',
-});
-const toggleOrganizationTags = Button({ id: 'accordion-toggle-button-tags' });
-const toggleButtonIsVendor = Button({ id: 'accordion-toggle-button-isVendor' });
-const toggleButtonCountry = Button({ id: 'accordion-toggle-button-plugin-country-filter' });
-const toggleButtonLanguage = Button({ id: 'accordion-toggle-button-plugin-language-filter' });
-const toggleButtonPaymentMethod = Button({ id: 'accordion-toggle-button-paymentMethod' });
-const toggleButtonAcquisitionMethod = Button({
-  id: 'accordion-toggle-button-org-filter-acqUnitIds',
-});
-const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
-const toggleButtonDateCreated = Button({ id: 'accordion-toggle-button-metadata.createdDate' });
-const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
-const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
-const updatedDateAccordion = Section({ id: 'metadata.updatedDate' });
-const startDateField = TextField({ name: 'startDate' });
-const endDateField = TextField({ name: 'endDate' });
-const applyButton = Button('Apply');
-const vendorInformationAccordion = Button({
-  id: 'accordion-toggle-button-vendorInformationSection',
-});
-const paymentMethodSection = Select('Payment method');
-const vendorTermsAccordion = Button({ id: 'accordion-toggle-button-agreementsSection' });
-const accountAccordion = Button({ id: 'accordion-toggle-button-accountsSection' });
-const accountStatus = Select('Account status*');
-
-const tagsPane = Pane('Tags');
-
 const nextButton = Button('Next', { disabled: or(true, false) });
 const previousButton = Button('Previous', { disabled: or(true, false) });
 const contactStatusButton = Button({ id: 'accordion-toggle-button-inactive' });
-
-const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
-
 const contactInformationSection = Button({
   id: 'accordion-toggle-button-contactInformationSection',
 });
+const vendorTermsAccordion = Button({ id: 'accordion-toggle-button-agreementsSection' });
+const accountAccordion = Button({ id: 'accordion-toggle-button-accountsSection' });
+const vendorInformationAccordion = Button({
+  id: 'accordion-toggle-button-vendorInformationSection',
+});
+const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
 
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
-  },
-
-  verifySearchAndFilterPane() {
-    cy.expect([
-      toggleOrganizationStatus.exists(),
-      toggleOrganizationTypes.exists(),
-      toggleOrganizationTags.exists(),
-      toggleButtonIsDonor.exists(),
-      toggleButtonIsVendor.exists(),
-      toggleButtonCountry.exists(),
-      toggleButtonLanguage.exists(),
-      toggleButtonPaymentMethod.exists(),
-      toggleButtonAcquisitionMethod.exists(),
-      toggleButtonCreatedBy.exists(),
-      toggleButtonDateCreated.exists(),
-      toggleButtonUpdatedBy.exists(),
-      toggleButtonDateUpdated.exists(),
-    ]);
   },
 
   verifyPagination(numberOfRows) {
@@ -259,7 +211,7 @@ export default {
     cy.get('@print').should('have.been.called');
   },
 
-  createOrganizationViaUi: (organization) => {
+  createOrganization(organization) {
     cy.expect(buttonNew.exists());
     cy.do(buttonNew.click());
     cy.wait(4000);
@@ -507,62 +459,6 @@ export default {
       MultiSelect({ id: 'acq-tags-filter' }).open(),
       MultiSelectMenu().find(MultiSelectOption(tag)).clickSegment(),
     ]);
-  },
-
-  selectActiveStatus: () => {
-    cy.do(Checkbox('Active').click());
-  },
-
-  selectPendingStatus: () => {
-    cy.wait(3000);
-    cy.do(Checkbox('Pending').click());
-  },
-
-  selectInactiveStatus: () => {
-    cy.wait(3000);
-    cy.do(Checkbox('Inactive').click());
-  },
-
-  selectIsDonorFilter: (isDonor) => {
-    if (isDonor === 'Yes') {
-      cy.wait(3000);
-      cy.do([
-        toggleButtonIsDonor.click(),
-        donorSection.find(Checkbox('Yes')).click(),
-        toggleButtonIsDonor.click(),
-      ]);
-    } else if (isDonor === 'No') {
-      cy.wait(3000);
-      cy.do([
-        toggleButtonIsDonor.click(),
-        donorSection.find(Checkbox('No')).click(),
-        toggleButtonIsDonor.click(),
-      ]);
-    }
-  },
-
-  selectCreatedByFiler: (createdBy) => {
-    cy.do([
-      toggleButtonCreatedBy.click(),
-      Button('Find User').click(),
-      TextField({ name: 'query' }).fillIn(createdBy),
-      searchButtonInModal.click(),
-      MultiColumnListRow({ index: 0 }).click(),
-    ]);
-  },
-
-  selectUpdatedByFiler: (createdBy) => {
-    cy.do([
-      toggleButtonUpdatedBy.click(),
-      Button('Find User').click(),
-      TextField({ name: 'query' }).fillIn(createdBy),
-      searchButtonInModal.click(),
-      MultiColumnListRow({ index: 0 }).click(),
-    ]);
-  },
-
-  checkOrganizationFilter: () => {
-    cy.expect(organizationsList.exists());
   },
 
   addNewCategory: (value) => {
@@ -941,15 +837,6 @@ export default {
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
   },
 
-  searchByParameters: (parameter, value) => {
-    cy.wait(4000);
-    cy.do([
-      searchInput.selectIndex(parameter),
-      searchInput.fillIn(value),
-      Button('Search').click(),
-    ]);
-  },
-
   resetFilters: () => {
     cy.wait(3000);
     cy.do(resetButton.click());
@@ -970,17 +857,7 @@ export default {
   },
 
   checkSearchResults: (organization) => {
-    cy.wait(4000);
     cy.expect(organizationsList.find(Link(organization.name)).exists());
-  },
-
-  selectYesInIsVendor: () => {
-    cy.do([toggleButtonIsVendor.click(), Checkbox('Yes').click()]);
-  },
-
-  selectNoInIsVendor: () => {
-    cy.wait(3000);
-    cy.do([toggleButtonIsVendor.click(), Checkbox('No').click()]);
   },
 
   selectVendor: () => {
@@ -1018,30 +895,9 @@ export default {
   closeDetailsPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(timesButton).click());
   },
+
   closeIntegrationDetailsPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
-  },
-  selectCountryFilter: (country) => {
-    cy.wait(3000);
-    cy.do([
-      toggleButtonCountry.click(),
-      Button({ id: 'addresses-selection' }).click(),
-      SelectionOption(country).click(),
-    ]);
-  },
-
-  selectLanguageFilter: () => {
-    cy.wait(3000);
-    cy.do([
-      toggleButtonLanguage.click(),
-      Button({ id: 'language-selection' }).click(),
-      SelectionOption('English').click(),
-    ]);
-  },
-
-  selectCashInPaymentMethod: () => {
-    cy.wait(3000);
-    cy.do([toggleButtonPaymentMethod.click(), Checkbox('Cash').click()]);
   },
 
   deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
@@ -1145,35 +1001,7 @@ export default {
     })
     .then((resp) => resp.body.id),
 
-  getTagByLabel(label) {
-    const q = `label=="${label}"`;
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'tags',
-        searchParams: { query: q, limit: 1 },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((r) => r.body.tags?.[0] ?? null);
-  },
-
-  getPrivilegedContacts({ cql, limit = 10, offset = 0, totalRecords = 'auto' } = {}) {
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'organizations-storage/privileged-contacts',
-        searchParams: { ...(cql ? { query: cql } : {}), limit, offset, totalRecords },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((r) => r.body.contacts ?? []);
-  },
-
-  getPrivilegedContactByName(firstName, lastName) {
-    const q = `firstName == "${firstName}" and lastName == "${lastName}"`;
-    return this.getPrivilegedContacts({ cql: q, limit: 1 }).then((arr) => arr[0] ?? null);
-  },
-
-  deleteTagById(id) {
+  deleteTagByIdViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `tags/${id}`,
@@ -1187,6 +1015,34 @@ export default {
       path: `organizations-storage/privileged-contacts/${id}`,
       failOnStatusCode: false,
     });
+  },
+
+  getTagByLabelViaApi(label) {
+    const q = `label=="${label}"`;
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'tags',
+        searchParams: { query: q, limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((r) => r.body.tags?.[0] ?? null);
+  },
+
+  getPrivilegedContactsViaApi({ cql, limit = 10, offset = 0, totalRecords = 'auto' } = {}) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'organizations-storage/privileged-contacts',
+        searchParams: { ...(cql ? { query: cql } : {}), limit, offset, totalRecords },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((r) => r.body.contacts ?? []);
+  },
+
+  getPrivilegedContactByName(firstName, lastName) {
+    const q = `firstName == "${firstName}" and lastName == "${lastName}"`;
+    return this.getPrivilegedContactsViaApi({ cql: q, limit: 1 }).then((arr) => arr[0] ?? null);
   },
 
   editOrganization: () => {
@@ -1922,7 +1778,7 @@ export default {
     cy.expect(deleteButton.absent());
   },
 
-  varifySaveOrganizationCalloutMessage: (organization) => {
+  verifySaveCalloutMessage: (organization) => {
     InteractorsTools.checkCalloutMessage(
       `The Organization - "${organization.name}" has been successfully saved`,
     );
@@ -2032,15 +1888,6 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(Button(label).has(conditions));
     });
-  },
-
-  filterByDateUpdated(startDate, endDate) {
-    cy.do([
-      toggleButtonDateUpdated.click(),
-      updatedDateAccordion.find(startDateField).fillIn(startDate),
-      updatedDateAccordion.find(endDateField).fillIn(endDate),
-      updatedDateAccordion.find(applyButton).click(),
-    ]);
   },
 
   checkInvalidDateRangeMessage: (expected = 'Start date is greater than end date') => {

@@ -1,11 +1,12 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Organizations --> Settings', () => {
   const categoryName = `Category_${getRandomPostfix()}`;
@@ -19,8 +20,8 @@ describe('Organizations --> Settings', () => {
       organization.id = organizationId;
     });
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.waitForAuthRefresh(() => {
@@ -46,8 +47,9 @@ describe('Organizations --> Settings', () => {
     SettingsOrganizations.fillCategoryName(categoryName);
     SettingsOrganizations.saveCategoryChanges();
     SettingsOrganizations.checkCategoriesTableContent(categoryName);
-    TopMenuNavigation.navigateToApp('Organizations');
-    Organizations.searchByParameters('Name', organization.name);
+
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
     Organizations.openContactPeopleSection();
