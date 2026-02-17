@@ -609,4 +609,24 @@ export default {
       saveAndCloseButton.has({ disabled: !saveAndClose }),
     ]);
   },
+
+  openAddChildInstanceModal() {
+    cy.do([
+      addChildInstanceButton.click(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+  },
+
+  openAddParentInstanceModal() {
+    cy.do([
+      addParentInstanceButton.click(),
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+  },
+
+  closeSelectInstanceModal() {
+    InventoryInstanceModal.close();
+  },
 };

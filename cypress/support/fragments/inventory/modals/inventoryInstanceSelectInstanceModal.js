@@ -59,4 +59,9 @@ export default {
         .exists(),
     );
   },
+
+  close() {
+    cy.do(rootModal.dismiss());
+    cy.expect(rootModal.absent());
+  },
 };
