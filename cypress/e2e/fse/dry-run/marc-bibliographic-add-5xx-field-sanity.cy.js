@@ -21,7 +21,7 @@ describe('MARC', () => {
         });
 
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password)
+        cy.getUserToken(user.username, user.password, { log: false })
           .then(() => {
             cy.getUserDetailsByUsername(user.username).then((details) => {
               user.id = details.id;
@@ -49,7 +49,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
 
         if (testData.instanceID) {
           InventoryInstance.deleteInstanceViaApi(testData.instanceID);

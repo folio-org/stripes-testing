@@ -22,7 +22,7 @@ describe('Bulk-edit', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         cy.createTempUser([]).then((userProperties) => {
           testUser = userProperties;
 
@@ -44,7 +44,7 @@ describe('Bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       Users.deleteViaApi(testUser.userId);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);

@@ -241,7 +241,7 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
@@ -259,7 +259,7 @@ describe('Data Import', () => {
       FileManager.deleteFileFromDownloadsByMask(`*${exportedFileName}`);
       FileManager.deleteFileFromDownloadsByMask(`*${nameForCSVFile}`);
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {

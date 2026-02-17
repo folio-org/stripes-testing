@@ -21,7 +21,7 @@ describe('MARC', () => {
 
     before('Setup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun)
         .then((response) => {
           response.forEach((record) => {
@@ -39,7 +39,7 @@ describe('MARC', () => {
     });
 
     after('Cleanup', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       if (holdingsID) {
         cy.deleteHoldingRecordViaApi(holdingsID);
       }

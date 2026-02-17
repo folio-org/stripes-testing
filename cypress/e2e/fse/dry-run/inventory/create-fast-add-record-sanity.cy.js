@@ -23,7 +23,7 @@ describe('Inventory', () => {
 
     before('Set instance status', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
       cy.allure().logCommandSteps(false);
@@ -33,7 +33,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
         );

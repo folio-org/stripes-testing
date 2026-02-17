@@ -19,7 +19,7 @@ describe('MARC', () => {
         });
 
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password)
+        cy.getUserToken(user.username, user.password, { log: false })
           .then(() => {
             InventoryInstances.importWithOclcViaApi(InventoryInstance.validOCLC.id).then(
               ({ body: { internalIdentifier } }) => {
@@ -40,7 +40,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         if (testData.instanceID) {
           InventoryInstance.deleteInstanceViaApi(testData.instanceID);
         }

@@ -38,7 +38,7 @@ describe('MARC', () => {
 
         afterEach('Deleting data', () => {
           cy.allure().logCommandSteps(false);
-          cy.getUserToken(user.username, user.password);
+          cy.getUserToken(user.username, user.password, { log: false });
           cy.allure().logCommandSteps();
           createdAuthorityIDs.forEach((id) => {
             MarcAuthority.deleteViaAPI(id);

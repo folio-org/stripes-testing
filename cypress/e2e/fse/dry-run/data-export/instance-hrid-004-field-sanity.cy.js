@@ -28,7 +28,7 @@ describe('Data Export', () => {
   describe('Holdings records export', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           // Fetch user details
           cy.getUserDetailsByUsername(user.username).then((details) => {
@@ -98,7 +98,7 @@ describe('Data Export', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
 
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);

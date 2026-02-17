@@ -16,7 +16,7 @@ describe('Note creation', () => {
 
   before('Setup', () => {
     cy.setTenant(memberTenant.id);
-    cy.getUserToken(user.username, user.password);
+    cy.getUserToken(user.username, user.password, { log: false });
     eHoldingsProviders
       .getProvidersViaApi()
       .then((providers) => {

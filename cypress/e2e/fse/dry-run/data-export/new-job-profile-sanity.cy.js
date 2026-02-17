@@ -22,7 +22,7 @@ describe('Data Export', () => {
   describe('Job profiles', () => {
     before('create user, job and navigate to page', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
           fieldMappingProfileName,
         ).then((response) => {
@@ -39,7 +39,7 @@ describe('Data Export', () => {
     });
 
     after('delete jobs and user', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
 
       ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(

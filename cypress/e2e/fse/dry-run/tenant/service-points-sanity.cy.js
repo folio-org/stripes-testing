@@ -15,7 +15,7 @@ const newServicePoint = {
 describe('Settings: Tenant', () => {
   before('create test data', () => {
     cy.setTenant(memberTenant.id);
-    cy.getUserToken(user.username, user.password);
+    cy.getUserToken(user.username, user.password, { log: false });
 
     cy.allure().logCommandSteps(false);
     cy.login(user.username, user.password, {
@@ -27,7 +27,7 @@ describe('Settings: Tenant', () => {
   });
 
   after('delete test data', () => {
-    cy.getUserToken(user.username, user.password);
+    cy.getUserToken(user.username, user.password, { log: false });
     cy.setTenant(memberTenant.id);
     ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.name}")` }).then(
       (servicePoints) => {

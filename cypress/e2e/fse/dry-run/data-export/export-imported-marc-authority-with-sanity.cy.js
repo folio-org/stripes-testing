@@ -52,7 +52,7 @@ describe('Data Export', () => {
   describe('Authority records export', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           // Fetch user details
           cy.getUserDetailsByUsername(user.username).then((details) => {
@@ -89,7 +89,7 @@ describe('Data Export', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       MarcAuthorities.deleteViaAPI(marcAuthority.id, true);
       FileManager.deleteFile(`cypress/fixtures/${marcAuthorityUUIDFileName}`);
@@ -123,7 +123,7 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
-          cy.getUserToken(user.username, user.password);
+          cy.getUserToken(user.username, user.password, { log: false });
 
           DataExportLogs.clickButtonWithText(exportedFileName);
 

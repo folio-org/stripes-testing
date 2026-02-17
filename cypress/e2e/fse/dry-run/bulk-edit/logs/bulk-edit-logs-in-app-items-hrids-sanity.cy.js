@@ -37,7 +37,7 @@ describe('Bulk-edit', () => {
         invalidItemHRID = getRandomPostfix();
 
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password)
+        cy.getUserToken(user.username, user.password, { log: false })
           .then(() => {
             cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
               instance.instanceTypeId = instanceTypes[0].id;
@@ -113,7 +113,7 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.setTenant(memberTenant.id);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item1.barcode);
         FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);

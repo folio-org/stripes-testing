@@ -224,14 +224,14 @@ Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
 Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
   if (Cypress.env('eureka')) {
     cy.do([
-      TextInput('Username').fillIn(username),
-      TextInput('Password').fillIn(password),
+      TextInput('Username').fillIn(username, { log: false }),
+      TextInput('Password').fillIn(password, { log: false }),
       Button({ name: 'login' }).click(),
     ]);
   } else {
     cy.do([
-      TextField('Username').fillIn(username),
-      TextField('Password').fillIn(password),
+      TextField('Username').fillIn(username, { log: false }),
+      TextField('Password').fillIn(password, { log: false }),
       Button('Log in').click(),
     ]);
   }
