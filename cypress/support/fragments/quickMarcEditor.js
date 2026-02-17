@@ -1020,6 +1020,16 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
+  deleteFirstFieldByTag(tag) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+      }
+    });
+  },
+
   verifySaveAndCloseButtonEnabled(isEnabled = true) {
     cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
   },
