@@ -192,12 +192,22 @@ export default {
     cy.expect(modalWithErrorMessage.absent());
   },
 
-  validateNameFieldWithError(message, indexRow = 0) {
-    cy.expect([
-      TextField({ name: `items[${indexRow}].name` }).has({ error: message }),
-      cancelButton.has({ disabled: false }),
-      saveButton.has({ disabled: true }),
-    ]);
+  validateNameFieldWithError(message) {
+    cy.get('#controlled-vocab-pane')
+      .find('input[name*="items["][name*="].name"]')
+      .should('exist')
+      .then(($inputs) => {
+        const nameAttr = $inputs.first().attr('name');
+        const indexMatch = nameAttr.match(/items\[(\d+)\]\.name/);
+        if (indexMatch) {
+          const rowIndex = parseInt(indexMatch[1], 10);
+          cy.expect([
+            TextField({ name: `items[${rowIndex}].name` }).has({ error: message }),
+            cancelButton.has({ disabled: false }),
+            saveButton.has({ disabled: true }),
+          ]);
+        }
+      });
     cy.wait(1000);
   },
 };

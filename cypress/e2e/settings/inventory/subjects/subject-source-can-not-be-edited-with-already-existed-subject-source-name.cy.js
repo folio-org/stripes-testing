@@ -5,7 +5,7 @@ import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-// import Users from '../../../../support/fragments/users/users';
+import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -27,7 +27,7 @@ describe('Inventory', () => {
       before('Create test data and login', () => {
         cy.getAdminToken();
         cy.getAdminUserDetails().then((admin) => {
-          testData.adminUser = admin.username;
+          testData.adminUser = admin;
         });
         SubjectSources.createViaApi({
           source: firstLocalSubjectSource.source,
@@ -55,11 +55,12 @@ describe('Inventory', () => {
         );
       });
 
-      // after('Delete test data', () => {
-      //   cy.getAdminToken();
-      //   Users.deleteViaApi(testData.user.userId);
-      //   SubjectSources.deleteViaApi(localSubjectSource.id);
-      // });
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        SubjectSources.deleteViaApi(firstLocalSubjectSource.id);
+        SubjectSources.deleteViaApi(secondLocalSubjectSource.id);
+      });
 
       it(
         "C543864 Check that Subject source can't be edited with already existed subject source name (folijet)",
@@ -68,14 +69,17 @@ describe('Inventory', () => {
           SubjectSources.verifySubjectSourceExists(
             firstLocalSubjectSource.name,
             firstLocalSubjectSource.source,
-            testData.adminUser,
+            `${testData.adminUser.personal.lastName}, ${testData.adminUser.personal.firstName}`,
+            { actions: ['edit', 'trash'] },
           );
           SubjectSources.editSubjectSourceName(
             firstLocalSubjectSource.name,
             secondLocalSubjectSource.name,
           );
-          SubjectSources.validateButtonsState({ cancel: 'enabled', save: 'disabled' });
-          SubjectSources.validateNameFieldWithError(testData.errorMessage);
+          SubjectSources.validateNameFieldWithError(
+            testData.errorMessage,
+            secondLocalSubjectSource.name,
+          );
         },
       );
     });
