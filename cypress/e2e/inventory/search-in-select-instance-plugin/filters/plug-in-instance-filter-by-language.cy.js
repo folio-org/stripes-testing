@@ -158,7 +158,7 @@ describe('Inventory', () => {
             languages[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             languageAccordionName,
             languages[1].name,
           );
