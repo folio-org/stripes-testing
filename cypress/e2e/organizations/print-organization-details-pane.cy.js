@@ -3,6 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let user;
@@ -32,7 +33,7 @@ describe('Organizations', () => {
     'C422053 Print organization details pane (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C422053'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.checkOrganizationInfo(organization);
       Organizations.clickExpandAllButton();

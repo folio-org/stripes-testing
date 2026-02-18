@@ -1,18 +1,17 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Organizations', () => {
   let user;
-  const organization = { ...newOrganization.defaultUiOrganizations };
+  const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before('Create user and organization', () => {
     cy.getAdminToken();
     cy.createTempUser([
-      permissions.uiOrganizationsViewEdit.gui,
-      permissions.uiOrganizationsViewEditCreate.gui,
+      Permissions.uiOrganizationsViewEdit.gui,
+      Permissions.uiOrganizationsViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -24,14 +23,10 @@ describe('Organizations', () => {
   });
 
   after('Delete test data', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.organizationsPath,
-      waiter: Organizations.waitLoading,
-      authRefresh: true,
+    cy.getAdminToken();
+    Organizations.getOrganizationViaApi({ name: organization.name }).then((response) => {
+      Organizations.deleteOrganizationViaApi(response.id);
     });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganizationInCurrentPage(organization.name);
-    Organizations.deleteOrganization();
     Users.deleteViaApi(user.userId);
   });
 
@@ -51,7 +46,7 @@ describe('Organizations', () => {
       Organizations.clickAddAdressButton();
       Organizations.addAdressToOrganization({ addressLine1: 'Test Address 4' }, 3);
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
       Organizations.editOrganization();
       Organizations.openContactInformationSection();
       Organizations.addAdressToOrganization({ addressLine1: 'Test Address Edited' }, 0);
@@ -62,7 +57,7 @@ describe('Organizations', () => {
       Organizations.clickAddPhoneNumberButton();
       Organizations.addPhoneNumberToOrganization({ phoneNum: '123456' }, 1);
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
     },
   );
 });

@@ -10,7 +10,7 @@ import { randomFourDigitNumber } from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../support/constants';
 
-describe('orders: Test PO filters', () => {
+describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const orderPrefix = `pref${randomFourDigitNumber()}`;
   const orderSuffix = `suf${randomFourDigitNumber()}`;

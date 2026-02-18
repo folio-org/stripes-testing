@@ -33,13 +33,7 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"title"=="${testData.instance.instanceTitle}"`,
-        }).then((instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       });
     });
 

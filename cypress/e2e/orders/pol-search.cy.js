@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
-describe('orders: Test Po line search', () => {
+describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {

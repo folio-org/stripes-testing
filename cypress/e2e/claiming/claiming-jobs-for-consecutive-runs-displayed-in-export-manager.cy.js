@@ -1,21 +1,20 @@
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import NewOrder from '../../support/fragments/orders/newOrder';
+import Claiming from '../../support/fragments/claiming/claiming';
+import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
+import { BasicOrderLine, NewOrder, Orders, Pieces } from '../../support/fragments/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import Pieces from '../../support/fragments/orders/pieces/pieces';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Claiming from '../../support/fragments/claiming/claiming';
-import Receiving from '../../support/fragments/receiving/receiving';
-import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import { ORDER_STATUSES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Claiming', () => {
   const testData = {
@@ -44,110 +43,103 @@ describe('Claiming', () => {
   before('Create test data', () => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-      .then((servicePoints) => {
-        testData.servicePointId = servicePoints[0].id;
+    cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` })
+      .then((locationResp) => {
+        testData.location = locationResp;
+        Organizations.createOrganizationViaApi(testData.organization).then(
+          (organizationResponse) => {
+            testData.organization.id = organizationResponse;
 
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.servicePointId)).then(
-          (location) => {
-            testData.location = location;
+            cy.getDefaultMaterialType().then((materialType) => {
+              testData.materialType = materialType;
 
-            Organizations.createOrganizationViaApi(testData.organization).then(
-              (organizationResponse) => {
-                testData.organization.id = organizationResponse;
+              cy.getAcquisitionMethodsApi({
+                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+              }).then((acquisitionMethodResponse) => {
+                testData.acquisitionMethod =
+                  acquisitionMethodResponse.body.acquisitionMethods[0].id;
 
-                cy.getDefaultMaterialType().then((materialType) => {
-                  testData.materialType = materialType;
+                const orderData = {
+                  ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+                  orderType: 'One-Time',
+                  approved: true,
+                  reEncumber: true,
+                };
 
-                  cy.getAcquisitionMethodsApi({
-                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                  }).then((acquisitionMethodResponse) => {
-                    testData.acquisitionMethod =
-                      acquisitionMethodResponse.body.acquisitionMethods[0].id;
+                Orders.createOrderViaApi(orderData).then((orderResponse) => {
+                  testData.order = orderResponse;
+                  testData.orderNumber = orderResponse.poNumber;
+                  testData.polTitle = `Autotest_POL_C692237_${getRandomPostfix()}`;
 
-                    const orderData = {
-                      ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-                      orderType: 'One-Time',
-                      approved: true,
-                      reEncumber: true,
-                    };
-
-                    Orders.createOrderViaApi(orderData).then((orderResponse) => {
-                      testData.order = orderResponse;
-                      testData.orderNumber = orderResponse.poNumber;
-                      testData.polTitle = `Autotest_POL_C692237_${getRandomPostfix()}`;
-
-                      const orderLineData = {
-                        ...BasicOrderLine.defaultOrderLine,
-                        purchaseOrderId: testData.order.id,
-                        titleOrPackage: testData.polTitle,
-                        claimingActive: true,
-                        claimingInterval: 1,
-                        checkinItems: false,
-                        receiptStatus: 'Awaiting Receipt',
-                        cost: {
-                          listUnitPrice: 10.0,
-                          currency: 'USD',
-                          quantityPhysical: 2,
+                  const orderLineData = {
+                    ...BasicOrderLine.defaultOrderLine,
+                    purchaseOrderId: testData.order.id,
+                    titleOrPackage: testData.polTitle,
+                    claimingActive: true,
+                    claimingInterval: 1,
+                    checkinItems: false,
+                    receiptStatus: 'Awaiting Receipt',
+                    cost: {
+                      listUnitPrice: 10.0,
+                      currency: 'USD',
+                      quantityPhysical: 2,
+                    },
+                    locations: [
+                      {
+                        locationId: testData.location.id,
+                        quantity: 2,
+                        quantityPhysical: 2,
+                      },
+                    ],
+                    acquisitionMethod: testData.acquisitionMethod,
+                    physical: {
+                      createInventory: 'Instance, Holding, Item',
+                      materialType: testData.materialType.id,
+                      materialSupplier: testData.organization.id,
+                      volumes: [],
+                    },
+                    vendorDetail: {
+                      instructions: '',
+                      vendorAccount: testData.organization.accounts[0].accountNo,
+                      referenceNumbers: [
+                        {
+                          refNumber: `VendorRef_${getRandomPostfix()}`,
+                          refNumberType: 'Vendor order reference number',
                         },
-                        locations: [
-                          {
-                            locationId: testData.location.id,
-                            quantity: 2,
-                            quantityPhysical: 2,
-                          },
-                        ],
-                        acquisitionMethod: testData.acquisitionMethod,
-                        physical: {
-                          createInventory: 'Instance, Holding, Item',
-                          materialType: testData.materialType.id,
-                          materialSupplier: testData.organization.id,
-                          volumes: [],
-                        },
-                        vendorDetail: {
-                          instructions: '',
-                          vendorAccount: testData.organization.accounts[0].accountNo,
-                          referenceNumbers: [
-                            {
-                              refNumber: `VendorRef_${getRandomPostfix()}`,
-                              refNumberType: 'Vendor order reference number',
-                            },
-                          ],
-                        },
-                      };
+                      ],
+                    },
+                  };
 
-                      OrderLines.createOrderLineViaApi(orderLineData).then((orderLineResponse) => {
-                        testData.orderLine = orderLineResponse;
+                  OrderLines.createOrderLineViaApi(orderLineData).then((orderLineResponse) => {
+                    testData.orderLine = orderLineResponse;
 
-                        Orders.updateOrderViaApi({
-                          ...testData.order,
-                          workflowStatus: ORDER_STATUSES.OPEN,
-                        }).then(() => {
-                          cy.wait(3000);
+                    Orders.updateOrderViaApi({
+                      ...testData.order,
+                      workflowStatus: ORDER_STATUSES.OPEN,
+                    }).then(() => {
+                      cy.wait(3000);
 
-                          Receiving.getPiecesViaApi(testData.orderLine.id).then((pieces) => {
-                            if (pieces && pieces.length >= 2) {
-                              testData.pieces = pieces;
-                              const updatePromises = pieces.map((piece) => Pieces.updateOrderPieceViaApi({
-                                ...piece,
-                                receivingStatus: 'Late',
-                              }));
-                              cy.wrap(Promise.all(updatePromises));
-                            }
-                          });
-                        });
+                      Receiving.getPiecesViaApi(testData.orderLine.id).then((pieces) => {
+                        if (pieces && pieces.length >= 2) {
+                          testData.pieces = pieces;
+                          const updatePromises = pieces.map((piece) => Pieces.updateOrderPieceViaApi({
+                            ...piece,
+                            receivingStatus: 'Late',
+                          }));
+                          cy.wrap(Promise.all(updatePromises));
+                        }
                       });
                     });
                   });
                 });
-              },
-            );
+              });
+            });
           },
         );
       })
       .then(() => {
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.searchByParameters('Name', testData.organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
         Organizations.selectOrganization(testData.organization.name);
         Organizations.addIntegration();
         Organizations.fillIntegrationInformationWithoutSchedulingWithDifferentInformation({
@@ -160,6 +152,7 @@ describe('Claiming', () => {
           fileFormat: 'CSV',
         });
         Organizations.saveOrganization();
+
         cy.createTempUser([
           Permissions.uiClaimingView.gui,
           Permissions.exportManagerAll.gui,

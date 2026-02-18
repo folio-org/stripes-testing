@@ -1,5 +1,6 @@
 import { Permissions } from '../../support/dictionary';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -43,11 +44,11 @@ describe('Organizations', () => {
     { tags: ['extendedPath', 'thunderjet', 'C369086'] },
     () => {
       // Check "Active" checkbox in "Organizations status" accordion on "Search & filter" pane
-      Organizations.selectActiveStatus();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
 
       testData.organizations.forEach((organization) => {
         // Search for organizations from Preconditions
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
 
         // Click on the hyperlink in "Name" column

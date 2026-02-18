@@ -5,12 +5,14 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
-  describe('Edit list',
+  describe(
+    'Edit list',
     {
       retries: {
         runMode: 1,
       },
-    }, () => {
+    },
+    () => {
       let firstUser = {};
       let secondUser = {};
       let listData;
@@ -147,5 +149,6 @@ describe('Lists', () => {
           Lists.verifyListIsPresent(listData.name);
         },
       );
-    });
+    },
+  );
 });

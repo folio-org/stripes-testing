@@ -60,7 +60,7 @@ describe('fse-organizations - UI (data manipulation)', () => {
     { tags: ['nonProd', 'fse', 'ui', 'organizations', 'fse-user-journey'] },
     () => {
       // create new organization via UI
-      Organizations.createOrganizationViaUi(organization);
+      Organizations.createOrganization(organization);
       Organizations.checkOrganizationInfo(organization);
       // assign an interface
       Organizations.editOrganization();
@@ -97,7 +97,7 @@ describe('fse-organizations - UI (data manipulation)', () => {
     () => {
       // create new organization via UI
       organization.name += 'FSE_TEST_TC195673';
-      Organizations.createOrganizationViaUi(organization);
+      Organizations.createOrganization(organization);
       Organizations.checkOrganizationInfo(organization);
       // add organization to an agreement
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);

@@ -1,6 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -38,7 +39,7 @@ describe('Organizations', () => {
     'C380639 Edit note (enter more than 30 characters) in "Contact people" list in "Organization" app (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C380639'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.openContactPeopleSectionInEditCard();

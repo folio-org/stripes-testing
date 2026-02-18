@@ -7,7 +7,10 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Consortia', () => {
   let user1;
-  let user2 = { ...Users.generateUserModel(), ...{ username: `AT_Username_${getRandomPostfix()}` } };
+  let user2 = {
+    ...Users.generateUserModel(),
+    ...{ username: `AT_Username_${getRandomPostfix()}` },
+  };
 
   before('Create users, data', () => {
     cy.getAdminToken();
@@ -15,11 +18,11 @@ describe('Consortia', () => {
     cy.createTempUser([Permissions.uiUsersView.gui]).then((userProperties) => {
       user1 = userProperties;
     });
-    cy.createTempUserParameterized(user2, [Permissions.uiUsersView.gui], { userType: 'staff' }).then(
-      (userProperties) => {
-        user2 = { ...user2, ...userProperties };
-      },
-    );
+    cy.createTempUserParameterized(user2, [Permissions.uiUsersView.gui], {
+      userType: 'staff',
+    }).then((userProperties) => {
+      user2 = { ...user2, ...userProperties };
+    });
   });
 
   after('Delete users, data', () => {

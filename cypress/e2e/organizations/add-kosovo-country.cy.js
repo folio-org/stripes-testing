@@ -3,6 +3,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization1 = {
@@ -55,7 +56,7 @@ describe('Organizations', () => {
       });
     });
     Organizations.deleteOrganizationViaApi(organization2.id);
-    Organizations.searchByParameters('Name', organization1.name);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization1.name);
     Organizations.selectOrganization(organization1.name);
     Organizations.deleteOrganization(organization1.name);
   });
@@ -70,13 +71,13 @@ describe('Organizations', () => {
       Organizations.clickAddAdressButton();
       Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
-      Organizations.searchByParameters('Name', organization2.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization2.name);
       Organizations.selectOrganization(organization2.name);
       Organizations.editOrganization();
       Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
-      Organizations.resetFilters();
-      Organizations.selectCountryFilter('Kosovo');
+      OrganizationsSearchAndFilter.resetFilters();
+      OrganizationsSearchAndFilter.filterByCountry('Kosovo');
       Organizations.checkSearchResults(organization1);
       Organizations.checkSearchResults(organization2);
     },

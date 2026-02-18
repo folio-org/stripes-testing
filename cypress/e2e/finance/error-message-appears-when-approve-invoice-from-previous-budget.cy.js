@@ -181,7 +181,7 @@ describe('Finance', () => {
   // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'false'
   it(
     'C375959 Meaningful error message appears when trying to approve invoice with related fund having only previous budget (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C375959'] },
+    { tags: ['extendedPathFlaky', 'thunderjet', 'C375959'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

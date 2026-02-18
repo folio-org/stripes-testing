@@ -21,8 +21,12 @@ const memberLibrariesShare = Checkbox({ labelText: 'Share' });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
 const confirmDeleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
-const confirmDeleteButton = Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' });
-const cancelDeleteButton = Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-cancel' });
+const confirmDeleteButton = Button({
+  id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm',
+});
+const cancelDeleteButton = Button({
+  id: 'clickable-delete-controlled-vocab-entry-confirmation-cancel',
+});
 
 export default {
   waitLoading(panesetName) {
@@ -226,10 +230,12 @@ export default {
   },
 
   verifyDeleteConfirmationMessage(settingName, entityName) {
-    cy.expect(confirmDeleteModal.has({
-      header: `Delete ${settingName}`,
-      message: `The ${settingName} ${entityName} will be deleted.`,
-    }));
+    cy.expect(
+      confirmDeleteModal.has({
+        header: `Delete ${settingName}`,
+        message: `The ${settingName} ${entityName} will be deleted.`,
+      }),
+    );
     cy.expect(cancelDeleteButton.is({ disabled: false }));
     cy.expect(confirmDeleteButton.is({ disabled: false }));
   },

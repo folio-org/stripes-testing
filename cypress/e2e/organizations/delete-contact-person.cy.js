@@ -3,6 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = {
@@ -36,19 +37,15 @@ describe('Organizations', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C729 Delete a contact person (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C729'] },
-    () => {
-      Organizations.searchByParameters('Name', organization.name);
-      Organizations.selectOrganization(organization.name);
-      Organizations.editOrganization();
-      Organizations.openContactPeopleSectionInEditCard();
-      Organizations.deleteContactFromContactPeople();
-      Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
-      Organizations.openContactPeopleSection();
-      Organizations.checkContactSectionIsEmpty();
-    },
-  );
+  it('C729 Delete a contact person (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
+    Organizations.selectOrganization(organization.name);
+    Organizations.editOrganization();
+    Organizations.openContactPeopleSectionInEditCard();
+    Organizations.deleteContactFromContactPeople();
+    Organizations.saveOrganization();
+    Organizations.verifySaveCalloutMessage(organization);
+    Organizations.openContactPeopleSection();
+    Organizations.checkContactSectionIsEmpty();
+  });
 });

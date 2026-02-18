@@ -13,6 +13,7 @@ import Users from '../../../support/fragments/users/users';
 import OrganizationDetails from '../../../support/fragments/organizations/organizationDetails';
 import IntegrationViewForm from '../../../support/fragments/organizations/integrations/integrationViewForm';
 import IntegrationEditForm from '../../../support/fragments/organizations/integrations/integrationEditForm';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -76,7 +77,7 @@ describe('Export Manager', () => {
       { tags: ['criticalPath', 'thunderjet', 'C377048'] },
       () => {
         // Click on the "Name" link for Organization
-        Organizations.searchByParameters('Name', testData.organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
         Organizations.checkSearchResults(testData.organization);
         Organizations.selectOrganization(testData.organization.name);
 

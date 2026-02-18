@@ -5,6 +5,7 @@ import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = {
@@ -28,7 +29,7 @@ describe('Organizations', () => {
       organization.id = response;
     });
     cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
+    OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
     Organizations.addNewDonorContact(firstContact);
@@ -60,7 +61,7 @@ describe('Organizations', () => {
     { tags: ['criticalPath', 'thunderjet', 'C423690'] },
     () => {
       TopMenuNavigation.navigateToApp('Organizations');
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.addNewDonorContact(secondContact);

@@ -29,7 +29,7 @@ describe(
       'C675 Create new organization record (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'C675', 'shiftLeft'] },
       () => {
-        Organizations.createOrganizationViaUi(organization);
+        Organizations.createOrganization(organization);
         Organizations.checkOrganizationInfo(organization);
       },
     );

@@ -122,4 +122,13 @@ async function getTestCase(api, caseId) {
   }
 }
 
-module.exports = { getAllTestCases, getTestHistory, getCaseHistory, getTestRunResults, updateTestResult, getTestCase, team, status };
+module.exports = {
+  getAllTestCases,
+  getTestHistory,
+  getCaseHistory,
+  getTestRunResults,
+  updateTestResult,
+  getTestCase,
+  team,
+  status,
+};

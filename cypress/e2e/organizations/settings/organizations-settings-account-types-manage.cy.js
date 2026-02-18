@@ -1,10 +1,12 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Banking Information', () => {
   before('Enable Banking Information', () => {
@@ -25,7 +27,7 @@ describe('Banking Information', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(existingAccountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -78,7 +80,7 @@ describe('Banking Information', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -124,7 +126,7 @@ describe('Banking Information', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -180,7 +182,7 @@ describe('Banking Information', () => {
       });
       SettingsOrganizations.uncheckenableBankingInformationIfChecked();
       SettingsOrganizations.createAccountTypesViaApi(accountType);
-      cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
@@ -234,9 +236,9 @@ describe('Banking Information', () => {
       Organizations.createBankingInformationViaApi(bankingInformation);
 
       cy.createTempUser([
-        permissions.uiOrganizationsView.gui,
-        permissions.uiOrganizationsViewBankingInformation.gui,
-        permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.uiOrganizationsViewBankingInformation.gui,
+        Permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.waitForAuthRefresh(() => {
@@ -266,12 +268,12 @@ describe('Banking Information', () => {
         // Verify banking information settings enabled: other settings might deactivate it
         SettingsOrganizations.selectBankingInformation();
         SettingsOrganizations.checkenableBankingInformationIfNeeded();
-
         SettingsOrganizations.selectAccountTypes();
         SettingsOrganizations.checkNewAccountTypeButtonExists();
         SettingsOrganizations.tryToDeleteAccountTypeWhenItUnable(existingAccountType);
-        cy.visit(TopMenu.organizationsPath);
-        Organizations.searchByParameters('Name', organization.name);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.selectOrganization(organization.name);
         Organizations.verifyBankingInformationAccordionIsPresent();
         Organizations.checkBankInformationExist(bankingInformation.bankName);
