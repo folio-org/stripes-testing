@@ -1,4 +1,12 @@
-const searchButton = '[data-testid="id-search-button"]';
+import { Button, TextInput } from '../../../../interactors';
+
+const searchButton = Button({ dataTestID: 'id-search-button' });
+const resetButton = Button({ dataTestID: 'id-search-reset-button' });
+const hubsTabButton = Button({ dataTestID: 'id-search-segment-button-hubs' });
+const workInstancesTabButton = Button({ dataTestID: 'id-search-segment-button-resources' });
+const sourceLocalOption = "//input[@id='search-source-option-local']";
+const sourceLoCOption = "//input[@id='search-source-option-libraryOfCongress']";
+const hubsSearchInput = TextInput({ id: 'id-search-input' });
 
 export default {
   waitLoading: () => {
@@ -6,6 +14,27 @@ export default {
     cy.get('[class*="item-search-content"]')
       .contains('Enter search criteria to start search')
       .should('exist');
+  },
+
+  switchToHubsTab: () => {
+    cy.do(hubsTabButton.click());
+  },
+
+  switchToWorkInstancesTab: () => {
+    cy.do(workInstancesTabButton.click());
+  },
+
+  selectSourceLocalOption: () => {
+    cy.xpath(sourceLocalOption).click();
+  },
+
+  selectSourceLoCOption: () => {
+    cy.xpath(sourceLoCOption).click();
+  },
+
+  verifyActiveButtons: (isActive) => {
+    cy.expect(searchButton.has({ disabled: !isActive }));
+    cy.expect(resetButton.has({ disabled: !isActive }));
   },
 
   searchResourceByTitle: (title) => {
@@ -70,5 +99,19 @@ export default {
 
   selectAdvancedSearch() {
     cy.xpath('//button[@class="button button-link search-button"]').click();
+  },
+
+  fillHubsSearchInput(searchQuery) {
+    cy.do(hubsSearchInput.fillIn(searchQuery));
+    cy.wait(200);
+    cy.expect(searchButton.is({ disabled: false }));
+    cy.expect(resetButton.is({ disabled: false }));
+    cy.do(searchButton.click());
+    cy.wait(500);
+  },
+
+  clickResetButton() {
+    cy.do(resetButton.click());
+    cy.wait(500);
   },
 };
