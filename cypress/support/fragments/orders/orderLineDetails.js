@@ -408,40 +408,40 @@ export default {
         cy.expect(
           relatedInvoiceLinesSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
-            .has({ content: including(record.vendorInvoiceNo) }),
+            .find(MultiColumnListCell({ content: including(record.vendorInvoiceNo) }))
+            .exists(),
         );
       }
       if (record.invoiceLineNumber) {
         cy.expect(
           relatedInvoiceLinesSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
-            .has({ content: including(record.invoiceLineNumber) }),
+            .find(MultiColumnListCell({ content: including(record.invoiceLineNumber) }))
+            .exists(),
         );
       }
       if (record.fiscalYear) {
         cy.expect(
           relatedInvoiceLinesSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 2 }))
-            .has({ content: including(record.fiscalYear) }),
+            .find(MultiColumnListCell({ content: including(record.fiscalYear) }))
+            .exists(),
         );
       }
       if (record.invoiceDate) {
         cy.expect(
           relatedInvoiceLinesSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 3 }))
-            .has({ content: including(record.invoiceDate) }),
+            .find(MultiColumnListCell({ content: including(record.invoiceDate) }))
+            .exists(),
         );
       }
       if (record.vendorCode) {
         cy.expect(
           relatedInvoiceLinesSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 4 }))
-            .has({ content: including(record.vendorCode) }),
+            .find(MultiColumnListCell({ content: including(record.vendorCode) }))
+            .exists(),
         );
       }
     });

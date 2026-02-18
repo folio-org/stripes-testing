@@ -77,7 +77,6 @@ const saveAndContinueButton = Button('Save & continue');
 const invoiceLinesSequenceSelector = '#invoice-lines-sequence';
 const invoiceLinesSequenceRowsSelector = '#invoice-lines-sequence [class*="mclRow--"]';
 const columnHeaderRoleSelector = '[role="columnheader"]';
-const rowInnerDataAttribute = '[data-row-inner="true"]';
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -1537,41 +1536,38 @@ export default {
   },
 
   dragAndDropInvoiceLine(sourceIndex, targetIndex) {
-    cy.get(invoiceLinesSequenceRowsSelector).as('rows');
+    const SPACE_KEY = 32;
+    const ARROW_DOWN_KEY = 40;
+    const ARROW_UP_KEY = 38;
 
-    cy.get('@rows').eq(sourceIndex).as('sourceRow');
-    cy.get('@rows').eq(targetIndex).as('targetRow');
-
-    cy.get('@sourceRow').then(($sourceRow) => {
-      const $draggable =
-        $sourceRow.find(rowInnerDataAttribute).length > 0
-          ? $sourceRow.find(rowInnerDataAttribute)
-          : $sourceRow;
-
-      cy.wrap($draggable)
-        .trigger('mousedown', { which: 1, force: true })
-        .trigger('dragstart', { force: true });
+    cy.get(invoiceLinesSequenceRowsSelector).then(($rows) => {
+      if (sourceIndex >= $rows.length || targetIndex >= $rows.length) {
+        throw new Error(
+          `Index out of bounds: sourceIndex=${sourceIndex}, targetIndex=${targetIndex}, rowsLength=${$rows.length}`,
+        );
+      }
     });
 
-    cy.get('@targetRow').then(($targetRow) => {
-      const $droppable =
-        $targetRow.find(rowInnerDataAttribute).length > 0
-          ? $targetRow.find(rowInnerDataAttribute)
-          : $targetRow;
+    cy.get(invoiceLinesSequenceRowsSelector).eq(sourceIndex).focus();
 
-      cy.wrap($droppable).trigger('dragover', { force: true }).trigger('drop', { force: true });
-    });
+    cy.get(invoiceLinesSequenceRowsSelector)
+      .eq(sourceIndex)
+      .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
+      .wait(200);
 
-    cy.get('@sourceRow').then(($sourceRow) => {
-      const $draggable =
-        $sourceRow.find(rowInnerDataAttribute).length > 0
-          ? $sourceRow.find(rowInnerDataAttribute)
-          : $sourceRow;
+    const moveCount = Math.abs(targetIndex - sourceIndex);
+    const arrowKey = targetIndex > sourceIndex ? ARROW_DOWN_KEY : ARROW_UP_KEY;
 
-      cy.wrap($draggable).trigger('dragend', { force: true });
-    });
+    for (let i = 0; i < moveCount; i++) {
+      cy.get(invoiceLinesSequenceRowsSelector)
+        .eq(sourceIndex)
+        .trigger('keydown', { keyCode: arrowKey, which: arrowKey, force: true })
+        .wait(100);
+    }
 
-    cy.wait(1000);
+    cy.get('body')
+      .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
+      .wait(500);
   },
 
   saveAndCloseEditSequencePage() {

@@ -69,6 +69,12 @@ describe('Invoices', () => {
         Orders.updateOrderViaApi({
           ...testData.order,
           workflowStatus: ORDER_STATUSES.OPEN,
+        }).then(() => {
+          OrderLines.getOrderLineViaApi({
+            query: `purchaseOrderId=="${testData.order.id}"`,
+          }).then((orderLines) => {
+            testData.orderLines = orderLines;
+          });
         });
       });
     });
@@ -124,12 +130,13 @@ describe('Invoices', () => {
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [
           { key: 'Status', value: 'Open' },
+          { key: 'Batch group', value: testData.invoice.batchGroup },
           { key: 'Total units', value: '3' },
-          { key: 'Sub-total', value: `$${(polLinePrice * 3).toFixed(2)}` },
+          { key: 'Sub-total', value: '$300.00' },
           { key: 'Total adjustments', value: '$0.00' },
-          { key: 'Calculated total amount', value: `$${(polLinePrice * 3).toFixed(2)}` },
+          { key: 'Calculated total amount', value: '$300.00' },
         ],
-        vendorDetails: [
+        vendorDetailsInformation: [
           { key: 'Vendor invoice number', value: testData.invoice.invoiceNumber },
           { key: 'Vendor name', value: testData.organization.name },
           { key: 'Accounting code', value: testData.organization.erpCode },
