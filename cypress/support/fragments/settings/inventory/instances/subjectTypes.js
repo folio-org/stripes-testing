@@ -2,10 +2,11 @@ import { including } from '@interactors/html';
 import {
   Button,
   EditableListRow,
+  Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
-  Modal,
+  TextField,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
@@ -13,6 +14,9 @@ import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-
 
 const rootPane = Pane('Subject types');
 const modalWithErrorMessage = Modal('Cannot delete Subject type');
+const newButton = Button('+ New');
+const saveButton = Button('Save');
+const cancelButton = Button('Cancel');
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -131,6 +135,10 @@ export default {
     );
   },
 
+  createSubjectType(value, rowIndex = 0) {
+    cy.do([newButton.click(), TextField({ name: `items[${rowIndex}].name` }).fillIn(value)]);
+  },
+
   deleteSubjectType(name) {
     const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
     const rowSelector = MultiColumnListCell({ content: name });
@@ -164,5 +172,24 @@ export default {
     );
     cy.do(Button('Okay').click());
     cy.expect(modalWithErrorMessage.absent());
+  },
+
+  validateNameFieldWithError(message) {
+    cy.get('#controlled-vocab-pane')
+      .find('input[name*="items["][name*="].name"]')
+      .should('exist')
+      .then(($inputs) => {
+        const nameAttr = $inputs.first().attr('name');
+        const indexMatch = nameAttr.match(/items\[(\d+)\]\.name/);
+        if (indexMatch) {
+          const rowIndex = parseInt(indexMatch[1], 10);
+          cy.expect([
+            TextField({ name: `items[${rowIndex}].name` }).has({ error: message }),
+            cancelButton.has({ disabled: false }),
+            saveButton.has({ disabled: true }),
+          ]);
+        }
+      });
+    cy.wait(1000);
   },
 };

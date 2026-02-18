@@ -17,7 +17,6 @@ const modalWithErrorMessage = Modal('Cannot delete Subject source');
 const newButton = Button('+ New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
-// const nameField = TextField({ name: 'items[0].name' });
 
 const COLUMN_INDEX = {
   NAME: 0,
