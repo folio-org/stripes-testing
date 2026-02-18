@@ -12,6 +12,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 
 const searchResultsPaneContent = PaneContent({ id: 'users-search-results-pane-content' });
 const financialTransactionsReportButton = Button({ id: 'financial-transaction-report' });
+const overdueLoansExportButton = Button('Overdue loans report (CSV)');
 const actionsButtonInSearchResultsPane = Pane({ id: 'users-search-results-pane' }).find(
   Button('Actions'),
 );
@@ -19,6 +20,7 @@ const newButton = Button({ id: 'clickable-newuser' });
 
 const actionsButtons = {
   financialTransactionsReport: financialTransactionsReportButton,
+  overdueLoansExport: overdueLoansExportButton,
 };
 
 export default {
@@ -44,6 +46,10 @@ export default {
       actionsButtonInSearchResultsPane.click(),
       actionsButtons.financialTransactionsReport.click(),
     ]);
+  },
+
+  exportOverdueLoans: () => {
+    cy.do([actionsButtonInSearchResultsPane.click(), actionsButtons.overdueLoansExport.click()]);
   },
 
   openNewUser: () => {
