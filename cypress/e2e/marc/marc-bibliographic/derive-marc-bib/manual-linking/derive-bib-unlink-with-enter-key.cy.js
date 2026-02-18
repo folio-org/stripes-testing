@@ -79,7 +79,7 @@ describe('MARC', () => {
         marcBibFields[3].tag,
         marcBibFields[3].indicators[0],
         marcBibFields[3].indicators[1],
-        `${authorityFields2[0].content} ${testData.nonControllableSubfield2} $0 ${authData.prefix}${authData.startWithNumber}`,
+        `${authorityFields2[0].content} ${testData.nonControllableSubfield2} $0 ${authData.prefix}${authData.startWithNumber + 1}`,
       ];
 
       const user = {};
@@ -162,8 +162,7 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBibRecord();
           QuickMarcEditor.verifyRemoveLinkingModal();
 
-          cy.wait(1000);
-          cy.get('#quick-marc-remove-authority-linking-confirm-modal').type('{enter}');
+          QuickMarcEditor.confirmRemoveAuthorityLinkingWithEnterKey();
           QuickMarcEditor.verifyRemoveLinkingModalAbsence();
           QuickMarcEditor.checkLinkButtonExistByRowIndex(5);
           QuickMarcEditor.checkLinkButtonExistByRowIndex(6);
@@ -178,12 +177,12 @@ describe('MARC', () => {
           InventoryInstance.checkAuthorityAppIconInSection(
             testData.contributorSectionId,
             authorityHeading1,
-            true,
+            false,
           );
           InventoryInstance.checkAuthorityAppIconInSection(
             testData.contributorSectionId,
             authorityHeading2,
-            true,
+            false,
           );
 
           InventoryInstance.editMarcBibliographicRecord();
