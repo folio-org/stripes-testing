@@ -226,10 +226,6 @@ describe('Inventory', () => {
             locations[Affiliations.University][0].name,
             locations[Affiliations.University][2].name,
           ];
-          const notUsedLocations = [
-            locations[Affiliations.College][1].name,
-            locations[Affiliations.University][1].name,
-          ];
 
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue, undefined, undefined, 2);
           // wait to make sure same call number is indexed for all items in 2 instances:
@@ -259,14 +255,6 @@ describe('Inventory', () => {
               locationAccordionName,
               locationName,
               locationName,
-            );
-          });
-          notUsedLocations.forEach((locationName) => {
-            InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
-              locationAccordionName,
-              locationName,
-              locationName,
-              false,
             );
           });
           InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(

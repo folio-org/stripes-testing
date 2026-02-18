@@ -63,6 +63,7 @@ describe('MARC', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });
@@ -92,7 +93,7 @@ describe('MARC', () => {
           testData.invalidAcqEndDate,
         );
 
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);
       },
     );
