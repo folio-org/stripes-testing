@@ -157,6 +157,25 @@ export default {
     );
   },
 
+  editSubjectTypeName(oldValue, newValue) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: oldValue });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do([
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.EDIT }))
+            .click(),
+          TextField({ name: `items[${rowIndex}].name` }).fillIn(newValue),
+        ]);
+      }),
+    );
+  },
+
   confirmDeletionOfSubjectType(name) {
     DeleteCancelReason.waitLoadingDeleteModal('Subject type', name);
     DeleteCancelReason.clickDelete();
