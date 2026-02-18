@@ -9,8 +9,12 @@ import ComparisonForm from './comparisonForm';
 
 const searchSection = "//div[@class='item-search-content']";
 const actionsWorkButton = Button({ dataTestID: 'resources-actions-dropdown' });
-const newResourceButton = "//button[contains(@data-testid,'newResource')]";
-const compareSelectedButton = "//button[contains(@data-testid,'compareSelected')]";
+const newResourceButton = Button({
+  dataTestID: 'resources-actions-dropdown__option-ld.newResource',
+});
+const compareSelectedButton = Button({
+  dataTestID: 'resources-actions-dropdown__option-ld.compareSelected',
+});
 const searchSelect = "//select[@id='id-search-select']";
 const searchButton = Button({ dataTestID: 'id-search-button' });
 const workPreviewPanel = "//div[@class='preview-panel']";
@@ -100,7 +104,7 @@ export default {
 
   openComparisonForm: () => {
     cy.do(actionsWorkButton.click());
-    cy.xpath(compareSelectedButton).click();
+    cy.do(compareSelectedButton.click());
     ComparisonForm.waitLoading();
   },
 
