@@ -286,6 +286,32 @@ export default {
     })
     .then(({ body }) => body),
 
+  closeLoanViaApi: (userId, servicePointId) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `circulation/loans?query=(userId=="${userId}")`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        if (response.body.loans && response.body.loans.length > 0) {
+          const loanId = response.body.loans[0].id;
+          return cy.okapiRequest({
+            method: 'PUT',
+            path: `circulation/loans/${loanId}`,
+            body: {
+              ...response.body.loans[0],
+              status: { name: 'Closed' },
+              action: 'checkedin',
+              checkinServicePointId: servicePointId,
+            },
+            isDefaultSearchParamsRequired: false,
+          });
+        }
+        return cy.wrap(null);
+      });
+  },
+
   getListTimersForTenant: () => cy
     .okapiRequest({
       method: 'GET',
