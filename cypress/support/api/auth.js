@@ -162,8 +162,9 @@ Cypress.Commands.add('getConsortiaStatus', () => {
 Cypress.Commands.add('ifConsortia', (condition, callback) => {
   return cy.wrap(Cypress.env('isConsortia')).then((isConsortiaStatus) => {
     if (isConsortiaStatus === undefined) {
-      cy.getConsortiaStatus().then(({ isConsortia }) => {
+      cy.getConsortiaStatus().then(({ isConsortia, centralTenantId }) => {
         Cypress.env('isConsortia', isConsortia);
+        Cypress.env('centralTenantId', centralTenantId);
         if (condition === isConsortia) {
           return cy.wrap(callback());
         }

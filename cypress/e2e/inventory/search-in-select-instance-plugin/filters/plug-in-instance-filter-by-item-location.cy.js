@@ -45,6 +45,7 @@ describe('Inventory', () => {
       let loanTypeId;
       let holdingsSourceId;
       let user;
+      let currentTenantName = '';
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -66,6 +67,12 @@ describe('Inventory', () => {
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             holdingsSourceId = folioSource.id;
+          });
+
+          cy.ifConsortia(true, () => {
+            cy.getTenantNameInMemberRun().then((tenantName) => {
+              currentTenantName = tenantName;
+            });
           });
 
           Organizations.createOrganizationViaApi(organization).then(() => {
@@ -180,60 +187,70 @@ describe('Inventory', () => {
           });
           SelectInstanceModal.verifyMultiSelectFilterNumberOfOptions(locationAccordionName, 2);
 
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          SelectInstanceModal.selectEcsLocationFilterOption(
             locationAccordionName,
             locations[0].name,
+            currentTenantName,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
 
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          SelectInstanceModal.selectEcsLocationFilterOption(
             locationAccordionName,
             locations[0].name,
+            currentTenantName,
           );
-          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            locationAccordionName,
-            locations[0].name,
-            false,
-          );
+          cy.ifConsortia(false, () => {
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              locationAccordionName,
+              locations[0].name,
+              false,
+            );
+          });
           instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
           });
           InventorySearchAndFilter.checkRowsCount(instanceTitles.length);
 
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          SelectInstanceModal.selectEcsLocationFilterOption(
             locationAccordionName,
             locations[0].name,
+            currentTenantName,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          SelectInstanceModal.selectEcsLocationFilterOption(
             locationAccordionName,
             locations[2].name,
+            currentTenantName,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
-          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            locationAccordionName,
-            locations[0].name,
-          );
-          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            locationAccordionName,
-            locations[2].name,
-          );
+          cy.ifConsortia(false, () => {
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              locationAccordionName,
+              locations[0].name,
+            );
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              locationAccordionName,
+              locations[2].name,
+            );
+          });
           instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
           });
 
           InventorySearchAndFilter.clearFilter(locationAccordionName);
-          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            locationAccordionName,
-            locations[0].name,
-            false,
-          );
-          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-            locationAccordionName,
-            locations[2].name,
-            false,
-          );
+          cy.ifConsortia(false, () => {
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              locationAccordionName,
+              locations[0].name,
+              false,
+            );
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              locationAccordionName,
+              locations[2].name,
+              false,
+            );
+          });
           SelectInstanceModal.verifyMultiSelectFilterNumberOfOptions(locationAccordionName, 2);
           instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
@@ -249,9 +266,10 @@ describe('Inventory', () => {
             locations[2].name,
           );
 
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          SelectInstanceModal.selectEcsLocationFilterOption(
             locationAccordionName,
             locations[2].name,
+            currentTenantName,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
