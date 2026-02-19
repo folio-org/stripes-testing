@@ -122,3 +122,15 @@ Cypress.Commands.add('getAllTenants', () => {
     });
   });
 });
+
+Cypress.Commands.add('getTenantNameInMemberRun', () => {
+  return cy
+    .setTenant(Cypress.env('centralTenantId'))
+    .then(() => cy.getAllTenants())
+    .then((userTenants) => {
+      const targetTenant = userTenants.filter(
+        (element) => element.id === Cypress.env('OKAPI_TENANT'),
+      )[0];
+      return cy.setTenant(Cypress.env('OKAPI_TENANT')).then(() => targetTenant.name);
+    });
+});
