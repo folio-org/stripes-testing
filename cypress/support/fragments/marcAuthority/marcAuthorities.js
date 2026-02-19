@@ -402,10 +402,7 @@ export default {
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
   checkRowsCount: (expectedRowsCount) => {
-    cy.expect([
-      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
-      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
-    ]);
+    cy.expect(authoritiesList.has({ rowCount: expectedRowsCount }));
   },
 
   checkRowsCountExistance: (expectedRowsCount) => {
