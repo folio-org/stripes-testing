@@ -407,40 +407,35 @@ export default {
       if (record.vendorInvoiceNo) {
         cy.expect(
           relatedInvoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ content: including(record.vendorInvoiceNo) }))
+            .find(MultiColumnListCell({ row: index, column: 'Vendor invoice #' }))
             .exists(),
         );
       }
       if (record.invoiceLineNumber) {
         cy.expect(
           relatedInvoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ content: including(record.invoiceLineNumber) }))
+            .find(MultiColumnListCell({ row: index, column: 'Invoice line #' }))
             .exists(),
         );
       }
       if (record.fiscalYear) {
         cy.expect(
           relatedInvoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ content: including(record.fiscalYear) }))
+            .find(MultiColumnListCell({ row: index, column: 'Fiscal year' }))
             .exists(),
         );
       }
       if (record.invoiceDate) {
         cy.expect(
           relatedInvoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ content: including(record.invoiceDate) }))
+            .find(MultiColumnListCell({ row: index, column: 'Invoice date' }))
             .exists(),
         );
       }
       if (record.vendorCode) {
         cy.expect(
           relatedInvoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ content: including(record.vendorCode) }))
+            .find(MultiColumnListCell({ row: index, column: 'Vendor code' }))
             .exists(),
         );
       }

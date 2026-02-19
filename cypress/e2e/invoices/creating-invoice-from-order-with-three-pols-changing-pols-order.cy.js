@@ -95,8 +95,6 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      OrderLinesLimit.setPOLLimitViaApi();
-
       Invoices.getInvoiceViaApi({
         query: `vendorInvoiceNo="${testData.invoice.invoiceNumber}"`,
       }).then(({ invoices }) => {
