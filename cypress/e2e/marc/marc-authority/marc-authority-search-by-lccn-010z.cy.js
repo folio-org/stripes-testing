@@ -86,7 +86,7 @@ describe('MARC', () => {
         { value: `${testData.authorityHeadingPrefix}_450_1`, type: AUTHORITY_TYPES.REFERENCE },
         { value: `${testData.authorityHeadingPrefix}_550a_1`, type: AUTHORITY_TYPES.AUTH_REF },
         {
-          value: `${testData.authorityHeadingPrefix}_550b_1 Washington (State)`,
+          value: `${testData.authorityHeadingPrefix}_550b_1--Washington (State)`,
           type: AUTHORITY_TYPES.AUTH_REF,
         },
       ];
@@ -152,6 +152,7 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
+              authRefresh: true,
             });
           });
       });

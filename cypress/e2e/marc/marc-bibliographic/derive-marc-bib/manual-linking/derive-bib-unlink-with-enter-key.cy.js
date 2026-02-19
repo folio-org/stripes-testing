@@ -138,6 +138,7 @@ describe('MARC', () => {
               cy.login(user.userProperties.username, user.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
             });
         });

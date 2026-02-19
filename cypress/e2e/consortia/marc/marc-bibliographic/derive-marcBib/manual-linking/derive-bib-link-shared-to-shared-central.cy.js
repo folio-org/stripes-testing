@@ -88,12 +88,12 @@ describe('MARC', () => {
             ind1: bibFields[3].indicators[0],
             ind2: bibFields[3].indicators[1],
             controlledLetterSubfields: authorityFields2[0].content,
-            uncontrolledLetterSubfields: bibNotControllableSubfield2,
+            uncontrolledLetterSubfields: '',
             controlledDigitSubfields: `$0 ${authData.prefix}${authData.startWithNumber + 1}`,
             uncontrolledDigitSubfields: '',
           };
           const contributorValue = authorityHeading1;
-          const subjectValue = `${authorityHeading2}--${bibNotControllableSubfield2.split(' ')[1]}`;
+          const subjectValue = authorityHeading2;
 
           let user;
           let createdInstanceId;
@@ -162,6 +162,7 @@ describe('MARC', () => {
                   cy.login(user.username, user.password, {
                     path: TopMenu.inventoryPath,
                     waiter: InventoryInstances.waitContentLoading,
+                    authRefresh: true,
                   });
                   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 });
