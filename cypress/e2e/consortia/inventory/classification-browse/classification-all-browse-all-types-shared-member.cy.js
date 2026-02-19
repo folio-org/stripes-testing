@@ -192,13 +192,11 @@ describe('Inventory', () => {
         'C468273 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C468273'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.setTenant(Affiliations.College);
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          }, 20_000);
+          cy.setTenant(Affiliations.College);
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.slice(0, -1).forEach((row) => {
