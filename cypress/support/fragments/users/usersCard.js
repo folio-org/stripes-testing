@@ -680,6 +680,10 @@ export default {
     cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
   },
 
+  verifyRequestsAccordionExists() {
+    cy.expect(requestsAccordion.exists());
+  },
+
   verifyProfilePictureIsPresent(url) {
     cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
   },
