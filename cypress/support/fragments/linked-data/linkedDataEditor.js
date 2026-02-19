@@ -1,4 +1,5 @@
-import { Option } from '../../../../interactors';
+import { Button, Option } from '../../../../interactors';
+
 import EditResource from './editResource';
 import InventoryInstances from '../inventory/inventoryInstances';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -7,12 +8,18 @@ import SearchAndFilter from './searchAndFilter';
 import ComparisonForm from './comparisonForm';
 
 const searchSection = "//div[@class='item-search-content']";
-const actionsButton = "//button[@data-testid='resources-actions-dropdown']";
-const newResourceButton = "//button[contains(@data-testid,'newResource')]";
-const compareSelectedButton = "//button[contains(@data-testid,'compareSelected')]";
+const actionsWorkButton = Button({ dataTestID: 'resources-actions-dropdown' });
+const newResourceButton = Button({
+  dataTestID: 'resources-actions-dropdown__option-ld.newResource',
+});
+const compareSelectedButton = Button({
+  dataTestID: 'resources-actions-dropdown__option-ld.compareSelected',
+});
 const searchSelect = "//select[@id='id-search-select']";
-const searchButton = "//button[@data-testid='id-search-button']";
+const searchButton = Button({ dataTestID: 'id-search-button' });
 const workPreviewPanel = "//div[@class='preview-panel']";
+const actionsHubButton = Button({ dataTestID: 'hubs-actions-dropdown' });
+const newHubButton = Button({ dataTestID: 'hubs-actions-dropdown__option-ld.newHub' });
 
 export default {
   waitLoading: () => {
@@ -47,8 +54,13 @@ export default {
   },
 
   openNewResourceForm: () => {
-    cy.xpath(actionsButton).click();
-    cy.xpath(newResourceButton).click();
+    cy.do(actionsWorkButton.click());
+    cy.do(newResourceButton.click());
+  },
+
+  openNewHubForm: () => {
+    cy.do(actionsHubButton.click());
+    cy.do(newHubButton.click());
   },
 
   editWork: () => {
@@ -91,8 +103,8 @@ export default {
   },
 
   openComparisonForm: () => {
-    cy.xpath(actionsButton).click();
-    cy.xpath(compareSelectedButton).click();
+    cy.do(actionsWorkButton.click());
+    cy.do(compareSelectedButton.click());
     ComparisonForm.waitLoading();
   },
 

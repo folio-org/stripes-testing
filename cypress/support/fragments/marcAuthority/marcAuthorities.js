@@ -436,10 +436,7 @@ export default {
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
   checkRowsCount: (expectedRowsCount) => {
-    cy.expect([
-      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
-      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
-    ]);
+    cy.expect(authoritiesList.has({ rowCount: expectedRowsCount }));
   },
 
   checkRowsCountExistance: (expectedRowsCount) => {
@@ -664,6 +661,20 @@ export default {
       selectField.has({ content: including('Select a browse option') }),
       searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
+  },
+
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
   },
 
   chooseTypeOfHeading: (headingTypes) => {

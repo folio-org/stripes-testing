@@ -1020,6 +1020,16 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
+  deleteFirstFieldByTag(tag) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((rows) => {
+      const firstMatchingRow = rows.find((row) => row.tag === tag);
+      if (firstMatchingRow) {
+        const rowIndex = rows.indexOf(firstMatchingRow);
+        cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+      }
+    });
+  },
+
   verifySaveAndCloseButtonEnabled(isEnabled = true) {
     cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
   },
@@ -2400,6 +2410,24 @@ export default {
     cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
   },
 
+  /*
+    This method is to check that pressing Enter key triggers a click on a focused button.
+    Due to automation limitations, click event is then called with "isTrusted: false" and is ignored by the browser.
+    When actual user presses the key, the same event has "isTrusted: true", and is being handled.
+    So here, we first check that expected click event is called, but then still have to perform the actual click.
+  */
+  confirmRemoveAuthorityLinkingWithEnterKey() {
+    cy.expect(removeLinkingModal.find(removeLinkingButton).exists());
+    cy.window().then((win) => {
+      cy.spy(win, 'PointerEvent').as('pointerEventSpy');
+    });
+    cy.get('#clickable-quick-marc-remove-authority-linking-confirm-modal-confirm')
+      .focus()
+      .type('{enter}');
+    cy.get('@pointerEventSpy').should('have.been.calledWithMatch', 'click');
+    this.confirmRemoveAuthorityLinking();
+  },
+
   clickKeepLinkingButton() {
     cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
@@ -2726,6 +2754,10 @@ export default {
 
   checkTagAbsent(tag) {
     cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
+  checkTagExists(tag) {
+    cy.expect(getRowInteractorByTagName(tag).exists());
   },
 
   checkValueAbsent(rowIndex, valueToCheck) {
