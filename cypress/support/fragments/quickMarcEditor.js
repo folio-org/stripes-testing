@@ -2756,6 +2756,10 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).absent());
   },
 
+  checkTagExists(tag) {
+    cy.expect(getRowInteractorByTagName(tag).exists());
+  },
+
   checkValueAbsent(rowIndex, valueToCheck) {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })
