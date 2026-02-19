@@ -37,6 +37,8 @@ describe('MARC', () => {
       ])
         .then((createdUserProperties) => {
           testData.firstUser = createdUserProperties;
+
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Kirby, Jack');
         })
         .then(() => {
           cy.getUsers({ limit: 1, query: `username=${testData.firstUser.username}` }).then(

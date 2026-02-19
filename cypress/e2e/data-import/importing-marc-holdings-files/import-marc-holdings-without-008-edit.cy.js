@@ -92,7 +92,7 @@ describe('Data Import', () => {
         QuickMarcEditor.waitLoading();
 
         QuickMarcEditor.updateExistingField(tags.tag852, updatedTag852Content);
-        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkDelete008Callout();
 
         QuickMarcEditor.addNewField(tags.tag008, '', 3);
