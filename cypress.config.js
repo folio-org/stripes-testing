@@ -3,7 +3,7 @@ const path = require('path');
 const globby = require('globby');
 const converter = require('json-2-csv');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
-const { rmdir, unlink } = require('fs');
+const { rm, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
@@ -131,14 +131,17 @@ module.exports = defineConfig({
 
         deleteFolder(folderName) {
           return new Promise((resolve, reject) => {
-            // eslint-disable-next-line consistent-return
-            rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
-              if (err && err.code !== 'ENOENT') {
-                return reject(err);
-              }
-
-              resolve(null);
-            });
+            rm(
+              folderName,
+              { maxRetries: 10, recursive: true, force: true },
+              // eslint-disable-next-line consistent-return
+              (err) => {
+                if (err && err.code !== 'ENOENT') {
+                  return reject(err);
+                }
+                resolve(null);
+              },
+            );
           });
         },
 
