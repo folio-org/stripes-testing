@@ -1550,6 +1550,7 @@ export default {
 
     cy.get(invoiceLinesSequenceRowsSelector).eq(sourceIndex).focus();
 
+    // eslint-disable-next-line cypress/no-force
     cy.get(invoiceLinesSequenceRowsSelector)
       .eq(sourceIndex)
       .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
@@ -1559,12 +1560,14 @@ export default {
     const arrowKey = targetIndex > sourceIndex ? ARROW_DOWN_KEY : ARROW_UP_KEY;
 
     for (let i = 0; i < moveCount; i++) {
+      // eslint-disable-next-line cypress/no-force
       cy.get(invoiceLinesSequenceRowsSelector)
         .eq(sourceIndex)
         .trigger('keydown', { keyCode: arrowKey, which: arrowKey, force: true })
         .wait(100);
     }
 
+    // eslint-disable-next-line cypress/no-force
     cy.get('body')
       .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
       .wait(500);
