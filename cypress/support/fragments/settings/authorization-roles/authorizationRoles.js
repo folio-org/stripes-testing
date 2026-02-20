@@ -956,9 +956,13 @@ export default {
     );
   },
 
-  verifyRolesCount: (count) => {
+  verifyRolesCount: (count, { plusMinus = 0 } = {}) => {
     if (count === 0) cy.expect(rolesPane.find(MultiColumnList()).absent());
-    else cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: count }));
+    else if (plusMinus) {
+      const range = Array.from({ length: 2 * plusMinus + 1 }, (_, i) => i - plusMinus);
+      const rangeMatcher = or(...range.map((num) => count + num));
+      cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: rangeMatcher }));
+    } else cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: count }));
   },
 
   checkRoleFound: (roleName, isFound = true) => {
