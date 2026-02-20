@@ -204,6 +204,8 @@ export const itemFieldValues = {
   itemStatisticalCodeNames: 'Item — Statistical codes',
   itemTags: 'Item — Tags',
   itemFormerIdentifiers: 'Item — Former identifiers',
+  affiliationName: 'Item — Affiliation name',
+  instanceShared: 'Instance — Shared',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
