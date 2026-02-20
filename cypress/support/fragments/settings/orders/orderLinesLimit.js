@@ -35,18 +35,6 @@ export default {
       });
   },
 
-  setPOLLimitViaApi(limit) {
-    const value = String(limit);
-    this.getPOLLimit().then((settings) => {
-      if (settings.length) {
-        const current = settings[0];
-        this.updatePOLLimit({ ...current, value });
-      } else {
-        this.createPOLimit({ value });
-      }
-    });
-  },
-
   createPOLimit({ value }) {
     const nextVal = String(value);
 

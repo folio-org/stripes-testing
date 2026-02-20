@@ -35,7 +35,7 @@ describe('Invoices', () => {
       testData.invoice.vendorName = testData.organization.name;
     });
 
-    OrderLinesLimit.setPOLLimitViaApi(3);
+    OrderLinesLimit.setPOLLimit(3);
 
     cy.getBatchGroups().then((batchGroup) => {
       testData.invoice.batchGroup = batchGroup.name;
