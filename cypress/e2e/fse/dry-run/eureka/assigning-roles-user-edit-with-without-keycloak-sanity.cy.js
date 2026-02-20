@@ -148,6 +148,7 @@ describe('Eureka', () => {
           userBodies[0].personal.firstName,
         );
         cy.wait('@getUsers1').its('response.statusCode').should('eq', 200);
+        cy.wait(3000);
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[0].username);
@@ -160,6 +161,7 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
+        cy.wait(3000);
         UsersSearchPane.searchByKeywords(
           `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
         );
@@ -195,6 +197,7 @@ describe('Eureka', () => {
         );
         UsersCard.verifyUserRolesCounter('0');
 
+        cy.wait(3000);
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.clickOnUserRowContaining(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
@@ -222,6 +225,7 @@ describe('Eureka', () => {
           userBodies[2].personal.firstName,
         );
         cy.wait('@getUsers2').its('response.statusCode').should('eq', 200);
+        cy.wait(3000);
         UsersSearchPane.resetAllFilters();
         UsersSearchResultsPane.verifySearchPaneIsEmpty();
         UsersSearchPane.searchByKeywords(userBodies[2].username);
