@@ -483,3 +483,12 @@ Cypress.Commands.add('getUserMigrations', () => {
     return response;
   });
 });
+
+Cypress.Commands.add('assignDepartmentsToExistingUser', (userId, departments = []) => {
+  Users.getUser({ id: userId }).then(({ body: user }) => {
+    return cy.updateUser({
+      ...user,
+      departments,
+    });
+  });
+});

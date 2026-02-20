@@ -48,30 +48,13 @@ Cypress.Commands.add('deleteCancellationReasonApi', (id) => {
   });
 });
 
-Cypress.Commands.add('getConfigByName', (module = 'SETTINGS', config) => {
+Cypress.Commands.add('getCirculationSettingsByName', (name) => {
   return cy
     .okapiRequest({
       method: 'GET',
-      path: 'configurations/entries',
+      path: 'circulation/settings',
       searchParams: {
-        query: `(module==${module} and configName==${config})`,
-      },
-      failOnStatusCode: true,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body }) => {
-      return body;
-    });
-});
-
-// for TLR: scope=circulation, key=generalTlr
-Cypress.Commands.add('getSettingsByName', (scope, config) => {
-  return cy
-    .okapiRequest({
-      method: 'GET',
-      path: 'settings/entries',
-      searchParams: {
-        query: `(scope==${scope} and key==${config})`,
+        query: `(name==${name})`,
       },
       failOnStatusCode: true,
       isDefaultSearchParamsRequired: false,

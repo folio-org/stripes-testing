@@ -71,6 +71,12 @@ const invoiceDateField = TextField('Invoice date*');
 const vendorInvoiceNumberField = TextField('Vendor invoice number*');
 const batchGroupSelection = Selection('Batch group*');
 const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
+const linesSequencePane = Pane({ id: 'pane-lines-sequence' });
+const invoiceLinesSequenceList = MultiColumnList({ id: 'invoice-lines-sequence' });
+const saveAndContinueButton = Button('Save & continue');
+const invoiceLinesSequenceSelector = '#invoice-lines-sequence';
+const invoiceLinesSequenceRowsSelector = '#invoice-lines-sequence [class*="mclRow--"]';
+const columnHeaderRoleSelector = '[role="columnheader"]';
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -866,13 +872,15 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(errorMessage);
   },
 
-  canNotApproveAndPayInvoice: (errorMessage) => {
+  canNotApproveAndPayInvoice: (fund) => {
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve & pay').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${fund.code}].`,
+    );
   },
 
   approveAndPayInvoice: () => {
@@ -1472,5 +1480,101 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),
     ]);
+  },
+
+  createInvoiceFromOrderWithEditSequence(invoice) {
+    cy.wait(4000);
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+    ]);
+    cy.wait(2000);
+    cy.do(saveAndContinueButton.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    cy.wait(4000);
+  },
+
+  checkEditSequenceOfInvoiceLinesPage(vendorInvoiceNumber, columns = []) {
+    cy.expect(
+      linesSequencePane.has({
+        title: including(
+          `Edit sequence of invoice lines • Vendor invoice number ${vendorInvoiceNumber}`,
+        ),
+      }),
+    );
+    cy.expect(invoiceLinesSequenceList.exists());
+
+    const columnsToCheck =
+      columns.length > 0
+        ? columns
+        : [
+          'POL number',
+          'Description',
+          'Fund code',
+          'PO status',
+          'Receipt status',
+          'Payment status',
+          'Vendor reference number',
+          'Quantity',
+          'Sub-total',
+          'Adjustments',
+          'Release encumbrance',
+          'Total',
+          'Vendor code',
+        ];
+
+    columnsToCheck.forEach((columnName) => {
+      cy.get(invoiceLinesSequenceSelector).within(() => {
+        cy.contains(columnHeaderRoleSelector, columnName).should('exist');
+      });
+    });
+  },
+
+  dragAndDropInvoiceLine(sourceIndex, targetIndex) {
+    const SPACE_KEY = 32;
+    const ARROW_DOWN_KEY = 40;
+    const ARROW_UP_KEY = 38;
+
+    cy.get(invoiceLinesSequenceRowsSelector).then(($rows) => {
+      if (sourceIndex >= $rows.length || targetIndex >= $rows.length) {
+        throw new Error(
+          `Index out of bounds: sourceIndex=${sourceIndex}, targetIndex=${targetIndex}, rowsLength=${$rows.length}`,
+        );
+      }
+    });
+
+    cy.get(invoiceLinesSequenceRowsSelector).eq(sourceIndex).focus();
+
+    // eslint-disable-next-line cypress/no-force
+    cy.get(invoiceLinesSequenceRowsSelector)
+      .eq(sourceIndex)
+      .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
+      .wait(200);
+
+    const moveCount = Math.abs(targetIndex - sourceIndex);
+    const arrowKey = targetIndex > sourceIndex ? ARROW_DOWN_KEY : ARROW_UP_KEY;
+
+    for (let i = 0; i < moveCount; i++) {
+      // eslint-disable-next-line cypress/no-force
+      cy.get(invoiceLinesSequenceRowsSelector)
+        .eq(sourceIndex)
+        .trigger('keydown', { keyCode: arrowKey, which: arrowKey, force: true })
+        .wait(100);
+    }
+
+    // eslint-disable-next-line cypress/no-force
+    cy.get('body')
+      .trigger('keydown', { keyCode: SPACE_KEY, which: SPACE_KEY, force: true })
+      .wait(500);
+  },
+
+  saveAndCloseEditSequencePage() {
+    cy.do(linesSequencePane.find(Button('Save & close')).click());
+    cy.wait(4000);
   },
 };

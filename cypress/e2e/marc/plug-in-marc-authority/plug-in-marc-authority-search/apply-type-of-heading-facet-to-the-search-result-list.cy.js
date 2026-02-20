@@ -13,6 +13,7 @@ describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
+        typeOfHeadingsAccordionName: 'Type of heading',
         headingTypes: ['Corporate Name', 'Conference Name'],
         tags: {
           tag700: '700',
@@ -151,6 +152,12 @@ describe('MARC', () => {
             column: 'Type of heading',
             expectedValues: testData.headingTypes,
           });
+
+          MarcAuthorities.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+            testData.typeOfHeadingsAccordionName,
+            'name',
+            testData.headingTypes[0],
+          );
 
           MarcAuthorities.clickResetAndCheck();
         },

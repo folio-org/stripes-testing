@@ -88,11 +88,11 @@ function parseCommand() {
           }
         })
         .then(() => {
-          const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
+          const parsedCommand = `--spec "${filteredFiles.join(',')}"\n`;
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
             // To print test cases IDs (NOT FILTERED!!!)
-            // console.log(`\n${ids.join('')}`);
+            console.log(`\n${ids.join('')}\n`);
           } else {
             console.log(`Number of chunks: ${chunks.length}\n`);
             chunks.forEach((chunk, index) => {

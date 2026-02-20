@@ -1,160 +1,156 @@
-import { ORDER_STATUSES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import {
+  BasicOrderLine,
+  NewOrder,
+  OrderDetails,
+  OrderLineDetails,
+  OrderLines,
+  Orders,
+} from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const firstOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
-  };
-  const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
-    itemBarcode: getRandomPostfix(),
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  let user;
-  let orderNumber;
-  let servicePointId;
-  let location;
-  let instance;
+  describe('Inventory interaction', () => {
+    const organization = NewOrganization.getDefaultOrganization();
+    const testData = {
+      organization,
+      order: {
+        ...NewOrder.getDefaultOngoingOrder({ vendorId: organization.id }),
+        approved: true,
+      },
+    };
 
-  before(() => {
-    cy.log('Get admin token (1)...');
-    cy.getAdminToken();
-    cy.log('Admin token received.');
+    before(() => {
+      cy.getAdminToken();
+      InventoryInstance.createInstanceViaApi()
+        .then(({ instanceData }) => {
+          testData.instance = instanceData;
+        })
+        .then(() => {
+          Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+              (locationResp) => {
+                testData.location = locationResp;
+                cy.getAcquisitionMethodsApi({
+                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                }).then((amResp) => {
+                  cy.getBookMaterialType().then((mtypeResp) => {
+                    const orderLine = {
+                      ...BasicOrderLine.defaultOrderLine,
+                      instanceId: testData.instance.instanceId,
+                      cost: {
+                        listUnitPrice: 20.0,
+                        currency: 'USD',
+                        discountType: 'percentage',
+                        quantityPhysical: 1,
+                        poLineEstimatedPrice: 20.0,
+                      },
+                      locations: [
+                        { locationId: locationResp.id, quantity: 1, quantityPhysical: 1 },
+                      ],
+                      acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                      physical: {
+                        createInventory: 'Instance, Holding, Item',
+                        materialType: mtypeResp.id,
+                        materialSupplier: orgResp,
+                        volumes: [],
+                      },
+                    };
 
-    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
-      if (settings?.length !== 0) {
-        InventoryInteractions.setInstanceMatchingSetting({
-          ...settings[0],
-          value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+                    Orders.createOrderViaApi(testData.order).then((orderResp) => {
+                      testData.order.id = orderResp.id;
+                      testData.orderNumber = orderResp.poNumber;
+                      orderLine.purchaseOrderId = orderResp.id;
+
+                      OrderLines.createOrderLineViaApi(orderLine);
+                    });
+                  });
+                });
+              },
+            );
+          });
         });
-      }
-    });
+      InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
+        if (settings?.length !== 0) {
+          InventoryInteractions.setInstanceMatchingSetting({
+            ...settings[0],
+            value: JSON.stringify({ isInstanceMatchingDisabled: false }),
+          });
+        }
+      });
 
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersApprovePurchaseOrders.gui,
+        Permissions.uiOrdersEdit.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
+        Orders.waitLoading();
       });
     });
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
+
+    after(() => {
+      cy.getAdminToken();
+      Orders.deleteOrderViaApi(testData.order.id);
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instance.instanceId);
+      Users.deleteViaApi(testData.user.userId);
     });
-    firstOrder.vendor = organization.name;
-    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-      (instanceResponse) => {
-        instance = instanceResponse;
+
+    it(
+      'C374118 Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when editing PO line (thunderjet) (TaaS)',
+      { tags: ['extendedPath', 'thunderjet', 'C374118'] },
+      () => {
+        Orders.searchByParameter('PO number', testData.orderNumber);
+        Orders.selectFromResultsList(testData.orderNumber);
+        OrderLines.selectPOLInOrder();
+        OrderLineDetails.openOrderLineEditForm();
+        OrderLines.openPageConnectedInstance();
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(2000);
+        InstanceRecordView.getAssignedHRID().then((hridBefore) => {
+          testData.hridBeforeEdit = hridBefore;
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+          Orders.selectOrdersPane();
+          Orders.waitLoading();
+          Orders.searchByParameter('PO number', testData.orderNumber);
+          Orders.selectFromResultsList(testData.orderNumber);
+          OrderLines.selectPOLInOrder();
+          OrderLineDetails.openOrderLineEditForm();
+          OrderLines.fillInInvalidDataForPublicationDate();
+          OrderLines.removeInstanceConnectionModal();
+          OrderLines.saveOrderLine();
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+          OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
+          OrderLines.selectPOLInOrder();
+          OrderLines.openInstanceInPOL(testData.instance.instanceName);
+          InstanceRecordView.verifyInstanceRecordViewOpened();
+          cy.wait(2000);
+          InstanceRecordView.getAssignedHRID().then((hridAfter) => {
+            testData.hridAfterEdit = hridAfter;
+
+            expect(testData.hridAfterEdit).not.to.equal(testData.hridBeforeEdit);
+          });
+        });
       },
     );
-
-    cy.log('Login as admin...');
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.log('Logged in as admin.');
-
-    cy.log('Get admin token (2)...');
-    cy.getAdminToken();
-    cy.log('Admin token received.');
-
-    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.name);
-    });
-
-    cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
   });
-
-  after(() => {
-    cy.log('Login as admin...');
-    cy.loginAsAdmin({
-      path: TopMenu.ordersPath,
-      waiter: Orders.waitLoading,
-    });
-    cy.log('Logged in as admin.');
-
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    cy.wait(6000);
-    Orders.deleteOrderViaApi(firstOrder.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    NewLocation.deleteViaApi(location.id);
-
-    InventoryInteractions.getInstanceMatchingSettings().then((settings) => {
-      if (settings?.length !== 0) {
-        InventoryInteractions.setInstanceMatchingSetting({
-          ...settings[0],
-          value: JSON.stringify({ isInstanceMatchingDisabled: true }),
-        });
-      }
-    });
-
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C374118 Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when editing PO line (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'C374118'] },
-    () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder();
-      OrderLines.editPOLInOrder();
-      OrderLines.openPageConnectedInstance();
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder();
-      OrderLines.editPOLInOrder();
-      OrderLines.fillInInvalidDataForPublicationDate();
-      OrderLines.removeInstanceConnectionModal();
-      OrderLines.saveOrderLine();
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-      OrderLines.selectPOLInOrder();
-      OrderLines.openInstanceInPOL(item.instanceName);
-      instance.hrid = instance.hrid.replace(/\d+$/, (match) => {
-        let numericPart = Number(match);
-        numericPart += 1;
-        return numericPart.toString().padStart(match.length, '0');
-      });
-      InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
-    },
-  );
 });

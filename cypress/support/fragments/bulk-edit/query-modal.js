@@ -13,9 +13,10 @@ import {
   Spinner,
   TextField,
   Checkbox,
+  Calendar,
   Pane,
 } from '../../../../interactors';
-import { pluralize } from '../../../../scripts/helpers/tests.helper';
+import { pluralize } from '../../utils/stringTools';
 
 const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
@@ -130,6 +131,7 @@ export const instanceFieldValues = {
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
+  updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical codes',
@@ -454,6 +456,45 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
   },
 
+  verifyDatePlaceholder(row = 0) {
+    cy.expect([
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .exists(),
+    ]);
+  },
+
+  openCalendar(row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Button({ icon: 'calendar' }))
+        .click(),
+    );
+  },
+
+  verifyCalendarOpenedDate(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const [month, day, year] = date.split('/');
+    const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' });
+
+    cy.expect(Calendar().has({ day, month: monthName, year }));
+  },
+
+  selectDayFromCalendar(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const day = date.split('/')[1];
+
+    cy.do(Calendar().clickDay(day));
+  },
+
+  verifySelectedDateInCalendar(date, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .has({ value: date }),
+    );
+  },
+
   populateFiled(filedType, value) {
     switch (filedType) {
       case 'input':
@@ -472,12 +513,29 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },
 
+  verifyTextFieldValue(expectedValue, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(TextField()).has({ value: expectedValue }));
+  },
+
   chooseValueSelect(choice, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
+  },
+
+  verifySelectedValue(expectedValue, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ content: including('Select value') }))
+        .has({ checkedOptionText: expectedValue }),
+    );
+  },
+
+  chooseValueSelectByValue(value, row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectControl"]`).select(value);
     cy.wait(1000);
   },
 
@@ -491,6 +549,40 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    cy.wait(1000);
+  },
+
+  verifySelectedMultiselectValue(text, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(MultiSelect()).has({ selected: text }));
+  },
+
+  selectAllMatchingFromMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.wait(1500);
+
+    const clickNext = () => {
+      cy.get('body').then(($body) => {
+        const $unselected = $body.find(
+          '[role="listbox"]:visible [role="option"][aria-selected="false"]',
+        );
+
+        let found = false;
+        $unselected.each((i, el) => {
+          if (!found && Cypress.$(el).text().trim().includes(text)) {
+            found = true;
+            cy.wrap(el).click();
+            cy.wait(1000);
+            clickNext();
+            return false; // break the loop
+          }
+          return true; // continue the loop
+        });
+      });
+    };
+
+    clickNext();
+    cy.wait(500);
+    cy.do(buildQueryModal.click());
     cy.wait(1000);
   },
 
@@ -633,8 +725,10 @@ export default {
         .invoke('text')
         .then((text) => {
           if (numberOfMatchedRecords) {
+            const recordText = pluralize(numberOfMatchedRecords, 'record');
+
             expect(text).to.equal(
-              `Query returns ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${numberOfMatchedRecords} ${recordText}:`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');

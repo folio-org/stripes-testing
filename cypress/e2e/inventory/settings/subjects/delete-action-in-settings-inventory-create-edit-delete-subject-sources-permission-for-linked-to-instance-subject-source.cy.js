@@ -1,15 +1,15 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
-import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import SubjectSources, {
   ACTION_BUTTONS,
 } from '../../../../support/fragments/settings/inventory/instances/subjectSources';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import { APPLICATION_NAMES } from '../../../../support/constants';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Settings', () => {

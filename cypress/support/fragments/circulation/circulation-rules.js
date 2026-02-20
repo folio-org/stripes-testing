@@ -59,6 +59,18 @@ export default {
     cy.get('.react-codemirror2').type('{moveToEnd}');
   },
 
+  verifyHintExists() {
+    cy.expect(CodeMirrorHint().exists());
+  },
+
+  verifyDropdownHasAtLeastItems(count) {
+    cy.get('.CodeMirror-hints .CodeMirror-hint').should('have.length.at.least', count);
+  },
+
+  verifyDropdownContainsText(text) {
+    cy.get('.CodeMirror-hints').should('contain.text', text);
+  },
+
   fillInFallbackPolicy(policyData) {
     this.fillInCirculationRules('fallback-policy: ');
     cy.wait(2000);

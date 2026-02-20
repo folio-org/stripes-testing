@@ -1,4 +1,12 @@
-const searchButton = '[data-testid="id-search-button"]';
+import { Button, TextInput } from '../../../../interactors';
+
+const searchButton = Button({ dataTestID: 'id-search-button' });
+const resetButton = Button({ dataTestID: 'id-search-reset-button' });
+const hubsTabButton = Button({ dataTestID: 'id-search-segment-button-hubs' });
+const workInstancesTabButton = Button({ dataTestID: 'id-search-segment-button-resources' });
+const sourceLocalOption = "//input[@id='search-source-option-local']";
+const sourceLoCOption = "//input[@id='search-source-option-libraryOfCongress']";
+const hubsSearchInput = TextInput({ id: 'id-search-input' });
 
 export default {
   waitLoading: () => {
@@ -8,22 +16,43 @@ export default {
       .should('exist');
   },
 
+  switchToHubsTab: () => {
+    cy.do(hubsTabButton.click());
+  },
+
+  switchToWorkInstancesTab: () => {
+    cy.do(workInstancesTabButton.click());
+  },
+
+  selectSourceLocalOption: () => {
+    cy.xpath(sourceLocalOption).click();
+  },
+
+  selectSourceLoCOption: () => {
+    cy.xpath(sourceLoCOption).click();
+  },
+
+  verifyActiveButtons: (isActive) => {
+    cy.expect(searchButton.has({ disabled: !isActive }));
+    cy.expect(resetButton.has({ disabled: !isActive }));
+  },
+
   searchResourceByTitle: (title) => {
     cy.get('#id-search-select').select('Title');
     cy.get('#id-search-input').clear().type(title);
-    cy.get(searchButton).click();
+    cy.do(searchButton.click());
   },
 
   searchResourceByIsbn: (isbn) => {
     cy.get('#id-search-select').select('ISBN');
     cy.get('#id-search-input').type(isbn);
-    cy.get(searchButton).click();
+    cy.do(searchButton.click());
   },
 
   searchResourceByContributor: (contributor) => {
     cy.get('#id-search-select').select('Contributor');
     cy.get('#id-search-input').type(contributor);
-    cy.get(searchButton).click();
+    cy.do(searchButton.click());
   },
 
   verifySearchResult(data) {
@@ -57,11 +86,32 @@ export default {
       });
   },
 
+  verifyNoResultsFound() {
+    cy.get('[class*="search-result-entry-container"]').should('not.exist');
+    cy.get('[class*="item-search-content"]')
+      .contains('No resource descriptions match your query')
+      .should('exist');
+  },
+
   checkSearchResultsByTitle(title) {
     cy.xpath(`//button[text()="${title}"]`).should('be.visible');
   },
 
   selectAdvancedSearch() {
     cy.xpath('//button[@class="button button-link search-button"]').click();
+  },
+
+  fillHubsSearchInput(searchQuery) {
+    cy.do(hubsSearchInput.fillIn(searchQuery));
+    cy.wait(200);
+    cy.expect(searchButton.is({ disabled: false }));
+    cy.expect(resetButton.is({ disabled: false }));
+    cy.do(searchButton.click());
+    cy.wait(500);
+  },
+
+  clickResetButton() {
+    cy.do(resetButton.click());
+    cy.wait(500);
   },
 };

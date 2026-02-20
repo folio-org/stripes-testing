@@ -7,6 +7,8 @@ import {
   Select,
   TextArea,
   Section,
+  MultiColumnListRow,
+  and,
 } from '../../../../interactors';
 import InventoryHotkeys from './inventoryHotkeys';
 import QuickMarcEditor from '../quickMarcEditor';
@@ -16,7 +18,27 @@ const keyboardShortcutModal = Modal({ id: 'keyboard-shortcuts-modal' });
 const closeKeyboardShortcutModalButton = keyboardShortcutModal.find(
   Button({ id: 'keyboard-shortcuts-modal-close' }),
 );
+const closeIcon = Button({ icon: 'times' });
 const hotKeys = InventoryHotkeys.hotKeys;
+const shortcutList = [
+  ['Create a new record', 'Alt + N'],
+  ['Edit a record', 'Ctrl + Alt + E'],
+  ['Save a record', 'Ctrl + S'],
+  ['Duplicate a record', 'Alt + C'],
+  ['Expand all accordions', 'Ctrl + Alt + B'],
+  ['Collapse all accordions', 'Ctrl + Alt + G'],
+  ['Expand or collapse an accordion', 'Spacebar'],
+  ['Go to "Search & filter" pane', 'Ctrl + Alt + H'],
+  ['Open keyboard shortcuts modal', 'Ctrl + Alt + K'],
+  ['Edit MARC record', 'Ctrl + Shift + E'],
+  ['quickMARC only: Move to the next subfield in a text box', 'Ctrl + ]'],
+  ['quickMARC only: Move to the previous subfield in a text box', 'Ctrl + ['],
+  ['Close a modal or pop-up', 'Esc'],
+  ['Copy', 'Ctrl + C'],
+  ['Cut', 'Ctrl + X'],
+  ['Paste', 'Ctrl + V'],
+  ['Find', 'Ctrl + F'],
+];
 
 export default {
   verifyInventoryDropdownIsShown(isOpen) {
@@ -76,4 +98,20 @@ export default {
       rowNumber,
     );
   },
+
+  verifyShortcutsModalContent() {
+    shortcutList.forEach(([action, keys]) => {
+      cy.expect(
+        keyboardShortcutModal
+          .find(MultiColumnListRow(and(including(action), including(keys))))
+          .exists(),
+      );
+    });
+    cy.expect([
+      keyboardShortcutModal.find(closeIcon).exists(),
+      closeKeyboardShortcutModalButton.exists(),
+    ]);
+  },
+
+  closeShortcutsViaIcon: () => cy.do(keyboardShortcutModal.find(closeIcon).click()),
 };

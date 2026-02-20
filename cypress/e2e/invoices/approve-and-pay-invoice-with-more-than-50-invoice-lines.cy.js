@@ -160,7 +160,7 @@ describe('Invoices', () => {
       user = userProperties;
 
       cy.getAdminToken();
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
 
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,

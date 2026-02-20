@@ -25,7 +25,12 @@ import {
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
-import { AUTHORIZATION_ROLES_COLUMNS, AUTHORIZATION_ROLES_COLUMNS_CM } from '../../../constants';
+import {
+  AUTHORIZATION_ROLES_COLUMNS,
+  AUTHORIZATION_ROLES_COLUMNS_CM,
+  CAPABILITY_ACTIONS,
+  CAPABILITY_TYPES,
+} from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button(or('+ New', 'New'));
@@ -126,6 +131,23 @@ const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
   );
 };
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
+const expectedCapabilityTableActions = {
+  [CAPABILITY_TYPES.DATA]: [
+    CAPABILITY_ACTIONS.VIEW,
+    CAPABILITY_ACTIONS.EDIT,
+    CAPABILITY_ACTIONS.CREATE,
+    CAPABILITY_ACTIONS.DELETE,
+    CAPABILITY_ACTIONS.MANAGE,
+  ],
+  [CAPABILITY_TYPES.SETTINGS]: [
+    CAPABILITY_ACTIONS.VIEW,
+    CAPABILITY_ACTIONS.EDIT,
+    CAPABILITY_ACTIONS.CREATE,
+    CAPABILITY_ACTIONS.DELETE,
+    CAPABILITY_ACTIONS.MANAGE,
+  ],
+  [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
+};
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -638,7 +660,7 @@ export default {
   },
 
   waitCapabilitiesShown: () => {
-    cy.expect(capabilitiesAccordion.find(MultiColumnListRow()).exists());
+    cy.expect([Spinner().absent(), capabilitiesAccordion.find(MultiColumnListRow()).exists()]);
   },
 
   verifyRoleViewPane(roleName, roleDescription) {
@@ -1098,8 +1120,11 @@ export default {
   },
 
   checkApplicationCountInModal: (count) => {
-    if (count) cy.expect(selectApplicationModal.find(MultiColumnList()).has({ rowCount: count }));
-    else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
+    if (count) {
+      cy.expect(
+        selectApplicationModal.find(MultiColumnList()).has({ ariaRowCount: `${count + 1}` }),
+      );
+    } else cy.expect(selectApplicationModal.find(MultiColumnListRow()).absent());
   },
 
   clickResetAllInSelectAppModal() {
@@ -1115,5 +1140,59 @@ export default {
   cancelAppUnselection() {
     cy.do(unselectAppConfirmationModal.find(cancelButton).click());
     cy.expect(unselectAppConfirmationModal.absent());
+  },
+
+  verifyCapabilityTableRowsSorted(table, { sets = false } = {}) {
+    const targetAccordion = sets ? capabilitySetsAccordion : capabilitiesAccordion;
+    cy.then(() => targetAccordion
+      .find(capabilityTables[table])
+      .find(HTML({ className: including('mclRowContainer-') }))
+      .text()).then((tableText) => {
+      const rowTexts = tableText.split(/(?=app-)/);
+      expect(rowTexts).to.deep.equal(rowTexts.toSorted());
+    });
+  },
+
+  verifyCapabilityRowsSortedInMultipleTables({
+    capabilitySetTableNames = Object.values(CAPABILITY_TYPES),
+    capabilityTableNames = Object.values(CAPABILITY_TYPES),
+  } = {}) {
+    cy.wait(1000);
+    capabilitySetTableNames.forEach((table) => {
+      this.verifyCapabilityTableRowsSorted(table, { sets: true });
+      cy.wait(1000);
+    });
+    capabilityTableNames.forEach((table) => {
+      this.verifyCapabilityTableRowsSorted(table, { sets: false });
+      cy.wait(1000);
+    });
+  },
+
+  verifyHeadersForCapabilityTables({
+    capabilitySetTableNames = Object.values(CAPABILITY_TYPES),
+    capabilityTableNames = Object.values(CAPABILITY_TYPES),
+  } = {}) {
+    const expectedHeadersMatcher = (table) => or(
+      [
+        'Application',
+        'Resource',
+        ...expectedCapabilityTableActions[table].map((text) => `${text} `),
+      ],
+      ['Application', 'Resource', ...expectedCapabilityTableActions[table]],
+    );
+    capabilitySetTableNames.forEach((table) => {
+      cy.expect(
+        capabilitySetsAccordion.find(capabilityTables[table]).has({
+          columns: expectedHeadersMatcher(table),
+        }),
+      );
+    });
+    capabilityTableNames.forEach((table) => {
+      cy.expect(
+        capabilitiesAccordion.find(capabilityTables[table]).has({
+          columns: expectedHeadersMatcher(table),
+        }),
+      );
+    });
   },
 };
