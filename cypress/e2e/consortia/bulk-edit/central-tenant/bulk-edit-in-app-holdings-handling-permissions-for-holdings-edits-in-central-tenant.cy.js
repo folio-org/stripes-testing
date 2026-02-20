@@ -42,19 +42,13 @@ const holdingInMarcInstance = {
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(holdingUUIDsFileName, true);
 const newAdministrativeNote = `Administrative note_${getRandomPostfix()}`;
-const collegePermissions = [
-  permissions.bulkEditEdit.gui,
-  permissions.bulkEditQueryView.gui,
-  permissions.uiInventoryViewInstances.gui,
-];
+const collegePermissions = [permissions.bulkEditEdit.gui, permissions.uiInventoryViewInstances.gui];
 const universityPermissions = [
   permissions.bulkEditView.gui,
-  permissions.bulkEditQueryView.gui,
   permissions.uiInventoryViewCreateEditHoldings.gui,
 ];
 const centralPermissions = [
   permissions.bulkEditEdit.gui,
-  permissions.bulkEditQueryView.gui,
   permissions.uiInventoryViewCreateEditHoldings.gui,
 ];
 
