@@ -12,7 +12,6 @@ import ItemRecordNew from '../../../../../support/fragments/inventory/item/itemR
 import BrowseCallNumber from '../../../../../support/fragments/inventory/search/browseCallNumber';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../../support/constants';
-import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -24,15 +23,15 @@ describe('MARC', () => {
         const randomPostfix = getRandomPostfix();
         const testData = {
           user: {},
-          marcTitle: `AT_C784586_MarcBibInstance_${randomPostfix}`,
+          marcTitle: `AT_C788740_MarcBibInstance_${randomPostfix}`,
           tag035: '035',
           tag852: '852',
-          callNumberValue: `AT_C784586_CallNunmber_${randomPostfix}`,
-          tag035Value: '784586123123',
+          callNumberValue: `AT_C788740_CallNunmber_${randomPostfix}`,
+          tag035Value: '788740123123',
           heldbyAccordionName: 'Held by',
         };
         const userPermissions = {
-          central: [Permissions.inventoryAll.gui],
+          central: [Permissions.uiInventoryViewInstances.gui],
           college: [
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -60,14 +59,9 @@ describe('MARC', () => {
             cy.getAdminToken();
           })
             .then(() => {
-              [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
-                cy.withinTenant(tenant, () => {
-                  InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C784586');
-                });
-              });
-            })
-            .then(() => {
               cy.setTenant(Affiliations.College);
+              InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C788740');
+
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 loanTypeName = res[0].name;
               });
@@ -108,7 +102,7 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              cy.resetTenant();
+              cy.setTenant(Affiliations.College);
               cy.createSimpleMarcBibViaAPI(testData.marcTitle).then((instanceId) => {
                 createdInstanceId = instanceId;
               });
@@ -126,12 +120,8 @@ describe('MARC', () => {
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
-            cy.withinTenant(tenant, () => {
-              InventoryInstances.deleteFullInstancesByTitleViaApi(testData.marcTitle);
-            });
-          });
           cy.setTenant(Affiliations.College);
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C788740');
           Users.deleteViaApi(testData.user.userId);
           [Affiliations.University, Affiliations.College, Affiliations.Consortia].forEach(
             (tenant) => {
@@ -144,8 +134,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C784586 Create MARC holdings record on Shared MARC bib from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C784586'] },
+          'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire', 'C788740'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);
@@ -216,18 +206,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
             BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberValue);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            InventoryInstances.waitContentLoading();
-
-            InventoryInstances.searchByTitle(createdInstanceId);
-            InventoryInstances.selectInstanceById(createdInstanceId);
-            InventoryInstance.waitInstanceRecordViewOpened();
-            InventoryInstance.expandConsortiaHoldings();
-            InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
-            InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
-            InstanceRecordView.verifyIsHoldingsCreated([locations[Affiliations.College].name]);
-
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             InventoryInstances.waitContentLoading();
 
             InventorySearchAndFilter.switchToBrowseTab();
@@ -238,18 +217,9 @@ describe('MARC', () => {
             InventorySearchAndFilter.checkBrowseOptionSelected(
               BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
             );
-            cy.setTenant(Affiliations.University);
-            BrowseCallNumber.waitForCallNumberToAppear(testData.callNumberValue);
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
-            BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberValue);
-
-            BrowseCallNumber.clickOnResult(testData.callNumberValue);
-            InventorySearchAndFilter.validateSearchTabIsDefault();
-            InventoryInstances.selectInstanceById(createdInstanceId);
-            InventoryInstance.waitInstanceRecordViewOpened();
-            InstanceRecordView.verifyMemberHoldingsAccordionExpanded(tenantNames.college);
-            InstanceRecordView.verifyIsHoldingsCreated([locations[Affiliations.College].name]);
+            BrowseCallNumber.checkNonExactSearchResult(testData.callNumberValue);
           },
         );
       });
