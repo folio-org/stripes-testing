@@ -27,12 +27,10 @@ describe('Eureka', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
-          authRefresh: false,
+          authRefresh: true,
         });
         cy.allure().logCommandSteps();
-        cy.waitForAuthRefresh(() => {
-          cy.logout();
-        });
+        cy.logout();
 
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
