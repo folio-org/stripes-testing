@@ -1519,7 +1519,6 @@ export default {
           'Quantity',
           'Sub-total',
           'Adjustments',
-          'Release encumbrance',
           'Total',
           'Vendor code',
         ];
