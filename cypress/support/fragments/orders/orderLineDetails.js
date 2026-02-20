@@ -46,6 +46,9 @@ const routingListSection = orderLineDetailsSection.find(Section({ id: 'routing-l
 const routingListAccordionButton = '#accordion-toggle-button-routing-list';
 const routingListBadgeSelector = '[class*="badge"]';
 const routingListContainer = '#routing-list';
+const relatedInvoiceLinesSection = orderLineDetailsSection.find(
+  Section({ id: 'relatedInvoiceLines' }),
+);
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -398,5 +401,44 @@ export default {
   },
   checkNoRoutingListsText() {
     cy.get(routingListContainer).should('contain.text', 'No routing lists');
+  },
+  checkRelatedInvoiceLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.vendorInvoiceNo) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Vendor invoice #' }))
+            .exists(),
+        );
+      }
+      if (record.invoiceLineNumber) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Invoice line #' }))
+            .exists(),
+        );
+      }
+      if (record.fiscalYear) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Fiscal year' }))
+            .exists(),
+        );
+      }
+      if (record.invoiceDate) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Invoice date' }))
+            .exists(),
+        );
+      }
+      if (record.vendorCode) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Vendor code' }))
+            .exists(),
+        );
+      }
+    });
   },
 };
