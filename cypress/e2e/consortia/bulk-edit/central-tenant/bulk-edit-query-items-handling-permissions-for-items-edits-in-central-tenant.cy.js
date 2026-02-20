@@ -28,17 +28,7 @@ import QueryModal, {
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
-let instanceTypeId;
-let sourceId;
-let locationId;
-let materialTypeId;
-let loanTypeId;
-let sharedFolioInstance;
-let sharedMarcInstance;
-let allItemIds;
-let allItemBarcodes;
-let collegeItemBarcodes;
-let universityItemBarcodes;
+const testData = {};
 const itemInFolioInstance = {
   collegeItemId: null,
   collegeItemBarcode: null,
@@ -59,7 +49,6 @@ const holdingInMarcInstance = {
   collegeHoldingId: null,
   universityHoldingId: null,
 };
-let fileNames;
 const newItemNote = `Item note_${getRandomPostfix()}`;
 const collegePermissions = [
   permissions.bulkEditView.gui,
@@ -101,55 +90,55 @@ describe('Bulk-edit', () => {
           })
           .then(() => {
             cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-              instanceTypeId = instanceTypeData[0].id;
+              testData.instanceTypeId = instanceTypeData[0].id;
             });
           })
           .then(() => {
             // Create shared FOLIO Instance in Central tenant
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
-                instanceTypeId,
+                instanceTypeId: testData.instanceTypeId,
                 title: `AT_C566499_FolioInstance_${getRandomPostfix()}`,
               },
             }).then((createdInstanceData) => {
-              sharedFolioInstance = createdInstanceData.instanceId;
+              testData.sharedFolioInstance = createdInstanceData.instanceId;
             });
 
             // Create shared MARC Instance in Central tenant
             const marcInstanceTitle = `AT_C566499_MarcInstance_${getRandomPostfix()}`;
             cy.createSimpleMarcBibViaAPI(marcInstanceTitle).then((instanceId) => {
-              sharedMarcInstance = instanceId;
+              testData.sharedMarcInstance = instanceId;
             });
           })
           .then(() => {
             // Create Holdings and Items in College tenant
             cy.withinTenant(Affiliations.College, () => {
               cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-                materialTypeId = materialTypes.id;
+                testData.materialTypeId = materialTypes.id;
               });
               cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
-                loanTypeId = res[0].id;
+                testData.loanTypeId = res[0].id;
               });
               cy.getLocations({ limit: 1 }).then((res) => {
-                locationId = res.id;
+                testData.locationId = res.id;
               });
               InventoryHoldings.getHoldingsFolioSource()
                 .then((folioSource) => {
-                  sourceId = folioSource.id;
+                  testData.sourceId = folioSource.id;
                 })
                 .then(() => {
                   // holding in FOLIO instance
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: sharedFolioInstance,
-                    permanentLocationId: locationId,
-                    sourceId,
+                    instanceId: testData.sharedFolioInstance,
+                    permanentLocationId: testData.locationId,
+                    sourceId: testData.sourceId,
                   }).then((holding) => {
                     holdingInFolioInstance.collegeHoldingId = holding.id;
                     InventoryItems.createItemViaApi({
                       barcode: `Item_${getRandomPostfix()}`,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: loanTypeId },
-                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      materialType: { id: testData.materialTypeId },
                       holdingsRecordId: holding.id,
                     }).then((item) => {
                       itemInFolioInstance.collegeItemId = item.id;
@@ -159,16 +148,16 @@ describe('Bulk-edit', () => {
 
                   // holding in MARC instance
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: sharedMarcInstance,
-                    permanentLocationId: locationId,
-                    sourceId,
+                    instanceId: testData.sharedMarcInstance,
+                    permanentLocationId: testData.locationId,
+                    sourceId: testData.sourceId,
                   }).then((holding) => {
                     holdingInMarcInstance.collegeHoldingId = holding.id;
                     InventoryItems.createItemViaApi({
                       barcode: `Item_${getRandomPostfix()}`,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: loanTypeId },
-                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      materialType: { id: testData.materialTypeId },
                       holdingsRecordId: holding.id,
                     }).then((item) => {
                       itemInMarcInstance.collegeItemId = item.id;
@@ -182,31 +171,31 @@ describe('Bulk-edit', () => {
             // Create Holdings and Items in University tenant
             cy.withinTenant(Affiliations.University, () => {
               cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-                materialTypeId = materialTypes.id;
+                testData.materialTypeId = materialTypes.id;
               });
               cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
-                loanTypeId = res[0].id;
+                testData.loanTypeId = res[0].id;
               });
               cy.getLocations({ limit: 1 }).then((res) => {
-                locationId = res.id;
+                testData.locationId = res.id;
               });
               InventoryHoldings.getHoldingsFolioSource()
                 .then((folioSource) => {
-                  sourceId = folioSource.id;
+                  testData.sourceId = folioSource.id;
                 })
                 .then(() => {
                   // holding in FOLIO instance
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: sharedFolioInstance,
-                    permanentLocationId: locationId,
-                    sourceId,
+                    instanceId: testData.sharedFolioInstance,
+                    permanentLocationId: testData.locationId,
+                    sourceId: testData.sourceId,
                   }).then((holding) => {
                     holdingInFolioInstance.universityHoldingId = holding.id;
                     InventoryItems.createItemViaApi({
                       barcode: `Item_${getRandomPostfix()}`,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: loanTypeId },
-                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      materialType: { id: testData.materialTypeId },
                       holdingsRecordId: holding.id,
                     }).then((item) => {
                       itemInFolioInstance.universityItemId = item.id;
@@ -216,16 +205,16 @@ describe('Bulk-edit', () => {
 
                   // holding in MARC instance
                   InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: sharedMarcInstance,
-                    permanentLocationId: locationId,
-                    sourceId,
+                    instanceId: testData.sharedMarcInstance,
+                    permanentLocationId: testData.locationId,
+                    sourceId: testData.sourceId,
                   }).then((holding) => {
                     holdingInMarcInstance.universityHoldingId = holding.id;
                     InventoryItems.createItemViaApi({
                       barcode: `Item_${getRandomPostfix()}`,
                       status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: loanTypeId },
-                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      materialType: { id: testData.materialTypeId },
                       holdingsRecordId: holding.id,
                     }).then((item) => {
                       itemInMarcInstance.universityItemId = item.id;
@@ -237,23 +226,23 @@ describe('Bulk-edit', () => {
           })
           .then(() => {
             // Initialize arrays for test usage
-            allItemIds = [
+            testData.allItemIds = [
               itemInFolioInstance.collegeItemId,
               itemInFolioInstance.universityItemId,
               itemInMarcInstance.collegeItemId,
               itemInMarcInstance.universityItemId,
             ];
-            allItemBarcodes = [
+            testData.allItemBarcodes = [
               itemInFolioInstance.collegeItemBarcode,
               itemInFolioInstance.universityItemBarcode,
               itemInMarcInstance.collegeItemBarcode,
               itemInMarcInstance.universityItemBarcode,
             ];
-            collegeItemBarcodes = [
+            testData.collegeItemBarcodes = [
               itemInFolioInstance.collegeItemBarcode,
               itemInMarcInstance.collegeItemBarcode,
             ];
-            universityItemBarcodes = [
+            testData.universityItemBarcodes = [
               itemInFolioInstance.universityItemBarcode,
               itemInMarcInstance.universityItemBarcode,
             ];
@@ -284,10 +273,10 @@ describe('Bulk-edit', () => {
           InventoryHoldings.deleteHoldingRecordViaApi(holdingInMarcInstance.universityHoldingId);
         });
         cy.resetTenant();
-        InventoryInstance.deleteInstanceViaApi(sharedFolioInstance);
-        InventoryInstance.deleteInstanceViaApi(sharedMarcInstance);
+        InventoryInstance.deleteInstanceViaApi(testData.sharedFolioInstance);
+        InventoryInstance.deleteInstanceViaApi(testData.sharedMarcInstance);
         Users.deleteViaApi(user.userId);
-        BulkEditFiles.deleteAllDownloadedFiles(fileNames);
+        BulkEditFiles.deleteAllDownloadedFiles(testData.fileNames);
       });
 
       it(
@@ -315,7 +304,10 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(itemFieldValues.instanceId, 2);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN, 2);
-          QueryModal.fillInValueTextfield(`${sharedFolioInstance}, ${sharedMarcInstance}`, 2);
+          QueryModal.fillInValueTextfield(
+            `${testData.sharedFolioInstance}, ${testData.sharedMarcInstance}`,
+            2,
+          );
 
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
@@ -331,12 +323,15 @@ describe('Bulk-edit', () => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
-            fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
+            testData.fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(
+              interceptedUuid,
+              true,
+            );
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 item');
 
-            allItemBarcodes.forEach((barcode) => {
+            testData.allItemBarcodes.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 barcode,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
@@ -347,9 +342,9 @@ describe('Bulk-edit', () => {
             // Step 2: Download matched records (CSV)
             BulkEditActions.downloadMatchedResults();
 
-            allItemBarcodes.forEach((barcode) => {
+            testData.allItemBarcodes.forEach((barcode) => {
               BulkEditFiles.verifyValueInRowByUUID(
-                fileNames.matchedRecordsCSV,
+                testData.fileNames.matchedRecordsCSV,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
                 barcode,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
@@ -370,7 +365,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-            allItemBarcodes.forEach((barcode) => {
+            testData.allItemBarcodes.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
                 barcode,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -381,9 +376,9 @@ describe('Bulk-edit', () => {
             // Step 6: Download preview CSV
             BulkEditActions.downloadPreview();
 
-            allItemIds.forEach((itemId) => {
+            testData.allItemIds.forEach((itemId) => {
               BulkEditFiles.verifyValueInRowByUUID(
-                fileNames.previewRecordsCSV,
+                testData.fileNames.previewRecordsCSV,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
                 itemId,
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -429,19 +424,19 @@ describe('Bulk-edit', () => {
             BulkEditActions.openActions();
             BulkEditActions.downloadErrors();
 
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+            ExportFile.verifyFileIncludes(testData.fileNames.errorsFromCommitting, [
               `ERROR,${itemInFolioInstance.collegeItemId},${errorMessageTemplateCollege(itemInFolioInstance.collegeItemId)}`,
               `ERROR,${itemInMarcInstance.collegeItemId},${errorMessageTemplateCollege(itemInMarcInstance.collegeItemId)}`,
               `ERROR,${itemInFolioInstance.universityItemId},${errorMessageTemplateUniversity(itemInFolioInstance.universityItemId)}`,
               `ERROR,${itemInMarcInstance.universityItemId},${errorMessageTemplateUniversity(itemInMarcInstance.universityItemId)}`,
             ]);
-            BulkEditFiles.verifyCSVFileRecordsNumber(fileNames.errorsFromCommitting, 4);
+            BulkEditFiles.verifyCSVFileRecordsNumber(testData.fileNames.errorsFromCommitting, 4);
 
             // Step 12: Switch to College tenant and verify changes NOT applied
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            collegeItemBarcodes.forEach((barcode) => {
+            testData.collegeItemBarcodes.forEach((barcode) => {
               InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
@@ -454,7 +449,7 @@ describe('Bulk-edit', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            universityItemBarcodes.forEach((barcode) => {
+            testData.universityItemBarcodes.forEach((barcode) => {
               InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
