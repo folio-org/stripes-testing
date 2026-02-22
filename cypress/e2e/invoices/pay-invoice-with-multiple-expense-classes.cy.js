@@ -1,122 +1,210 @@
-import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  INVOICE_STATUSES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import { BudgetDetails, Budgets, Funds } from '../../support/fragments/finance';
+import {
+  InvoiceLineEditForm,
+  InvoiceNewForm,
+  Invoices,
+  InvoiceView,
+  NewInvoice,
+} from '../../support/fragments/invoices';
+import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const firstOrder = { ...NewOrder.defaultOneTimeOrder, approved: true, reEncumber: true };
-  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const organization = NewOrganization.getDefaultOrganization();
+  const testData = {
+    organization,
+    user: {},
+  };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '100';
-  let user;
-  let firstOrderNumber;
-  let servicePointId;
-  let location;
+  const expenseClass1 = { ...ExpenseClasses.getDefaultExpenseClass() };
+  const expenseClass2 = {
+    ...ExpenseClasses.getDefaultExpenseClass(),
+    name: `autotest_class_2_name_${getRandomPostfix()}`,
+  };
 
-  before(() => {
+  before('Setup test data', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.expenseClassesPath,
-      waiter: SettingsFinance.waitExpenseClassesLoading,
+    ExpenseClasses.createExpenseClassViaApi(expenseClass1).then((ec1) => {
+      testData.expenseClass1 = ec1;
+
+      ExpenseClasses.createExpenseClassViaApi(expenseClass2).then((ec2) => {
+        testData.expenseClass2 = ec2;
+
+        const { fiscalYear, fund } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+          budget: {
+            allocated: 100,
+            statusExpenseClasses: [
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass1.id,
+              },
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass2.id,
+              },
+            ],
+          },
+        });
+        testData.fiscalYear = fiscalYear;
+        testData.fund = fund;
+      });
     });
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+    Organizations.createOrganizationViaApi(testData.organization).then((orgResp) => {
+      testData.organization.id = orgResp;
+      invoice.accountingCode = organization.erpCode;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addExpensesClass(firstExpenseClass.name);
+      cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((locationResp) => {
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }).then((amResp) => {
+          cy.getBookMaterialType().then((mtypeResp) => {
+            testData.order = {
+              ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+              reEncumber: true,
+              approved: true,
+            };
+            const orderLine = {
+              ...BasicOrderLine.defaultOrderLine,
+              cost: {
+                listUnitPrice: 20.0,
+                currency: 'USD',
+                discountType: 'percentage',
+                quantityPhysical: 1,
+                poLineEstimatedPrice: 20.0,
+              },
+              fundDistribution: [
+                {
+                  code: testData.fund.code,
+                  fundId: testData.fund.id,
+                  value: 100,
+                },
+              ],
+              locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+              acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+              physical: {
+                createInventory: 'Instance, Holding, Item',
+                materialType: mtypeResp.id,
+                materialSupplier: orgResp.id,
+                volumes: [],
+              },
+            };
+
+            Orders.createOrderViaApi(testData.order).then((orderResp) => {
+              testData.order.id = orderResp.id;
+              testData.orderNumber = orderResp.poNumber;
+              orderLine.purchaseOrderId = orderResp.id;
+
+              OrderLines.createOrderLineViaApi(orderLine);
+              Orders.updateOrderViaApi({
+                ...orderResp,
+                workflowStatus: ORDER_STATUSES.OPEN,
+              });
+            });
+          });
         });
       });
     });
-
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      firstOrder.orderType = 'One-time';
-      firstOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
-      Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
-        firstOrder.id = secondOrderResponse.id;
-        firstOrderNumber = secondOrderResponse.poNumber;
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-          defaultFund,
-          '40',
-          '1',
-          '40',
-          location.name,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
+    cy.getBatchGroups().then((bgResp) => {
+      invoice.batchGroup = bgResp.name;
     });
 
     cy.createTempUser([
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesPayInvoices.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-        authRefresh: true,
-      });
+      testData.user = userProperties;
+
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
     });
   });
 
-  after(() => {
+  after('Clean up test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
+    Organizations.deleteOrganizationViaApi(testData.organization.id);
   });
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C15859'] },
+    { tags: ['criticalPath', 'thunderjet', 'C15859'] },
     () => {
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
+      Invoices.openNewInvoiceForm();
+      InvoiceNewForm.createInvoice({
+        status: invoice.status,
+        invoiceDate: invoice.invoiceDate,
+        invoiceNumber: invoice.invoiceNumber,
+        vendorName: organization.name,
+        accountingCode: invoice.accountingCode,
+        batchGroup: invoice.batchGroup,
+        paymentMethod: 'Cash',
+      });
+      Invoices.createInvoiceLineFromPol(testData.orderNumber);
+      Invoices.selectInvoiceLine();
+      InvoiceLineDetails.waitLoading();
+      InvoiceLineDetails.openInvoiceLineEditForm();
+      InvoiceLineEditForm.configureFundDistribution(0, {
+        expenseClass: expenseClass1.name,
+        value: '50',
+      });
+      InvoiceLineEditForm.clickAddFundDistributionButton();
+      InvoiceLineEditForm.configureFundDistribution(1, {
+        fund: `${testData.fund.name} (${testData.fund.code})`,
+        expenseClass: expenseClass2.name,
+        value: '50',
+      });
+      InvoiceLineEditForm.clickSaveButton();
+      InvoiceView.approveInvoice();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Status', value: INVOICE_STATUSES.APPROVED },
+        ],
+      });
+      InvoiceView.selectInvoiceLine();
+      InvoiceLineDetails.waitLoading();
+      InvoiceLineDetails.openFundDetailsPane(testData.fund.name);
+      Funds.selectBudgetDetails();
+      BudgetDetails.checkBudgetDetails({
+        summary: [{ key: 'Awaiting payment', value: '$20.00' }],
+      });
+      Funds.viewTransactions();
+      Funds.checkTransactionCount('Pending payment', 2);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+      Invoices.waitLoading();
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      InvoiceView.payInvoice();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
+      });
+      InvoiceView.selectInvoiceLine();
+      InvoiceLineDetails.waitLoading();
+      InvoiceLineDetails.openFundDetailsPane(testData.fund.name, 0);
+      Funds.selectBudgetDetails();
+      BudgetDetails.checkBudgetDetails({
+        summary: [{ key: 'Expended', value: '$20.00' }],
+      });
+      Funds.viewTransactions();
+      Funds.checkTransactionCount('Payment', 2);
     },
   );
 });

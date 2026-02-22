@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';

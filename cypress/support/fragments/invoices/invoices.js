@@ -138,6 +138,12 @@ export default {
       })
       .then(({ body }) => body);
   },
+  openNewInvoiceForm() {
+    cy.wait(4000);
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
+  },
   createInvoiceViaApi({
     vendorId,
     accountingCode,

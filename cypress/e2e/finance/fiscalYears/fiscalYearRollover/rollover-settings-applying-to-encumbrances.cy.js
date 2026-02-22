@@ -188,7 +188,7 @@ describe('Finance', () => {
         Ledgers.selectLedger(ledger.name);
 
         LedgerDetails.checkLedgerDetails({
-          information: [{ key: 'Fiscal year', value: fiscalYears.first.code }],
+          information: [{ key: 'Current fiscal year', value: fiscalYears.first.code }],
           financialSummary: {
             information: [{ key: 'Encumbered', value: '$50.00' }],
           },

@@ -216,6 +216,7 @@ export default {
   fillLocationDetails(locationDetails) {
     locationDetails.forEach((location, index) => {
       Object.entries(location).forEach(([key, value]) => {
+        cy.wait(1500);
         cy.do(
           locationSection.find(TextField({ name: `locations[${index}].${key}` })).fillIn(value),
         );

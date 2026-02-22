@@ -924,7 +924,7 @@ export default {
     }
 
     cy.expect(
-      Accordion('Administrative data')
+      adminDataAccordion
         .find(
           HTML(
             or(...timePoints.map((timePoint) => including(`Record last updated: ${timePoint}`))),
@@ -936,9 +936,7 @@ export default {
 
   verifyLastUpdatedDateAndTime(updatedDate) {
     cy.expect(
-      Accordion('Administrative data')
-        .find(HTML(including(`Record last updated: ${updatedDate}`)))
-        .exists(),
+      adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
     );
   },
 
@@ -1138,5 +1136,9 @@ export default {
         acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: values })).exists(),
       );
     }
+  },
+
+  openAccordion: (name) => {
+    cy.do(Accordion(name).clickHeader());
   },
 };
