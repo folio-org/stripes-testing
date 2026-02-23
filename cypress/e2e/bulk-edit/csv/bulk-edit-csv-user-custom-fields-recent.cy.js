@@ -14,14 +14,14 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const customFieldData = {
-  fieldLabel: `fieldLabel;${getRandomPostfix()}`,
-  label1: `label1;${getRandomPostfix()}`,
-  label2: `label2;${getRandomPostfix()}`,
+  fieldLabel: `fieldLabel${getRandomPostfix()}`,
+  label1: `label1${getRandomPostfix()}`,
+  label2: `label2${getRandomPostfix()}`,
 };
 const updatedCustomFieldData = {
-  fieldLabel: `updated-fieldLabel-${getRandomPostfix()}`,
-  label1: `updated-label1-${getRandomPostfix()}`,
-  label2: `updated-label2-${getRandomPostfix()}`,
+  fieldLabel: `updated${getRandomPostfix()}`,
+  label1: `updated${getRandomPostfix()}`,
+  label2: `updated${getRandomPostfix()}`,
 };
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
