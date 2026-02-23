@@ -1129,4 +1129,9 @@ export default {
   openAccordion: (name) => {
     cy.do(Accordion(name).clickHeader());
   },
+
+  verifyMemberHoldingsAccordionExpanded(memberName, isOpen = true) {
+    cy.wait(2000);
+    cy.expect(rootSection.find(Accordion(memberName)).has({ open: isOpen }));
+  },
 };
