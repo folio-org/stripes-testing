@@ -125,7 +125,7 @@ Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
             return cy
               .wait(`@${alias}`)
               .its('response.statusCode')
-              .should('eq', 201)
+              .should('be.oneOf', [200, 201])
               .then(() => {
                 cy.wait(500);
               });

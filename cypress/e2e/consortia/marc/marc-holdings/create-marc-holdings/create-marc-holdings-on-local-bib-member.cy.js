@@ -28,7 +28,6 @@ describe('MARC', () => {
           tag852: '852',
           callNumberValue: `AT_C788740_CallNunmber_${randomPostfix}`,
           tag035Value: '788740123123',
-          heldbyAccordionName: 'Held by',
         };
         const userPermissions = {
           central: [Permissions.uiInventoryViewInstances.gui],
@@ -137,7 +136,6 @@ describe('MARC', () => {
           'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C788740'] },
           () => {
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);
             InventoryInstance.waitInstanceRecordViewOpened();
@@ -217,7 +215,6 @@ describe('MARC', () => {
             InventorySearchAndFilter.checkBrowseOptionSelected(
               BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
             );
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
             BrowseCallNumber.checkNonExactSearchResult(testData.callNumberValue);
           },

@@ -29,7 +29,6 @@ describe('MARC', () => {
           tag852: '852',
           callNumberValue: `AT_C784586_CallNunmber_${randomPostfix}`,
           tag035Value: '784586123123',
-          heldbyAccordionName: 'Held by',
         };
         const userPermissions = {
           central: [Permissions.inventoryAll.gui],
@@ -118,6 +117,7 @@ describe('MARC', () => {
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             });
@@ -147,7 +147,6 @@ describe('MARC', () => {
           'C784586 Create MARC holdings record on Shared MARC bib from Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C784586'] },
           () => {
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);
             InventoryInstance.waitInstanceRecordViewOpened();
@@ -240,7 +239,6 @@ describe('MARC', () => {
             );
             cy.setTenant(Affiliations.University);
             BrowseCallNumber.waitForCallNumberToAppear(testData.callNumberValue);
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
             BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberValue);
 
