@@ -23,6 +23,7 @@ import {
   Select,
   Link,
   Label,
+  not,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -3509,5 +3510,25 @@ export default {
           .has({ value: tag }),
       );
     });
+  },
+
+  toggleHoldingsLocationModal(isOpened = true) {
+    if (isOpened) {
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+    } else {
+      cy.do(holdingsLocationModal.dismiss());
+      cy.expect(holdingsLocationModal.absent());
+    }
+  },
+
+  verifyInstitutionFoundInHoldingsLocationModal(institutionName, isFound = true) {
+    if (isFound) {
+      cy.expect(holdingsLocationInstitutionSelect.has({ optionsText: including(institutionName) }));
+    } else {
+      cy.expect(
+        holdingsLocationInstitutionSelect.has({ optionsText: not(including(institutionName)) }),
+      );
+    }
   },
 };
