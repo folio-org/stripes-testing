@@ -13,6 +13,7 @@ describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Browse', () => {
       const testData = {
+        typeOfHeadingsAccordionName: 'Type of heading',
         searchQuery: 'Apple',
         headingTypes: ['Corporate Name', 'Conference Name'],
         tags: {
@@ -171,6 +172,12 @@ describe('MARC', () => {
           });
           MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
           MarcAuthorities.verifySelectedTypeOfHeadingCount(0);
+
+          MarcAuthorities.typeNotFullValueInMultiSelectFilterFieldAndCheck(
+            testData.typeOfHeadingsAccordionName,
+            'name',
+            testData.headingTypes[0],
+          );
         },
       );
     });
