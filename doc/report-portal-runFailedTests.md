@@ -37,6 +37,14 @@ Example `.env` entries:
 CI_API_KEY=report-portal-token-here
 ```
 
+## How to get the API token for authenticating with Report Portal
+
+- Log in to your Report Portal account.
+- Click on your User Profile (avatar icon).
+- Open the **API KEYS** section.
+- Enter a name for the key and click **Generate API Key**.
+- Copy the generated token immediately and paste it into your `.env` file. For security reasons, the token is shown only once. If you lose it, you will need to generate a new one.
+
 ## Flow Summary
 
 1. **Fetch failed tests**: Query Report Portal for tests with **"To Investigate"** status from the latest launch.
