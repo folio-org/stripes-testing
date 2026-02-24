@@ -1416,8 +1416,6 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ELECTRONIC_ACCESS: 'Electronic access',
-    IS_BOUND_WITH: 'Is bound with',
-    BOUND_WITH_TITLES: 'Bound with titles',
     TAGS: 'Tags',
     HOLDINGS_UUID: 'Holdings UUID',
     MEMBER: 'Member',
