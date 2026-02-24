@@ -837,7 +837,7 @@ export default {
     });
   },
 
-  verifyNonMatchedResults(identifier, reasonMessage = ERROR_MESSAGES.NO_MATCH_FOUND) {
+  verifyNonMatchedResults(identifier, reasonMessage = `${ERROR_MESSAGES.NO_MATCH_FOUND} `) {
     cy.expect([
       errorsAccordion.find(MultiColumnListCell({ column: 'Status', content: 'Error' })).exists(),
       errorsAccordion
