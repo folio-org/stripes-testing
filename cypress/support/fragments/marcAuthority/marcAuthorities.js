@@ -313,6 +313,10 @@ export default {
 
   selectFirstRecord: () => cy.do(MultiColumnListRow({ index: 0 }).find(Button()).click()),
 
+  selectAuthorityById(specialInternalId) {
+    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click());
+  },
+
   selectTitle: (title) => cy.do(Button(title).click()),
 
   selectIncludingTitle: (title) => cy.do(Button(including(title)).click()),
