@@ -68,8 +68,8 @@ describe('Bulk-edit', () => {
     after('delete test data', () => {
       cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
-      InventoryInstance.deleteInstanceViaApi(folioInstance.instanceId);
-      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
+      InventoryInstance.deleteInstanceViaApi(folioInstance.instanceId, true);
+      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId, true);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         matchedRecordsFileName,

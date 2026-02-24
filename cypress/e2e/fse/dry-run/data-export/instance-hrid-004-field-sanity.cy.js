@@ -115,7 +115,8 @@ describe('Data Export', () => {
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
-          const job = response.body.jobExecutions.find(({ runBy }) => runBy.userId === user.id);
+          const exportedFile = fileName.replace('.csv', '');
+          const job = response.body.jobExecutions.find((jobExecution) => jobExecution.exportedFiles[0].fileName.includes(exportedFile));
           resultsFileName = job.exportedFiles[0].fileName;
           const recordsCount = job.progress.total;
           const jobId = job.hrId;
