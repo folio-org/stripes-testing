@@ -146,10 +146,13 @@ describe('Data Export', () => {
 
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
       cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
         const { jobExecutions } = response.body;
-        const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.id);
+        const jobData = jobExecutions.find((jobExecution) => {
+          return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
+        });
         firstJobHrid = jobData.hrId;
-        exportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
+        exportedFileName = `${exportedFile}-${firstJobHrid}.mrc`;
 
         DataExportResults.verifySuccessExportResultCells(
           exportedFileName,
@@ -233,9 +236,10 @@ describe('Data Export', () => {
       cy.wait(2000);
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
       cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
+        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
         const jobs = response.body.jobExecutions;
         const jobData = jobs.find(
-          (job) => job.runBy.userId === user.id && job.hrId !== firstJobHrid,
+          (job) => job.exportedFiles[0].fileName.includes(exportedFile) && job.hrId !== firstJobHrid,
         );
         const jobId = jobData.hrId;
         secondExportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${jobId}.mrc`;

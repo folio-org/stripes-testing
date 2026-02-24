@@ -111,8 +111,11 @@ describe('Data Export', () => {
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const exportedFile = marcAuthorityUUIDFileName.replace('.csv', '');
           const { jobExecutions } = response.body;
-          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.id);
+          const jobData = jobExecutions.find((jobExecution) => {
+            return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
+          });
           firstJobHrid = jobData.hrId;
           exportedFileName = `${marcAuthorityUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
 
