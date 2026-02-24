@@ -1002,8 +1002,14 @@ export default {
   },
 
   clickSaveAndKeepEditing() {
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(calloutAfterSaveAndClose.exists());
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
     cy.expect(rootSection.exists());
   },
 
@@ -2723,6 +2729,16 @@ export default {
       });
   },
 
+  checkOnlyBackslashesIn008BoxesHoldings() {
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('[data-testid="bytes-field-col"] input')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
+      });
+  },
+
   check008BoxesCount(count) {
     cy.get('input[value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
@@ -3530,5 +3546,13 @@ export default {
         holdingsLocationInstitutionSelect.has({ optionsText: not(including(institutionName)) }),
       );
     }
+  },
+
+  focusOnContentBox(rowIndex) {
+    const targetBox = QuickMarcEditorRow({ index: rowIndex }).find(
+      TextArea({ name: including('.content') }),
+    );
+    cy.do(targetBox.focus());
+    cy.expect(targetBox.has({ focused: true }));
   },
 };
