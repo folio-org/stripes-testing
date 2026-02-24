@@ -117,6 +117,7 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
       });
@@ -238,9 +239,7 @@ describe('MARC', () => {
             testData.tag999,
           ];
           QuickMarcEditor.checkFieldsCount(remainingFields.length);
-          remainingFields.forEach((tag) => {
-            QuickMarcEditor.checkTagExists(tag);
-          });
+          QuickMarcEditor.checkFieldsExist(remainingFields);
         },
       );
     });

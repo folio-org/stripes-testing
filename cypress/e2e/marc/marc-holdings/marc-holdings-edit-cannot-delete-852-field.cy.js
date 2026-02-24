@@ -55,6 +55,7 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
       });
@@ -76,7 +77,7 @@ describe('MARC', () => {
 
           HoldingsRecordView.editInQuickMarc();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkTagExists(testData.tag852);
+          QuickMarcEditor.checkFieldsExist([testData.tag852]);
           QuickMarcEditor.checkDeleteButtonExistsByTag(testData.tag852, false);
 
           cy.wait(1000); // wait for 852 field to be fully loaded to avoid value re-set
