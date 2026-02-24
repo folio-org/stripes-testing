@@ -481,4 +481,8 @@ export default {
     cy.do(holdingHrIdKeyValue.find(Button({ icon: 'clipboard' })).click());
     InteractorsTools.checkCalloutMessage(matching(/Successfully copied ".*" to clipboard./));
   },
+
+  verifyTextAbsent(text) {
+    cy.expect(HTML(including(text)).absent());
+  },
 };
