@@ -45,7 +45,7 @@ describe('fse-requests - UI (no data manipulation)', () => {
 
   it(
     `TC195690 - verify that requests page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'requests', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'requests', 'fse-user-journey', 'TC195690'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();

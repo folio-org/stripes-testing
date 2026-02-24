@@ -14,7 +14,7 @@ describe('fse-sudoc - UI (no data manipulation)', () => {
 
   it(
     `TC195780 - verify that sudoc page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['mod-sudoc', 'fse', 'ui'] },
+    { tags: ['mod-sudoc', 'fse', 'ui', 'TC195780'] },
     () => {
       Sudoc.checkTableDisplayed();
     },

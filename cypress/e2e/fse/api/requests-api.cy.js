@@ -8,7 +8,7 @@ describe('fse-requests', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195388 - Get request by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'requests', 'loc'] },
+    { tags: ['sanity', 'fse', 'api', 'requests', 'loc', 'TC195388'] },
     () => {
       cy.getItemRequestsApi({
         query: '(status=="Closed - Filled") sortby requestDate',
