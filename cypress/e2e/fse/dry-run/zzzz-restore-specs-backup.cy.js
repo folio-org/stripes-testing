@@ -13,7 +13,7 @@ describe('MARC Specifications - Restore from Backup', () => {
     cy.getAdminToken();
   });
 
-  it('C999902 Restore MARC specifications from backup if modified', { tags: ['dryRun'] }, () => {
+  it('Restore MARC specifications from backup if modified', { tags: ['dryRun'] }, () => {
     cy.log('🔍 Checking for backup file...');
 
     // Step 1: Check if backup file exists (use failOnStatusCode: false equivalent)
