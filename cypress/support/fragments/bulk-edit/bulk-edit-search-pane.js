@@ -159,6 +159,8 @@ export const ERROR_MESSAGES = {
   EDIT_MARC_INSTANCE_NOTES_NOT_SUPPORTED:
     'Bulk edit of instance notes is not supported for MARC Instances.',
   NO_CHANGE_REQUIRED: 'No change in value required',
+  NO_CHANGE_IN_ADMINISTRATIVE_DATA_REQUIRED: 'No change in administrative data required',
+  NO_CHANGE_IN_MARC_FIELDS_REQUIRED: 'No change in MARC fields required',
   NO_MATCH_FOUND: 'No match found',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
@@ -808,25 +810,34 @@ export default {
   },
 
   verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
-    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+    cy.then(() => {
+      return errorsAccordion
+        .find(
+          MultiColumnListRow({
+            content: including(`${identifier}${reasonMessage}`),
+            isContainer: false,
+          }),
+        )
+        .indexRow();
+    }).then((indexRow) => {
       cy.expect([
         errorsAccordion
-          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListRow({ indexRow }))
           .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
           .exists(),
         errorsAccordion
-          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListRow({ indexRow }))
           .find(MultiColumnListCell({ content: status, column: 'Status' }))
           .exists(),
         errorsAccordion
-          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListRow({ indexRow }))
           .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
           .exists(),
       ]);
     });
   },
 
-  verifyNonMatchedResults(identifier, reasonMessage = 'No match found ') {
+  verifyNonMatchedResults(identifier, reasonMessage = ERROR_MESSAGES.NO_MATCH_FOUND) {
     cy.expect([
       errorsAccordion.find(MultiColumnListCell({ column: 'Status', content: 'Error' })).exists(),
       errorsAccordion

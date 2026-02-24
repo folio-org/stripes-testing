@@ -184,9 +184,9 @@ describe('Bulk-edit', () => {
           const contributorsFields = [
             instanceFieldValues.contributorName,
             instanceFieldValues.contributorNameType,
+            instanceFieldValues.contributorPrimary,
             instanceFieldValues.contributorType,
             instanceFieldValues.contributorTypeFreeText,
-            instanceFieldValues.contributorPrimary,
           ];
 
           contributorsFields.forEach((field) => {
