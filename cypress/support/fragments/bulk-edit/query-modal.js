@@ -38,7 +38,7 @@ const embeddedTableHeadersMap = {
     'URL relationship',
     'URI',
     'Link text',
-    'Materials specified',
+    'Material specified',
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
@@ -55,13 +55,7 @@ const embeddedTableHeadersMap = {
     'Statement for indexes staff note',
   ],
   receivingHistory: ['Public display', 'Enumeration', 'Chronology'],
-  contributors: [
-    'Contributor name',
-    'Contributor name type',
-    'Contributor type',
-    'Contributor type, free text',
-    'Primary',
-  ],
+  contributors: ['Name', 'Name type', 'Type', 'Type, free text', 'Primary'],
   alternativeTitles: ['Alternative title', 'Alternative title type'],
   subjects: ['Subject headings', 'Subject source', 'Subject type'],
   identifiers: ['Type', 'Identifier'],
@@ -110,6 +104,7 @@ export const holdingsFieldValues = {
     'Holdings — Statements for indexes — Statement for indexes public note',
   statementsForIndexesStaffNote:
     'Holdings — Statements for indexes — Statement for indexes staff note',
+  suppressFromDiscovery: 'Holdings — Suppress from discovery',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -120,6 +115,7 @@ export const holdingsFieldValues = {
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
   holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
+  affiliationName: 'Holdings — Affiliation name',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -144,10 +140,10 @@ export const instanceFieldValues = {
   publicationsRole: 'Instance — Publications — Publisher role',
   publicationsPlace: 'Instance — Publications — Place of publication',
   publicationsDate: 'Instance — Publications — Publication date',
-  contributorName: 'Instance — Contributors — Contributor name',
-  contributorNameType: 'Instance — Contributors — Contributor name type',
-  contributorType: 'Instance — Contributors — Contributor type',
-  contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
+  contributorName: 'Instance — Contributors — Name',
+  contributorNameType: 'Instance — Contributors — Name type',
+  contributorType: 'Instance — Contributors — Type',
+  contributorTypeFreeText: 'Instance — Contributors — Type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
@@ -204,6 +200,8 @@ export const itemFieldValues = {
   itemStatisticalCodeNames: 'Item — Statistical codes',
   itemTags: 'Item — Tags',
   itemFormerIdentifiers: 'Item — Former identifiers',
+  affiliationName: 'Item — Affiliation name',
+  instanceShared: 'Instance — Shared',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
