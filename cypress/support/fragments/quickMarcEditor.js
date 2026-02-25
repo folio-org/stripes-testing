@@ -3555,4 +3555,21 @@ export default {
     cy.do(targetBox.focus());
     cy.expect(targetBox.has({ focused: true }));
   },
+
+  checkMarcHoldingsEditHeader({ status = 'Current', user } = {}) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(including('Edit MARC holdings - Location:'));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(including('Status:'), including(status), including(`Source: ${user}`)),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
+  },
 };
