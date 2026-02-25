@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
@@ -37,7 +38,7 @@ describe('eHoldings', () => {
       { tags: ['extendedPath', 'spitfire', 'C423466'] },
       () => {
         EHoldingsTitle.searchTitle(testData.existingTitle);
-        EHoldingsTitlesSearch.openTitle(testData.existingTitle);
+        EHoldingsTitles.openTitle(0);
         EHoldingsTitle.waitPackagesLoading();
         EHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
         EHoldingsTitle.waitPackagesLoading();

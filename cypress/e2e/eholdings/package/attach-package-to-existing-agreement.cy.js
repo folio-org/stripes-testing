@@ -20,6 +20,7 @@ describe('eHoldings', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiAgreementsAgreementsEdit.gui,
+        Permissions.uiAgreementsAgreementsDelete.gui,
         Permissions.uiAgreementsSearchAndView.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uiAgreementsSearch.gui,
@@ -78,7 +79,7 @@ describe('eHoldings', () => {
         AgreementViewDetails.verifyAgreementLinePresented(
           testData.defaultPackage.data.attributes.name,
         );
-        AgreementViewDetails.deletionOfAgreementLine();
+        AgreementViewDetails.deletionOfAgreementLine({ openAccordion: false });
       },
     );
   });

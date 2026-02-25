@@ -425,8 +425,10 @@ export default {
     cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
   },
 
-  deletionOfAgreementLine() {
-    openAgreementLineAccordion();
+  deletionOfAgreementLine({ openAccordion = true } = {}) {
+    if (openAccordion) {
+      openAgreementLineAccordion();
+    }
     selectAgreementLine();
     cy.do([
       Section({ id: 'pane-view-agreement-line' }).find(actionsButton).click(),

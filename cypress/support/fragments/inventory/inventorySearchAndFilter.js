@@ -885,9 +885,7 @@ export default {
   },
 
   verifySearchOptionAndQuery(searchOption, queryValue) {
-    cy.get('#input-inventory-search-qindex').then((elem) => {
-      expect(elem.text()).to.include(searchOption);
-    });
+    this.verifyDefaultSearchOptionSelected(searchOption);
     cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 

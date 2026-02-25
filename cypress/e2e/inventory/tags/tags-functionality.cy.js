@@ -1083,7 +1083,7 @@ describe('Inventory', () => {
           ItemRecordView.toggleTagsAccordion();
 
           // 5. Using dropdown list add 4-5 different tags to the Item record
-          InventoryInstance.addMultipleTags(testData.tags.map((tag) => tag.label));
+          ItemRecordView.addMultipleTags(testData.tags.map((tag) => tag.label));
 
           // Verify no error messages appeared
           InteractorsTools.checkNoErrorCallouts();
@@ -1103,13 +1103,13 @@ describe('Inventory', () => {
           });
 
           // 9. Quickly delete 2-3 tags by clicking on the "x" icon next to each tag
-          InventoryInstance.deleteMultipleTags(testData.tags.slice(0, 3).map((tag) => tag.label));
+          ItemRecordView.deleteMultipleTags(testData.tags.slice(0, 3).map((tag) => tag.label));
 
           // Verify no error messages appeared
           InteractorsTools.checkNoErrorCallouts();
 
           // 10. Quickly unselect the remaining tags by clicking on the tag row in multiselect dropdown
-          InventoryInstance.deleteMultipleTags(testData.tags.slice(3).map((tag) => tag.label));
+          ItemRecordView.deleteMultipleTags(testData.tags.slice(3).map((tag) => tag.label));
 
           // Verify no error messages appeared
           InteractorsTools.checkNoErrorCallouts();
