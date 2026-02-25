@@ -1,12 +1,15 @@
 import { Modal, Button, including, HTML } from '../../../../../interactors';
+import { DELETE_HOLDINGS_ACTIONS } from '../../../constants';
 
 const deleteHoldingsModal = Modal({ id: 'delete-holdings-confirmation' });
-
-const cancelButton = deleteHoldingsModal.find(Button('Cancel'));
-const keepHoldingsButton = deleteHoldingsModal.find(Button('Keep Holdings'));
-const deleteHoldingsButton = deleteHoldingsModal.find(Button('Delete Holdings'));
 const modalMessage =
   'This piece is connected to records in inventory. After this edit there will be no other purchase order lines, pieces OR items connected to the related Holdings record(s). After making this change would you like FOLIO to delete the Holdings record(s)?';
+
+const deleteHoldingsButtons = {
+  [DELETE_HOLDINGS_ACTIONS.CANCEL]: () => deleteHoldingsModal.find(Button('Cancel')),
+  [DELETE_HOLDINGS_ACTIONS.KEEP]: () => deleteHoldingsModal.find(Button('Keep Holdings')),
+  [DELETE_HOLDINGS_ACTIONS.DELETE]: () => deleteHoldingsModal.find(Button('Delete Holdings')),
+};
 
 export default {
   deleteHoldingsModal({ action, locations = [] }) {
@@ -14,7 +17,7 @@ export default {
     cy.expect([
       deleteHoldingsModal.has({ header: 'Delete Holdings' }),
       deleteHoldingsModal.has({ message: including(modalMessage) }),
-      [cancelButton, keepHoldingsButton, deleteHoldingsButton].map((button) => button.has({ visible: true, disabled: false })),
+      Object.values(deleteHoldingsButtons).map((button) => button().has({ visible: true, disabled: false })),
     ]);
 
     if (holdingsToDelete.length > 0) {
@@ -23,19 +26,7 @@ export default {
       });
     }
 
-    switch (action) {
-      case 'Cancel':
-        cy.do(cancelButton.click());
-        break;
-      case 'Keep Holdings':
-        cy.do(keepHoldingsButton.click());
-        break;
-      case 'Delete Holdings':
-        cy.do(deleteHoldingsButton.click());
-        break;
-      default:
-        throw new Error(`Invalid action: ${action}`);
-    }
+    cy.do(deleteHoldingsButtons[action]().click());
     cy.expect(deleteHoldingsModal.absent());
   },
 };

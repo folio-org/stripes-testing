@@ -11,8 +11,9 @@ import Users from '../../support/fragments/users/users';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
+  DELETE_HOLDINGS_ACTIONS,
   ITEM_STATUS_NAMES,
+  ORDER_STATUSES,
 } from '../../support/constants';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -125,7 +126,7 @@ describe(
           rowNumber: 0,
           displaySummary,
           institutionId: secondLocation.name,
-          deleteAction: 'Keep Holdings',
+          deleteAction: DELETE_HOLDINGS_ACTIONS.KEEP,
           locations: [firstLocation],
         });
         Receiving.checkReceived(0, displaySummary);

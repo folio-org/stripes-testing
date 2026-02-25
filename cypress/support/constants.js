@@ -1846,3 +1846,9 @@ export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
   DELETE: 'pcId',
   UPDATE: 'updateSettingsPCId',
 };
+
+export const DELETE_HOLDINGS_ACTIONS = {
+  CANCEL: 'cancel',
+  KEEP: 'keep',
+  DELETE: 'delete',
+};
