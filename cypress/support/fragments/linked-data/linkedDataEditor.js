@@ -1,3 +1,4 @@
+import { CheckBox, including } from '@interactors/html';
 import { Button, Option } from '../../../../interactors';
 
 import EditResource from './editResource';
@@ -98,8 +99,9 @@ export default {
     SearchAndFilter.waitLoading();
   },
 
-  selectInventoryInstance(rowNumber) {
-    cy.xpath(`(//input[contains(@id, 'row-select')])[${rowNumber}]`).should('be.visible').click();
+  selectInstanceForComparisonByTitle(title) {
+    cy.do(CheckBox(including(title)).click());
+    cy.wait(500);
   },
 
   openComparisonForm: () => {

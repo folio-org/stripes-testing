@@ -38,9 +38,9 @@ export default {
   },
 
   searchResourceByTitle: (title) => {
-    cy.get('#id-search-select').select('Title');
-    cy.get('#id-search-input').clear().type(title);
+    cy.do(hubsSearchInput.fillIn(title));
     cy.do(searchButton.click());
+    cy.wait(1000);
   },
 
   searchResourceByIsbn: (isbn) => {
