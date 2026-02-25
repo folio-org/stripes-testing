@@ -12,6 +12,7 @@ import {
 import ExportNewJobProfile from './exportNewJobProfile';
 import SettingsDataExport from '../settingsDataExport';
 import { defaultJobProfiles } from '../exportFile';
+import DateTools from '../../../utils/dateTools';
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
@@ -67,6 +68,31 @@ export default {
     this.scrollDownIfListOfResultsIsLong();
 
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
+  },
+
+  verifyProfileInTable(name, userObject) {
+    const targetProfileRow = MultiColumnListRow({ content: including(name), isContainer: false });
+
+    cy.expect(
+      targetProfileRow
+        .find(MultiColumnListCell({ column: 'Name' }))
+        .has({ content: including(name) }),
+    );
+    cy.expect(
+      targetProfileRow.find(MultiColumnListCell({ column: 'Updated' })).has({
+        content: DateTools.getFormattedDateWithSlashes({
+          date: new Date(),
+        }),
+      }),
+    );
+    cy.expect(
+      targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
+        content: including(`${userObject.personal.firstName} ${userObject.personal.lastName}`),
+      }),
+    );
+    cy.expect(
+      targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: '' }),
+    );
   },
 
   verifyJobProfileSearchResult(text) {
