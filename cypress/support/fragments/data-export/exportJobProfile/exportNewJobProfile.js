@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   PaneHeader,
   TextField,
   Select,
@@ -16,6 +17,7 @@ const cancelButton = Button('Cancel');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const selectMappingProfileDropdown = Select({ name: 'mappingProfileId' });
+const lockProfileCheckbox = Checkbox('Lock profile');
 
 export default {
   fillJobProfile: (profileName, mappingProfileName) => {
@@ -41,6 +43,10 @@ export default {
     ]);
   },
 
+  verifyLockProfileCheckbox(isChecked, isDisabled) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
+  },
+
   clickNameTextfield() {
     cy.do(nameTextfield.find(TextInput()).click());
   },
@@ -53,16 +59,20 @@ export default {
     cy.expect([
       nameTextfield.find(TextFieldIcon({ id: 'icon-job-profile-name-validation-error' })).exists(),
       nameTextfield.has({ valid: false }),
-      HTML('Please enter a value').exists(),
+      nameTextfield.find(HTML('Please enter a value')).exists(),
     ]);
   },
 
   verifyNameValidationErrorGone() {
-    cy.expect(HTML('Please enter a value').absent());
+    cy.expect(nameTextfield.find(HTML('Please enter a value')).absent());
   },
 
   fillinNameTextfield(content) {
     cy.do(nameTextfield.fillIn(content));
+  },
+
+  verifyClearNameButtonExists() {
+    cy.expect(nameTextfield.find(Button({ icon: 'times-circle-solid' })).exists());
   },
 
   verifySaveAndCloseButtonEnabled() {
@@ -76,7 +86,7 @@ export default {
   verifySelectMappingProfileValidationError() {
     cy.expect([
       selectMappingProfileDropdown.has({ valid: false }),
-      HTML('Please enter a value').exists(),
+      selectMappingProfileDropdown.find(HTML('Please enter a value')).exists(),
     ]);
   },
 
@@ -87,12 +97,26 @@ export default {
   verifySelectMappingProfileValidationErrorGone() {
     cy.expect([
       selectMappingProfileDropdown.has({ valid: true }),
-      HTML('Please enter a value').absent(),
+      selectMappingProfileDropdown.find(HTML('Please enter a value')).absent(),
     ]);
   },
 
   fillinDescription(descriptionText) {
     cy.do(descriptionTextarea.fillIn(descriptionText));
+  },
+
+  verifyAllMappingProfilesPresentInDropdown() {
+    cy.getDataExportMappingProfiles({ limit: 1000 }).then((profiles) => {
+      const mappingProfilesNames = profiles
+        .map((profile) => profile.name)
+        .sort((a, b) => a.localeCompare(b));
+
+      cy.then(() => selectMappingProfileDropdown.optionsText()).then((options) => {
+        cy.expect(options, 'Dropdown options should match all mapping profiles').to.deep.equal(
+          mappingProfilesNames,
+        );
+      });
+    });
   },
 
   verifyMappingProfilesOrderedAlphabetically() {
