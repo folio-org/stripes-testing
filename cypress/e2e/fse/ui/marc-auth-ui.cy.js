@@ -24,7 +24,7 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
 
   it(
     `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'marc-authorities'] },
+    { tags: ['sanity', 'fse', 'ui', 'marc-authorities', 'TC195332'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
       MarcAuthorities.waitLoading();
@@ -61,7 +61,7 @@ describe('fse-marc-authority - UI (data manipulation)', () => {
 
   it(
     `TC195688 - check import of "MARC Authority" record ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'fse-user-journey', 'TC195688'] },
     () => {
       DataImport.uploadFileViaApi(
         'corporate_name(prefix_in_010Sa)sc_02.mrc',

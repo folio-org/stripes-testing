@@ -8,7 +8,7 @@ describe('fse-consortia-api', () => {
 
   it(
     `TC195510 - Get consortia id for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['consortia-sanity', 'fse', 'api'] },
+    { tags: ['consortia-sanity', 'fse', 'api', 'TC195510'] },
     () => {
       cy.getConsortiaId().then((consortiaId) => {
         cy.expect(consortiaId).to.not.be.oneOf([null, '']);

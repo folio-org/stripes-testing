@@ -17,7 +17,7 @@ describe('fse-timers', () => {
   tenantIds.forEach((tenantId) => {
     it(
       `TC196314 - Get timers for ${Cypress.env('OKAPI_HOST')} - ${tenantId}`,
-      { tags: ['fse', 'api', 'timers', 'eureka-sanity'] },
+      { tags: ['fse', 'api', 'timers', 'eureka-sanity', 'TC196314'] },
       () => {
         // Set the tenant ID for this iteration
         cy.setTenant(tenantId);

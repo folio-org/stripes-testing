@@ -8,7 +8,7 @@ describe('fse-smtp', () => {
 
   it(
     `TC196238 - Get SMTP status by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'smtp-enabled'] },
+    { tags: ['fse', 'api', 'smtp-enabled', 'TC196238'] },
     () => {
       cy.getSmtpStatus().then((response) => {
         cy.expect(response.status).to.eq(200);
