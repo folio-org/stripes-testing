@@ -1848,7 +1848,7 @@ export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
 };
 
 export const DELETE_HOLDINGS_ACTIONS = {
-  CANCEL: 'cancel',
-  KEEP: 'keep',
-  DELETE: 'delete',
+  CANCEL: 'Cancel',
+  KEEP_HOLDINGS: 'Keep Holdings',
+  DELETE_HOLDINGS: 'Delete Holdings',
 };

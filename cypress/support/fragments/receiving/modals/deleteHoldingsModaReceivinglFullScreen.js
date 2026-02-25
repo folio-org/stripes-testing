@@ -7,8 +7,8 @@ const modalMessage =
 
 const deleteHoldingsButtons = {
   [DELETE_HOLDINGS_ACTIONS.CANCEL]: () => deleteHoldingsModal.find(Button('Cancel')),
-  [DELETE_HOLDINGS_ACTIONS.KEEP]: () => deleteHoldingsModal.find(Button('Keep Holdings')),
-  [DELETE_HOLDINGS_ACTIONS.DELETE]: () => deleteHoldingsModal.find(Button('Delete Holdings')),
+  [DELETE_HOLDINGS_ACTIONS.KEEP_HOLDINGS]: () => deleteHoldingsModal.find(Button('Keep Holdings')),
+  [DELETE_HOLDINGS_ACTIONS.DELETE_HOLDINGS]: () => deleteHoldingsModal.find(Button('Delete Holdings')),
 };
 
 export default {

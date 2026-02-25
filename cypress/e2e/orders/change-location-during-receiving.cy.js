@@ -126,7 +126,7 @@ describe(
           rowNumber: 0,
           displaySummary,
           institutionId: secondLocation.name,
-          deleteAction: DELETE_HOLDINGS_ACTIONS.KEEP,
+          deleteAction: DELETE_HOLDINGS_ACTIONS.KEEP_HOLDINGS,
           locations: [firstLocation],
         });
         Receiving.checkReceived(0, displaySummary);
