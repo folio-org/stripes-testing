@@ -96,7 +96,7 @@ describe('MARC Specifications - Restore from Backup', () => {
             cy.log(`  ${profile}: ${summary}`);
 
             // Add changes to the list
-            differences.fieldsToUpdate.forEach((change) => allChanges.push({ type: 'field', ...change }));
+            differences.fieldsToUpdate.forEach((change) => allChanges.push({ type: 'field', specificationId: currentSpec.id, ...change }));
             differences.subfieldsToUpdate.forEach((change) => allChanges.push({ type: 'subfield', ...change }));
             differences.indicatorsToUpdate.forEach((change) => allChanges.push({ type: 'indicator', ...change }));
             differences.indicatorCodesToUpdate.forEach((change) => allChanges.push({ type: 'indicatorCode', ...change }));
@@ -170,7 +170,7 @@ describe('MARC Specifications - Restore from Backup', () => {
             const change = allChanges[index];
 
             // Process based on change type
-            if (change.type === 'field') {
+            if (change.type === 'field' && change.changeType === 'modified') {
               cy.updateSpecificationField(change.id, change.original, false).then(
                 (updateResponse) => {
                   if (updateResponse.status >= 200 && updateResponse.status < 300) {
@@ -178,6 +178,20 @@ describe('MARC Specifications - Restore from Backup', () => {
                     cy.log(
                       `    ✓ Restored field ${change.original.tag} (${change.changedFields.join(', ')})`,
                     );
+                  } else {
+                    restorationResults.errors.push(
+                      `Field ${change.original.tag}: status ${updateResponse.status}`,
+                    );
+                  }
+                  processChange(index + 1);
+                },
+              );
+            } else if (change.type === 'field' && change.changeType === 'deleted') {
+              cy.createSpecificationField(change.specificationId, change.original, false).then(
+                (updateResponse) => {
+                  if (updateResponse.status >= 200 && updateResponse.status < 300) {
+                    restorationResults.restoredFields++;
+                    cy.log(`    ✓ Restored field ${change.original.tag} (re-created)`);
                   } else {
                     restorationResults.errors.push(
                       `Field ${change.original.tag}: status ${updateResponse.status}`,

@@ -224,12 +224,13 @@ export function compareSpecifications(originalSpec, currentSpec) {
   const fieldChanges = getChangedFields(originalFields, currentFields);
 
   Object.entries(fieldChanges).forEach(([fieldId, change]) => {
-    if (change.type === 'modified') {
+    if (['modified', 'deleted'].includes(change.type)) {
       differences.fieldsToUpdate.push({
         id: fieldId,
         fieldId,
         original: change.original,
         changedFields: change.changedFields,
+        changeType: change.type,
       });
       differences.stats.changedFields++;
     }
