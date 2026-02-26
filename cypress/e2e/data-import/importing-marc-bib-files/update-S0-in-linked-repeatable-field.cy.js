@@ -116,14 +116,11 @@ describe('Data Import', () => {
             });
           });
         });
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000)
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        })
           .then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
@@ -143,6 +140,7 @@ describe('Data Import', () => {
           })
           .then(() => {
             // create Match profile
+            cy.getAdminToken();
             NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
               .then((matchProfileResponse) => {
                 matchProfile.id = matchProfileResponse.body.id;
@@ -171,15 +169,14 @@ describe('Data Import', () => {
                   actionProfile.id,
                 );
               });
+          })
+          .then(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
       });
     });
 
@@ -205,6 +202,7 @@ describe('Data Import', () => {
       'C385663 Update "$0" in linked repeatable field (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
       { tags: ['criticalPathFlaky', 'spitfire', 'C385663'] },
       () => {
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file

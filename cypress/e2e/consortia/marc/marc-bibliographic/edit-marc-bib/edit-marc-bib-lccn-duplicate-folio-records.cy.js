@@ -133,7 +133,7 @@ describe('MARC', () => {
               // Attempt to update "010 $a" with LCCN values
               testData.lccnValues.forEach((lccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${lccnValue}`);
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
                 QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
               });
 

@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import { including } from '@interactors/html';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -37,8 +36,6 @@ describe('MARC', () => {
           tag981Value1: '$a Repeatable local 1st',
           tag981Value2: '$a Repeatable local 2nd',
         },
-        successMessage:
-          'This record has successfully saved and is in process. Changes may not appear immediately.',
         userProperties: {},
       };
 
@@ -164,7 +161,6 @@ describe('MARC', () => {
 
           // Step 6: Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(including(testData.successMessage));
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
 

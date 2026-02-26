@@ -29,3 +29,4 @@ scripts/update_permission_names/permissions_backups/*
 
 mcp.json
 cypress/e2e/failed.cy.js
+parallelWorkers.json

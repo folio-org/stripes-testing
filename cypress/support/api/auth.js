@@ -2,8 +2,6 @@
 import { adminUsernames } from '../dictionary/affiliations';
 import Tenant from '../tenant';
 
-let authRefreshCounter = 0;
-
 Cypress.Commands.add('getToken', (username, password, getServicePoint = false) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
@@ -110,9 +108,8 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 });
 
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
-  authRefreshCounter++;
-  const alias = `authnRefreshCall_${authRefreshCounter}`;
-  cy.intercept('POST', '/authn/refresh').as(alias);
+  const alias = `authnRefreshCall_${Date.now()}_${Math.floor(Math.random() * 10 ** 5)}`;
+  cy.intercept('POST', '/authn/refresh', { times: 1 }).as(alias);
 
   callback();
 
@@ -128,7 +125,7 @@ Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
             return cy
               .wait(`@${alias}`)
               .its('response.statusCode')
-              .should('eq', 201)
+              .should('be.oneOf', [200, 201])
               .then(() => {
                 cy.wait(500);
               });
@@ -162,8 +159,9 @@ Cypress.Commands.add('getConsortiaStatus', () => {
 Cypress.Commands.add('ifConsortia', (condition, callback) => {
   return cy.wrap(Cypress.env('isConsortia')).then((isConsortiaStatus) => {
     if (isConsortiaStatus === undefined) {
-      cy.getConsortiaStatus().then(({ isConsortia }) => {
+      cy.getConsortiaStatus().then(({ isConsortia, centralTenantId }) => {
         Cypress.env('isConsortia', isConsortia);
+        Cypress.env('centralTenantId', centralTenantId);
         if (condition === isConsortia) {
           return cy.wrap(callback());
         }

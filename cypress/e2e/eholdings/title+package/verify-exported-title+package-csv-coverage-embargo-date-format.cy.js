@@ -43,6 +43,7 @@ describe('eHoldings', () => {
         cy.login(userProperties.username, userProperties.password, {
           path: `/eholdings/resources/${testData.resourceId}`,
           waiter: EHoldingsResourceView.waitLoading,
+          authRefresh: true,
         });
       });
     });

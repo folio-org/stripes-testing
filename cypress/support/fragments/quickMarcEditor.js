@@ -23,6 +23,7 @@ import {
   Select,
   Link,
   Label,
+  not,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -1001,8 +1002,14 @@ export default {
   },
 
   clickSaveAndKeepEditing() {
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(calloutAfterSaveAndClose.exists());
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
     cy.expect(rootSection.exists());
   },
 
@@ -2387,6 +2394,24 @@ export default {
     cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
   },
 
+  /*
+    This method is to check that pressing Enter key triggers a click on a focused button.
+    Due to automation limitations, click event is then called with "isTrusted: false" and is ignored by the browser.
+    When actual user presses the key, the same event has "isTrusted: true", and is being handled.
+    So here, we first check that expected click event is called, but then still have to perform the actual click.
+  */
+  confirmRemoveAuthorityLinkingWithEnterKey() {
+    cy.expect(removeLinkingModal.find(removeLinkingButton).exists());
+    cy.window().then((win) => {
+      cy.spy(win, 'PointerEvent').as('pointerEventSpy');
+    });
+    cy.get('#clickable-quick-marc-remove-authority-linking-confirm-modal-confirm')
+      .focus()
+      .type('{enter}');
+    cy.get('@pointerEventSpy').should('have.been.calledWithMatch', 'click');
+    this.confirmRemoveAuthorityLinking();
+  },
+
   clickKeepLinkingButton() {
     cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
@@ -2700,6 +2725,16 @@ export default {
       .find('[data-testid="bytes-field-col"] input')
       .then((inputs) => {
         const values = Array.from(inputs, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
+      });
+  },
+
+  checkOnlyBackslashesIn008BoxesHoldings() {
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('[data-testid="bytes-field-col"] input')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
         expect(values.join('')).to.match(/^\\+$/);
       });
   },
@@ -3491,5 +3526,50 @@ export default {
           .has({ value: tag }),
       );
     });
+  },
+
+  toggleHoldingsLocationModal(isOpened = true) {
+    if (isOpened) {
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+    } else {
+      cy.do(holdingsLocationModal.dismiss());
+      cy.expect(holdingsLocationModal.absent());
+    }
+  },
+
+  verifyInstitutionFoundInHoldingsLocationModal(institutionName, isFound = true) {
+    if (isFound) {
+      cy.expect(holdingsLocationInstitutionSelect.has({ optionsText: including(institutionName) }));
+    } else {
+      cy.expect(
+        holdingsLocationInstitutionSelect.has({ optionsText: not(including(institutionName)) }),
+      );
+    }
+  },
+
+  focusOnContentBox(rowIndex) {
+    const targetBox = QuickMarcEditorRow({ index: rowIndex }).find(
+      TextArea({ name: including('.content') }),
+    );
+    cy.do(targetBox.focus());
+    cy.expect(targetBox.has({ focused: true }));
+  },
+
+  checkMarcHoldingsEditHeader({ status = 'Current', user } = {}) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(including('Edit MARC holdings - Location:'));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(including('Status:'), including(status), including(`Source: ${user}`)),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
   },
 };

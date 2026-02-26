@@ -183,11 +183,7 @@ describe('MARC', () => {
                   linkingTagAndValues.rowIndex,
                 );
                 QuickMarcEditor.deleteField(4);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(2000);
-                QuickMarcEditor.confirmDelete();
+                QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -223,11 +219,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updated100FieldValue);
           QuickMarcEditor.checkContent(testData.updated100FieldValue, 8);
           QuickMarcEditor.checkButtonsEnabled();
-          // if clicked too fast, delete modal might not appear
-          cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(3);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(3);
           cy.visit(TopMenu.inventoryPath);
