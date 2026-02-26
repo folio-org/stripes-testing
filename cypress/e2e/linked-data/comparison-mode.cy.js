@@ -126,8 +126,8 @@ describe('Citation: edit existing instance', () => {
       // search by work title again
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // select both inventory instances
-      LinkedDataEditor.selectInventoryInstance(1);
-      LinkedDataEditor.selectInventoryInstance(2);
+      LinkedDataEditor.selectInstanceForComparisonByTitle(resourceData.title);
+      LinkedDataEditor.selectInstanceForComparisonByTitle(testData.uniqueInstanceTitle);
       // comparison mode
       LinkedDataEditor.openComparisonForm();
       ComparisonForm.verifyComparisonSectionDisplayed();
