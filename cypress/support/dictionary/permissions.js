@@ -1000,7 +1000,7 @@ export default {
     gui: 'Finance: Export finance records',
   },
   uiFinanceManageAcquisitionUnits: {
-    internal: 'ui-finance.acq.unit.assignment.manage',
+    internal: 'ui-finance.finance.acquisitions_units.manage.execute',
     gui: 'Finance: Manage acquisition units',
   },
   uiFinanceManuallyReleaseEncumbrance: {
@@ -1079,7 +1079,7 @@ export default {
     gui: 'Settings (Finance): Export fund and expense class codes',
   },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
-    internal: 'ui-finance.acq.unit.assignment.assign',
+    internal: 'ui-finance.finance.acquisitions_units.assign.execute',
     gui: 'Finance: Assign acquisition units to new record',
   },
   uiFinanceFundUpdateLogsView: {
