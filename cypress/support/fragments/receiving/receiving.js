@@ -20,6 +20,7 @@ import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
+import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
@@ -269,7 +270,13 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, displaySummary, institutionId) => {
+  receiveAndChangeLocation: ({
+    rowNumber,
+    displaySummary,
+    institutionId,
+    deleteAction = null,
+    locations = [],
+  }) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -289,6 +296,14 @@ export default {
         .click(),
       receiveButton.click(),
     ]);
+
+    if (deleteAction) {
+      deleteHoldingsModalReceivingFullScreen.deleteHoldingsModal({
+        action: deleteAction,
+        locations,
+      });
+    }
+
     // Need to wait, while data will be loaded
     cy.wait(1000);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
