@@ -38,6 +38,7 @@ describe('MARC', () => {
           notExpectedContributorName: 'Testauthor.',
           expectedSubjectName: `C405513 Auto Black Panther (Fictitious character)--Comic books, strips, etc. ${randomDigits}`,
           notExpectedSubjectName: 'C405513 Auto Superheroes--Comic books, strips, etc.',
+          heldbyAccordionName: 'Held by',
         };
 
         const users = {};
@@ -99,9 +100,6 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                cy.waitForAuthRefresh(() => {
-                  cy.reload();
-                }, 30_000);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -120,6 +118,7 @@ describe('MARC', () => {
           'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C405513'] },
           () => {
+            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkInstanceTitle(testData.title);
@@ -139,8 +138,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
             QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
@@ -223,6 +220,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
+            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkInstanceTitle(testData.title);

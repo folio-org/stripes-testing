@@ -26,6 +26,7 @@ describe('MARC', () => {
           'C402769 The Riviera house (derived and edited record) / Natasha Lester.',
         deriveLocalPaneheaderText: 'Derive a new local MARC bib record',
         sourceViewLocalText: 'Local MARC bibliographic record',
+        heldbyAccordionName: 'Held by',
       };
 
       const marcFile = {
@@ -80,14 +81,10 @@ describe('MARC', () => {
             });
 
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000).then(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
                 tenantNames.university,
@@ -111,6 +108,7 @@ describe('MARC', () => {
         'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C402769'] },
         () => {
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -120,8 +118,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkSharedTextInDetailView(false);
@@ -134,8 +130,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView(false);
@@ -150,6 +144,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
+            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceIDs[1], false);
             InventorySearchAndFilter.verifyNoRecordsFound();
 
