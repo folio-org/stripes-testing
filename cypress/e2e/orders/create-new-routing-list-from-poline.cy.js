@@ -115,7 +115,7 @@ describe('Orders', () => {
       Receiving.selectLinkFromResultsList();
       Receiving.waitLoading();
       Receiving.verifyRoutingListWarning();
-      Receiving.verifyAddingRoutingList(routingList);
+      Receiving.verifyRoutingListExists(routingList);
     },
   );
 });

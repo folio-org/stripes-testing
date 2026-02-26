@@ -112,8 +112,10 @@ describe('Consortia', () => {
 
             ConsortiumSubjectSources.deleteSubjectSourceByName(subjectSourceNames.name1);
             ConsortiumSubjectSources.cancelDelitionOfSubjectSource(subjectSourceNames.name1);
+            cy.wait(3000);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSourceNames.name1,
+              user: 'No value set-',
               actions: ['edit', 'trash'],
             });
             ConsortiumSubjectSources.deleteSubjectSourceByName(subjectSourceNames.name1);

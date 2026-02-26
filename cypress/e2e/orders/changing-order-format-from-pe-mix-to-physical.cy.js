@@ -49,7 +49,7 @@ describe('Orders', () => {
         };
 
         Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
-          testData.order = order;
+          testData.order.poNumber = order.poNumber;
         });
       });
     });

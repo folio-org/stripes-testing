@@ -616,6 +616,14 @@ export default {
     );
   },
 
+  verifySubjectWithoutMarcAppIcon: (row, value) => {
+    cy.expect(
+      subjectList
+        .find(MultiColumnListCell({ row, content: including(value) }))
+        .has({ content: not(including('Linked to MARC authority')) }),
+    );
+  },
+
   expandContributorAccordion() {
     cy.do(contributorAccordion.clickHeader());
   },
@@ -726,6 +734,7 @@ export default {
   },
 
   expandAllInConsortialHoldingsAccordion(instanceId) {
+    cy.wait(3000);
     cy.do([
       Section({ id: `consortialHoldings.${instanceId}` })
         .find(Button('Expand all'))
@@ -734,6 +743,7 @@ export default {
   },
 
   collapseAllInConsortialHoldingsAccordion(instanceId) {
+    cy.wait(3000);
     cy.do([
       Section({ id: `consortialHoldings.${instanceId}` })
         .find(Button('Collapse all'))
@@ -971,10 +981,13 @@ export default {
     ]);
   },
 
-  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
-    cy.wait(1000);
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = 'false') {
+    cy.wait(2000);
     cy.expect([
-      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).exists(),
+      Button({ id: `accordion-toggle-button-consortialHoldings.${memberId}.${holdingId}` }).has({
+        ariaExpanded: isOpen,
+      }),
     ]);
   },
 

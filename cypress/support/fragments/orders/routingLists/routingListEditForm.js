@@ -79,6 +79,7 @@ export default {
   save: () => {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
+    cy.wait(4000);
   },
 
   unAssignUserFromRoutingList(userID) {

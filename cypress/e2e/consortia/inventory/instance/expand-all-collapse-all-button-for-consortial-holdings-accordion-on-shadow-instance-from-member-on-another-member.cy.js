@@ -103,7 +103,7 @@ describe('Inventory', () => {
           InstanceRecordView.verifySubHoldingsAccordion(
             Affiliations.College,
             testData.holdingId,
-            true,
+            'true',
           );
           InstanceRecordView.collapseAllInConsortialHoldingsAccordion(testData.instanceId);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
@@ -118,7 +118,7 @@ describe('Inventory', () => {
           InstanceRecordView.verifySubHoldingsAccordion(
             Affiliations.College,
             testData.holdingId,
-            true,
+            'true',
           );
           InstanceRecordView.collapseAllInConsortialHoldingsAccordion(testData.instanceId);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);

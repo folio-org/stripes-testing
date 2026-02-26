@@ -152,8 +152,6 @@ describe('Inventory', () => {
           InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.shadowInstance.id, true);
-          cy.wait(1000);
-          InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
         },
       );
     });

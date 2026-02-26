@@ -1228,6 +1228,25 @@ export default {
     cy.wait(2000);
   },
 
+  changeStatusOfExpClassByName: (expenseClassName, statusName) => {
+    cy.get('section#expense-classes fieldset#budget-status-expense-classes').within(() => {
+      cy.get('li[data-test-repeatable-field-list-item="true"]').each(($li, index) => {
+        cy.wrap($li).within(() => {
+          cy.get('button[name*="expenseClassId"]').then(($button) => {
+            if ($button.text().includes(expenseClassName)) {
+              cy.do(Select({ name: `statusExpenseClasses[${index}].status` }).choose(statusName));
+              return false;
+            }
+            return true;
+          });
+        });
+      });
+    });
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);

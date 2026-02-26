@@ -3,7 +3,6 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
-  VENDOR_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -17,6 +16,7 @@ import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine'
 import NewOrder from '../../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
+import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import Receiving from '../../../../support/fragments/receiving/receiving';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -31,6 +31,8 @@ describe('Inventory', () => {
         holdings: {},
         instance: {},
         user: {},
+        memberVendor: { ...NewOrganization.defaultUiOrganizations },
+        centralVendor: { ...NewOrganization.defaultUiOrganizations },
       };
       const userPermissions = [
         Permissions.inventoryAll.gui,
@@ -47,129 +49,6 @@ describe('Inventory', () => {
         orderLine: {},
         piece: {},
       };
-      // create order for central tenant
-      const createOrderLineOnCentral = (purchaseOrderId, vendorId, acquisitionMethodId) => {
-        return {
-          ...BasicOrderLine.defaultOrderLine,
-          purchaseOrderId,
-          source: 'User',
-          claimingActive: false,
-          claimingInterval: 45,
-          cost: {
-            currency: 'USD',
-            discountType: 'percentage',
-            discount: 10,
-            listUnitPrice: 10,
-            quantityPhysical: 1,
-          },
-          physical: {
-            createInventory: 'Instance, Holding',
-            materialSupplier: vendorId,
-          },
-          locations: [
-            {
-              tenantId: 'college',
-              holdingId: testData.holdings.holdingId,
-              quantityPhysical: 1,
-            },
-          ],
-          isPackage: false,
-          checkinItems: false,
-          suppressInstanceFromDiscovery: false,
-          instanceId: testData.instance.instanceId,
-          titleOrPackage: testData.instance.instanceTitle,
-          acquisitionMethod: acquisitionMethodId,
-          orderFormat: 'Physical Resource',
-        };
-      };
-      const createOrderWithLineOnCentral = (vendorId, acquisitionMethodId) => {
-        const order = {
-          ...NewOrder.getDefaultOrder({ vendorId }),
-          orderType: 'One-Time',
-          reEncumber: true,
-          approved: true,
-        };
-
-        return Orders.createOrderViaApi(order).then((orderResponse) => {
-          centralData.order.id = orderResponse.id;
-          const orderLine = createOrderLineOnCentral(
-            orderResponse.id,
-            orderResponse.vendorId,
-            acquisitionMethodId,
-          );
-
-          return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
-            centralData.orderLine = orderLineResponse;
-
-            return Orders.updateOrderViaApi({
-              ...orderResponse,
-              workflowStatus: ORDER_STATUSES.OPEN,
-            });
-          });
-        });
-      };
-
-      // create order for member tenant
-      const createOrderLineOnMember = (purchaseOrderId, vendorId, acquisitionMethodId) => {
-        return {
-          ...BasicOrderLine.defaultOrderLine,
-          purchaseOrderId,
-          source: 'User',
-          claimingActive: false,
-          claimingInterval: 45,
-          cost: {
-            currency: 'USD',
-            discountType: 'percentage',
-            discount: 10,
-            listUnitPrice: 10,
-            quantityPhysical: 1,
-          },
-          physical: {
-            createInventory: 'Instance, Holding',
-            materialSupplier: vendorId,
-          },
-          locations: [
-            {
-              holdingId: testData.holdings.holdingId,
-              quantityPhysical: 1,
-            },
-          ],
-          isPackage: false,
-          checkinItems: false,
-          suppressInstanceFromDiscovery: false,
-          instanceId: testData.instance.instanceId,
-          titleOrPackage: testData.instance.instanceTitle,
-          acquisitionMethod: acquisitionMethodId,
-          orderFormat: 'Physical Resource',
-        };
-      };
-      const createOrderWithLineOnMember = (vendorId, acquisitionMethodId) => {
-        const order = {
-          ...NewOrder.getDefaultOrder({ vendorId }),
-          orderType: 'One-Time',
-          reEncumber: true,
-          approved: true,
-        };
-
-        return Orders.createOrderViaApi(order).then((orderResponse) => {
-          memberData.order.id = orderResponse.id;
-          const orderLine = createOrderLineOnMember(
-            orderResponse.id,
-            orderResponse.vendorId,
-            acquisitionMethodId,
-            testData.holdings.location.id,
-          );
-
-          return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
-            memberData.orderLine = orderLineResponse;
-
-            return Orders.updateOrderViaApi({
-              ...orderResponse,
-              workflowStatus: ORDER_STATUSES.OPEN,
-            });
-          });
-        });
-      };
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -180,93 +59,179 @@ describe('Inventory', () => {
             testData.instance = instanceData;
           })
           .then(() => {
-            cy.setTenant(Affiliations.College);
-            cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-              testData.holdings.location = res;
-            });
-            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-              testData.holdings.sourceId = folioSource.id;
-            });
-            cy.getAcquisitionMethodsApi({
-              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-            }).then((params) => {
-              memberData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
-            });
-            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.MOSAIC}"` }).then(
-              (organization) => {
-                memberData.vendorId = organization.id;
-              },
-            );
-          })
-          .then(() => {
-            // create holding on member tenant
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.instance.instanceId,
-              permanentLocationId: testData.holdings.location.id,
-              sourceId: testData.holdings.sourceId,
-            }).then((resp) => {
-              testData.holdings.holdingId = resp.id;
+            cy.withinTenant(Affiliations.College, () => {
+              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` })
+                .then((res) => {
+                  testData.holdings.location = res;
 
-              // create order with order line on member tenant
-              createOrderWithLineOnMember(memberData.vendorId, memberData.acquisitionMethodId).then(
-                () => {
-                  // receive piece for the order line on member tenant
+                  InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                    // create holding on member tenant
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: testData.instance.instanceId,
+                      permanentLocationId: testData.holdings.location.id,
+                      sourceId: folioSource.id,
+                    }).then((resp) => {
+                      testData.holdings.holdingId = resp.id;
+                    });
+                  });
+                })
+                .then(() => {
+                  cy.getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  }).then((params) => {
+                    Organizations.createOrganizationViaApi(testData.memberVendor).then(
+                      (orgResponse) => {
+                        memberData.vendorId = orgResponse;
+
+                        const memberOrder = {
+                          ...NewOrder.getDefaultOrder({ vendorId: orgResponse }),
+                          orderType: 'One-Time',
+                          approved: true,
+                        };
+                        const memberOrderLine = {
+                          ...BasicOrderLine.defaultOrderLine,
+                          cost: {
+                            currency: 'USD',
+                            discountType: 'percentage',
+                            discount: 10,
+                            listUnitPrice: 10,
+                            quantityPhysical: 1,
+                          },
+                          physical: {
+                            createInventory: 'Instance, Holding',
+                            materialSupplier: orgResponse,
+                          },
+                          locations: [
+                            {
+                              holdingId: testData.holdings.holdingId,
+                              quantityPhysical: 1,
+                            },
+                          ],
+                          checkinItems: false,
+                          instanceId: testData.instance.instanceId,
+                          titleOrPackage: testData.instance.instanceTitle,
+                          acquisitionMethod: params.body.acquisitionMethods[0].id,
+                          orderFormat: 'Physical Resource',
+                        };
+
+                        // create order with order line on member tenant
+                        Orders.createOrderViaApi(memberOrder)
+                          .then((orderResponse) => {
+                            memberData.order.id = orderResponse.id;
+                            memberOrderLine.purchaseOrderId = orderResponse.id;
+
+                            OrderLines.createOrderLineViaApi(memberOrderLine).then(
+                              (orderLineResponse) => {
+                                memberData.orderLine = orderLineResponse;
+
+                                Orders.updateOrderViaApi({
+                                  ...orderResponse,
+                                  workflowStatus: ORDER_STATUSES.OPEN,
+                                });
+                              },
+                            );
+                          })
+                          .then(() => {
+                            // receive piece for the order line on member tenant
+                            return cy.wait(3000).then(() => {
+                              return Receiving.getPiecesViaApi(memberData.orderLine.id).then(
+                                (pieces) => {
+                                  return Receiving.receivePieceViaApi({
+                                    poLineId: memberData.orderLine.id,
+                                    tenantId: Affiliations.College,
+                                    pieces: [
+                                      {
+                                        id: pieces[0].id,
+                                        displayOnHolding: true,
+                                      },
+                                    ],
+                                  });
+                                },
+                              );
+                            });
+                          });
+                      },
+                    );
+                  });
+                });
+            });
+          });
+
+        cy.resetTenant();
+        cy.getAdminToken().then(() => {
+          cy.getAcquisitionMethodsApi({
+            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+          }).then((params) => {
+            Organizations.createOrganizationViaApi(testData.centralVendor).then((orgResponse) => {
+              centralData.vendorId = orgResponse;
+
+              // create order with order line on central tenant
+              const centralOrder = {
+                ...NewOrder.getDefaultOrder({ vendorId: orgResponse }),
+                orderType: 'One-Time',
+                approved: true,
+              };
+              const centralOrderLine = {
+                ...BasicOrderLine.defaultOrderLine,
+                cost: {
+                  currency: 'USD',
+                  discountType: 'percentage',
+                  discount: 10,
+                  listUnitPrice: 10,
+                  quantityPhysical: 1,
+                },
+                physical: {
+                  createInventory: 'Instance, Holding',
+                  materialSupplier: orgResponse,
+                },
+                locations: [
+                  {
+                    tenantId: Affiliations.College,
+                    holdingId: testData.holdings.holdingId,
+                    quantityPhysical: 1,
+                  },
+                ],
+                checkinItems: false,
+                instanceId: testData.instance.instanceId,
+                titleOrPackage: testData.instance.instanceTitle,
+                acquisitionMethod: params.body.acquisitionMethods[0].id,
+                orderFormat: 'Physical Resource',
+              };
+
+              Orders.createOrderViaApi(centralOrder)
+                .then((orderResponse) => {
+                  centralData.order.id = orderResponse.id;
+                  centralOrderLine.purchaseOrderId = orderResponse.id;
+
+                  OrderLines.createOrderLineViaApi(centralOrderLine).then((orderLineResponse) => {
+                    centralData.orderLine = orderLineResponse;
+
+                    Orders.updateOrderViaApi({
+                      ...orderResponse,
+                      workflowStatus: ORDER_STATUSES.OPEN,
+                    });
+                  });
+                })
+                .then(() => {
+                  // receive piece for the order line on central tenant
                   return cy.wait(3000).then(() => {
-                    return Receiving.getPiecesViaApi(memberData.orderLine.id).then((pieces) => {
+                    return Receiving.getPiecesViaApi(centralData.orderLine.id).then((pieces) => {
                       return Receiving.receivePieceViaApi({
-                        poLineId: memberData.orderLine.id,
-                        tenantId: Affiliations.College,
+                        poLineId: centralData.orderLine.id,
                         pieces: [
                           {
                             id: pieces[0].id,
                             displayOnHolding: true,
                           },
                         ],
+                        tenantId: Affiliations.College,
                       });
                     });
                   });
-                },
-              );
-            });
-          });
-
-        cy.resetTenant();
-        cy.getAdminToken()
-          .then(() => {
-            cy.getAcquisitionMethodsApi({
-              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-            }).then((params) => {
-              centralData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
-            });
-            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.MOSAIC}"` }).then(
-              (organization) => {
-                centralData.vendorId = organization.id;
-              },
-            );
-          })
-          .then(() => {
-            // create order with order line on central tenant
-            createOrderWithLineOnCentral(
-              centralData.vendorId,
-              centralData.acquisitionMethodId,
-            ).then(() => {
-              // receive piece for the order line on central tenant
-              return cy.wait(3000).then(() => {
-                return Receiving.getPiecesViaApi(centralData.orderLine.id).then((pieces) => {
-                  return Receiving.receivePieceViaApi({
-                    poLineId: centralData.orderLine.id,
-                    tenantId: Affiliations.College,
-                    pieces: [
-                      {
-                        id: pieces[0].id,
-                        displayOnHolding: true,
-                      },
-                    ],
-                  });
                 });
-              });
             });
           });
+        });
 
         cy.resetTenant();
         cy.getAdminToken();
@@ -306,9 +271,8 @@ describe('Inventory', () => {
         'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C491283'] },
         () => {
-          const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
@@ -320,7 +284,6 @@ describe('Inventory', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
