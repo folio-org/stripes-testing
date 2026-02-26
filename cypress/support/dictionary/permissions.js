@@ -823,11 +823,11 @@ export default {
     gui: 'Receiving: Export search results',
   },
   uiReceivingAssignAcquisitionUnitsToNewTitle: {
-    internal: 'ui-receiving.acq-units.assignment.assign',
+    internal: 'ui-receiving.titles.acquisitions_units.assign.execute',
     gui: 'Receiving: Assign acquisition units to new receiving title',
   },
   uiReceivingManageAcquisitionUnits: {
-    internal: 'ui-receiving.acq-units.assignment.manage',
+    internal: 'ui-receiving.titles.acquisitions_units.manage.execute',
     gui: 'Receiving: Manage acquisition units',
   },
   // Invoice
