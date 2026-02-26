@@ -39,14 +39,14 @@ function getChangedFields(originalFields, currentFields) {
   originalFields.forEach((origField) => {
     const currField = currentFields.find((f) => f.id === origField.id);
 
-    if (!currField) {
-      // Field was deleted - we'll need to recreate it
-      changes[origField.id] = { type: 'deleted', original: origField };
+    // Skip system-managed fields - they should not be modified by tests
+    if (origField.scope === 'system') {
       return;
     }
 
-    // Skip system-managed fields - they should not be modified by tests
-    if (origField.scope === 'system') {
+    if (!currField) {
+      // Field was deleted - we'll need to recreate it
+      changes[origField.id] = { type: 'deleted', original: origField };
       return;
     }
 
@@ -86,13 +86,13 @@ function getChangedSubfields(originalSubfields, currentSubfields) {
   originalSubfields.forEach((origSubfield) => {
     const currSubfield = currentSubfields.find((s) => s.id === origSubfield.id);
 
-    if (!currSubfield) {
-      changes[origSubfield.id] = { type: 'deleted', original: origSubfield };
+    // Skip system-managed subfields
+    if (origSubfield.scope === 'system') {
       return;
     }
 
-    // Skip system-managed subfields
-    if (origSubfield.scope === 'system') {
+    if (!currSubfield) {
+      changes[origSubfield.id] = { type: 'deleted', original: origSubfield };
       return;
     }
 
@@ -166,13 +166,13 @@ function getChangedIndicatorCodes(originalCodes, currentCodes) {
   originalCodes.forEach((origCode) => {
     const currCode = currentCodes.find((c) => c.id === origCode.id);
 
-    if (!currCode) {
-      changes[origCode.id] = { type: 'deleted', original: origCode };
+    // Skip system-managed codes
+    if (origCode.scope === 'system') {
       return;
     }
 
-    // Skip system-managed codes
-    if (origCode.scope === 'system') {
+    if (!currCode) {
+      changes[origCode.id] = { type: 'deleted', original: origCode };
       return;
     }
 
@@ -251,12 +251,13 @@ export function compareSpecifications(originalSpec, currentSpec) {
     const subfieldChanges = getChangedSubfields(origSubfields, currSubfields);
 
     Object.entries(subfieldChanges).forEach(([subfieldId, change]) => {
-      if (change.type === 'modified') {
+      if (['modified', 'deleted'].includes(change.type)) {
         differences.subfieldsToUpdate.push({
           id: subfieldId,
           fieldId: origField.id,
           original: change.original,
           changedFields: change.changedFields,
+          changeType: change.type,
         });
         differences.stats.changedSubfields++;
       }
@@ -271,12 +272,13 @@ export function compareSpecifications(originalSpec, currentSpec) {
     const indicatorChanges = getChangedIndicators(origIndicators, currIndicators);
 
     Object.entries(indicatorChanges).forEach(([indicatorId, change]) => {
-      if (change.type === 'modified') {
+      if (['modified', 'deleted'].includes(change.type)) {
         differences.indicatorsToUpdate.push({
           id: indicatorId,
           fieldId: origField.id,
           original: change.original,
           changedFields: change.changedFields,
+          changeType: change.type,
         });
         differences.stats.changedIndicators++;
       }
@@ -296,13 +298,14 @@ export function compareSpecifications(originalSpec, currentSpec) {
       const codeChanges = getChangedIndicatorCodes(origCodes, currCodes);
 
       Object.entries(codeChanges).forEach(([codeId, change]) => {
-        if (change.type === 'modified') {
+        if (['modified', 'deleted'].includes(change.type)) {
           differences.indicatorCodesToUpdate.push({
             id: codeId,
             indicatorId: origIndicator.id,
             fieldId: origField.id,
             original: change.original,
             changedFields: change.changedFields,
+            changeType: change.type,
           });
           differences.stats.changedIndicatorCodes++;
         }

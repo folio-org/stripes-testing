@@ -255,7 +255,7 @@ describe('MARC Specifications - Restore from Backup', () => {
                   processChange(index + 1);
                 },
               );
-            } else if (change.type === 'subfield') {
+            } else if (change.type === 'subfield' && change.changeType === 'modified') {
               cy.updateSpecificationSubfield(change.id, change.original, false).then(
                 (updateResponse) => {
                   if (updateResponse.status >= 200 && updateResponse.status < 300) {
@@ -271,7 +271,21 @@ describe('MARC Specifications - Restore from Backup', () => {
                   processChange(index + 1);
                 },
               );
-            } else if (change.type === 'indicator') {
+            } else if (change.type === 'subfield' && change.changeType === 'deleted') {
+              cy.createSpecificationFieldSubfield(change.fieldId, change.original, false).then(
+                (createResponse) => {
+                  if (createResponse.status >= 200 && createResponse.status < 300) {
+                    restorationResults.restoredSubfields++;
+                    cy.log(`    ✓ Restored subfield ${change.original.code} (re-created)`);
+                  } else {
+                    restorationResults.errors.push(
+                      `Subfield ${change.original.code}: status ${createResponse.status}`,
+                    );
+                  }
+                  processChange(index + 1);
+                },
+              );
+            } else if (change.type === 'indicator' && change.changeType === 'modified') {
               cy.updateSpecificationFieldIndicator(change.id, change.original, false).then(
                 (updateResponse) => {
                   if (updateResponse.status >= 200 && updateResponse.status < 300) {
@@ -287,7 +301,21 @@ describe('MARC Specifications - Restore from Backup', () => {
                   processChange(index + 1);
                 },
               );
-            } else if (change.type === 'indicatorCode') {
+            } else if (change.type === 'indicator' && change.changeType === 'deleted') {
+              cy.createSpecificationFieldIndicator(change.fieldId, change.original, false).then(
+                (createResponse) => {
+                  if (createResponse.status >= 200 && createResponse.status < 300) {
+                    restorationResults.restoredIndicators++;
+                    cy.log(`    ✓ Restored indicator ${change.original.order} (re-created)`);
+                  } else {
+                    restorationResults.errors.push(
+                      `Indicator ${change.original.order}: status ${createResponse.status}`,
+                    );
+                  }
+                  processChange(index + 1);
+                },
+              );
+            } else if (change.type === 'indicatorCode' && change.changeType === 'modified') {
               cy.updateSpecificationIndicatorCode(change.id, change.original, false).then(
                 (updateResponse) => {
                   if (updateResponse.status >= 200 && updateResponse.status < 300) {
@@ -298,6 +326,20 @@ describe('MARC Specifications - Restore from Backup', () => {
                   } else {
                     restorationResults.errors.push(
                       `Indicator code '${change.original.code}': status ${updateResponse.status}`,
+                    );
+                  }
+                  processChange(index + 1);
+                },
+              );
+            } else if (change.type === 'indicatorCode' && change.changeType === 'deleted') {
+              cy.createSpecificationIndicatorCode(change.indicatorId, change.original, false).then(
+                (createResponse) => {
+                  if (createResponse.status >= 200 && createResponse.status < 300) {
+                    restorationResults.restoredIndicatorCodes++;
+                    cy.log(`    ✓ Restored indicator code '${change.original.code}' (re-created)`);
+                  } else {
+                    restorationResults.errors.push(
+                      `Indicator code '${change.original.code}': status ${createResponse.status}`,
                     );
                   }
                   processChange(index + 1);
