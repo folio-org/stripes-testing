@@ -193,6 +193,7 @@ describe('MARC', () => {
             if (!index) {
               InventorySearchAndFilter.verifySearchOptionAndQuery(testData.advSearchOption, '');
               InventorySearchAndFilter.verifyResultPaneEmpty();
+              cy.wait(2000);
             } else {
               InventorySearchAndFilter.verifySearchOptionAndQuery(
                 testData.advSearchOption,

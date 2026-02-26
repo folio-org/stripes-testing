@@ -34,11 +34,12 @@ describe('MARC', () => {
     before('Creating user, data', () => {
       cy.getAdminToken();
       cy.then(() => {
-        cy.getLocations({ limit: 1, query: '(name<>"*autotest*" and name<>"AT_*")' }).then(
-          (loc) => {
-            location = loc;
-          },
-        );
+        cy.getLocations({
+          limit: 1,
+          query: '(isActive=true and name<>"*autotest*" and name<>"AT_*")',
+        }).then((loc) => {
+          location = loc;
+        });
       }).then(() => {
         cy.createSimpleMarcBibViaAPI(testData.marcBibTitle).then((instanceId) => {
           recordIds.push(instanceId);

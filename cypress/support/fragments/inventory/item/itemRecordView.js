@@ -12,6 +12,7 @@ import {
   PaneHeader,
   Spinner,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
@@ -31,6 +32,7 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
 const hridKeyValue = KeyValue('Item HRID');
 const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
+const closeIcon = Button({ icon: 'times' });
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -641,8 +643,47 @@ export default {
 
   addTag: (tagName) => {
     cy.expect(tagsAccordion.find(Spinner()).absent());
+    cy.intercept('PUT', '**/inventory/items/*').as('addTag');
     cy.do(tagsAccordion.find(textFieldTagInput).choose(tagName));
+    cy.wait('@addTag');
     cy.wait(1500);
+  },
+
+  checkTagSelectedInDropdown(tag, isShown = true) {
+    if (isShown) cy.expect(ValueChipRoot(tag).exists());
+    else cy.expect(ValueChipRoot(tag).absent());
+  },
+
+  addMultipleTags(tagNames) {
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      this.addTag(tag);
+      this.checkTagSelectedInDropdown(tag);
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+    });
+  },
+
+  deleteMultipleTags(tagNames) {
+    cy.wait(1500);
+    cy.intercept('PUT', '**/inventory/items/*').as('removeTag');
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag);
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+      cy.do(ValueChipRoot(tag).find(closeIcon).click());
+      cy.wait('@removeTag');
+      cy.wait(1000);
+      this.checkTagSelectedInDropdown(tag, false);
+      cy.expect(textFieldTagInput.find(Spinner()).absent());
+    });
+    cy.wait(1500);
+    tagNames.forEach((tag) => {
+      this.checkTagSelectedInDropdown(tag, false);
+    });
   },
 
   checkInstanceTitle: (instanceTitle) => {

@@ -1,4 +1,4 @@
-import { Button, Modal, HTML, Section, Select, including } from '../../../../interactors';
+import { Button, Modal, HTML, Section, Select, including, or } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
 const proxySelect = Select('Proxy');
@@ -25,10 +25,12 @@ const API = {
 
 export default {
   waitLoading: (providerName) => {
-    cy.intercept('eholdings/providers/**').as('getProviderProperties');
+    cy.intercept('eholdings/providers/*').as('getProviderProperties');
     cy.wait('@getProviderProperties', getLongDelay()).then((request) => {
       cy.expect(Section({ id: providerName.replaceAll(' ', '-').toLowerCase() }).exists());
-      cy.expect(proxySelect.has({ value: request.response.body.data.attributes.proxy.id }));
+      cy.expect(
+        proxySelect.has({ value: request.response.body.data.attributes.proxy.id.toLowerCase() }),
+      );
     });
   },
 
@@ -39,9 +41,11 @@ export default {
         API.getProxyTypesByApi().then((proxyTypes) => {
           const availableProxies = proxyTypes.map((proxyType) => proxyType.attributes.name);
           const notSelectedProxy = availableProxies.filter(
-            (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
+            (availableProxy) => ![selectedProxy, `inherited - ${selectedProxy}`].includes(
+              availableProxy.toLowerCase(),
+            ),
           )[1];
-          cy.do(proxySelect.choose(notSelectedProxy));
+          cy.do(proxySelect.choose(or(notSelectedProxy, `Inherited - ${notSelectedProxy}`)));
           cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
           return cy.wrap(notSelectedProxy);
         });
