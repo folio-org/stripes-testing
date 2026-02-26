@@ -188,13 +188,68 @@ describe('MARC Specifications - Restore from Backup', () => {
               );
             } else if (change.type === 'field' && change.changeType === 'deleted') {
               cy.createSpecificationField(change.specificationId, change.original, false).then(
-                (updateResponse) => {
-                  if (updateResponse.status >= 200 && updateResponse.status < 300) {
+                (fieldResponse) => {
+                  if (fieldResponse.status >= 200 && fieldResponse.status < 300) {
                     restorationResults.restoredFields++;
                     cy.log(`    ✓ Restored field ${change.original.tag} (re-created)`);
+
+                    change.original.subfields?.forEach((originalSubfield) => {
+                      cy.createSpecificationFieldSubfield(
+                        fieldResponse.body?.id,
+                        originalSubfield,
+                        false,
+                      ).then((subfieldResponse) => {
+                        if (subfieldResponse.status >= 200 && subfieldResponse.status < 300) {
+                          restorationResults.restoredSubfields++;
+                          cy.log(`    ✓ Restored subfield ${originalSubfield.code} (re-created)`);
+                        } else {
+                          restorationResults.errors.push(
+                            `Subfield ${originalSubfield.code}: status ${subfieldResponse.status}`,
+                          );
+                        }
+                      });
+                    });
+
+                    change.original.indicators?.forEach((originalIndicator) => {
+                      cy.createSpecificationFieldIndicator(
+                        fieldResponse.body?.id,
+                        originalIndicator,
+                        false,
+                      ).then((indicatorResponse) => {
+                        if (indicatorResponse.status >= 200 && indicatorResponse.status < 300) {
+                          restorationResults.restoredIndicators++;
+                          cy.log(
+                            `    ✓ Restored indicator ${originalIndicator.order} (re-created)`,
+                          );
+
+                          originalIndicator.codes?.forEach((originalCode) => {
+                            cy.createSpecificationIndicatorCode(
+                              indicatorResponse.body?.id,
+                              originalCode,
+                              false,
+                            ).then((codeResponse) => {
+                              if (codeResponse.status >= 200 && codeResponse.status < 300) {
+                                restorationResults.restoredIndicatorCodes++;
+                                cy.log(
+                                  `    ✓ Restored indicator code '${originalCode.code}' (re-created)`,
+                                );
+                              } else {
+                                restorationResults.errors.push(
+                                  `Indicator code '${originalCode.code}': status ${codeResponse.status}`,
+                                );
+                              }
+                            });
+                          });
+                        } else {
+                          restorationResults.errors.push(
+                            `Indicator ${originalIndicator.order}: status ${indicatorResponse.status}`,
+                          );
+                        }
+                      });
+                    });
                   } else {
                     restorationResults.errors.push(
-                      `Field ${change.original.tag}: status ${updateResponse.status}`,
+                      `Field ${change.original.tag}: status ${fieldResponse.status}`,
                     );
                   }
                   processChange(index + 1);
