@@ -231,7 +231,7 @@ export default {
   },
 
   checkExportedFundAndExpenseClassFile(fileName, expectedRows) {
-    cy.wait(3000);
+    cy.wait(6000);
     cy.readFile(`cypress/downloads/${fileName}`).then((content) => {
       const lines = content.trim().split(/\r?\n/);
 

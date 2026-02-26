@@ -1,10 +1,9 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { HTML, including, matching } from '@interactors/html';
+import { and, HTML, including, matching, or } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   AdvancedSearch,
-  MultiSelectMenu,
   AdvancedSearchRow,
   Button,
   Callout,
@@ -15,6 +14,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
   PaneContent,
@@ -24,21 +24,19 @@ import {
   TextArea,
   TextField,
   TextInput,
-  or,
-  and,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';
+import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import parseMrkFile from '../../utils/parseMrkFile';
 import getRandomPostfix from '../../utils/stringTools';
 import CheckinActions from '../check-in-actions/checkInActions';
+import QuickMarcEditor from '../quickMarcEditor';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
-import QuickMarcEditor from '../quickMarcEditor';
-import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });

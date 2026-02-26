@@ -11,51 +11,48 @@ describe('Orders', () => {
     organization,
     order: {},
     user: {},
+    location: LOCATION_NAMES.ANNEX_UI,
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(testData.organization);
-    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-      (locationResponse) => {
-        cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
-          testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
-          testData.orderLine = {
-            ...BasicOrderLine.getDefaultOrderLine(),
-            cost: {
-              currency: 'USD',
-              discountType: 'percentage',
+    cy.getLocations({ query: `name="${testData.location}"` }).then((locationResponse) => {
+      cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
+        testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+        testData.orderLine = {
+          ...BasicOrderLine.getDefaultOrderLine(),
+          cost: {
+            currency: 'USD',
+            discountType: 'percentage',
+            quantityPhysical: 1,
+            quantityElectronic: 1,
+            listUnitPriceElectronic: 10,
+            listUnitPrice: 10,
+          },
+          orderFormat: 'P/E Mix',
+          eresource: {
+            createInventory: 'Instance, Holding',
+            accessProvider: testData.organization.id,
+          },
+          physical: {
+            createInventory: 'Instance, Holding, Item',
+            materialType: materialTypeId,
+          },
+          locations: [
+            {
+              locationId: locationResponse.id,
               quantityPhysical: 1,
               quantityElectronic: 1,
-              listUnitPriceElectronic: 10,
-              listUnitPrice: 10,
             },
-            orderFormat: 'P/E Mix',
-            eresource: {
-              createInventory: 'Instance, Holding',
-              accessProvider: testData.organization.id,
-            },
-            physical: {
-              createInventory: 'Instance, Holding, Item',
-              materialType: materialTypeId,
-            },
-            locations: [
-              {
-                locationId: locationResponse.id,
-                quantityPhysical: 1,
-                quantityElectronic: 1,
-              },
-            ],
-          };
+          ],
+        };
 
-          Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
-            (order) => {
-              testData.order = order;
-            },
-          );
+        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+          testData.order.poNumber = order.poNumber;
         });
-      },
-    );
+      });
+    });
 
     cy.createTempUser([Permissions.uiOrdersEdit.gui, Permissions.uiOrdersView.gui]).then(
       (userProperties) => {
@@ -149,7 +146,7 @@ describe('Orders', () => {
         ],
         locationDetails: [
           [
-            { key: 'Holding', value: testData.location.name },
+            { key: 'Holding', value: testData.location },
             { key: 'Quantity physical', value: 1 },
             { key: 'Quantity electronic', value: 1 },
           ],

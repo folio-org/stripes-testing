@@ -1,213 +1,272 @@
-import permissions from '../../../../support/dictionary/permissions';
+import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../../../support/constants';
+import Permissions from '../../../../support/dictionary/permissions';
+import {
+  Budgets,
+  FiscalYears,
+  Funds,
+  LedgerRollovers,
+  Ledgers,
+} from '../../../../support/fragments/finance';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../../support/fragments/orders/orderLines';
-import Orders from '../../../../support/fragments/orders/orders';
-import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
+import ExpenseClasses from '../../../../support/fragments/settings/finance/expenseClasses';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import DateTools from '../../../../support/utils/dateTools';
+import { CodeTools, StringTools } from '../../../../support/utils';
+import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Finance: Ledgers', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const date = new Date();
+  const code = CodeTools(4);
+  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const testData = {
+    organization,
+    user: {},
   };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
+  const fiscalYears = {
+    current: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${StringTools.randomTwoDigitNumber()}01`,
+      periodStart: new Date(date.getFullYear(), 0, 1),
+      periodEnd: new Date(date.getFullYear(), 11, 31),
+    },
+    next: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${StringTools.randomTwoDigitNumber()}02`,
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
+    },
+  };
+  const expenseClass1 = { ...ExpenseClasses.getDefaultExpenseClass() };
+  const expenseClass2 = {
+    ...ExpenseClasses.getDefaultExpenseClass(),
+    name: `autotest_class_2_name_${getRandomPostfix()}`,
+  };
   const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
+    id: uuid(),
     approved: true,
     reEncumber: true,
+    vendorId: testData.organization.id,
   };
   const secondOrder = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
+    id: uuid(),
     approved: true,
     reEncumber: true,
+    vendorId: testData.organization.id,
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  let user;
-  let location;
-  let fileName;
 
-  before(() => {
+  before('Setup test data', () => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+    ExpenseClasses.createExpenseClassViaApi(expenseClass1).then((ec1) => {
+      testData.expenseClass1 = ec1;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+      ExpenseClasses.createExpenseClassViaApi(expenseClass2).then((ec2) => {
+        testData.expenseClass2 = ec2;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addTwoExpensesClass('Electronic', 'Print');
+        // create first Fiscal Year with Expense Classes
+        const { ledger, fund } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+          fiscalYear: fiscalYears.current,
+          ledger: { restrictEncumbrance: true, restrictExpenditures: true },
+          budget: {
+            allocated: 100,
+            statusExpenseClasses: [
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass1.id,
+              },
+              {
+                status: 'Active',
+                expenseClassId: testData.expenseClass2.id,
+              },
+            ],
+          },
         });
+        testData.ledger = ledger;
+        testData.fund = fund;
+
+        // Create second Fiscal Year for Rollover
+        FiscalYears.createViaApi(fiscalYears.next);
+        Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+          organization.id = orgResp;
+          firstOrder.vendor = orgResp;
+          secondOrder.vendor = orgResp;
+
+          cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((locationResp) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((amResp) => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                const firstOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  cost: {
+                    listUnitPrice: 25.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 25.0,
+                  },
+                  fundDistribution: [
+                    {
+                      code: testData.fund.code,
+                      fundId: testData.fund.id,
+                      expenseClassId: testData.expenseClass1.id,
+                      value: 100,
+                    },
+                  ],
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp.id,
+                    volumes: [],
+                  },
+                };
+
+                // Create first open order
+                Orders.createOrderViaApi(firstOrder).then((orderResp) => {
+                  firstOrder.id = orderResp.id;
+                  firstOrder.poNumber = orderResp.poNumber;
+                  firstOrderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(firstOrderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResp,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
+
+                const secondOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  id: uuid(),
+                  cost: {
+                    listUnitPrice: 20.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 20.0,
+                  },
+                  fundDistribution: [
+                    {
+                      code: testData.fund.code,
+                      fundId: testData.fund.id,
+                      expenseClassId: testData.expenseClass2.id,
+                      value: 100,
+                    },
+                  ],
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp.id,
+                    volumes: [],
+                  },
+                };
+                // Create second open order
+                Orders.createOrderViaApi(secondOrder).then((orderResp) => {
+                  secondOrder.id = orderResp.id;
+                  secondOrder.poNumber = orderResp.poNumber;
+                  secondOrderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(secondOrderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResp,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
+              });
+            });
+          });
+        });
+
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.fundPath);
+        FinanceHelp.searchByName(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
+        Funds.selectBudgetDetails();
+        Funds.editBudget();
+        Funds.changeStatusOfExpClassByName(expenseClass2.name, 'Inactive');
+
+        const rollover = LedgerRollovers.generateLedgerRollover({
+          ledger: testData.ledger,
+          fromFiscalYear: fiscalYears.current,
+          toFiscalYear: fiscalYears.next,
+          restrictEncumbrance: true,
+          restrictExpenditures: true,
+          needCloseBudgets: true,
+          budgetsRollover: [
+            {
+              rolloverAllocation: true,
+              rolloverBudgetValue: 'None',
+              addAvailableTo: 'Allocation',
+            },
+          ],
+          encumbrancesRollover: [{ orderType: 'One-time', basedOn: 'InitialAmount' }],
+        });
+        LedgerRollovers.createLedgerRolloverViaApi(rollover);
+        testData.fileName = `Export-${testData.ledger.code}-${fiscalYears.next.code}`;
       });
 
-      cy.getLocations({ limit: 1 }).then((res) => {
-        location = res;
+      FiscalYears.updateFiscalYearViaApi({
+        ...fiscalYears.current,
+        _version: 1,
+        periodStart: new Date(date.getFullYear() - 1, 0, 1),
+        periodEnd: new Date(date.getFullYear() - 1, 11, 31),
       });
-      // Create second Fiscal Year for Rollover
-      FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-        secondFiscalYear.id = secondFiscalYearResponse.id;
+
+      FiscalYears.updateFiscalYearViaApi({
+        ...fiscalYears.next,
+        _version: 1,
+        periodStart: new Date(date.getFullYear(), 0, 1),
+        periodEnd: new Date(date.getFullYear(), 11, 31),
       });
-      // Prepare Open Order for Rollover
-      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-        organization.id = responseOrganizations;
-      });
-      firstOrder.vendor = organization.name;
-      secondOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
-      Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-        firstOrder.id = firstOrderResponse.id;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
-          defaultFund,
-          'Electronic',
-          '10',
-          '1',
-          '10',
-          location.name,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-      Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
-        secondOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(secondOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
-          defaultFund,
-          'Print',
-          '10',
-          '1',
-          '10',
-          location.name,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.editBudget();
-      Funds.changeStatusOfExpClass(1, 'Inactive');
-      cy.visit(TopMenu.ledgerPath);
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
-      Ledgers.rollover();
-      Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
-        secondFiscalYear.code,
-        'None',
-        'Allocation',
-      );
-      cy.visit(TopMenu.fiscalYearPath);
-      FinanceHelp.searchByName(firstFiscalYear.name);
-      FiscalYears.selectFY(firstFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForFirstFY,
-        periodEndForFirstFY,
-      );
-      FinanceHelp.searchByName(secondFiscalYear.name);
-      FiscalYears.selectFY(secondFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForSecondFY,
-        periodEndForSecondFY,
-      );
-      fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
-    });
-    cy.createTempUser([
-      permissions.uiFinanceExportFinanceRecords.gui,
-      permissions.uiFinanceViewLedger.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ledgerPath,
-        waiter: Ledgers.waitForLedgerDetailsLoading,
+
+      cy.createTempUser([
+        Permissions.uiFinanceExportFinanceRecords.gui,
+        Permissions.uiFinanceViewLedger.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ledgerPath,
+          waiter: Ledgers.waitForLedgerDetailsLoading,
+        });
       });
     });
   });
 
-  after(() => {
+  after('Clean up test data', () => {
+    FileManager.deleteFile(`cypress/downloads/${testData.fileName}.csv`);
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C350975 Ledger export settings: last year Fund with budget, Print (Active) and Electronic (Inactive) Classes, Export settings- All statuses (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C350975'] },
     () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      FinanceHelp.searchByName(testData.ledger.name);
+      Ledgers.selectLedger(testData.ledger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'All', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '20',
-        '0',
-        '0',
-        '20',
-        '0',
-        '0',
-        '100',
-        '80',
-        'Print',
-        'Prn',
-        'Inactive',
-        '10',
-        '0',
-        '0',
+      Ledgers.prepareExportSettings(fiscalYears.next.code, 'All', testData.ledger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(
+        `${testData.fileName}.csv`,
       );
       Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
-        `${fileName}.csv`,
-        2,
-        defaultFund,
-        secondFiscalYear,
+        `${testData.fileName}.csv`,
+        expenseClass1.name,
+        testData.fund,
+        fiscalYears.next,
         '100',
         '100',
         '100',
@@ -216,22 +275,47 @@ describe('Finance: Ledgers', () => {
         '100',
         '0',
         '100',
-        '20',
+        '45',
         '0',
         '0',
-        '20',
+        '45',
         '0',
         '0',
         '100',
-        '80',
-        'Electronic',
-        'Elec',
+        '55',
+        expenseClass1.code,
         'Active',
-        '10',
+        '25',
         '0',
         '0',
       );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
+        `${testData.fileName}.csv`,
+        expenseClass2.name,
+        testData.fund,
+        fiscalYears.next,
+        '100',
+        '100',
+        '100',
+        '0',
+        '0',
+        '100',
+        '0',
+        '100',
+        '45',
+        '0',
+        '0',
+        '45',
+        '0',
+        '0',
+        '100',
+        '55',
+        expenseClass2.code,
+        'Inactive',
+        '20',
+        '0',
+        '0',
+      );
     },
   );
 });

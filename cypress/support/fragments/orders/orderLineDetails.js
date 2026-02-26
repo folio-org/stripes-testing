@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import {
   Button,
   Checkbox,
@@ -9,7 +10,7 @@ import {
   PaneHeader,
   Section,
   Warning,
-  including,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -46,6 +47,7 @@ const routingListSection = orderLineDetailsSection.find(Section({ id: 'routing-l
 const routingListAccordionButton = '#accordion-toggle-button-routing-list';
 const routingListBadgeSelector = '[class*="badge"]';
 const routingListContainer = '#routing-list';
+const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
@@ -401,6 +403,116 @@ export default {
   },
   checkNoRoutingListsText() {
     cy.get(routingListContainer).should('contain.text', 'No routing lists');
+  },
+  openRoutingListsAccordion: () => {
+    cy.do(Button({ id: 'accordion-toggle-button-routing-list' }).click());
+  },
+
+  addRoutingListButtonExist: () => {
+    cy.expect(routingListSection.find(addRoutingListButton).exists());
+  },
+
+  addRoutingList: () => {
+    cy.do(routingListSection.find(addRoutingListButton).click());
+  },
+
+  addRoutingListByActions: () => {
+    cy.do([routingListSection.find(actionsButton).click(), addRoutingListButton.click()]);
+  },
+
+  verifyAddingRoutingList: (name) => {
+    cy.expect(routingListSection.find(MultiColumnListCell(name)).exists());
+  },
+
+  openRoutingList: (name) => {
+    cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
+  },
+
+  addRoutingListIsDisabled() {
+    this.clickActionsButtonInRoutingList();
+    cy.get('[class^=overlay-]')
+      .find('[data-test-routing-list-button="true"]')
+      .should('have.attr', 'disabled');
+  },
+
+  clickActionsButtonInRoutingList() {
+    cy.do(routingListSection.find(actionsButton).click());
+  },
+
+  verifyRoutingListAccordionRecordCount(expectedCount) {
+    cy.get(routingListContainer).find('[class*="mclRow-"]').should('have.length', expectedCount);
+  },
+
+  verifyRoutingListTableColumns() {
+    cy.expect(routingListSection.find(MultiColumnListHeader('Name')).exists());
+    cy.expect(routingListSection.find(MultiColumnListHeader('Notes')).exists());
+    cy.expect(routingListSection.find(MultiColumnListHeader('Users')).exists());
+  },
+
+  verifyRoutingListNamesClickable() {
+    // Verify each routing list name is clickable (has link)
+    cy.get(routingListContainer)
+      .find('[class*="mclRow-"]')
+      .each(($row) => {
+        cy.wrap($row).find('a').should('exist');
+      });
+  },
+
+  verifyAddRoutingListInactive() {
+    // Open actions menu and verify "Add routing list" is inactive/disabled
+    this.clickActionsButtonInRoutingList();
+
+    cy.get('[class^=overlay-]')
+      .find('[data-test-routing-list-button="true"]')
+      .should('have.attr', 'disabled');
+  },
+
+  checkAssignedUsersInRoutingList(usernames = [], options = {}) {
+    const { rowIndex = 0 } = options;
+
+    // Always use index-based selection to avoid multiple element matching
+    const targetRow = routingListSection.find(MultiColumnListRow({ index: rowIndex }));
+
+    if (usernames.length === 0) {
+      // Check for empty users column
+      cy.expect(targetRow.find(MultiColumnListCell({ column: 'Users' })).has({ content: '' }));
+      return;
+    }
+
+    // For single user, check directly
+    if (usernames.length === 1) {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: 'Users' }))
+          .has({ content: including(usernames[0]) }),
+      );
+      return;
+    }
+
+    // For multiple users, verify each username is present in the content
+    usernames.forEach((username) => {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: 'Users' }))
+          .has({ content: including(username) }),
+      );
+    });
+  },
+
+  createRoutingListViaApi(userIds, routingListName, polId) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/routing-lists',
+        body: {
+          userIds,
+          name: routingListName,
+          poLineId: polId,
+        },
+      })
+      .then((response) => {
+        return response.body.id;
+      });
   },
   checkRelatedInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {

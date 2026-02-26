@@ -99,6 +99,7 @@ export default {
   },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
+    cy.wait(1000);
   },
   fillInvoiceLineFields(invoiceLine) {
     if (invoiceLine.description) {
@@ -142,7 +143,7 @@ export default {
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     }
     // wait for changes to be applied
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   checkSelectionOptions(selectionName, expectedOptions) {
@@ -152,5 +153,31 @@ export default {
 
   selectSelectionOption(optionName) {
     cy.do([SelectionList().select(optionName)]);
+  },
+
+  configureFundDistribution(index, config) {
+    const { fund, expenseClass, value } = config;
+
+    if (fund) {
+      cy.do([
+        Button({ id: `fundDistributions[${index}].fundId` }).click(),
+        SelectionList().filter(fund),
+        SelectionList().select(including(fund)),
+      ]);
+      cy.wait(1000);
+    }
+
+    if (expenseClass) {
+      cy.do([
+        Button({ id: `fundDistributions[${index}].expenseClassId` }).click(),
+        SelectionList().filter(expenseClass),
+        SelectionList().select(including(expenseClass)),
+      ]);
+      cy.wait(1000);
+    }
+
+    if (value) {
+      cy.do(TextField({ name: `fundDistributions[${index}].value` }).fillIn(value));
+    }
   },
 };

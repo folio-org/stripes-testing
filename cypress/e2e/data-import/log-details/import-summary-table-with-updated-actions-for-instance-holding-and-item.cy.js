@@ -300,7 +300,9 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+      FileManager.deleteFileFromDownloadsByMask(nameMarcFileForImportUpdate);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFileFromDownloadsByMask(nameForCSVFile);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);

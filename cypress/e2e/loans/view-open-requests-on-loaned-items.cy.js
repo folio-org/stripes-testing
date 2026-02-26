@@ -1,6 +1,11 @@
 import uuid from 'uuid';
 
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES, APPLICATION_NAMES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+  APPLICATION_NAMES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
 import Checkout from '../../support/fragments/checkout/checkout';

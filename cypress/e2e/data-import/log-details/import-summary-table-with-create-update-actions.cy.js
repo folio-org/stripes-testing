@@ -260,6 +260,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(exportedFileName);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
