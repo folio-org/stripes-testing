@@ -31,7 +31,11 @@ describe('Funds', () => {
   after('Clean up test data', () => {
     cy.getAdminToken();
     Funds.getFundsViaApi({ query: `code="${testData.fund.code}"` }).then((body) => {
-      Funds.deleteFundViaApi(body.funds[0].id);
+      const fundId = body.funds?.[0]?.id;
+
+      if (fundId) {
+        Funds.deleteFundViaApi(fundId);
+      }
     });
     cy.deleteLedgerApi(testData.ledger.id);
     FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
