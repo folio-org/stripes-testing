@@ -280,7 +280,6 @@ describe('MARC', () => {
 
           // Verify specific field content in source
           const sourceViewTagsOrder = [...testData.expectedOrderInEdit];
-          sourceViewTagsOrder[0] = ''; // Exclude LDR for source view check
           InventoryViewSource.verifyFieldsOrder(sourceViewTagsOrder);
         },
       );

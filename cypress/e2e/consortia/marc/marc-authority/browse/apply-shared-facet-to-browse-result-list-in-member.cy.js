@@ -99,7 +99,7 @@ describe('MARC', () => {
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });
@@ -121,9 +121,9 @@ describe('MARC', () => {
           })
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'University') {
+              if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
-              } else if (marcFile.tenant === 'College') {
+              } else if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
               } else {
                 cy.resetTenant();
