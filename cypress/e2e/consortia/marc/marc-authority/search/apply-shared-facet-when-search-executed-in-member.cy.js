@@ -107,9 +107,9 @@ describe('MARC', () => {
           .then(() => {
             cy.resetTenant();
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'College') {
+              if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
-              } else if (marcFile.tenant === 'University') {
+              } else if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
               }
               DataImport.uploadFileViaApi(
