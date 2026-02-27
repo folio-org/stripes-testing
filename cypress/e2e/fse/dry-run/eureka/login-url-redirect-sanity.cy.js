@@ -25,15 +25,6 @@ describe('Eureka', () => {
 
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-          authRefresh: true,
-        });
-        cy.allure().logCommandSteps();
-        cy.logout();
-
-        cy.allure().logCommandSteps(false);
-        cy.login(user.username, user.password, {
           path: TopMenu.coursesPath,
           waiter: Courses.waitLoading,
           authRefresh: true,
@@ -46,6 +37,15 @@ describe('Eureka', () => {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
           authRefresh: true,
+        });
+        cy.allure().logCommandSteps();
+        cy.logout();
+
+        cy.allure().logCommandSteps(false);
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+          authRefresh: false,
         });
         cy.allure().logCommandSteps();
         cy.logout();
