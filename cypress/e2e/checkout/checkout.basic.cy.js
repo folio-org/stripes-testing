@@ -11,9 +11,13 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check out', () => {
   const patronGroup = getTestEntityValue('staff');
+  const USER_NAME = 'username';
+  const getPrefPatronIdentifier = (otherSettings) => otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
+  let shouldRemoveUserNameAfterTest = false;
   let userData = {};
   let patronGroupId = '';
 
@@ -44,6 +48,23 @@ describe('Check out', () => {
         });
         PatronGroups.createViaApi(patronGroup).then((patronGroupResponse) => {
           patronGroupId = patronGroupResponse;
+        });
+        // Fetching the current "Other settings" values.
+        // Checking if "Patron id(s) for checkout scanning" is enabled by "Username".
+        // Enabling it if not already enabled.
+        OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
+          const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+          if (!prefPatronIdentifier.includes(USER_NAME)) {
+            shouldRemoveUserNameAfterTest = true;
+            const updatedValue = prefPatronIdentifier
+              ? `${prefPatronIdentifier},${USER_NAME}`
+              : USER_NAME;
+
+            OtherSettings.setOtherSettingsViaApi({
+              prefPatronIdentifier: updatedValue,
+            });
+          }
         });
       })
       .then(() => {
@@ -107,6 +128,29 @@ describe('Check out', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroupId);
+    // Fetching the current "Other settings" values.
+    // Checking if "Patron id(s) for checkout scanning" is enabled by "Username".
+    // Verifying that it was enabled earlier.
+    // Ensuring that "Username" is not the only enabled value, since at least one value is required.
+    // Disabling "Username" if appropriate.
+    OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+      if (
+        shouldRemoveUserNameAfterTest &&
+        prefPatronIdentifier.includes(USER_NAME) &&
+        prefPatronIdentifier !== USER_NAME
+      ) {
+        const updatedValue = prefPatronIdentifier
+          .split(',')
+          .filter((id) => id !== USER_NAME)
+          .join(',');
+
+        OtherSettings.setOtherSettingsViaApi({
+          prefPatronIdentifier: updatedValue,
+        });
+      }
+    });
   });
 
   it(
