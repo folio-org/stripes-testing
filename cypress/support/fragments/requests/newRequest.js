@@ -55,6 +55,7 @@ function addRequester(userName) {
 
 function openNewRequestPane() {
   cy.do([actionsButton.click(), newRequestButton.click()]);
+  cy.wait(10000);
 }
 
 function openNewMediatedRequestPane() {
