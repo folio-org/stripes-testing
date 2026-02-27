@@ -30,6 +30,8 @@ describe('fse-invoices - UI (data manipulation)', () => {
     cy.wait(3000);
     // close service point modal if it appears after login
     Modals.closeModalWithEscapeIfAny();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(

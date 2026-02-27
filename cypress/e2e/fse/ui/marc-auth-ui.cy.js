@@ -23,6 +23,8 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
     Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
