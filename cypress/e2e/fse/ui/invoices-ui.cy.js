@@ -5,6 +5,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-invoices - UI (data manipulation)', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -49,8 +50,12 @@ describe('fse-invoices - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
+    // close service point modal if it appears after switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
