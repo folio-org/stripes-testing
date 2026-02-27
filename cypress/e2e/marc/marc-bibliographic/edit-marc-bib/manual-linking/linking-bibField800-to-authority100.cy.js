@@ -122,11 +122,11 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag800);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib800LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(
               0,
@@ -159,7 +159,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib800UnlinkedFieldValues);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib800UnlinkedFieldValues[0]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
             InventoryInstance.viewSource();

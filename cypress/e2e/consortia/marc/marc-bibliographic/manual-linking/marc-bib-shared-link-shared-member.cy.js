@@ -28,6 +28,7 @@ describe('MARC', () => {
           'C397343 Murder in Mérida, 1792 : violence, factions, and the law / Mark W. Lentz.',
         authorityLinkText: 'Linked to MARC authority',
         sharedLinkText: 'Shared',
+        heldbyAccordionName: 'Held by',
       };
 
       const linkingTagAndValues = {
@@ -109,14 +110,10 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-            }, 20_000);
-            InventoryInstances.waitContentLoading();
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -136,6 +133,7 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C397343'] },
         () => {
           cy.wait(15_000);
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -155,8 +153,6 @@ describe('MARC', () => {
             linkingTagAndValues.zeroSubfield,
             linkingTagAndValues.seventhBox,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
