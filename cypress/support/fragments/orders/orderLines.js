@@ -1970,7 +1970,7 @@ export default {
   },
   setElectronicQuantity(quantity) {
     cy.wait(1500);
-    cy.do(quantityElectronicField.fillIn(quantity));
+    cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
     cy.expect(quantityElectronicField.has({ value: quantity }));
   },
   openCreateHoldingForLocation() {
