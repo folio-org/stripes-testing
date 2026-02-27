@@ -13,6 +13,7 @@ import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -64,6 +65,8 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C411611');
+      InventoryInstances.deleteInstanceByTitleViaApi('C411611');
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
@@ -151,7 +154,7 @@ describe('Inventory', () => {
         })
         .then(() => {
           marcFiles.forEach((marcFile) => {
-            if (marcFile.tenant === 'College') {
+            if (marcFile.tenant === tenantNames.college) {
               cy.setTenant(Affiliations.College);
             } else {
               cy.resetTenant();
@@ -200,8 +203,6 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           InventorySearchAndFilter.instanceTabIsDefault();

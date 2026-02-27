@@ -33,7 +33,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 3,
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcAuthFileForC405927.mrc',
@@ -41,7 +41,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
           numOfRecords: 1,
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcBibFileForC405927-Local-M1.mrc',
@@ -49,7 +49,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'University',
+          tenant: tenantNames.university,
         },
         {
           marc: 'marcBibFileForC405927-Local-M2.mrc',
@@ -57,7 +57,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'College',
+          tenant: tenantNames.college,
         },
       ];
 
@@ -136,9 +136,9 @@ describe('MARC', () => {
           })
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'University') {
+              if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
-              } else if (marcFile.tenant === 'College') {
+              } else if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
               } else {
                 cy.resetTenant();

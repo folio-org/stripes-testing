@@ -1,12 +1,11 @@
 import { calloutTypes } from '../../../../interactors';
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -35,24 +34,19 @@ describe('MARC', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-          authRefresh: true,
-        }).then(() => {
-          cy.getUserToken(testData.user.username, testData.user.password);
+        cy.getUserToken(testData.user.username, testData.user.password);
+        cy.getLocations({
+          limit: 1,
+          query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+        }).then((loc) => {
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
                 instanceID = record[propertyName].id;
+                cy.createSimpleMarcHoldingsViaAPI(instanceID, record[propertyName].hrid, loc.code);
               });
             },
           );
-          Logs.waitFileIsImported(fileName);
-          Logs.checkJobStatus(fileName, 'Completed');
-          Logs.openFileDetails(fileName);
-          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
-          InventorySteps.addMarcHoldingRecord();
         });
       });
     });
@@ -64,6 +58,7 @@ describe('MARC', () => {
         authRefresh: true,
       });
       InventorySearchAndFilter.searchInstanceByTitle(instanceID);
+      InventoryInstance.waitInstanceRecordViewOpened();
       InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();
