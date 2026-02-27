@@ -10,6 +10,7 @@ import ConsortiumManager from '../../../../../support/fragments/settings/consort
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -25,6 +26,7 @@ describe('MARC', () => {
           'C402767 Variations (derived and edited record) / Ludwig Van Beethoven.',
         deriveSharedPaneheaderText: 'Derive a new shared MARC bib record',
         sourceViewSharedText: 'Shared MARC bibliographic record',
+        heldbyAccordionName: 'Held by',
       };
 
       const marcFile = {
@@ -92,14 +94,10 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.checkPresentedText(testData.instanceTitle);
 
-          cy.waitForAuthRefresh(() => {
-            InventoryInstance.deriveNewMarcBib();
-            QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
-            QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
-            QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
-          }, 20_000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2500);
+          InventoryInstance.deriveNewMarcBib();
+          QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
+          QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
+          QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.pressSaveAndClose();
 
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
@@ -123,8 +121,6 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView();
             InventoryInstance.checkExpectedMARCSource();
@@ -134,6 +130,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
+            InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceIDs[1]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
