@@ -19,7 +19,6 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
-    cy.wait(3000);
     // close service point modal if it appears after login
     Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
