@@ -27,11 +27,6 @@ describe('fse-invoices - UI (data manipulation)', () => {
       invoice.batchGroup = batchGroup.name;
     });
     cy.allure().logCommandSteps();
-    cy.wait(3000);
-    // close service point modal if it appears after login
-    Modals.closeModalWithEscapeIfAny();
-    // close service point modal if it appears switching locale
-    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
@@ -55,8 +50,12 @@ describe('fse-invoices - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
+    // close service point modal if it appears after switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
