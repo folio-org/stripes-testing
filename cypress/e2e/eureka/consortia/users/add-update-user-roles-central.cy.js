@@ -71,9 +71,7 @@ describe('Eureka', () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
-          cy.reload();
         }, 20_000);
-        Users.waitLoading();
       });
 
       after('Delete roles, users', () => {
