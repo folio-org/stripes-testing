@@ -4,6 +4,7 @@ import { Localization } from '../../../support/fragments/settings/tenant/general
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-finance - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -14,6 +15,8 @@ describe('fse-finance - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
   });

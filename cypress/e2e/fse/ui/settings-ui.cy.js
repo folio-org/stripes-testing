@@ -3,6 +3,7 @@ import Settings from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SoftwareVersions from '../../../support/fragments/settings/softwareVersions/software-versions';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -13,6 +14,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
       waiter: Settings.waitSettingsPaneLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
