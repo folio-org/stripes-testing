@@ -246,7 +246,7 @@ describe('Inventory', () => {
           BrowseClassifications.verifyValueInResultTableIsHighlighted(thirdExact.value);
           InventorySearchAndFilter.selectFoundItemFromBrowse(thirdExact.value);
           InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query',
+            'Query search',
             `classifications.classificationNumber=="${thirdExact.value}"`,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);

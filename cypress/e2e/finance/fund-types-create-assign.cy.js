@@ -58,7 +58,7 @@ describe('Finance', () => {
         SettingsFinance.checkErrorMessage();
         SettingsFinance.fillTypeName(fundTypeName);
         SettingsFinance.clicksaveButton();
-        SettingsFinance.checkFundType(fundTypeName);
+        SettingsFinance.checkFundType({ name: fundTypeName });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
         Funds.waitLoading();
