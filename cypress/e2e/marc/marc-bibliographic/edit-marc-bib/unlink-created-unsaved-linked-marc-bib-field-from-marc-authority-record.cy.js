@@ -98,6 +98,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickLinkIconInTagField(13);
           MarcAuthorities.switchToSearch();
           MarcAuthorities.searchBy('Keyword', 'C366554 Sprouse, Chris');
+          MarcAuthority.contains('\t$a C366554 Sprouse, Chris');
           MarcAuthorities.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(13, 700);
           QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -113,6 +114,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickLinkIconInTagField(14);
           MarcAuthorities.switchToSearch();
           MarcAuthorities.searchBy('Keyword', 'C366554 Sabino, Joe');
+          MarcAuthority.contains('\t$a C366554 Sabino, Joe');
           MarcAuthorities.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(14, 700);
           QuickMarcEditor.verifyTagFieldAfterLinking(

@@ -80,8 +80,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000).then(() => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -98,8 +96,6 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.editMarcBibliographicRecord();
@@ -113,8 +109,6 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(16, testData.tag650);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -130,16 +124,12 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(17, testData.tag650);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.waitForAuthRefresh(() => {
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             }, 20_000);
           });
         });
@@ -164,9 +154,7 @@ describe('MARC', () => {
           QuickMarcEditor.fillLinkedFieldBox(10, 5, testData.tag240FifthBoxValue);
           QuickMarcEditor.fillLinkedFieldBox(16, 5, testData.tag650FifthBoxValue);
           QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag650SeventhBoxValue);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.checkErrorMessage(16, testData.errorMessage);
           QuickMarcEditor.checkErrorMessage(17, testData.errorMessage);

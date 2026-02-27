@@ -146,14 +146,10 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -167,8 +163,6 @@ describe('Data Import', () => {
             linkingTagAndValues.tag,
             linkingTagAndValues.rowIndex,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -203,14 +197,10 @@ describe('Data Import', () => {
           );
         })
         .then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
     });
 
@@ -237,7 +227,6 @@ describe('Data Import', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C375108'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -284,7 +273,6 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(testData.accordion, testData.deletedValue);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyNoFieldWithContent(testData.naturalId);

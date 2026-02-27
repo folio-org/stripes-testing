@@ -78,12 +78,10 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin({
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, 20_000).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -117,12 +115,10 @@ describe('MARC', () => {
             ]).then((createdUserProperties) => {
               userData = createdUserProperties;
 
-              cy.waitForAuthRefresh(() => {
-                cy.login(userData.username, userData.password, {
-                  path: TopMenu.marcAuthorities,
-                  waiter: MarcAuthorities.waitLoading,
-                });
-              }, 20_000);
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
       });
