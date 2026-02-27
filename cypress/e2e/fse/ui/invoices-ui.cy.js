@@ -27,6 +27,7 @@ describe('fse-invoices - UI (data manipulation)', () => {
       invoice.batchGroup = batchGroup.name;
     });
     cy.allure().logCommandSteps();
+    cy.wait(3000);
     // close service point modal if it appears after login
     Modals.closeModalWithEscapeIfAny();
   });
