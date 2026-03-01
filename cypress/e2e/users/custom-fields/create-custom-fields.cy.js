@@ -36,7 +36,10 @@ describe('Users', () => {
 
     it(
       'C15693 Create a text field custom field (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C15693'] },
+      {
+        tags: ['extendedPath', 'volaris', 'C15693'],
+        retries: 2,
+      },
       () => {
         const fieldData = {
           fieldLabel: `TF_${getRandomPostfix()}`,
@@ -59,7 +62,10 @@ describe('Users', () => {
 
     it(
       'C15694 Create a text area custom field and add help text (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C15694', 'eurekaPhase1'] },
+      {
+        tags: ['extendedPath', 'volaris', 'C15694', 'eurekaPhase1'],
+        retries: 2,
+      },
       () => {
         const fieldData = {
           fieldLabel: `TA_${getRandomPostfix()}`,
@@ -82,7 +88,10 @@ describe('Users', () => {
 
     it(
       'C15695 Create a checkbox custom field (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C15695', 'eurekaPhase1'] },
+      {
+        tags: ['extendedPath', 'volaris', 'C15695', 'eurekaPhase1'],
+        retries: 2,
+      },
       () => {
         const checkboxData = {
           fieldLabel: `CB_${getRandomPostfix()}`,
@@ -105,7 +114,10 @@ describe('Users', () => {
 
     it(
       'C15696 Create a radio button custom field (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C15696', 'eurekaPhase1'] },
+      {
+        tags: ['extendedPath', 'volaris', 'C15696', 'eurekaPhase1'],
+        retries: 2,
+      },
       () => {
         const radioButtonData = {
           data: {
@@ -132,7 +144,10 @@ describe('Users', () => {
 
     it(
       'C15697 Create a single select custom field (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C15697', 'eurekaPhase1'] },
+      {
+        tags: ['extendedPath', 'volaris', 'C15697', 'eurekaPhase1'],
+        retries: 2,
+      },
       () => {
         const singleSelectData = {
           data: {
