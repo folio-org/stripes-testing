@@ -85,18 +85,20 @@ describe('Circulation log', () => {
     'C17135 Filter circulation log by declared lost (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17135'] },
     () => {
-      SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
-      SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch({
+      const searchResults = {
         itemBarcode: item.barcode,
         circAction: 'Declared lost',
+      };
+      SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
+      SearchPane.verifyResultCells();
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResults, rowIndex);
       });
       SearchPane.resetResults();
 
       SearchPane.searchByItemBarcode(item.barcode);
-      SearchPane.checkResultSearch({
-        itemBarcode: item.barcode,
-        circAction: 'Declared lost',
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResults, rowIndex);
       });
     },
   );
