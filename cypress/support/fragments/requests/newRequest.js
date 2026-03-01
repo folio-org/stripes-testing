@@ -34,6 +34,7 @@ const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
+const printPickSlipsBtn = Button({ id: 'printPickSlipsBtn' });
 const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
@@ -62,7 +63,10 @@ function openNewMediatedRequestPane() {
 }
 
 function printPickSlips() {
-  cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
+  cy.expect(actionsButton.exists());
+  cy.do(actionsButton.click());
+  cy.expect(printPickSlipsBtn.exists());
+  cy.do(printPickSlipsBtn.click());
   InteractorsTools.checkCalloutMessage(
     'Print options loading in progress. It might take a few seconds, please be patient.',
   );
