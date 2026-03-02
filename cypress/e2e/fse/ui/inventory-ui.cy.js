@@ -9,6 +9,7 @@ import BrowseClassifications from '../../../support/fragments/inventory/search/b
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-inventory - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -19,6 +20,8 @@ describe('fse-inventory - UI (no data manipulation)', () => {
       waiter: InventorySearchAndFilter.waitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(

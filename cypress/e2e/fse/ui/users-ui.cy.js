@@ -2,6 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-users - UI (no data manipulation)', () => {
   let adminId;
@@ -20,6 +21,8 @@ describe('fse-users - UI (no data manipulation)', () => {
       waiter: Users.waitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
