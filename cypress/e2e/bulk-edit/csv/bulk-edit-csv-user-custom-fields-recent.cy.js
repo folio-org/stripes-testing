@@ -69,6 +69,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.errorsAccordionIsAbsent();
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
 
