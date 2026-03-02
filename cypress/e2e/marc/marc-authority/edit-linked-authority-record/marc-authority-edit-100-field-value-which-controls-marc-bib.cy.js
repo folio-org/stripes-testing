@@ -77,14 +77,10 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -98,19 +94,13 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-            MarcAuthorities.waitLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -135,17 +125,11 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();
