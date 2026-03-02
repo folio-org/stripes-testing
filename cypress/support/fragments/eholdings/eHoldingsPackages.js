@@ -114,12 +114,12 @@ export default {
     cy.do(resultSection.find(Link({ text: including(`${packageName}\n`) })).click());
   },
   openPackageWithExpectedTitels: (totalTitlesNumber) => {
-    cy.do(
-      resultSection
-        .find(ListItem({ text: including(`Total titles: ${totalTitlesNumber}`) }))
-        .find(Link())
-        .click(),
-    );
+    cy.wait(1000);
+    cy.get('#search-results')
+      .contains('[class^="list-item--"]', `Total titles: ${totalTitlesNumber}`)
+      .first()
+      .find('a[data-test-eholdings-package-list-item="true"]')
+      .click();
   },
 
   openPackage: (rowNumber = 0) => {

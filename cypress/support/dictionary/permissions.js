@@ -823,11 +823,11 @@ export default {
     gui: 'Receiving: Export search results',
   },
   uiReceivingAssignAcquisitionUnitsToNewTitle: {
-    internal: 'ui-receiving.acq-units.assignment.assign',
+    internal: 'ui-receiving.titles.acquisitions_units.assign.execute',
     gui: 'Receiving: Assign acquisition units to new receiving title',
   },
   uiReceivingManageAcquisitionUnits: {
-    internal: 'ui-receiving.acq-units.assignment.manage',
+    internal: 'ui-receiving.titles.acquisitions_units.manage.execute',
     gui: 'Receiving: Manage acquisition units',
   },
   // Invoice
@@ -840,7 +840,7 @@ export default {
     gui: 'Invoice: Can view, edit and create new Invoices and Invoice lines',
   },
   assignAcqUnitsToNewInvoice: {
-    internal: 'ui-invoice.acq.unit.assignment.assign',
+    internal: 'ui-invoice.invoices.acquisitions_units.assign.execute',
     gui: 'Invoice: Assign acquisitions units to new record',
   },
   uiInvoicesApproveInvoices: {
@@ -889,7 +889,7 @@ export default {
     gui: 'Invoice: Export search results',
   },
   uiInvoicesManageAcquisitionUnits: {
-    internal: 'ui-invoice.acq.unit.assignment.manage',
+    internal: 'ui-invoice.invoices.acquisitions_units.manage.execute',
     gui: 'Invoice: Manage acquisition units',
   },
   uiInvoicesVoucherExport: {
@@ -919,7 +919,7 @@ export default {
     gui: 'Orders: Approve purchase orders',
   },
   uiOrdersAssignAcquisitionUnitsToNewOrder: {
-    internal: 'ui-orders.acq.unit.assignment.assign',
+    internal: 'ui-orders.orders.acquisitions_units.assign.execute',
     gui: 'Orders: Assign acquisition units to new order',
   },
   uiOrdersCancelOrderLines: {
@@ -931,7 +931,7 @@ export default {
     gui: 'Orders: Cancel purchase orders',
   },
   uiOrdersManageAcquisitionUnits: {
-    internal: 'ui-orders.acq.unit.assignment.manage',
+    internal: 'ui-orders.orders.acquisitions_units.manage.execute',
     gui: 'Orders: Manage acquisition units',
   },
   uiOrdersReopenPurchaseOrders: {
@@ -1000,7 +1000,7 @@ export default {
     gui: 'Finance: Export finance records',
   },
   uiFinanceManageAcquisitionUnits: {
-    internal: 'ui-finance.acq.unit.assignment.manage',
+    internal: 'ui-finance.finance.acquisitions_units.manage.execute',
     gui: 'Finance: Manage acquisition units',
   },
   uiFinanceManuallyReleaseEncumbrance: {
@@ -1079,7 +1079,7 @@ export default {
     gui: 'Settings (Finance): Export fund and expense class codes',
   },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
-    internal: 'ui-finance.acq.unit.assignment.assign',
+    internal: 'ui-finance.finance.acquisitions_units.assign.execute',
     gui: 'Finance: Assign acquisition units to new record',
   },
   uiFinanceFundUpdateLogsView: {
@@ -1096,7 +1096,7 @@ export default {
     gui: 'Organizations: can view, create, edit, delete privileged donor information',
   },
   uiOrganizationsAssignAcquisitionUnitsToNewOrganization: {
-    internal: 'ui-organizations.acqUnits.assign',
+    internal: 'ui-organizations.organizations.acquisitions_units.assign.execute',
     gui: 'Organizations: Assign acquisition units to new organization',
   },
   uiOrganizationsViewBankingInformation: {
@@ -1132,7 +1132,7 @@ export default {
     gui: 'Organizations: Interface usernames and passwords: view, edit, create, delete',
   },
   uiOrganizationsManageAcquisitionUnits: {
-    internal: 'ui-organizations.acqUnits.manage',
+    internal: 'ui-organizations.organizations.acquisitions_units.manage.execute',
     gui: 'Organizations: Manage acquisition units',
   },
   uiOrganizationsView: { internal: 'ui-organizations.view', gui: 'Organizations: View' },

@@ -85,7 +85,9 @@ export default {
   checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
+      MultiColumnList({ rowCount: 1 })
+        .find(MultiColumnListCell(`Barcode${itemBarcode}`))
+        .exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
       Label('Total items scanned: 1').exists(),
     ]);

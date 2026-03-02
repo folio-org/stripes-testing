@@ -133,7 +133,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField('245', testData.testFieldContent);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           testData.expectedRequiredErrors.forEach((errorMessage) => {
             QuickMarcEditor.checkCallout(errorMessage);
