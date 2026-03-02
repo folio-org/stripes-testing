@@ -36,14 +36,17 @@ describe('Data Import', () => {
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(searchRecordName);
 
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(searchRecordName);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               ]);
               cy.setTenant(Affiliations.University);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(searchRecordName);
               cy.wait(10_000);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -55,6 +58,7 @@ describe('Data Import', () => {
               cy.login(users.userProperties.username, users.userProperties.password, {
                 path: TopMenu.dataImportPath,
                 waiter: DataImport.waitLoading,
+                authRefresh: true,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(
