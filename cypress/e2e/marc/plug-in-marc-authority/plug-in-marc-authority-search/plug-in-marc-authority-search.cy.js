@@ -578,7 +578,7 @@ describe('MARC', () => {
               testData.forC359230.typeOfHeadingC,
             );
             const title = interception.response.body.authorities[0].headingRef;
-            MarcAuthorities.selectTitle(title);
+            MarcAuthorities.selectNthResultContaining(title);
             MarcAuthorities.verifyViewPaneContentExists();
             MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
             MarcAuthorities.checkSingleHeadingType(
