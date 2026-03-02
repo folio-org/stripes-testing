@@ -1882,10 +1882,10 @@ export default {
       });
   },
 
-  selectNthResultContaining: (text, index = 0) => {
-    cy.expect(MultiColumnListCell(text).exists());
+  selectNthResultWithHeading: (heading, index = 0) => {
+    cy.expect(MultiColumnListCell(heading).exists());
     cy.xpath(
-      `(//div[contains(@class, "mclCell-")]/button[text()="${text}"])[${index + 1}]`,
+      `(//div[contains(@class, "mclCell-")]/button[text()="${heading}"])[${index + 1}]`,
     ).click();
   },
 };
