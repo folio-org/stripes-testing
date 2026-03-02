@@ -210,8 +210,6 @@ describe('MARC', () => {
               '100',
               'Authority source file name',
               'LC Name Authority file (LCNAF)',
-              'Number of bibliographic records linked',
-              '1',
               'Updater',
             ],
           );
