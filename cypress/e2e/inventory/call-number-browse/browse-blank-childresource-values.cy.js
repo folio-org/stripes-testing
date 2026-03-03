@@ -119,7 +119,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(callNumberValue);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumberValueNoNewline);
-        BrowseCallNumber.checkNumberOfTitlesForRow(callNumberValueNoNewline, 1);
+        BrowseCallNumber.checkNumberOfTitlesForRow(callNumberValueNoNewline, '1');
         BrowseCallNumber.checkValuePresentForRow(callNumberValueNoNewline, 2, '1');
 
         // 2. Browse Classification
