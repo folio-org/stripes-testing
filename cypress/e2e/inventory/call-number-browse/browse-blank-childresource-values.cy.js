@@ -126,19 +126,19 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup('Classification (all)');
         InventorySearchAndFilter.browseSearch(classificationValue);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationValueNoNewline);
-        BrowseClassifications.checkNumberOfTitlesInRow(classificationValueNoNewline, '1');
+        BrowseClassifications.checkNumberOfTitlesForRow(classificationValueNoNewline, '1');
 
         // 3. Browse Contributors
         BrowseContributors.selectContributorsOption();
         InventorySearchAndFilter.browseSearch(contributorValue);
         BrowseContributors.checkSearchResultRecord(contributorValueNoNewline);
-        BrowseContributors.checkNumberOfTitlesInRow(contributorValueNoNewline, '1');
+        BrowseContributors.checkNumberOfTitlesForRow(contributorValueNoNewline, '1');
 
         // 4. Browse Subjects
         BrowseSubjects.select();
         InventorySearchAndFilter.browseSearch(subjectValue);
         BrowseSubjects.checkValueIsBold(subjectValueNoNewline);
-        BrowseSubjects.checkNumberOfTitlesInRow(subjectValueNoNewline, '1');
+        BrowseSubjects.checkNumberOfTitlesForRow(subjectValueNoNewline, '1');
       },
     );
   });

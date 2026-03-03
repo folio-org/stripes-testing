@@ -507,17 +507,12 @@ export default {
     );
   },
 
-  checkNumberOfTitlesInRow(subjectValue, numberOfTitles) {
+  checkNumberOfTitlesForRow(subjectValue, numberOfTitles) {
     cy.do(
       MultiColumnListCell(subjectValue).perform((element) => {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
         cy.expect(MultiColumnListCell(String(numberOfTitles), { row: rowNumber }).exists());
       }),
     );
-  },
-
-  checkValuePresentInResults(value, isPresent = true) {
-    if (isPresent) cy.expect(MultiColumnListCell(value).exists());
-    else cy.expect(MultiColumnListCell(value).absent());
   },
 };
