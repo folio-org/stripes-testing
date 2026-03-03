@@ -1,9 +1,9 @@
-import { REQUEST_METHOD } from '../../../support/constants';
+import { REQUEST_METHOD } from '../../../../../../../support/constants';
 import {
   compareSpecifications,
   findSpecificationByProfile,
   formatDifferencesSummary,
-} from '../../../support/utils/specification-comparator';
+} from '../../../../../../../support/utils/specification-comparator';
 
 describe('MARC Specifications - Restore from Backup', () => {
   const BACKUP_FILE_PATH = 'cypress/fixtures/backup/specifications-backup.json';
