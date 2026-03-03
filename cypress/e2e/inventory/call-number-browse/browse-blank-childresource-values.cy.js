@@ -33,7 +33,6 @@ describe('Inventory', () => {
       });
 
       cy.then(() => {
-        // Create Instance via API
         cy.okapiRequest({
           method: 'POST',
           path: '/instance-storage/instances',
@@ -68,7 +67,7 @@ describe('Inventory', () => {
           },
         }).then((instanceRes) => {
           instanceId = instanceRes.body.id;
-          // Create Holdings via API
+
           cy.okapiRequest({
             method: 'POST',
             path: '/holdings-storage/holdings',
@@ -79,7 +78,7 @@ describe('Inventory', () => {
             },
           }).then((holdingsRes) => {
             holdingsId = holdingsRes.body.id;
-            // Create Item via API
+
             cy.okapiRequest({
               method: 'POST',
               path: '/item-storage/items',
