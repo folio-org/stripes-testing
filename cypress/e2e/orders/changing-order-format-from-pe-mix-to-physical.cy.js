@@ -149,7 +149,7 @@ describe('Orders', () => {
         ],
         locationDetails: [
           [
-            { key: 'Holding', value: testData.location.name },
+            { key: 'Holding', value: LOCATION_NAMES.MAIN_LIBRARY_UI },
             { key: 'Quantity physical', value: 1 },
             { key: 'Quantity electronic', value: 1 },
           ],
