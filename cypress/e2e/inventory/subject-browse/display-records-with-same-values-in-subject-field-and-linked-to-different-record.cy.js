@@ -125,7 +125,6 @@ describe('Inventory', () => {
           cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
             testData.user = userProperties;
           });
-          cy.logout();
         });
     });
 
@@ -150,7 +149,8 @@ describe('Inventory', () => {
         }, 20_000);
 
         InventorySearchAndFilter.selectBrowseSubjects();
-        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);
+        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true, 2);
+        cy.wait(10_000); // to make sure BOTH subjects are indexed as linked
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
         BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
           5,

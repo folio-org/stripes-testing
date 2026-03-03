@@ -1,8 +1,6 @@
 import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
@@ -16,9 +14,12 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       searchOption: 'Keyword',
-      marcValue: 'Cartoons & Comics',
-      valueForUpdate: '$a Cartoons & Animations',
-      valueAfterUpdate: 'Cartoons & Animations',
+      marcValueC358994: 'C358994 Cartoons & Comics',
+      valueForUpdateC358994: '$a C358994 Cartoons & Animations',
+      valueAfterUpdateC358994: 'C358994 Cartoons & Animations',
+      marcValueC358995: 'C358995 Cartoons & Books',
+      valueForUpdateC358995: '$a C358995 Cartoons & Journals',
+      valueAfterUpdateC358995: 'C358995 Cartoons & Journals',
       calloutMessage:
         'This record has successfully saved and is in process. Changes may not appear immediately.',
     };
@@ -30,7 +31,13 @@ describe('MARC', () => {
         marc: 'marcAuthFileForC358994.mrc',
         fileName: `C358994testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-        numOfRecords: 1,
+        propertyName: 'authority',
+      },
+      {
+        marc: 'marcAuthFileForC358995.mrc',
+        fileName: `C358995testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+        propertyName: 'authority',
       },
     ];
 
@@ -38,7 +45,10 @@ describe('MARC', () => {
 
     before('Creating user', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValueC358994);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.valueAfterUpdateC358994);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValueC358995);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.valueAfterUpdateC358995);
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -49,25 +59,16 @@ describe('MARC', () => {
         .then((createdUserProperties) => {
           user.userAProperties = createdUserProperties;
 
+          cy.getToken(user.userAProperties.username, user.userAProperties.password);
           marcFiles.forEach((marcFile) => {
-            cy.login(user.userAProperties.username, user.userAProperties.password, {
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-              authRefresh: true,
-            }).then(() => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFile.jobProfileToRun);
-              JobProfiles.runImportFile();
-              Logs.waitFileIsImported(marcFile.fileName);
-              Logs.checkStatusOfJobProfile('Completed');
-              Logs.openFileDetails(marcFile.fileName);
-              for (let i = 0; i < marcFile.numOfRecords; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdAuthorityIDs.push(link.split('/')[5]);
-                });
-              }
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
         })
@@ -99,7 +100,9 @@ describe('MARC', () => {
     after('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userBProperties.userId);
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
+      createdAuthorityIDs.forEach((id) => {
+        MarcAuthority.deleteViaAPI(id, true);
+      });
     });
 
     it(
@@ -118,13 +121,13 @@ describe('MARC', () => {
           `User ${user.userAProperties.username}, ${user.userCProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-        MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.selectTitle(testData.marcValue);
+        MarcAuthorities.searchBy(testData.searchOption, testData.marcValueC358994);
+        MarcAuthorities.selectTitle(testData.marcValueC358994);
         MarcAuthority.edit();
-        QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
+        QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdateC358994);
         QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
-        MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
+        MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdateC358994);
       },
     );
 
@@ -132,24 +135,22 @@ describe('MARC', () => {
       'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C358995'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.userCProperties.username, user.userCProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+        cy.login(user.userCProperties.username, user.userCProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
-        MarcAuthorities.searchBy(testData.searchOption, testData.valueAfterUpdate);
-        MarcAuthorities.selectTitle(testData.valueAfterUpdate);
+        MarcAuthorities.searchBy(testData.searchOption, testData.marcValueC358995);
+        MarcAuthorities.selectTitle(testData.marcValueC358995);
         MarcAuthority.edit();
-        QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
+        QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdateC358995);
         QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
-        MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.userBProperties.username, user.userBProperties.password, {
-            path: TopMenu.usersPath,
-            waiter: UsersSearchPane.waitLoading,
-          });
+        MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdateC358995);
+        cy.login(user.userBProperties.username, user.userBProperties.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+          authRefresh: true,
         });
         UsersSearchPane.searchByUsername(user.userCProperties.username);
         UsersSearchPane.openUser(user.userCProperties.username);
@@ -159,13 +160,13 @@ describe('MARC', () => {
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-        MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.selectTitle(testData.marcValue);
+        MarcAuthorities.searchBy(testData.searchOption, testData.valueAfterUpdateC358995);
+        MarcAuthorities.selectTitle(testData.valueAfterUpdateC358995);
         MarcAuthority.edit();
-        QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
+        QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValueC358995}`);
         QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
-        MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
+        MarcAuthorities.checkDetailViewIncludesText(testData.marcValueC358995);
       },
     );
   });

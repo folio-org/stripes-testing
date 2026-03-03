@@ -40,6 +40,7 @@ describe('eHoldings', () => {
       cy.login(testData.user.username, testData.user.password, {
         path: SettingsMenu.tenantPath,
         waiter: TenantPane.waitLoading,
+        authRefresh: true,
       });
     });
   });

@@ -126,7 +126,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.toggleAccordionByName(formatAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(formatAccordionName);
 
+          cy.intercept('/search/instances?*').as('searchInstances0');
           SelectInstanceModal.searchByName(instanceTitlePrefix);
+          cy.wait('@searchInstances0').its('response.statusCode').should('eq', 200);
           instanceTitles.forEach((title) => {
             InventorySearchAndFilter.verifySearchResult(title);
           });
