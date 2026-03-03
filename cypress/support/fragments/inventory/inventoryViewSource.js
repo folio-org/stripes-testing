@@ -232,4 +232,11 @@ export default {
         .exists(),
     );
   },
+
+  verifyLinkedToAuthorityIconIsPresent(isPresent = true) {
+    cy.wait(1000); // icon may appear after a short delay
+    const targetIcon = rootSection.find(linkedToMarcAuthorityIcon);
+    if (isPresent) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
 };
