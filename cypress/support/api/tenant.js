@@ -1,7 +1,5 @@
 import { DEFAULT_LOCALE_OBJECT } from '../constants';
 
-const localeConfigName = 'tenantLocaleSettings';
-
 Cypress.Commands.add('getConfigForTenantByName', (configName) => {
   cy.okapiRequest({
     method: 'GET',
@@ -71,11 +69,10 @@ Cypress.Commands.add('getTenantsApi', () => {
 });
 
 Cypress.Commands.add('setDefaultLocaleApi', () => {
-  cy.getConfigForTenantByName(localeConfigName).then((config) => {
-    if (config) {
-      const updatedConfig = { ...config };
-      updatedConfig.value = DEFAULT_LOCALE_OBJECT;
-      cy.updateConfigForTenantById(config.id, updatedConfig);
-    }
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'locale',
+    isDefaultSearchParamsRequired: false,
+    body: DEFAULT_LOCALE_OBJECT,
   });
 });
