@@ -152,7 +152,7 @@ export default {
     return FundEditForm;
   },
   createFund(fund) {
-    cy.do([newButton.click()]);
+    cy.do([fundResultsPane.find(newButton).click()]);
     cy.wait(2000);
     cy.do([
       nameField.fillIn(fund.name),
@@ -182,7 +182,7 @@ export default {
 
   newFund() {
     cy.wait(2000);
-    cy.do(Section({ id: 'fund-results-pane' }).find(newButton).click());
+    cy.do(fundResultsPane.find(newButton).click());
   },
 
   clickRestrictByLocationsCheckbox() {
@@ -398,7 +398,7 @@ export default {
 
   tryToCreateFundWithoutMandatoryFields: (fundName) => {
     cy.do([
-      newButton.click(),
+      fundResultsPane.find(newButton).click(),
       nameField.fillIn(fundName),
       saveAndClose.click(),
       codeField.fillIn('some code'),

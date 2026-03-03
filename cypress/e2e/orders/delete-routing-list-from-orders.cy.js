@@ -70,6 +70,7 @@ describe('Orders', () => {
                   ...orderResponse,
                   workflowStatus: ORDER_STATUSES.OPEN,
                 });
+                OrderLineDetails.createRoutingListViaApi([], routingList, testData.orderLineId);
               });
             });
           });
@@ -82,13 +83,6 @@ describe('Orders', () => {
       Permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      cy.getAdminToken();
-      OrderLineDetails.createRoutingListViaApi(
-        [userProperties.userId],
-        routingList,
-        testData.orderLineId,
-      );
 
       cy.login(userProperties.username, userProperties.password);
     });

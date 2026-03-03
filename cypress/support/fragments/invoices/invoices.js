@@ -1127,6 +1127,7 @@ export default {
     cy.wait(1500);
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+    cy.wait(1500);
   },
 
   editInvoiceLine: () => {
