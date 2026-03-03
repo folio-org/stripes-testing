@@ -70,6 +70,7 @@ export default {
   },
 
   checkOutItem(itemBarcode) {
+    cy.wait(1000);
     cy.do(TextField('Item ID').fillIn(itemBarcode));
     cy.wait(1000);
     cy.do(Pane('Scan items').find(Button('Enter')).click());
@@ -85,8 +86,12 @@ export default {
   checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
+      MultiColumnList({ rowCount: 1 })
+        .find(MultiColumnListCell({ content: including(itemBarcode) }))
+        .exists(),
+      MultiColumnList({ rowCount: 1 })
+        .find(MultiColumnListCell({ content: including(instanceTitle) }))
+        .exists(),
       Label('Total items scanned: 1').exists(),
     ]);
   },

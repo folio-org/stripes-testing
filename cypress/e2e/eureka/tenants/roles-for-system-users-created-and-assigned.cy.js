@@ -62,7 +62,7 @@ describe('Eureka', () => {
 
     it(
       'C784506 Default roles for system users created and assigned (eureka)',
-      { tags: ['criticalPath', 'eureka', 'C784506'] },
+      { tags: ['criticalPath', 'eureka', 'shiftLeft', 'C784506'] },
       () => {
         cy.getAdminToken();
         expectedSystemRoles.forEach((expectedSystemRole) => {

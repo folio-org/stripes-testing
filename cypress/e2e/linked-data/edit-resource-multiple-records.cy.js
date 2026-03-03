@@ -109,7 +109,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
 
   it(
     'C721761 [User journey] LDE - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
-    { tags: ['criticalPath', 'citation', 'C721761', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'linked-data-editor'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

@@ -885,9 +885,7 @@ export default {
   },
 
   verifySearchOptionAndQuery(searchOption, queryValue) {
-    cy.get('#input-inventory-search-qindex').then((elem) => {
-      expect(elem.text()).to.include(searchOption);
-    });
+    this.verifyDefaultSearchOptionSelected(searchOption);
     cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 
@@ -1324,10 +1322,11 @@ export default {
     );
   },
 
-  checkSharedInstancesInResultList() {
+  checkSharedInstancesInResultList({ instancePlugin = false } = {}) {
+    const childNumber = instancePlugin ? 1 : 2;
     return cy
       .get('div[class^="mclRowContainer--"]')
-      .find('[class*="mclCell-"]:nth-child(2)')
+      .find(`[class*="mclCell-"]:nth-child(${childNumber})`)
       .each(($cell) => {
         cy.wrap($cell).find('span[class*="sharedIcon"]').should('exist');
       });

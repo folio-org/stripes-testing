@@ -574,6 +574,13 @@ export default {
     );
   },
 
+  verifyFieldsOrder(fieldsArray) {
+    this.waitLoading();
+    fieldsArray.forEach((tag, index) => {
+      this.checkTagInRow(index, tag);
+    });
+  },
+
   setValid008DropdownValues() {
     defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().forEach((property) => {
       cy.do(property.interactor.choose(property.defaultValue));

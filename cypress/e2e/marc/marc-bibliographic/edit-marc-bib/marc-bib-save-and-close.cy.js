@@ -46,22 +46,19 @@ describe('MARC', () => {
               ).then((response) => {
                 response.forEach((record) => {
                   instanceIDs.push(record[marcFile.propertyName].id);
+
+                  cy.login(testData.userProperties.username, testData.userProperties.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  }).then(() => {
+                    InventoryInstances.searchByTitle(instanceIDs[0]);
+                    InventoryInstances.selectInstance();
+                    InventoryInstance.editMarcBibliographicRecord();
+                  });
                 });
               });
             },
           );
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000).then(() => {
-            InventoryInstances.searchByTitle(instanceIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-          });
         });
       });
 
@@ -80,8 +77,6 @@ describe('MARC', () => {
             testData.tag245value1,
           );
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value1, testData.tag245rowIndex);
           QuickMarcEditor.closeUsingCrossButton();
@@ -96,8 +91,6 @@ describe('MARC', () => {
             testData.tag245rowIndex,
             testData.tag245value2,
           );
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value2, testData.tag245rowIndex);
           cy.go('back');

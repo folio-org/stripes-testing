@@ -59,11 +59,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-        cy.reload();
-        DataImport.waitLoading();
-      }, 20_000).then(() => {
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(query);
         });
@@ -74,7 +70,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -102,8 +98,6 @@ describe('Inventory', () => {
         InventoryInstance.searchResults(testData.searchQueries[i]);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifyAlternativeTitle(0, 1, including(testData.alternativeTitles[i]));
         InventoryInstances.resetAllFilters();

@@ -142,7 +142,6 @@ describe('Remote Storage', () => {
 
       // select instance
       InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();

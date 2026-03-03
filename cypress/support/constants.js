@@ -1243,8 +1243,14 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
   UDC: 'e8662436-75a8-4984-bebc-531e38c774a0',
 };
 
-export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
-export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
+export const DEFAULT_LOCALE_STRING =
+  '{"locale":"en-US","timezone":"UTC","currency":"USD","numberingSystem":"latn"}';
+export const DEFAULT_LOCALE_OBJECT = {
+  locale: 'en-US',
+  timezone: 'UTC',
+  currency: 'USD',
+  numberingSystem: 'latn',
+};
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
@@ -1416,8 +1422,6 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ELECTRONIC_ACCESS: 'Electronic access',
-    IS_BOUND_WITH: 'Is bound with',
-    BOUND_WITH_TITLES: 'Bound with titles',
     TAGS: 'Tags',
     HOLDINGS_UUID: 'Holdings UUID',
     MEMBER: 'Member',
@@ -1836,3 +1840,21 @@ export const EHOLDINGS_KB_SETTINGS_TABS = {
 };
 
 export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';
+
+export const PUBLISH_COORDINATOR_STATUSES = {
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR',
+  IN_PROGRESS: 'IN_PROGRESS',
+};
+
+export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
+  CREATE: 'createSettingsPCId',
+  DELETE: 'pcId',
+  UPDATE: 'updateSettingsPCId',
+};
+
+export const DELETE_HOLDINGS_ACTIONS = {
+  CANCEL: 'Cancel',
+  KEEP_HOLDINGS: 'Keep Holdings',
+  DELETE_HOLDINGS: 'Delete Holdings',
+};
