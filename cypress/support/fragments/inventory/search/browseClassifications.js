@@ -67,6 +67,11 @@ export default {
     );
   },
 
+  checkValuePresentInResults(value, isPresent = true) {
+    if (isPresent) cy.expect(MultiColumnListCell(value).exists());
+    else cy.expect(MultiColumnListCell(value).absent());
+  },
+
   verifySearchResultsTable(isShown = true) {
     if (isShown) {
       cy.expect([
