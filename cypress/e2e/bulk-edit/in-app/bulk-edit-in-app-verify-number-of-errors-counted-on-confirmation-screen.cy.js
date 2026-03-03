@@ -60,6 +60,7 @@ const fileNames = BulkEditFiles.getAllDownloadedFileNames(instanceUUIDsFileName)
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.getAdminToken();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,

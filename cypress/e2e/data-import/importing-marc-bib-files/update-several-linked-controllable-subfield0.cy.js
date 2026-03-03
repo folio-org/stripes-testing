@@ -113,79 +113,81 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
+      ])
+        .then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
-        });
-
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
-          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          linkingTagAndValues.forEach((linking) => {
-            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(linking.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+        })
+        .then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            linkingTagAndValues.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+            });
+            QuickMarcEditor.clickArrowDownButton(75);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
-          QuickMarcEditor.clickArrowDownButton(75);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
-        });
-
-        // create Match profile
-        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
-          .then((matchProfileResponse) => {
-            matchProfile.id = matchProfileResponse.body.id;
-          })
-          .then(() => {
-            // create Field mapping profile
-            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-              (mappingProfileResponse) => {
+        })
+        .then(() => {
+          // create Match profile
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+            .then((matchProfileResponse) => {
+              matchProfile.id = matchProfileResponse.body.id;
+            })
+            .then(() => {
+              // create Field mapping profile
+              NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                mappingProfile,
+              ).then((mappingProfileResponse) => {
                 mappingProfile.id = mappingProfileResponse.body.id;
-              },
-            );
-          })
-          .then(() => {
-            // create Action profile and link it to Field mapping profile
-            NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
-              (actionProfileResponse) => {
-                actionProfile.id = actionProfileResponse.body.id;
-              },
-            );
-          })
-          .then(() => {
-            // create Job profile
-            NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-              jobProfile.profileName,
-              matchProfile.id,
-              actionProfile.id,
-            );
+              });
+            })
+            .then(() => {
+              // create Action profile and link it to Field mapping profile
+              NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+                (actionProfileResponse) => {
+                  actionProfile.id = actionProfileResponse.body.id;
+                },
+              );
+            })
+            .then(() => {
+              // create Job profile
+              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                jobProfile.profileName,
+                matchProfile.id,
+                actionProfile.id,
+              );
+            });
+        })
+        .then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
         });
-      });
     });
 
     after('Delete user and test data', () => {

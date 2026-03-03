@@ -60,9 +60,10 @@ describe('Bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it(
+    // Obsolete from Trillium because the issue MODBULKOPS-546 won't be fixed
+    it.skip(
       'C389567 Local | Verify bulk edit Users records with Custom fields with semicolon (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C389567'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

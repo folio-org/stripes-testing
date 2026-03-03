@@ -8,7 +8,7 @@ describe('fse-circulation-bff', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195957 - Get circulation-bff allowed service points for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'circulationBff', 'loc'] },
+    { tags: ['fse', 'api', 'circulationBff', 'loc', 'TC195957'] },
     () => {
       cy.getCirculationBffAllowerServicePoints().then((response) => {
         cy.expect(response.status).to.eq(200);

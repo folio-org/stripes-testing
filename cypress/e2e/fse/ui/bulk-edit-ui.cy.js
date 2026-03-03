@@ -4,6 +4,7 @@ import BulkEditSearch from '../../../support/fragments/bulk-edit/bulk-edit-searc
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-bulk-edit - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -14,13 +15,17 @@ describe('fse-bulk-edit - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
     `TC195812 - verify that bulk edit page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'bulk-edit'] },
+    { tags: ['sanity', 'fse', 'ui', 'bulk-edit', 'TC195812'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearch.waitLoading();

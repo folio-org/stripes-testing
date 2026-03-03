@@ -9,9 +9,16 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  DELETE_HOLDINGS_ACTIONS,
+  ITEM_STATUS_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 describe(
   'orders: Receive piece from Order',
@@ -115,13 +122,20 @@ describe(
         // Receiving part
         Orders.receiveOrderViaActions();
         Receiving.selectFromResultsList(orderLineUI.titleOrPackage);
-        Receiving.receiveAndChangeLocation(0, displaySummary, secondLocation.name);
-
+        Receiving.receiveAndChangeLocation({
+          rowNumber: 0,
+          displaySummary,
+          institutionId: secondLocation.name,
+          deleteAction: DELETE_HOLDINGS_ACTIONS.KEEP_HOLDINGS,
+          locations: [firstLocation],
+        });
         Receiving.checkReceived(0, displaySummary);
         Receiving.selectInstanceInReceive();
         InventoryInstance.checkInstanceTitle(orderLineUI.titleOrPackage);
+        InstanceRecordView.verifyItemsCount(0, firstLocation.name);
         InventoryInstance.openHoldingsAccordion(secondLocation.name);
         InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+        ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
       },
     );
   },

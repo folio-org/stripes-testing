@@ -87,10 +87,12 @@ describe('Bulk-edit', () => {
           BulkEditLogs.checkItemsCheckbox();
           BulkEditLogs.verifyDirection('Ended');
           cy.reload();
+          BulkEditLogs.waitLogsTableLoading();
           BulkEditLogs.verifyDirection('Ended');
           BulkEditLogs.clickLogHeader('# of records');
           BulkEditLogs.verifyDirection('# of records', 'ascending');
           cy.reload();
+          BulkEditLogs.waitLogsTableLoading();
           BulkEditLogs.verifyDirection('# of records', 'ascending');
         },
       );

@@ -15,7 +15,7 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
-describe('LDE Hubs: Test Suite Name', () => {
+describe('LDE Hubs: Create and edit local hub', () => {
   const testData = {
     // MARC Authority file configuration
     marcAuthFilePath: 'marcAuthC375263.mrc',
@@ -108,7 +108,7 @@ describe('LDE Hubs: Test Suite Name', () => {
 
   it(
     'C987719 C1030042  Create and edit local hub (citation)',
-    { tags: ['criticalPath', 'citation', 'C987719', 'C1030042'] },
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C987719', 'C1030042'] },
     () => {
       SearchAndFilter.switchToHubsTab();
       SearchAndFilter.verifyActiveButtons(false);

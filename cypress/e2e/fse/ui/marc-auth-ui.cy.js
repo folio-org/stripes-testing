@@ -8,6 +8,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-marc-authority - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -18,13 +19,17 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
       waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
     // change session locale to English (temporary action, won't affect tenant settings)
     Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
     `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'marc-authorities'] },
+    { tags: ['sanity', 'fse', 'ui', 'marc-authorities', 'TC195332'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
       MarcAuthorities.waitLoading();
@@ -61,7 +66,7 @@ describe('fse-marc-authority - UI (data manipulation)', () => {
 
   it(
     `TC195688 - check import of "MARC Authority" record ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'fse-user-journey', 'TC195688'] },
     () => {
       DataImport.uploadFileViaApi(
         'corporate_name(prefix_in_010Sa)sc_02.mrc',

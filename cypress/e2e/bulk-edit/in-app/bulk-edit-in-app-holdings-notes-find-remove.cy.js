@@ -46,7 +46,7 @@ const initialValueSets = [
 ];
 const editedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, null],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
 ];
 
@@ -256,7 +256,7 @@ describe(
 
           [
             [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
-            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, 'null'],
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, ''],
             [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
           ].forEach((editedValueSet) => {
             BulkEditSearchPane.verifyExactChangesUnderColumns(...editedValueSet);
@@ -273,7 +273,7 @@ describe(
           HoldingsRecordView.waitLoading();
           HoldingsRecordView.checkAdministrativeNote('-');
           HoldingsRecordView.checkNotesByType(0, HOLDING_NOTE_TYPES.COPY_NOTE, noteText);
-          HoldingsRecordView.checkNotesByType(1, HOLDING_NOTE_TYPES.REPRODUCTION, '-');
+          HoldingsRecordView.checkHoldingNoteTypeAbsent(HOLDING_NOTE_TYPES.REPRODUCTION, noteText);
         },
       );
     });
