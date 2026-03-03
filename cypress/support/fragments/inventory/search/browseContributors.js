@@ -479,4 +479,13 @@ export default {
       }),
     );
   },
+
+  checkNumberOfTitlesForRow(contributor, numberOfTitles) {
+    cy.do(
+      MultiColumnListCell(contributor).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(String(numberOfTitles), { row: rowNumber }).exists());
+      }),
+    );
+  },
 };

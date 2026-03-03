@@ -126,7 +126,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup('Classification (all)');
         InventorySearchAndFilter.browseSearch(classificationValue);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationValueNoNewline);
-        BrowseClassifications.checkNumberOfTitlesForRow(classificationValueNoNewline, '1');
+        BrowseClassifications.checkNumberOfTitlesInRow(classificationValueNoNewline, '1');
 
         // 3. Browse Contributors
         BrowseContributors.selectContributorsOption();
