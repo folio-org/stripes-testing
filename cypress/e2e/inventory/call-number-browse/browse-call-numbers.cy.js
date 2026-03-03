@@ -15,6 +15,7 @@ describe('Inventory', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
         });
       });
     });

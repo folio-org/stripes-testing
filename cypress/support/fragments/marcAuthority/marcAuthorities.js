@@ -1881,4 +1881,11 @@ export default {
         return cy.wrap(!isDisabled);
       });
   },
+
+  selectNthResultWithHeading: (heading, index = 0) => {
+    cy.expect(MultiColumnListCell(heading).exists());
+    cy.xpath(
+      `(//div[contains(@class, "mclCell-")]/button[text()="${heading}"])[${index + 1}]`,
+    ).click();
+  },
 };

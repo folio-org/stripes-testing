@@ -84,8 +84,6 @@ describe('Eureka', () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
-          cy.reload();
-          Users.waitLoading();
         }, 20_000);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         Users.waitLoading();
