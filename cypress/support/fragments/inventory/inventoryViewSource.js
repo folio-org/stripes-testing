@@ -7,6 +7,7 @@ import {
   Tooltip,
   Spinner,
   DropdownMenu,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -222,5 +223,13 @@ export default {
     }).then(() => {
       expect(rows).to.deep.equal(expectedTagsArray);
     });
+  },
+
+  checkRowExistsWithTagAndValue(tag, value) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ innerText: and(including(`${tag}  `), including(value)) }))
+        .exists(),
+    );
   },
 };

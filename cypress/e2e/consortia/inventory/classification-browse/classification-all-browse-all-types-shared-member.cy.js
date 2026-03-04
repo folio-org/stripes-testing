@@ -226,7 +226,7 @@ describe('Inventory', () => {
           );
           InventorySearchAndFilter.selectFoundItemFromBrowse(testClassifications[10].value);
           InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query',
+            'Query search',
             `classifications.classificationNumber=="${testClassifications[10].value}"`,
           );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);

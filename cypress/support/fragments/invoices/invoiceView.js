@@ -137,6 +137,7 @@ export default {
     }
 
     invoiceInformation.forEach(({ key, value }) => {
+      cy.wait(2000);
       cy.contains('div[class^="kvRoot"]', key)
         .parent()
         .within(() => {

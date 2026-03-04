@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -20,6 +21,7 @@ describe('MARC', () => {
         tag100: '100',
         updated100FieldValue: 'C405927 Lentz Shared (Updated in C)',
         authoritySearchOption: 'Keyword',
+        heldbyAccordionName: 'Held by',
       };
 
       const users = {};
@@ -33,7 +35,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 3,
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcAuthFileForC405927.mrc',
@@ -41,7 +43,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
           numOfRecords: 1,
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcBibFileForC405927-Local-M1.mrc',
@@ -49,7 +51,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'University',
+          tenant: tenantNames.university,
         },
         {
           marc: 'marcBibFileForC405927-Local-M2.mrc',
@@ -57,7 +59,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'College',
+          tenant: tenantNames.college,
         },
       ];
 
@@ -136,9 +138,9 @@ describe('MARC', () => {
           })
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'University') {
+              if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
-              } else if (marcFile.tenant === 'College') {
+              } else if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
               } else {
                 cy.resetTenant();
@@ -162,13 +164,11 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-            }, 30_000);
 
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
+              if (tenants.openingTenat !== tenantNames.central) InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
               tenants.linkingInstances.forEach((instance) => {
                 InventoryInstances.searchByTitle(instance);
                 InventoryInstances.selectInstanceByTitle(instance);
@@ -185,11 +185,7 @@ describe('MARC', () => {
                   linkingTagAndValues.rowIndex,
                 );
                 QuickMarcEditor.deleteField(4);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(2000);
-                QuickMarcEditor.confirmDelete();
+                QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -214,6 +210,7 @@ describe('MARC', () => {
         'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C405927'] },
         () => {
+          cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -226,9 +223,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(3);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(3);
           cy.visit(TopMenu.inventoryPath);
@@ -251,6 +246,7 @@ describe('MARC', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           instancesToCheckInM1.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);
@@ -271,6 +267,7 @@ describe('MARC', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           instancesToCheckInM2.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);

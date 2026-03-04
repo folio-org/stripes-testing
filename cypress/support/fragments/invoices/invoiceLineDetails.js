@@ -50,6 +50,11 @@ export default {
 
     return InvoiceLineEditForm;
   },
+  openPOLineFromInvoiceLine() {
+    const polNumberLink = informationSection.find(KeyValue('PO line number')).find(Link());
+
+    cy.do([polNumberLink.perform((el) => el.removeAttribute('target')), polNumberLink.click()]);
+  },
   checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
@@ -122,28 +127,40 @@ export default {
       cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
     }
   },
-  openFundDetailsPane(fundName) {
-    this.clickTheLinkInFundDetailsSection({ fundName });
+  openFundDetailsPane(fundName, rowIndex = 0) {
+    this.clickTheLinkInFundDetailsSection({ fundName, columnIndex: 0, rowIndex });
 
     FundDetails.waitLoading();
 
     return FundDetails;
   },
-  openEncumbrancePane(fundName) {
-    this.clickTheLinkInFundDetailsSection({ fundName, columnIndex: 5 });
+  openEncumbrancePane(fundName, rowIndex = 0) {
+    this.clickTheLinkInFundDetailsSection({ fundName, columnIndex: 5, rowIndex });
 
     TransactionDetails.waitLoading();
 
     return TransactionDetails;
   },
-  clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
-    const tableRow = fundName
-      ? fundDistributionsSection.find(
-        MultiColumnListRow({ content: including(fundName), isContainer: true }),
-      )
-      : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
-    const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
+  clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0, rowIndex } = {}) {
+    let tableRow;
 
+    if (fundName && rowIndex !== undefined) {
+      // When both fundName and rowIndex are provided, find the specific row by index
+      // and verify it contains the expected fund name
+      tableRow = fundDistributionsSection.find(
+        MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }),
+      );
+    } else if (fundName) {
+      // Find by fund name in the Fund column specifically to avoid ambiguity
+      tableRow = fundDistributionsSection
+        .find(MultiColumnListCell({ column: 'Fund', content: including(fundName) }))
+        .find(MultiColumnListRow({ isContainer: true }));
+    } else {
+      // Default to first row
+      tableRow = fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
+    }
+
+    const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
   getInvoiceLinesViaApi(searchParams) {

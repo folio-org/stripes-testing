@@ -76,10 +76,7 @@ describe('Inventory', () => {
             firstLocalSubjectSource.name,
             secondLocalSubjectSource.name,
           );
-          SubjectSources.validateNameFieldWithError(
-            testData.errorMessage,
-            secondLocalSubjectSource.name,
-          );
+          SubjectSources.validateNameFieldWithError(testData.errorMessage);
         },
       );
     });

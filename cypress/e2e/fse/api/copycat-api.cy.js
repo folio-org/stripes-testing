@@ -11,7 +11,7 @@ describe('fse-copycat for production tenants', { retries: { runMode: 1 } }, () =
 
   it(
     `TC195638 - Get all z3950 target profiles for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'copycat', 'loc'] },
+    { tags: ['sanity', 'fse', 'api', 'copycat', 'loc', 'TC195638'] },
     () => {
       Z3950TargetProfiles.getAllTargetProfiles().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -40,7 +40,7 @@ describe('fse-copycat for non-production tenants', () => {
 
   it(
     `TC195640 - Create and delete z3950 target profile for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'api', 'copycat'] },
+    { tags: ['nonProd', 'fse', 'api', 'copycat', 'TC195640'] },
     () => {
       Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName).then((profileId) => {
         cy.expect(profileId).to.not.be.oneOf([null, '']);

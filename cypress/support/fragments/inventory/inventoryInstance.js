@@ -1140,10 +1140,10 @@ export default {
 
   deleteMultipleTags(tagNames) {
     cy.wait(1500);
+    cy.intercept('PUT', '**/inventory/instances/*').as('removeTag');
     tagNames.forEach((tag) => {
       this.checkTagSelectedInDropdown(tag);
       cy.expect(textFieldTagInput.find(Spinner()).absent());
-      cy.intercept('PUT', '**/inventory/instances/*').as('removeTag');
       cy.do(ValueChipRoot(tag).find(closeTag).click());
       cy.wait('@removeTag');
       cy.wait(1000);
@@ -1367,6 +1367,7 @@ export default {
       cy.do(holdingsSection.clickHeader());
     }
 
+    cy.wait(2000);
     cy.do(
       holdingsSection
         .find(MultiColumnListCell({ column: 'Item: barcode' }))

@@ -4,7 +4,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
-import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 const testData = {
   user: null,
@@ -19,15 +18,16 @@ const yesterday = DateTools.getFormattedDate({ date: d }, 'MM/DD/YYYY');
 
 describe('Organizations', () => {
   before('Create user and organization', () => {
-    cy.getAdminToken();
-    NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {
-      testData.organization.id = responseOrganization.id;
-
+    cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
+      testData.user = user;
+      NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {
+        testData.organization.id = responseOrganization.id;
+      });
       cy.loginAsAdmin({
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
-      OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults(testData.organization);
       Organizations.selectOrganization(testData.organization.name);
       Organizations.editOrganization();
@@ -37,10 +37,6 @@ describe('Organizations', () => {
         name: `${testData.organization.name}-edited`,
         code: testData.organization.code,
       });
-    });
-
-    cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((user) => {
-      testData.user = user;
 
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -59,16 +55,16 @@ describe('Organizations', () => {
     'C466131 Organizations can be found by "Date updated" filter (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C466131'] },
     () => {
-      OrganizationsSearchAndFilter.filterByDateUpdated(today, today);
-      OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
+      Organizations.filterByDateUpdated(today, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
-      OrganizationsSearchAndFilter.resetFilters();
-      OrganizationsSearchAndFilter.filterByDateUpdated('01/01/2000', '12/31/2000');
+      Organizations.resetFilters();
+      Organizations.filterByDateUpdated('01/01/2000', '12/31/2000');
       Organizations.checkZeroSearchResultsHeader();
-      OrganizationsSearchAndFilter.filterByDateUpdated(today, yesterday);
+      Organizations.filterByDateUpdated(today, yesterday);
       Organizations.checkInvalidDateRangeMessage();
-      OrganizationsSearchAndFilter.filterByDateUpdated(yesterday, today);
-      OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
+      Organizations.filterByDateUpdated(yesterday, today);
+      Organizations.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
     },
   );

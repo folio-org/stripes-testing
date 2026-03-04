@@ -110,10 +110,24 @@ const vendorInformationAccordion = Button({
   id: 'accordion-toggle-button-vendorInformationSection',
 });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
+const toggleButtonCreatedBy = Button({ id: 'accordion-toggle-button-metadata.createdByUserId' });
+const toggleButtonUpdatedBy = Button({ id: 'accordion-toggle-button-metadata.updatedByUserId' });
+const toggleButtonDateUpdated = Button({ id: 'accordion-toggle-button-metadata.updatedDate' });
+const updatedDateAccordion = Section({ id: 'metadata.updatedDate' });
+const searchInput = SearchField({ id: 'input-record-search' });
+const startDateField = TextField({ name: 'startDate' });
+const endDateField = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
 
 export default {
   waitLoading: () => {
     cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
+  },
+
+  verifySaveOrganizationCalloutMessage: (organization) => {
+    InteractorsTools.checkCalloutMessage(
+      `The Organization - "${organization.name}" has been successfully saved`,
+    );
   },
 
   verifyPagination(numberOfRows) {
@@ -552,6 +566,35 @@ export default {
     });
   },
 
+  filterByUpdatedBy(userName) {
+    cy.do([
+      toggleButtonUpdatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(userName),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
+  },
+
+  filterByDateUpdated(startDate, endDate) {
+    cy.do([
+      toggleButtonDateUpdated.click(),
+      updatedDateAccordion.find(startDateField).fillIn(startDate),
+      updatedDateAccordion.find(endDateField).fillIn(endDate),
+      updatedDateAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  filterByCreatedBy(userName) {
+    cy.do([
+      toggleButtonCreatedBy.click(),
+      Button('Find User').click(),
+      TextField({ name: 'query' }).fillIn(userName),
+      searchButtonInModal.click(),
+      MultiColumnListRow({ index: 0 }).click(),
+    ]);
+  },
+
   checkDayFieldError(expectedError = 'Value must be less than or equal to 31') {
     cy.get('[class^=feedbackError]').should('contain.text', expectedError);
   },
@@ -912,6 +955,15 @@ export default {
     isDefaultSearchParamsRequired: false,
     body: requestData,
   }),
+
+  searchByParameters: (parameter, value) => {
+    cy.wait(4000);
+    cy.do([
+      searchInput.selectIndex(parameter),
+      searchInput.fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
 
   getOrganizationViaApi: (searchParams) => cy
     .okapiRequest({

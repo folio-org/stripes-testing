@@ -255,6 +255,7 @@ describe('Bulk-edit', () => {
 
           notesToAdd.forEach((note) => {
             addNoteInBulkEdit(note.fieldIndex, note.type, note.text);
+            cy.wait(500);
           });
 
           // Step 24: Click "Confirm changes" button

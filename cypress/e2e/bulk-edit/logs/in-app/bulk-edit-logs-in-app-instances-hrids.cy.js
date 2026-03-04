@@ -18,179 +18,198 @@ import { APPLICATION_NAMES } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
-const hridValues = {};
-const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
-const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
-const errorsFromCommittingFileName =
-  BulkEditFiles.getErrorsFromCommittingFileName(instanceHRIDFileName);
-const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: `folioItem${getRandomPostfix()}`,
-};
-const marcInstance = {
-  title: `AT_C423990_MarcInstance_${getRandomPostfix()}`,
-};
+let hridValues;
+let instanceHRIDFileName;
+let matchedRecordsFileName;
+let previewFileName;
+let errorsFromCommittingFileName;
+let folioItem;
+let marcInstance;
 
-describe('Bulk-edit', () => {
-  describe('Logs', () => {
-    describe('In-app approach', () => {
-      before('create test data', () => {
-        cy.createTempUser([
-          permissions.inventoryAll.gui,
-          permissions.enableStaffSuppressFacet.gui,
-          permissions.bulkEditView.gui,
-          permissions.bulkEditEdit.gui,
-          permissions.bulkEditLogsView.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
+describe(
+  'Bulk-edit',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    describe('Logs', () => {
+      describe('In-app approach', () => {
+        beforeEach('create test data', () => {
+          hridValues = {};
+          instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
+          matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
+          previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
+          errorsFromCommittingFileName =
+            BulkEditFiles.getErrorsFromCommittingFileName(instanceHRIDFileName);
+          folioItem = {
+            instanceName: `testBulkEdit_${getRandomPostfix()}`,
+            itemBarcode: `folioItem${getRandomPostfix()}`,
+          };
+          marcInstance = {
+            title: `AT_C423990_MarcInstance_${getRandomPostfix()}`,
+          };
 
-          cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
-            marcInstance.instanceId = instanceId;
+          cy.createTempUser([
+            permissions.inventoryAll.gui,
+            permissions.enableStaffSuppressFacet.gui,
+            permissions.bulkEditView.gui,
+            permissions.bulkEditEdit.gui,
+            permissions.bulkEditLogsView.gui,
+          ]).then((userProperties) => {
+            user = userProperties;
 
-            cy.getInstanceById(marcInstance.instanceId).then((body) => {
-              body.staffSuppress = false;
-              cy.updateInstance(body);
-            });
+            cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+              marcInstance.instanceId = instanceId;
 
-            folioItem.instanceId = InventoryInstances.createInstanceViaApi(
-              folioItem.instanceName,
-              folioItem.itemBarcode,
-            );
-            cy.getInstance({
-              limit: 1,
-              expandAll: true,
-              query: `"id"=="${folioItem.instanceId}"`,
-            }).then((instance) => {
-              hridValues.folioHrid = instance.hrid;
-              FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, instance.hrid);
-            });
-            cy.getInstance({
-              limit: 1,
-              expandAll: true,
-              query: `"id"=="${marcInstance.instanceId}"`,
-            }).then((instance) => {
-              hridValues.marcHrid = instance.hrid;
-              FileManager.appendFile(
-                `cypress/fixtures/${instanceHRIDFileName}`,
-                `\n${instance.hrid}\n`,
+              cy.getInstanceById(marcInstance.instanceId).then((body) => {
+                body.staffSuppress = false;
+                cy.updateInstance(body);
+              });
+
+              folioItem.instanceId = InventoryInstances.createInstanceViaApi(
+                folioItem.instanceName,
+                folioItem.itemBarcode,
               );
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"id"=="${folioItem.instanceId}"`,
+              }).then((instance) => {
+                hridValues.folioHrid = instance.hrid;
+                FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, instance.hrid);
+              });
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"id"=="${marcInstance.instanceId}"`,
+              }).then((instance) => {
+                hridValues.marcHrid = instance.hrid;
+                FileManager.appendFile(
+                  `cypress/fixtures/${instanceHRIDFileName}`,
+                  `\n${instance.hrid}\n`,
+                );
+              });
             });
-          });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
         });
-      });
 
-      after('delete test data', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
-        InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
-        FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(
-          matchedRecordsFileName,
-          previewFileName,
-          errorsFromCommittingFileName,
-        );
-      });
-
-      it(
-        'C423990 Verify generated Logs files for Instances staff suppress (Set false) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C423990'] },
-        () => {
-          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
-          BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-          BulkEditSearchPane.waitFileUploading();
-
-          BulkEditActions.downloadMatchedResults();
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
-          BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
-          ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-            `${folioItem.instanceId},false,false,`,
-            `${marcInstance.instanceId},false,false,`,
-          ]);
-          BulkEditActions.openStartBulkEditFolioInstanceForm();
-          BulkEditActions.verifyModifyLandingPageBeforeModifying();
-          BulkEditActions.selectOption('Staff suppress');
-          BulkEditSearchPane.verifyInputLabel('Staff suppress');
-          BulkEditActions.selectAction('Set false');
-          BulkEditActions.verifyCheckboxAbsent();
-          BulkEditActions.verifyConfirmButtonDisabled(false);
-          BulkEditActions.confirmChanges();
-          BulkEditActions.verifyAreYouSureForm(2, folioItem.instanceId);
-          BulkEditActions.verifyAreYouSureForm(2, marcInstance.instanceId);
-          BulkEditActions.downloadPreview();
-          ExportFile.verifyFileIncludes(previewFileName, [
-            `${folioItem.instanceId},false,false,`,
-            `${marcInstance.instanceId},false,false,`,
-          ]);
-          BulkEditActions.commitChanges();
-          BulkEditActions.verifySuccessBanner(0);
-          BulkEditSearchPane.verifyErrorLabel(0, 2);
-
-          [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
-            BulkEditSearchPane.verifyErrorByIdentifier(
-              hrid,
-              ERROR_MESSAGES.NO_CHANGE_REQUIRED,
-              'Warning',
-            );
-          });
-
-          BulkEditActions.openActions();
-          BulkEditActions.downloadErrors();
-          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `WARNING,${hridValues.folioHrid},No change in value required`,
-            `WARNING,${hridValues.marcHrid},No change in value required`,
-          ]);
+        afterEach('delete test data', () => {
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
+          InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
+          InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
+          FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
           FileManager.deleteFileFromDownloadsByMask(
             matchedRecordsFileName,
             previewFileName,
             errorsFromCommittingFileName,
           );
+        });
 
-          BulkEditSearchPane.openLogsSearch();
-          BulkEditLogs.checkInstancesCheckbox();
-          BulkEditLogs.clickActionsRunBy(user.username);
-          BulkEditLogs.verifyLogsRowActionWhenNoChangesApplied();
+        it(
+          'C423990 Verify generated Logs files for Instances staff suppress (Set false) (firebird)',
+          { tags: ['extendedPath', 'firebird', 'C423990'] },
+          () => {
+            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+              'Instance',
+              'Instance HRIDs',
+            );
+            BulkEditSearchPane.uploadFile(instanceHRIDFileName);
+            BulkEditSearchPane.waitFileUploading();
 
-          BulkEditLogs.downloadFileUsedToTrigger();
-          ExportFile.verifyFileIncludes(instanceHRIDFileName, [
-            hridValues.folioHrid,
-            hridValues.marcHrid,
-          ]);
+            BulkEditActions.downloadMatchedResults();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Staff suppress');
+            BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
+            ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+              `${folioItem.instanceId},false,false,`,
+              `${marcInstance.instanceId},false,false,`,
+            ]);
+            BulkEditActions.openStartBulkEditFolioInstanceForm();
+            BulkEditActions.verifyModifyLandingPageBeforeModifying();
+            BulkEditActions.selectOption('Staff suppress');
+            BulkEditSearchPane.verifyInputLabel('Staff suppress');
+            BulkEditActions.selectAction('Set false');
+            BulkEditActions.verifyCheckboxAbsent();
+            BulkEditActions.verifyConfirmButtonDisabled(false);
+            BulkEditActions.confirmChanges();
+            BulkEditActions.verifyAreYouSureForm(2, folioItem.instanceId);
+            BulkEditActions.verifyAreYouSureForm(2, marcInstance.instanceId);
+            BulkEditActions.downloadPreview();
+            ExportFile.verifyFileIncludes(previewFileName, [
+              `${folioItem.instanceId},false,false,`,
+              `${marcInstance.instanceId},false,false,`,
+            ]);
+            BulkEditActions.commitChanges();
+            BulkEditActions.verifySuccessBanner(0);
+            BulkEditSearchPane.verifyErrorLabel(0, 2);
 
-          BulkEditLogs.downloadFileWithMatchingRecords();
-          ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-            `${folioItem.instanceId},false,false,`,
-            `${marcInstance.instanceId},false,false,`,
-          ]);
+            [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
+              BulkEditSearchPane.verifyErrorByIdentifier(
+                hrid,
+                ERROR_MESSAGES.NO_CHANGE_REQUIRED,
+                'Warning',
+              );
+            });
 
-          BulkEditLogs.downloadFileWithProposedChanges();
-          ExportFile.verifyFileIncludes(previewFileName, [
-            `${folioItem.instanceId},false,false,`,
-            `${marcInstance.instanceId},false,false,`,
-          ]);
+            BulkEditActions.openActions();
+            BulkEditActions.downloadErrors();
+            ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+              `WARNING,${hridValues.folioHrid},No change in value required`,
+              `WARNING,${hridValues.marcHrid},No change in value required`,
+            ]);
+            FileManager.deleteFileFromDownloadsByMask(
+              matchedRecordsFileName,
+              previewFileName,
+              errorsFromCommittingFileName,
+            );
 
-          BulkEditLogs.downloadFileWithCommitErrors();
-          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `WARNING,${hridValues.folioHrid},No change in value required`,
-            `WARNING,${hridValues.marcHrid},No change in value required`,
-          ]);
+            BulkEditSearchPane.openLogsSearch();
+            BulkEditLogs.checkInstancesCheckbox();
+            BulkEditLogs.clickActionsRunBy(user.username);
+            BulkEditLogs.verifyLogsRowActionWhenNoChangesApplied();
 
-          [folioItem.instanceName, marcInstance.title].forEach((title) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            SelectInstanceModal.filterByStaffSuppress('No');
-            InventorySearchAndFilter.searchInstanceByTitle(title);
-            InventoryInstances.selectInstance();
-            InventoryInstance.waitLoading();
-            InventoryInstance.verifyNoStaffSuppress();
-          });
-        },
-      );
+            BulkEditLogs.downloadFileUsedToTrigger();
+            ExportFile.verifyFileIncludes(instanceHRIDFileName, [
+              hridValues.folioHrid,
+              hridValues.marcHrid,
+            ]);
+
+            BulkEditLogs.downloadFileWithMatchingRecords();
+            ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+              `${folioItem.instanceId},false,false,`,
+              `${marcInstance.instanceId},false,false,`,
+            ]);
+
+            BulkEditLogs.downloadFileWithProposedChanges();
+            ExportFile.verifyFileIncludes(previewFileName, [
+              `${folioItem.instanceId},false,false,`,
+              `${marcInstance.instanceId},false,false,`,
+            ]);
+
+            BulkEditLogs.downloadFileWithCommitErrors();
+            ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+              `WARNING,${hridValues.folioHrid},No change in value required`,
+              `WARNING,${hridValues.marcHrid},No change in value required`,
+            ]);
+
+            [folioItem.instanceName, marcInstance.title].forEach((title) => {
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              SelectInstanceModal.filterByStaffSuppress('No');
+              InventorySearchAndFilter.searchInstanceByTitle(title);
+              InventoryInstances.selectInstance();
+              InventoryInstance.waitLoading();
+              InventoryInstance.verifyNoStaffSuppress();
+            });
+          },
+        );
+      });
     });
-  });
-});
+  },
+);

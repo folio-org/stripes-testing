@@ -85,6 +85,7 @@ describe('MARC', () => {
             cy.wait(1000);
             MarcAuthorities.chooseTypeOfHeading('Genre');
             InventoryInstance.searchResults(testData.linkingValue);
+            MarcAuthority.contains(`\t$a ${testData.linkingValue}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
