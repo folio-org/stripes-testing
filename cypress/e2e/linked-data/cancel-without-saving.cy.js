@@ -90,7 +90,6 @@ describe('Citation: cancel without saving', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
@@ -101,6 +100,7 @@ describe('Citation: cancel without saving', () => {
       Work.deleteById(filteredInstances[0].id);
     });
     Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
+    Users.deleteViaApi(user.userId);
   });
 
   beforeEach('Apply test data manually', () => {
@@ -115,7 +115,7 @@ describe('Citation: cancel without saving', () => {
 
   it(
     'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
-    { tags: ['criticalPath', 'citation', 'C656342', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C656342', 'linked-data-editor'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();

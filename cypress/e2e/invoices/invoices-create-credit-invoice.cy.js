@@ -32,7 +32,7 @@ describe('Invoices', () => {
       cy.getBatchGroups().then((batchGroup) => {
         invoice.batchGroup = batchGroup.name;
       });
-      Funds.createFundViaApiAndUi(fund).then(() => {
+      Funds.createFundViaUI(fund).then(() => {
         Funds.addBudget(100);
       });
       invoiceLine.subTotal = -subtotalValue;

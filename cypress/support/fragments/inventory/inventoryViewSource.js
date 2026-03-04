@@ -7,6 +7,7 @@ import {
   Tooltip,
   Spinner,
   DropdownMenu,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -222,5 +223,20 @@ export default {
     }).then(() => {
       expect(rows).to.deep.equal(expectedTagsArray);
     });
+  },
+
+  checkRowExistsWithTagAndValue(tag, value) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ innerText: and(including(`${tag}  `), including(value)) }))
+        .exists(),
+    );
+  },
+
+  verifyLinkedToAuthorityIconIsPresent(isPresent = true) {
+    cy.wait(1000); // icon may appear after a short delay
+    const targetIcon = rootSection.find(linkedToMarcAuthorityIcon);
+    if (isPresent) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
   },
 };

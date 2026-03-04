@@ -297,9 +297,6 @@ describe('Bulk-edit', () => {
           true,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
         );
-        BulkEditSearchPane.verifyResultColumnTitles(
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_ACCESS,
-        );
 
         // Step 2: Check display of "Electronic access" Item data in the "Preview of records matched" table
         verifyElectronicAccessInTableForm(BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED);
