@@ -118,7 +118,7 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 20_000) => {
   const alias = `authnRefreshCall_${Date.now()}_${Math.floor(Math.random() * 10 ** 5)}`;
-  cy.intercept('POST', '/authn/refresh', { times: 1 }).as(alias);
+  cy.intercept('POST', '/authn/refresh').as(alias);
 
   callback();
 
