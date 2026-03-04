@@ -622,10 +622,20 @@ export default {
   },
 
   pressSaveAndClose({ acceptLinkedBibModal = false, acceptDeleteModal = false } = {}) {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
     cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequest', { timeout: 10_000 }).then(({ response }) => {
+      if (response.body?.issues && response.body?.issues?.length > 0) {
+        cy.wait(500);
+        this.closeAllCallouts();
+        cy.wait(500);
+        cy.do(saveAndCloseButton.click());
+      }
+    });
+
     if (acceptLinkedBibModal) {
       cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
       cy.do(saveButton.click());
