@@ -133,8 +133,7 @@ describe('MARC', () => {
             );
           }
 
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.waitLoading();
           QuickMarcEditor.checkContentByTag(testData.tag866, testData.tag866UpdatedContent);
           for (let i = 0; i < 3; i++) {

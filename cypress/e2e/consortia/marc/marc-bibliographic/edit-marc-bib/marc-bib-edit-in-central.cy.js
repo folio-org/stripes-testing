@@ -10,6 +10,7 @@ import ConsortiumManager from '../../../../../support/fragments/settings/consort
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -22,6 +23,7 @@ describe('MARC', () => {
         tag245UpdatedValue: '$a C405520 Auto Instance Shared Central Updated',
         tag500UpdatedValue: '$a Proceedings. Updated',
         updatedTitle: 'C405520 Auto Instance Shared Central Updated',
+        heldbyAccordionName: 'Held by',
       };
 
       const users = {};
@@ -71,14 +73,10 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-            }, 20_000);
-            InventoryInstances.waitContentLoading();
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
       });
 
@@ -102,8 +100,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
           QuickMarcEditor.moveFieldUp(17);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
           InventoryInstance.verifyLastUpdatedSource(
@@ -116,6 +112,8 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);

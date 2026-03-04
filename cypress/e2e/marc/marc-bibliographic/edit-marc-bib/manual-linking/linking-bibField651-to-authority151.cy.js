@@ -124,6 +124,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag651);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);

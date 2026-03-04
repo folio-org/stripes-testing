@@ -31,6 +31,18 @@ Cypress.Commands.add('createDataExportCustomMappingProfile', (body) => {
     .then((response) => response.body);
 });
 
+Cypress.Commands.add('getDataExportMappingProfiles', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'data-export/mapping-profiles',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.mappingProfiles;
+    });
+});
+
 Cypress.Commands.add('getDataExportJobProfile', (searchParams) => {
   return cy
     .okapiRequest({

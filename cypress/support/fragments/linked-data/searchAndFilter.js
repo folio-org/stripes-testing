@@ -37,10 +37,15 @@ export default {
     cy.expect(resetButton.has({ disabled: !isActive }));
   },
 
+  verifyLoCSourceOptionIsSelected: () => {
+    cy.xpath(sourceLoCOption).should('be.checked');
+  },
+
   searchResourceByTitle: (title) => {
-    cy.get('#id-search-select').select('Title');
-    cy.get('#id-search-input').clear().type(title);
+    cy.do(hubsSearchInput.fillIn(title));
+    cy.wait(2000);
     cy.do(searchButton.click());
+    cy.wait(2000);
   },
 
   searchResourceByIsbn: (isbn) => {

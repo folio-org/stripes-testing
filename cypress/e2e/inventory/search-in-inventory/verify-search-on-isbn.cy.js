@@ -22,7 +22,7 @@ describe('Inventory', () => {
         `978-2321-${randomDigits}-2`,
         `1${randomDigits}Y`,
         `978-2321-${randomDigits}INV-4`,
-        `9782321${randomDigits}INV5`,
+        `09782321${randomDigits}INV5`,
         `978-2321-${randomDigits}INV-6`,
       ],
     };
@@ -38,10 +38,10 @@ describe('Inventory', () => {
         cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
           instanceTypeId = instanceTypes[0].id;
         });
-        InventoryInstances.getIdentifierTypes({ query: 'name="ISBN"' }).then((identifier) => {
+        InventoryInstances.getIdentifierTypes({ query: 'name=="ISBN"' }).then((identifier) => {
           isbnTypeId = identifier.id;
         });
-        InventoryInstances.getIdentifierTypes({ query: 'name="Invalid ISBN"' }).then(
+        InventoryInstances.getIdentifierTypes({ query: 'name=="Invalid ISBN"' }).then(
           (identifier) => {
             invalidIsbnTypeId = identifier.id;
           },
@@ -83,14 +83,10 @@ describe('Inventory', () => {
       'C2321 Search: Verify search on ISBN (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C2321'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-        }, 20_000);
-        InventoryInstances.waitContentLoading();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
 
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.verifyResultPaneEmpty();
