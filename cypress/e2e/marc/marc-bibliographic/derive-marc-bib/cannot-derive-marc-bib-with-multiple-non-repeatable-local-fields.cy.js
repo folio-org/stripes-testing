@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import '../../../../support/api/specifications';
+import { findLocalField } from '../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -50,13 +51,18 @@ describe('MARC', () => {
               const bibliographicSpec = specs.find((s) => s.profile === 'bibliographic');
               bibliographicSpecId = bibliographicSpec.id;
 
-              cy.createSpecificationField(bibliographicSpecId, {
-                tag: testData.tag980,
-                label: 'C552356 Test Field - Non-repeatable Local',
-                repeatable: false,
-                required: true,
-              }).then((fieldResponse) => {
-                createdRuleFieldId = fieldResponse.body.id;
+              cy.getSpecificationFields(bibliographicSpecId).then((fieldsResp) => {
+                const existingSpecField = findLocalField(fieldsResp.body.fields, testData.tag980);
+                if (existingSpecField) cy.deleteSpecificationField(existingSpecField.id);
+
+                cy.createSpecificationField(bibliographicSpecId, {
+                  tag: testData.tag980,
+                  label: 'C552356 Test Field - Non-repeatable Local',
+                  repeatable: false,
+                  required: true,
+                }).then((fieldResponse) => {
+                  createdRuleFieldId = fieldResponse.body.id;
+                });
               });
             });
           });
@@ -69,8 +75,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
 
@@ -98,7 +102,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagValue(6, testData.tag980);
           QuickMarcEditor.updateExistingFieldContent(6, testData.field980Two);
 
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(6, testData.expectedNonRepeatableError);
           QuickMarcEditor.verifyValidationCallout(0, 1);
         },

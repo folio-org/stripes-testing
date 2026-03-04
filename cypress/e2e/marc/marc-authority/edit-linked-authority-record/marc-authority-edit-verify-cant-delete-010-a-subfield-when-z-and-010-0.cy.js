@@ -142,7 +142,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.new010FieldValue);
           cy.wait(2000);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);

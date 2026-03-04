@@ -111,7 +111,7 @@ describe('MARC', () => {
               testData.lccnValues.forEach((lccnValue, index) => {
                 QuickMarcEditor.updateExistingField('010', lccnValue);
                 if (index < 2) {
-                  QuickMarcEditor.pressSaveAndClose();
+                  QuickMarcEditor.pressSaveAndCloseButton();
                   QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
                 } else {
                   QuickMarcEditor.clickSaveAndKeepEditingButton();

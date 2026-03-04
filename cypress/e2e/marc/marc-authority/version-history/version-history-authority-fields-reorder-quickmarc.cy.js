@@ -145,7 +145,7 @@ describe('MARC', () => {
 
       it(
         'C407739 Verify that all fields (except "LDR") can be moved and saved when editing "MARC authority" record and check "Version history" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C407739'] },
+        { tags: ['extendedPath', 'spitfire', 'C407739'] },
         () => {
           MarcAuthority.clickVersionHistoryButton();
 

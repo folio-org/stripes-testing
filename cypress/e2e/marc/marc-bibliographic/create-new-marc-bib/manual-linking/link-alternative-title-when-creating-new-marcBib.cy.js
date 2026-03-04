@@ -41,7 +41,7 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
-              'C422127 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
+              'C422127 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
             valueAfterSave:
               'C422127 Edinburgh tracts in mathematics and mathematical physics english',
           },
@@ -153,7 +153,6 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.accordion,

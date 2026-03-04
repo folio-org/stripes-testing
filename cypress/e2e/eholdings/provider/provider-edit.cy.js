@@ -1,11 +1,13 @@
 import { Permissions } from '../../../support/dictionary';
 import EHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
 import EHoldingsProviderView from '../../../support/fragments/eholdings/eHoldingsProviderView';
-import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
-import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import Users from '../../../support/fragments/users/users';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
+import {
+  EHoldingsProviders,
+  EHoldingsProvidersSearch,
+  EHoldingsSearch,
+} from '../../../support/fragments/eholdings';
 
 describe('eHoldings', () => {
   describe('Provider', () => {
@@ -17,10 +19,14 @@ describe('eHoldings', () => {
         Permissions.moduleeHoldingsEnabled.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: EHoldingsSearch.waitLoading,
+          authRefresh: true,
+        });
       });
     });
+
     it(
       'C696 Edit proxy setting (spitfire)',
       { tags: ['smoke', 'spitfire', 'broken', 'C696'] },

@@ -143,6 +143,7 @@ describe('Data Import', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
+            cy.getAdminToken();
             // create Match profile
             NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
               .then((matchProfileResponse) => {
@@ -202,6 +203,7 @@ describe('Data Import', () => {
       'C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)',
       { tags: ['criticalPathFlaky', 'spitfire', 'C375098'] },
       () => {
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file

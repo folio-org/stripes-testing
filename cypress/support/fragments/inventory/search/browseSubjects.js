@@ -324,10 +324,15 @@ export default {
     );
   },
 
-  waitForSubjectToAppear(subjectName, isPresent = true, isLinked = false) {
+  waitForSubjectToAppear(subjectName, isPresent = true, isLinked = false, quantity) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
         return item.authorityId && item.authorityId !== '';
+      });
+    };
+    const hasNotLinkedItem = (items) => {
+      return items.some((item) => {
+        return !item.authorityId || item.authorityId === '';
       });
     };
     return cy.recurse(
@@ -339,18 +344,23 @@ export default {
             query: `(value>="${subjectName.replace(/"/g, '""')}")`,
           },
           isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
         });
       },
       (response) => {
         const foundSubjects = response.body.items.filter((item) => {
           return item.value === subjectName;
         });
-
+        const quantityCondition = foundSubjects.length === quantity;
         if (isPresent) {
           if (isLinked) {
-            return hasLinkedItem(foundSubjects);
+            return quantity
+              ? quantityCondition && hasLinkedItem(foundSubjects)
+              : hasLinkedItem(foundSubjects);
           } else {
-            return foundSubjects.length > 0 && !hasLinkedItem(foundSubjects);
+            return quantity
+              ? quantityCondition && hasNotLinkedItem(foundSubjects)
+              : hasNotLinkedItem(foundSubjects);
           }
         } else {
           return foundSubjects.length === 0;

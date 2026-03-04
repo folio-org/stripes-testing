@@ -12,7 +12,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
       const testData = {
-        tag040: '040',
+        tag455: '455',
+        rawIndex: 9,
         searchOption: 'Keyword',
         title: 'C523595 Dramas',
         successMessage:
@@ -61,7 +62,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
           MarcAuthorities.selectFirstRecord();
           MarcAuthority.edit();
-          QuickMarcEditor.deleteFieldByTagAndCheck(testData.tag040);
+          QuickMarcEditor.deleteField(testData.rawIndex);
           cy.wait(1000);
 
           QuickMarcEditor.simulateSlowNetwork('**/records-editor/validate', 5000);

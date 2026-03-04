@@ -56,6 +56,7 @@ describe('MARC', () => {
     };
 
     before('Create users, data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404417 Auth');
       cy.createTempUser([
@@ -68,19 +69,11 @@ describe('MARC', () => {
           users.userProperties = userProperties;
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-        })
-        .then(() => {
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            if (marcFile.tenant === 'College') {
+            if (marcFile.tenant === tenantNames.college) {
               cy.setTenant(Affiliations.College);
             } else {
               cy.resetTenant();
-              cy.getAdminToken();
             }
 
             DataImport.uploadFileViaApi(
@@ -99,6 +92,7 @@ describe('MARC', () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             InventoryInstances.searchByTitle(marcFiles[0].title);

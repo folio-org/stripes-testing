@@ -4,6 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
@@ -38,7 +39,7 @@ describe('eHoldings', () => {
       { tags: ['extendedPath', 'spitfire', 'C423466'] },
       () => {
         EHoldingsTitle.searchTitle(testData.existingTitle);
-        EHoldingsTitlesSearch.openTitle(testData.existingTitle);
+        EHoldingsTitles.openTitle();
         EHoldingsTitle.waitPackagesLoading();
         EHoldingsTitle.changePackageStatusViaApi();
         cy.reload();

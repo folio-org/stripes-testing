@@ -79,10 +79,11 @@ describe('MARC', () => {
           });
       });
 
-      beforeEach('Login to the application', () => {
+      before('Login to the application', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+          authRefresh: true,
         });
       });
 
@@ -95,8 +96,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C375231'] },
+        'C1030817 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C1030817'] },
         () => {
           const dataForC375231 = [
             {

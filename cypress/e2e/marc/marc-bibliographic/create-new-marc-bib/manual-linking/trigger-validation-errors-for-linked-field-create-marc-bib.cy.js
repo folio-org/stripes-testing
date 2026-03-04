@@ -285,7 +285,7 @@ describe('MARC', () => {
             const invalidTagRowIndex = field700_2RowIndex + 1;
 
             // Step 10: Click "Save & close" and verify validation errors
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.verifyValidationCallout(0, 13);
 
             // Verify inline errors for linked 700 field

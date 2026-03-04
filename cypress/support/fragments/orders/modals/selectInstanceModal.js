@@ -347,7 +347,9 @@ export default {
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.open());
     cy.wait(1_000);
+    cy.intercept('/search/instances?*').as('searchInstances');
     cy.do(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))).clickSegment());
+    cy.wait('@searchInstances').its('response.statusCode').should('eq', 200);
   },
 
   typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
@@ -397,5 +399,20 @@ export default {
         .exists(),
     );
     InteractorsTools.checkCalloutErrorMessage(InventorySearchAndFilter.uriCharLimitErrorText);
+  },
+
+  selectEcsLocationFilterOption(locationAccordionName, locationName, locationTenantName) {
+    const multiSelect = selectInstanceModal
+      .find(Accordion(locationAccordionName))
+      .find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.wait(1_000);
+    cy.do(
+      MultiSelectOption(
+        matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+      ).clickSegment(),
+    );
   },
 };

@@ -9,11 +9,16 @@ describe('eHoldings', () => {
     const testData = {
       resourcePath: '/resources/38-467-103587',
       titleName: 'Fashion Theory',
-      noneProxy: 'Inherited - None',
+      noneProxy: 'None',
+      defaultProxy: null,
+      firstProxy: null,
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      cy.getEholdingsProxiesViaAPI().then((proxies) => {
+        testData.defaultProxy = proxies.find((proxy) => proxy.includes('Inherited'));
+      });
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
@@ -58,17 +63,20 @@ describe('eHoldings', () => {
           cy.wait(1000);
 
           EHoldingsResourceView.verifyProxy(testData.firstProxy);
-          EHoldingsResourceView.verifyProxiedURL();
-
-          EHoldingsResourceView.verifyProxiedURLLink();
+          if (testData.firstProxy.includes(testData.noneProxy)) EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+          else {
+            EHoldingsResourceView.verifyProxiedURL();
+            EHoldingsResourceView.verifyProxiedURLLink();
+          }
         });
 
         EHoldingsResourceView.removeTitleFromHolding();
         cy.wait(1000);
         EHoldingsResourceView.checkHoldingStatus('Not selected');
         EHoldingsResourceView.verifyResourceSettingsAccordion();
-        EHoldingsResourceView.verifyProxy(testData.noneProxy);
-        EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+        EHoldingsResourceView.verifyProxy(testData.defaultProxy);
+        if (testData.defaultProxy.includes(testData.noneProxy)) EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+        else EHoldingsResourceView.verifyProxiedURL();
       },
     );
   });

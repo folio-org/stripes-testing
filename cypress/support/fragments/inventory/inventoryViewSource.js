@@ -7,6 +7,7 @@ import {
   Tooltip,
   Spinner,
   DropdownMenu,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -214,5 +215,41 @@ export default {
     }).then(() => {
       expect(rows).to.deep.equal(expectedTagsArray);
     });
+  },
+
+  verifyFieldsOrderWithLDR(expectedTagsArray) {
+    const rows = [];
+    cy.then(() => {
+      cy.get('table[class^="marc"]').within(() => {
+        cy.get('tr').each(($tr) => {
+          const tdElements = $tr.find('td');
+          if (
+            tdElements.eq(0).attr('colspan') === '4' &&
+            tdElements.eq(0).text().includes('LEADER')
+          ) {
+            rows.push('LDR');
+          } else {
+            rows.push(tdElements.eq(1).text());
+          }
+        });
+      });
+    }).then(() => {
+      expect(rows).to.deep.equal(expectedTagsArray);
+    });
+  },
+
+  checkRowExistsWithTagAndValue(tag, value) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ innerText: and(including(`${tag}  `), including(value)) }))
+        .exists(),
+    );
+  },
+
+  verifyLinkedToAuthorityIconIsPresent(isPresent = true) {
+    cy.wait(1000); // icon may appear after a short delay
+    const targetIcon = rootSection.find(linkedToMarcAuthorityIcon);
+    if (isPresent) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
   },
 };
