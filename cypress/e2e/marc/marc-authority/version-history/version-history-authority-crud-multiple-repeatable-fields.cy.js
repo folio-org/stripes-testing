@@ -15,7 +15,7 @@ describe('MARC', () => {
     describe('Version history', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        authorityHeading: 'Kafka, Franz, 1883-1924',
+        authorityHeading: 'C663316_Kafka, Franz, 1883-1924',
         searchOption: 'Keyword',
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
         ldrRegExp: /^\d{5}[a-zA-Z]{2}.{2}[a-zA-Z0-9]{9}.{2}4500$/,
