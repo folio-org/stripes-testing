@@ -33,8 +33,8 @@ export default {
     const messages = ['Please select an institution to continue.', 'There are no Campuses'];
     TenantPane.checkEmptyTableContent(messages);
   },
-  getViaApi() {
-    return TenantPane.getViaApi({ path: 'location-units/campuses' });
+  getViaApi(searchParams = null) {
+    return TenantPane.getViaApi({ path: 'location-units/campuses', searchParams });
   },
   createViaApi(campusesProperties = getDefaultTenant({ institutionId: uuid() })) {
     return TenantPane.createViaApi({ path: 'location-units/campuses', body: campusesProperties });
