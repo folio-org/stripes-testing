@@ -15,7 +15,6 @@ import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import { Approvals } from '../../support/fragments/settings/invoices';
-import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
@@ -36,7 +35,6 @@ describe('Invoices', () => {
     orderLines: [],
     invoice: {},
     user: {},
-    originalApprovalSettings: null,
   };
 
   before('Create test data', () => {
@@ -182,10 +180,6 @@ describe('Invoices', () => {
       });
     });
 
-    Approvals.getApprovalConfigViaApi().then((settings) => {
-      testData.originalApprovalSettings = settings;
-    });
-
     Approvals.setApprovePayValueViaApi(false);
 
     cy.createTempUser([
@@ -204,11 +198,6 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-
-    if (testData.originalApprovalSettings?.length > 0) {
-      const originalValue = JSON.parse(testData.originalApprovalSettings[0].value);
-      Approvals.setApprovePayValueViaApi(originalValue.isApprovePayEnabled);
-    }
 
     Users.deleteViaApi(testData.user.userId);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
@@ -256,7 +245,8 @@ describe('Invoices', () => {
       });
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
-      FinanceHelper.clickFundButton();
+      Funds.waitLoading();
+
       FinanceHelper.searchByName(testData.fundAlpha.name);
       Funds.selectFund(testData.fundAlpha.name);
       FundDetails.waitLoading();
@@ -276,7 +266,9 @@ describe('Invoices', () => {
       Funds.verifyTransactionWithAmountExist('Pending payment', `$${invoiceLineAmount3}.00`);
       Transactions.waitLoading();
 
-      cy.visit(TopMenu.invoicesPath);
+      Transactions.closeTransactionsPage();
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
       Invoices.waitLoading();
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
@@ -288,6 +280,7 @@ describe('Invoices', () => {
       });
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
+      Funds.waitLoading();
       FinanceHelper.searchByName(testData.fundBeta.name);
       Funds.selectFund(testData.fundBeta.name);
       FundDetails.waitLoading();

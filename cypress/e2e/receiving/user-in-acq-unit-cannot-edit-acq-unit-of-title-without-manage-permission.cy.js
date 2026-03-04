@@ -57,6 +57,7 @@ describe('Receiving', () => {
             cy.createTempUser([
               permissions.inventoryAll.gui,
               permissions.uiReceivingViewEditCreate.gui,
+              permissions.uiReceivingAssignAcquisitionUnitsToNewTitle.gui,
             ]).then((userProperties) => {
               user = userProperties;
 
