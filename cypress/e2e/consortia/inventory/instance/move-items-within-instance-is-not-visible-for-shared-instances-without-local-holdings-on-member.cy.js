@@ -120,7 +120,6 @@ describe('Inventory', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
@@ -131,7 +130,6 @@ describe('Inventory', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();

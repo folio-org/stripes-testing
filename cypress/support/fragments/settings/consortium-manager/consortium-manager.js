@@ -9,11 +9,13 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
+import OrderStorageSettings from '../../orders/orderStorageSettings';
 
 const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
   Button({ className: including('navButton') }),
 );
 const switchActiveAffiliationButton = Button('Switch active affiliation');
+const CENTRAL_ORDERING_SETTINGS_KEY = 'ALLOW_ORDERING_WITH_AFFILIATED_LOCATIONS';
 
 export default {
   waitLoading() {
@@ -123,5 +125,36 @@ export default {
   checkOptionsExist() {
     cy.expect(NavListItem('Membership').exists());
     cy.expect(NavListItem('Central ordering').exists());
+  },
+
+  getCentralOrderingSettingsViaApi() {
+    return OrderStorageSettings.getSettingsViaApi({ key: CENTRAL_ORDERING_SETTINGS_KEY });
+  },
+
+  updateCentralOrderingSettingsViaApi(settings) {
+    return OrderStorageSettings.updateSettingViaApi(settings);
+  },
+
+  createCentralOrderingSettingsViaApi(setting) {
+    return OrderStorageSettings.createSettingViaApi(setting);
+  },
+
+  enableCentralOrderingViaApi() {
+    const enabledCentralOrdering = 'true';
+    return this.getCentralOrderingSettingsViaApi().then((settings) => {
+      if (settings?.length !== 0 && settings.value !== enabledCentralOrdering) {
+        return this.updateCentralOrderingSettingsViaApi({
+          ...settings[0],
+          value: enabledCentralOrdering,
+        });
+      }
+      if (settings?.length === 0) {
+        return this.createCentralOrderingSettingsViaApi({
+          key: CENTRAL_ORDERING_SETTINGS_KEY,
+          value: enabledCentralOrdering,
+        });
+      }
+      return settings[0];
+    });
   },
 };

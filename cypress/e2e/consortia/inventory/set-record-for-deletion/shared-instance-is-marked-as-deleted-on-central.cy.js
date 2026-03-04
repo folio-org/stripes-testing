@@ -67,7 +67,6 @@ describe('Inventory', () => {
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
         });

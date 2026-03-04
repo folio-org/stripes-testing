@@ -77,7 +77,7 @@ describe('Inventory', () => {
           AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES.STATUS,
           AUTHORITY_LDR_FIELD_STATUS_DROPDOWN.C,
         );
-        QuickMarcEditor.saveAndCloseWithValidationWarnings();
+        QuickMarcEditor.pressSaveAndCloseButton();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning();
         InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery();

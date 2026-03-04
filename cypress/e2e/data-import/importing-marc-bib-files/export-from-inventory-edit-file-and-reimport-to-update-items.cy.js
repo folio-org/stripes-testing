@@ -223,7 +223,9 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
+      FileManager.deleteFileFromDownloadsByMask(nameMarcFileForUpload);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFileFromDownloadsByMask(nameForCSVFile);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(userId);
         Users.deleteViaApi(preconditionUserId);

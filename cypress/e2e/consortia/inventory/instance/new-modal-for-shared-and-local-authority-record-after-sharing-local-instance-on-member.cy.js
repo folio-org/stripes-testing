@@ -2,17 +2,18 @@ import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../suppor
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import LinkedToLocalAuthoritiesModal from '../../../../support/fragments/inventory/modals/linkedToLocalAuthoritiesModal';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -122,7 +123,6 @@ describe('Inventory', () => {
               CapabilitySets.uiInventory,
               CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
               CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
-              CapabilitySets.uiQuickMarcQuickMarcEditor,
             ],
           );
           cy.resetTenant();
@@ -172,14 +172,18 @@ describe('Inventory', () => {
             testData.sharedAuthorityHeading,
             testData.createdRecordIDs[0],
           );
-
-          InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.verifyTagFieldAfterUnlinking(
-            32,
-            '650',
-            '\\',
-            '7',
-            '$a C411723 Lentz Local M1 $z Latin America $x Mexico. $0 http://id.loc.gov/authorities/names/n2011049161405560 $2 bisacsh',
+          InstanceRecordView.verifySubjectWithoutMarcAppIcon(
+            3,
+            'C411723 Lentz Local M1--Latin America--Mexico',
+          );
+          InstanceRecordView.verifyInstanceSubject(
+            {
+              indexRow: 3,
+              subjectHeadings: 'C411723 Lentz Local M1--Latin America--Mexico',
+              subjectSource: 'No value set-',
+              subjectType: 'Topical term',
+            },
+            false,
           );
         },
       );

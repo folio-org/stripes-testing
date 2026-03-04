@@ -155,6 +155,7 @@ describe('Invoices', () => {
       { tags: ['criticalPath', 'thunderjet', 'C6724'] },
       () => {
         filter.filterActions();
+        Invoices.searchByParameter('Vendor invoice number', testData.invoice.vendorInvoiceNo);
         Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
         Invoices.closeInvoiceDetailsPane();
         Invoices.resetFilters();

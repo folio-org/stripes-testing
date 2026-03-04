@@ -1,142 +1,225 @@
-import permissions from '../../../../support/dictionary/permissions';
+import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+} from '../../../../support/constants';
+import Permissions from '../../../../support/dictionary/permissions';
+import { Budgets, Funds, Ledgers } from '../../../../support/fragments/finance';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../../support/fragments/orders/orderLines';
-import Orders from '../../../../support/fragments/orders/orders';
-import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
+import ExpenseClasses from '../../../../support/fragments/settings/finance/expenseClasses';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import FileManager from '../../../../support/utils/fileManager';
 
 describe('Finance: Ledgers', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
+  const organization = { ...NewOrganization.defaultUiOrganizations, isVendor: true };
+  const testData = {
+    organization,
+    user: {},
+    expenseClass1: {
+      name: 'Electronic',
+      code: 'Elec',
+      status: 'Active',
+      id: '',
+    },
+    expenseClass2: {
+      name: 'Print',
+      code: 'Prn',
+      status: 'Active',
+      id: '',
+    },
+  };
   const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
+    id: uuid(),
     approved: true,
     reEncumber: true,
+    vendorId: testData.organization.id,
   };
   const secondOrder = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
+    id: uuid(),
     approved: true,
     reEncumber: true,
+    vendorId: testData.organization.id,
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  let user;
-  let location;
-  let fileName;
 
-  before(() => {
+  before('Setup test data', () => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+    ExpenseClasses.getExpenseClassesViaApi({
+      query: `name=="${testData.expenseClass1.name}"`,
+      limit: 1,
+    }).then((resp1) => {
+      testData.expenseClass1.id = resp1?.[0]?.id;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+      ExpenseClasses.getExpenseClassesViaApi({
+        query: `name=="${testData.expenseClass2.name}"`,
+        limit: 1,
+      }).then((resp2) => {
+        testData.expenseClass2.id = resp2?.[0]?.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addTwoExpensesClass('Electronic', 'Print');
+        const { fiscalYear, ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+          ledger: { restrictEncumbrance: true, restrictExpenditures: true },
+          budget: {
+            allocated: 100,
+            statusExpenseClasses: [
+              {
+                status: testData.expenseClass1.status,
+                expenseClassId: testData.expenseClass1.id,
+              },
+              {
+                status: testData.expenseClass2.status,
+                expenseClassId: testData.expenseClass2.id,
+              },
+            ],
+          },
         });
+        testData.fiscalYear = fiscalYear;
+        testData.ledger = ledger;
+        testData.fund = fund;
+        testData.budget = budget;
+
+        Organizations.createOrganizationViaApi(organization).then((orgResp) => {
+          organization.id = orgResp;
+          firstOrder.vendor = orgResp;
+          secondOrder.vendor = orgResp;
+
+          cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((locationResp) => {
+            cy.getAcquisitionMethodsApi({
+              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+            }).then((amResp) => {
+              cy.getBookMaterialType().then((mtypeResp) => {
+                const firstOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  cost: {
+                    listUnitPrice: 25.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 25.0,
+                  },
+                  fundDistribution: [
+                    {
+                      code: testData.fund.code,
+                      fundId: testData.fund.id,
+                      expenseClassId: testData.expenseClass1.id,
+                      value: 100,
+                    },
+                  ],
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp.id,
+                    volumes: [],
+                  },
+                };
+
+                // Create first open order
+                Orders.createOrderViaApi(firstOrder).then((orderResp) => {
+                  firstOrder.id = orderResp.id;
+                  firstOrder.poNumber = orderResp.poNumber;
+                  firstOrderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(firstOrderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResp,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
+
+                const secondOrderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  id: uuid(),
+                  cost: {
+                    listUnitPrice: 20.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 20.0,
+                  },
+                  fundDistribution: [
+                    {
+                      code: testData.fund.code,
+                      fundId: testData.fund.id,
+                      expenseClassId: testData.expenseClass2.id,
+                      value: 100,
+                    },
+                  ],
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  acquisitionMethod: amResp.body.acquisitionMethods[0].id,
+                  physical: {
+                    createInventory: 'Instance, Holding, Item',
+                    materialType: mtypeResp.id,
+                    materialSupplier: orgResp.id,
+                    volumes: [],
+                  },
+                };
+                // Create second open order
+                Orders.createOrderViaApi(secondOrder).then((orderResp) => {
+                  secondOrder.id = orderResp.id;
+                  secondOrder.poNumber = orderResp.poNumber;
+                  secondOrderLine.purchaseOrderId = orderResp.id;
+
+                  OrderLines.createOrderLineViaApi(secondOrderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResp,
+                    workflowStatus: ORDER_STATUSES.OPEN,
+                  });
+                });
+              });
+            });
+          });
+        });
+        testData.fileName = `Export-${testData.ledger.code}-${testData.fiscalYear.code}`;
+
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.fundPath);
+        FinanceHelp.searchByName(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
+        Funds.selectBudgetDetails();
+        Funds.editBudget();
+        Funds.changeStatusOfExpClassByName(testData.expenseClass2.name, 'Inactive');
       });
-      cy.getLocations({ limit: 1 }).then((res) => {
-        location = res;
-      });
-      // Prepare Open Order for Rollover
-      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-        organization.id = responseOrganizations;
-      });
-      firstOrder.vendor = organization.name;
-      secondOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
-      Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-        firstOrder.id = firstOrderResponse.id;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
-          defaultFund,
-          'Electronic',
-          '10',
-          '1',
-          '10',
-          location.name,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-      Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
-        secondOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(secondOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoForPhysicalMaterialWithFundAndExpClass(
-          defaultFund,
-          'Print',
-          '10',
-          '1',
-          '10',
-          location.name,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.editBudget();
-      Funds.changeStatusOfExpClass(1, 'Inactive');
-      fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
     });
+
     cy.createTempUser([
-      permissions.uiFinanceExportFinanceRecords.gui,
-      permissions.uiFinanceViewLedger.gui,
+      Permissions.uiFinanceExportFinanceRecords.gui,
+      Permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
-        authRefresh: true,
       });
     });
   });
 
-  after(() => {
+  after('Clean up test data', () => {
+    FileManager.deleteFile(`cypress/downloads/${testData.fileName}.csv`);
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C353205 Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings-None statuses (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C353205'] },
     () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      FinanceHelp.searchByName(testData.ledger.name);
+      Ledgers.selectLedger(testData.ledger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(firstFiscalYear.code, 'None', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileForNone(`${fileName}.csv`);
+      Ledgers.prepareExportSettings(testData.fiscalYear.code, 'None', testData.ledger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileForNone(`${testData.fileName}.csv`);
       Ledgers.checkColumnContentInDownloadedLedgerExportFileForNone(
-        `${fileName}.csv`,
+        `${testData.fileName}.csv`,
         1,
-        defaultFund,
-        firstFiscalYear,
+        testData.fund,
+        testData.budget.name,
         '100',
         '100',
         '100',
@@ -145,16 +228,15 @@ describe('Finance: Ledgers', () => {
         '100',
         '0',
         '100',
-        '20',
+        '45',
         '0',
         '0',
-        '20',
+        '45',
         '0',
         '0',
         '100',
-        '80',
+        '55',
       );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );
 });
