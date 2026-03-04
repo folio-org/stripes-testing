@@ -588,4 +588,12 @@ export default {
       cy.expect(property.interactor.has({ value: property.defaultValue }));
     });
   },
+
+  getVersionHistoryViaAPI(authorityUUID) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `audit-data/marc/authority/${authorityUUID}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

@@ -96,8 +96,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C375231'] },
+        'C1030817 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C1030817'] },
         () => {
           const dataForC375231 = [
             {

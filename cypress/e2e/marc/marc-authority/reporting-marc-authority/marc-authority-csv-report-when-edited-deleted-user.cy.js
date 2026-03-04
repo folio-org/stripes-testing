@@ -120,8 +120,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C378894 "MARC authority headings updates (CSV)" report generated when user who made updates was deleted (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C378894'] },
+        'C1030820 "MARC authority headings updates (CSV)" report generated when user who made updates was deleted (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C1030820'] },
         () => {
           cy.login(user1.username, user1.password, {
             path: TopMenu.marcAuthorities,
