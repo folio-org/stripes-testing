@@ -133,8 +133,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422122 User cannot add a new field below "999 ff" field on "Create a new MARC bib record" pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422122'] },
+      'C396384 Overlay created Instance record with source "MARC" and with linked fields. (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C396384'] },
       () => {
         InventoryInstance.newMarcBibRecord();
         QuickMarcEditor.waitLoading();

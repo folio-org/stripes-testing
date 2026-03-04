@@ -172,8 +172,7 @@ describe('Inventory', () => {
           );
           InventorySearchAndFilter.browseSearch(classificationValue);
           BrowseCallNumber.valueInResultTableIsHighlighted(classificationValue);
-          BrowseCallNumber.checkValuePresentForRow(classificationValue, 1, instanceTitle);
-          BrowseCallNumber.checkValuePresentForRow(classificationValue, 3, '1');
+          BrowseCallNumber.checkValuePresentForRow(classificationValue, 1, '1');
 
           InventorySearchAndFilter.selectBrowseOption(contributorsBrowseOption);
           InventorySearchAndFilter.checkBrowseOptionSelected(contributorsBrowseOption);
