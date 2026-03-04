@@ -21,9 +21,10 @@ import { CodeTools, StringTools } from '../../support/utils';
 import { TransactionDetails, FinanceHelper } from '../../support/fragments/finance';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
-  INVOICE_STATUSES,
   APPLICATION_NAMES,
+  INVOICE_POL_PAYMENT_STATUSES,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import { OrderDetails } from '../../support/fragments/orders';
@@ -255,7 +256,7 @@ describe('Orders', () => {
         const createInvoiceLine = (poLineId, fundDistribution) => {
           const invoiceLine = Invoices.getDefaultInvoiceLine({
             invoiceId: invoice.id,
-            invoiceLineStatus: 'Open',
+            invoiceLineStatus: INVOICE_STATUSES.OPEN,
             poLineId,
             fundDistributions: fundDistribution,
             subTotal: 50.0,
@@ -290,7 +291,7 @@ describe('Orders', () => {
               return Invoices.changeInvoiceStatusViaApi({
                 invoice,
                 status: INVOICE_STATUSES.PAID,
-                searchParams: { poLinePaymentStatus: 'Fully Paid' },
+                searchParams: { poLinePaymentStatus: INVOICE_POL_PAYMENT_STATUSES.FULLY_PAID },
               });
             });
           });
