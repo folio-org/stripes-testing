@@ -244,7 +244,7 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.clearFilter(testData.instanceStatusAccordionName);
                   InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
                     testData.instanceStatusAccordionName,
-                    '76732',
+                    'AT_C476',
                     instanceStatuses[0].name,
                   );
                 });

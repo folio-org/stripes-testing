@@ -50,7 +50,7 @@ describe('MARC', () => {
         cy.deleteHoldingRecordViaApi(initialHoldingsRecordId);
       }
       if (instanceId) {
-        InventoryInstance.deleteInstanceViaApi(instanceId);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
       }
     });
 

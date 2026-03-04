@@ -27,7 +27,7 @@ import {
   or,
   and,
 } from '../../../../interactors';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
+import { ITEM_STATUS_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';
 import FileManager from '../../utils/fileManager';
 import parseMrkFile from '../../utils/parseMrkFile';
@@ -464,7 +464,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getDefaultMaterialType();
-        cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
+        cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
           (holdingSources) => {
@@ -629,9 +629,9 @@ export default {
   deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` }).then(
       (instance) => {
-        cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
-        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+        cy.wrap(instance?.items || []).each((item) => cy.deleteItemViaApi(item.id));
+        cy.wrap(instance?.holdings || []).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        InventoryInstance.deleteInstanceViaApi(instance.id, true);
       },
     );
   },

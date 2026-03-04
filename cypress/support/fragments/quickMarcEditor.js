@@ -28,6 +28,9 @@ import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
+import Campuses from './settings/tenant/location-setup/campuses';
+import Libraries from './settings/tenant/location-setup/libraries';
+import Locations from './settings/tenant/location-setup/locations';
 import {
   INVENTORY_LDR_FIELD_DROPDOWNS_NAMES,
   INVENTORY_LDR_FIELD_TYPE_DROPDOWN,
@@ -622,10 +625,20 @@ export default {
   },
 
   pressSaveAndClose({ acceptLinkedBibModal = false, acceptDeleteModal = false } = {}) {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
     cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequest', { timeout: 10_000 }).then(({ response }) => {
+      if (response.body?.issues && response.body?.issues?.length > 0) {
+        cy.wait(500);
+        this.closeAllCallouts();
+        cy.wait(500);
+        cy.do(saveAndCloseButton.click());
+      }
+    });
+
     if (acceptLinkedBibModal) {
       cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
       cy.do(saveButton.click());
@@ -1772,7 +1785,19 @@ export default {
   },
 
   getExistingLocation() {
-    return defaultFieldValues.existingLocation;
+    return Institutions.getViaApi().then((institutions) => {
+      const institution = institutions.locinsts.find((inst) => inst.isShadow === false);
+      Campuses.getViaApi({ query: `institutionId==${institution.id}` }).then((campuses) => {
+        const campus = campuses.loccamps.find((camp) => camp.isShadow === false);
+        Libraries.getViaApi({ query: `campusId==${campus.id}` }).then((libraries) => {
+          const library = libraries.loclibs.find((lib) => lib.isShadow === false);
+          Locations.getViaApi({ query: `libraryId==${library.id}` }).then((locations) => {
+            const location = locations.locations.find((loc) => loc.isActive === true);
+            return cy.wrap(`$b ${location.code}`);
+          });
+        });
+      });
+    });
   },
 
   getFreeTags() {
