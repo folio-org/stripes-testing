@@ -114,8 +114,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380531 Data for "MARC authority headings updates (CSV)" report is generated for controlling record with updated heading ("$0"="001") (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C380531'] },
+        'C1030822 Data for "MARC authority headings updates (CSV)" report is generated for controlling record with updated heading ("$0"="001") (spitfire) (TaaS)',
+        { tags: ['extendedPath', 'spitfire', 'C1030822'] },
         () => {
           const expectedFirstUpdateData = {
             naturalIdOld: marcFiles[1].authority010FieldValue,
