@@ -40,7 +40,7 @@ describe('MARC', () => {
 
       const controlFieldContents = [
         { tag: testData.tag002, content: '$a FOLIO23491' },
-        // { tag: testData.tag003, content: 'FOLIO23492' }, uncoment after UIQM-787 is done
+        { tag: testData.tag003, content: '$a FOLIO23492' },
         { tag: testData.tag004, content: '$a FOLIO23493' },
         { tag: testData.tag009, content: '$a FOLIO23494' },
       ];
@@ -52,9 +52,9 @@ describe('MARC', () => {
 
       const controlFieldContentsAfterSave = [
         { tag: testData.tag002, content: controlFieldContents[0].content },
-        // { tag: testData.tag003, content: controlFieldContents[1].content }, uncoment after UIQM-787 is done
-        { tag: testData.tag004, content: controlFieldContents[1].content },
-        { tag: testData.tag009, content: controlFieldContents[2].content },
+        { tag: testData.tag003, content: controlFieldContents[1].content },
+        { tag: testData.tag004, content: controlFieldContents[2].content },
+        { tag: testData.tag009, content: controlFieldContents[3].content },
       ];
 
       const expectedSourceControlFields = controlFieldContentsAfterSave.map(
@@ -129,10 +129,10 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(field.content, 4 + index);
           });
           regularFieldContents.forEach((field, index) => {
-            QuickMarcEditor.addNewField(field.tag, field.content, 6 + index);
+            QuickMarcEditor.addNewField(field.tag, field.content, 7 + index);
           });
           regularFieldContents.forEach((field, index) => {
-            QuickMarcEditor.checkContent(field.content, 7 + index);
+            QuickMarcEditor.checkContent(field.content, 8 + index);
           });
 
           // 5. Click on the "Save & close" button

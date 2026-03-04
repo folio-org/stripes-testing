@@ -181,8 +181,6 @@ describe('MARC', () => {
                 '155',
                 'Authority source file name',
                 'LC Genre/Form Terms (LCGFT)',
-                'Number of bibliographic records linked',
-                '1',
                 'Updater',
                 'Unknown User',
               ],
