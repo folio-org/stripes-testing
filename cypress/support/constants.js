@@ -1243,8 +1243,14 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
   UDC: 'e8662436-75a8-4984-bebc-531e38c774a0',
 };
 
-export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
-export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
+export const DEFAULT_LOCALE_STRING =
+  '{"locale":"en-US","timezone":"UTC","currency":"USD","numberingSystem":"latn"}';
+export const DEFAULT_LOCALE_OBJECT = {
+  locale: 'en-US',
+  timezone: 'UTC',
+  currency: 'USD',
+  numberingSystem: 'latn',
+};
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
