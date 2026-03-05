@@ -229,6 +229,11 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiQuickMarcQuickMarcAuthoritiesEditorManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
