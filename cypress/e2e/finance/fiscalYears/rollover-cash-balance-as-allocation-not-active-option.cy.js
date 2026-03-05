@@ -1,26 +1,19 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import DateTools from '../../../support/utils/dateTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
 } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import Permissions from '../../../support/dictionary/permissions';
+import { Budgets, FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import Invoices from '../../../support/fragments/invoices/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance', () => {
   describe('Fiscal Year Rollover', () => {
@@ -184,11 +177,11 @@ describe('Finance', () => {
       });
 
       cy.createTempUser([
-        permissions.uiFinanceExecuteFiscalYearRollover.gui,
-        permissions.uiFinanceViewFiscalYear.gui,
-        permissions.uiFinanceViewFundAndBudget.gui,
-        permissions.uiFinanceViewLedger.gui,
-        permissions.uiOrdersView.gui,
+        Permissions.uiFinanceExecuteFiscalYearRollover.gui,
+        Permissions.uiFinanceViewFiscalYear.gui,
+        Permissions.uiFinanceViewFundAndBudget.gui,
+        Permissions.uiFinanceViewLedger.gui,
+        Permissions.uiOrdersView.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {

@@ -3,6 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = {
@@ -35,11 +36,11 @@ describe('Organizations', () => {
     'C358965 Make existing organization NOT a Vendor (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C358965'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.deselectVendor();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
     },
   );
 });

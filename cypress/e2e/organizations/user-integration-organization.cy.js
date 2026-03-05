@@ -5,6 +5,7 @@ import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let userId;
@@ -69,7 +70,7 @@ describe('Organizations', () => {
     { tags: ['smoke', 'thunderjet', 'C350762', 'shiftLeft'] },
     () => {
       // Found and edit created organization
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
       // Add first integration and check this

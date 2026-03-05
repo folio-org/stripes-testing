@@ -1,8 +1,8 @@
 import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import ConfirmDeleteOrganizationModal from '../../support/fragments/organizations/modals/confirmDeleteOrganizationModal';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -47,7 +47,7 @@ describe('Organizations', () => {
     'C613152 Delete organization with at least one existing Banking information (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C613152'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsPresent();
       Organizations.checkBankInformationExist(bankingInformation.bankName);

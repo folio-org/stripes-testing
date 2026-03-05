@@ -4,6 +4,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -58,7 +59,7 @@ describe('Export Manager', () => {
           order.orderType = 'One-time';
         });
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.addIntegration();

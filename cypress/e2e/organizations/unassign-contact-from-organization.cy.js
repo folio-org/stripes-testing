@@ -3,6 +3,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = {
@@ -40,13 +41,13 @@ describe('Organizations', () => {
     'C727 Unassign contact from an organization record (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C727'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.openContactPeopleSectionInEditCard();
       Organizations.deleteContactFromContactPeople();
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
       Organizations.checkContactSectionIsEmpty();
     },
   );
