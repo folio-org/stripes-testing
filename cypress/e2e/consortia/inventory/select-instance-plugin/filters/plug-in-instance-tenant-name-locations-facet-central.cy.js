@@ -211,6 +211,7 @@ describe('Inventory', () => {
               cy.login(user.username, user.password, {
                 path: TopMenu.ordersPath,
                 waiter: Orders.waitLoading,
+                authRefresh: true,
               });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
