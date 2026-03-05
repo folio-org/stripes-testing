@@ -16,7 +16,6 @@ const getCalloutContent = (fileName) => {
 };
 const identifierTypes = [
   'Item barcodes',
-  'Item UUIDs',
   'Item HRIDs',
   'Item former identifiers',
   'Item accession numbers',
@@ -72,6 +71,19 @@ describe('Bulk-edit', () => {
       'C440083 Verify Error while uploading file with incorrectly formatted identifiers - Items (firebird)',
       { tags: ['criticalPath', 'firebird', 'C440083'] },
       () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
+        cy.intercept('POST', '/bulk-operations/*/start').as('bulkOperation');
+        BulkEditSearchPane.uploadFile(testFileName);
+        InteractorsTools.checkCalloutErrorMessage(getCalloutContent(testFileName));
+        cy.wait('@bulkOperation').then((interception) => {
+          expect(interception.response.body.errorMessage).to.equal(
+            'Incorrect number of tokens found in record',
+          );
+        });
+        InteractorsTools.dismissCallout(getCalloutContent(testFileName));
+
         identifierTypes.forEach((label) => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier(label);

@@ -13,8 +13,8 @@ describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     newAddress: {
-      name: `addressName_${getRandomPostfix()}`,
-      address: `address_${getRandomPostfix()}`,
+      name: `AT_C410753_addressName_${getRandomPostfix()}`,
+      address: `AT_C410753_address_${getRandomPostfix()}`,
     },
   };
   let addressId;

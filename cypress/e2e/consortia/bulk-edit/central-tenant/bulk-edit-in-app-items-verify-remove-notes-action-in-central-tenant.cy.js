@@ -426,7 +426,7 @@ describe('Bulk-edit', () => {
             },
             {
               header: centralSharedItemNoteType.payload.name,
-              value: 'null (staff only)',
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
@@ -449,7 +449,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: 'null',
+                  value: '',
                 },
               ],
             );
@@ -473,7 +473,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: null,
+                  value: '',
                 },
               ],
             );
@@ -494,7 +494,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: 'null',
+                  value: '',
                 },
               ],
             );
@@ -528,7 +528,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: null,
+                  value: '',
                 },
               ],
             );
@@ -551,19 +551,9 @@ describe('Bulk-edit', () => {
             InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'No',
-              collegeItemNoteType.name,
-              'No value set-',
-            );
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              1,
-              'Yes',
-              centralSharedItemNoteType.payload.name,
-              'No value set-',
-            );
-            ItemRecordView.checkCheckOutNote('No value set-', 'No');
+            ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
+            ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
+            ItemRecordView.verifyTextAbsent('Check out note');
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -575,14 +565,9 @@ describe('Bulk-edit', () => {
             InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'Yes',
-              centralSharedItemNoteType.payload.name,
-              'No value set-',
-            );
+            ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
             ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
-            ItemRecordView.checkCheckOutNote('No value set-', 'No');
+            ItemRecordView.verifyTextAbsent('Check out note');
           });
         },
       );

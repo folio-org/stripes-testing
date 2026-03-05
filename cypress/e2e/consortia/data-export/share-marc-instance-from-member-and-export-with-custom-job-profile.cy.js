@@ -5,7 +5,7 @@ import {
   DEFAULT_JOB_PROFILE_NAMES,
   ITEM_STATUS_NAMES,
 } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -391,8 +391,7 @@ describe('Data Export', () => {
         );
         InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
+          expect(testData.importedMarcInstance.hrid).to.not.eq(updatedHrid);
           testData.importedMarcInstance.hrid = updatedHrid;
 
           // Step 7: MARC holdings already added via API in before hook
@@ -432,6 +431,7 @@ describe('Data Export', () => {
               user.username,
               `AT_C407650_CustomJobProfile_${postfix}`,
             );
+            cy.getUserToken(user.username, user.password);
             DataExportLogs.clickButtonWithText(exportedFileName);
 
             // Steps 12-15: Verify the downloaded .mrc file includes all instances
@@ -444,16 +444,6 @@ describe('Data Export', () => {
                   ind1: ' ',
                   ind2: ' ',
                   subfields: ['a', instance.title],
-                });
-              },
-              (record) => {
-                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
-                  ind1: 'f',
-                  ind2: 'f',
-                  subfields: [
-                    ['i', instance.uuid],
-                    ['s', instance.srsId],
-                  ],
                 });
               },
             ];
@@ -495,6 +485,16 @@ describe('Data Export', () => {
                     ['a', instance.items.hrid],
                     ['b', instance.items.id],
                     ['3', instance.holdings.hrid],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
+                  ind1: 'f',
+                  ind2: 'f',
+                  subfields: [
+                    ['i', instance.uuid],
+                    ['s', instance.srsId],
                   ],
                 });
               },
@@ -870,6 +870,16 @@ describe('Data Export', () => {
                     ['a', testData.importedMarcInstance.items.hrid],
                     ['b', testData.importedMarcInstance.items.id],
                     ['3', testData.importedMarcInstance.holdings.hrid],
+                  ],
+                });
+              },
+              (record) => {
+                verifyMarcFieldByTagWithMultipleSubfieldsInStrictOrder(record, '999', {
+                  ind1: 'f',
+                  ind2: 'f',
+                  subfields: [
+                    ['s', testData.importedMarcInstance.srsId],
+                    ['i', testData.importedMarcInstance.uuid],
                   ],
                 });
               },

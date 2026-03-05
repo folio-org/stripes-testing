@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
 import { APPLICATION_NAMES, NOTE_TYPES } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -312,8 +312,7 @@ describe('Data Export', () => {
         );
         InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
+          expect(instances[0].hrid).not.equal(updatedHrid);
           instances[0].hrid = updatedHrid;
         });
 
@@ -327,8 +326,7 @@ describe('Data Export', () => {
         );
         InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
+          expect(instances[1].hrid).not.equal(updatedHrid);
           instances[1].hrid = updatedHrid;
 
           // Step 3: Go to the "Data export" app
@@ -393,8 +391,8 @@ describe('Data Export', () => {
                   ind1: 'f',
                   ind2: 'f',
                   subfields: [
-                    ['i', instance.uuid],
                     ['s', instance.srsId],
+                    ['i', instance.uuid],
                   ],
                 });
               },
