@@ -120,7 +120,7 @@ describe('Inventory', () => {
           testData.searchQueriesLinkText.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
-            InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
+            InventorySearchAndFilter.executeSearch(`electronicAccess all "${query}"`);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
@@ -136,7 +136,7 @@ describe('Inventory', () => {
           testData.searchQueriesUrlPublicNote.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
-            InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
+            InventorySearchAndFilter.executeSearch(`electronicAccess all "${query}"`);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });

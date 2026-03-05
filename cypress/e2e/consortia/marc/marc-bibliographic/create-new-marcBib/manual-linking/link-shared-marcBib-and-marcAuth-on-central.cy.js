@@ -58,6 +58,7 @@ describe('MARC', () => {
         before('Create users, data', () => {
           cy.getAdminToken();
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422141');
+          InventoryInstances.deleteInstanceByTitleViaApi('C422141');
 
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,

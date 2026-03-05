@@ -1127,7 +1127,7 @@ export default {
   },
 
   verifyUserRolesCounter(expectedCount) {
-    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+    cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
   },
 
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {
