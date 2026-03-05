@@ -71,7 +71,7 @@
     "eslint-plugin-cypress": "^2.11.2",
     "find-test-names": "^1.28.28",
     "fs-extra": "7.0.1",
-    "glob": "^13.0.5",
+    "glob": "10.4.5",
     "globby": "^11.1.0",
     "husky": "^8.0.3",
     "json-2-csv": "^5.0.1",
