@@ -4,7 +4,10 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import Users from '../../../../support/fragments/users/users';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
-import getRandomPostfix, { randomFourDigitNumber, getRandomLetters } from '../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  randomFourDigitNumber,
+  getRandomLetters,
+} from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 

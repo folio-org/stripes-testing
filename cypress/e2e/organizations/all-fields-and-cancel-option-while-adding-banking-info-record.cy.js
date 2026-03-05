@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
@@ -83,7 +84,7 @@ describe('Organizations', () => {
     'C423519 Verifying all fields and "Cancel" option while adding "Banking information" record (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C423519'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsPresent();
       Organizations.editOrganization();

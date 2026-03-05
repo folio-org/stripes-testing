@@ -1,8 +1,8 @@
-import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
@@ -10,12 +10,12 @@ describe('Organizations', () => {
   const resetFiltersMessage = 'Choose a filter or enter a search query to show results.';
   const organizations = [
     {
-      ...newOrganization.defaultUiOrganizations,
+      ...NewOrganization.defaultUiOrganizations,
       name: `Test Organization 1 ${Date.now()}`,
       code: `${getRandomPostfix()}_1`,
     },
     {
-      ...newOrganization.defaultUiOrganizations,
+      ...NewOrganization.defaultUiOrganizations,
       name: `Test Organization 2 ${Date.now()}`,
       code: `${getRandomPostfix()}_2`,
     },
@@ -28,7 +28,7 @@ describe('Organizations', () => {
         org.id = orgId;
       });
     });
-    cy.createTempUser([permissions.uiOrganizationsView.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -50,17 +50,17 @@ describe('Organizations', () => {
     { tags: ['extendedPath', 'thunderjet', 'C451606'] },
     () => {
       Organizations.verifyNoResultMessage(resetFiltersMessage);
-      Organizations.searchByParameters('Name', organizations[0].name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organizations[0].name);
       Organizations.selectOrganization(organizations[0].name);
       Organizations.closeDetailsPane();
       Organizations.resetFilters();
       Organizations.verifyNoResultMessage(resetFiltersMessage);
-      Organizations.selectActiveStatus();
-      Organizations.searchByParameters('Name', organizations[0].name);
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
+      OrganizationsSearchAndFilter.searchByParameters('Name', organizations[0].name);
       Organizations.checkSearchResults(organizations[0]);
       Organizations.selectOrganization(organizations[0].name);
       Organizations.checkOrganizationInfo(organizations[0]);
-      Organizations.searchByParameters('Name', organizations[1].name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organizations[1].name);
       Organizations.checkSearchResults(organizations[1]);
       Organizations.selectOrganization(organizations[1].name);
       Organizations.checkOrganizationInfo(organizations[1]);
