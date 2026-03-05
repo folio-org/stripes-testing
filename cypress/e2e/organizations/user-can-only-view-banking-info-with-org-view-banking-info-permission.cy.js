@@ -1,6 +1,7 @@
 import { APPLICATION_NAMES, CAPABILITY_ACTIONS, CAPABILITY_TYPES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -93,7 +94,7 @@ describe('Organizations', () => {
       cy.login(user.username, user.password);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
       Organizations.waitLoading();
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsPresent();
       Organizations.checkBankInformationExist(bankingInformation.bankName);
@@ -113,7 +114,7 @@ describe('Organizations', () => {
           cy.login(user.username, user.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
           Organizations.waitLoading();
-          Organizations.searchByParameters('Name', organization.name);
+          OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
           Organizations.selectOrganization(organization.name);
           Organizations.verifyBankingInformationAccordionIsPresent();
           Organizations.editOrganization();

@@ -65,7 +65,7 @@ describe('Inventory', () => {
       'C813025 Search for Item by UUID field using "Keyword" and "Item UUID" search options (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C813025'] },
       () => {
-        // Step 1: Search for item using item UUID with "Keyword" search option
+        // Step 1: Search for an item by UUID using the “Keyword” search option
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
@@ -73,17 +73,83 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(itemUuids[0]);
         ItemRecordView.verifyHrid(itemHrids[0]);
 
-        // Step 2: Close item detail view and select "Item UUID" search option
+        // Step 2: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 3: Search for an item by UUID via the “Keyword” search option with a leading space
+        InventoryInstances.searchByTitle(` ${itemUuids[0]}`);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 4: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 5: Search for an item by UUID via the “Keyword” search option with a trailing space
+        InventoryInstances.searchByTitle(`${itemUuids[0]}  `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 6. Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 7:  Search for an item by UUID via the “Keyword” search option with a leading and trailing spaces
+        InventoryInstances.searchByTitle(` ${itemUuids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 8: Close item detail view and select "Item UUID" search option
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.selectSearchOption(searchOptions.itemUuid);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemUuid);
 
-        // Step 3: Search for item using item UUID with "Item UUID" search option
+        // Step 9: Search for item using item UUID via the "Item UUID" search option
         InventoryInstances.searchByTitle(itemUuids[0]);
         ItemRecordView.verifyHrid(itemHrids[0]);
 
-        // Step 4: Repeat test with additional item UUIDs
+        // Step 10: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 11: Search for item using item UUID via the "Item UUID" search option with leading space
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemUuid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemUuid);
+        InventoryInstances.searchByTitle(`  ${itemUuids[0]}`);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 12: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 13: Search for item using item UUID via the "Item UUID" search option with trailing space
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemUuid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemUuid);
+        InventoryInstances.searchByTitle(`${itemUuids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 14: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 15: Search for item using item UUID via the "Item UUID" search option with leading and trailing spaces
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemUuid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemUuid);
+        InventoryInstances.searchByTitle(` ${itemUuids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 16: Repeat test with additional item UUIDs
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
         InventoryInstances.searchByTitle(itemUuids[1]);

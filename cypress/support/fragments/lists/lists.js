@@ -827,7 +827,9 @@ const QueryBuilder = {
 
   cancelQueryBuilder() {
     cy.wait(500);
-    cy.xpath('.//*[contains(@class, "LayerRoot") and @aria-label="Build query"]//button[.="Cancel"]').click();
+    cy.xpath(
+      './/*[contains(@class, "LayerRoot") and @aria-label="Build query"]//button[.="Cancel"]',
+    ).click();
     cy.wait(500);
   },
 
@@ -838,11 +840,13 @@ const QueryBuilder = {
         cy.wait(1000);
         if (locator) {
           cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).should('exist');
-          cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`).then(($index) => {
-            columnNumber = $index;
-          }).then(() => {
-            cy.log(`Column number is: ${columnNumber}`);
-          });
+          cy.xpath(`count(//div[@id="${locator}"]/preceding-sibling::div)`)
+            .then(($index) => {
+              columnNumber = $index;
+            })
+            .then(() => {
+              cy.log(`Column number is: ${columnNumber}`);
+            });
         }
       })
       .then(() => {

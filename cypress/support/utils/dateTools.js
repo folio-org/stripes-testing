@@ -392,7 +392,17 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 2;
-    const ampm = hours >= 12 ? 'P' : 'A';
+
+    // Handle minute overflow
+    if (minutes >= 60) {
+      hours += Math.floor(minutes / 60);
+      minutes %= 60;
+    }
+
+    // Handle hour overflow - needed for correct AM/PM calculation
+    hours %= 24;
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
@@ -403,7 +413,17 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 3;
-    const ampm = hours >= 12 ? 'P' : 'A';
+
+    // Handle minute overflow
+    if (minutes >= 60) {
+      hours += Math.floor(minutes / 60);
+      minutes %= 60;
+    }
+
+    // Handle hour overflow - needed for correct AM/PM calculation
+    hours %= 24;
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;

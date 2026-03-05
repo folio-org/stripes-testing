@@ -5,6 +5,7 @@ import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let userId;
@@ -52,7 +53,7 @@ describe('Organizations', () => {
     'C350758 Verify if a User can not set and edit EDI convention in Organization Integration (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'C350758', 'shiftLeft'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
 

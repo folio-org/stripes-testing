@@ -1,7 +1,4 @@
-import {
-  PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS,
-  REQUEST_METHOD,
-} from '../constants';
+import { PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS, REQUEST_METHOD } from '../constants';
 import { ConsortiumUtils } from '../utils';
 
 Cypress.Commands.add('getConsortiaId', (options = {}) => {
@@ -17,17 +14,19 @@ Cypress.Commands.add('getConsortiaId', (options = {}) => {
     return cy.wrap(cached);
   }
 
-  return cy.okapiRequest({
-    method: 'GET',
-    path: 'consortia',
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    const consortiumId = body.consortia[0].id;
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'consortia',
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      const consortiumId = body.consortia[0].id;
 
-    Cypress.env('activeConsortiumId', consortiumId);
+      Cypress.env('activeConsortiumId', consortiumId);
 
-    return consortiumId;
-  });
+      return consortiumId;
+    });
 });
 
 Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUserId) => {
@@ -155,12 +154,7 @@ Cypress.Commands.add('getAllTenants', () => {
   https://s3.amazonaws.com/foliodocs/api/mod-consortia/s/publications.html#operation/publishRequests
  */
 Cypress.Commands.add('initPublishCoordinatorRequest', (publication) => {
-  const {
-    method,
-    payload,
-    tenants,
-    url,
-  } = publication;
+  const { method, payload, tenants, url } = publication;
 
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
@@ -188,11 +182,7 @@ Cypress.Commands.add('initPublishCoordinatorRequest', (publication) => {
  */
 Cypress.Commands.add('initShareSettingPublication', (publication, options = {}) => {
   const { method = REQUEST_METHOD.POST } = options;
-  const {
-    url,
-    settingId,
-    payload,
-  } = publication;
+  const { url, settingId, payload } = publication;
 
   cy.getConsortiaId().then((consortiaId) => {
     const baseUrl = `consortia/${consortiaId}/sharing/settings`;
@@ -208,11 +198,11 @@ Cypress.Commands.add('initShareSettingPublication', (publication, options = {}) 
       },
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
-      const id = (
+      const id =
         method === REQUEST_METHOD.DELETE
           ? body[PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS.DELETE]
-          : body[PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS.CREATE] || body[PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS.UPDATE]
-      );
+          : body[PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS.CREATE] ||
+            body[PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS.UPDATE];
 
       return { id };
     });

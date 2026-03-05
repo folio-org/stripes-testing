@@ -7,7 +7,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 
-describe('orders: Test PO search', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };

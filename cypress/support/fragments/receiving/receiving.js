@@ -44,6 +44,7 @@ const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
+const titleLookUpButton = Button('Title look-up');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -644,9 +645,13 @@ export default {
     cy.do(Button('New').click());
   },
 
+  clickTitleLookUpButton() {
+    cy.do(titleLookUpButton.click());
+  },
+
   fillTitleLookup(titleName) {
     cy.do([
-      Button('Title look-up').click(),
+      titleLookUpButton.click(),
       Modal('Select instance')
         .find(TextField({ name: 'query' }))
         .fillIn(titleName),
