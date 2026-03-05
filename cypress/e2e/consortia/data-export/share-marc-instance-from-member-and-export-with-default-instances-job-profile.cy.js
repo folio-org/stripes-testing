@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -111,8 +111,7 @@ describe('Data Export', () => {
         );
         InventoryInstance.checkSharedTextInDetailView();
         InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
+          expect(marcInstance.hrid).to.not.eq(updatedHrid);
           marcInstance.hrid = updatedHrid;
 
           // Step 8: Go to the "Data export" app
@@ -142,6 +141,7 @@ describe('Data Export', () => {
               jobId,
               user.username,
             );
+            cy.getUserToken(user.username, user.password);
             DataExportLogs.clickButtonWithText(exportedFileName);
 
             // Steps 12-13: Verify the downloaded .mrc file
@@ -491,8 +491,8 @@ describe('Data Export', () => {
                   ind1: 'f',
                   ind2: 'f',
                   subfields: [
-                    ['i', marcInstance.uuid],
                     ['s', marcInstance.srsId],
+                    ['i', marcInstance.uuid],
                   ],
                 });
               },

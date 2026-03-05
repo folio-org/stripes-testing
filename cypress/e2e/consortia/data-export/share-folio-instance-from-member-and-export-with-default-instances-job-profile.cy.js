@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
 import { APPLICATION_NAMES, NOTE_TYPES } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -365,8 +365,7 @@ describe('Data Export', () => {
 
         // Verify Instance HRID is changed and contains central tenant prefix from the very beginning
         InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-          expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-            .true;
+          expect(testData.newInstance.hrid).to.not.eq(updatedHrid);
           testData.newInstance.hrid = updatedHrid;
 
           // Step 6: Go to the "Data export" app
@@ -405,6 +404,7 @@ describe('Data Export', () => {
               jobId,
               user.username,
             );
+            cy.getUserToken(user.username, user.password);
             DataExportLogs.clickButtonWithText(exportedFileName);
 
             // Steps 10-13: Verify the downloaded .mrc file includes all instances

@@ -71,9 +71,13 @@ describe('Bulk-edit', () => {
       { tags: ['criticalPath', 'firebird', 'C440084'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
-        cy.intercept('GET', '*bulk-operations/*').as('uuid');
+        cy.intercept('POST', '*bulk-operations/*/start').as('uuid');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
-        checkResponses('@uuid', numberOfRequests);
+        cy.wait('@uuid').then((interception) => {
+          expect(interception.response.body.errorMessage).to.equal(
+            'Incorrect number of tokens found in record',
+          );
+        });
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(userUUIDsFileName));
         InteractorsTools.dismissCallout(getCalloutContent(userUUIDsFileName));
 
