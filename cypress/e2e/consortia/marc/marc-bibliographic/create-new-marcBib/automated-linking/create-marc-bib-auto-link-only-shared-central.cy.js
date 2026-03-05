@@ -5,11 +5,7 @@ import TopMenu from '../../../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix, { getRandomLetters } from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
-import {
-  MARC_AUTHORITY_BROWSE_OPTIONS,
-  APPLICATION_NAMES,
-  INSTANCE_SOURCE_NAMES,
-} from '../../../../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -30,16 +26,13 @@ describe('MARC', () => {
             tag700: '700',
           };
           const testData = {
-            sharedPaneheaderText: 'Derive a new shared MARC bib record',
-            authorityBrowseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
-            sharedLinkText: 'Shared',
             contributorSectionId: 'list-contributors',
-            subjectSectionId: 'list-subject',
-            contributorsAccordionName: 'Contributors',
+            contributorsAccordionName: 'Contributor',
           };
           const bibTitle = `AT_C422155_MarcBibInstance_${randomPostfix}`;
-          const authorityHeadingCentral = `AT_C422155_MarcAuthority_${randomPostfix}_Central`;
-          const authorityHeadingCollege = `AT_C422155_MarcAuthority_${randomPostfix}_College, 1972-`;
+          const marcAuthoritySubfieldACentral = `AT_C422155_MarcAuthority_${randomPostfix}_Central,`;
+          const authorityHeadingCentral = `${marcAuthoritySubfieldACentral} 1972-`;
+          const authorityHeadingCollege = `AT_C422155_MarcAuthority_${randomPostfix}_College`;
           const bibFieldSubfieldA1 = 'Field700_1';
           const bibFieldSubfieldA2 = 'Field700_2';
           const bibNotControllableSubfield1 = 'author';
@@ -50,18 +43,19 @@ describe('MARC', () => {
             'Field 700 has been linked to MARC authority record(s).',
             'Field 700 must be set manually by selecting the link icon.',
           ];
-          const authData = { prefix: randomLetters, startWithNumber: 1 };
+          const authDataCentral = { prefix: randomLetters, startWithNumber: 1 };
+          const authDataCollege = { prefix: randomLetters, startWithNumber: 255 };
           const authorityFieldsCentral = [
             {
               tag: tags.tag100,
-              content: `$a ${authorityHeadingCentral}`,
+              content: `$a ${marcAuthoritySubfieldACentral} $d 1972-`,
               indicators: ['1', '\\'],
             },
           ];
           const authorityFieldsCollege = [
             {
               tag: tags.tag100,
-              content: `$a ${authorityHeadingCollege}, $d 1972-`,
+              content: `$a ${authorityHeadingCollege}`,
               indicators: ['1', '\\'],
             },
           ];
@@ -69,12 +63,12 @@ describe('MARC', () => {
             {
               rowIndex: 5,
               tag: tags.tag700,
-              content: `$a ${bibFieldSubfieldA1} $e ${bibNotControllableSubfield1}`,
+              content: `$a ${bibFieldSubfieldA1} $e ${bibNotControllableSubfield1} $0 ${authDataCentral.prefix}${authDataCentral.startWithNumber}`,
             },
             {
               rowIndex: 6,
               tag: tags.tag700,
-              content: `$a ${bibFieldSubfieldA2} $e ${bibNotControllableSubfield2} $l ${bibNotControllableSubfield2a}`,
+              content: `$a ${bibFieldSubfieldA2} $e ${bibNotControllableSubfield2} $l ${bibNotControllableSubfield2a} $0 ${authDataCollege.prefix}${authDataCollege.startWithNumber}`,
             },
           ];
           const linkedFieldData = {
@@ -82,9 +76,9 @@ describe('MARC', () => {
             tag: newFields[0].tag,
             ind1: '\\',
             ind2: '\\',
-            controlledLetterSubfields: `$a ${authorityHeadingCentral}`,
-            uncontrolledLetterSubfields: bibNotControllableSubfield1,
-            controlledDigitSubfields: `$0 ${authData.prefix}${authData.startWithNumber}`,
+            controlledLetterSubfields: authorityFieldsCentral[0].content,
+            uncontrolledLetterSubfields: `$e ${bibNotControllableSubfield1}`,
+            controlledDigitSubfields: `$0 ${authDataCentral.prefix}${authDataCentral.startWithNumber}`,
             uncontrolledDigitSubfields: '',
           };
           const updatedFifthBoxValue = `$e ${bibNotControllableSubfield1} $e ${newNotControllableSubfield}`;
@@ -112,10 +106,14 @@ describe('MARC', () => {
 
               cy.assignAffiliationToUser(Affiliations.College, user.userId);
 
+              cy.setTenant(Affiliations.College);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C422155');
+
               cy.then(() => {
+                cy.resetTenant();
                 MarcAuthorities.createMarcAuthorityViaAPI(
-                  authData.prefix,
-                  authData.startWithNumber,
+                  authDataCentral.prefix,
+                  authDataCentral.startWithNumber,
                   authorityFieldsCentral,
                 ).then((createdRecordId) => {
                   createdAuthorityIdCentral = createdRecordId;
@@ -124,8 +122,8 @@ describe('MARC', () => {
                 .then(() => {
                   cy.setTenant(Affiliations.College);
                   MarcAuthorities.createMarcAuthorityViaAPI(
-                    authData.prefix,
-                    authData.startWithNumber + 1,
+                    authDataCollege.prefix,
+                    authDataCollege.startWithNumber,
                     authorityFieldsCollege,
                   ).then((createdRecordId) => {
                     createdAuthorityIdCollege = createdRecordId;
@@ -133,11 +131,10 @@ describe('MARC', () => {
                 })
                 .then(() => {
                   cy.setTenant(Affiliations.College);
-                  MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C422155');
-
                   cy.assignPermissionsToExistingUser(user.userId, [
                     Permissions.inventoryAll.gui,
                     Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+                    Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
                   ]);
                 })
                 .then(() => {
@@ -167,7 +164,7 @@ describe('MARC', () => {
             () => {
               InventoryInstance.newMarcBibRecord();
               QuickMarcEditor.updateLDR06And07Positions();
-              QuickMarcEditor.updateExistingField(testData.tag245, `$a ${bibTitle}`);
+              QuickMarcEditor.updateExistingField(tags.tag245, `$a ${bibTitle}`);
 
               newFields.forEach((field) => {
                 MarcAuthority.addNewField(field.rowIndex - 1, field.tag, field.content);
@@ -212,7 +209,7 @@ describe('MARC', () => {
               MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
               MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingCentral);
-              InventoryInstances.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.verifyInstanceTitle(bibTitle);
               InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.MARC);
               InventoryInstance.checkAuthorityAppIconInSection(
@@ -233,7 +230,7 @@ describe('MARC', () => {
               MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
               InventoryInstance.goToPreviousPage();
-              InventoryInstances.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.verifyInstanceTitle(bibTitle);
               InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
                 testData.contributorsAccordionName,
@@ -242,7 +239,7 @@ describe('MARC', () => {
               MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
               InventoryInstance.goToPreviousPage();
-              InventoryInstances.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstance.verifyInstanceTitle(bibTitle);
               InventoryInstance.viewSource();
               InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
@@ -252,7 +249,9 @@ describe('MARC', () => {
               MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
               InventoryInstance.goToPreviousPage();
-              InventoryViewSource.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
+              InventoryInstance.verifyInstanceTitle(bibTitle);
+              InventoryInstance.viewSource();
               InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
               InventoryViewSource.clickViewMarcAuthorityIcon();
               MarcAuthorities.waitLoading();

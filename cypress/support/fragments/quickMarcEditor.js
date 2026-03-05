@@ -3588,4 +3588,14 @@ export default {
     );
     cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
   },
+
+  verifyAuthorityIdForViewAuthorityIcon(tag, authorityId, rowIndex = null) {
+    const targetField = rowIndex
+      ? getRowInteractorByRowNumber(rowIndex)
+      : getRowInteractorByTagName(tag);
+    cy.expect([
+      targetField.find(viewAuthorityIconButton).exists(),
+      targetField.find(Link({ href: including(`/authorities/${authorityId}`) })).exists(),
+    ]);
+  },
 };
