@@ -22,33 +22,33 @@ const testData = {
     QUERY_SEARCH: 'Query search',
   },
   instanceRecords: [
-    'Sleeping in the ground (Test record 1 with linked 800 field)',
-    'Sleeping in the ground (Test record 2 with linked 810 field)',
-    'Sleeping in the ground (Test record 3 with linked 811 field)',
-    'Sleeping in the ground (Test record 4 with linked 830 field)',
+    'C375258 Sleeping in the ground (Test record 1 with linked 800 field)',
+    'C375258 Sleeping in the ground (Test record 2 with linked 810 field)',
+    'C375258 Sleeping in the ground (Test record 3 with linked 811 field)',
+    'C375258 Sleeping in the ground (Test record 4 with linked 830 field)',
   ],
   searchAuthorityQueries: [
-    'Robinson, Peter, 1950-2022',
-    'Robinson & Associates, Inc.',
-    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
-    'Robinson eminent scholar lecture series',
+    'C375258 Robinson, Peter, 1950-2022',
+    'C375258 Robinson & Associates, Inc.',
+    '1938-1988 Jubilee Conference of the Institution of C375258 Agricultural Engineers (1988 : Robinson College, Cambridge)',
+    'C375258 Robinson eminent scholar lecture series',
   ],
   searchQueries: [
-    'series = "Robinson"',
-    'series = "Robinson, Peter," OR series = "Agricultural Engineers Robinson College, Cambridge"',
-    'series == "Robinson eminent scholar lecture series"',
+    'series = "C375258 Robinson"',
+    'series = "C375258 Robinson, Peter," OR series = "C375258 Agricultural Engineers Robinson College, Cambridge"',
+    'series == "C375258 Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, 1950-2022 Inspector Banks series',
-    'Robinson & Associates, Inc.',
-    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
-    'Robinson eminent scholar lecture series',
+    'C375258 Robinson, Peter, 1950-2022 Inspector Banks series',
+    'C375258 Robinson & Associates, Inc.',
+    '1938-1988 Jubilee Conference of the Institution of C375258 Agricultural Engineers (1988 : Robinson College, Cambridge)',
+    'C375258 Robinson eminent scholar lecture series',
   ],
   searchResults: [
-    'Sleeping in the ground (Test record 1 with linked 800 field) : an Inspector Banks novel / Peter Robinson.',
-    'Sleeping in the ground (Test record 2 with linked 810 field) : an Inspector Banks novel / Peter Robinson.',
-    'Sleeping in the ground (Test record 3 with linked 811 field) : an Inspector Banks novel / Peter Robinson.',
-    'Sleeping in the ground (Test record 4 with linked 830 field) : an Inspector Banks novel / Peter Robinson.',
+    'C375258 Sleeping in the ground (Test record 1 with linked 800 field) : an Inspector Banks novel / Peter Robinson.',
+    'C375258 Sleeping in the ground (Test record 2 with linked 810 field) : an Inspector Banks novel / Peter Robinson.',
+    'C375258 Sleeping in the ground (Test record 3 with linked 811 field) : an Inspector Banks novel / Peter Robinson.',
+    'C375258 Sleeping in the ground (Test record 4 with linked 830 field) : an Inspector Banks novel / Peter Robinson.',
   ],
   marcFiles: [
     {
@@ -92,23 +92,24 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.deleteInstanceByTitleViaApi('Sleeping in the ground');
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
-        });
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].id);
+      cy.getAdminToken()
+        .then(() => {
+          InventoryInstances.deleteInstanceByTitleViaApi('C375258');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375258');
+        })
+        .then(() => {
+          testData.marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.recordIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
         });
-      });
       cy.waitForAuthRefresh(() => {
         cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);

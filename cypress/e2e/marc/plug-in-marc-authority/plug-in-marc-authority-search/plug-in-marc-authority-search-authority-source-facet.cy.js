@@ -51,31 +51,34 @@ describe('MARC', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-          testData.preconditionUserId = userProperties.userId;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
 
-          // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166*');
-          DataImport.uploadFileViaApi(
-            marcBibFile.marc,
-            marcBibFile.fileName,
-            marcBibFile.jobProfileToRun,
-          ).then((response) => {
-            testData.createdInstanceId = response[0].instance.id;
-          });
-          marcAuthFiles.forEach((marcFile) => {
+            // make sure there are no duplicate records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166');
+          })
+          .then(() => {
             DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
+              marcBibFile.marc,
+              marcBibFile.fileName,
+              marcBibFile.jobProfileToRun,
             ).then((response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].id);
-              });
+              testData.createdInstanceId = response[0].instance.id;
             });
-            cy.wait(2000);
+            marcAuthFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+              cy.wait(2000);
+            });
           });
-        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,

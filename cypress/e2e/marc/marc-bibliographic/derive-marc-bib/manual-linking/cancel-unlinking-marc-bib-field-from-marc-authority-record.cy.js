@@ -73,7 +73,7 @@ describe('MARC', () => {
         before('Creating user and test data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365603*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365603');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -90,6 +90,7 @@ describe('MARC', () => {
           cy.loginAsAdmin({
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           }).then(() => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
