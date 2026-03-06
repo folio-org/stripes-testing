@@ -15,6 +15,9 @@ const newResourceButton = Button({
 const compareSelectedButton = Button({
   dataTestID: 'resources-actions-dropdown__option-ld.compareSelected',
 });
+const manageProfileSettingsButton = Button({
+  dataTestID: 'resources-actions-dropdown__option-ld.manageProfileSettings',
+});
 const searchSelect = "//select[@id='id-search-select']";
 const searchButton = Button({ dataTestID: 'id-search-button' });
 const workPreviewPanel = "//div[@class='preview-panel']";
@@ -61,6 +64,11 @@ export default {
   openNewHubForm: () => {
     cy.do(actionsHubButton.click());
     cy.do(newHubButton.click());
+  },
+
+  openManageProfileSettings: () => {
+    cy.do(actionsWorkButton.click());
+    cy.do(manageProfileSettingsButton.click());
   },
 
   editWork: () => {
