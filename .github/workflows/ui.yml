@@ -1,19 +1,118 @@
 name: Centralized workflow
 on:
-  - push
   - pull_request
-  - workflow_dispatch
 
 jobs:
-  ui:
-    uses: folio-org/.github/.github/workflows/ui.yml@v1
-    if: github.ref_name == github.event.repository.default_branch || github.event_name != 'push' || github.ref_type == 'tag'
-    secrets: inherit
-    with:
-      jest-enabled: false
-      sonar-enabled: false
-      compile-translations: false
-      generate-module-descriptor: false
-      publish-module-descriptor: false
-      install-before-publish: true
+  install-cypress:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
+        with:
+          # Disable running of tests within install job
+          runTests: false
+
+  set-shared-variables:
+    name: Set shared variables
+    runs-on: ubuntu-latest
+    outputs:
+      specs-list: ${{ steps.format-specs-list.outputs.specs-list }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+      - name: Get changed files
+        id: get-changed-files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          echo "changed-files=$(git diff --name-only -r origin/${{ github.base_ref }}...HEAD | xargs)" >> $GITHUB_OUTPUT
+      - name: List changed files
+        run: |
+            for file in ${{ steps.get-changed-files.outputs.changed-files }}; do
+                echo "$file was changed"
+            done
+      - name: Filter and format changed files for cypress
+        id: format-specs-list
+        shell: python # quicker to use than node, since node would require a longer installation step
+        run: |
+          changed_files = "${{ steps.get-changed-files.outputs.changed-files }}"
+
+          print("changed files:", changed_files)
+
+          import re
+
+
+          complete_specs_list = ''
+
+          for file in changed_files.split():
+            if re.match(r'.+\.cy\.js', file):
+              complete_specs_list += file + ' '
+
+          print("complete specs list:", complete_specs_list)
+          import os
+          output = open(os.environ['GITHUB_OUTPUT'], 'a')
+          output.write("specs-list=" + complete_specs_list + "\n")
+          output.close()
+
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    needs: [set-shared-variables]
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          show-progress: false # spammy
+
+      - name: Install Node ${{ inputs.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          check-latest: true
+          always-auth: true
+
+      - name: Set FOLIO NPM registry
+        run: yarn config set @folio:registry ${{ inputs.folio-npm-registry }}
+
+        # We must check if a yarn.lock exists, as we do not want to add --frozen-lockfile if there is no lockfile.
+      # Just adding this flag when there is no lockfile would normally cause no issues, however, it will prevent a lockfile
+      # from being generated if one does not exist. This breaks publication of the `yarn.lock` artifact (and use of `yarn list`).
+      - name: Check if lockfile should be frozen
+        id: check-yarn-lock
+        run: echo install-args=$(test -f yarn.lock && echo --frozen-lockfile) | tee -a $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: yarn install ${{ steps.check-yarn-lock.outputs.install-args }} --ignore-scripts --non-interactive
+
+      - name: List installed FOLIO package versions
+        run: yarn list --pattern @folio
+
+  cypress-run:
+    runs-on: ubuntu-24.04
+    needs: [install-cypress, install, set-shared-variables]
+    with:
+      specs-list: ${{ needs.set-shared-variables.outputs.specs-list }}
+    strategy:
+      # don't fail the entire matrix on failure
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          parallel: false
+          group: 'UI-Chrome'
+          start: yarn cypress run --spec ${{ needs.set-shared-variables.outputs.specs-list }}
+
+  # version-number:
+  #   # used for module descriptor and publishing to NPM
+  #   needs: [set-shared-variables]
+  #   uses: ./.github/workflows/ui-version-number.yml
+  #   with:
+  #     is-release: ${{ needs.set-shared-variables.outputs.is-release }}
