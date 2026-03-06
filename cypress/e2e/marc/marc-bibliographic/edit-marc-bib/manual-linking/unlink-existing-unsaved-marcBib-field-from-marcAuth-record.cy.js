@@ -120,16 +120,7 @@ describe('MARC', () => {
 
         before('Creating user and test data', () => {
           cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C366552"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366552');
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,

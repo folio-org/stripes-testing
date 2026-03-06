@@ -15,7 +15,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '651',
-      marcValue: 'Clear Creek (Tex.) Place in Texas',
+      marcValue: 'C375270 Clear Creek (Tex.) Place in Texas',
       rowIndex: 20,
       searchOption: 'Keyword',
       instanceTitle: 'Clear Creek and Clear Lake, Tex. [electronic resource].',

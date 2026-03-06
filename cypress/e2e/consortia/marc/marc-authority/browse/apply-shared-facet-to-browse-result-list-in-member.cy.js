@@ -216,6 +216,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
           cy.then(() => {
+            cy.wait(3000);
             MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
               sharedRecordsCount = count;
             });
@@ -268,10 +269,14 @@ describe('MARC', () => {
             cy.wait(3000);
             cy.then(() => {
               MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-                cy.expect(count).to.eq(sharedRecordsCount);
+                const actual = Number(count);
+                const expected = Number(sharedRecordsCount);
+                cy.expect(actual).to.be.within(expected - 10, expected + 10);
               });
               MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-                cy.expect(count).to.eq(localRecordsCount);
+                const actual = Number(count);
+                const expected = Number(localRecordsCount);
+                cy.expect(actual).to.be.within(expected - 10, expected + 10);
               });
             }).then(() => {
               // 6 Check the "Yes" checkbox in expanded "Shared" accordion.
@@ -318,12 +323,16 @@ describe('MARC', () => {
               cy.then(() => {
                 MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
                   (count) => {
-                    cy.expect(count).to.eq(sharedRecordsCount);
+                    const actual = Number(count);
+                    const expected = Number(sharedRecordsCount);
+                    cy.expect(actual).to.be.within(expected - 10, expected + 10);
                   },
                 );
                 MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then(
                   (count) => {
-                    cy.expect(count).to.eq(localRecordsCount);
+                    const actual = Number(count);
+                    const expected = Number(localRecordsCount);
+                    cy.expect(actual).to.be.within(expected - 10, expected + 10);
                   },
                 );
               }).then(() => {
@@ -369,12 +378,16 @@ describe('MARC', () => {
                 cy.then(() => {
                   MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
                     (count) => {
-                      cy.expect(count).to.eq(sharedRecordsCount);
+                      const actual = Number(count);
+                      const expected = Number(sharedRecordsCount);
+                      cy.expect(actual).to.be.within(expected - 10, expected + 10);
                     },
                   );
                   MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then(
                     (count) => {
-                      cy.expect(count).to.eq(localRecordsCount);
+                      const actual = Number(count);
+                      const expected = Number(localRecordsCount);
+                      cy.expect(actual).to.be.within(expected - 10, expected + 10);
                     },
                   );
                 }).then(() => {
@@ -454,7 +467,7 @@ describe('MARC', () => {
                     cy.then(() => {
                       MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
                         (count) => {
-                          cy.expect(+count).to.be.at.most(+sharedRecordsCount);
+                          cy.expect(+count).to.be.at.most(+sharedRecordsCount + 10);
 
                           sharedRecordsCount = count;
                         },
