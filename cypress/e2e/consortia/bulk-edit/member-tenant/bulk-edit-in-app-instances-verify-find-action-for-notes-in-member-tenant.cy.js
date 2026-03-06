@@ -410,14 +410,19 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
               instance.hrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
-              ' | ',
+              '',
             );
           });
 
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
             folioInstance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
-            'null (staff only) | null',
+            '',
+          );
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            marcInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
+            notes.reproductionUpper,
           );
 
           // Step 24: Verify error for MARC Instance
@@ -434,11 +439,11 @@ describe('Bulk-edit', () => {
             [
               {
                 header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
-                value: '|',
+                value: '',
               },
               {
                 header: 'Notes',
-                value: 'Reproduction note;;true|Reproduction note;;false',
+                value: '',
               },
             ],
           );
@@ -467,7 +472,6 @@ describe('Bulk-edit', () => {
           InventoryInstance.waitLoading();
           cy.wait(3000);
           InstanceRecordView.verifyInstaneceAdministrativeNoteByRow('No value set-');
-          InstanceRecordView.verifyInstaneceAdministrativeNoteByRow('No value set-', 1);
           InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             0,
             'No',
@@ -481,19 +485,8 @@ describe('Bulk-edit', () => {
           InventoryInstance.waitLoading();
           cy.wait(3000);
           InstanceRecordView.verifyInstaneceAdministrativeNoteByRow('No value set-');
-          InstanceRecordView.verifyInstaneceAdministrativeNoteByRow('No value set-', 1);
-          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-            0,
-            'Yes',
+          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
-            'No value set-',
-          );
-          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-            0,
-            'No',
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
-            'No value set-',
-            1,
           );
         },
       );

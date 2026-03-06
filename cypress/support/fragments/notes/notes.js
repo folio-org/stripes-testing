@@ -105,4 +105,12 @@ export default {
       notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
     });
   },
+
+  getNotesViaApi(searchParams = { limit: 200 }) {
+    return cy.okapiRequest({
+      path: 'notes',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

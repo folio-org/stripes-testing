@@ -1,5 +1,6 @@
 import Permissions from '../../support/dictionary/permissions';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -25,8 +26,8 @@ describe('Organizations', () => {
     'C353532 Organizations search style and position of pagination (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C353532'] },
     () => {
-      Organizations.verifySearchAndFilterPane();
-      Organizations.selectActiveStatus();
+      OrganizationsSearchAndFilter.verifySearchAndFilterPane();
+      OrganizationsSearchAndFilter.filterByOrganizationStatus('Active');
       Organizations.verifyPagination(50);
       Organizations.clickNextPaginationButton();
       Organizations.clickPreviousPaginationButton();

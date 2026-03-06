@@ -573,6 +573,14 @@ export default {
     this.waitingFileDownload();
   },
 
+  scrollLogsTableTo(direction) {
+    cy.get('body').then(($body) => {
+      if ($body.find('div[class^="mclScrollable"]').length > 0) {
+        cy.get('div[class^="mclScrollable"]').scrollTo(direction, { ensureScrollable: false });
+      }
+    });
+  },
+
   verifyLogsTableHeaders(verification = 'exists') {
     cy.get('div[class^="mclScrollable"]')
       .should('exist')

@@ -13,6 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -84,7 +85,7 @@ describe('orders: Edifact export', () => {
                   path: TopMenu.organizationsPath,
                   waiter: Organizations.waitLoading,
                 });
-                Organizations.searchByParameters('Name', organization.name);
+                OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
                 Organizations.checkSearchResults(organization);
                 Organizations.selectOrganization(organization.name);
                 Organizations.addIntegration();

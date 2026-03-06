@@ -49,7 +49,7 @@ specFiles.forEach((specFile) => {
   testInfo.tests.forEach((info) => {
     const shouldRun = shouldTestRun(parsedGrep, null, info.tags);
     if (shouldRun) {
-      testIds.push(info.tags.filter(tag => tag.startsWith('C') || tag.startsWith('TC')));
+      testIds.push(info.tags.filter((tag) => tag.startsWith('C') || tag.startsWith('TC')));
     }
   });
 });
@@ -89,5 +89,3 @@ fs.writeFile('parallelWorkers.json', JSON.stringify(fileJson), 'utf8', (err) => 
     console.log('File has been written');
   }
 });
-
-

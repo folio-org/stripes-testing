@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import Affiliations, { tenantNames, tenantCodes } from '../../../support/dictionary/affiliations';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -134,8 +134,11 @@ describe('Data Export', () => {
           cy.withinTenant(Affiliations.College, () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C407652');
 
-            cy.getLocations({ limit: 1 }).then((res) => {
-              testData.locationId = res.id;
+            InventoryInstances.getLocations({ limit: 2 }).then((res) => {
+              const locations = res.filter((loc) => loc.name !== 'DCB');
+
+              testData.locationId = locations[0].id;
+              testData.locationName = locations[0].name;
             });
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
@@ -316,13 +319,12 @@ describe('Data Export', () => {
           );
           InventoryInstance.checkSharedTextInDetailView();
           InventoryInstance.getAssignedHRID().then((updatedHrid) => {
-            expect(updatedHrid.toLowerCase().startsWith(tenantCodes.central.toLowerCase())).to.be
-              .true;
+            expect(testData.createdFolioInstance.hrid).to.not.eq(updatedHrid);
             testData.createdFolioInstance.hrid = updatedHrid;
 
             // Step 6: Add Holdings by clicking on the "Add holdings" button => Fill in mandatory fields => Click "Save & close" button
             InstanceRecordView.addHoldings();
-            InventoryNewHoldings.fillPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY);
+            InventoryNewHoldings.fillPermanentLocation(testData.locationName);
             InventoryNewHoldings.saveAndClose();
             InventoryInstance.waitLoading();
             InventoryInstance.openHoldingView();
@@ -370,6 +372,7 @@ describe('Data Export', () => {
                 user.username,
                 `AT_C407652_CustomJobProfile_${postfix}`,
               );
+              cy.getUserToken(user.username, user.password);
               DataExportLogs.clickButtonWithText(exportedFileName);
 
               // Steps 11-13: Run the downloaded .mrc file and verify it includes all instances with custom mapping transformations

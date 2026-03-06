@@ -4,6 +4,7 @@ import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = {
@@ -43,12 +44,12 @@ describe('Organizations', () => {
     'C730 Make existing organization a Vendor (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C730'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();
       Organizations.selectVendor();
       Organizations.addVendorInformation(vendorInformation);
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
     },
   );
 });
