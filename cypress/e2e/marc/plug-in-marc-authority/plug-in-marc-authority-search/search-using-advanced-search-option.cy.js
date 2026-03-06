@@ -18,18 +18,18 @@ describe('MARC', () => {
         },
         instanceTitle: 'C380573',
         authTitles: [
-          'Ouyang, Hui',
-          'Dunning, Mike',
-          'Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
-          'Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
+          'C380573 Ouyang, Hui',
+          'C380573 Dunning, Mike',
+          'C380573 Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+          'C380573 Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
         ],
         advancesSearchQuery:
-          'identifiers.value exactPhrase n  80094057 or personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+          'identifiers.value exactPhrase n  80094057380573 or personalNameTitle exactPhrase C380573 Dunning, Mike or corporateNameTitle exactPhrase C380573 Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase C380573 Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
         partialAdvancesSearchQuery:
-          'personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+          'personalNameTitle exactPhrase C380573 Dunning, Mike or corporateNameTitle exactPhrase C380573 Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase C380573 Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
         authRows: {
           interboroughAuth: {
-            title: 'Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
+            title: 'C380573 Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
             tag: '110',
           },
         },
@@ -61,60 +61,44 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
-          testData.authTitles.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id, true);
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            InventoryInstances.deleteInstanceByTitleViaApi('C380573');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380573');
+          })
+          .then(() => {
+            testData.marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  if (
+                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                  ) {
+                    testData.instanceIDs.push(record[marcFile.propertyName].id);
+                  } else {
+                    testData.authorityIDs.push(record[marcFile.propertyName].id);
+                  }
                 });
-              }
-            });
-          });
-
-          testData.marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                if (
-                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                ) {
-                  testData.instanceIDs.push(record[marcFile.propertyName].id);
-                } else {
-                  testData.authorityIDs.push(record[marcFile.propertyName].id);
-                }
               });
             });
+          })
+          .then(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
+            InventoryInstances.searchByTitle(testData.instanceIDs[0]);
+            InventoryInstances.selectInstanceById(testData.instanceIDs[0]);
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
           });
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-            authRefresh: true,
-          });
-          InventoryInstances.searchByTitle(testData.instanceTitle);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-        });
       });
 
       after('Deleting created user', () => {
