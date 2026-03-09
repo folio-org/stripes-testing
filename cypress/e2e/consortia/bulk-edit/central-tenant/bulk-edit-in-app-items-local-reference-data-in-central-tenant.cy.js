@@ -80,7 +80,6 @@ const userPermissions = [
   permissions.bulkEditEdit.gui,
   permissions.uiInventoryViewCreateEditItems.gui,
 ];
-let headerValuesToVerify;
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -252,7 +251,7 @@ describe('Bulk-edit', () => {
           );
 
           // Initialize header values to verify across all forms
-          headerValuesToVerify = [
+          const headerValuesToVerify = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
               value: localLoanType.name,

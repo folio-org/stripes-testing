@@ -32,8 +32,6 @@ let locationId;
 let sourceId;
 let statisticalCodeTypeId;
 let illPolicyId;
-let holdingId;
-let holdingHrid;
 const folioInstance = {
   title: `AT_C926165_FolioInstance_${getRandomPostfix()}`,
 };
@@ -81,7 +79,6 @@ const userPermissions = [
   permissions.bulkEditEdit.gui,
   permissions.uiInventoryViewCreateEditHoldings.gui,
 ];
-let headerValuesToVerify;
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -189,10 +186,13 @@ describe('Bulk-edit', () => {
                 ],
                 sourceId,
               }).then((holding) => {
-                holdingId = holding.id;
-                holdingHrid = holding.hrid;
+                folioInstance.holdingId = holding.id;
+                folioInstance.holdingHrid = holding.hrid;
 
-                FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdingId);
+                FileManager.createFile(
+                  `cypress/fixtures/${holdingUUIDsFileName}`,
+                  folioInstance.holdingId,
+                );
               });
 
               cy.resetTenant();
@@ -208,7 +208,7 @@ describe('Bulk-edit', () => {
       after('delete test data', () => {
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-        cy.deleteHoldingRecordViaApi(holdingId);
+        cy.deleteHoldingRecordViaApi(folioInstance.holdingId);
         HoldingsNoteTypes.deleteViaApi(localHoldingNoteType.id);
         HoldingsTypes.deleteViaApi(localHoldingsType.id);
         StatisticalCodes.deleteViaApi(localStatisticalCode.id);
@@ -231,7 +231,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyMatchedResults(holdingHrid);
+          BulkEditSearchPane.verifyMatchedResults(folioInstance.holdingHrid);
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             localHoldingNoteType.name,
@@ -243,7 +243,7 @@ describe('Bulk-edit', () => {
           );
 
           // Initialize header values to verify across all forms
-          headerValuesToVerify = [
+          const headerValuesToVerify = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TYPE,
               value: localHoldingsType.name,
@@ -268,12 +268,12 @@ describe('Bulk-edit', () => {
           ];
 
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_MATCHED,
-            holdingHrid,
+            folioInstance.holdingHrid,
             localUrlRelationship1.name,
             electronicAccessFields.uri,
             electronicAccessFields.linkText,
@@ -290,7 +290,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
             fileNames.matchedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
           BulkEditFiles.verifyValueInRowByUUID(
@@ -298,7 +298,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
             holdingElectronicAccessFieldsInFile,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
           );
 
           // Step 3: Open bulk edit form
@@ -325,7 +325,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.ARE_YOU_SURE,
-            holdingHrid,
+            folioInstance.holdingHrid,
             localUrlRelationship2.name,
             electronicAccessFields.uri,
             electronicAccessFields.linkText,
@@ -335,7 +335,7 @@ describe('Bulk-edit', () => {
 
           // Step 6: Verify local reference data in preview
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
 
@@ -347,7 +347,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
             fileNames.previewRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
           BulkEditFiles.verifyValueInRowByUUID(
@@ -355,7 +355,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
             editedHoldingElectronicAccessFieldsInFile,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
           );
 
           // Step 8: Commit changes
@@ -364,7 +364,7 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyElectronicAccessTableInForm(
             BULK_EDIT_FORMS.PREVIEW_OF_RECORDS_CHANGED,
-            holdingHrid,
+            folioInstance.holdingHrid,
             localUrlRelationship2.name,
             electronicAccessFields.uri,
             electronicAccessFields.linkText,
@@ -374,7 +374,7 @@ describe('Bulk-edit', () => {
 
           // Step 9: Verify local reference data in changed records preview
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
 
@@ -385,7 +385,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
             fileNames.changedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
             headerValuesToVerify,
           );
           BulkEditFiles.verifyValueInRowByUUID(
@@ -393,7 +393,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
             editedHoldingElectronicAccessFieldsInFile,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-            holdingHrid,
+            folioInstance.holdingHrid,
           );
 
           // Step 11: Switch to member tenant and verify changes

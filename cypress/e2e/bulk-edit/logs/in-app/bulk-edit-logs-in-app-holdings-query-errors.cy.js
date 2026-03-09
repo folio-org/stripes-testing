@@ -14,7 +14,6 @@ import QueryModal, {
   booleanOperators,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-// import FileManager from '../../../../support/utils/fileManager';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import getRandomPostfix from '../../../../support/utils/stringTools';
