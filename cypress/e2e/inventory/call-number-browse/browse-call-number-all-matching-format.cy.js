@@ -29,16 +29,24 @@ describe('Inventory', () => {
       'Y4.F66/2:Af1/32/rev.',
       'GROUP Autotest A.',
     ];
+    const heldbyAccordionName = 'Held by';
     let instanceTypeId;
     let locationId;
     let holdingTypeId;
     let loanTypeId;
     let materialTypeId;
     let user;
+    let currentTenantName;
 
     before('Create test data', () => {
       cy.getAdminToken();
       InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C466213');
+
+      cy.ifConsortia(true, () => {
+        cy.getTenantNameInMemberRun().then((tenantName) => {
+          currentTenantName = tenantName;
+        });
+      });
 
       cy.then(() => {
         cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
@@ -116,7 +124,21 @@ describe('Inventory', () => {
       () => {
         callNumbers.forEach((callNumber) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.toggleAccordionByName(heldbyAccordionName);
+          InventorySearchAndFilter.selectMultiSelectFilterOption(
+            heldbyAccordionName,
+            currentTenantName,
+          );
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+            heldbyAccordionName,
+            currentTenantName,
+          );
+        });
+
+        callNumbers.forEach((callNumber) => {
           BrowseContributors.browse(callNumber);
           BrowseCallNumber.checkSearchResultsTable();
           BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);

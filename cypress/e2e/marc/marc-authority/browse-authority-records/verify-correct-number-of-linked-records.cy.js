@@ -24,10 +24,10 @@ describe('MARC', () => {
         authorized: 'Authorized',
         reference: 'Reference',
         searchAuthorityQueries: [
-          'Dugmore, C. W. (Clifford William)',
-          'Woodson, Jacqueline',
-          'Chin, Staceyann, 1972-',
-          'Lee, Stan, 1922-2018',
+          'C367936 Dugmore, C. W. (Clifford William)',
+          'C367936 Woodson, Jacqueline',
+          'C367936 Chin, Staceyann, 1972-',
+          'C367936 Lee, Stan, 1922-2018',
         ],
       };
 
@@ -36,7 +36,7 @@ describe('MARC', () => {
           marc: 'marcBibFileForC367936_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          title: 'The Journal of ecclesiastical history.',
+          title: 'C367936 The Journal of ecclesiastical history.',
           propertyName: 'instance',
         },
         {
@@ -44,35 +44,35 @@ describe('MARC', () => {
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           title:
-            'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
+            'C367936 Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC367936_1.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          title: 'Dugmore, C. W. (Clifford William)',
+          title: 'C367936 Dugmore, C. W. (Clifford William)',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_2.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          title: 'Woodson, Jacqueline',
+          title: 'C367936 Woodson, Jacqueline',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_3.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          title: 'Chin, Staceyann, 1972-',
+          title: 'C367936 Chin, Staceyann, 1972-',
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC367936_4.mrc',
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          title: 'Lee, Stan, 1922-2018',
+          title: 'C367936 Lee, Stan, 1922-2018',
           propertyName: 'authority',
         },
       ];
@@ -84,7 +84,7 @@ describe('MARC', () => {
             instanseFieldTag: '700',
             instanseFieldRowIndex: 25,
             authorityFieldTag: '100',
-            authorityFieldValue: '$a Dugmore, C. W. $q (Clifford William)',
+            authorityFieldValue: '$a C367936 Dugmore, C. W. $q (Clifford William)',
             authorityTitle: marcFiles[2].title,
           },
           {
@@ -92,7 +92,7 @@ describe('MARC', () => {
             instanseFieldTag: '700',
             instanseFieldRowIndex: 26,
             authorityFieldTag: '100',
-            authorityFieldValue: '$a Woodson, Jacqueline',
+            authorityFieldValue: '$a C367936 Woodson, Jacqueline',
             authorityTitle: marcFiles[3].title,
           },
         ],
@@ -102,7 +102,7 @@ describe('MARC', () => {
             instanseFieldTag: '700',
             instanseFieldRowIndex: 21,
             authorityFieldTag: '100',
-            authorityFieldValue: '$a Woodson, Jacqueline',
+            authorityFieldValue: '$a C367936 Woodson, Jacqueline',
             authorityTitle: marcFiles[3].title,
           },
           {
@@ -110,7 +110,7 @@ describe('MARC', () => {
             instanseFieldTag: '100',
             instanseFieldRowIndex: 11,
             authorityFieldTag: '100',
-            authorityFieldValue: '$a Chin, Staceyann, $d 1972-',
+            authorityFieldValue: '$a C367936 Chin, Staceyann, $d 1972-',
             authorityTitle: marcFiles[4].title,
           },
           {
@@ -118,7 +118,7 @@ describe('MARC', () => {
             instanseFieldTag: '700',
             instanseFieldRowIndex: 22,
             authorityFieldTag: '100',
-            authorityFieldValue: '$a Chin, Staceyann, $d 1972-',
+            authorityFieldValue: '$a C367936 Chin, Staceyann, $d 1972-',
             authorityTitle: marcFiles[4].title,
           },
         ],
@@ -129,9 +129,8 @@ describe('MARC', () => {
 
       before(() => {
         cy.getAdminToken();
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C367936');
+
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((userProperties) => {
             preconditionUserId = userProperties.userId;
@@ -287,10 +286,15 @@ describe('MARC', () => {
 
           MarcAuthorityBrowse.searchBy(
             testData.personalNameSearchOption,
-            'Dugmore, Clifford William',
+            'C367936 Dugmore, Clifford William',
           );
-          MarcAuthorityBrowse.checkResultWithValue(testData.reference, 'Dugmore, Clifford William');
-          MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue('Dugmore, Clifford William');
+          MarcAuthorityBrowse.checkResultWithValue(
+            testData.reference,
+            'C367936 Dugmore, Clifford William',
+          );
+          MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue(
+            'C367936 Dugmore, Clifford William',
+          );
 
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[5].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[5].title);

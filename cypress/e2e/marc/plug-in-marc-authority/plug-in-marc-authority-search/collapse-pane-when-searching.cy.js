@@ -108,6 +108,10 @@ describe('MARC', () => {
           MarcAuthoritiesSearch.collapseSearchPane();
           MarcAuthoritiesSearch.verifySearchPaneIsCollapsed(true);
           MarcAuthoritiesSearch.clickShowFilters();
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthoritiesSearch.clickSearchButton();
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthoritiesSearch.collapseSearchPane();
