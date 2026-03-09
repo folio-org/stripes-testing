@@ -112,8 +112,13 @@ describe('Bulk-edit', () => {
         cy.logout();
 
         // Step 6: Relog into FOLIO with updated capability sets and navigate to Bulk edit
-        cy.login(user.username, user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        cy.waitForAuthRefresh(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          cy.reload();
+        });
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
 

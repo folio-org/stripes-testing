@@ -95,6 +95,7 @@ describe('OAI-PMH', () => {
         // Step 4-5: Delete holdings via Actions → Delete and confirm
         HoldingsRecordView.delete();
         InventoryInstance.waitLoading();
+        cy.wait(2000); // Wait to ensure deletion is registered before verification
         InventoryInstance.verifyHoldingsAbsent(testData.locationName);
 
         // Step 6: Send ListRecords request with date range and verify instance appears
