@@ -224,13 +224,13 @@ Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
     cy.do([
       TextInput('Username').fillIn(username),
       TextInput('Password').fillIn(password),
-      Button({ name: 'login' }).click(),
+      Button({ id: 'clickable-login' }).click(),
     ]);
   } else {
     cy.do([
       TextField('Username').fillIn(username),
       TextField('Password').fillIn(password),
-      Button('Log in').click(),
+      Button({ id: 'clickable-login' }).click(),
     ]);
   }
 });
