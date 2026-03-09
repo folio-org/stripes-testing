@@ -1,4 +1,3 @@
-
 const manageProfileSettingsPage = "//div[@data-testid='manage-profile-settings']";
 const profilesSection = "//div[@data-testid='profiles-list']";
 const editorSection = "//div[@data-testid='profile-settings-editor']";
@@ -13,8 +12,8 @@ const customProfileSettingsRadio = "//input[@data-testid='settings-active-custom
 
 const selectedList = "//div[@data-testid='selected-component-list']";
 const unusedList = "//div[@data-testid='unused-component-list']";
+const unusedContainer = "//div[@data-droppable-id='unused-container']";
 const profileComponent = "div.component";
-const draggingComponent = "//div[contains(@class, 'component') and contains(@class, 'dragging')]"
 const componentActivateMenu = "//button[@data-testid='activate-menu']";
 const componentMoveAction = "//button[@data-testid='move-action']";
 const componentNudgeUp = "//button[@data-testid='nudge-up']";
@@ -36,40 +35,98 @@ const center = (el) => {
   return { x: Math.floor(r.left + r.width / 2), y: Math.floor(r.top + r.height / 2) };
 };
 
-const dragDrop = (dragTarget, dragTargetList, dropTarget, dropTargetList) => {
+const doDrag = (node, endCoords) => {
+  // The dnd-kit DragOverlay makes things work more smoothly, but in
+  // this context it adds an extra burden of replacing the original
+  // object with the drag overlay, which may have a markedly different
+  // position compared to the original object. We need to calculate
+  // the difference between them in order to move the overlay over the
+  // original start before finally moving to the target object. The
+  // mouse pointer does not actually move, so we have to acquire the
+  // position of the overlay to make the coordinate calculations.
+  cy.wrap(node)
+    .realMouseMove(0, 0, { position: 'center', steps: 6 })
+    .realMouseDown({ button: 'left' })
+    .realMouseMove(0, 1, { position: 'center', steps: 2 })
+    .then(($el) => {
+      const doc = $el[0].ownerDocument;
+      const overlay = doc.querySelector('.drag-overlay')
+      const ov = center(overlay);
+
+      const dx = endCoords.x - ov.x;
+      const dy = endCoords.y - ov.y;
+
+      return { dx, dy };
+    }).then(({ dx, dy }) => {
+      cy.wrap(node)
+        .realMouseMove(dx, dy, { position: 'center', steps: 14 })
+        .wait(200)
+        .realMouseUp({ button: 'left' });
+    });
+};
+
+const dragDropGeneral = (dragTarget, dragTargetList, dropTarget) => {
   cy.xpath(dragTargetList)
-    .xpath(component(dragTarget, '', true)).then(($drag) => {
+    .xpath(component(dragTarget, '', true)).then((drag) => {
+      cy.xpath(dropTarget).then((drop) => {
+        const end = center(drop[0]);
+        doDrag(drag, end);
+      });
+    });
+};
+
+const dragDropList = (dragTarget, dragTargetList, dropTarget, dropTargetList) => {
+  cy.xpath(dragTargetList)
+    .xpath(component(dragTarget, '', true)).then((drag) => {
       cy.xpath(dropTargetList)
-        .xpath(component(dropTarget, '', true)).then(($drop) => {
-          const end = center($drop[0]);
-
-          // The dnd-kit DragOverlay makes things work more smoothly, but in
-          // this context it adds an extra burden of replacing the original
-          // object with the drag overlay, which may have a markedly different
-          // position compared to the original object. We need to calculate
-          // the difference between them in order to move back to the start,
-          // before finally moving to the target object.
-          cy.wrap($drag)
-            .realMouseMove(0, 0, { position: 'center', steps: 6 })
-            .realMouseDown({ button: 'left' })
-            .realMouseMove(0, 1, { position: 'center', steps: 2 })
-            .then(($el) => {
-              const doc = $el[0].ownerDocument;
-              const overlay = doc.querySelector('.drag-overlay')
-              const ov = center(overlay);
-
-              const dx = end.x - ov.x;
-              const dy = end.y - ov.y;
-
-              return { dx, dy };
-            }).then(({ dx, dy }) => {
-              cy.wrap($drag)
-                .realMouseMove(dx, dy, { position: 'center', steps: 14 })
-                .wait(200)
-                .realMouseUp({ button: 'left' });
-            });
+        .xpath(component(dropTarget, '', true)).then((drop) => {
+          const end = center(drop[0]);
+          doDrag(drag, end);
         });
     });
+};
+
+const getComponentPosition = (id, list) => {
+  return cy.xpath(list)
+    .find(profileComponent)
+    .then((els) => {
+      const idx = els.toArray().findIndex((el) => {
+        const val = el.getAttribute('data-testid');
+        return val === `component-${id}`;
+      });
+      return idx;
+    });
+};
+
+const getListLength = (list) => {
+  return cy
+    .xpath(list)
+    .find(profileComponent)
+    .its('length')
+    .then((count) => {
+      return count;
+    });
+}
+
+const keyBackToStartingPosition = (list, listLength, initialPosition) => {
+  // Keyboard interactions suffer from the same recalibrating overlay
+  // position issue as mouse, and since the mouse isn't involved, it can't be
+  // rectified in the same way with a coordinate diff caluclation. But
+  // switching (non-required) fields between lists should return the horizontal
+  // positioning, then resetting with up arrows to the top of the list
+  // before finally using down arrows to reach the original position
+  // should help put it into the correct original starting position.
+
+  if (list === 'selected') {
+    cy.realPress('ArrowLeft')
+      .realPress('ArrowRight');
+  } else if (list === 'unused') {
+    cy.realPress('ArrowRight')
+      .realPress('ArrowLeft');
+  }
+
+  Cypress._.times(listLength, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
+  Cypress._.times(initialPosition, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
 };
 
 export default {
@@ -142,7 +199,7 @@ export default {
 
   selectProfile: (name) => {
     cy.do(
-      cy.contains('button', name)
+      cy.contains('button', new RegExp(`^${name}$`))
         .scrollIntoView()
         .should('be.visible')
         .click(),
@@ -176,14 +233,18 @@ export default {
     );
   },
 
+  verifySelectedComponent: (id) => {
+    cy.xpath(selectedList).xpath(component(id, '', true)).should('exist');
+  },
+
   verifySelectedComponentPosition: (id, position) => {
-    cy.xpath(selectedList).get(profileComponent).eq(position-1)
+    cy.xpath(selectedList).find(profileComponent).eq(position-1)
       .invoke('attr', 'data-testid').should('eq', `component-${id}`);
     if (position === 1) {
       cy.xpath(component(id, componentNudgeUp))
         .should('not.exist');
     }
-    cy.xpath(selectedList).get(profileComponent).its('length').then((length) => {
+    cy.xpath(selectedList).find(profileComponent).its('length').then((length) => {
       if (position === length) {
         cy.xpath(component(id, componentNudgeDown))
           .should('not.exist');
@@ -191,103 +252,157 @@ export default {
     });
   },
 
+  verifyUnusedComponent: (id) => {
+    cy.xpath(unusedList).xpath(component(id, '', true)).should('exist');
+  },
+
   verifyUnusedComponentPosition: (id, position) => {
-    cy.xpath(unusedList).get(profileComponent).eq(position-1)
+    cy.xpath(unusedList).find(profileComponent).eq(position-1)
       .invoke('attr', 'data-testid').should('eq', `component-${id}`);
   },
 
   dragUnusedComponentAndCancel: (position) => {
     cy.do(
       cy.xpath(unusedList)
-        .get(profileComponent)
+        .find(profileComponent)
         .eq(position-1)
         .realMouseDown({ button: 'left', position: 'center' })
         .realMouseMove(0, 10, { position: 'center' })
         .wait(200),
-      cy.realPress('{esc}'),
+      cy.realPress('Escape'),
     );
   },
 
   dragSelectedComponentAndCancel: (position) => {
     cy.do(
       cy.xpath(selectedList)
-        .get(profileComponent)
+        .find(profileComponent)
         .eq(position-1)
         .realMouseDown({ button: 'left', position: 'center' })
         .realMouseMove(0, 10, { position: 'center' })
         .wait(200),
-      cy.realPress('{esc}'),
+      cy.realPress('Escape'),
     );
   },
 
   dragReorderSelectedComponent: (id, targetId) => {
-    dragDrop(id, selectedList, targetId, selectedList);
+    dragDropList(id, selectedList, targetId, selectedList);
   },
 
-  // test
   dragReorderUnusedComponent: (id, targetId) => {
-    dragDrop(id, unusedList, targetId, unusedList);
+    dragDropList(id, unusedList, targetId, unusedList);
   },
 
-  // test
   dragSelectedToUnused: (id, targetId) => {
-    dragDrop(id, selectedList, targetId, unusedList);
+    dragDropList(id, selectedList, targetId, unusedList);
   },
 
-  // test
   dragSelectedToUnusedContainer: (id) => {
-    // div.unused-container
+    dragDropGeneral(id, selectedList, unusedContainer);
   },
 
-  // test
   dragUnusedToSelected: (id, targetId) => {
-    dragDrop(id, unusedList, targetId, selectedList);
+    dragDropList(id, unusedList, targetId, selectedList);
   },
 
-  // test
-  dragComponentToUndroppableRegion: (id) => {
-    
+  dragSelectedToUndroppableRegion: (id) => {
+    dragDropGeneral(id, selectedList, profilesSection);
   },
 
-  // test
-  keyboardReorderUnusedComponent: () => {
-
+  dragUnusedToUndroppableRegion: (id) => {
+    dragDropGeneral(id, unusedList, profilesSection);
   },
 
-  // test
   keyboardDragUnusedComponentAndCancel: (position) => {
-    // TODO
-    // focus on element somehow?
-    cy.do(
-      cy.xpath(unusedList)
-        .get(profileComponent)
-        .eq(position-1)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
-        .wait(200),
-      cy.realPress(' '),
-      cy.realPress('{downarrow}'),
-      cy.realPress('{downarrow}'),
-      cy.realPress('{esc}'),
-    );
+    cy.xpath(unusedList)
+      .find(profileComponent)
+      .eq(position-1)
+      .focus()
+      .wait(200),
+    cy.realPress(' '),
+    cy.realPress('ArrowDown'),
+    cy.realPress('ArrowDown'),
+    cy.realPress('Escape');
   },
 
-  // test
   keyboardDragSelectedComponentAndCancel: (position) => {
-    // TODO
-    // focus on element somehow?
-    cy.do(
-      cy.xpath(selectedList)
-        .get(profileComponent)
-        .eq(position-1)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
-        .wait(200),
-      cy.realPress(' '),
-      cy.realPress('{downarrow}'),
-      cy.realPress('{downarrow}'),
-      cy.realPress('{esc}'),
-    );
+    cy.xpath(selectedList)
+      .find(profileComponent)
+      .eq(position-1)
+      .focus()
+      .wait(200),
+    cy.realPress(' '),
+    cy.realPress('ArrowDown'),
+    cy.realPress('ArrowDown'),
+    cy.realPress('Escape');
+  },
+
+  keyboardDragReorderSelectedComponent: (id, targetId) => {
+    getListLength(selectedList).then((length) => {
+      getComponentPosition(id, selectedList).then((focusedPosition) => {
+        getComponentPosition(targetId, selectedList).then((targetPosition) => {
+          cy.xpath(selectedList)
+            .xpath(component(id, '', true))
+            .focus();
+          cy.realPress(' ');
+          keyBackToStartingPosition('selected', length, focusedPosition-1);
+          if (focusedPosition < targetPosition) {
+            Cypress._.times(targetPosition - focusedPosition-1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
+          } else if (focusedPosition > targetPosition) {
+            Cypress._.times(focusedPosition - targetPosition-1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
+          }
+          cy.realPress('Enter');
+        });
+      });
+    });
+  },
+
+  keyboardDragReorderUnusedComponent: (id, targetId) => {
+    getListLength(unusedList).then((length) => {
+      getComponentPosition(id, unusedList).then((focusedPosition) => {
+        getComponentPosition(targetId, unusedList).then((targetPosition) => {
+          cy.xpath(unusedList)
+            .xpath(component(id, '', true))
+            .focus();
+          cy.realPress(' ');
+          keyBackToStartingPosition('unused', length, focusedPosition-1);
+          if (focusedPosition < targetPosition) {
+            Cypress._.times(targetPosition - focusedPosition-1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
+          } else if (focusedPosition > targetPosition) {
+            Cypress._.times(focusedPosition - targetPosition-1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
+          }
+          cy.realPress('Enter');
+        });
+      });
+    });
+  },
+
+  keyboardDragSelectedToUnused: (id) => {
+    getListLength(selectedList).then((length) => {
+      getComponentPosition(id, selectedList).then((focusedPosition) => {
+        cy.xpath(selectedList)
+          .xpath(component(id, '', true))
+          .focus();
+        cy.realPress(' ');
+        keyBackToStartingPosition('selected', length, focusedPosition);
+        cy.realPress('ArrowLeft', { pressDelay: 100 });
+        cy.realPress('Enter');
+      });
+    });
+  },
+
+  keyboardDragUnusedToSelected: (id, targetId) => {
+    getListLength(unusedList).then((length) => {
+      getComponentPosition(id, unusedList).then((focusedPosition) => {
+        cy.xpath(unusedList)
+          .xpath(component(id, '', true))
+          .focus();
+        cy.realPress(' ');
+        keyBackToStartingPosition('unused', length, focusedPosition);
+        cy.realPress('ArrowRight', { pressDelay: 100 });
+        cy.realPress('Enter');
+      });
+    });
   },
 
   verifyModalUnsavedOpen: () => {
@@ -338,7 +453,6 @@ export default {
     cy.xpath(modalUnused).should('not.exist')
   },
 
-  // test more thoroughly - leave and come back
   modalUnusedSave: () => {
     cy.xpath(modalUnused)
       .xpath(modalSubmitButton)
