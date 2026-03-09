@@ -2,14 +2,21 @@ import Permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Acquisition Units', () => {
-  const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
+  let user;
+  let membershipUserId;
+  const acquisitionUnit = {
+    ...AcquisitionUnits.defaultAcquisitionUnit,
+    protectDelete: true,
+    protectUpdate: true,
+    protectCreate: true,
+    protectRead: true,
+  };
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `new_autotest_year_${getRandomPostfix()}`,
@@ -17,20 +24,22 @@ describe('Acquisition Units', () => {
     periodBeginDate: DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit(),
     periodEndDate: DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit(),
   };
-  let user;
 
   before(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
-      cy.reload();
-      AcquisitionUnits.waitLoading();
-    }, 20_000);
+    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
+
+      AcquisitionUnits.createAcquisitionUnitViaApi(acquisitionUnit).then((acqUnitResponse) => {
+        acquisitionUnit.id = acqUnitResponse.id;
+
+        FiscalYears.updateFiscalYearViaApi({
+          ...firstFiscalYearResponse,
+          acqUnitIds: [acquisitionUnit.id],
+        });
+      });
     });
+
     cy.createTempUser([
       Permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
       Permissions.uiSettingsFinanceViewEditCreateDelete.gui,
@@ -59,29 +68,24 @@ describe('Acquisition Units', () => {
     ]).then((userProperties) => {
       user = userProperties;
 
-      AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
-      AcquisitionUnits.assignUser(user.username);
+      AcquisitionUnits.assignUserViaApi(userProperties.userId, acquisitionUnit.id).then((id) => {
+        membershipUserId = id;
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fiscalYearPath,
         waiter: FiscalYears.waitForFiscalYearDetailsLoading,
       });
-      FinanceHelp.searchByAll(firstFiscalYear.name);
-      FiscalYears.selectFisacalYear(firstFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.assignAU(defaultAcquisitionUnit.name);
-      FiscalYears.closeThirdPane();
-      FiscalYears.resetFilters();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.acquisitionUnitsPath,
-      waiter: AcquisitionUnits.waitLoading,
+    cy.getAdminToken();
+    AcquisitionUnits.unAssignUserViaApi(membershipUserId);
+    AcquisitionUnits.deleteAcquisitionUnitViaApi(acquisitionUnit.id);
+    FiscalYears.getFiscalYearIdByName(secondFiscalYear.name).then((id) => {
+      FiscalYears.deleteFiscalYearViaApi(id);
     });
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
     Users.deleteViaApi(user.userId);
   });
 

@@ -1,13 +1,10 @@
-import { APPLICATION_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { InventoryInstance, InventoryInstances } from '../../support/fragments/inventory';
+import { NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
@@ -63,23 +60,23 @@ describe('Export Manager', () => {
       const UTCTime = DateTools.getUTCDateForScheduling();
       let user;
       let location;
-      let servicePointId;
       let orderNumber;
+      let instance;
 
       before(() => {
         cy.getAdminToken();
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          instance = instanceData;
+        });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((response) => {
+          location = response;
         });
         Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
           organization.id = organizationsResponse;
           order.vendor = organizationsResponse;
         });
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.addIntegration();
@@ -108,8 +105,18 @@ describe('Export Manager', () => {
           orderNumber = response.body.poNumber;
         });
         // Need to wait while first job will be runing
-        cy.wait(60000);
+        cy.wait(30000);
+
         cy.createTempUser([
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersCreate.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiOrdersApprovePurchaseOrders.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.uiOrganizationsView.gui,
+          Permissions.uiExportOrders.gui,
+          Permissions.exportManagerAll.gui,
+          Permissions.exportManagerDownloadAndResendFiles.gui,
           Permissions.uiOrdersView.gui,
           Permissions.uiOrdersCreate.gui,
           Permissions.uiOrdersEdit.gui,
@@ -121,6 +128,7 @@ describe('Export Manager', () => {
           Permissions.exportManagerDownloadAndResendFiles.gui,
         ]).then((userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.ordersPath,
             waiter: Orders.waitLoading,
@@ -129,21 +137,10 @@ describe('Export Manager', () => {
       });
 
       after(() => {
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.unOpenOrder();
-        // Need to wait until the order is opened before deleting it
-        cy.wait(2000);
+        cy.getAdminToken();
         Orders.deleteOrderViaApi(order.id);
-
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
         Organizations.deleteOrganizationViaApi(organization.id);
-        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-          location.institutionId,
-          location.campusId,
-          location.libraryId,
-          location.id,
-        );
         Users.deleteViaApi(user.userId);
       });
 
@@ -154,10 +151,11 @@ describe('Export Manager', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+          OrderLines.selectRandomInstanceInTitleLookUP(instance.instanceId, 0);
           OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
+
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchByFailed();

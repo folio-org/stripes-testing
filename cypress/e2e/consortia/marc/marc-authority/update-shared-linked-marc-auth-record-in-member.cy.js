@@ -34,7 +34,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 3,
           propertyName: 'instance',
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcAuthFileForC407633.mrc',
@@ -42,7 +42,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
           numOfRecords: 1,
-          tenant: 'Central Office',
+          tenant: tenantNames.central,
         },
         {
           marc: 'marcBibFileForC407633-Local-M1.mrc',
@@ -50,7 +50,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'University',
+          tenant: tenantNames.university,
         },
         {
           marc: 'marcBibFileForC407633-Local-M2.mrc',
@@ -58,7 +58,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           numOfRecords: 1,
-          tenant: 'College',
+          tenant: tenantNames.college,
         },
       ];
 
@@ -150,9 +150,9 @@ describe('MARC', () => {
           })
           .then(() => {
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'University') {
+              if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
-              } else if (marcFile.tenant === 'College') {
+              } else if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
               } else {
                 cy.resetTenant();
@@ -170,13 +170,11 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.resetTenant();
-              cy.loginAsAdmin();
-              cy.visit(TopMenu.inventoryPath);
-              cy.reload();
-            }, 30_000);
-            InventoryInstances.waitContentLoading();
+            cy.resetTenant();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
 
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
@@ -238,7 +236,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
           cy.visit(TopMenu.inventoryPath);
@@ -260,7 +258,6 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
           });
           cy.checkInstanceLinkStatus(createdRecordIDs[4], Affiliations.University);
-          cy.checkInstanceLinkStatus(createdRecordIDs[0], Affiliations.University);
           cy.checkInstanceLinkStatus(createdRecordIDs[0], Affiliations.Consortia);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);

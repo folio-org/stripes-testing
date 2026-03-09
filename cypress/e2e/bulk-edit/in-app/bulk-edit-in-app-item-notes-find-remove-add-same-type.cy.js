@@ -79,21 +79,21 @@ describe('Bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Check in note', [checkInNote]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`${checkInNote}, (staff only),`]);
+        ExportFile.verifyFileIncludes(previewFileName, [`${checkInNote},,`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', checkInNote);
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', ' (staff only)');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`${checkInNote}, (staff only),`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [`${checkInNote},,`]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkCheckInNote(checkInNote, 'No');
-        ItemRecordView.checkCheckOutNote('No value set-', 'Yes');
+        ItemRecordView.verifyTextAbsent('Check out note');
       },
     );
   });

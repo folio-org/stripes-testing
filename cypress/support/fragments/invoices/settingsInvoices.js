@@ -101,13 +101,14 @@ export default {
   },
 
   canNotDeleteBatchGroup: (batchGroup) => {
-    cy.do([
+    cy.do(
       MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
       }),
-      Modal('Cannot delete batch group').find(Button('Okay')).click(),
-    ]);
+    );
+    cy.wait(1500);
+    cy.do(Modal('Cannot delete batch group').find(Button('Okay')).click());
   },
 
   checkNotDeletingGroup: (batchGroupName) => {

@@ -265,7 +265,7 @@ describe('Inventory', () => {
           );
           InventorySearchAndFilter.selectFoundItemFromBrowse(testClassifications[11].value);
           InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query',
+            'Query search',
             `classifications.classificationNumber=="${testClassifications[11].value}"`,
           );
           // Number of found Instance records matches to the value in "Number of titles" column from the Browse result list for selected Classification

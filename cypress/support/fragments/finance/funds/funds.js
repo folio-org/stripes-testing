@@ -93,6 +93,8 @@ const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
 
+const clickNewFundButton = () => fundResultsPane.find(newButton).click();
+
 export default {
   defaultUiFund: {
     name: `autotest_fund_${getRandomPostfix()}`,
@@ -145,14 +147,14 @@ export default {
   },
 
   clickCreateNewFundButton() {
-    cy.do(newButton.click());
+    cy.do(clickNewFundButton());
     FundEditForm.waitLoading();
     FundEditForm.verifyFormView();
 
     return FundEditForm;
   },
   createFund(fund) {
-    cy.do([newButton.click()]);
+    cy.do([clickNewFundButton()]);
     cy.wait(8000);
     cy.do([
       nameField.fillIn(fund.name),
@@ -182,7 +184,7 @@ export default {
 
   newFund() {
     cy.wait(2000);
-    cy.do(Section({ id: 'fund-results-pane' }).find(newButton).click());
+    cy.do(clickNewFundButton());
   },
 
   clickRestrictByLocationsCheckbox() {
@@ -317,7 +319,7 @@ export default {
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
     cy.wait(4000);
     cy.do([
-      newButton.click(),
+      clickNewFundButton(),
       nameField.fillIn(defaultFund.name),
       codeField.fillIn(defaultFund.code),
       ledgerSelection.open(),
@@ -342,7 +344,7 @@ export default {
 
   createFundForWarningMessage(fund) {
     cy.do([
-      newButton.click(),
+      clickNewFundButton(),
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
@@ -402,7 +404,7 @@ export default {
 
   tryToCreateFundWithoutMandatoryFields: (fundName) => {
     cy.do([
-      newButton.click(),
+      clickNewFundButton(),
       nameField.fillIn(fundName),
       saveAndClose.click(),
       codeField.fillIn('some code'),
@@ -1306,7 +1308,7 @@ export default {
   },
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
-      newButton.click(),
+      clickNewFundButton(),
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),

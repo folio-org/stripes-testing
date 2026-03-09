@@ -46,7 +46,7 @@ describe('Organizations', () => {
       Organizations.fillInInfoNewOrganization(organization);
       Organizations.selectDonorCheckbox();
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveCalloutMessage(organization);
       Organizations.varifyAbsentPrivilegedDonorInformationSection();
     },
   );

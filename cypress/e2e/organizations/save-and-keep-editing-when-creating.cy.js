@@ -1,7 +1,6 @@
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 
 describe('Organizations', () => {
@@ -9,25 +8,18 @@ describe('Organizations', () => {
   let user;
 
   before(() => {
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((u) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((u) => {
       user = u;
-      cy.waitForAuthRefresh(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.organizationsPath,
-          waiter: Organizations.waitLoading,
-        });
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.organizationsPath,
-      waiter: Organizations.waitLoading,
-    });
-    Organizations.searchByParameters('Name', org.name);
-    Organizations.selectOrganization(org.name);
-    Organizations.deleteOrganization();
+    cy.getAdminToken();
+    Organizations.deleteOrganizationViaApi(org.id);
     Users.deleteViaApi(user.userId);
   });
 
@@ -42,11 +34,11 @@ describe('Organizations', () => {
       Organizations.checkRequiredFields('Status');
       Organizations.fillInInfoNewOrganization(org);
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(org);
+      Organizations.verifySaveCalloutMessage(org);
       Organizations.editOrganization();
       Organizations.selectVendor();
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(org);
+      Organizations.verifySaveCalloutMessage(org);
       Organizations.checkIsaVendor(org);
       Organizations.editOrganization();
       Organizations.selectDonorCheckbox();

@@ -68,21 +68,87 @@ describe('Inventory', () => {
         InventorySearchAndFilter.itemTabIsDefault();
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
 
-        // Step 2: Search for item using item HRID with "Keyword" search option
+        // Step 2: Search for item using item HRID via "Keyword" search option
         InventoryInstances.searchByTitle(itemHrids[0]);
         ItemRecordView.verifyHrid(itemHrids[0]);
 
-        // Step 3: Close item detail view and select "Item HRID" search option
+        // Step 3: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 4: Search for item using item HRID via "Keyword" search option with leading space
+        InventoryInstances.searchByTitle(` ${itemHrids[0]}`);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 5: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 6: Search for item using item HRID via "Keyword" search option with trailing space
+        InventoryInstances.searchByTitle(`${itemHrids[0]}  `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 7: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 8: Search for item using item HRID via "Keyword" search option with leading and trailing spaces
+        InventoryInstances.searchByTitle(` ${itemHrids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 9: Close item detail view and select "Item HRID" search option
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.selectSearchOption(searchOptions.itemHrid);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemHrid);
 
-        // Step 4: Search for item using item HRID with "Item HRID" search option
+        // Step 10: Search for item using item HRID via "Item HRID" search option
         InventoryInstances.searchByTitle(itemHrids[0]);
         ItemRecordView.verifyHrid(itemHrids[0]);
 
-        // Step 5: Repeat test with additional item HRIDs
+        // Step 11: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 12: Search for item using item HRID via "Item HRID" search option with leading space
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemHrid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemHrid);
+        InventoryInstances.searchByTitle(`  ${itemHrids[0]}`);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 13: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 14: Search for item using item HRID via "Item HRID" search option with trailing space
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemHrid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemHrid);
+        InventoryInstances.searchByTitle(`${itemHrids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 15: Close item detail view and click "Reset all" button
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.keyword);
+
+        // Step 16: Search for item using item HRID via "Item HRID" search option with leading and trailing spaces
+        InventorySearchAndFilter.selectSearchOption(searchOptions.itemHrid);
+        InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.itemHrid);
+        InventoryInstances.searchByTitle(` ${itemHrids[0]} `);
+        ItemRecordView.verifyHrid(itemHrids[0]);
+
+        // Step 17: Repeat test with additional item HRIDs
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
         InventoryInstances.searchByTitle(itemHrids[1]);

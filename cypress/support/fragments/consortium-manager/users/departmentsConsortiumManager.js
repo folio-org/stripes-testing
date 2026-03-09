@@ -45,9 +45,12 @@ export default {
       },
     };
 
-    return cy.sendPublishCoordinatorShareSettingPublication(publication, { method: REQUEST_METHOD.POST }).then(({ publicationResults }) => {
-      return publicationResults.find((record) => record.tenantId === Affiliations.Consortia)?.response;
-    });
+    return cy
+      .sendPublishCoordinatorShareSettingPublication(publication, { method: REQUEST_METHOD.POST })
+      .then(({ publicationResults }) => {
+        return publicationResults.find((record) => record.tenantId === Affiliations.Consortia)
+          ?.response;
+      });
   },
 
   deleteViaApi: (department) => {

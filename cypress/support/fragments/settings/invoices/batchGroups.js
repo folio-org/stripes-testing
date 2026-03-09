@@ -33,6 +33,8 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `batch-groups/${batchGroupId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 };

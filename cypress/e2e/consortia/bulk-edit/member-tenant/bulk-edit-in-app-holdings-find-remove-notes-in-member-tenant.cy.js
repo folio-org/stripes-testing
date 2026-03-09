@@ -40,8 +40,8 @@ const notes = {
 };
 const editedNotes = {
   administrativeNoteText: '',
-  sharedNoteText: 'null',
-  collegeLocalNoteText: 'null',
+  sharedNoteText: '',
+  collegeLocalNoteText: '',
 };
 const centralSharedHoldingNoteType = {
   payload: {
@@ -304,11 +304,11 @@ describe('Bulk-edit', () => {
             },
             {
               header: collegeHoldingNoteType.name,
-              value: null,
+              value: '',
             },
             {
               header: centralSharedHoldingNoteType.payload.name,
-              value: null,
+              value: '',
             },
           ];
 
@@ -359,13 +359,14 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
             HoldingsRecordView.checkAdministrativeNote('No value set\n-');
-            HoldingsRecordView.checkNotesByType(
-              1,
+            HoldingsRecordView.checkHoldingNoteTypeAbsent(
               centralSharedHoldingNoteType.payload.name,
-              '-',
-              'No',
+              notes.sharedNoteText,
             );
-            HoldingsRecordView.checkNotesByType(0, collegeHoldingNoteType.name, '-', 'No');
+            HoldingsRecordView.checkHoldingNoteTypeAbsent(
+              collegeHoldingNoteType.name,
+              notes.collegeLocalNoteText,
+            );
           });
         },
       );

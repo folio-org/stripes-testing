@@ -67,6 +67,10 @@ const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
 
 export default {
+  waitLogsTableLoading() {
+    cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
   resetAllBtnIsDisabled(isDisabled) {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
@@ -567,6 +571,14 @@ export default {
   downloadFileWithCommitErrors() {
     cy.do(errorsCommittingBtn.click());
     this.waitingFileDownload();
+  },
+
+  scrollLogsTableTo(direction) {
+    cy.get('body').then(($body) => {
+      if ($body.find('div[class^="mclScrollable"]').length > 0) {
+        cy.get('div[class^="mclScrollable"]').scrollTo(direction, { ensureScrollable: false });
+      }
+    });
   },
 
   verifyLogsTableHeaders(verification = 'exists') {
