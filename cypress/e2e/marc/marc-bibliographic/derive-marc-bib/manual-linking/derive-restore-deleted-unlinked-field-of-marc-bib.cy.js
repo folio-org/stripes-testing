@@ -98,6 +98,7 @@ describe('MARC', () => {
               cy.loginAsAdmin({
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
+                authRefresh: true,
               });
               InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
               InventoryInstances.selectInstance();

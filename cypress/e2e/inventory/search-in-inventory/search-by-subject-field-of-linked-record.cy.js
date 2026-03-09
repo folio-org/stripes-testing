@@ -15,8 +15,6 @@ import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
-  searchQueryBeforeTest:
-    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio in religion--Catholic Church" OR subjects = "Vatican Council 1962-1965" OR subjects = "Comic books, strips, etc.--United States--Catalogs" OR subjects = "Lincoln, Abraham, 1809-1865--Addresses, sermons, etc" OR subjects = "Topographical surveying" OR subjects = "Titanic (Steamship)--Drama"',
   user: {},
   recordIDs: [],
   tags: ['600', '610', '611', '630', '650', '651', '655'],
@@ -24,35 +22,35 @@ const testData = {
     QUERY_SEARCH: 'Query search',
   },
   instanceRecords: [
-    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
-    'Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
-    'An Anglican view of the Vatican Council.',
-    'Marvel comics direct distributors meeting / Marvel Comics Group.',
-    'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
-    'Clear Creek and Clear Lake, Tex. [electronic resource].',
-    'Titanic / written and directed by James Cameron.',
+    "C375259 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+    'C375259 Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
+    'C375259 An Anglican view of the Vatican Council.',
+    'C375259 Marvel comics direct distributors meeting / Marvel Comics Group.',
+    'C375259 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
+    'C375259 Clear Creek and Clear Lake, Tex. [electronic resource].',
+    'C375259 Titanic / written and directed by James Cameron.',
   ],
   searchAuthorityQueries: [
-    'Black Panther (Fictitious character)',
-    'Radio \\"Vaticana\\". Hrvatski program',
-    'Vatican Council',
-    'Marvel comics ComiCon',
-    'Speaking Oratory debating',
-    'Clear Creek (Tex.) Place in Texas',
-    'Drama Genre',
+    'C375259 Black Panther (Fictitious character)',
+    'C375259 Radio \\"Vaticana\\". Hrvatski program',
+    'C375259 Vatican Council',
+    'C375259 Marvel comics ComiCon',
+    'C375259 Speaking Oratory debating',
+    'C375259 Clear Creek (Tex.) Place in Texas',
+    'C375259 Drama Genre',
   ],
   searchQueries: [
-    'subjects = "Black Panther (Fictitious character)"',
-    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio Vaticana. Hrvatski program" OR subjects = "Vatican Council 1962-1965" OR subjects = "Marvel comics ComiCon" OR subjects == "Speaking Oratory--debating"  OR subjects == "Clear Creek (Tex.)--Place in Texas" OR subjects = "Drama--Genre"',
+    'subjects = "C375259 Black Panther (Fictitious character)"',
+    'subjects = "C375259 Black Panther (Fictitious character)" OR subjects = "C375259 Radio Vaticana. Hrvatski program" OR subjects = "C375259 Vatican Council 1962-1965" OR subjects = "C375259 Marvel comics ComiCon" OR subjects == "C375259 Speaking Oratory--debating"  OR subjects == "C375259 Clear Creek (Tex.)--Place in Texas" OR subjects = "C375259 Drama--Genre"',
   ],
   subjectHeading: [
-    'Black Panther (Fictitious character) Wakanda Forever',
-    'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
-    'Marvel comics ComiCon',
-    'Speaking Oratory--debating',
-    'Clear Creek (Tex.)',
-    'Drama Genre',
+    'C375259 Black Panther (Fictitious character) Wakanda Forever',
+    'C375259 Radio "Vaticana". Hrvatski program test',
+    'C375259 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
+    'C375259 Marvel comics ComiCon',
+    'C375259 Speaking Oratory--debating',
+    'C375259 Clear Creek (Tex.)',
+    'C375259 Drama Genre',
   ],
 
   marcFiles: [
@@ -77,12 +75,8 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
-        testData.instanceRecords.forEach((instanceTitle) => {
-          InventoryInstances.deleteInstanceByTitleViaApi(instanceTitle);
-        });
-        testData.searchAuthorityQueries.forEach((authHeading) => {
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authHeading);
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi('C375259');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375259');
 
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

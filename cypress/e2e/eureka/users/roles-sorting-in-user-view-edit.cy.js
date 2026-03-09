@@ -83,12 +83,12 @@ describe('Eureka', () => {
       'C627440 [UIU-3301] Roles rows are sorted when viewing/editing a user while having ui-users.roles - Manage (eureka)',
       { tags: ['extendedPath', 'eureka', 'C627440'] },
       () => {
-        UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
+        UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length);
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNamesOrdered(originalRoleNamesSorted);
 
         UserEdit.openEdit();
-        UserEdit.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
+        UserEdit.verifyUserRolesCounter(originalRoleNamesRandomized.length);
         UserEdit.clickUserRolesAccordion();
         UserEdit.verifyUserRoleNames(originalRoleNamesRandomized);
         UserEdit.verifyUserRoleNamesOrdered(originalRoleNamesSorted);
@@ -111,7 +111,7 @@ describe('Eureka', () => {
 
         UserEdit.saveAndClose();
         UsersCard.waitLoading();
-        UsersCard.verifyUserRolesCounter(testData.allRoleNamesSorted.length - 1 + '');
+        UsersCard.verifyUserRolesCounter(testData.allRoleNamesSorted.length - 1);
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNamesOrdered(
           testData.allRoleNamesSorted.filter((roleName) => roleName !== roleToRemove),

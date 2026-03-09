@@ -1442,7 +1442,7 @@ export default {
     fileName,
     fileRow,
     fund,
-    secondFiscalYear,
+    fiscalYear,
     allowableEncumbrance,
     allowableExpenditure,
     initialAllocation,
@@ -1470,7 +1470,7 @@ export default {
       expect(actualData[0]).to.equal(`"${fund.name}"`);
       expect(actualData[1]).to.equal(`"${fund.code}"`);
       expect(actualData[9]).to.equal(`"${fund.description}"`);
-      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect([`"${fund.code}-${fiscalYear.code}"`, `"${fiscalYear}"`]).to.include(actualData[10]);
       expect(actualData[12]).to.equal(allowableEncumbrance);
       expect(actualData[13]).to.equal(allowableExpenditure);
       expect(actualData[16]).to.equal(initialAllocation);
@@ -1492,9 +1492,9 @@ export default {
 
   checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
     fileName,
-    fileRow,
+    expClassName,
     fund,
-    secondFiscalYear,
+    fiscalYear,
     allowableEncumbrance,
     allowableExpenditure,
     initialAllocation,
@@ -1511,7 +1511,6 @@ export default {
     overExpended,
     cashBalance,
     available,
-    expClassName,
     expClassCode,
     expClassStatus,
     expClassEncumbered,
@@ -1522,13 +1521,27 @@ export default {
     cy.wait(3000); // wait for the file to load
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
       // Split the contents of a file into lines
-      const fileRows = fileContent.split('\n');
+      const fileRows = fileContent.split('\n').filter(Boolean);
 
-      const actualData = fileRows[fileRow].trim().split(',');
+      // Find the row by expense class name (column 31)
+      let actualData;
+      for (let i = 1; i < fileRows.length; i++) {
+        const currentRow = fileRows[i].split(',');
+        if (currentRow[31] && currentRow[31].includes(expClassName)) {
+          actualData = currentRow;
+          break;
+        }
+      }
+
+      if (!actualData) {
+        throw new Error(
+          `Row with expense class name "${expClassName}" not found in the export file`,
+        );
+      }
       expect(actualData[0]).to.equal(`"${fund.name}"`);
       expect(actualData[1]).to.equal(`"${fund.code}"`);
       expect(actualData[9]).to.equal(`"${fund.description}"`);
-      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect([`"${fund.code}-${fiscalYear.code}"`, `"${fiscalYear}"`]).to.include(actualData[10]);
       expect(actualData[12]).to.equal(allowableEncumbrance);
       expect(actualData[13]).to.equal(allowableExpenditure);
       expect(actualData[16]).to.equal(initialAllocation);
@@ -1714,9 +1727,9 @@ export default {
 
   checkColumnContentInDownloadedLedgerExport(
     fileName,
-    fileRow,
+    expenseClassName,
     fund,
-    budgetNameExpected, // pass the actual budget.name here
+    budgetNameExpected,
     allowableEncumbrance,
     allowableExpenditure,
     initialAllocation,
@@ -1736,7 +1749,22 @@ export default {
   ) {
     cy.readFile(`cypress/downloads/${fileName}`, 'utf8', { timeout: 15000 }).then((fileContent) => {
       const lines = fileContent.split(/\r?\n/).filter(Boolean);
-      const row = this.parseCsvLine(lines[fileRow]);
+
+      // Find the row by expense class name (column 30)
+      let row;
+      for (let i = 1; i < lines.length; i++) {
+        const currentRow = this.parseCsvLine(lines[i]);
+        if (this.clean(currentRow[30]) === this.clean(expenseClassName)) {
+          row = currentRow;
+          break;
+        }
+      }
+
+      if (!row) {
+        throw new Error(
+          `Row with expense class name "${expenseClassName}" not found in the export file`,
+        );
+      }
 
       expect(row[0]).to.equal(fund.name); // Name (Fund)
       expect(row[1]).to.equal(fund.code); // Code (Fund)

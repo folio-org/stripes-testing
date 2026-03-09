@@ -52,20 +52,20 @@ describe('Invoices', () => {
     first: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}01`,
-      periodStart: new Date(),
-      periodEnd: new Date(date.getFullYear() + 0, 1, 28),
+      periodStart: new Date(date.getFullYear() - 0, 0, 1),
+      periodEnd: new Date(date.getFullYear() - 0, 11, 31),
     },
     second: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}02`,
-      periodStart: new Date(date.getFullYear() + 0, 2, 1),
-      periodEnd: new Date(date.getFullYear() + 0, 2, 31),
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
     },
     third: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}03`,
-      periodStart: new Date(date.getFullYear() + 0, 3, 1),
-      periodEnd: new Date(date.getFullYear() + 0, 3, 30),
+      periodStart: new Date(date.getFullYear() + 2, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 2, 11, 31),
     },
   };
 
@@ -172,8 +172,8 @@ describe('Invoices', () => {
       FiscalYears.updateFiscalYearViaApi({
         ...fiscalYears.first,
         _version: 1,
-        periodStart: new Date(date.getFullYear() - 0, 0, 1),
-        periodEnd: new Date(date.getFullYear() - 0, 0, 20),
+        periodStart: new Date(date.getFullYear() - 1, 0, 1),
+        periodEnd: new Date(date.getFullYear() - 1, 11, 31),
       });
       FiscalYears.updateFiscalYearViaApi({
         ...fiscalYears.second,
@@ -311,12 +311,12 @@ describe('Invoices', () => {
       });
 
       DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-      const periodStartForFirstFY2 = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear() - 0, 0, 21) },
+      const periodStartForSecondFY = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear() + 0, 0, 1) },
         'MM/DD/YYYY',
       );
-      const periodEndForFirstFY2 = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear() - 0, 0, 26) },
+      const periodEndForSecondFY = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1) },
         'MM/DD/YYYY',
       );
       const periodStartForThirdFY = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
@@ -343,8 +343,8 @@ describe('Invoices', () => {
       FiscalYears.selectFY(fiscalYears.second.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForFirstFY2,
-        periodEndForFirstFY2,
+        periodStartForSecondFY,
+        periodEndForSecondFY,
       );
       FinanceHelper.searchByName(fiscalYears.third.name);
       FiscalYears.selectFY(fiscalYears.third.name);

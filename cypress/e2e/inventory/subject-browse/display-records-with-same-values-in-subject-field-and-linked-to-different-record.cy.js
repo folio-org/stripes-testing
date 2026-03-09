@@ -20,12 +20,12 @@ const testData = {
   recordIDs: [],
   tags: ['650'],
   instanceRecords: [
-    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
-    'Black Panther : the Intergalactic Empire of Wakanda',
+    "C375224 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+    'C375224 Black Panther : the Intergalactic Empire of Wakanda',
   ],
-  searchAuthorityQueries: ['Good and evil'],
-  browseQueries: ['Good and Evil'],
-  subjectHeading: ['Good and evil'],
+  searchAuthorityQueries: ['C375224 Good and evil'],
+  browseQueries: ['C375224 Good and Evil'],
+  subjectHeading: ['C375224 Good and evil'],
 
   marcFiles: [
     {
@@ -57,28 +57,9 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: 'title="Black Panther"',
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-            testData.searchAuthorityQueries.forEach((query) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-              }).then((authorities) => {
-                if (authorities) {
-                  authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id, true);
-                  });
-                }
-              });
-            });
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi('C375224');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375224');
+
           testData.marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

@@ -22,9 +22,16 @@ describe('Inventory', () => {
     const locations = [];
     let loanTypeId;
     let user;
+    let currentTenantName = '';
 
     before('Create users, data', () => {
       cy.getAdminToken();
+
+      cy.ifConsortia(true, () => {
+        cy.getTenantNameInMemberRun().then((tenantName) => {
+          currentTenantName = tenantName;
+        });
+      });
 
       cy.then(() => {
         InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C409422');
@@ -123,21 +130,24 @@ describe('Inventory', () => {
             location.name,
           );
         });
-        InventorySearchAndFilter.selectMultiSelectFilterOption(
+        InventorySearchAndFilter.selectEcsLocationFilterOption(
           locationAccordionName,
           locations[0].name,
+          currentTenantName,
         );
         InventorySearchAndFilter.verifyNumberOfSearchResults(1);
         InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
 
-        InventorySearchAndFilter.selectMultiSelectFilterOption(
+        InventorySearchAndFilter.selectEcsLocationFilterOption(
           locationAccordionName,
           locations[0].name,
+          currentTenantName,
         );
         InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
-        InventorySearchAndFilter.selectMultiSelectFilterOption(
+        InventorySearchAndFilter.selectEcsLocationFilterOption(
           locationAccordionName,
           locations[1].name,
+          currentTenantName,
         );
         InventorySearchAndFilter.verifyNumberOfSearchResults(1);
         InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);

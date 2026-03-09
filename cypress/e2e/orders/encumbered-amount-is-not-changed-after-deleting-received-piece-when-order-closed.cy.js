@@ -61,11 +61,11 @@ describe('Orders', () => {
               const orderLine = {
                 ...BasicOrderLine.defaultOrderLine,
                 cost: {
-                  listUnitPrice: 90.0,
+                  listUnitPrice: 10.0,
                   currency: 'USD',
                   discountType: 'percentage',
-                  quantityPhysical: 1,
-                  poLineEstimatedPrice: 90.0,
+                  quantityPhysical: 2,
+                  poLineEstimatedPrice: 20.0,
                 },
                 fundDistribution: [
                   {
@@ -74,7 +74,7 @@ describe('Orders', () => {
                     value: 100,
                   },
                 ],
-                locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                locations: [{ locationId: locationResp.id, quantity: 2, quantityPhysical: 2 }],
                 acquisitionMethod: amResp.body.acquisitionMethods[0].id,
                 physical: {
                   createInventory: 'Instance, Holding, Item',
@@ -115,7 +115,7 @@ describe('Orders', () => {
                       poLineId: testData.orderLine.id,
                       fundDistributions: testData.orderLine.fundDistribution,
                       accountingCode: testData.organization.erpCode,
-                      subTotal: 25,
+                      subTotal: 20,
                       releaseEncumbrance: true,
                     }).then((invoice) => {
                       testData.invoice = invoice;
@@ -181,7 +181,7 @@ describe('Orders', () => {
       const ReceivingDetails = Receivings.selectFromResultsList(testData.orderLine.titleOrPackage);
       ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.orderNumber}-1` }],
-        expected: [],
+        expected: [{ format: 'Physical' }],
         received: [{ barcode: testData.barcode, format: 'Physical' }],
       });
 
@@ -194,13 +194,13 @@ describe('Orders', () => {
 
       // Click "Delete" button
       Receiving.openDropDownInEditPieceModal();
-      const DeletePieceModal = EditPieceModal.clickDeleteButton();
+      const DeletePieceModal = EditPieceModal.clickDeleteButton({ isLastPiece: false });
 
       // Click "Delete item" button
-      DeletePieceModal.clickDeleteItemButton();
+      DeletePieceModal.confirmDelete({ pieceDeleted: true });
       ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.orderNumber}-1` }],
-        expected: [],
+        expected: [{ format: 'Physical' }],
         received: [],
       });
 
@@ -219,8 +219,8 @@ describe('Orders', () => {
           { key: 'Source', value: `${testData.orderNumber}-1` },
           { key: 'Type', value: 'Encumbrance' },
           { key: 'From', value: testData.fund.name },
-          { key: 'Initial encumbrance', value: '$0.00' },
-          { key: 'Awaiting payment', value: '$25.00' },
+          { key: 'Initial encumbrance', value: '$10.00' },
+          { key: 'Awaiting payment', value: '$20.00' },
           { key: 'Expended', value: '$0.00' },
           { key: 'Status', value: 'Released' },
         ],

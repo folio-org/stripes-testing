@@ -5,46 +5,39 @@ import Funds from '../../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import DateTools from '../../../../support/utils/dateTools';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import FileManager from '../../../../support/utils/fileManager';
 
 describe('Finance: Ledgers', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const testData = {
+    user: {},
+    fiscalYear: { ...FiscalYears.defaultRolloverFiscalYear },
+    ledger: { ...Ledgers.defaultUiLedger },
+    fund: { ...Funds.defaultUiFund },
   };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  let user;
-  let fileName;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(testData.fiscalYear).then((fiscalYearResponse) => {
+      testData.fiscalYear.id = fiscalYearResponse.id;
+      testData.ledger.fiscalYearOneId = testData.fiscalYear.id;
+      testData.ledger.code = testData.fiscalYear.code.slice(0, -1) + '2';
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+      Ledgers.createViaApi(testData.ledger).then((ledgerResponse) => {
+        testData.ledger.id = ledgerResponse.id;
+        testData.fund.ledgerId = testData.ledger.id;
+
+        Funds.createViaApi(testData.fund).then((fundResponse) => {
+          testData.fund.id = fundResponse.fund.id;
         });
       });
-      fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
+      testData.fileName = `Export-${testData.ledger.code}-${testData.fiscalYear.code}`;
     });
+
     cy.createTempUser([
       permissions.uiFinanceExportFinanceRecords.gui,
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
@@ -52,26 +45,29 @@ describe('Finance: Ledgers', () => {
     });
   });
 
-  after(() => {
+  after('Clean up test data', () => {
+    FileManager.deleteFile(`cypress/downloads/${testData.fileName}.csv`);
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C353214 Ledger export settings: current year Fund with NO budget, NO Classes, Export settings; Expense class - Active (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C353214'] },
     () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      FinanceHelp.searchByName(testData.ledger.name);
+      Ledgers.selectLedger(testData.ledger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(firstFiscalYear.code, 'Active', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
+      Ledgers.prepareExportSettings(testData.fiscalYear.code, 'Active', testData.ledger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(
+        `${testData.fileName}.csv`,
       );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
+        `${testData.fileName}.csv`,
+        1,
+        testData.fund,
+      );
+      // Ledgers.deleteDownloadedFile(`${testData.fileName}.csv`);
     },
   );
 });

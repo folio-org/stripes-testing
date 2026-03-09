@@ -1,129 +1,143 @@
-import permissions from '../../../../support/dictionary/permissions';
+import Permissions from '../../../../support/dictionary/permissions';
+import {
+  FiscalYears,
+  Funds,
+  LedgerRollovers,
+  Ledgers,
+} from '../../../../support/fragments/finance';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
+import { NewOrganization } from '../../../../support/fragments/organizations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import DateTools from '../../../../support/utils/dateTools';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { CodeTools, StringTools } from '../../../../support/utils';
+import FileManager from '../../../../support/utils/fileManager';
 
 describe('Finance: Ledgers', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+  const date = new Date();
+  const code = CodeTools(4);
+  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const testData = {
+    organization,
+    user: {},
   };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  let user;
-  let fileName;
+  const fiscalYears = {
+    current: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${StringTools.randomTwoDigitNumber()}01`,
+      periodStart: new Date(date.getFullYear(), 0, 1),
+      periodEnd: new Date(date.getFullYear(), 11, 31),
+    },
+    next: {
+      ...FiscalYears.getDefaultFiscalYear(),
+      code: `${code}${StringTools.randomTwoDigitNumber()}02`,
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
+    },
+  };
+  const ledger = { ...Ledgers.defaultUiLedger };
+  const fund = { ...Funds.defaultUiFund };
 
-  before(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading, authRefresh: true });
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+  before('Setup test data', () => {
+    cy.getAdminToken();
+    FiscalYears.createViaApi(fiscalYears.current).then((fiscalYearResponse) => {
+      fiscalYears.current.id = fiscalYearResponse.id;
+      ledger.fiscalYearOneId = fiscalYears.current.id;
+
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        fund.ledgerId = ledgerResponse.id;
+        Funds.createViaApi(fund).then((fundResponse) => {
+          fund.id = fundResponse.fund.id;
         });
+
+        // Create second Fiscal Year for Rollover
+        FiscalYears.createViaApi(fiscalYears.next);
+        const rollover = LedgerRollovers.generateLedgerRollover({
+          ledger,
+          fromFiscalYear: fiscalYears.current,
+          toFiscalYear: fiscalYears.next,
+          restrictEncumbrance: true,
+          restrictExpenditures: true,
+          needCloseBudgets: true,
+          budgetsRollover: [
+            {
+              rolloverAllocation: true,
+              rolloverBudgetValue: 'None',
+              addAvailableTo: 'Allocation',
+            },
+          ],
+          encumbrancesRollover: [{ orderType: 'One-time', basedOn: 'InitialAmount' }],
+        });
+        LedgerRollovers.createLedgerRolloverViaApi(rollover);
+        FiscalYears.updateFiscalYearViaApi({
+          ...fiscalYears.current,
+          _version: 1,
+          periodStart: new Date(date.getFullYear() - 1, 0, 1),
+          periodEnd: new Date(date.getFullYear() - 1, 11, 31),
+        });
+
+        FiscalYears.updateFiscalYearViaApi({
+          ...fiscalYears.next,
+          _version: 1,
+          periodStart: new Date(date.getFullYear(), 0, 1),
+          periodEnd: new Date(date.getFullYear(), 11, 31),
+        });
+        testData.fileName = `Export-${ledger.code}-${fiscalYears.next.code}`;
       });
-      FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-        secondFiscalYear.id = secondFiscalYearResponse.id;
-      });
-      cy.visit(TopMenu.ledgerPath);
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
-      Ledgers.rollover();
-      Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
-        secondFiscalYear.code,
-        'None',
-        'Allocation',
-      );
-      cy.visit(TopMenu.fiscalYearPath);
-      FinanceHelp.searchByName(firstFiscalYear.name);
-      FiscalYears.selectFY(firstFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForFirstFY,
-        periodEndForFirstFY,
-      );
-      FinanceHelp.searchByName(secondFiscalYear.name);
-      FiscalYears.selectFY(secondFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForSecondFY,
-        periodEndForSecondFY,
-      );
-      fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
     });
+
     cy.createTempUser([
-      permissions.uiFinanceExportFinanceRecords.gui,
-      permissions.uiFinanceViewLedger.gui,
+      Permissions.uiFinanceExportFinanceRecords.gui,
+      Permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
-        authRefresh: true,
       });
     });
   });
 
-  after(() => {
+  after('Cleanup test data', () => {
+    FileManager.deleteFile(`cypress/downloads/${testData.fileName}.csv`);
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C353212 Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-All statuses (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C353212'] },
     () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
+      FinanceHelp.searchByName(ledger.name);
+      Ledgers.selectLedger(ledger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'All', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileForNone(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '100',
-        '100',
+      Ledgers.prepareExportSettings(fiscalYears.next.code, 'All', ledger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(
+        `${testData.fileName}.csv`,
       );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileForNone(
+        `${testData.fileName}.csv`,
+        1,
+        fund,
+        'No budget found',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      );
     },
   );
 });

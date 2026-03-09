@@ -653,7 +653,7 @@ export default {
   verifyUserRolesCounter(expectedCount) {
     cy.expect([
       userRolesAccordion.find(Spinner()).absent(),
-      userRolesAccordion.has({ counter: expectedCount }),
+      userRolesAccordion.has({ counter: `${expectedCount}` }),
     ]);
   },
 

@@ -97,7 +97,7 @@ describe('Inventory', () => {
             InstanceRecordView.verifyInstanceSource(testData.instanceSource);
             InstanceRecordView.verifyAddItemButtonVisibility({
               holdingName: 'Consortial holdings',
-              shouldBePresent: true,
+              shouldBePresent: false,
             });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);

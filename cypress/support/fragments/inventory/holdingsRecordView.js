@@ -17,6 +17,7 @@ import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
+import { Affiliations } from '../../dictionary';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -392,6 +393,40 @@ export default {
   checkActionsButtonShown(isShown = true) {
     if (isShown) cy.expect(actionsButton.exists());
     else cy.expect(actionsButton.absent());
+  },
+
+  checkReceivingHistoryForTenant(tenantName, receiptDate, source) {
+    const accordionConfigs = {
+      member: {
+        listId: `${Affiliations.College}-receiving-history-list`,
+      },
+      central: {
+        listId: `${Affiliations.Consortia}-receiving-history-list`,
+      },
+    };
+
+    const config = accordionConfigs[tenantName];
+    // Find the receiving history list by ID within any section (including consortial holdings)
+    const receivingHistoryList = MultiColumnList({ id: config.listId });
+
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Receipt date', content: receiptDate }))
+        .exists(),
+    );
+    cy.expect(
+      receivingHistoryList
+        .find(MultiColumnListCell({ column: 'Source', content: source }))
+        .exists(),
+    );
+  },
+
+  checkReceivingHistoryAccordionForMemberTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('member', receiptDate, source);
+  },
+
+  checkReceivingHistoryAccordionForCentralTenant(receiptDate, source) {
+    this.checkReceivingHistoryForTenant('central', receiptDate, source);
   },
 
   checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),

@@ -2,14 +2,21 @@ import { including } from '@interactors/html';
 import {
   Button,
   EditableListRow,
+  Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
+  TextField,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
+import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-reason';
 
 const rootPane = Pane('Subject types');
+const modalWithErrorMessage = Modal('Cannot delete Subject type');
+const newButton = Button('+ New');
+const saveButton = Button('Save');
+const cancelButton = Button('Cancel');
 
 const COLUMN_INDEX = {
   NAME: 0,
@@ -126,5 +133,82 @@ export default {
         });
       }),
     );
+  },
+
+  createSubjectType(value, rowIndex = 0) {
+    cy.do([newButton.click(), TextField({ name: `items[${rowIndex}].name` }).fillIn(value)]);
+  },
+
+  deleteSubjectType(name) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: name });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do(
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.TRASH }))
+            .click(),
+        );
+      }),
+    );
+  },
+
+  editSubjectTypeName(oldValue, newValue) {
+    const actionsCell = MultiColumnListCell({ columnIndex: COLUMN_INDEX.ACTIONS });
+    const rowSelector = MultiColumnListCell({ content: oldValue });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = getRowIndex(element);
+        const row = EditableListRow({ index: rowIndex });
+
+        cy.do([
+          row
+            .find(actionsCell)
+            .find(Button({ icon: ACTION_BUTTONS.EDIT }))
+            .click(),
+          TextField({ name: `items[${rowIndex}].name` }).fillIn(newValue),
+        ]);
+      }),
+    );
+  },
+
+  confirmDeletionOfSubjectType(name) {
+    DeleteCancelReason.waitLoadingDeleteModal('Subject type', name);
+    DeleteCancelReason.clickDelete();
+  },
+
+  verifySubjectTypeCannotBeDeleted() {
+    cy.expect(
+      modalWithErrorMessage.has({
+        content: including(
+          'This Subject type cannot be deleted, as it is in use by one or more records.',
+        ),
+      }),
+    );
+    cy.do(Button('Okay').click());
+    cy.expect(modalWithErrorMessage.absent());
+  },
+
+  validateNameFieldWithError(message) {
+    cy.get('#controlled-vocab-pane')
+      .find('input[name*="items["][name*="].name"]')
+      .should('exist')
+      .then(($inputs) => {
+        const nameAttr = $inputs.first().attr('name');
+        const indexMatch = nameAttr.match(/items\[(\d+)\]\.name/);
+        if (indexMatch) {
+          const rowIndex = parseInt(indexMatch[1], 10);
+          cy.expect([
+            TextField({ name: `items[${rowIndex}].name` }).has({ error: message }),
+            cancelButton.has({ disabled: false }),
+            saveButton.has({ disabled: true }),
+          ]);
+        }
+      });
+    cy.wait(1000);
   },
 };

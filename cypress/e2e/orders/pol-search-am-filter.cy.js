@@ -6,10 +6,9 @@ import {
   VENDOR_NAMES,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
+import { BasicOrderLine, OrderLines, Orders } from '../../support/fragments/orders';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 
@@ -73,6 +72,7 @@ describe('Export Manager', () => {
                         poLines[index].purchaseOrderId = purchaseOrderId;
                         poLines[index].physical.materialSupplier = order.vendor;
 
+                        OrderLinesLimit.setPOLLimit(3);
                         OrderLines.createOrderLineViaApi(poLines[index]);
                       });
                     });
