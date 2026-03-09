@@ -22,6 +22,7 @@ const fundDistributionSection = Section({ id: 'invoiceLineForm-fundDistribution'
 
 const cancelButtom = Button('Cancel');
 const saveButton = Button('Save & close');
+const subTotalSelector = '#subTotal';
 
 const infoFields = {
   description: informationSection.find(TextField({ id: 'description' })),
@@ -143,6 +144,12 @@ export default {
     }
     // wait for changes to be applied
     cy.wait(1000);
+  },
+
+  setNegativeSubTotal(amount) {
+    cy.get(subTotalSelector).clear();
+    cy.get(subTotalSelector).type(`-${amount}`);
+    cy.get(subTotalSelector).should('have.value', `-${amount}`);
   },
 
   checkSelectionOptions(selectionName, expectedOptions) {
