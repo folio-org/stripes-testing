@@ -221,7 +221,7 @@ describe('Finance', () => {
 
     it(
       'C375067 Money transfer between funds is successful if budget "To" already has negative available amount (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'C374184'] },
+      { tags: ['extendedPath', 'thunderjet', 'C375067'] },
       () => {
         // Open Fund B from Preconditions
         FinanceHelper.searchByName(funds.second.name);

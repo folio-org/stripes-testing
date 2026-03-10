@@ -8,6 +8,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ConfirmDeleteOrganizationModal from '../../support/fragments/organizations/modals/confirmDeleteOrganizationModal';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -37,7 +38,7 @@ describe('Organizations', () => {
     { tags: ['extendedPath', 'thunderjet', 'C674'] },
     () => {
       // Step 1: Open organization from "Preconditions" details pane
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
 
       // Step 2: Click "Actions" button on organization from "Preconditions" details pane and select "Delete" option
@@ -60,7 +61,7 @@ describe('Organizations', () => {
         `The organization ${organization.name} was successfully deleted`,
       );
       OrganizationDetails.organizationDetailsSectionIsAbsent();
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.checkZeroSearchResultsHeader();
     },
   );

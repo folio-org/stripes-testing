@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -112,7 +113,7 @@ describe('Export Manager', () => {
       'C359200 Days previously chosen for weekly scheduling are NOT displaying in new current scheduling settings (thunderjet) (TaaS)',
       { tags: ['criticalPath', 'thunderjet', 'C359200'] },
       () => {
-        Organizations.searchByParameters('Name', organization.name);
+        OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);
         Organizations.selectOrganization(organization.name);
         Organizations.selectIntegration(integrationName);

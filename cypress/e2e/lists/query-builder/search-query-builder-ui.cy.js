@@ -22,7 +22,15 @@ describe('Lists', () => {
       Lists.buildQuery();
     };
 
-    const verifyQueryBuilder = (field, operator, filedType, value, query, locator, valueInColumn) => {
+    const verifyQueryBuilder = (
+      field,
+      operator,
+      filedType,
+      value,
+      query,
+      locator,
+      valueInColumn,
+    ) => {
       QueryModal.selectField(field);
       QueryModal.selectOperator(operator);
       QueryModal.populateFiled(filedType, value);

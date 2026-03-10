@@ -46,6 +46,7 @@ const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
 const searchButton = Button('Search');
+const approvePay = Button('Approve & pay');
 const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -313,6 +314,7 @@ export default {
   },
 
   createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
+    cy.wait(2000);
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       newBlankLineButton.click(),
@@ -1358,6 +1360,15 @@ export default {
     cy.wait(6000);
     cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
     cy.expect(Button('Pay').is({ disabled: true }));
+  },
+
+  checkApprovePayButtonState: (isDisabled = true) => {
+    cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+    if (isDisabled) {
+      cy.expect(approvePay.is({ disabled: true }));
+    } else {
+      cy.expect(approvePay.is({ disabled: false }));
+    }
   },
 
   clickOnOrganizationFromInvoice: (organizationName) => {

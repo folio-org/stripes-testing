@@ -13,7 +13,8 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        createErrorText: 'Role could not be created: Failed to create keycloak role',
+        createErrorTextUI: 'Role could not be created',
+        createErrorTextAPI: 'Failed to create keycloak role',
       };
 
       const defaultRoles = [];
@@ -45,13 +46,11 @@ describe('Eureka', () => {
             capabsToAssign,
             capabSetsToAssign,
           );
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password);
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              SETTINGS_SUBSECTION_AUTH_ROLES,
-            );
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
           AuthorizationRoles.waitContentLoading();
         });
       });
@@ -76,11 +75,9 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveButton();
           cy.wait('@createCall').then(({ response }) => {
             expect(response.statusCode).to.eq(409);
-            expect(response.body.errors[0].message).to.include(
-              testData.createErrorText.split(': ')[1],
-            );
+            expect(response.body.errors[0].message).to.include(testData.createErrorTextAPI);
           });
-          InteractorsTools.checkCalloutErrorMessage(including(testData.createErrorText));
+          InteractorsTools.checkCalloutErrorMessage(including(testData.createErrorTextUI));
 
           AuthorizationRoles.closeRoleCreateView();
           AuthorizationRoles.searchRole(defaultRoles[1].name);

@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 describe('Organizations', () => {
   let user;
@@ -51,7 +52,7 @@ describe('Organizations', () => {
     'C423630 Privileged Donor contacts do NOT appear in Contact Person lookups (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C423630'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.openPrivilegedDonorInformationSection();
       Organizations.checkDonorContactIsAdd(privilegedContact);
