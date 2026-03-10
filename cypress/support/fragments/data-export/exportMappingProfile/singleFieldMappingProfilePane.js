@@ -19,6 +19,7 @@ const deleteButton = Button('Delete');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const saveAndCloseButton = Button('Save & close');
+const closeButton = Button({ icon: 'times' });
 const cancelButton = Button('Cancel');
 
 export default {
@@ -95,7 +96,6 @@ export default {
   },
 
   editFieldMappingProfile(newName, newDescription) {
-    this.clickEditButton();
     // Need to wait for page to reload
     cy.wait(2000);
     cy.do([
@@ -103,6 +103,10 @@ export default {
       nameTextfield.fillIn(newName),
       descriptionTextarea.fillIn(newDescription),
     ]);
+  },
+
+  verifyNameTextField(name) {
+    cy.expect(nameTextfield.has({ value: name }));
   },
 
   verifyMetadataSectionExists() {
@@ -115,6 +119,18 @@ export default {
 
   duplicateFieldMappingProfile() {
     cy.do([duplicateButton.click(), saveAndCloseButton.click()]);
+  },
+
+  verifySaveAndCloseButtonDisabled(isDisabled = true) {
+    cy.expect(saveAndCloseButton.has({ disabled: isDisabled }));
+  },
+
+  verifyCloseButtonDisabled(isDisabled = true) {
+    cy.expect(closeButton.has({ disabled: isDisabled }));
+  },
+
+  clickCloseButton() {
+    cy.do(closeButton.click());
   },
 
   clickEditTransformations() {
@@ -140,6 +156,10 @@ export default {
 
   clickCancelButton() {
     cy.do(cancelButton.click());
+  },
+
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
 
   verifyActionsButtonAbsent() {
