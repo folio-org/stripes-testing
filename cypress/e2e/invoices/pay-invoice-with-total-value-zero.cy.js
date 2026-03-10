@@ -7,7 +7,7 @@ import {
   Funds,
   Transactions,
 } from '../../support/fragments/finance';
-import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { InvoiceLineDetails, InvoiceView, Invoices } from '../../support/fragments/invoices';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -236,7 +236,7 @@ describe('Invoices', () => {
           amount: `-$${invoiceLineAmount3}.00`,
         },
       ]);
-      cy.go('back');
+      InvoiceLineDetails.closeInvoiceLineDetailsPane();
       InvoiceView.waitLoading();
 
       InvoiceView.approveInvoice();

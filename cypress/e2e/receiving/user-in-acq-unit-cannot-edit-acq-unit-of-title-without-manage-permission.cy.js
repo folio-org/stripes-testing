@@ -169,7 +169,7 @@ describe('Receiving', () => {
         ReceivingDetails.expandTitleInformationAccordion();
         ReceivingDetails.verifyAcquisitionUnitInTitleInformation(firstAcquisitionUnit.name, true);
 
-        ReceivingDetails.openReceivingEditForm();
+        ReceivingDetails.editReceivingItem();
         ReceivingEditForm.waitLoading();
         ReceivingEditForm.verifyAcquisitionUnitsDropdownDisabled();
         ReceivingEditForm.verifyAcquisitionUnitDisplayed(firstAcquisitionUnit.name, true);
