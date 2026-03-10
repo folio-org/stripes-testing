@@ -8,6 +8,8 @@ export default {
   invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',
   // warnings
-  invoiceCanNotBeApproved:
+  invoiceCanNotBeApprovedPendingOrder:
     'Invoice can not be approved. One or more of the related orders has a workflow status of "Pending". If desired, please open the related orders before approving this invoice.',
+  invoiceCanNotBeApprovedInactiveOrganization:
+    'Vendor is inactive. Invoice cannot be approved or paid.',
 };
