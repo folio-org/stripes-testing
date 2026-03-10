@@ -16,9 +16,79 @@ import { parseSanityParameters } from '../../../support/utils/users';
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
 
+const selectedResource = {
+  title: '',
+  publicationType: 'Journal',
+};
+
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const { user, memberTenant } = parseSanityParameters();
+    beforeEach(() => {
+      cy.getUserToken(user.username, user.password, { log: false });
+      eHoldingsTitles
+        .getEHoldingsTitlesViaApi({
+          'filter[selected]': true,
+          'filter[type]': 'journal',
+          'filter[name]': '*',
+        })
+        .then(({ data }) => {
+          const selectedTitle = data[0];
+          selectedResource.title = selectedTitle?.attributes?.name;
+        });
+    });
+
+    it(
+      'C700 Title: Add or Edit custom coverage (spitfire)',
+      { tags: ['dryRun', 'spitfire', 'C700'] },
+      () => {
+        cy.setTenant(memberTenant.id);
+        cy.allure().logCommandSteps(false);
+        cy.login(user.username, user.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: eHoldingsTitlesSearch.waitLoading,
+          authRefresh: true,
+        });
+        cy.allure().logCommandSteps();
+        eHoldingSearch.switchToTitles();
+
+        // test related with special data from Ebsco
+        eHoldingsTitlesSearch.byTitle(selectedResource.title);
+        eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
+        eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
+        eHoldingsTitles.openTitle(0);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.openResource(0);
+        eHoldingsResourceView.goToEdit();
+        eHoldingsResourceEdit.swicthToCustomCoverageDates();
+
+        let addedRangesCount = 0;
+        const dateRanges = dateTools.getDateRanges(2).map((range) => ({
+          startDay: `${dateTools.padWithZero(
+            range.startDay.getMonth() + 1,
+          )}/${dateTools.padWithZero(range.startDay.getDate())}/${dateTools.padWithZero(
+            range.startDay.getFullYear(),
+          )}`,
+          endDay: `${dateTools.padWithZero(range.endDay.getMonth() + 1)}/${dateTools.padWithZero(
+            range.endDay.getDate(),
+          )}/${dateTools.padWithZero(range.endDay.getFullYear())}`,
+        }));
+        dateRanges.forEach((range) => {
+          eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
+          addedRangesCount++;
+        });
+        eHoldingsResourceEdit.saveAndClose();
+        eHoldingsResourceView.waitLoading();
+        eHoldingsResourceView.checkCustomPeriods(dateRanges);
+
+        // revert test data
+        // TODO: redesign to api requests
+        eHoldingsResourceView.goToEdit();
+        eHoldingsResourceEdit.removeExistingCustomeCoverageDates();
+      },
+    );
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
@@ -50,64 +120,6 @@ describe('eHoldings', () => {
           cy.expect(Button('Edit').exists());
           cy.expect(Button('Remove title from holdings').exists());
         });
-      },
-    );
-
-    it(
-      'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: ['dryRun', 'spitfire', 'C700'], retries: 1 },
-      () => {
-        cy.setTenant(memberTenant.id);
-        cy.allure().logCommandSteps(false);
-        cy.login(user.username, user.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: eHoldingsTitlesSearch.waitLoading,
-          authRefresh: true,
-        });
-        cy.allure().logCommandSteps();
-        eHoldingSearch.switchToTitles();
-
-        // test related with special data from Ebsco
-        const selectedResource = {
-          title:
-            'Preparative biochemistry & biotechnology : an international journal for rapid communications',
-          publicationType: 'Journal',
-          package: 'Taylor & Francis',
-        };
-        eHoldingsTitlesSearch.byTitle(selectedResource.title);
-        eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
-        eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
-        eHoldingsTitles.openTitle(0);
-        eHoldingsTitle.waitPackagesLoading();
-        eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED, selectedResource.package);
-        eHoldingsTitle.waitPackagesLoading();
-        eHoldingsTitle.openResource(0);
-        eHoldingsResourceView.goToEdit();
-        eHoldingsResourceEdit.swicthToCustomCoverageDates();
-
-        let addedRangesCount = 0;
-        const dateRanges = dateTools.getDateRanges(2).map((range) => ({
-          startDay: `${dateTools.padWithZero(
-            range.startDay.getMonth() + 1,
-          )}/${dateTools.padWithZero(range.startDay.getDate())}/${dateTools.padWithZero(
-            range.startDay.getFullYear(),
-          )}`,
-          endDay: `${dateTools.padWithZero(range.endDay.getMonth() + 1)}/${dateTools.padWithZero(
-            range.endDay.getDate(),
-          )}/${dateTools.padWithZero(range.endDay.getFullYear())}`,
-        }));
-        dateRanges.forEach((range) => {
-          eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
-          addedRangesCount++;
-        });
-        eHoldingsResourceEdit.saveAndClose();
-        eHoldingsResourceView.waitLoading();
-        eHoldingsResourceView.checkCustomPeriods(dateRanges);
-
-        // revert test data
-        // TODO: redesign to api requests
-        eHoldingsResourceView.goToEdit();
-        eHoldingsResourceEdit.removeExistingCustomeCoverageDates();
       },
     );
 
