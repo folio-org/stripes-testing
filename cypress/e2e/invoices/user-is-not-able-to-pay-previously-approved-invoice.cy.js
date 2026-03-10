@@ -19,6 +19,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Approvals from '../../support/fragments/settings/invoices/approvals';
+import InvoiceStates from '../../support/fragments/invoices/invoiceStates';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -139,7 +140,9 @@ describe('Invoices', () => {
       OrderLines.viewPO();
       Orders.unOpenOrderAndDeleteItems();
       Orders.selectInvoiceInRelatedInvoicesList(invoice.invoiceNumber);
-      InvoiceView.checkInvoiceCanNotBeApprovedWarning();
+      InvoiceView.checkInvoiceCanNotBeApprovedWarning(
+        InvoiceStates.invoiceCanNotBeApprovedPendingOrder,
+      );
       Invoices.checkPayButtonIsDissabled();
     },
   );
