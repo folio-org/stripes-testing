@@ -61,6 +61,10 @@ export default {
     }
   },
 
+  verifyLockProfileCheckbox(isChecked, isDisabled) {
+    cy.expect(Checkbox('Lock profile').has({ checked: isChecked, disabled: isDisabled }));
+  },
+
   verifyElements() {
     cy.expect([
       Accordion({ label: 'Summary', open: true }).exists(),

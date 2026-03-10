@@ -39,6 +39,7 @@ describe('Data Export', () => {
       () => {
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
         ExportFieldMappingProfiles.verifyDefaultProfiles();
+        ExportFieldMappingProfiles.verifyColumnTitles();
       },
     );
 
