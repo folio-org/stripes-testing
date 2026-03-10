@@ -54,6 +54,7 @@ specFiles.forEach((specFile) => {
   });
 });
 testIds = testIds.flat();
+testIds.sort(() => Math.random() - 0.5);
 
 console.log('Matched test IDs: ', testIds);
 console.log('Matched test IDs: ', testIds);
