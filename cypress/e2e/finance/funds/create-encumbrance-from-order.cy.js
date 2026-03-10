@@ -70,7 +70,8 @@ describe('Transactions', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.getAdminToken();
+    Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
 

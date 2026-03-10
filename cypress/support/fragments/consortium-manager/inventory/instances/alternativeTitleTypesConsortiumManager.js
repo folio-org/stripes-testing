@@ -46,10 +46,20 @@ export default {
             method: REQUEST_METHOD.GET,
             path: `consortia/${consortiaId}/publications/${publicationId}/results`,
           }).then(({ body }) => {
-            const alternativeTitleTypes = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).alternativeTitleTypes;
+            if (!body.publicationResults) {
+              throw new Error(`No publication results found for consortia ${consortiaId}`);
+            }
+
+            const publication = body.publicationResults.find((pub) => pub.tenantId === tenantId);
+            if (!publication) {
+              throw new Error(`No publication found for tenant ${tenantId}`);
+            }
+
+            if (!publication.response) {
+              throw new Error(`No response data found for tenant ${tenantId}`);
+            }
+
+            const alternativeTitleTypes = JSON.parse(publication.response).alternativeTitleTypes;
             return alternativeTitleTypes.find(
               (alternativeTitleType) => alternativeTitleType.name === name,
             );
@@ -65,6 +75,7 @@ export default {
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
         path: `alternative-title-types/${alternativeTitleType.id}`,
+        isDefaultSearchParamsRequired: false,
         failOnStatusCode: false,
       });
       cy.resetTenant();
