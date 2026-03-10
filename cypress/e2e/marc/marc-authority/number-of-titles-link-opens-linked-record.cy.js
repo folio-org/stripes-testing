@@ -20,9 +20,9 @@ const testData = {
   instanceIDs: [],
   authorityIDs: [],
   tag: '111',
-  marcValue: 'Mediterranean Conference on Medical and Biological Engineering',
+  marcValue: 'C375263 Mediterranean Conference on Medical and Biological Engineering',
   instanceTitle:
-    'Mediterranean conference on medical and biological engineering and computing 2013 / Laura M. Roa Romero, editor.',
+    'C375263 Mediterranean conference on medical and biological engineering and computing 2013 / Laura M. Roa Romero, editor.',
   authorizedTypes: {
     AUTHORIZED: 'Authorized',
   },
@@ -48,8 +48,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
+      InventoryInstances.deleteInstanceByTitleViaApi('C375263');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375263');
 
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(

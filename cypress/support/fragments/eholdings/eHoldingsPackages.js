@@ -110,16 +110,16 @@ export default {
 
     return cy.get('@selectedPackages');
   },
+
   openPackageWithExpectedName(packageName) {
     cy.do(resultSection.find(Link({ text: including(`${packageName}\n`) })).click());
   },
-  openPackageWithExpectedTitels: (totalTitlesNumber) => {
-    cy.do(
-      resultSection
-        .find(ListItem({ text: including(`Total titles: ${totalTitlesNumber}`) }))
-        .find(Link())
-        .click(),
-    );
+
+  openNthPackageWithExpectedTitles: (totalTitles, indexOfElement = 0) => {
+    cy.wait(2000);
+    cy.contains('[data-testid*="-list-item-link"]', new RegExp(`Total titles: ${totalTitles}$`))
+      .eq(indexOfElement)
+      .click();
   },
 
   openPackage: (rowNumber = 0) => {

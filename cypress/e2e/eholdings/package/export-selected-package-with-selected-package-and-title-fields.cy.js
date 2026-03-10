@@ -17,7 +17,6 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      packageName: 'Sabinet African Journals (Juta Law Journals)',
       fileName: `C356413autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
       selectedStatus: 'Selected',
@@ -66,7 +65,7 @@ describe('eHoldings', () => {
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
 
-        EHoldingsPackages.openPackageWithExpectedTitels(21);
+        EHoldingsPackages.openNthPackageWithExpectedTitles('\\d{2}');
         EHoldingsPackageView.waitLoading();
 
         EHoldingsPackageView.openExportModal();

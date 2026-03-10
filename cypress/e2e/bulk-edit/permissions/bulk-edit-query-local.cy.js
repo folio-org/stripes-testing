@@ -112,12 +112,12 @@ describe('Bulk-edit', () => {
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
         AuthorizationRoles.clickOnCapabilitySetsAccordion();
         AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
+        cy.wait(5000); // wait for the changes to be applied in the system
+        cy.logout();
 
         // Step 6: Relog into FOLIO with updated capability sets and navigate to Bulk edit
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
 
