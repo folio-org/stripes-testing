@@ -210,18 +210,34 @@ export default {
     cy.do(
       cy.xpath(component(id, componentActivateMenu))
         .should('be.visible')
-        .click(),
+        .focus()
+        .wait(100)
+        .realClick(),
       cy.xpath(component(id, componentMoveAction))
         .should('be.visible')
-        .click(),
+        .focus()
+        .wait(100)
+        .realClick(),
     );
+  },
+
+  moveComponentUnavailable: (id) => {
+    cy.xpath(component(id, componentActivateMenu))
+      .should('be.visible')
+      .focus()
+      .wait(100)
+      .realClick();
+    cy.xpath(component(id, componentMoveAction))
+      .should('not.exist')
   },
 
   nudgeComponentUpButton: (id) => {
     cy.do(
       cy.xpath(component(id, componentNudgeUp))
         .should('be.visible')
-        .click(),
+        .focus()
+        .wait(100)  
+        .realPress('Enter'),
     );
   },
 
@@ -229,7 +245,9 @@ export default {
     cy.do(
       cy.xpath(component(id, componentNudgeDown))
         .should('be.visible')
-        .click(),
+        .focus()
+        .wait(100)    
+        .realPress('Enter'),
     );
   },
 
