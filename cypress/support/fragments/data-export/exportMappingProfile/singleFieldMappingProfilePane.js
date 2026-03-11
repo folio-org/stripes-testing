@@ -10,6 +10,7 @@ import {
   Checkbox,
   HTML,
   MetaSection,
+  Modal,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -21,6 +22,7 @@ const descriptionTextarea = TextArea('Description');
 const saveAndCloseButton = Button('Save & close');
 const closeButton = Button({ icon: 'times' });
 const cancelButton = Button('Cancel');
+const cannotDeleteModal = Modal('Cannot delete mapping profile');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -154,6 +156,14 @@ export default {
     cy.do(duplicateButton.click());
   },
 
+  clickDeleteButton() {
+    cy.do(deleteButton.click());
+  },
+
+  confirmDeletion() {
+    cy.do(Modal().find(deleteButton).click());
+  },
+
   clickCancelButton() {
     cy.do(cancelButton.click());
   },
@@ -168,5 +178,33 @@ export default {
 
   clickXButton() {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyCannotDeleteModalOpened() {
+    cy.expect(cannotDeleteModal.exists());
+    cy.expect(cannotDeleteModal.has({ header: 'Cannot delete mapping profile' }));
+  },
+
+  verifyCannotDeleteModalMessage(jobProfileNames, excludedJobProfileNames = []) {
+    const expectedMessage =
+      'This mapping profile cannot be deleted, as it is used in the following job profiles';
+
+    cy.expect(cannotDeleteModal.has({ message: including(expectedMessage) }));
+
+    jobProfileNames.forEach((name) => {
+      cy.expect(cannotDeleteModal.has({ message: including(name) }));
+    });
+
+    excludedJobProfileNames.forEach((name) => {
+      cy.expect(cannotDeleteModal.find(HTML({ text: including(name) })).absent());
+    });
+  },
+
+  closeCannotDeleteModal() {
+    cy.do(cannotDeleteModal.find(Button('Close')).click());
+  },
+
+  verifyCannotDeleteModalClosed() {
+    cy.expect(cannotDeleteModal.absent());
   },
 };

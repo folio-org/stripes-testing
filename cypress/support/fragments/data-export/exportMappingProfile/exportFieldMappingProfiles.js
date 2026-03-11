@@ -141,7 +141,7 @@ export default {
   },
 
   verifyColumnTitles() {
-    ['Name', 'FOLIO record type', 'Format', 'Updated', 'Updated by'].forEach((title) => {
+    ['Name', 'FOLIO record type', 'Format', 'Updated', 'Updated by', 'Status'].forEach((title) => {
       cy.expect(fieldMappingProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
   },
@@ -214,5 +214,9 @@ export default {
 
   verifyNewButtonAbsent() {
     cy.expect(newButton.absent());
+  },
+
+  verifyProfileNotInList(profileName) {
+    cy.expect(MultiColumnListCell(profileName).absent());
   },
 };
