@@ -1826,3 +1826,54 @@ export const EHOLDINGS_KB_SETTINGS_TABS = {
   ASSIGNED_USERS: 'Assigned users',
   USAGE_CONSOLIDATION: 'Usage consolidation',
 };
+
+export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';
+
+export const PUBLISH_COORDINATOR_STATUSES = {
+  COMPLETE: 'COMPLETE',
+  ERROR: 'ERROR',
+  IN_PROGRESS: 'IN_PROGRESS',
+};
+
+export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
+  CREATE: 'createSettingsPCId',
+  DELETE: 'pcId',
+  UPDATE: 'updateSettingsPCId',
+};
+
+export const DELETE_HOLDINGS_ACTIONS = {
+  CANCEL: 'Cancel',
+  KEEP_HOLDINGS: 'Keep Holdings',
+  DELETE_HOLDINGS: 'Delete Holdings',
+};
+
+export const TRANSACTION_TYPES = {
+  ALLOCATION: 'Allocation',
+  CREDIT: 'Credit',
+  ENCUMBRANCE: 'Encumbrance',
+  PAYMENT: 'Payment',
+  PENDING_PAYMENT: 'Pending payment',
+  ROLLOVER_TRANSFER: 'Rollover transfer',
+  TRANSFER: 'Transfer',
+};
+
+export const POL_CREATE_INVENTORY_SETTINGS = {
+  INSTANCE: 'Instance',
+  INSTANCE_HOLDINGS: 'Instance, holdings',
+  INSTANCE_HOLDINGS_ITEM: 'Instance, holdings, item',
+  NONE: 'None',
+};
+
+export const ORGANIZATION_STATUSES = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  PENDING: 'Pending',
+};
+
+export const INVOICE_POL_PAYMENT_STATUSES = {
+  AWAITING_PAYMENT: 'Awaiting Payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully Paid',
+  NO_CHANGE: 'No Change',
+  PARTIALLY_PAID: 'Partially Paid',
+};
