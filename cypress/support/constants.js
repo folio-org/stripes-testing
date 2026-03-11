@@ -1485,10 +1485,12 @@ export const INSTANCE_NOTE_TYPES = {
   AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  FORMATTED_CONTENTS_NOTE: 'Formatted Contents Note',
   DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
+  SUMMARY: 'Summary',
 };
 
 export const BULK_EDIT_ACTIONS = {
