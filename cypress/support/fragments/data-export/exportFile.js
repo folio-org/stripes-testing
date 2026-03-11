@@ -11,6 +11,7 @@ export const defaultJobProfiles = [
   'Default authority export job profile',
   'Default holdings export job profile',
   'Default instances export job profile',
+  'Default linked data export job profile',
   'Deleted authority export job profile',
 ];
 
