@@ -20,6 +20,11 @@ export default {
     University: 'university',
     College: 'college',
   },
+  vulcan: {
+    Consortia: 'cs00000int',
+    University: 'cs00000int_0001',
+    College: 'cs00000int_0002',
+  },
 }[currentEnv];
 
 export const tenantNames = {
