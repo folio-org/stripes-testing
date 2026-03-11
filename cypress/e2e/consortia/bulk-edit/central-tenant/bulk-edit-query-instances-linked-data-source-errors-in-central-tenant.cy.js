@@ -150,7 +150,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.downloadErrorsExists();
             BulkEditActions.downloadErrors();
 
-            ExportFile.verifyFileIncludes(fileNames.errorsSimplified, [
+            ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
               `ERROR,${linkedDataInstance.uuid},${ERROR_MESSAGES.LINKED_DATA_SOURCE_NOT_SUPPORTED}`,
             ]);
           });

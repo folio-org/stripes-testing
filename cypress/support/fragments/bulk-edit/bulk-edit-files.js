@@ -94,10 +94,7 @@ export default {
       errorsFromCommitting: isDateIncluded
         ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
         : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
-      errorsFromMatching: isDateIncluded
-        ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
-        : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
-      errorsSimplified: isDateIncluded ? `${todayDate}-Errors.csv` : '*-Errors.csv',
+      errorsFromMatching: isDateIncluded ? `${todayDate}-Errors.csv` : '*-Errors.csv',
     };
   },
 
