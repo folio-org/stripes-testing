@@ -20,7 +20,6 @@ describe('Eureka', () => {
     userWithKeycloak.username = `at_c451589_username_kc_${getRandomPostfix()}`;
 
     before('Create data', () => {
-      Cypress.session.clearCurrentSessionData();
       cy.getAdminToken();
       cy.getUserGroups().then((groupId) => {
         userWithoutKeycloak.patronGroup = groupId;
