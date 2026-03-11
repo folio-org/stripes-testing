@@ -52,20 +52,20 @@ describe('Invoices', () => {
     first: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}01`,
-      periodStart: new Date(), // Feb 4, 2026
-      periodEnd: new Date(date.getFullYear(), 11, 31), // Dec 31, 2026
+      periodStart: new Date(date.getFullYear() - 0, 0, 1),
+      periodEnd: new Date(date.getFullYear() - 0, 11, 31),
     },
     second: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}02`,
-      periodStart: new Date(date.getFullYear() + 1, 0, 1), // Jan 1, 2027
-      periodEnd: new Date(date.getFullYear() + 1, 11, 31), // Dec 31, 2027
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
     },
     third: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${randomNumber}03`,
-      periodStart: new Date(date.getFullYear() + 2, 0, 1), // Jan 1, 2028
-      periodEnd: new Date(date.getFullYear() + 2, 11, 31), // Dec 31, 2028
+      periodStart: new Date(date.getFullYear() + 2, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 2, 11, 31),
     },
   };
 
@@ -167,18 +167,19 @@ describe('Invoices', () => {
       LedgerRollovers.createLedgerRolloverViaApi({
         ...rollover,
         restrictEncumbrance: false,
+        restrictExpenditures: false,
       });
       FiscalYears.updateFiscalYearViaApi({
         ...fiscalYears.first,
         _version: 1,
-        periodStart: new Date(date.getFullYear() - 1, 0, 1), // Jan 1, 2025
-        periodEnd: new Date(date.getFullYear() - 1, 11, 31), // Dec 31, 2025
+        periodStart: new Date(date.getFullYear() - 1, 0, 1),
+        periodEnd: new Date(date.getFullYear() - 1, 11, 31),
       });
       FiscalYears.updateFiscalYearViaApi({
         ...fiscalYears.second,
         _version: 1,
-        periodStart: new Date(), // Feb 4, 2026
-        periodEnd: fiscalYears.second.periodEnd, // Dec 31, 2027
+        periodStart: new Date(),
+        periodEnd: fiscalYears.second.periodEnd,
       });
       Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
     });
@@ -309,20 +310,18 @@ describe('Invoices', () => {
         ],
       });
 
-      // Change "Period Start Date (UTC)" and "Period End Date (UTC)" fields to any date in the past (should be after "Period End Date (UTC)" for the first fiscal year)
       DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-      const periodStartForFirstFY2 = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear(), 0, 1) }, // Jan 1, 2026
+      const periodStartForSecondFY = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear() + 0, 0, 1) },
         'MM/DD/YYYY',
       );
-      const periodEndForFirstFY2 = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear(), 1, 3) }, // Feb 3, 2026
+      const periodEndForSecondFY = DateTools.getFormattedDate(
+        { date: new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1) },
         'MM/DD/YYYY',
       );
-      // Change "Period Start Date (UTC)" and "Period End Date (UTC)" fields to any date including current date (should be after "Period End Date (UTC)" for the second fiscal year)
       const periodStartForThirdFY = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const periodEndForThirdFY = DateTools.getFormattedDate(
-        { date: fiscalYears.third.periodEnd }, // Dec 31, 2028
+        { date: new Date(date.getFullYear() + 0, 4, 31) },
         'MM/DD/YYYY',
       );
 
@@ -336,6 +335,7 @@ describe('Invoices', () => {
         'None',
         'Allocation',
         true,
+        true,
       );
 
       FinanceHelper.selectFiscalYearsNavigation();
@@ -343,8 +343,8 @@ describe('Invoices', () => {
       FiscalYears.selectFY(fiscalYears.second.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-        periodStartForFirstFY2,
-        periodEndForFirstFY2,
+        periodStartForSecondFY,
+        periodEndForSecondFY,
       );
       FinanceHelper.searchByName(fiscalYears.third.name);
       FiscalYears.selectFY(fiscalYears.third.name);

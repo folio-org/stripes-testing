@@ -14,6 +14,7 @@ import UsersSearchResultsPane from '../../../support/fragments/users/usersSearch
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Capabilities from '../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import { including } from '../../../../interactors';
 
 let randomPostfix;
 let testData;
@@ -47,7 +48,7 @@ describe(
         testData = {
           roleName: `AT_C584520_UserRole_${randomPostfix}`,
           promotePath: '/users-keycloak/auth-users',
-          errorCalloutText: 'Something went wrong. Please try again later.',
+          errorCalloutText: including('User without username cannot be created in Keycloak'),
         };
         userBodies = [];
         userIds = [];
