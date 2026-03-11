@@ -105,7 +105,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
 
   const userProperties = {
     username: `at_username_${getRandomPostfix()}`,
-    password: 'wXeuh5#GF!tWZ4!nBdPqP0ST&v',
+    password: 'password',
   };
   let userBody;
   if (!userModel) {
