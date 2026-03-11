@@ -106,6 +106,18 @@ export default {
     cy.do([nameTextfield.clear(), nameTextfield.fillIn(newName)]);
   },
 
+  saveJobProfile() {
+    cy.do(saveAndCloseButton.click());
+  },
+
+  clickDeleteButton() {
+    cy.do(deleteButton.click());
+  },
+
+  confirmDeletion() {
+    cy.do(Modal().find(deleteButton).click());
+  },
+
   deleteMappingProfile: (name) => {
     cy.do([actionsButton.click(), deleteButton.click(), Modal().find(deleteButton).click()]);
     InteractorsTools.checkCalloutMessage(`Job profile ${name} has been successfully deleted`);
