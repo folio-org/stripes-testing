@@ -28,14 +28,14 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15828 Delete the existing mapping profile (firebird)',
+      'C15828 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to delete unlocked mapping profile not referenced in job profile (firebird)',
       { tags: ['criticalPath', 'firebird', 'C15828'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
 
         const testProfile = {
-          name: `autoTestMappingProf.${getRandomPostfix()}`,
+          name: `AT_C15828_autoTestMappingProf.${getRandomPostfix()}`,
           holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
           holdingsMarcField: '901',
           subfieldForHoldings: 'a',

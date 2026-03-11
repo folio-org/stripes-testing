@@ -179,6 +179,10 @@ export default {
     this.verifyFieldsSuppressionTextareaDisabled(true);
   },
 
+  verifyLockProfileCheckbox(isDisabled, isChecked) {
+    cy.expect(Checkbox('Lock profile').has({ checked: isChecked, disabled: isDisabled }));
+  },
+
   checkCheckbox(...names) {
     names.forEach((name) => {
       cy.wait(2000);
@@ -207,6 +211,10 @@ export default {
 
   clickSaveAndClose() {
     cy.do(saveAndCloseButton.click());
+  },
+
+  verifySaveAndCloseButtonDisabled(isDisabled = true) {
+    cy.expect(saveAndCloseButton.has({ disabled: isDisabled }));
   },
 
   clearFieldsSuppressionTextarea() {
