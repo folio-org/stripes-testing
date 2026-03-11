@@ -118,7 +118,7 @@ describe('eHoldings', () => {
           ({ packageName, contentType, title, customLabel, customValue }) => {
             EHoldingsPackagesSearch.byName(packageName);
             cy.wait(2000);
-            EHoldingsPackages.openPackageWithExpectedTitels(1);
+            EHoldingsPackages.openNthPackageWithExpectedTitles(1);
             EHoldingsPackages.verifyContentType(contentType);
             cy.wait(2000);
             EHoldingsPackage.openTitle(title);

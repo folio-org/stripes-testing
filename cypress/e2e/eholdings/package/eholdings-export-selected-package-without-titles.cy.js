@@ -60,7 +60,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
-        EHoldingsPackages.openPackageWithExpectedTitels(testData.titlesNumber);
+        EHoldingsPackages.openNthPackageWithExpectedTitles(testData.titlesNumber);
         EHoldingsPackageView.verifyPackageDetailViewIsOpened(
           testData.packageName,
           testData.titlesNumber,
