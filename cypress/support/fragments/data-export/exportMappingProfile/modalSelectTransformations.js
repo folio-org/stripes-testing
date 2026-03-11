@@ -20,6 +20,17 @@ const transformationsSearchTextfield = TextField({ name: 'searchValue' });
 const resetAllButton = Button('Reset all');
 const transformationsSaveAndCloseButton = ModalTransformation.find(Button('Save & close'));
 const transformationsCancelButton = ModalTransformation.find(Button('Cancel'));
+const closeFormButton = ModalTransformation.find(Button({ icon: 'times' }));
+
+// Common scrolling configuration
+const TRANSFORMATIONS_SCROLL_CONFIG = {
+  scrollableContainer: '#mapping-profiles-form-transformations div [style*=transform]',
+  fieldNameCellSelector:
+    '#mapping-profiles-form-transformations [role="row"] [class*="mclCell"]:nth-child(2)',
+  scrollStepPercentage: 0.8, // Scroll 80% of viewport height at a time
+  waitTime: 200, // Wait time in ms after each scroll
+};
+
 const getTargetFieldRow = (fieldName) => {
   return ModalTransformation.find(MultiColumnListRow({ innerHTML: including(fieldName) }));
 };
@@ -52,6 +63,50 @@ export default {
     cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
   },
 
+  clickFieldNameCheckbox(fieldName) {
+    const { scrollableContainer, fieldNameCellSelector, scrollStepPercentage, waitTime } =
+      TRANSFORMATIONS_SCROLL_CONFIG;
+
+    const checkIfFieldVisible = () => {
+      return cy.get(fieldNameCellSelector).then(($cells) => {
+        let isVisible = false;
+        $cells.each((i, cell) => {
+          if (cell.textContent.trim() === fieldName) {
+            isVisible = true;
+            return false; // Break the loop
+          }
+          return undefined;
+        });
+        return isVisible;
+      });
+    };
+
+    const scrollAndFindField = (currentStep = 0, maxSteps = 50) => {
+      checkIfFieldVisible().then((isVisible) => {
+        if (isVisible) {
+          // Field found, click its checkbox
+          const targetFieldRow = getTargetFieldRow(fieldName);
+          cy.do(targetFieldRow.find(Checkbox({ name: including('isSelected') })).click());
+        } else if (currentStep < maxSteps) {
+          // Field not visible yet, scroll down and try again
+          cy.get(scrollableContainer).then(($container) => {
+            const container = $container[0];
+            const scrollStep = container.clientHeight * scrollStepPercentage;
+            cy.get(scrollableContainer).scrollTo(0, (currentStep + 1) * scrollStep);
+            cy.wait(waitTime);
+            scrollAndFindField(currentStep + 1, maxSteps);
+          });
+        } else {
+          throw new Error(
+            `Field "${fieldName}" not found after scrolling through the entire list (${maxSteps} attempts)`,
+          );
+        }
+      });
+    };
+
+    scrollAndFindField();
+  },
+
   verifySearchResultIncludes(allContentToCheck) {
     return allContentToCheck.forEach((contentToCheck) => {
       cy.expect(
@@ -73,14 +128,13 @@ export default {
   },
 
   verifyTransformationFieldsFilteredByRecordType(recordType) {
-    const selector =
-      '#mapping-profiles-form-transformations [role="row"] [class*="mclCell"]:nth-child(2)';
-    const scrollableContainer = '#mapping-profiles-form-transformations div [style*=transform]';
+    const { scrollableContainer, fieldNameCellSelector, scrollStepPercentage, waitTime } =
+      TRANSFORMATIONS_SCROLL_CONFIG;
     const allFieldNames = [];
 
     // Function to collect visible field names
     const collectVisibleFieldNames = () => {
-      cy.get(selector).then(($cells) => {
+      cy.get(fieldNameCellSelector).then(($cells) => {
         $cells.each((i, cell) => {
           const fieldName = cell.textContent.trim();
           // Only add unique field names
@@ -97,7 +151,7 @@ export default {
         const container = $container[0];
         const scrollHeight = container.scrollHeight;
         const clientHeight = container.clientHeight;
-        const scrollStep = clientHeight * 0.8; // Scroll 80% of viewport height at a time
+        const scrollStep = clientHeight * scrollStepPercentage;
         const scrollSteps = Math.ceil(scrollHeight / scrollStep);
 
         // Collect from initial position
@@ -106,7 +160,7 @@ export default {
         // Scroll down incrementally and collect
         for (let i = 1; i <= scrollSteps; i++) {
           cy.get(scrollableContainer).scrollTo(0, i * scrollStep);
-          cy.wait(200);
+          cy.wait(waitTime);
           collectVisibleFieldNames();
         }
       })
@@ -300,8 +354,16 @@ export default {
     cy.do(transformationsCancelButton.click());
   },
 
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(transformationsCancelButton.has({ disabled: isDisabled }));
+  },
+
   clickKeepEditingBtn() {
     cy.do(Modal('Are you sure?').find(Button('Keep Editing')).click());
+  },
+
+  verifyCloseFormButtonDisabled(isDisabled = true) {
+    cy.expect(closeFormButton.has({ disabled: isDisabled }));
   },
 
   verifyTransformationsFirstRowTextFieldsPlaceholders(
@@ -363,8 +425,11 @@ export default {
   },
 
   verifyModalTransformationExists(isExist = true) {
-    if (isExist) cy.expect(ModalTransformation.exists());
-    cy.expect(ModalTransformation.absent());
+    if (isExist) {
+      cy.expect(ModalTransformation.exists());
+    } else {
+      cy.expect(ModalTransformation.absent());
+    }
   },
 
   verifyFieldSelectedForTransformationByName(fieldName, rowIndex = 0) {

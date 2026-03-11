@@ -141,9 +141,31 @@ export default {
   },
 
   verifyColumnTitles() {
-    ['Name', 'FOLIO record type', 'Format', 'Updated', 'Updated by'].forEach((title) => {
+    ['Name', 'FOLIO record type', 'Format', 'Updated', 'Updated by', 'Status'].forEach((title) => {
       cy.expect(fieldMappingProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
+  },
+
+  verifyValuesInAllColumnsOfFieldMappingProfile(
+    name,
+    recordType,
+    format,
+    updated,
+    updatedBy,
+    status = '',
+  ) {
+    const row = fieldMappingProfilesPane.find(
+      MultiColumnListRow({ innerHTML: including(name), isContainer: false }),
+    );
+
+    cy.expect([
+      row.find(MultiColumnListCell({ column: 'Name', content: name })).exists(),
+      row.find(MultiColumnListCell({ column: 'FOLIO record type', content: recordType })).exists(),
+      row.find(MultiColumnListCell({ column: 'Format', content: format })).exists(),
+      row.find(MultiColumnListCell({ column: 'Updated', content: updated })).exists(),
+      row.find(MultiColumnListCell({ column: 'Updated by', content: updatedBy })).exists(),
+      row.find(MultiColumnListCell({ column: 'Status', content: status })).exists(),
+    ]);
   },
 
   scrollDownIfListOfResultsIsLong() {
@@ -165,9 +187,20 @@ export default {
     this.scrollDownIfListOfResultsIsLong();
 
     cy.expect([
-      MultiColumnListRow(including('Default authority mapping profileAuthority')).exists(),
-      MultiColumnListRow(including('Default holdings mapping profileHoldings')).exists(),
-      MultiColumnListRow(including('Default instance mapping profileInstance')).exists(),
+      MultiColumnListRow(including('Default authority mapping profile'), { isContainer: false })
+        .find(MultiColumnListCell({ column: 'FOLIO record type', content: 'Authority' }))
+        .exists(),
+      MultiColumnListRow(including('Default holdings mapping profile'), { isContainer: false })
+        .find(MultiColumnListCell({ column: 'FOLIO record type', content: 'Holdings' }))
+        .exists(),
+      MultiColumnListRow(including('Default instance mapping profile'), { isContainer: false })
+        .find(MultiColumnListCell({ column: 'FOLIO record type', content: 'Instance' }))
+        .exists(),
+      MultiColumnListRow(including('Default Linked Data instance mapping profile'), {
+        isContainer: false,
+      })
+        .find(MultiColumnListCell({ column: 'FOLIO record type', content: 'Linked_data' }))
+        .exists(),
     ]);
   },
 
@@ -181,5 +214,9 @@ export default {
 
   verifyNewButtonAbsent() {
     cy.expect(newButton.absent());
+  },
+
+  verifyProfileNotInList(profileName) {
+    cy.expect(MultiColumnListCell(profileName).absent());
   },
 };
