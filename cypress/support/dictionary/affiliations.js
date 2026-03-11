@@ -43,6 +43,11 @@ export const tenantNames = {
     university: 'University',
     professional: 'Professional',
   },
+  vulcan: {
+    central: 'Central Office',
+    university: 'Colledge Consortia',
+    college: 'Professional Consortia',
+  },
 }[currentEnv];
 
 export const tenantCodes = {
@@ -67,6 +72,11 @@ export const tenantCodes = {
     college: 'COL',
     university: 'UNI',
     professional: 'UNI',
+  },
+  vulcan: {
+    central: 'CEN',
+    university: 'COL',
+    college: 'PRO',
   },
 }[currentEnv];
 
