@@ -29,17 +29,17 @@ describe('Consortia', () => {
         const localSubjectTypeOnCentral = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Central Office',
+          memberLibraries: tenantNames.central,
         };
         const localSubjectTypeOnCollege = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'College',
+          memberLibraries: tenantNames.college,
         };
         const localSubjectTypeOnUniversity = {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'University',
+          memberLibraries: tenantNames.university,
         };
         const settingsList = Object.values(settingsItems);
 

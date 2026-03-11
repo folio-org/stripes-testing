@@ -1,4 +1,4 @@
-export default function getRandomStrongPassword(len = 25) {
+export default function getRandomStrongPassword(len = 15) {
   const lettersUC = 'ABDEFGHKMNPQRSTWXZ!@#$%^&*()_+1234567980qwertyuiopasdfghjklzxcvbnm';
   let str = '';
   for (let i = 0; i < len; i++) {

@@ -228,6 +228,7 @@ describe('Data Import', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.searchByTitle(testData.instanceId);
+          InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.checkContributor(testData.contributorName);
           InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

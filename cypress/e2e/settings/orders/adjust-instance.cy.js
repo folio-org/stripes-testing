@@ -112,7 +112,7 @@ describe('Orders', () => {
         OrderLines.openInstance();
         InventoryInstance.openHoldingsAccordion(testData.location.name);
         InventoryInstance.verifyLoan(testData.loanType);
-        InstanceRecordView.verifyResourceType(`${testData.instanceType} `);
+        InstanceRecordView.verifyResourceType(testData.instanceType);
         InstanceRecordView.verifyInstanceStatusTerm(testData.instanceStatus);
       },
     );
