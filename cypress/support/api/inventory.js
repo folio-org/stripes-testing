@@ -74,6 +74,29 @@ Cypress.Commands.add('deleteLoanType', (loanId) => {
   });
 });
 
+Cypress.Commands.add('createIllPolicy', (illPolicyName) => {
+  return cy
+    .okapiRequest({
+      path: 'ill-policies',
+      method: 'POST',
+      body: {
+        id: uuid(),
+        name: illPolicyName,
+        source: 'local',
+      },
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});
+
+Cypress.Commands.add('deleteIllPolicy', (illPolicyId) => {
+  return cy.okapiRequest({
+    path: `ill-policies/${illPolicyId}`,
+    method: 'DELETE',
+  });
+});
+
 // Returns the LIST of all material types (array of objects, depending on searchParams)
 Cypress.Commands.add('getAllMaterialTypes', (searchParams) => {
   return cy
