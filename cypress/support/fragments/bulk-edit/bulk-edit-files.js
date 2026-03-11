@@ -97,6 +97,7 @@ export default {
       errorsFromMatching: isDateIncluded
         ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
         : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
+      errorsSimplified: isDateIncluded ? `${todayDate}-Errors.csv` : '*-Errors.csv',
     };
   },
 
