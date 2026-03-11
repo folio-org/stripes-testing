@@ -80,7 +80,6 @@ describe('Finance', () => {
         });
         firstOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        cy.visit(TopMenu.ordersPath);
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(firstOrder);
