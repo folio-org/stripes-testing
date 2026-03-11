@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -120,7 +120,7 @@ describe('Inventory', () => {
           );
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
-          InstanceRecordView.expandMemberSubHoldings('College');
+          InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
           InstanceRecordView.openHoldingsAccordion(testData.collegeLocation.name);
           InventoryInstance.checkIsItemCreated(testData.itemBarcode);
         },

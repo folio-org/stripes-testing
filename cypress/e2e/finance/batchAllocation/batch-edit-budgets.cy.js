@@ -41,7 +41,6 @@ describe('Finance', () => {
 
     before('Setup data', () => {
       cy.getAdminToken();
-
       FiscalYears.createViaApi(fiscalYear).then((fy) => {
         fiscalYear.id = fy.id;
         ledger.fiscalYearOneId = fy.id;

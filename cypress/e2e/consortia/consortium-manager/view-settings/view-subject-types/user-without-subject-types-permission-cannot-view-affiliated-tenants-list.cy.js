@@ -36,12 +36,12 @@ describe('Consortia', () => {
         const localSubjectTypeOnCollege = {
           name: `C594399 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'College',
+          memberLibraries: tenantNames.college,
         };
         const localSubjectTypeOnUniversity = {
           name: `C594399 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'University',
+          memberLibraries: tenantNames.university,
         };
         const settingsList = Object.values(settingsItems);
         const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;

@@ -2057,11 +2057,11 @@ export default {
     ]);
   },
   setPhysicalQuantity(quantity) {
-    cy.do(quantityPhysicalLocationField.fillIn(quantity));
+    cy.do([quantityPhysicalLocationField.clear(), quantityPhysicalLocationField.fillIn(quantity)]);
     cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
   },
   setElectronicQuantity(quantity) {
-    cy.do(quantityElectronicField.fillIn(quantity));
+    cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
     cy.expect(quantityElectronicField.has({ value: quantity }));
   },
   openCreateHoldingForLocation() {
