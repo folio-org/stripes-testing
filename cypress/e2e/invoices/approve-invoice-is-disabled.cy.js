@@ -2,6 +2,7 @@ import { INVOICE_STATUSES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import InvoiceStates from '../../support/fragments/invoices/invoiceStates';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -118,7 +119,9 @@ describe('Invoices', () => {
       SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
 
       // * Warning banner is displayed at top of invoice "Invoice can not be approved."
-      InvoiceView.checkInvoiceCanNotBeApprovedWarning();
+      InvoiceView.checkInvoiceCanNotBeApprovedWarning(
+        InvoiceStates.invoiceCanNotBeApprovedPendingOrder,
+      );
 
       // Click "Actions" menu button
       InvoiceView.expandActionsDropdown();

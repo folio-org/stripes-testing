@@ -12,7 +12,6 @@ const deleteHoldingsButtons = {
 };
 
 export default {
-  deleteHoldingsButtons,
   deleteHoldingsModal({ action, locations = [] }) {
     const holdingsToDelete = locations.map((location) => location.name);
     cy.expect([

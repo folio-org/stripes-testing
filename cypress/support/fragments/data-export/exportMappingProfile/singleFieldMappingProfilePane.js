@@ -10,6 +10,7 @@ import {
   Checkbox,
   HTML,
   MetaSection,
+  Modal,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -19,7 +20,9 @@ const deleteButton = Button('Delete');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const saveAndCloseButton = Button('Save & close');
+const closeButton = Button({ icon: 'times' });
 const cancelButton = Button('Cancel');
+const cannotDeleteModal = Modal('Cannot delete mapping profile');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -61,6 +64,10 @@ export default {
     }
   },
 
+  verifyLockProfileCheckbox(isChecked, isDisabled) {
+    cy.expect(Checkbox('Lock profile').has({ checked: isChecked, disabled: isDisabled }));
+  },
+
   verifyElements() {
     cy.expect([
       Accordion({ label: 'Summary', open: true }).exists(),
@@ -91,7 +98,6 @@ export default {
   },
 
   editFieldMappingProfile(newName, newDescription) {
-    this.clickEditButton();
     // Need to wait for page to reload
     cy.wait(2000);
     cy.do([
@@ -99,6 +105,10 @@ export default {
       nameTextfield.fillIn(newName),
       descriptionTextarea.fillIn(newDescription),
     ]);
+  },
+
+  verifyNameTextField(name) {
+    cy.expect(nameTextfield.has({ value: name }));
   },
 
   verifyMetadataSectionExists() {
@@ -111,6 +121,18 @@ export default {
 
   duplicateFieldMappingProfile() {
     cy.do([duplicateButton.click(), saveAndCloseButton.click()]);
+  },
+
+  verifySaveAndCloseButtonDisabled(isDisabled = true) {
+    cy.expect(saveAndCloseButton.has({ disabled: isDisabled }));
+  },
+
+  verifyCloseButtonDisabled(isDisabled = true) {
+    cy.expect(closeButton.has({ disabled: isDisabled }));
+  },
+
+  clickCloseButton() {
+    cy.do(closeButton.click());
   },
 
   clickEditTransformations() {
@@ -134,8 +156,20 @@ export default {
     cy.do(duplicateButton.click());
   },
 
+  clickDeleteButton() {
+    cy.do(deleteButton.click());
+  },
+
+  confirmDeletion() {
+    cy.do(Modal().find(deleteButton).click());
+  },
+
   clickCancelButton() {
     cy.do(cancelButton.click());
+  },
+
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
 
   verifyActionsButtonAbsent() {
@@ -144,5 +178,33 @@ export default {
 
   clickXButton() {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyCannotDeleteModalOpened() {
+    cy.expect(cannotDeleteModal.exists());
+    cy.expect(cannotDeleteModal.has({ header: 'Cannot delete mapping profile' }));
+  },
+
+  verifyCannotDeleteModalMessage(jobProfileNames, excludedJobProfileNames = []) {
+    const expectedMessage =
+      'This mapping profile cannot be deleted, as it is used in the following job profiles';
+
+    cy.expect(cannotDeleteModal.has({ message: including(expectedMessage) }));
+
+    jobProfileNames.forEach((name) => {
+      cy.expect(cannotDeleteModal.has({ message: including(name) }));
+    });
+
+    excludedJobProfileNames.forEach((name) => {
+      cy.expect(cannotDeleteModal.find(HTML({ text: including(name) })).absent());
+    });
+  },
+
+  closeCannotDeleteModal() {
+    cy.do(cannotDeleteModal.find(Button('Close')).click());
+  },
+
+  verifyCannotDeleteModalClosed() {
+    cy.expect(cannotDeleteModal.absent());
   },
 };

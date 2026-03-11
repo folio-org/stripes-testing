@@ -73,19 +73,55 @@ describe('Inventory', () => {
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
 
-        // Step 3: Select "Barcode" search option
+        // Step 3: Search for item with simple barcode using "Keyword" search option with leading space
+        InventoryInstances.searchByTitle(` ${simpleBarcode}`);
+        ItemRecordView.verifyItemBarcode(simpleBarcode);
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+
+        // Step 4: Search for item with parentheses in barcode using "Keyword" search option with trailing space
+        InventoryInstances.searchByTitle(`${barcodeWithParentheses} `);
+        ItemRecordView.verifyItemBarcode(barcodeWithParentheses);
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+
+        // Step 5: Search for item with simple barcode using "Keyword" search option with leading and trailing spaces
+        InventoryInstances.searchByTitle(` ${simpleBarcode} `);
+        ItemRecordView.verifyItemBarcode(simpleBarcode);
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+
+        // Step 6: Select "Barcode" search option
         InventorySearchAndFilter.selectSearchOption(searchOptions.barcode);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(searchOptions.barcode);
 
-        // Step 4: Search for item with simple barcode using "Barcode" search option
+        // Step 7: Search for item with simple barcode using "Barcode" search option
         InventoryInstances.searchByTitle(simpleBarcode);
         ItemRecordView.verifyItemBarcode(simpleBarcode);
 
-        // Step 5: Close item detail view and search for item with parentheses using "Barcode" search option
+        // Step 8: Close item detail view and search for item with parentheses using "Barcode" search option
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.waitLoading();
         InventoryInstances.searchByTitle(barcodeWithParentheses);
         ItemRecordView.verifyItemBarcode(barcodeWithParentheses);
+
+        // Step 9: Close item detail view and search for item with simple barcode using "Barcode" search option with trailing space
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventoryInstances.searchByTitle(`${simpleBarcode}  `);
+        ItemRecordView.verifyItemBarcode(simpleBarcode);
+
+        // Step 10: Close item detail view and search for item with parentheses using "Barcode" search option with leading space
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventoryInstances.searchByTitle(`  ${barcodeWithParentheses}`);
+        ItemRecordView.verifyItemBarcode(barcodeWithParentheses);
+
+        // Step 11: Close item detail view and search for item with simple barcode using "Barcode" search option with leading and trailing spaces
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.waitLoading();
+        InventoryInstances.searchByTitle(` ${simpleBarcode}  `);
+        ItemRecordView.verifyItemBarcode(simpleBarcode);
       },
     );
   });
