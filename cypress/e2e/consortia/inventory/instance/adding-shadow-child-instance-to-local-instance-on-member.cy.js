@@ -41,7 +41,7 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.shadowInstance.instanceTypeId = instanceTypes[0].id;
           });
-          cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          cy.getHoldingTypes({ limit: 1, query: 'source=folio' }).then((res) => {
             testData.shadowHoldings.holdingTypeId = res[0].id;
           });
           cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {

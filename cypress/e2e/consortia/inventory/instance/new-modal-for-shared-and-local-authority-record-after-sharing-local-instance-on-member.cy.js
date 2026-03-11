@@ -100,7 +100,8 @@ describe('Inventory', () => {
             InventoryInstance.searchResults(testData.localAuthorityHeading);
             InventoryInstance.clickLinkButton();
             cy.wait(2000);
-            QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.pressSaveAndCloseButton();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
         cy.resetTenant();
 
@@ -172,14 +173,11 @@ describe('Inventory', () => {
             testData.sharedAuthorityHeading,
             testData.createdRecordIDs[0],
           );
-          InstanceRecordView.verifySubjectWithoutMarcAppIcon(
-            3,
-            'C411723 Lentz Local M1--Latin America--Mexico',
-          );
+          InstanceRecordView.verifySubjectWithoutMarcAppIcon(3, 'C411723 Lentz Local M1');
           InstanceRecordView.verifyInstanceSubject(
             {
               indexRow: 3,
-              subjectHeadings: 'C411723 Lentz Local M1--Latin America--Mexico',
+              subjectHeadings: 'C411723 Lentz Local M1',
               subjectSource: 'No value set-',
               subjectType: 'Topical term',
             },

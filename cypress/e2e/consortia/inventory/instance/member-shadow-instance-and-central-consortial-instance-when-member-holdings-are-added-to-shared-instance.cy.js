@@ -106,7 +106,7 @@ describe('Inventory', () => {
             InventoryInstance.verifyConsortiaHoldingsAccordion(false);
             InventoryInstance.expandConsortiaHoldings();
             InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-            InventoryInstance.expandMemberSubHoldings('College');
+            InventoryInstance.expandMemberSubHoldings(tenantNames.college);
             InventoryInstance.checkIsHoldingsCreated([`${testData.location.name} >`]);
           });
         },

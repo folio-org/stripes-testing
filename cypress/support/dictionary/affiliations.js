@@ -20,11 +20,6 @@ export default {
     University: 'university',
     College: 'college',
   },
-  vulcan: {
-    Consortia: 'cs00000int',
-    University: 'cs00000int_0001',
-    College: 'cs00000int_0002',
-  },
 }[currentEnv];
 
 export const tenantNames = {
@@ -47,11 +42,6 @@ export const tenantNames = {
     college: 'College',
     university: 'University',
     professional: 'Professional',
-  },
-  vulcan: {
-    Consortia: 'Central Office',
-    University: 'Colledge Consortia',
-    College: 'Professional Consortia',
   },
 }[currentEnv];
 
@@ -77,11 +67,6 @@ export const tenantCodes = {
     college: 'COL',
     university: 'UNI',
     professional: 'UNI',
-  },
-  vulcan: {
-    Consortia: 'CEN',
-    University: 'COL',
-    College: 'PRO',
   },
 }[currentEnv];
 
