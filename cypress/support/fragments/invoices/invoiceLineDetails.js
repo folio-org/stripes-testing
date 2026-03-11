@@ -107,6 +107,13 @@ export default {
             .has({ content: including(record.expenseClass) }),
         );
       }
+      if (record.amount) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Amount' }))
+            .has({ content: including(record.amount) }),
+        );
+      }
       if (record.initialEncumbrance) {
         cy.expect(
           fundDistributionsSection

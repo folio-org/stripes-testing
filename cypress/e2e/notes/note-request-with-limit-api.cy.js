@@ -58,7 +58,7 @@ describe('Notes', () => {
   });
 
   it(
-    'C360558 Create a note (spitfire)',
+    'C360558 Check that GET request to the "/notes" endpoint with limit parameter will succeed (spitfire)',
     { tags: ['extendedPath', 'backend', 'spitfire', 'C360558'] },
     () => {
       cy.then(() => {

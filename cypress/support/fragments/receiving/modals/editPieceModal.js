@@ -23,6 +23,8 @@ const cancelButton = editPieceModal.find(Button('Cancel'));
 const deleteButton = Button('Delete');
 const quickReceiveButton = Button('Quick receive');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
+const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
+const unreceiveButton = Button('Unreceive');
 
 const editPieceFields = {
   Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
@@ -103,6 +105,10 @@ export default {
     cy.expect(saveAndCloseButton.has({ disabled }));
   },
   verifyActionsMenuState({ disabled = true } = {}) {
-    cy.expect(Button({ dataTestID: 'dropdown-trigger-button' }).has({ disabled }));
+    cy.expect(actionsDropdownButton.has({ disabled }));
+  },
+  verifyUnreceiveOptionState({ disabled = true } = {}) {
+    cy.do(actionsDropdownButton.click());
+    cy.expect(unreceiveButton.has({ disabled }));
   },
 };
