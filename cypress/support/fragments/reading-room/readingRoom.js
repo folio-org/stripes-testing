@@ -104,6 +104,6 @@ export default {
 
   checkFieldsDisplayed() {
     cy.expect(patronBarcodeField.exists());
-    cy.expect(rootSection.find(Button('Enter')).exists());
+    cy.get('[type="submit"]').should('exist');
   },
 };
