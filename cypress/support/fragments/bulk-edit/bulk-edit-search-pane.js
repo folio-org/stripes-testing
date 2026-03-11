@@ -169,6 +169,7 @@ export const ERROR_MESSAGES = {
   OPTIMISTIC_LOCKING:
     'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
   DUPLICATE_ENTRY: 'Duplicate entry',
+  DUPLICATES_ACROSS_TENANTS: 'Duplicates across tenants',
   SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
   INVALID_MARC_RECORD:
