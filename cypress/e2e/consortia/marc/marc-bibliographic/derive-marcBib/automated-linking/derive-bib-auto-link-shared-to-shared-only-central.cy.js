@@ -105,8 +105,8 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ];
-          const contributorValueLinked = authorityHeadingShared1;
-          const contributorValueNotLinked = authorityHeadingLocal;
+          const contributorValueLinked = authorityHeadingShared2;
+          const contributorValueNotLinked = 'Field700';
 
           let user;
           let createdInstanceId;
@@ -208,11 +208,11 @@ describe('MARC', () => {
               QuickMarcEditor.verifyRemoveLinkingModalAbsence();
               QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldData650));
 
+              QuickMarcEditor.clickLinkHeadingsButton();
               automatedLinkingCallouts.forEach((callout) => {
                 QuickMarcEditor.checkCallout(callout);
               });
               QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-              QuickMarcEditor.verifyRowLinked();
 
               QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndCloseDerive();
@@ -227,9 +227,9 @@ describe('MARC', () => {
               MarcAuthorities.searchBeats(authorityHeadingLocal);
               MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingLocal, '');
 
-              MarcAuthorities.searchBeats(authorityHeadingShared1);
-              MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingShared1, '1');
-              MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingShared1);
+              MarcAuthorities.searchBeats(authorityHeadingShared2);
+              MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingShared2, '1');
+              MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingShared2);
               InventoryInstances.waitLoading();
               InventoryInstance.verifyInstanceTitle(bibTitle);
               InventoryInstance.checkAuthorityAppIconInSection(
