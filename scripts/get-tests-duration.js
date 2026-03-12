@@ -24,7 +24,18 @@ const TESTS_EXECUTION_TIME_FILE = './doc/testsExecutionTime.json'; // file with 
 const timelineContent = fs.readFileSync(ALLURE_TIMELINE_FILE, { encoding: 'utf8' });
 const { children: timeLine } = JSON.parse(timelineContent);
 
+let oldData = {};
+if (fs.existsSync(TESTS_EXECUTION_TIME_FILE)) {
+  try {
+    oldData = JSON.parse(fs.readFileSync(TESTS_EXECUTION_TIME_FILE, { encoding: 'utf8' }));
+  } catch (error) {
+    console.error('Error reading old data file:', error);
+  }
+}
+
+// Extract test durations and IDs, and sort by duration in descending order
 const executionTimeList = timeLine
+  .filter(({ status }) => status === 'passed')
   .map((test) => {
     return {
       name: test.name,
@@ -34,20 +45,31 @@ const executionTimeList = timeLine
   })
   .sort((a, b) => b.duration - a.duration);
 
+// Aggregate execution times by test ID
 const testsExecutionTime = {};
 executionTimeList.forEach((test) => {
-  if (Object.keys(testsExecutionTime).includes(test.testId)) {
+  if (test.testId && Object.keys(testsExecutionTime).includes(test.testId)) {
     testsExecutionTime[test.testId] += test.duration;
-  } else {
+  } else if (test.testId) {
     testsExecutionTime[test.testId] = test.duration;
   }
 });
-fs.writeFileSync(TESTS_EXECUTION_TIME_FILE, JSON.stringify(testsExecutionTime, null, 2), {
+
+// Merge with old data, keeping the maximum duration for each test ID
+for (const [testId, duration] of Object.entries(testsExecutionTime)) {
+  if (!oldData[testId] || duration > oldData[testId]) {
+    oldData[testId] = duration;
+  }
+}
+
+oldData = Object.fromEntries(Object.entries(oldData).sort(([, a], [, b]) => b - a)); // sort by duration in descending order
+
+fs.writeFileSync(TESTS_EXECUTION_TIME_FILE, JSON.stringify(oldData, null, 2), {
   encoding: 'utf8',
 });
 
 // ---------------- Printing results ----------------
-Object.entries(testsExecutionTime).forEach(([testId, duration]) => {
+Object.entries(oldData).forEach(([testId, duration]) => {
   console.log(`${duration}ms`.padEnd(10) + `${testId}`.padEnd(10));
 });
-console.log(`Total unique test IDs count: ${Object.keys(testsExecutionTime).length}`);
+console.log(`Total unique test IDs count: ${Object.keys(oldData).length}`);
