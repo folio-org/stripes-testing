@@ -9,19 +9,19 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_ACTIONS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 let user;
 let noteTypeId;
 const specialNoteTypeName = `n@te type ~,#,$,%,^,&, {.[,]<},>,ø, Æ, §,;_${getRandomPostfix()}`;
-const longNoteText = 'a'.repeat(31999);
-const notes = {
-  administrative: longNoteText,
-  customNoteType: longNoteText,
-};
+const notes = { administrative: 'a'.repeat(31999), customNoteType: 'b'.repeat(31999) };
 const instanceA = {
-  instanceName: `C422061 instanceA-${getRandomPostfix()}`,
+  instanceName: `AT_C422061 instanceA-${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
 const instanceB = {
@@ -143,6 +143,18 @@ describe('Bulk-edit', () => {
         );
         BulkEditSearchPane.verifyResultColumnTitles(specialNoteTypeName, true);
 
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instanceA.holdingHRID,
+          specialNoteTypeName,
+          notes.customNoteType,
+        );
+
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instanceB.holdingHRID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          notes.administrative,
+        );
+
         // Step 5: Download matched records CSV
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
@@ -183,16 +195,31 @@ describe('Bulk-edit', () => {
         cy.wait(1000);
 
         // Steps 13-14: Select custom note type and "Mark as staff only"
-        BulkEditActions.clickOptionsSelection(1);
-        cy.get('li[class*="option-"]').contains(specialNoteTypeName).click();
+        BulkEditActions.selectOption(specialNoteTypeName, 1);
         cy.wait(1000);
-        BulkEditActions.selectAction('Mark as staff only', 1);
-        BulkEditActions.verifyActionSelected('Mark as staff only', 1);
+        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
+        BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 15: Confirm changes
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
+
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          instanceA.holdingHRID,
+          specialNoteTypeName,
+          `${notes.customNoteType} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          instanceB.holdingHRID,
+          specialNoteTypeName,
+          `${notes.administrative} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+          instanceB.holdingHRID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          '',
+        );
 
         // Step 16: Download preview CSV
         BulkEditActions.downloadPreview();
@@ -205,10 +232,34 @@ describe('Bulk-edit', () => {
           `${notes.administrative} (staff only)`,
         ]);
 
+        BulkEditFiles.verifyValueInRowByUUID(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+          instanceB.holdingsUUID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          '',
+        );
+
         // Step 17: Commit changes
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(2);
+
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          instanceA.holdingHRID,
+          specialNoteTypeName,
+          `${notes.customNoteType} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          instanceB.holdingHRID,
+          specialNoteTypeName,
+          `${notes.administrative} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          instanceB.holdingHRID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          '',
+        );
 
         // Step 18: Download changed records CSV
         BulkEditActions.openActions();
@@ -221,6 +272,14 @@ describe('Bulk-edit', () => {
           instanceB.holdingsUUID,
           `${notes.administrative} (staff only)`,
         ]);
+
+        BulkEditFiles.verifyValueInRowByUUID(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+          instanceA.holdingsUUID,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+          '',
+        );
 
         // Step 19: Verify changes in Inventory for instance A
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
