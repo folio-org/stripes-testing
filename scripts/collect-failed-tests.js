@@ -7,7 +7,7 @@ const { createTestRailClient } = require('./helpers/api.client');
 const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed, status.Retest, status.Untested];
+const selectedStatus = [status.Untested, status.Failed, status.Retest];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,
@@ -33,6 +33,7 @@ let filteredFiles = [];
 const shuffle = true;
 const numberOfChunks = 1;
 const chunks = [];
+const chunksId = [];
 
 function parseCommand() {
   getTests()
@@ -72,32 +73,38 @@ function parseCommand() {
           filteredFiles = Array.from(new Set(filteredFiles));
           console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);
           filteredFiles.sort();
+          ids.sort();
           if (shuffle) {
             filteredFiles.sort(() => Math.random() - 0.5);
+            ids.sort(() => Math.random() - 0.5);
           }
           if (numberOfChunks > 1) {
             const chunkSize = Math.ceil(filteredFiles.length / numberOfChunks);
             // Loop to split array into chunks
             for (let i = 0; i < filteredFiles.length; i += chunkSize) {
               const chunk = [];
+              const chunkId = [];
               for (let j = i; j < i + chunkSize && j < filteredFiles.length; j++) {
                 chunk.push(filteredFiles[j]);
+                chunkId.push(ids[j]);
               }
               chunks.push(chunk);
+              chunksId.push(chunkId);
             }
           }
         })
         .then(() => {
-          const parsedCommand = `--spec "${filteredFiles.join(',')}"\n`;
+          const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
             // To print test cases IDs (NOT FILTERED!!!)
-            console.log(`--env grepTags="${ids.join('')}"`);
+            console.log(`\ntags="${ids.join('')}"`);
           } else {
             console.log(`Number of chunks: ${chunks.length}\n`);
             chunks.forEach((chunk, index) => {
               console.log(`Chunk #${index + 1}: `, chunk.length);
-              console.log(`--spec "${chunk.join(',')}"\n`);
+              console.log(`--spec "${chunk.join(',')}"`);
+              console.log(`\ntags="${chunksId[index].join('')}"\n`);
             });
           }
           return parsedCommand;
