@@ -3,7 +3,6 @@ import permissions from '../../support/dictionary/permissions';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
-import Pieces from '../../support/fragments/orders/pieces/pieces';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -16,16 +15,13 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
 import EditPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
-import DeletePieceModal from '../../support/fragments/receiving/modals/deletePieceModal';
 
 describe('Receiving', () => {
   describe('Acquisition units', () => {
     const organization = { ...NewOrganization.defaultUiOrganizations };
     const randomPostfix = getRandomPostfix();
-    const instanceTitle = `C436818_Title_${randomPostfix}`;
-    const quantity = 2;
-    let order;
-    let orderLine;
+    const instanceTitle = `C436820_Title_${randomPostfix}`;
+    const quantity = 1;
     let user;
     let acquisitionUnit;
     let location;
@@ -37,7 +33,7 @@ describe('Receiving', () => {
         protectRead: false,
         protectUpdate: true,
         protectCreate: true,
-        protectDelete: false,
+        protectDelete: true,
       });
 
       AcquisitionUnits.createAcquisitionUnitViaApi(acquisitionUnit).then((auResponse) => {
@@ -46,7 +42,6 @@ describe('Receiving', () => {
         cy.createTempUser([
           permissions.uiInventoryViewInstances.gui,
           permissions.uiReceivingViewEditCreate.gui,
-          permissions.uiReceivingViewEditDelete.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
@@ -67,8 +62,6 @@ describe('Receiving', () => {
                   };
 
                   Orders.createOrderViaApi(orderData).then((orderResponse) => {
-                    order = orderResponse;
-
                     const orderLineData = {
                       ...BasicOrderLine.defaultOrderLine,
                       id: uuid(),
@@ -80,7 +73,7 @@ describe('Receiving', () => {
                         currency: 'USD',
                         discountType: 'percentage',
                         quantityPhysical: quantity,
-                        poLineEstimatedPrice: 200.0,
+                        poLineEstimatedPrice: 100.0,
                       },
                       fundDistribution: [],
                       locations: [
@@ -99,37 +92,17 @@ describe('Receiving', () => {
                       },
                     };
 
-                    OrderLines.createOrderLineViaApi(orderLineData).then((orderLineResponse) => {
-                      orderLine = orderLineResponse;
-
+                    OrderLines.createOrderLineViaApi(orderLineData).then(() => {
                       Orders.updateOrderViaApi({
                         ...orderResponse,
                         workflowStatus: ORDER_STATUSES.OPEN,
+                        acqUnitIds: [acquisitionUnit.id],
                       }).then(() => {
                         cy.getAdminToken();
-                        cy.wait(3000);
 
-                        Receiving.getPiecesViaApi(orderLine.id).then((pieces) => {
-                          if (pieces && pieces.length > 0) {
-                            pieces.forEach((piece) => {
-                              Pieces.updateOrderPieceViaApi({
-                                ...piece,
-                                receivingStatus: 'Claim sent',
-                              });
-                            });
-                          }
-                        });
-
-                        Receiving.getTitleByPoLineIdViaApi(orderLine.id).then((titleData) => {
-                          Receiving.updateTitleViaApi({
-                            ...titleData,
-                            acqUnitIds: [acquisitionUnit.id],
-                          }).then(() => {
-                            cy.login(user.username, user.password, {
-                              path: TopMenu.receivingPath,
-                              waiter: Receiving.waitLoading,
-                            });
-                          });
+                        cy.login(user.username, user.password, {
+                          path: TopMenu.receivingPath,
+                          waiter: Receiving.waitLoading,
                         });
                       });
                     });
@@ -144,38 +117,30 @@ describe('Receiving', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      OrderLines.deleteOrderLineViaApi(orderLine.id);
-      Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       Users.deleteViaApi(user.userId);
       AcquisitionUnits.deleteAcquisitionUnitViaApi(acquisitionUnit.id);
     });
 
     it(
-      'C436818 User NOT included in Acq unit is not able to move a piece having Acq unit in "Claim sent" status (thunderjet)',
-      { tags: ['extendedPath', 'thunderjet', 'C436818'] },
+      'C436820 User NOT included in Acq unit is able to receive a piece having Acq unit in related order (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'C436820'] },
       () => {
         Receiving.searchByParameter({ parameter: 'Keyword', value: instanceTitle });
         Receiving.selectFromResultsList(instanceTitle);
         ReceivingDetails.waitLoading();
-        ReceivingDetails.verifyExpectedRecordsCount(2);
+        ReceivingDetails.verifyExpectedRecordsCount(1);
 
-        ReceivingDetails.expandTitleInformationAccordion();
-        ReceivingDetails.verifyAcquisitionUnitInTitleInformation(acquisitionUnit.name, true);
+        ReceivingDetails.verifyAcquisitionUnitInTitleInformation(acquisitionUnit.name, false);
 
         ReceivingDetails.openEditPieceModal({ row: 0, section: 'Expected' });
         EditPieceModal.waitLoading();
 
-        EditPieceModal.openActionsMenu();
-        EditPieceModal.verifyActionsMenuOptionsStates([
-          { option: 'Send claim', disabled: true },
-          { option: 'Delete', disabled: false },
-        ]);
+        Receiving.quickReceiveInEditPieceModal();
 
-        EditPieceModal.clickDeleteButton({ isLastPiece: false });
-        DeletePieceModal.confirmDelete({ pieceDeleted: true });
         ReceivingDetails.waitLoading();
-        ReceivingDetails.verifyExpectedRecordsCount(1);
+        ReceivingDetails.verifyExpectedRecordsCount(0);
+        ReceivingDetails.verifyReceivedRecordsCount(1);
       },
     );
   });
