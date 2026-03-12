@@ -3,6 +3,7 @@ import permissions from '../../support/dictionary/permissions';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
+import Pieces from '../../support/fragments/orders/pieces/pieces';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -20,7 +21,7 @@ describe('Receiving', () => {
   describe('Acquisition units', () => {
     const organization = { ...NewOrganization.defaultUiOrganizations };
     const randomPostfix = getRandomPostfix();
-    const instanceTitle = `C436816_Title_${randomPostfix}`;
+    const instanceTitle = `C436817_Title_${randomPostfix}`;
     const quantity = 1;
     let order;
     let orderLine;
@@ -34,8 +35,8 @@ describe('Receiving', () => {
       acquisitionUnit = AcquisitionUnits.getDefaultAcquisitionUnit({
         protectRead: false,
         protectUpdate: true,
-        protectCreate: false,
-        protectDelete: false,
+        protectCreate: true,
+        protectDelete: true,
       });
 
       AcquisitionUnits.createAcquisitionUnitViaApi(acquisitionUnit).then((auResponse) => {
@@ -104,6 +105,17 @@ describe('Receiving', () => {
                         workflowStatus: ORDER_STATUSES.OPEN,
                       }).then(() => {
                         cy.getAdminToken();
+                        cy.wait(3000);
+
+                        Receiving.getPiecesViaApi(orderLine.id).then((pieces) => {
+                          if (pieces && pieces.length > 0) {
+                            Pieces.updateOrderPieceViaApi({
+                              ...pieces[0],
+                              receivingStatus: 'Claim delayed',
+                            });
+                          }
+                        });
+
                         Receiving.getTitleByPoLineIdViaApi(orderLine.id).then((titleData) => {
                           Receiving.updateTitleViaApi({
                             ...titleData,
@@ -135,8 +147,8 @@ describe('Receiving', () => {
     });
 
     it(
-      'C436816 User NOT included in Acq unit is not able to move a piece having Acq unit in "Unreceivable" status (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C436816'] },
+      'C436817 User NOT included in Acq unit is not able to move a piece having Acq unit in "Claim delayed" status (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'C436817'] },
       () => {
         Receiving.searchByParameter({ parameter: 'Keyword', value: instanceTitle });
         Receiving.selectFromResultsList(instanceTitle);
@@ -149,17 +161,7 @@ describe('Receiving', () => {
         ReceivingDetails.openEditPieceModal({ row: 0, section: 'Expected' });
         EditPieceModal.waitLoading();
         EditPieceModal.verifySaveAndCloseButtonState({ disabled: true });
-
-        EditPieceModal.openActionsMenu();
-        EditPieceModal.verifyActionsMenuOptionsStates([
-          { option: 'Save and create another', disabled: true },
-          { option: 'Quick receive', disabled: true },
-          { option: 'Mark late', disabled: true },
-          { option: 'Send claim', disabled: true },
-          { option: 'Delay claim', disabled: true },
-          { option: 'Unreceivable', disabled: true },
-          { option: 'Delete', disabled: false },
-        ]);
+        EditPieceModal.verifyActionsMenuState({ disabled: true });
       },
     );
   });
