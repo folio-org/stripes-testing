@@ -25,6 +25,7 @@ const xButton = Button({ icon: 'times' });
 const selectMappingProfileDropdown = Select('Mapping profile*');
 const descriptionField = TextArea('Description');
 const lockProfileCheckbox = Checkbox('Lock profile');
+const deleteJobProfileModal = Modal('Delete job profile');
 
 export default {
   waitLoading(name) {
@@ -116,6 +117,31 @@ export default {
 
   confirmDeletion() {
     cy.do(Modal().find(deleteButton).click());
+  },
+
+  verifyDeleteJobProfileModal(jobProfileName, isReferenced = false) {
+    const message = isReferenced
+      ? `The job profile ${jobProfileName} and all files created by export jobs that used this profile will be permanently deleted.`
+      : `The job profile ${jobProfileName} will be deleted.`;
+
+    cy.expect([
+      deleteJobProfileModal.exists(),
+      deleteJobProfileModal.has({ message: including(message) }),
+      deleteJobProfileModal.find(cancelButton).has({ disabled: false }),
+      deleteJobProfileModal.find(Button('Delete')).has({ disabled: false }),
+    ]);
+  },
+
+  clickCancelInDeleteModal() {
+    cy.do(deleteJobProfileModal.find(cancelButton).click());
+  },
+
+  verifyDeleteModalClosed() {
+    cy.expect(deleteJobProfileModal.absent());
+  },
+
+  verifyDeleteModalOpen() {
+    cy.expect(deleteJobProfileModal.exists());
   },
 
   deleteMappingProfile: (name) => {

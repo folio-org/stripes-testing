@@ -95,6 +95,12 @@ export default {
     );
   },
 
+  verifyJobProfileAbsentInTheTable(jobProfileName) {
+    cy.expect(
+      jobProfilesPane.find(MultiColumnListCell({ content: including(jobProfileName) })).absent(),
+    );
+  },
+
   verifyJobProfileSearchResult(text) {
     cy.get('body').then((body) => {
       const element = body.find('[class^=mclEndOfListContainer]');
