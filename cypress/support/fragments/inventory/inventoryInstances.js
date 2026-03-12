@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { HTML, including, matching } from '@interactors/html';
+import { and, HTML, including, matching, or } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
@@ -24,8 +24,6 @@ import {
   TextArea,
   TextField,
   TextInput,
-  and,
-  or,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import Arrays from '../../utils/arrays';

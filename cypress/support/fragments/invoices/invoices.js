@@ -61,7 +61,6 @@ const batchGroupFilterSection = Section({ id: 'batchGroupId' });
 const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
-const invoiceCreatedByFilterSection = Section({ id: 'metadata.createdByUserId' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 const newBlankLineButton = Button('New blank line');
 const polLookUpButton = Button('POL look-up');
@@ -144,6 +143,12 @@ export default {
         searchParams,
       })
       .then(({ body }) => body);
+  },
+  openNewInvoiceForm() {
+    cy.wait(4000);
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
   },
   createInvoiceViaApi({
     vendorId,
@@ -1314,13 +1319,16 @@ export default {
   },
 
   selectCreatedByFilter: (userName) => {
-    cy.do([
-      invoiceFiltersSection
-        .find(invoiceCreatedByFilterSection)
-        .find(Button({ ariaLabel: 'Created by filter list' }))
-        .click(),
-      Button({ id: 'metadata.createdByUserId-button' }).click(),
-    ]);
+    cy.wait(2000);
+    cy.get('button[aria-label="Created by filter list"]')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (ariaExpanded !== 'true') {
+          cy.do(Button({ ariaLabel: 'Created by filter list' }).click());
+        }
+      });
+    cy.wait(2000);
+    cy.do(Button({ id: 'metadata.createdByUserId-button' }).click());
     SelectUser.selectUser(userName);
   },
 

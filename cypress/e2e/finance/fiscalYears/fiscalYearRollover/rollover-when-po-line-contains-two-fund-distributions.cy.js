@@ -231,13 +231,13 @@ describe('Finance', () => {
         cy.visit(`${TopMenu.fundPath}/view/${funds.first.id}`);
         FundDetails.checkFundDetails({
           currentBudget: { unavailable: '$40.00' },
-          plannedBudgets: [{ unavailable: '$10.00' }],
+          plannedBudgets: [{ unavailable: '$40.00' }],
         });
 
         // Click budget record in "Planned budget" accordion
         const BudgetDetails = FundDetails.openPlannedBudgetDetails();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: 'Unavailable', value: '$10.00' }],
+          summary: [{ key: 'Unavailable', value: '$40.00' }],
         });
 
         // Click "View transactions" link in "Budget information" accordion
