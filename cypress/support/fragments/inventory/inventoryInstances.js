@@ -417,7 +417,7 @@ export default {
       filterSection.find(searchButton).click(),
     ]);
     if (result) {
-      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+      cy.expect(rootSection.find(MultiColumnListRow({ index: 0 })).exists());
     }
   },
   searchByTag: (tagName) => {
