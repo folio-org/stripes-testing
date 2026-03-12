@@ -35,7 +35,6 @@ describe('MARC', () => {
             authorityBrowseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
             contributorSectionId: 'list-contributors',
             subjectSectionId: 'list-subject',
-            heldbyAccordionName: 'Held by',
           };
           const bibTitle = `AT_C410748_MarcBibInstance_${randomPostfix}`;
           const authorityHeadingShared1 = `AT_C410748_MarcAuthority_${randomPostfix}_Shared1`;
@@ -200,6 +199,7 @@ describe('MARC', () => {
                     cy.login(user.username, user.password, {
                       path: TopMenu.inventoryPath,
                       waiter: InventoryInstances.waitContentLoading,
+                      authRefresh: true,
                     });
                     ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
                   });
@@ -222,7 +222,6 @@ describe('MARC', () => {
             'C410748 Link Local MARC bib with Shared/Local MARC auth on Member tenant in Derive screen (derived from Shared) (consortia) (spitfire)',
             { tags: ['extendedPathECS', 'spitfire', 'C410748'] },
             () => {
-              InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.waitLoading();

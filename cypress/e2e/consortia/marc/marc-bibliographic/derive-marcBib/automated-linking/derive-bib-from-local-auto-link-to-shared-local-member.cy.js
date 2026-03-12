@@ -14,7 +14,6 @@ import ConsortiumManager from '../../../../../../support/fragments/settings/cons
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -28,7 +27,6 @@ describe('MARC', () => {
             authorityBrowseOption: MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
             contributorSectionId: 'list-contributors',
             subjectSectionId: 'list-subject',
-            heldbyAccordionName: 'Held by',
           };
           const tags = {
             tag008: '008',
@@ -246,6 +244,7 @@ describe('MARC', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
@@ -269,7 +268,6 @@ describe('MARC', () => {
             'C410751 Auto-Link Local MARC bib with Shared/Local MARC auth on Member tenant in Derive screen (derived from Local) (consortia) (spitfire)',
             { tags: ['extendedPathECS', 'spitfire', 'C410751'] },
             () => {
-              InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.waitLoading();
