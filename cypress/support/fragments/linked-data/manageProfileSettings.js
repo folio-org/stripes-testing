@@ -14,6 +14,7 @@ const selectedList = "//div[@data-testid='selected-component-list']";
 const unusedList = "//div[@data-testid='unused-component-list']";
 const unusedContainer = "//div[@data-droppable-id='unused-container']";
 const profileComponent = "div.component";
+const draggingComponent = "div.drag-overlay";
 const componentActivateMenu = "//button[@data-testid='activate-menu']";
 const componentMoveAction = "//button[@data-testid='move-action']";
 const componentNudgeUp = "//button[@data-testid='nudge-up']";
@@ -41,9 +42,9 @@ const doDrag = (node, endCoords) => {
   // object with the drag overlay, which may have a markedly different
   // position compared to the original object. We need to calculate
   // the difference between them in order to move the overlay over the
-  // original start before finally moving to the target object. The
-  // mouse pointer does not actually move, so we have to acquire the
-  // position of the overlay to make the coordinate calculations.
+  // the target object. The mouse pointer does not actually move, so we
+  // have to acquire the position of the overlay to make the coordinate
+  // calculations.
   cy.wrap(node)
     .realMouseMove(0, 0, { position: 'center', steps: 6 })
     .realMouseDown({ button: 'left' })
@@ -60,9 +61,11 @@ const doDrag = (node, endCoords) => {
     }).then(({ dx, dy }) => {
       cy.wrap(node)
         .realMouseMove(dx, dy, { position: 'center', steps: 14 })
-        .wait(200)
+        .wait(500)
         .realMouseUp({ button: 'left' });
     });
+    cy.get(draggingComponent).should('not.exist')
+      .wait(1000);
 };
 
 const dragDropGeneral = (dragTarget, dragTargetList, dropTarget) => {
@@ -236,8 +239,9 @@ export default {
       cy.xpath(component(id, componentNudgeUp))
         .should('be.visible')
         .focus()
-        .wait(100)  
-        .realPress('Enter'),
+        .wait(100)
+        .click()
+        .wait(500),
     );
   },
 
@@ -247,7 +251,8 @@ export default {
         .should('be.visible')
         .focus()
         .wait(100)    
-        .realPress('Enter'),
+        .click()
+        .wait(500),
     );
   },
 
@@ -303,10 +308,16 @@ export default {
     );
   },
 
+  // Note that dragging downwards will drag past the target by one, because
+  // the remainder of the list shifts upward in response to 'removing' the
+  // selected component. Plan accordingly.
   dragReorderSelectedComponent: (id, targetId) => {
     dragDropList(id, selectedList, targetId, selectedList);
   },
 
+  // Note that dragging downwards will drag past the target by one, because
+  // the remainder of the list shifts upward in response to 'removing' the
+  // selected component. Plan accordingly.
   dragReorderUnusedComponent: (id, targetId) => {
     dragDropList(id, unusedList, targetId, unusedList);
   },
@@ -373,6 +384,8 @@ export default {
         });
       });
     });
+    cy.get(draggingComponent).should('not.exist')
+      .wait(1000);
   },
 
   keyboardDragReorderUnusedComponent: (id, targetId) => {
@@ -393,6 +406,8 @@ export default {
         });
       });
     });
+    cy.get(draggingComponent).should('not.exist')
+      .wait(1000);
   },
 
   keyboardDragSelectedToUnused: (id) => {
@@ -401,12 +416,14 @@ export default {
         cy.xpath(selectedList)
           .xpath(component(id, '', true))
           .focus();
-        cy.realPress(' ');
+        cy.realPress(' ', { pressDelay: 100 });
         keyBackToStartingPosition('selected', length, focusedPosition);
         cy.realPress('ArrowLeft', { pressDelay: 100 });
         cy.realPress('Enter');
       });
     });
+    cy.get(draggingComponent).should('not.exist')
+      .wait(1000);
   },
 
   keyboardDragUnusedToSelected: (id, targetId) => {
@@ -415,12 +432,14 @@ export default {
         cy.xpath(unusedList)
           .xpath(component(id, '', true))
           .focus();
-        cy.realPress(' ');
+        cy.realPress(' ', { pressDelay: 100 });
         keyBackToStartingPosition('unused', length, focusedPosition);
         cy.realPress('ArrowRight', { pressDelay: 100 });
         cy.realPress('Enter');
       });
     });
+    cy.get(draggingComponent).should('not.exist')
+      .wait(1000);
   },
 
   verifyModalUnsavedOpen: () => {
