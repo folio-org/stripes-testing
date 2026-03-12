@@ -47,6 +47,10 @@ export default {
     cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
   },
 
+  clickLockProfileCheckbox() {
+    cy.do(lockProfileCheckbox.click());
+  },
+
   clickNameTextfield() {
     cy.do(nameTextfield.find(TextInput()).click());
   },
