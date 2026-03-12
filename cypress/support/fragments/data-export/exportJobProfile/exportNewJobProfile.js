@@ -127,7 +127,7 @@ export default {
     });
   },
 
-  createNewJobProfileViaApi: (name, mappingProfileId) => {
+  createNewJobProfileViaApi: (name, mappingProfileId, isLocked = false) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -135,6 +135,7 @@ export default {
         body: {
           mappingProfileId,
           name,
+          locked: isLocked,
         },
         isDefaultSearchParamsRequired: false,
       })

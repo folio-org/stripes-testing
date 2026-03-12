@@ -70,7 +70,7 @@ export default {
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
   },
 
-  verifyProfileInTable(name, userObject) {
+  verifyProfileInTable(name, userObject, isLocked = false) {
     const targetProfileRow = MultiColumnListRow({ content: including(name), isContainer: false });
 
     cy.expect(
@@ -90,9 +90,16 @@ export default {
         content: including(`${userObject.personal.firstName} ${userObject.personal.lastName}`),
       }),
     );
-    cy.expect(
-      targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: '' }),
-    );
+
+    if (isLocked) {
+      cy.expect(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: 'Locked' }),
+      );
+    } else {
+      cy.expect(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: '' }),
+      );
+    }
   },
 
   verifyJobProfileAbsentInTheTable(jobProfileName) {
