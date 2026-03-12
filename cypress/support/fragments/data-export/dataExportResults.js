@@ -52,14 +52,14 @@ export default {
         () => {
           const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
             Cypress.env('users')[0].personal.firstName
-          }`.trim();
+          } `;
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
             resultRow.exported.is({ content: recordsCount.toString() }),
             resultRow.failed.is({ content: '' }),
             resultRow.jobProfile.is({ content: `${jobType} export job profile` }),
-            resultRow.runBy.is({ including: userNameToVerify }),
+            resultRow.runBy.is({ content: userNameToVerify }),
             resultRow.id.is({ content: jobId.toString() }),
           ]);
         },
@@ -170,7 +170,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.lastName}, ${user.firstName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
 
     cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),
@@ -230,7 +230,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.lastName}, ${user.firstName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
     const expectedFailedContent = failedRecordsCount
       ? `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`
       : `${duplicatesCount} duplicate(s)`;
