@@ -121,7 +121,7 @@ describe('Bulk-edit', () => {
 
     it(
       'C422061 Verify Bulk Edit actions for Holdings notes - edit note of new note type and containing 32000 characters (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422061'] },
+      { tags: ['extendedPath', 'firebird', 'C422061'] },
       () => {
         // Step 1: Select Holdings record type and Item barcodes identifier
         BulkEditSearchPane.checkHoldingsRadio();
