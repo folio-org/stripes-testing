@@ -18,17 +18,32 @@ import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 let user;
 let instanceTypeId;
 let fileNames;
 const postfix = randomFourDigitNumber();
 const folioInstance = {
-  title: `C651550_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C651550_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
 };
 const linkedDataInstance = {
-  title: `C651550_${postfix} linked data instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C651550_${postfix} linked data instance testBulkEdit_${getRandomPostfix()}`,
 };
+const marcInstance = {
+  title: `AT_C651550_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
+};
+const marcInstanceFields = [
+  {
+    tag: '008',
+    content: QuickMarcEditor.defaultValid008Values,
+  },
+  {
+    tag: '245',
+    content: `$a ${marcInstance.title}`,
+    indicators: ['1', '0'],
+  },
+];
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -45,6 +60,19 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 })
             .then((instanceTypes) => {
               instanceTypeId = instanceTypes[0].id;
+            })
+            .then(() => {
+              // Create MARC instance
+              cy.createMarcBibliographicViaAPI(
+                QuickMarcEditor.defaultValidLdr,
+                marcInstanceFields,
+              ).then((instanceId) => {
+                marcInstance.uuid = instanceId;
+
+                cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+                  marcInstance.hrid = instanceData.hrid;
+                });
+              });
             })
             .then(() => {
               // Create FOLIO instance
@@ -87,12 +115,33 @@ describe('Bulk-edit', () => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
         });
+
+        // Precondition: Navigate to Bulk edit, Query tab, select Inventory - instances
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.checkInstanceRadio();
+        BulkEditSearchPane.clickBuildQueryButton();
+        QueryModal.verify();
+        QueryModal.selectField(instanceFieldValues.updatedDate);
+        QueryModal.verifySelectedField(instanceFieldValues.updatedDate);
+        QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN);
+        QueryModal.fillInValueTextfield('01/01/2020');
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
+        QueryModal.fillInValueTextfield(`AT_C651550_${postfix}`, 1);
+
+        cy.intercept('GET', '**/errors?limit=10&offset=0&errorType=ERROR').as('getErrors');
+        cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
+        cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
+        QueryModal.clickTestQuery();
+        QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
       });
 
       after('delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
+        InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
         InventoryInstance.deleteInstanceViaApi(linkedDataInstance.uuid);
         BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       });
@@ -101,26 +150,6 @@ describe('Bulk-edit', () => {
         'C651550 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit in Central tenant (consortia) (firebird)',
         { tags: ['extendedPathECS', 'firebird', 'C651550'] },
         () => {
-          // Precondition: Navigate to Bulk edit, Query tab, select Inventory - instances
-          BulkEditSearchPane.openQuerySearch();
-          BulkEditSearchPane.checkInstanceRadio();
-          BulkEditSearchPane.clickBuildQueryButton();
-          QueryModal.verify();
-          QueryModal.selectField(instanceFieldValues.updatedDate);
-          QueryModal.verifySelectedField(instanceFieldValues.updatedDate);
-          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN);
-          QueryModal.fillInValueTextfield('01/01/2020');
-          QueryModal.addNewRow();
-          QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
-          QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-          QueryModal.fillInValueTextfield(`C651550_${postfix}`, 1);
-
-          cy.intercept('GET', '**/errors?limit=10&offset=0&errorType=ERROR').as('getErrors');
-          cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
-          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
-          QueryModal.clickTestQuery();
-          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
-
           // Step 1: Click "Run query" button and check the Preview of record matched
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
@@ -132,6 +161,17 @@ describe('Bulk-edit', () => {
             fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              folioInstance.hrid,
+              'Instance HRID',
+              folioInstance.hrid,
+            );
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              marcInstance.hrid,
+              'Instance HRID',
+              marcInstance.hrid,
+            );
 
             // Verify the "Errors & warnings" accordion
             BulkEditSearchPane.verifyErrorLabel(1, 0);
@@ -146,7 +186,6 @@ describe('Bulk-edit', () => {
 
             // Step 3: Click "Actions" menu => Click "Download errors (CSV)" option
             BulkEditActions.openActions();
-            BulkEditSearchPane.searchColumnNameTextfieldAbsent();
             BulkEditActions.downloadErrorsExists();
             BulkEditActions.downloadErrors();
 
