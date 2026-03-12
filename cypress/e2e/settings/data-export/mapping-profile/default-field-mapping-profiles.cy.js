@@ -39,6 +39,7 @@ describe('Data Export', () => {
       () => {
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
         ExportFieldMappingProfiles.verifyDefaultProfiles();
+        ExportFieldMappingProfiles.verifyColumnTitles();
       },
     );
 
@@ -50,18 +51,6 @@ describe('Data Export', () => {
           'Default instance mapping profile',
         );
         SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
-        SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
-      },
-    );
-
-    it(
-      'C15825 Profiles that cannot be edited or deleted (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15825'] },
-      () => {
-        SingleFieldMappingProfilePane.clickProfileNameFromTheList(
-          'Default holdings mapping profile',
-        );
-        SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');
         SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
       },
     );

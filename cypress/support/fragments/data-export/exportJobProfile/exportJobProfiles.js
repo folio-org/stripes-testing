@@ -38,7 +38,7 @@ export default {
 
   verifyJobProfilesElements() {
     cy.do(NavListItem('Job profiles').click());
-    ['Name', 'Updated', 'Updated by'].forEach((title) => {
+    ['Name', 'Updated', 'Updated by', 'Status'].forEach((title) => {
       cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
     cy.expect([

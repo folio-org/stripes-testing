@@ -33,7 +33,7 @@ describe('Data Export', () => {
     });
 
     it(
-      'C422217 User with "settings - UI-Data-Export Settings - view" capability set is able to view but not edit data export settings (firebird)',
+      'C422217 User with "Settings - UI-Data-Export Settings - View" capability set is able to view but not edit data export settings (firebird)',
       { tags: ['extendedPath', 'firebird', 'C422217'] },
       () => {
         // Step 1: Verify available applications on the landing page
