@@ -20,93 +20,91 @@ let user;
 let instanceId;
 
 const lockedNotReferencedJobProfile = {
-  mappingProfileName: getTestEntityValue('C1003543_LockedNotRefMappingProfile'),
-  jobProfileName: getTestEntityValue('C1003543_LockedNotRefJobProfile'),
-  duplicatedJobProfileName: getTestEntityValue('C1003543_DuplicatedLockedNotRef'),
-  description: getTestEntityValue('C1003543_Description1'),
+  mappingProfileName: getTestEntityValue('C1045406_LockedNotRefMappingProfile'),
+  jobProfileName: getTestEntityValue('C1045406_LockedNotRefJobProfile'),
+  duplicatedJobProfileName: getTestEntityValue('C1045406_DuplicatedLockedNotRef'),
+  description: getTestEntityValue('C1045406_Description1'),
   mappingProfileId: null,
   jobProfileId: null,
 };
 
 const lockedReferencedJobProfile = {
-  mappingProfileName: getTestEntityValue('C1003543_LockedRefMappingProfile'),
-  jobProfileName: getTestEntityValue('C1003543_LockedRefJobProfile'),
-  duplicatedJobProfileName: getTestEntityValue('C1003543_DuplicatedLockedRef'),
-  description: getTestEntityValue('C1003543_Description2'),
+  mappingProfileName: getTestEntityValue('C1045406_LockedRefMappingProfile'),
+  jobProfileName: getTestEntityValue('C1045406_LockedRefJobProfile'),
+  duplicatedJobProfileName: getTestEntityValue('C1045406_DuplicatedLockedRef'),
+  description: getTestEntityValue('C1045406_Description2'),
   mappingProfileId: null,
   jobProfileId: null,
 };
 
 const defaultJobProfile = {
   jobProfileName: DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.INSTANCES,
-  duplicatedJobProfileName: getTestEntityValue('C1003543_DuplicatedDefaultProfile'),
-  description: getTestEntityValue('C1003543_Description3'),
+  duplicatedJobProfileName: getTestEntityValue('C1045406_DuplicatedDefaultProfile'),
+  description: getTestEntityValue('C1045406_Description3'),
   mappingProfileName: 'Default instance mapping profile',
 };
 
-const folioInstanceTitle = `AT_C1003543_FolioInstance_${getRandomPostfix()}`;
-const csvFileName = `AT_C1003543_instance_${getRandomPostfix()}.csv`;
+const folioInstanceTitle = `AT_C1045406_FolioInstance_${getRandomPostfix()}`;
+const csvFileName = `AT_C1045406_instance_${getRandomPostfix()}.csv`;
 
 describe('Data Export', () => {
   describe('Job profile - setup', () => {
     before('create test data', () => {
-      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+      cy.createTempUser([permissions.dataExportLockUnlockProfiles.gui]).then((userProperties) => {
+        user = userProperties;
 
-          ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
-            lockedNotReferencedJobProfile.mappingProfileName,
-          ).then((response) => {
-            lockedNotReferencedJobProfile.mappingProfileId = response.body.id;
+        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
+          lockedNotReferencedJobProfile.mappingProfileName,
+        ).then((response) => {
+          lockedNotReferencedJobProfile.mappingProfileId = response.body.id;
 
-            ExportNewJobProfile.createNewJobProfileViaApi(
-              lockedNotReferencedJobProfile.jobProfileName,
-              response.body.id,
-              true,
-            ).then((jobResponse) => {
-              lockedNotReferencedJobProfile.jobProfileId = jobResponse.body.id;
-            });
+          ExportNewJobProfile.createNewJobProfileViaApi(
+            lockedNotReferencedJobProfile.jobProfileName,
+            response.body.id,
+            true,
+          ).then((jobResponse) => {
+            lockedNotReferencedJobProfile.jobProfileId = jobResponse.body.id;
           });
+        });
 
-          ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
-            lockedReferencedJobProfile.mappingProfileName,
-          ).then((response) => {
-            lockedReferencedJobProfile.mappingProfileId = response.body.id;
+        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
+          lockedReferencedJobProfile.mappingProfileName,
+        ).then((response) => {
+          lockedReferencedJobProfile.mappingProfileId = response.body.id;
 
-            ExportNewJobProfile.createNewJobProfileViaApi(
-              lockedReferencedJobProfile.jobProfileName,
-              response.body.id,
-              true,
-            ).then((jobResponse) => {
-              lockedReferencedJobProfile.jobProfileId = jobResponse.body.id;
+          ExportNewJobProfile.createNewJobProfileViaApi(
+            lockedReferencedJobProfile.jobProfileName,
+            response.body.id,
+            true,
+          ).then((jobResponse) => {
+            lockedReferencedJobProfile.jobProfileId = jobResponse.body.id;
 
-              cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    title: folioInstanceTitle,
-                    instanceTypeId: instanceTypeData[0].id,
-                  },
-                }).then((createdInstanceData) => {
-                  instanceId = createdInstanceData.instanceId;
+            cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  title: folioInstanceTitle,
+                  instanceTypeId: instanceTypeData[0].id,
+                },
+              }).then((createdInstanceData) => {
+                instanceId = createdInstanceData.instanceId;
 
-                  FileManager.createFile(`cypress/fixtures/${csvFileName}`, instanceId);
+                FileManager.createFile(`cypress/fixtures/${csvFileName}`, instanceId);
 
-                  ExportFile.exportFileViaApi(
-                    csvFileName,
-                    'instance',
-                    lockedReferencedJobProfile.jobProfileName,
-                  );
-                });
+                ExportFile.exportFileViaApi(
+                  csvFileName,
+                  'instance',
+                  lockedReferencedJobProfile.jobProfileName,
+                );
               });
             });
           });
+        });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
-          });
-        },
-      );
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
+      });
     });
 
     after('delete test data', () => {
@@ -119,6 +117,10 @@ describe('Data Export', () => {
       ].forEach((name) => {
         ExportJobProfiles.getJobProfile({ query: `"name"=="${name}"` }).then((response) => {
           if (response) {
+            cy.getDataExportJobProfile({ query: `"id"=="${response.id}"` }).then((profile) => {
+              profile.locked = false;
+              cy.updateDataExportJobProfile(response.id, profile);
+            });
             ExportJobProfiles.deleteJobProfileViaApi(response.id);
           }
         });
@@ -146,8 +148,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1003543 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to duplicate locked and default job profiles (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C1003543'] },
+      'C1045406 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to duplicate locked and default job profiles (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C1045406'] },
       () => {
         // Step 1: Select existing locked job profile from Preconditions: job profile not referenced in an existing export job
         SettingsDataExport.goToSettingsDataExport();
@@ -158,11 +160,8 @@ describe('Data Export', () => {
         SingleJobProfile.verifyElements();
         SingleJobProfile.verifyLockProfileCheckbox(true, true);
 
-        // Step 2: Click "Actions" menu button
+        // Step 2: Click on Actions menu => Duplicate option
         SingleJobProfile.openActions();
-        SingleJobProfile.verifyActionsMenuItems({ edit: false, duplicate: true, delete: false });
-
-        // Step 3: Click on Actions menu => Duplicate option
         SingleJobProfile.clickDuplicateButton();
         ExportNewJobProfile.verifyNewJobProfileForm();
         SingleJobProfile.verifyProfileFieldsValues(
@@ -170,10 +169,10 @@ describe('Data Export', () => {
           lockedNotReferencedJobProfile.mappingProfileName,
           '',
         );
-        SingleJobProfile.verifyLockProfileCheckbox(false, true);
+        ExportNewJobProfile.verifyLockProfileCheckbox(false, false);
         SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');
 
-        // Step 4: Make changes to the Name, Mapping profile or Description from job profile form, Click "Save & close" button
+        // Step 3: Make changes to the Name, Mapping profile or Description from job profile form, Click "Save & close" button
         SingleJobProfile.editJobProfile(lockedNotReferencedJobProfile.duplicatedJobProfileName);
         ExportNewJobProfile.fillinDescription(lockedNotReferencedJobProfile.description);
         ExportNewJobProfile.saveJobProfile();
@@ -181,13 +180,13 @@ describe('Data Export', () => {
           `Job profile ${lockedNotReferencedJobProfile.duplicatedJobProfileName} has been successfully created`,
         );
 
-        // Step 5: Verify row with duplicated job profile in "Job profiles" table
+        // Step 4: Verify row with duplicated job profile in "Job profiles" table
         ExportJobProfiles.verifyProfileInTable(
           lockedNotReferencedJobProfile.duplicatedJobProfileName,
           user,
         );
 
-        // Step 6: Click on the row with duplicated job profile
+        // Step 5: Click on the row with duplicated job profile
         ExportJobProfiles.clickProfileNameFromTheList(
           lockedNotReferencedJobProfile.duplicatedJobProfileName,
         );
@@ -197,33 +196,36 @@ describe('Data Export', () => {
           lockedNotReferencedJobProfile.mappingProfileName,
           lockedNotReferencedJobProfile.description,
         );
+        SingleJobProfile.verifyLockProfileCheckbox(false, true);
 
-        // Step 7: Select existing locked job profile from Preconditions: job profile referenced in an existing export job
+        // Step 6: Close Job profile view page by clicking "X" button, Select existing locked job profile from Preconditions: job profile referenced in an existing export job
+        SingleJobProfile.clickXButton();
+        ExportJobProfiles.waitLoading();
         ExportJobProfiles.clickProfileNameFromTheList(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
         SingleJobProfile.verifyLockProfileCheckbox(true, true);
 
-        // Step 8: Click "Actions" menu button
+        // Step 7: Click on Actions menu => Duplicate option, Make changes to the Name, Mapping profile or Description from job profile form, Check "Lock profile" checkbox, Click "Save & close" button
         SingleJobProfile.openActions();
-        SingleJobProfile.verifyActionsMenuItems({ edit: false, duplicate: true, delete: false });
-
-        // Step 9: Click on Actions menu => Duplicate option, Make changes to the Name, Mapping profile or Description from job profile form, Click "Save & close" button
         SingleJobProfile.clickDuplicateButton();
         SingleJobProfile.editJobProfile(lockedReferencedJobProfile.duplicatedJobProfileName);
         ExportNewJobProfile.fillinDescription(lockedReferencedJobProfile.description);
+        ExportNewJobProfile.clickLockProfileCheckbox();
+        ExportNewJobProfile.verifyLockProfileCheckbox(true, false);
         ExportNewJobProfile.saveJobProfile();
         InteractorsTools.checkCalloutMessage(
           `Job profile ${lockedReferencedJobProfile.duplicatedJobProfileName} has been successfully created`,
         );
 
-        // Step 10: Verify row with duplicated job profile in "Job profiles" table
+        // Step 8: Verify row with duplicated job profile in "Job profiles" table
         ExportJobProfiles.verifyProfileInTable(
           lockedReferencedJobProfile.duplicatedJobProfileName,
           user,
+          true,
         );
 
-        // Step 11: Click on the row with duplicated job profile
+        // Step 9: Click on the row with duplicated job profile
         ExportJobProfiles.clickProfileNameFromTheList(
           lockedReferencedJobProfile.duplicatedJobProfileName,
         );
@@ -233,30 +235,34 @@ describe('Data Export', () => {
           lockedReferencedJobProfile.mappingProfileName,
           lockedReferencedJobProfile.description,
         );
+        SingleJobProfile.verifyLockProfileCheckbox(true, true);
 
-        // Step 12: Select existing job profile from Preconditions: default job profile
+        // Step 10: Select existing job profile from Preconditions: default job profile
         ExportJobProfiles.clickProfileNameFromTheList(defaultJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(defaultJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
         SingleJobProfile.verifyLockProfileCheckbox(false, true);
 
-        // Step 13: Click "Actions" menu button
+        // Step 11: Click on Actions menu => Duplicate option, Make changes to the Name, Mapping profile or Description from job profile form, Check "Lock profile" checkbox, Click "Save & close" button
         SingleJobProfile.openActions();
-        SingleJobProfile.verifyActionsMenuItems({ edit: false, duplicate: true, delete: false });
-
-        // Step 14: Click on Actions menu => Duplicate option, Make changes to the Name, Mapping profile or Description from job profile form, Click "Save & close" button
         SingleJobProfile.clickDuplicateButton();
         SingleJobProfile.editJobProfile(defaultJobProfile.duplicatedJobProfileName);
         ExportNewJobProfile.fillinDescription(defaultJobProfile.description);
+        ExportNewJobProfile.clickLockProfileCheckbox();
+        ExportNewJobProfile.verifyLockProfileCheckbox(true, false);
         ExportNewJobProfile.saveJobProfile();
         InteractorsTools.checkCalloutMessage(
           `Job profile ${defaultJobProfile.duplicatedJobProfileName} has been successfully created`,
         );
 
-        // Step 15: Verify row with duplicated job profile in "Job profiles" table
-        ExportJobProfiles.verifyProfileInTable(defaultJobProfile.duplicatedJobProfileName, user);
+        // Step 12: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.verifyProfileInTable(
+          defaultJobProfile.duplicatedJobProfileName,
+          user,
+          true,
+        );
 
-        // Step 16: Click on the row with duplicated job profile
+        // Step 13: Click on the row with duplicated job profile
         ExportJobProfiles.clickProfileNameFromTheList(defaultJobProfile.duplicatedJobProfileName);
         SingleJobProfile.waitLoading(defaultJobProfile.duplicatedJobProfileName);
         SingleJobProfile.verifyViewProfileDetails(
@@ -264,9 +270,9 @@ describe('Data Export', () => {
           defaultJobProfile.mappingProfileName,
           defaultJobProfile.description,
         );
-        SingleJobProfile.verifyLockProfileCheckbox(false, true);
+        SingleJobProfile.verifyLockProfileCheckbox(true, true);
 
-        // Step 17: In DevTools verify "default" value for duplicated job profile
+        // Step 14: In DevTools verify "default" value for duplicated job profile
         ExportJobProfiles.getJobProfile({
           query: `"name"=="${defaultJobProfile.duplicatedJobProfileName}"`,
         }).then((response) => {
