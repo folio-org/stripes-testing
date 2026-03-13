@@ -1814,6 +1814,7 @@ export default {
   },
 
   clearDefaultHeldbyFilter() {
+    cy.wait(2000);
     this.clearDefaultFilter(heldbyAccordionName);
     cy.expect(
       Button({
