@@ -150,7 +150,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         createdAuthorityIds.forEach((authorityId) => MarcAuthority.deleteViaAPI(authorityId, true));
-        InventoryInstances.deleteInstanceByTitleViaApi(createdInstanceId);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceId);
       });
 
       it(
