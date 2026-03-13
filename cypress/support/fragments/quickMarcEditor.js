@@ -2693,6 +2693,15 @@ export default {
     ]);
   },
 
+  verifyIconsAfterUnlinkingByTag(tag) {
+    const targetRow = getRowInteractorByTagName(tag);
+    cy.expect([
+      targetRow.find(unlinkIconButton).absent(),
+      targetRow.find(viewAuthorityIconButton).absent(),
+      targetRow.find(linkToMarcRecordButton).exists(),
+    ]);
+  },
+
   selectExistingHoldingsLocation(locationObject) {
     Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
       const institutionName = institution.name;
