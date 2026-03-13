@@ -1838,6 +1838,11 @@ export default {
     cy.wait(5000);
   },
 
+  clickSaveUuidsButton() {
+    cy.do(saveUuidsButton.click());
+    cy.wait(5000);
+  },
+
   verifyResultsPane() {
     cy.expect([
       resultsPaneHeader.has({ subtitle: matching(/\d+ records? found/) }),
