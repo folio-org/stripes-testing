@@ -247,12 +247,12 @@ export default {
     });
   },
 
-  checkRowExistsWithTagAndValue(tag, value) {
-    cy.expect(
-      rootSection
-        .find(TableRow({ innerText: and(including(`${tag}  `), including(value)) }))
-        .exists(),
+  checkRowExistsWithTagAndValue(tag, value, isExist = true) {
+    const targetRow = rootSection.find(
+      TableRow({ innerText: and(including(`${tag}  `), including(value)) }),
     );
+    if (isExist) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
   },
 
   verifyLinkedToAuthorityIconIsPresent(isPresent = true) {
@@ -260,5 +260,14 @@ export default {
     const targetIcon = rootSection.find(linkedToMarcAuthorityIcon);
     if (isPresent) cy.expect(targetIcon.exists());
     else cy.expect(targetIcon.absent());
+  },
+
+  checkAuthorityIdForViewAuthorityIconByTag(tag, authorityId) {
+    const targetRow = rootSection.find(TableRow({ innerText: including(`${tag}  `) }));
+    cy.expect(
+      targetRow
+        .find(linkedToMarcAuthorityIcon)
+        .has({ href: including(`/marc-authorities/authorities/${authorityId}`) }),
+    );
   },
 };
