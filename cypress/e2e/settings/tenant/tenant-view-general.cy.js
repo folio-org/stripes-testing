@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
@@ -15,6 +17,7 @@ describe('Settings: Tenant', () => {
     newAddress: {
       name: `AT_C410753_addressName_${getRandomPostfix()}`,
       address: `AT_C410753_address_${getRandomPostfix()}`,
+      id: uuid(),
     },
   };
   let addressId;
