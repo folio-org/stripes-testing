@@ -1,13 +1,18 @@
 import permissions from '../../../../support/dictionary/permissions';
 import DeleteFieldMappingProfile from '../../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
 import ExportFieldMappingProfiles from '../../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportNewFieldMappingProfile from '../../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import SingleFieldMappingProfilePane from '../../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import ExportNewFieldMappingProfile, {
+  CHECKBOX_NAMES,
+} from '../../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 import ModalSelectTransformations from '../../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
+import SettingsDataExport from '../../../../support/fragments/data-export/settingsDataExport';
 import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
@@ -39,25 +44,70 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10984 New mapping profile form (firebird)',
+      'C10984 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to create unlocked mapping profile (firebird)',
       { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10984'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-        ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
-          'Item',
-        ]);
+        ExportNewFieldMappingProfile.clickNewButton();
+        ExportNewFieldMappingProfile.verifyNewProfileForm();
+        ExportNewFieldMappingProfile.verifyLockProfileCheckbox(true, false);
+        SettingsDataExport.verifyPageTitle(
+          'Data export settings - New field mapping profile - FOLIO',
+        );
+        ExportNewFieldMappingProfile.fillInName(fieldMappingProfileName);
+        ExportNewFieldMappingProfile.checkCheckbox(CHECKBOX_NAMES.INVENTORY_INSTANCE);
+        ExportNewFieldMappingProfile.verifySaveAndCloseButtonDisabled(false);
+        ExportNewFieldMappingProfile.clickAddTransformationsButton();
+
+        ModalSelectTransformations.verifyTransformationsPaneColumns();
+        ModalSelectTransformations.verifySearchAndFilterPane();
+        ModalSelectTransformations.verifySaveAndCloseButtonDisabled();
+        ModalSelectTransformations.verifyCancelButtonDisabled(false);
+        ModalSelectTransformations.verifyCloseFormButtonDisabled(false);
+
         ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-        ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
+        ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+        ModalSelectTransformations.clickFieldNameCheckbox('Instance - ID');
+
+        const transformationRules = ['Instance - ID', '999', 'f', 'f', 'i'];
+
+        ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
+          ...transformationRules,
+        );
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+        ModalSelectTransformations.verifyModalTransformationExists(false);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(...transformationRules);
 
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+
+        const updatedDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+
+        ExportFieldMappingProfiles.verifyValuesInAllColumnsOfFieldMappingProfile(
+          fieldMappingProfileName,
+          'Instance',
+          'MARC',
+          updatedDate,
+          `${user.personal.firstName} ${user.username}`,
+        );
         ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
+        ExportFieldMappingProfiles.clickProfileNameFromTheList(fieldMappingProfileName);
+
+        const profileDetails = {
+          source: user.username,
+          name: fieldMappingProfileName,
+          recordType: 'Instance',
+          outputFormat: 'MARC',
+          description: 'No value set-',
+          transformation: '',
+        };
+
+        SingleFieldMappingProfilePane.verifyProfileDetails(profileDetails);
+        SingleFieldMappingProfilePane.verifyLockProfileCheckbox(false, true);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(...transformationRules);
       },
     );
   });

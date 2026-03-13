@@ -38,7 +38,7 @@ export default {
 
   verifyJobProfilesElements() {
     cy.do(NavListItem('Job profiles').click());
-    ['Name', 'Updated', 'Updated by'].forEach((title) => {
+    ['Name', 'Updated', 'Updated by', 'Status'].forEach((title) => {
       cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
     cy.expect([
@@ -87,7 +87,7 @@ export default {
     );
     cy.expect(
       targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
-        content: including(`${userObject.personal.firstName} ${userObject.personal.lastName}`),
+        content: including(`${userObject.personal.lastName}, ${userObject.personal.firstName} `),
       }),
     );
     cy.expect(

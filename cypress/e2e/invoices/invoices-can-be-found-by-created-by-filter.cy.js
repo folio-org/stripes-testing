@@ -110,6 +110,7 @@ describe('Invoices', () => {
       Invoices.resetFilters();
       Invoices.selectCreatedByFilter(users.secondUser.username);
       Invoices.verifySearchResult(testData.secondInvoice.vendorInvoiceNo);
+      Invoices.resetFilters();
       Invoices.selectCreatedByFilter(users.firstUser.username);
       Invoices.verifySearchResult(testData.firstInvoice.vendorInvoiceNo);
     },

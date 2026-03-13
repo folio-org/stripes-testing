@@ -126,6 +126,15 @@ export default {
     }
   },
 
+  verifyLinkedToAuthorityIconByTag(tag, isPresent = true) {
+    const targetRow = rootSection.find(TableRow({ innerText: including(`${tag}  `) }));
+    if (isPresent) {
+      cy.expect(targetRow.find(linkedToMarcAuthorityIcon).exists());
+    } else {
+      cy.expect(targetRow.find(linkedToMarcAuthorityIcon).absent());
+    }
+  },
+
   verifyFieldContent: (rowIndex, updatedDate) => {
     cy.get('table')
       .find('tr')

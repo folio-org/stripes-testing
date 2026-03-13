@@ -181,6 +181,7 @@ export const ERROR_MESSAGES = {
   LINKED_DATA_SOURCE_NOT_SUPPORTED:
     'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
+  noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
