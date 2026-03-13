@@ -90,7 +90,7 @@ chunks.forEach((chunk, index) => {
   console.log(
     `Chunk #${index + 1}: `,
     chunk.testIds.length,
-    `, total duration: ${chunk.totalDuration}ms`,
+    `, Estimated duration: ${new Date(chunk.totalDuration).toISOString().slice(11, 19)}`,
   );
   console.log(parsedChunk + '\n');
 });
