@@ -117,7 +117,7 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.addReveivingNoteToItemDetailsAndSave(testData.order.poNumber);
+      OrderLines.addReceivingNoteToItemDetailsAndSave(testData.order.poNumber);
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${testData.order.poNumber}-1 was successfully updated`,
       );

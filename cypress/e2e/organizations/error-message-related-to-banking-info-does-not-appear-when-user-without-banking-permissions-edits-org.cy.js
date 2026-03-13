@@ -48,7 +48,7 @@ describe('Organizations', () => {
       Organizations.editOrganization();
       Organizations.selectDonorCheckbox();
       Organizations.saveOrganization();
-      Organizations.varifySaveOrganizationCalloutMessage(organization);
+      Organizations.verifySaveOrganizationCalloutMessage(organization);
     },
   );
 });

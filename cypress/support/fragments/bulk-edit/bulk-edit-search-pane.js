@@ -179,6 +179,8 @@ export const ERROR_MESSAGES = {
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
   ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC:
     'Change note type for administrative notes is not supported for MARC Instances.',
+  LINKED_DATA_SOURCE_NOT_SUPPORTED:
+    'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
   noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
 };

@@ -2693,6 +2693,15 @@ export default {
     ]);
   },
 
+  verifyIconsAfterUnlinkingByTag(tag) {
+    const targetRow = getRowInteractorByTagName(tag);
+    cy.expect([
+      targetRow.find(unlinkIconButton).absent(),
+      targetRow.find(viewAuthorityIconButton).absent(),
+      targetRow.find(linkToMarcRecordButton).exists(),
+    ]);
+  },
+
   selectExistingHoldingsLocation(locationObject) {
     Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
       const institutionName = institution.name;
@@ -3528,6 +3537,24 @@ export default {
     );
   },
 
+  focusOnBoxInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.do(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .focus(),
+    );
+    this.verifyBoxIsFocusedInLinkedField(tag, boxNumber);
+  },
+
   verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
@@ -3597,5 +3624,23 @@ export default {
       targetField.find(viewAuthorityIconButton).exists(),
       targetField.find(Link({ href: including(`/authorities/${authorityId}`) })).exists(),
     ]);
+  },
+
+  verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, expectedPosition) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      expect(el.selectionStart).to.equal(expectedPosition);
+      expect(el.selectionEnd).to.equal(expectedPosition);
+    });
+  },
+
+  setCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      el.focus();
+      el.selectionStart = position;
+      el.selectionEnd = position;
+      this.verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position);
+    });
   },
 };

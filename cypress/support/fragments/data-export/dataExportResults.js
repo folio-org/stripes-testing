@@ -50,9 +50,9 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
-            Cypress.env('users')[0].personal.lastName
-          }`.trim();
+          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
+            Cypress.env('users')[0].personal.firstName
+          } `;
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
@@ -111,9 +111,7 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
-            Cypress.env('users')[0].personal.lastName
-          }`;
+          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${Cypress.env('users')[0].personal.firstName} `;
           cy.expect([
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
@@ -172,7 +170,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.firstName} ${user.lastName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
 
     cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),
@@ -232,7 +230,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.firstName} ${user.lastName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
     const expectedFailedContent = failedRecordsCount
       ? `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`
       : `${duplicatesCount} duplicate(s)`;

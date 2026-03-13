@@ -110,7 +110,7 @@ describe('Orders', () => {
       Orders.openOrder();
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.addReveivingNoteToItemDetailsAndSave(orderNumber);
+      OrderLines.addReceivingNoteToItemDetailsAndSave(orderNumber);
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

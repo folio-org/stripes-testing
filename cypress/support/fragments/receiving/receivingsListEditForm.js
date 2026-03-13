@@ -11,6 +11,7 @@ import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ReceivingStates from './receivingStates';
+import DeleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 
 const receivingsListEditForm = Section({ id: 'pane-title-receive-list' });
 const receinigsListTable = receivingsListEditForm.find(HTML({ id: 'title-receive-list' }));
@@ -105,6 +106,7 @@ export default {
     cy.do(receiveButton.click());
 
     if (receiveSaved) {
+      DeleteHoldingsModalReceivingFullScreen.deleteHoldingsModal({ action: 'Keep Holdings' });
       InteractorsTools.checkCalloutMessage(ReceivingStates.receiveSavedSuccessfully);
     }
   },
