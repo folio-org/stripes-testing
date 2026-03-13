@@ -1,6 +1,5 @@
 import { MultiColumnListCell } from '../../../../../interactors';
 import Helper from '../../../../support/fragments/finance/financeHelper';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -25,13 +24,8 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
-          (id) => {
-            InventoryInstance.deleteInstanceViaApi(id, true);
-          },
-        );
-      });
+      cy.getUserToken(user.username, user.password, { log: false });
+      InventoryInstances.deleteInstanceByTitleViaApi(instanceTitle);
     });
 
     it('C598 Create new instance with add "New" (folijet)', { tags: ['dryRun', 'folijet'] }, () => {

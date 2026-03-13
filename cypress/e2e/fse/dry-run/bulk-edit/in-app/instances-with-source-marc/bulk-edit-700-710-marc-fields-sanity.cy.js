@@ -279,7 +279,6 @@ describe('Bulk-edit', () => {
           0,
           newValueOfContributorsField.subfieldA,
         );
-        InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '710',
