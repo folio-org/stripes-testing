@@ -25,6 +25,7 @@ const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polD
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
+const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
 
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
@@ -106,6 +107,13 @@ export default {
       cy.expect(expectedSection.has({ text: including('The list contains no items') }));
     } else {
       cy.get(expectedRowsSelector).should('have.length', expectedCount);
+    }
+  },
+  verifyReceivedRecordsCount(receivedCount) {
+    if (receivedCount === 0) {
+      cy.expect(receivedSection.has({ text: including('The list contains no items') }));
+    } else {
+      cy.get(receivedRowsSelector).should('have.length', receivedCount);
     }
   },
   checkExpectedTableContent(records = []) {

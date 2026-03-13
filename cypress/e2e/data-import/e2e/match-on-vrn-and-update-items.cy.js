@@ -144,7 +144,7 @@ describe('Data Import', () => {
               cy.getProductIdTypes({ query: 'name=="ISSN"' }).then((productIdType) => {
                 productIdTypeId = productIdType.id;
               });
-              cy.getLocations({ query: 'name="Main Library"' }).then((res) => {
+              cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then((res) => {
                 locationId = res.id;
               });
             })

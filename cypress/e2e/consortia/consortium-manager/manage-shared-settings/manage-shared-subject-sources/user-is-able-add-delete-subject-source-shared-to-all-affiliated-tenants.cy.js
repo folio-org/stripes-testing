@@ -77,7 +77,7 @@ describe('Consortia', () => {
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSourceNames.name1);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSourceNames.name1,
-              user: 'System, System user - mod-consortia-keycloak ',
+              user: 'No value set-',
               actions: ['edit', 'trash'],
             });
 

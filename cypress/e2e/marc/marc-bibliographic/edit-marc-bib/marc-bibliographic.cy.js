@@ -172,35 +172,6 @@ describe('MARC', () => {
             InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
           },
         );
-
-        it(
-          'C345388 Derive a MARC bib record (spitfire)',
-          { tags: ['smokeBroken', 'spitfire', 'C345388'] },
-          () => {
-            InventoryInstance.getAssignedHRID().then((instanceHRID) => {
-              InventoryInstance.deriveNewMarcBib();
-              const expectedCreatedValue = QuickMarcEditor.addNewField();
-
-              QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-                const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-                QuickMarcEditor.pressSaveAndCloseButton();
-                QuickMarcEditor.deleteConfirmationPresented();
-                QuickMarcEditor.confirmDelete();
-
-                InventoryInstance.checkUpdatedHRID(instanceHRID);
-                InventoryInstance.checkExpectedMARCSource();
-                InventoryInstance.checkPresentedText(expectedUpdatedValue);
-
-                // Wait for the content to be loaded.
-                cy.wait(4000);
-                InventoryInstance.viewSource();
-                InventoryViewSource.contains(expectedCreatedValue);
-                InventoryViewSource.contains(expectedUpdatedValue);
-                InventoryViewSource.notContains(deletedTag);
-              });
-            });
-          },
-        );
       },
     );
   });

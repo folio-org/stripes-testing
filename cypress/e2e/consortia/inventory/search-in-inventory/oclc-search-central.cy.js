@@ -85,7 +85,6 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411625');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
@@ -96,6 +95,8 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.resetTenant();
+            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411625');
+
             cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
               InventoryInstances.getIdentifierTypes({
                 query: `name=="${identifierTypeName}"`,

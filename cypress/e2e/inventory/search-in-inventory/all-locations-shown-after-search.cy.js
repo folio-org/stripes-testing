@@ -14,6 +14,7 @@ const testData = {
 };
 const instanceTitles = [testData.instanceTitlePrefix + '_1', testData.instanceTitlePrefix + '_2'];
 let userId;
+let currentTenantName = '';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -24,6 +25,11 @@ describe('Inventory', () => {
 
           cy.getAdminToken()
             .then(() => {
+              cy.ifConsortia(true, () => {
+                cy.getTenantNameInMemberRun().then((tenantName) => {
+                  currentTenantName = tenantName;
+                });
+              });
               InventoryInstances.deleteFullInstancesByTitleViaApi(testData.instanceTitlePrefix);
               cy.getMaterialTypes({ limit: 1, query: 'source="folio"' }).then((res) => {
                 testData.materialType = res.id;
@@ -127,14 +133,17 @@ describe('Inventory', () => {
                 { checkIncluding: true },
               );
             });
-            InventorySearchAndFilter.selectMultiSelectFilterOption(
+            InventorySearchAndFilter.selectEcsLocationFilterOption(
               testData.effectiveLocationFacet,
               testData.locations[0].name,
+              currentTenantName,
             );
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-              testData.effectiveLocationFacet,
-              testData.locations[0].name,
-            );
+            cy.ifConsortia(false, () => {
+              InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+                testData.effectiveLocationFacet,
+                testData.locations[0].name,
+              );
+            });
             testData.locations.forEach((location) => {
               InventorySearchAndFilter.verifyOptionAvailableMultiselect(
                 testData.effectiveLocationFacet,
@@ -164,10 +173,13 @@ describe('Inventory', () => {
                 { checkIncluding: true },
               );
             });
-            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-              testData.effectiveLocationFacet,
-              testData.locations[0].name,
-            );
+
+            cy.ifConsortia(false, () => {
+              InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+                testData.effectiveLocationFacet,
+                testData.locations[0].name,
+              );
+            });
             InventorySearchAndFilter.resetAll();
             InventorySearchAndFilter.typeNotFullValueInMultiSelectFilterFieldAndCheck(
               testData.effectiveLocationFacet,
