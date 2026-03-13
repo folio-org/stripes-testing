@@ -252,6 +252,7 @@ export default {
   checkErrorQuantityInSummaryTable,
 
   openInstanceInInventory: (itemStatus, rowNumber = 0) => {
+    cy.wait(1500);
     cy.do(
       resultsList
         .find(MultiColumnListCell({ row: rowNumber, columnIndex: 3 }))

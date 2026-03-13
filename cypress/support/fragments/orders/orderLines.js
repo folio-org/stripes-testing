@@ -107,6 +107,7 @@ const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const addDonorsModal = Modal('Add donors');
 const titleLookUpButton = Button('Title look-up');
+const donorsInformationSection = Section({ id: 'donorsInformation' });
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 const locationLookUpButton = Button('Location look-up');
@@ -2544,7 +2545,7 @@ export default {
 
   checkAddDonorButtomisActive() {
     cy.expect([
-      Section({ id: 'donorsInformation' })
+      donorsInformationSection
         .find(Button({ id: 'donorOrganizationIds-plugin' }))
         .is({ disabled: false }),
     ]);
@@ -2657,21 +2658,17 @@ export default {
   },
 
   checkDonorInformation(donors) {
-    for (let i = 0; i < donors.length; i++) {
+    donors.forEach((donor) => {
       cy.expect(
-        Section({ id: 'donorsInformation' })
-          .find(MultiColumnListCell({ row: i, column: 'Name' }))
-          .has({ content: donors[i] }),
+        donorsInformationSection
+          .find(MultiColumnListCell({ column: 'Name', content: donor }))
+          .exists(),
       );
-    }
+    });
   },
 
   checkDonorIsAbsent(donor) {
-    cy.expect(
-      Section({ id: 'donorsInformation' })
-        .find(MultiColumnListCell({ content: donor }))
-        .absent(),
-    );
+    cy.expect(donorsInformationSection.find(MultiColumnListCell({ content: donor })).absent());
   },
 
   changeExpenseClassInPOLWithoutSave(indexOfPreviousExpenseClass, expenseClass) {
