@@ -13,7 +13,7 @@ import {
 } from '../../../../../../interactors';
 import SettingsPane, { rootPane } from '../../settingsPane';
 import LocationDetails from '../locations/locationDetails';
-import Configs from '../../configs';
+import AddressesConfig from '../addressesConfig';
 import { randomFourDigitNumber } from '../../../../utils/stringTools';
 
 const addButton = Button('New');
@@ -73,27 +73,22 @@ export default {
   addressRowWithValueIsAbsent(addressValue) {
     cy.expect(MultiColumnListRow(including(addressValue)).absent());
   },
-  setAddress(body) {
-    return Configs.createConfigViaApi({
-      module: `TENANT_${randomFourDigitNumber()}`,
-      configName: 'tenant.addresses',
-      value: JSON.stringify(body),
-    });
+  setAddress(config) {
+    return AddressesConfig.createAddressViaApi(config);
   },
   createAddressViaApi(config) {
-    Configs.createConfigViaApi(config);
+    return AddressesConfig.createAddressViaApi(config);
   },
   deleteAddressViaApi(config) {
-    return Configs.deleteConfigViaApi(config);
+    return AddressesConfig.deleteAddressViaApi(config);
   },
   generateAddressConfig({
     name = `autotest_address_name_${randomFourDigitNumber()}`,
     address = `autotest_address_value_${randomFourDigitNumber()}`,
   } = {}) {
     return {
-      value: { name, address },
-      scope: 'ui-tenant-settings.addresses.manage',
-      key: `ADDRESS_${randomFourDigitNumber()}`,
+      name,
+      address,
       id: uuid(),
     };
   },
