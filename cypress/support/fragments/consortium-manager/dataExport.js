@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { ListRow, MultiColumnListCell } from '../../../../interactors';
+import { ListRow, MultiColumnListCell, Button } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getResultRow = (resultFileName) => {
@@ -99,5 +99,23 @@ export default {
     verifyCommonFields(resultRow, jobId, user, jobType);
     verifyFileName(resultRow, resultFileName, jobId);
     verifyEndedRunningDate(resultRow);
+  },
+
+  verifyDeletedJobProfileNotationInConsortiumManager(profileName) {
+    cy.expect(MultiColumnListCell({ content: `${profileName} (deleted)` }).exists());
+  },
+
+  verifyFileNameReadOnlyInConsortiumManager(fileName) {
+    cy.expect(
+      MultiColumnListCell({ content: including(fileName) })
+        .find(Button())
+        .absent(),
+    );
+  },
+
+  verifyErrorLogsDoNotOpenInConsortiumManager(fileName) {
+    cy.do(MultiColumnListCell({ content: including(fileName) }).click());
+    cy.wait(1000);
+    cy.get('[class^="errorLogsContainer"]').should('not.exist');
   },
 };

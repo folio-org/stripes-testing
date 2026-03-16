@@ -246,7 +246,7 @@ export default {
 
   clickJobProfileDropdown() {
     cy.do(jobProfileAccordion.find(Selection()).open());
-    cy.wait(1000);
+    cy.wait(3000);
   },
 
   verifyJobProfileInDropdown(profileName) {
