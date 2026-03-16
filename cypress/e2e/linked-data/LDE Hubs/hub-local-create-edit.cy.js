@@ -11,6 +11,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import HubSearchResults from '../../../support/fragments/linked-data/hubSearchResults';
 import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
+import LocalHubPreview from '../../../support/fragments/linked-data/localHubPreview';
 
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
@@ -87,8 +88,8 @@ describe('LDE Hubs: Create and edit local hub', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
 
-    if (testData.hubId) {
-      EditHubPage.deleteViaAPI(testData.hubId);
+    if (hubData.hubId) {
+      EditHubPage.deleteViaAPI(hubData.hubId);
     }
 
     if (testData.authorityId) {
@@ -107,9 +108,10 @@ describe('LDE Hubs: Create and edit local hub', () => {
   });
 
   it(
-    'C987719 C1030042  Create and edit local hub (citation)',
+    'C987719 C1030042 Create and edit local hub (citation)',
     { tags: ['criticalPath', 'shiftLeft', 'citation', 'C987719', 'C1030042'] },
     () => {
+      // Switch to Hubs tab
       SearchAndFilter.switchToHubsTab();
       SearchAndFilter.verifyActiveButtons(false);
       HubSearchResults.verifyNumberOfFoundRecords(0);
@@ -118,11 +120,13 @@ describe('LDE Hubs: Create and edit local hub', () => {
       SearchAndFilter.verifyActiveButtons(false);
       HubSearchResults.verifyEnterSearchCriteriaMessage();
 
+      // Create new local hub
       LinkedDataEditor.openNewHubForm();
       NewHub.waitLoading();
       NewHub.assignAuthority(testData.authorityHeading);
       NewHub.verifyActiveSaveButtons(true);
 
+      // Duplicate title to have both preferred and variant titles filled in
       NewHub.clickDuplicateTitleButton();
       NewHub.selectVariantTitleType();
 
@@ -148,6 +152,7 @@ describe('LDE Hubs: Create and edit local hub', () => {
       cy.getAdminToken();
       HubSearchResults.verifyEnterSearchCriteriaMessage();
 
+      // Verify created hub in the search results
       SearchAndFilter.selectSourceLocalOption();
       SearchAndFilter.fillHubsSearchInput(hubData.preferredTitle);
       HubSearchResults.verifyNumberOfFoundRecords(1);
@@ -159,7 +164,10 @@ describe('LDE Hubs: Create and edit local hub', () => {
       });
       HubSearchResults.clickEditButtonByTitle(hubData.preferredTitle);
 
-      EditHubPage.waitLoading();
+      // Verify information on the edit page
+      EditHubPage.waitLoading().then((id) => {
+        hubData.hubId = id;
+      });
       EditHubPage.verifyCreatorOfHub(testData.authorityHeading);
       EditHubPage.verifyTitleInformation(
         hubData.variantType,
@@ -179,14 +187,14 @@ describe('LDE Hubs: Create and edit local hub', () => {
       EditHubPage.verifyLanguageCode(hubData.languageCode);
 
       EditHubPage.updateTitle(hubData.preferredTitleUpdated);
-      EditHubPage.saveAndKeepEditing().then((id) => {
-        testData.hubId = id;
-      });
 
-      EditHubPage.saveAndClose();
+      EditHubPage.saveAndClose().then((id) => {
+        hubData.hubId = id;
+      });
       SearchAndFilter.switchToWorkInstancesTab();
       SearchAndFilter.switchToHubsTab();
 
+      // Verify updated title in the search results
       HubSearchResults.verifySearchResultsByTitle({
         creator: testData.authorityHeading,
         title: `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
@@ -194,6 +202,18 @@ describe('LDE Hubs: Create and edit local hub', () => {
         source: 'Local',
       });
       HubSearchResults.verifyNumberOfFoundRecords(1);
+
+      // Verify hub preview page
+      cy.then(() => {
+        HubSearchResults.openPreviewByTitle(hubData.hubId);
+      });
+      LocalHubPreview.waitLoading();
+      LocalHubPreview.verifyButtons();
+      LocalHubPreview.verifyHubTitle(`${hubData.preferredTitle}${hubData.preferredTitleUpdated}`);
+      LocalHubPreview.verifySectionsPresent();
+      LocalHubPreview.verifyCreatorOfHub(testData.authorityHeading);
+      LocalHubPreview.verifyLanguage(hubData.languageLabel);
+      LocalHubPreview.close();
     },
   );
 });

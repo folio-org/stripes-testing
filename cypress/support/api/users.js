@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 import permissionsList from '../dictionary/permissions';
+import generateStrongPassword from '../utils/generateStrongPassword';
 import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
@@ -108,7 +109,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
 
   const userProperties = {
     username: `at_username_${getRandomPostfix()}`,
-    password: 'password',
+    password: generateStrongPassword(),
   };
   let userBody;
   if (!userModel) {

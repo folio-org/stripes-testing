@@ -241,4 +241,27 @@ export default {
   scrollTo(direction) {
     cy.get('div[class*="mclScrollable-"]').scrollTo(direction);
   },
+
+  verifyDeletedJobProfileNotation(profileName) {
+    cy.expect(logsList.find(MultiColumnListCell({ content: `${profileName} (deleted)` })).exists());
+  },
+
+  verifyFileNameReadOnly(fileName) {
+    cy.expect(
+      logsList
+        .find(MultiColumnListCell({ content: including(fileName) }))
+        .find(Button())
+        .absent(),
+    );
+  },
+
+  verifyErrorLogsDoNotOpen(fileName) {
+    cy.do(logsList.find(MultiColumnListCell({ content: including(fileName) })).click());
+    cy.wait(1000);
+    cy.get('[class^="errorLogsContainer"]').should('not.exist');
+  },
+
+  verifyFileExistsInLogs(fileName) {
+    cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
+  },
 };
