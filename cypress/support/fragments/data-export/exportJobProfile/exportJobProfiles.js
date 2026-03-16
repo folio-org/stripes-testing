@@ -87,7 +87,7 @@ export default {
     );
     cy.expect(
       targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
-        content: including(`${userObject.personal.lastName}, ${userObject.personal.firstName} `),
+        content: including(`${userObject.personal.firstName} ${userObject.personal.lastName}`),
       }),
     );
 
