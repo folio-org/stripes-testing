@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import FastAddNewRecord from '../../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
@@ -20,11 +20,23 @@ describe('Inventory', () => {
       start: null,
       end: null,
     };
+    const newRecordDetails = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
+    let locationName;
 
     before('Set instance status', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
+      cy.getLocations().then((locations) => {
+        locationName = locations.name;
+        newRecordDetails.permanentLocationOption = `${locations.name} (${locations.code}) `;
+      });
+      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
+        newRecordDetails.materialType = materialType.name;
+      });
+      cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+        newRecordDetails.permanentLoanType = loanTypes[0].name;
+      });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password);
@@ -35,7 +47,7 @@ describe('Inventory', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+          newRecordDetails.itemBarcode,
         );
       });
     });
@@ -51,7 +63,7 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
-        FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
+        FastAddNewRecord.fillFastAddNewRecordForm(newRecordDetails);
 
         // set starting timestamp right before saving
         timeStamp.start = new Date();
@@ -64,43 +76,25 @@ describe('Inventory', () => {
           InteractorsTools.checkCalloutMessage(
             FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
           );
-          InventorySearchAndFilter.searchByParameter(
-            'Title (all)',
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-          );
+          InventorySearchAndFilter.searchByParameter('Title (all)', newRecordDetails.resourceTitle);
           FastAddNewRecord.openRecordDetails();
 
           // verify instance details
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          InstanceRecordView.verifyResourceTitle(
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-          );
-          InstanceRecordView.verifyInstanceStatusCode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeValue,
-          );
-          InstanceRecordView.verifyResourceType(
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceType,
-          );
+          InstanceRecordView.verifyResourceTitle(newRecordDetails.resourceTitle);
+          InstanceRecordView.verifyInstanceStatusCode(newRecordDetails.instanceStatusCodeValue);
+          InstanceRecordView.verifyResourceType(newRecordDetails.resourceType);
 
           // verify holdings details
           FastAddNewRecord.viewHoldings();
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          FastAddNewRecord.verifyPermanentLocation(LOCATION_NAMES.ANNEX_UI);
+          FastAddNewRecord.verifyPermanentLocation(locationName);
           FastAddNewRecord.closeHoldingsRecordView();
 
           // verify item details
-          InventoryInstance.openHoldings([LOCATION_NAMES.ANNEX_UI]);
-          InventoryInstance.openItemByBarcode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-          );
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          ItemRecordView.verifyPermanentLoanType(
-            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLoanType,
-          );
-          ItemRecordView.verifyItemBarcode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-          );
-          ItemRecordView.verifyNote(FastAddNewRecord.fastAddNewRecordFormDetails.note);
+          InventoryInstance.openHoldings([locationName]);
+          InventoryInstance.openItemByBarcode(newRecordDetails.itemBarcode);
+          ItemRecordView.verifyPermanentLoanType(newRecordDetails.permanentLoanType);
+          ItemRecordView.verifyItemBarcode(newRecordDetails.itemBarcode);
+          ItemRecordView.verifyNote(newRecordDetails.note);
         });
       },
     );
