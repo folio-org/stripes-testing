@@ -43,9 +43,13 @@ export default {
     cy.xpath(editPage).should('be.visible');
   },
   saveAndClose: () => {
+    cy.intercept('POST', '**/linked-data/resource').as('createHub');
     cy.do(saveAndCloseButton.click());
-    cy.wait(500);
-    cy.xpath(editPage).should('not.exist');
+
+    return cy.wait('@createHub').then((interception) => {
+      cy.xpath(editPage).should('not.exist');
+      return cy.wrap(interception.response.body.resource?.['http://bibfra.me/vocab/lite/Hub']?.id);
+    });
   },
 
   assignAuthority: (name) => {
