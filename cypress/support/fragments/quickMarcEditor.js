@@ -1424,11 +1424,16 @@ export default {
   },
 
   verifyTagFieldAfterUnlinkingByTag(tag, secondBox, thirdBox, content) {
+    const targetRow = getRowInteractorByTagName(tag);
     cy.expect([
-      QuickMarcEditorRow({ tagValue: tag }).find(tagBox).has({ value: tag }),
-      QuickMarcEditorRow({ tagValue: tag }).find(firstIndicatorBox).has({ value: secondBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(secondIndicatorBox).has({ value: thirdBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ value: content }),
+      targetRow.find(tagBox).has({ value: tag, disabled: false }),
+      targetRow.find(firstIndicatorBox).has({ value: secondBox, disabled: false }),
+      targetRow.find(secondIndicatorBox).has({ value: thirdBox, disabled: false }),
+      targetRow.find(fourthBox).has({ value: content, disabled: false }),
+      targetRow.find(fourthBoxInLinkedField).absent(),
+      targetRow.find(fifthBoxInLinkedField).absent(),
+      targetRow.find(sixthBoxInLinkedField).absent(),
+      targetRow.find(seventhBoxInLinkedField).absent(),
     ]);
   },
 
