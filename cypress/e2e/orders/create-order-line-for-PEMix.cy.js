@@ -6,7 +6,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import interactorsTools from '../../support/utils/interactorsTools';
 
-describe('orders: Test PO search', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let orderNumber;

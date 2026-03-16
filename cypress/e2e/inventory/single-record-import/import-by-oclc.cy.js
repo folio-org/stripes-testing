@@ -4,6 +4,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 const testData = {
   user: {},
@@ -14,6 +15,8 @@ const testData = {
 describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication, false);
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiInventorySingleRecordImport.gui,

@@ -16,7 +16,7 @@ let testItems;
 let itemBarcodes;
 let servicePoint;
 
-describe('Check In', () => {
+describe('Check in', () => {
   before('create inventory instances', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;

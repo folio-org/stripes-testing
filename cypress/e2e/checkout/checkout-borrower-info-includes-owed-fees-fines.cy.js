@@ -9,8 +9,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 
-describe('Checkout', () => {
-  describe('Borrower info includes owed fees/fines information', () => {
+describe('Fees&Fines', () => {
+  describe('Display Fees/Fines', () => {
     const owner = UsersOwners.getDefaultNewOwner({ name: `owner-${uuid()}` });
     let testUser;
     let staffUser;
