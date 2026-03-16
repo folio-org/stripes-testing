@@ -7,7 +7,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Search', () => {
     describe('Search in Inventory', () => {
       const randomPostfix = getRandomPostfix();
