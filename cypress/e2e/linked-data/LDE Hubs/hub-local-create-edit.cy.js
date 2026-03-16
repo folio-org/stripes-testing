@@ -165,7 +165,9 @@ describe('LDE Hubs: Create and edit local hub', () => {
       HubSearchResults.clickEditButtonByTitle(hubData.preferredTitle);
 
       // Verify information on the edit page
-      EditHubPage.waitLoading();
+      EditHubPage.waitLoading().then((id) => {
+        hubData.hubId = id;
+      });
       EditHubPage.verifyCreatorOfHub(testData.authorityHeading);
       EditHubPage.verifyTitleInformation(
         hubData.variantType,

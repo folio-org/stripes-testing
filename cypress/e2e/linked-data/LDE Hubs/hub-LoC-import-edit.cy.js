@@ -19,7 +19,7 @@ describe('LDE Hubs: Import and edit LoC hub', () => {
     primarySource: 'Library of Congress',
     importedSource: 'Library of Congress, Local',
     variantTitles: ['Conference', 'Netscape Communicator. Netscape Conference'],
-    hubToEdit: null,
+    hubId: null,
   };
 
   before('Create test user', () => {
@@ -118,8 +118,8 @@ describe('LDE Hubs: Import and edit LoC hub', () => {
       HubSearchResults.clickImportEditButton();
       PreviewHubPage.waitLoading();
       PreviewHubPage.clickContinue();
-      EditHubPage.waitLoading().then((hubId) => {
-        testData.hubId = hubId;
+      EditHubPage.waitLoading().then((id) => {
+        testData.hubId = id;
       });
 
       // Verify edit page buttons state

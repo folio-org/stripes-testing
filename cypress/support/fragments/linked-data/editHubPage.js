@@ -27,6 +27,10 @@ const otherTitleField = "(//input[@data-testid='literal-field'])[11]";
 export default {
   waitLoading: () => {
     cy.xpath(editPage).should('be.visible');
+    return cy.url().then((url) => {
+      const match = url.match(/resources\/([^/]+)\/edit/);
+      return match ? match[1] : null;
+    });
   },
 
   verifyButtons(saveActive = false) {
