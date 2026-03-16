@@ -234,4 +234,45 @@ export default {
   viewBlockDetails() {
     cy.do(Button({ id: 'patron-block-details-modal' }).click());
   },
+
+  verifyBlockModalButtons() {
+    cy.expect([
+      Button(buttonLabels.override).exists(),
+      Button(buttonLabels.close).exists(),
+      Button('View block details').exists(),
+    ]);
+  },
+
+  closeBlockModal() {
+    cy.do(Button(buttonLabels.close).click());
+    cy.wait(500);
+  },
+
+  verifyBlockModalClosed(modalTitle) {
+    cy.expect(Modal(including(modalTitle)).absent());
+  },
+
+  clickOverrideButton() {
+    cy.do(Button(buttonLabels.override).click());
+    cy.wait(500);
+  },
+
+  verifyOverridePatronBlockModal() {
+    cy.expect([
+      Modal(including(headers.overridePatronBlock)).exists(),
+      TextArea(fieldLabels.comment).exists(),
+    ]);
+  },
+
+  fillOverrideCommentAndSave(commentText) {
+    cy.do([
+      TextArea(fieldLabels.comment).fillIn(commentText),
+      Button(buttonLabels.saveAndClose).click(),
+    ]);
+    cy.wait(2000);
+  },
+
+  verifyOverrideModalClosed() {
+    cy.expect(Modal(including(headers.overridePatronBlock)).absent());
+  },
 };
