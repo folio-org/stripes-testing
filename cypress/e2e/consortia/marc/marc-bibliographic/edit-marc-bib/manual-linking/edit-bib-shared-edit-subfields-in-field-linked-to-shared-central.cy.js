@@ -9,7 +9,6 @@ import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('MARC', () => {
@@ -61,20 +60,18 @@ describe('MARC', () => {
           const authorityFields150 = [
             {
               tag: tags.tag150,
-              content: Object.entries(authSubfields150).reduce(
-                (acc, [subfield, value]) => `${acc} $${subfield} ${value}`,
-                '',
-              ),
+              content: Object.entries(authSubfields150)
+                .reduce((acc, [subfield, value]) => `${acc} $${subfield} ${value}`, '')
+                .trim(),
               indicators: ['\\', '\\'],
             },
           ];
           const authorityFields111 = [
             {
               tag: tags.tag111,
-              content: Object.entries(authSubfields111).reduce(
-                (acc, [subfield, value]) => `${acc} $${subfield} ${value}`,
-                '',
-              ),
+              content: Object.entries(authSubfields111)
+                .reduce((acc, [subfield, value]) => `${acc} $${subfield} ${value}`, '')
+                .trim(),
               indicators: ['2', '\\'],
             },
           ];
@@ -90,18 +87,16 @@ describe('MARC', () => {
             },
             {
               tag: tags.tag650,
-              content: Object.entries(bibSubfields650).reduce(
-                (acc, [subfield, value]) => `${acc} $${subfield} ${value}`,
-                '',
-              ),
+              content: Object.entries(bibSubfields650)
+                .reduce((acc, [subfield, value]) => `${acc} $${subfield} ${value}`, '')
+                .trim(),
               indicators: ['\\', '0'],
             },
             {
               tag: tags.tag711,
-              content: Object.entries(bibSubfields650).reduce(
-                (acc, [subfield, value]) => `${acc} $${subfield} ${value}`,
-                '',
-              ),
+              content: Object.entries(bibSubfields711)
+                .reduce((acc, [subfield, value]) => `${acc} $${subfield} ${value}`, '')
+                .trim(),
               indicators: ['\\', '0'],
             },
           ];
@@ -216,6 +211,7 @@ describe('MARC', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               });
@@ -267,7 +263,6 @@ describe('MARC', () => {
 
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
-              InventorySearchAndFilter.clearDefaultHeldbyFilter();
 
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);

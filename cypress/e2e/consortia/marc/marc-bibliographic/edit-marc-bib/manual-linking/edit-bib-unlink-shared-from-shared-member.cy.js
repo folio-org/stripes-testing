@@ -11,7 +11,6 @@ import ConsortiumManager from '../../../../../../support/fragments/settings/cons
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -128,6 +127,7 @@ describe('MARC', () => {
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
@@ -147,7 +147,6 @@ describe('MARC', () => {
             'C407666 Unlink Shared MARC bib from Shared MARC Authority in Member tenant (consortia) (spitfire)',
             { tags: ['extendedPathECS', 'spitfire', 'C407666'] },
             () => {
-              InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.waitLoading();
@@ -197,7 +196,6 @@ describe('MARC', () => {
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
               InventoryInstances.waitContentLoading();
 
-              InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.waitLoading();

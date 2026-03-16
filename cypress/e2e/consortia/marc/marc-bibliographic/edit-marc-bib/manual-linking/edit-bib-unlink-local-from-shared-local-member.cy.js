@@ -10,7 +10,6 @@ import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
@@ -186,6 +185,7 @@ describe('MARC', () => {
                     cy.login(user.username, user.password, {
                       path: TopMenu.inventoryPath,
                       waiter: InventoryInstances.waitContentLoading,
+                      authRefresh: true,
                     });
                     ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
                   });
@@ -207,7 +207,6 @@ describe('MARC', () => {
             'C407627 Unlink Local MARC bib from Shared/Local MARC Authority in Member tenant (consortia) (spitfire)',
             { tags: ['extendedPathECS', 'spitfire', 'C407627'] },
             () => {
-              InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.waitLoading();

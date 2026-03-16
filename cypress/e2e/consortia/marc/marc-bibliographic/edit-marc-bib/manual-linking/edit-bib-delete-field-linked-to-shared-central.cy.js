@@ -11,7 +11,6 @@ import ConsortiumManager from '../../../../../../support/fragments/settings/cons
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
-import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -124,6 +123,7 @@ describe('MARC', () => {
                   cy.login(user.username, user.password, {
                     path: TopMenu.inventoryPath,
                     waiter: InventoryInstances.waitContentLoading,
+                    authRefresh: true,
                   });
                   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 });
@@ -162,7 +162,6 @@ describe('MARC', () => {
 
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
-              InventorySearchAndFilter.clearDefaultHeldbyFilter();
 
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
