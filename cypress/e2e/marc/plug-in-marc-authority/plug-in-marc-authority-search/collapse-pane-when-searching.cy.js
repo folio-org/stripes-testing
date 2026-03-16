@@ -1,4 +1,7 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_AUTHORITY_SEARCH_OPTIONS,
+} from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -8,7 +11,7 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomNDigitNumber } from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('plug-in MARC authority', () => {
@@ -16,12 +19,10 @@ describe('MARC', () => {
       const testData = {
         authoritySource: 'LC Name Authority file (LCNAF)',
         tags: {
+          tag100: '100',
           tag700: '700',
         },
         instanceTitle: 'The data C380574',
-        authSearchOption: {
-          KEYWORD: 'Keyword',
-        },
         instanceIDs: [],
         authorityIDs: [],
         marcFiles: [
@@ -33,6 +34,11 @@ describe('MARC', () => {
             propertyName: 'instance',
           },
         ],
+        marcHeadingPrefix: `AT_C380574_MarcAuthority_${getRandomPostfix()}`,
+      };
+      const authData = {
+        prefix: 'n',
+        startsWithNumber: `380574${randomNDigitNumber(15)}`,
       };
 
       before('Creating user', () => {
@@ -43,49 +49,81 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            InventoryInstances.getInstancesViaApi({
+              limit: 100,
+              query: `title="${testData.instanceTitle}"`,
+            }).then((instances) => {
+              if (instances) {
+                instances.forEach(({ id }) => {
+                  InventoryInstance.deleteInstanceViaApi(id);
+                });
+              }
+            });
+          })
+          .then(() => {
+            testData.marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  if (
+                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                  ) {
+                    testData.instanceIDs.push(record[marcFile.propertyName].id);
+                  } else {
+                    testData.authorityIDs.push(record[marcFile.propertyName].id);
+                  }
+                });
               });
-            }
-          });
-
-          testData.marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                if (
-                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                ) {
-                  testData.instanceIDs.push(record[marcFile.propertyName].id);
-                } else {
-                  testData.authorityIDs.push(record[marcFile.propertyName].id);
-                }
+              MarcAuthorities.createMarcAuthorityViaAPI(
+                authData.prefix,
+                authData.startsWithNumber,
+                [
+                  {
+                    tag: testData.tags.tag100,
+                    content: `$a ${testData.marcHeadingPrefix}_1`,
+                    indicators: ['1', '\\'],
+                  },
+                ],
+              ).then((createdRecordId) => {
+                testData.authorityIDs.push(createdRecordId);
+              });
+              MarcAuthorities.createMarcAuthorityViaAPI(
+                authData.prefix,
+                authData.startsWithNumber + 1,
+                [
+                  {
+                    tag: testData.tags.tag100,
+                    content: `$a ${testData.marcHeadingPrefix}_2`,
+                    indicators: ['1', '\\'],
+                  },
+                ],
+              ).then((createdRecordId) => {
+                testData.authorityIDs.push(createdRecordId);
               });
             });
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+            }, 20_000);
+            InventoryInstances.searchByTitle(testData.instanceTitle);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthoritiesSearch.selectSearchOption(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD);
+            MarcAuthoritiesSearch.verifySelectedSearchOption(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD);
           });
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          }, 20_000);
-          InventoryInstances.searchByTitle(testData.instanceTitle);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-        });
       });
 
       after('Deleting created user', () => {
@@ -93,6 +131,9 @@ describe('MARC', () => {
         Users.deleteViaApi(testData.userProperties.userId);
         testData.instanceIDs.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
+        });
+        testData.authorityIDs.forEach((id) => {
+          MarcAuthority.deleteViaAPI(id, true);
         });
       });
 

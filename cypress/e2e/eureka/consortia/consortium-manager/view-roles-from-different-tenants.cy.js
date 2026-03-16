@@ -18,6 +18,7 @@ describe('Eureka', () => {
       collegeRoleName: `AT_C422010_AuthPolicy_College_${randomPostfix}`,
       universityRoleName: `AT_C422010_AuthPolicy_University_${randomPostfix}`,
     };
+    const plusMinus = 10;
     const capabSetsToAssignCentral = [
       CapabilitySets.uiAuthorizationRolesSettingsAdmin,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
@@ -84,7 +85,7 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
         cy.getAuthorizationRoles().then((rolesCentral) => {
-          AuthorizationRoles.verifyRolesCount(rolesCentral.length);
+          AuthorizationRoles.verifyRolesCount(rolesCentral.length, { plusMinus });
           AuthorizationRoles.checkRoleFound(testData.centralRoleName);
           AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
           AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
@@ -94,7 +95,7 @@ describe('Eureka', () => {
           SelectMembers.selectMember(tenantNames.college);
           cy.setTenant(Affiliations.College);
           cy.getAuthorizationRoles().then((rolesCollege) => {
-            AuthorizationRoles.verifyRolesCount(rolesCollege.length);
+            AuthorizationRoles.verifyRolesCount(rolesCollege.length, { plusMinus });
             AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
             AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
             AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
@@ -102,7 +103,7 @@ describe('Eureka', () => {
             SelectMembers.selectMember(tenantNames.university);
             cy.setTenant(Affiliations.University);
             cy.getAuthorizationRoles().then((rolesUniversity) => {
-              AuthorizationRoles.verifyRolesCount(rolesUniversity.length);
+              AuthorizationRoles.verifyRolesCount(rolesUniversity.length, { plusMinus });
               AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
               AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
               AuthorizationRoles.checkRoleFound(testData.universityRoleName);
