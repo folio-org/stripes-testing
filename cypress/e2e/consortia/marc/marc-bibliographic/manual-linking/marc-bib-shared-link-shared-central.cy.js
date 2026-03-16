@@ -95,6 +95,7 @@ describe('MARC', () => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
@@ -113,9 +114,6 @@ describe('MARC', () => {
         'C397392 Link Shared MARC bib with Shared MARC auth on Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C397392'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-          }, 30_000);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -163,6 +161,12 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          cy.setTenant(Affiliations.College);
+          BrowseContributors.waitForContributorToAppear(
+            linkingTagAndValues.authorityHeading,
+            true,
+            true,
+          );
           InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
           BrowseContributors.checkAuthorityIconAndValueDisplayed(
             linkingTagAndValues.authorityHeading,
