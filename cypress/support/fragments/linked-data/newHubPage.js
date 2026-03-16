@@ -47,7 +47,6 @@ export default {
     cy.do(saveAndCloseButton.click());
 
     return cy.wait('@createHub').then((interception) => {
-      cy.log('POST response:', JSON.stringify(interception.response.body).substring(0, 500));
       cy.xpath(editPage).should('not.exist');
       return cy.wrap(interception.response.body.resource?.['http://bibfra.me/vocab/lite/Hub']?.id);
     });
