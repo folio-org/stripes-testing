@@ -1,6 +1,11 @@
 import uuid from 'uuid';
 
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import Checkout from '../../support/fragments/checkout/checkout';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -13,6 +18,7 @@ import Requests from '../../support/fragments/requests/requests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -153,10 +159,8 @@ describe('Requests', () => {
       Requests.verifyRequestIsPresent(testData.requesters[1].barcode);
       Requests.verifyRequestIsPresent(testData.requesters[2].barcode);
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
       Requests.findCreatedRequest(testData.requesters[2].barcode);
       Requests.selectFirstRequest(instanceTitle);
       RequestDetail.waitLoading();
@@ -178,10 +182,8 @@ describe('Requests', () => {
         });
       });
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
       Requests.findCreatedRequest(itemBarcode);
       Requests.selectFirstRequest(instanceTitle);
       RequestDetail.waitLoading();
@@ -192,10 +194,8 @@ describe('Requests', () => {
       Requests.verifyRequestIsPresent(testData.requesters[1].barcode);
       Requests.verifyRequestIsAbsent(testData.requesters[2].barcode);
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      InventorySearchAndFilter.waitLoading();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       InventorySearchAndFilter.selectSearchResultItem();
@@ -209,34 +209,26 @@ describe('Requests', () => {
       Requests.verifyRequestIsPresent(testData.requesters[1].barcode);
       Requests.verifyRequestIsAbsent(testData.requesters[2].barcode);
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(testData.requesters[1].username);
       UsersSearchPane.openUser(testData.requesters[1].username);
       UsersCard.waitLoading();
 
       // Navigate to Requests filtered by this user's barcode
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
       Requests.findCreatedRequest(testData.requesters[1].barcode);
 
       Requests.verifyRequestIsPresent(testData.requesters[1].barcode);
 
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
+      Checkout.waitLoading();
       Checkout.fillUserBarcode(testData.requesters[1].barcode);
 
       // Navigate directly to Requests app filtered by this user's barcode
-      cy.login(testData.requesters[0].username, testData.requesters[0].password, {
-        path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
-      });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
       Requests.findCreatedRequest(testData.requesters[1].barcode);
 
       Requests.verifyRequestIsPresent(testData.requesters[1].barcode);
