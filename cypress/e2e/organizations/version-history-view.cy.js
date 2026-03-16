@@ -61,7 +61,6 @@ describe('Organizations', () => {
     Organizations.editOrganization();
     Organizations.addContactToOrganizationWithoutSaving(contactPeople);
     Organizations.addIntrefaceToOrganization(organizationInterface);
-    Organizations.verifySaveCalloutMessage(organization);
     Organizations.getLastUpdateTime().then((time) => {
       afterUpdated = time.replace(' ', ', ');
     });

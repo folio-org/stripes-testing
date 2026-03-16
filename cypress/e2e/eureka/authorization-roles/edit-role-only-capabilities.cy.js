@@ -29,6 +29,11 @@ describe('Eureka', () => {
         originalCapabilitiesInSets: [
           {
             table: 'Data',
+            resource: 'Calendar',
+            action: 'View',
+          },
+          {
+            table: 'Data',
             resource: 'Calendar Endpoint Calendars',
             action: 'View',
           },
@@ -49,6 +54,26 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
+            resource: 'Locale Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Mod-Settings Entries Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Mod-Settings Global Read Stripes-Core Prefs',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
+            resource: 'Mod-Settings Owner Read Stripes-Core Prefs',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
             resource: 'Note Links Collection',
             action: 'View',
           },
@@ -60,6 +85,11 @@ describe('Eureka', () => {
           {
             table: 'Data',
             resource: 'Note Types Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
             action: 'View',
           },
           {
@@ -80,6 +110,11 @@ describe('Eureka', () => {
           {
             table: 'Settings',
             resource: 'Module Notes Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Stripes-Core Settings',
             action: 'View',
           },
           {
@@ -262,7 +297,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('15');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('20');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);

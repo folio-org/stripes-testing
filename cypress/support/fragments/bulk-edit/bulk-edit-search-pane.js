@@ -169,6 +169,7 @@ export const ERROR_MESSAGES = {
   OPTIMISTIC_LOCKING:
     'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
   DUPLICATE_ENTRY: 'Duplicate entry',
+  DUPLICATES_ACROSS_TENANTS: 'Duplicates across tenants',
   SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
   INVALID_MARC_RECORD:
@@ -178,7 +179,10 @@ export const ERROR_MESSAGES = {
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
   ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC:
     'Change note type for administrative notes is not supported for MARC Instances.',
+  LINKED_DATA_SOURCE_NOT_SUPPORTED:
+    'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
+  noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
