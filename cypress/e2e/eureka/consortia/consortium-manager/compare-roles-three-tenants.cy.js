@@ -25,7 +25,7 @@ describe('Eureka', () => {
       capabilitiesForRoleCentral: [
         {
           table: CAPABILITY_TYPES.PROCEDURAL,
-          resource: 'UI-Finance Acq Unit Assignment',
+          resource: 'UI-Finance Finance Acquisitions Units Assign',
           action: CAPABILITY_ACTIONS.EXECUTE,
         },
         {
@@ -40,7 +40,7 @@ describe('Eureka', () => {
         },
         {
           table: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Finance Acq Unit Assignment',
+          resource: 'UI-Organizations Creds',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
@@ -62,7 +62,7 @@ describe('Eureka', () => {
         },
         {
           table: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Finance Acq Unit Assignment',
+          resource: 'UI-Organizations Creds',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
@@ -84,7 +84,7 @@ describe('Eureka', () => {
         },
         {
           table: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Finance Acq Unit Assignment',
+          resource: 'UI-Organizations Creds',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
