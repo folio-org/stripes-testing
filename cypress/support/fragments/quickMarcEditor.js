@@ -3648,4 +3648,17 @@ export default {
       this.verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position);
     });
   },
+
+  verifyInlineValidationErrorLink(rowIndex, linkText) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link(linkText))
+        .perform((elem) => {
+          const targetValue = elem.getAttribute('target');
+          const targetHref = elem.getAttribute('href');
+          expect(targetValue).to.equal('_blank');
+          expect(targetHref).to.equal(linkText);
+        }),
+    );
+  },
 };
