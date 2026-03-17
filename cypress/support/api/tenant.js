@@ -68,6 +68,25 @@ Cypress.Commands.add('getTenantsApi', () => {
   });
 });
 
+Cypress.Commands.add('getTenantLocaleApi', () => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'locale',
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body);
+});
+
+Cypress.Commands.add('setTenantLocaleApi', (localeBody) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'locale',
+    isDefaultSearchParamsRequired: false,
+    body: localeBody,
+  });
+});
+
 Cypress.Commands.add('setDefaultLocaleApi', () => {
   return cy.okapiRequest({
     method: 'PUT',
