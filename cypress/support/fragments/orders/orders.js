@@ -163,6 +163,12 @@ export default {
     cy.expect(modal.absent());
   },
 
+  checkOpenOrderCalloutMessage(orderNumber) {
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully opened`,
+    );
+  },
+
   editOrder() {
     expandActionsDropdown();
     cy.do(Button('Edit').click());
