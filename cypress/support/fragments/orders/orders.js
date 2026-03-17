@@ -151,6 +151,18 @@ export default {
     cy.expect(Modal('Different account numbers').absent());
   },
 
+  checkModalDifferentAccountNumbersWithMessage(uniqueAccountCount) {
+    const modal = Modal('Different account numbers');
+    cy.expect(modal.exists());
+    cy.expect(
+      modal.has({
+        message: including(`${uniqueAccountCount} unique account numbers for export`),
+      }),
+    );
+    cy.do(modal.find(Button('Close')).click());
+    cy.expect(modal.absent());
+  },
+
   editOrder() {
     expandActionsDropdown();
     cy.do(Button('Edit').click());
