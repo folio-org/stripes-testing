@@ -60,8 +60,53 @@ export const defaultLoanPolicy = {
   renewable: false,
 };
 
+const getExampleLoanPolicy = () => {
+  return {
+    id: 'd9cd0bed-1b49-4b5e-a7bd-064b8d177231',
+    name: 'Example Loan Policy',
+    description: 'An example loan policy',
+    loanable: true,
+    loansPolicy: {
+      profileId: 'Rolling',
+      period: {
+        duration: 60,
+        intervalId: 'Days',
+      },
+      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
+      gracePeriod: {
+        duration: 7,
+        intervalId: 'Days',
+      },
+    },
+    renewable: true,
+    renewalsPolicy: {
+      unlimited: true,
+      renewFromId: 'CURRENT_DUE_DATE',
+      differentPeriod: true,
+      period: {
+        duration: 30,
+        intervalId: 'Days',
+      },
+    },
+    requestManagement: {
+      recalls: {
+        minimumGuaranteedLoanPeriod: {
+          duration: 30,
+          intervalId: 'Days',
+        },
+        recallReturnInterval: {
+          duration: 5,
+          intervalId: 'Days',
+        },
+        allowRecallsToExtendOverdueLoans: false,
+      },
+    },
+  };
+};
+
 export default {
   getDefaultRollingLoanPolicy,
+  getExampleLoanPolicy,
 
   waitLoading() {
     cy.expect(Heading('Loan policies').exists());
