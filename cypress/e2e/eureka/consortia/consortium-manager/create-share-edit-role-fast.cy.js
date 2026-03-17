@@ -35,12 +35,12 @@ describe('Eureka', () => {
       newCapabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Capabilities',
+          resource: 'Batch-Groups',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Role-Capability-Sets',
+          resource: 'Finance',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
       ],
