@@ -72,6 +72,22 @@ export default {
     cy.get('.CodeMirror-hints').should('contain.text', text);
   },
 
+  verifyDropdownExists() {
+    cy.get('.CodeMirror-hints').should('exist').and('be.visible');
+  },
+
+  verifyDropdownHasItems() {
+    cy.get('.CodeMirror-hints .CodeMirror-hint').should('have.length.at.least', 1);
+  },
+
+  selectFirstHintItem() {
+    cy.get('.CodeMirror-hints .CodeMirror-hint').first().click();
+  },
+
+  verifyEditorContainsText(text) {
+    cy.get('.react-codemirror2').should('contain.text', text);
+  },
+
   fillInFallbackPolicy(policyData) {
     this.fillInCirculationRules('fallback-policy: ');
     cy.wait(2000);

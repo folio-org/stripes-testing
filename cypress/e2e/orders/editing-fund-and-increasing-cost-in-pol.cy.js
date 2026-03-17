@@ -25,7 +25,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-orders: Orders', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

@@ -13,7 +13,7 @@ import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 
-describe('ui-orders: Orders and Order lines', () => {
+describe('Orders', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
