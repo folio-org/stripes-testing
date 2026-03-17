@@ -5,8 +5,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('Settings (Orders)', () => {
-  describe('Instance matching', () => {
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
     let user;
 
     before(() => {

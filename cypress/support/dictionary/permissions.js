@@ -752,6 +752,10 @@ export default {
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
+  dataExportLockUnlockProfiles: {
+    internal: 'ui-data-export.settings.lock.edit',
+    gui: 'Settings (Data export): Can lock and unlock profiles',
+  },
   dataExportViewAddUpdateProfiles: {
     internal: 'ui-data-export.settings.edit',
     gui: 'Settings (Data export): Can view, add, update profiles',

@@ -8,6 +8,7 @@ describe('Eureka', () => {
     const expectedSystemRoles = [];
     const allExistingCapabilities = [];
     let existingRoles;
+    let missingPermissionsData;
 
     function getDataFromAppDescriptor(appDescriptor) {
       [...appDescriptor.moduleDescriptors, ...appDescriptor.uiModuleDescriptors].forEach(
@@ -43,67 +44,68 @@ describe('Eureka', () => {
       });
     });
 
-    // Uncomment for saving missing permissions in case of failure
-    // after(() => {
-    //   cy.writeFile(
-    //     './missing-permissions.json',
-    //     JSON.stringify(
-    //       expectedSystemRoles
-    //         .filter((role) => role.missingPermissions.length)
-    //         .map((role) => ({
-    //           moduleName: role.moduleName,
-    //           missingPermissions: role.missingPermissions,
-    //         })),
-    //       null,
-    //       2,
-    //     ),
-    //   );
-    // });
-
     it(
       'C784506 Default roles for system users created and assigned (eureka)',
       { tags: ['criticalPath', 'eureka', 'shiftLeft', 'C784506'] },
       () => {
-        cy.getAdminToken();
-        expectedSystemRoles.forEach((expectedSystemRole) => {
-          const matchingRoles = existingRoles.filter(
-            (role) => role.name === testData.systemRoleName(expectedSystemRole.moduleName),
-          );
-          expect(matchingRoles.length).to.eq(1);
-          expectedSystemRole.roleId = matchingRoles[0].id;
-
-          cy.getCapabilitiesForRoleApi(expectedSystemRole.roleId, {
-            limit: 5000,
-            expand: true,
-          }).then((assignedCapabilitiesResponse) => {
-            const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities.map(
-              (capab) => capab.permission,
+        cy.then(() => {
+          cy.getAdminToken();
+          expectedSystemRoles.forEach((expectedSystemRole) => {
+            const matchingRoles = existingRoles.filter(
+              (role) => role.name === testData.systemRoleName(expectedSystemRole.moduleName),
             );
-            const expectedPermissionNames = expectedSystemRole.permissionNames.filter(
-              (permission) => allExistingCapabilities.find((capab) => capab.permission === permission),
-            );
-            expect(
-              expectedPermissionNames.every((expectedPermName) => assignedPermissionNames.includes(expectedPermName)),
-            ).to.eq(true);
+            expect(matchingRoles.length).to.eq(1);
+            expectedSystemRole.roleId = matchingRoles[0].id;
 
-            // Uncomment for retrieving missing permissions in case of failure
-            // expectedSystemRole.missingPermissions = [];
-            // expectedPermissionNames.forEach((permission) => {
-            //   if (!assignedPermissionNames.includes(permission)) {
-            //     expectedSystemRole.missingPermissions.push(permission);
-            //   }
-            // });
+            cy.getCapabilitiesForRoleApi(expectedSystemRole.roleId, {
+              limit: 5000,
+              expand: true,
+            }).then((assignedCapabilitiesResponse) => {
+              const assignedPermissionNames = assignedCapabilitiesResponse.body.capabilities.map(
+                (capab) => capab.permission,
+              );
+              const expectedPermissionNames = expectedSystemRole.permissionNames.filter(
+                (permission) => allExistingCapabilities.find((capab) => capab.permission === permission),
+              );
 
-            cy.getUsers({ query: `username=="${expectedSystemRole.moduleName}"` }).then((users) => {
-              cy.getAuthorizationRolesForUserApi(users[0].id).then((userRolesResponse) => {
-                const systemUserRoleIds = userRolesResponse.body.userRoles.map(
-                  (role) => role.roleId,
-                );
-                expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
+              // Check and save missing permissions if there are any:
+              expectedSystemRole.missingPermissions = [];
+              expectedPermissionNames.forEach((permission) => {
+                if (!assignedPermissionNames.includes(permission)) {
+                  expectedSystemRole.missingPermissions.push(permission);
+                }
               });
+
+              cy.getUsers({ query: `username=="${expectedSystemRole.moduleName}"` }).then(
+                (users) => {
+                  cy.getAuthorizationRolesForUserApi(users[0].id).then((userRolesResponse) => {
+                    const systemUserRoleIds = userRolesResponse.body.userRoles.map(
+                      (role) => role.roleId,
+                    );
+                    expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
+                  });
+                },
+              );
             });
           });
-        });
+        })
+          .then(() => {
+            // Log missing permissions for debug purposes:
+            missingPermissionsData = expectedSystemRoles
+              .filter((role) => role.missingPermissions.length)
+              .map((role) => ({
+                moduleName: role.moduleName,
+                missingPermissions: role.missingPermissions,
+              }));
+            cy.log(
+              missingPermissionsData.length
+                ? 'MISSING permissions:\n' + JSON.stringify(missingPermissionsData, null, 2)
+                : 'No missing permissions',
+            );
+          })
+          .then(() => {
+            expect(missingPermissionsData, 'Roles with missing permissions').to.have.length(0);
+          });
       },
     );
   });

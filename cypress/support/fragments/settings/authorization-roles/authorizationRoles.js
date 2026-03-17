@@ -101,7 +101,7 @@ const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
-const createAccessErrorText = 'Role could not be created: Access Denied';
+const createAccessErrorText = including('Role could not be created');
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
   'Could not load authorization roles. User does not have required permissions.',
@@ -114,7 +114,7 @@ const shareToAllModal = Modal('Confirm share to all');
 const submitButton = Button('Submit');
 const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
-const createNameErrorText = including('Role could not be created: Failed to create keycloak role');
+const createNameErrorText = including('Role could not be created');
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';

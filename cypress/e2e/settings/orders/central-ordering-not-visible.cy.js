@@ -5,8 +5,8 @@ import Users from '../../../support/fragments/users/users';
 
 const NETWORK_ORDERING_OPTIONS = ['Network ordering', 'Central ordering'];
 
-describe('Settings (Orders)', () => {
-  describe('Network ordering visibility (NON-ECS)', () => {
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
     let user;
 
     before(() => {
