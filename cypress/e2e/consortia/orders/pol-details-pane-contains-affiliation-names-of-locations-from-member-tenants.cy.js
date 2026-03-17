@@ -1,35 +1,23 @@
-import Permissions from '../../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { NewOrder, Orders } from '../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
+import Permissions from '../../../support/dictionary/permissions';
+import { NewOrder, Orders } from '../../../support/fragments/orders';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
   describe('Consortium (Orders)', () => {
-    const randomPostfix = getRandomPostfix();
-    const instancePrefix = `C411683-B Instance ${randomPostfix}`;
-    const subjectPrefix = `C411683-B Subject ${randomPostfix}`;
     const testData = {
-      collegeHoldings: [],
-      universityHoldings: [],
-      sharedInstance: {
-        title: `${instancePrefix} Shared`,
-        subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
-      },
-      sharedAccordionName: 'Shared',
-      subjectBrowseoption: 'Subjects',
       user: {},
     };
-    const firstOrder = {
+    const order = {
       ...NewOrder.getDefaultOngoingOrder,
       orderType: 'Ongoing',
       ongoing: { isSubscription: false, manualRenewal: false },
@@ -41,7 +29,7 @@ describe('Orders', () => {
     let collegeLocation;
     let univercityLocation;
     let servicePointId;
-    let firstOrderNumber;
+    let orderNumber;
 
     before('Create user, data', () => {
       cy.getAdminToken();
@@ -91,8 +79,8 @@ describe('Orders', () => {
                               Organizations.createOrganizationViaApi(organization).then(
                                 (responseOrganizations) => {
                                   organization.id = responseOrganizations;
-                                  firstOrder.vendor = organization.id;
-                                  const firstOrderLine = {
+                                  order.vendor = organization.id;
+                                  const orderLine = {
                                     ...BasicOrderLine.defaultOrderLine,
                                     cost: {
                                       listUnitPrice: 10.0,
@@ -127,14 +115,12 @@ describe('Orders', () => {
                                       volumes: [],
                                     },
                                   };
-                                  Orders.createOrderViaApi(firstOrder).then(
-                                    (firstOrderResponse) => {
-                                      firstOrder.id = firstOrderResponse.id;
-                                      firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                                      firstOrderNumber = firstOrderResponse.poNumber;
-                                      OrderLines.createOrderLineViaApi(firstOrderLine);
-                                    },
-                                  );
+                                  Orders.createOrderViaApi(order).then((orderResponse) => {
+                                    order.id = orderResponse.id;
+                                    orderLine.purchaseOrderId = orderResponse.id;
+                                    orderNumber = orderResponse.poNumber;
+                                    OrderLines.createOrderLineViaApi(orderLine);
+                                  });
                                 },
                               );
                             });
@@ -163,7 +149,7 @@ describe('Orders', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      Orders.deleteOrderViaApi(firstOrder.id);
+      Orders.deleteOrderViaApi(order.id);
       Organizations.deleteOrganizationViaApi(organization.id);
       cy.resetTenant();
       cy.getAdminToken();
@@ -173,8 +159,8 @@ describe('Orders', () => {
       'C477645 PO line details pane contains affiliation names of locations from Member tenants (consortia) (thunderjet)',
       { tags: ['smokeECS', 'thunderjet', 'C477645'] },
       () => {
-        Orders.searchByParameter('PO number', firstOrderNumber);
-        Orders.selectFromResultsList(firstOrderNumber);
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
         OrderLines.selectPOLInOrder();
       },
     );
