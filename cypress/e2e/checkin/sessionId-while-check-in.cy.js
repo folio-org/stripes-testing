@@ -12,7 +12,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
 
-describe('Check In - Actions ', () => {
+describe('Check in', () => {
   const userData = [
     {
       permissions: [permissions.checkinAll.gui, permissions.checkoutAll.gui],
@@ -176,27 +176,24 @@ describe('Check In - Actions ', () => {
     },
   );
 
-  it(
-    'C398005 Check sessionId field while check-in (vega)',
-    { tags: ['extendedPath', 'vega', 'C398005'] },
-    () => {
-      cy.login(userData[1].username, userData[1].password, {
-        path: TopMenu.checkInPath,
-        waiter: CheckInActions.waitLoading,
+  // Test is obsolete
+  it('C398005 Check sessionId field while check-in (vega)', { tags: [] }, () => {
+    cy.login(userData[1].username, userData[1].password, {
+      path: TopMenu.checkInPath,
+      waiter: CheckInActions.waitLoading,
+    });
+    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode)
+      .then((responseSessionId) => {
+        sessionId = responseSessionId;
+      })
+      .then(() => {
+        // needed to synchronize with textfield to enter data
+        cy.wait(1000);
+        CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(
+          (responseSessionId2) => {
+            cy.wrap(responseSessionId2).should('equal', sessionId);
+          },
+        );
       });
-      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode)
-        .then((responseSessionId) => {
-          sessionId = responseSessionId;
-        })
-        .then(() => {
-          // needed to synchronize with textfield to enter data
-          cy.wait(1000);
-          CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(
-            (responseSessionId2) => {
-              cy.wrap(responseSessionId2).should('equal', sessionId);
-            },
-          );
-        });
-    },
-  );
+  });
 });

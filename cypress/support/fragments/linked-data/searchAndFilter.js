@@ -28,10 +28,12 @@ export default {
 
   selectSourceLocalOption: () => {
     cy.xpath(sourceLocalOption).click();
+    cy.wait(500);
   },
 
   selectSourceLoCOption: () => {
     cy.xpath(sourceLoCOption).click();
+    cy.wait(500);
   },
 
   verifyActiveButtons: (isActive) => {

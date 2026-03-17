@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
@@ -11,6 +13,7 @@ describe('Tenant', () => {
       newAddress: {
         name: `addressName_${getRandomPostfix()}`,
         address: `address_${getRandomPostfix()}`,
+        id: uuid(),
       },
     };
 

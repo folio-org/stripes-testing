@@ -30,7 +30,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('orders: Unopen order', { retries: { runMode: 1 } }, () => {
+describe('Orders', { retries: { runMode: 1 } }, () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
