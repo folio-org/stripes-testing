@@ -93,14 +93,10 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -125,6 +121,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, testData.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600LinkedFieldValues);

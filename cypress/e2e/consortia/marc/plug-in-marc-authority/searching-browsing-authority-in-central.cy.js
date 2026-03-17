@@ -3,7 +3,10 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_AUTHORITY_SEARCH_OPTIONS,
+} from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -68,19 +71,13 @@ describe('MARC', () => {
           users.userProperties = userProperties;
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
-        })
-        .then(() => {
+          cy.resetTenant();
+          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            if (marcFile.tenant === 'College') {
+            if (marcFile.tenant === tenantNames.college) {
               cy.setTenant(Affiliations.College);
             } else {
               cy.resetTenant();
-              cy.getAdminToken();
             }
 
             DataImport.uploadFileViaApi(
@@ -137,7 +134,7 @@ describe('MARC', () => {
 
         // 4 Fill search input field with query which will return all "MARC Authority" records from Preconditions
         // (e.g., "C404417 Auth" ) → Click "Search" button.
-        MarcAuthorities.searchBeats(searchValue);
+        MarcAuthorities.searchByParameter(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME, searchValue);
         headingsSharedRecords.forEach((heading, index) => {
           MarcAuthorities.verifyResultsRowContent(heading);
           MarcAuthorities.verifySharedIcon(index);
@@ -162,7 +159,7 @@ describe('MARC', () => {
         // Click "Search" button
 
         MarcAuthorities.switchToBrowse();
-        MarcAuthorities.searchBeats(searchValue);
+        MarcAuthorities.searchByParameter(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME, searchValue);
         headingsSharedRecords.forEach((heading, index) => {
           MarcAuthorities.verifyResultsRowContent(heading);
           MarcAuthorities.verifySharedIcon(index);

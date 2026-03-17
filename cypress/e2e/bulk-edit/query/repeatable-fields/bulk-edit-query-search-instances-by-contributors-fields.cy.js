@@ -273,7 +273,7 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
 
-          // Step 4-5: Search instances by "Instance — Contributors — Contributor type, free text" field using "contains" operator
+          // Step 4: Search instances by "Instance — Contributors — Contributor type, free text" field using "contains" operator
           QueryModal.selectField(instanceFieldValues.contributorTypeFreeText);
           QueryModal.verifySelectedField(instanceFieldValues.contributorTypeFreeText);
           QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
@@ -292,7 +292,73 @@ describe('Bulk-edit', () => {
             QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
           });
 
-          // Step 5: Check display of Instance data from Preconditions in "Instance — Contributors" column in the result table
+          // Step 5: Search instances by "Instance — Contributors — Contributor type, free text" field using "is null/empty" operator with "True" value
+          QueryModal.selectField(instanceFieldValues.contributorTypeFreeText);
+          QueryModal.verifySelectedField(instanceFieldValues.contributorTypeFreeText);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
+          QueryModal.chooseValueSelect('True');
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+
+          const expectedNullInstances = [
+            mappedInstancesDataToUIView[1],
+            mappedInstancesDataToUIView[3],
+          ];
+
+          expectedNullInstances.forEach((instance) => {
+            if (instance.contributors.length > 0) {
+              QueryModal.verifyContributorsEmbeddedTableInQueryModal(
+                instance.hrid,
+                instance.contributors,
+              );
+            } else {
+              QueryModal.verifyMatchedRecordsByIdentifier(
+                instance.hrid,
+                'Instance — Contributors',
+                '',
+              );
+            }
+          });
+
+          const notExpectedNullHrids = [
+            mappedInstancesDataToUIView[0].hrid,
+            mappedInstancesDataToUIView[2].hrid,
+          ];
+
+          notExpectedNullHrids.forEach((hrid) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+          });
+
+          // Step 6: Search instances by "Instance — Contributors — Contributor type, free text" field using "is null/empty" operator with "False" value
+          QueryModal.selectField(instanceFieldValues.contributorTypeFreeText);
+          QueryModal.verifySelectedField(instanceFieldValues.contributorTypeFreeText);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
+          QueryModal.chooseValueSelect('False');
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+
+          const expectedNotNullInstances = [
+            mappedInstancesDataToUIView[0],
+            mappedInstancesDataToUIView[2],
+          ];
+
+          expectedNotNullInstances.forEach((instance) => {
+            QueryModal.verifyContributorsEmbeddedTableInQueryModal(
+              instance.hrid,
+              instance.contributors,
+            );
+          });
+
+          const notExpectedNotNullHrids = [
+            mappedInstancesDataToUIView[1].hrid,
+            mappedInstancesDataToUIView[3].hrid,
+          ];
+
+          notExpectedNotNullHrids.forEach((hrid) => {
+            QueryModal.verifyRecordWithIdentifierAbsentInResultTable(hrid);
+          });
+
+          // Step 7: Check display of Instance data from Preconditions in "Instance — Contributors" column in the result table
           QueryModal.clickGarbage(0);
           QueryModal.clickTestQuery();
           QueryModal.verifyMatchedRecordsByIdentifier(

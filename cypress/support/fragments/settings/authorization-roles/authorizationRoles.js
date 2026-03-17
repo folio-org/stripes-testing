@@ -182,7 +182,7 @@ export default {
       selectApplicationButton.exists(),
       Spinner().absent(),
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {

@@ -20,7 +20,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
-describe('ui-orders: Orders', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

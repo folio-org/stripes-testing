@@ -800,11 +800,8 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@errors', getLongDelay()).then((interception) => {
-            const interceptedUuid = interception.request.url.match(
-              /bulk-operations\/([a-f0-9-]+)\/errors/,
-            )[1];
-            errorsFileItemUUID = `*-Matching-Records-Errors-Query-${interceptedUuid}.csv`;
+          cy.wait('@errors', getLongDelay()).then(() => {
+            errorsFileItemUUID = '*-Errors.csv';
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 item');

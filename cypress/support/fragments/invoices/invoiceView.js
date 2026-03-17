@@ -17,7 +17,7 @@ import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
 import InvoiceLineEditForm from './invoiceLineEditForm';
-import InvoiceStates from './invoiceStates';
+
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
 import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import PayInvoiceModal from './modal/payInvoiceModal';
@@ -137,6 +137,7 @@ export default {
     }
 
     invoiceInformation.forEach(({ key, value }) => {
+      cy.wait(2000);
       cy.contains('div[class^="kvRoot"]', key)
         .parent()
         .within(() => {
@@ -261,9 +262,14 @@ export default {
       cy.expect(Button(label).has(conditions));
     });
   },
-  checkInvoiceCanNotBeApprovedWarning() {
-    cy.expect(invoiceDetailsPane.has({ text: including(InvoiceStates.invoiceCanNotBeApproved) }));
+  checkInvoiceCanNotBeApprovedWarning(warningMessage) {
+    cy.expect(invoiceDetailsPane.has({ text: including(warningMessage) }));
   },
+
+  checkInvoiceWarningAbsent(warningText) {
+    cy.expect(invoiceDetailsPane.find(HTML(including(warningText))).absent());
+  },
+
   checkQuantityInvoiceLinesInRecord(quantity) {
     cy.expect(
       Pane({ id: 'pane-results' })

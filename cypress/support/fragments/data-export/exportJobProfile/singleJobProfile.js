@@ -8,6 +8,9 @@ import {
   Select,
   Modal,
   MultiColumnListCell,
+  DropdownMenu,
+  KeyValue,
+  Checkbox,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -17,8 +20,12 @@ const duplicateButton = Button('Duplicate');
 const nameTextfield = TextField('Name*');
 const cancelButton = Button('Cancel');
 const deleteButton = Button('Delete');
+const saveAndCloseButton = Button('Save & close');
+const xButton = Button({ icon: 'times' });
 const selectMappingProfileDropdown = Select('Mapping profile*');
 const descriptionField = TextArea('Description');
+const lockProfileCheckbox = Checkbox('Lock profile');
+const deleteJobProfileModal = Modal('Delete job profile');
 
 export default {
   waitLoading(name) {
@@ -30,6 +37,10 @@ export default {
       actionsButton.has({ disabled: false }),
       Button({ ariaLabel: 'Cancel' }).has({ disabled: false }),
     ]);
+  },
+
+  verifyLockProfileCheckbox(isChecked, isDisabled) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
   },
 
   verifyProfileDetailsEditable() {
@@ -60,6 +71,41 @@ export default {
     cy.do(actionsButton.click());
   },
 
+  verifyActionsMenuOptions() {
+    cy.expect([
+      DropdownMenu().find(editButton).exists(),
+      DropdownMenu().find(duplicateButton).exists(),
+      DropdownMenu().find(deleteButton).exists(),
+    ]);
+  },
+
+  verifyActionsMenuItems(config = { edit: true, duplicate: true, delete: true }) {
+    const assertions = [];
+
+    if (config.edit) assertions.push(DropdownMenu().find(editButton).exists());
+    else assertions.push(DropdownMenu().find(editButton).absent());
+
+    if (config.duplicate) assertions.push(DropdownMenu().find(duplicateButton).exists());
+    else assertions.push(DropdownMenu().find(duplicateButton).absent());
+
+    if (config.delete) assertions.push(DropdownMenu().find(deleteButton).exists());
+    else assertions.push(DropdownMenu().find(deleteButton).absent());
+
+    cy.expect(assertions);
+  },
+
+  verifySaveAndCloseButtonDisabled(isDisabled = true) {
+    cy.expect(saveAndCloseButton.has({ disabled: isDisabled }));
+  },
+
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(cancelButton.has({ disabled: isDisabled }));
+  },
+
+  verifyXButtonDisabled(isDisabled = true) {
+    cy.expect(xButton.has({ disabled: isDisabled }));
+  },
+
   clickEditButton() {
     cy.do(editButton.click());
   },
@@ -72,8 +118,49 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickLockProfileCheckbox() {
+    cy.do(lockProfileCheckbox.click());
+  },
+
   editJobProfile(newName) {
     cy.do([nameTextfield.clear(), nameTextfield.fillIn(newName)]);
+  },
+
+  saveJobProfile() {
+    cy.do(saveAndCloseButton.click());
+  },
+
+  clickDeleteButton() {
+    cy.do(deleteButton.click());
+  },
+
+  confirmDeletion() {
+    cy.do(Modal().find(deleteButton).click());
+  },
+
+  verifyDeleteJobProfileModal(jobProfileName, isReferenced = false) {
+    const message = isReferenced
+      ? `The job profile ${jobProfileName} and all files created by export jobs that used this profile will be permanently deleted.`
+      : `The job profile ${jobProfileName} will be deleted.`;
+
+    cy.expect([
+      deleteJobProfileModal.exists(),
+      deleteJobProfileModal.has({ message: including(message) }),
+      deleteJobProfileModal.find(cancelButton).has({ disabled: false }),
+      deleteJobProfileModal.find(Button('Delete')).has({ disabled: false }),
+    ]);
+  },
+
+  clickCancelInDeleteModal() {
+    cy.do(deleteJobProfileModal.find(cancelButton).click());
+  },
+
+  verifyDeleteModalClosed() {
+    cy.expect(deleteJobProfileModal.absent());
+  },
+
+  verifyDeleteModalOpen() {
+    cy.expect(deleteJobProfileModal.exists());
   },
 
   deleteMappingProfile: (name) => {
@@ -87,6 +174,14 @@ export default {
   },
 
   clickXButton() {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(xButton.click());
+  },
+
+  verifyViewProfileDetails(name, mappingProfile, description) {
+    cy.expect([
+      KeyValue('Name').has({ value: name }),
+      KeyValue('Mapping profile').has({ value: mappingProfile }),
+      KeyValue('Description').has({ value: description }),
+    ]);
   },
 };

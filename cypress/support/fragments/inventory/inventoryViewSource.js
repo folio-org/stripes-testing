@@ -7,6 +7,7 @@ import {
   Tooltip,
   Spinner,
   DropdownMenu,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -125,6 +126,15 @@ export default {
     }
   },
 
+  verifyLinkedToAuthorityIconByTag(tag, isPresent = true) {
+    const targetRow = rootSection.find(TableRow({ innerText: including(`${tag}  `) }));
+    if (isPresent) {
+      cy.expect(targetRow.find(linkedToMarcAuthorityIcon).exists());
+    } else {
+      cy.expect(targetRow.find(linkedToMarcAuthorityIcon).absent());
+    }
+  },
+
   verifyFieldContent: (rowIndex, updatedDate) => {
     cy.get('table')
       .find('tr')
@@ -222,5 +232,29 @@ export default {
     }).then(() => {
       expect(rows).to.deep.equal(expectedTagsArray);
     });
+  },
+
+  checkRowExistsWithTagAndValue(tag, value, isExist = true) {
+    const targetRow = rootSection.find(
+      TableRow({ innerText: and(including(`${tag}  `), including(value)) }),
+    );
+    if (isExist) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+  },
+
+  verifyLinkedToAuthorityIconIsPresent(isPresent = true) {
+    cy.wait(1000); // icon may appear after a short delay
+    const targetIcon = rootSection.find(linkedToMarcAuthorityIcon);
+    if (isPresent) cy.expect(targetIcon.exists());
+    else cy.expect(targetIcon.absent());
+  },
+
+  checkAuthorityIdForViewAuthorityIconByTag(tag, authorityId) {
+    const targetRow = rootSection.find(TableRow({ innerText: including(`${tag}  `) }));
+    cy.expect(
+      targetRow
+        .find(linkedToMarcAuthorityIcon)
+        .has({ href: including(`/marc-authorities/authorities/${authorityId}`) }),
+    );
   },
 };

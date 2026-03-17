@@ -18,7 +18,7 @@ const saveButton = rootPane.find(Button({ type: 'submit' }));
 const lockIcon = HTML({ className: including('icon-lock') });
 
 // needed for prod tenants with non-English default language, where this button originally can have different name
-const AmericanEnglishButton = "//button/span[contains(text(), 'American English')]";
+const AmericanEnglishButton = "//button[.//span[contains(normalize-space(.), 'American English')]]";
 
 export const LANGUAGES = {
   AMERICAN_ENGLISH: { name: 'American English / American English', value: 'en-US' },
@@ -79,11 +79,15 @@ export default {
   },
   // needed for prod tenants with non-English default language
   americanEnglishButtonWaitLoading() {
-    cy.xpath(AmericanEnglishButton).should('be.visible');
+    cy.xpath(AmericanEnglishButton).should('be.visible').should('not.be.disabled');
   },
   selectAmericanEnglish() {
-    cy.xpath(AmericanEnglishButton).click();
-    // need to wait for changes to be applied
-    cy.wait(2000);
+    // Intercept the translations fetch
+    cy.intercept('GET', '**/translations/en_US-*.json').as('translations');
+
+    cy.xpath(AmericanEnglishButton).should('be.visible').click();
+
+    // Wait for changes to apply and translations to load
+    cy.wait('@translations');
   },
 };

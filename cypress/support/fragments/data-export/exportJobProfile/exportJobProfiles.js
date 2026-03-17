@@ -12,6 +12,7 @@ import {
 import ExportNewJobProfile from './exportNewJobProfile';
 import SettingsDataExport from '../settingsDataExport';
 import { defaultJobProfiles } from '../exportFile';
+import DateTools from '../../../utils/dateTools';
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
@@ -37,7 +38,7 @@ export default {
 
   verifyJobProfilesElements() {
     cy.do(NavListItem('Job profiles').click());
-    ['Name', 'Updated', 'Updated by'].forEach((title) => {
+    ['Name', 'Updated', 'Updated by', 'Status'].forEach((title) => {
       cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
     cy.expect([
@@ -67,6 +68,44 @@ export default {
     this.scrollDownIfListOfResultsIsLong();
 
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
+  },
+
+  verifyProfileInTable(name, userObject, isLocked = false) {
+    const targetProfileRow = MultiColumnListRow({ content: including(name), isContainer: false });
+
+    cy.expect(
+      targetProfileRow
+        .find(MultiColumnListCell({ column: 'Name' }))
+        .has({ content: including(name) }),
+    );
+    cy.expect(
+      targetProfileRow.find(MultiColumnListCell({ column: 'Updated' })).has({
+        content: DateTools.getFormattedDateWithSlashes({
+          date: new Date(),
+        }),
+      }),
+    );
+    cy.expect(
+      targetProfileRow.find(MultiColumnListCell({ column: 'Updated by' })).has({
+        content: including(`${userObject.personal.firstName} ${userObject.personal.lastName}`),
+      }),
+    );
+
+    if (isLocked) {
+      cy.expect(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: 'Locked' }),
+      );
+    } else {
+      cy.expect(
+        targetProfileRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: '' }),
+      );
+    }
+  },
+
+  verifyJobProfileAbsentInTheTable(jobProfileName) {
+    cy.expect(
+      jobProfilesPane.find(MultiColumnListCell({ content: including(jobProfileName) })).absent(),
+    );
   },
 
   verifyJobProfileSearchResult(text) {

@@ -1,13 +1,17 @@
+import { Button } from '../../../../interactors';
+
 const hubsSearchResults = "//div[@data-testid='hubs-search-result-list']";
 const noSearchResultsMessage = "//div[text()='No resource descriptions match your query']";
 const entersearchCriteriaMessage = "//div[text()='Enter search criteria to start search']";
+const hubLoCImportEditButton = Button('Import/Edit');
+const hubLoCEditButton = Button('Edit');
 
 export default {
   waitLoading: () => {
     cy.xpath(hubsSearchResults).should('be.visible');
   },
 
-  verifiNoSearchResults: () => {
+  verifyNoSearchResults: () => {
     cy.xpath(hubsSearchResults).should('not.exist');
     cy.xpath(noSearchResultsMessage).should('be.visible');
   },
@@ -18,7 +22,7 @@ export default {
   },
 
   verifyNumberOfFoundRecords: (number) => {
-    cy.xpath('//div[@class=\'search-control-pane-subLabel\']').should(
+    cy.xpath("//div[@class='search-control-pane-subLabel']").should(
       'have.text',
       `${number} records found`,
     );
@@ -33,31 +37,51 @@ export default {
       );
   },
 
-  verifySearchResultsByTitle({ creator, title, language, source }) {
-    if (creator) {
-      cy.xpath(`//div[@data-testid='table-row']//span[contains(text(), "${creator}")]`).should(
-        'be.visible',
-      );
-    }
+  clickImportEditButton: () => {
+    cy.do(hubLoCImportEditButton.click());
+    cy.wait(1000);
+  },
+
+  verifyLoCSearchResultsByTitle: ({ title, source, actionButton = 'Import/Edit' }) => {
     if (title) {
-      cy.xpath(`//div[@data-testid='table-row']//span[contains(text(), "${title}")]`).should(
-        'be.visible',
-      );
-    }
-    if (language) {
-      cy.xpath(`//div[@data-testid='table-row']//span[contains(text(), "${language}")]`).should(
-        'be.visible',
-      );
+      cy.get('[data-testid="table-row"]').contains('div', title).should('be.visible');
     }
     if (source) {
-      cy.xpath(`//div[@data-testid='table-row']//span[text()="${source}"]`).should('be.visible');
+      cy.get('[data-testid="table-row"]').contains('span', source).should('be.visible');
     }
-    cy.xpath('//div[@data-testid=\'table-row\']//button[text()="Edit"]').should('be.enabled');
+    if (actionButton === 'Import/Edit') {
+      cy.expect(hubLoCImportEditButton.exists());
+    } else if (actionButton === 'Edit') {
+      cy.expect(hubLoCEditButton.exists());
+    }
+  },
+
+  verifySearchResultsByTitle({ creator, title, language, source }) {
+    if (creator) {
+      cy.get('[data-testid="table-row"]').contains('button', creator).should('be.visible');
+    }
+    if (title) {
+      cy.get('[data-testid="table-row"]').contains('button', title).should('be.visible');
+    }
+    if (language) {
+      cy.get('[data-testid="table-row"]').contains('button', language).should('be.visible');
+    }
+    if (source) {
+      cy.get('[data-testid="table-row"]').contains('span', source).should('be.visible');
+    }
+    cy.get('[data-testid="table-row"]').contains('button', 'Edit').should('be.enabled');
   },
 
   clickEditButtonByTitle(title) {
-    cy.xpath(
-      `//div[@data-testid='table-row']//span[contains(text(), "${title}")]//ancestor::div[@data-testid='table-row']//button[text()="Edit"]`,
-    ).click();
+    cy.get('[data-testid="table-row"]')
+      .contains('button', title)
+      .parents('[data-testid="table-row"]')
+      .contains('button', 'Edit')
+      .click();
+  },
+
+  openPreviewByTitle(hubID) {
+    cy.do(Button({ dataTestID: `hub-preview-link-${hubID}` }).click());
+    cy.wait(500);
   },
 };

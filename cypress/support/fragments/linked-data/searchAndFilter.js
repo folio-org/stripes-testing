@@ -18,18 +18,22 @@ export default {
 
   switchToHubsTab: () => {
     cy.do(hubsTabButton.click());
+    cy.wait(500);
   },
 
   switchToWorkInstancesTab: () => {
     cy.do(workInstancesTabButton.click());
+    cy.wait(500);
   },
 
   selectSourceLocalOption: () => {
     cy.xpath(sourceLocalOption).click();
+    cy.wait(500);
   },
 
   selectSourceLoCOption: () => {
     cy.xpath(sourceLoCOption).click();
+    cy.wait(500);
   },
 
   verifyActiveButtons: (isActive) => {
@@ -37,10 +41,15 @@ export default {
     cy.expect(resetButton.has({ disabled: !isActive }));
   },
 
+  verifyLoCSourceOptionIsSelected: () => {
+    cy.xpath(sourceLoCOption).should('be.checked');
+  },
+
   searchResourceByTitle: (title) => {
-    cy.get('#id-search-select').select('Title');
-    cy.get('#id-search-input').clear().type(title);
+    cy.do(hubsSearchInput.fillIn(title));
+    cy.wait(2000);
     cy.do(searchButton.click());
+    cy.wait(2000);
   },
 
   searchResourceByIsbn: (isbn) => {
@@ -94,7 +103,7 @@ export default {
   },
 
   checkSearchResultsByTitle(title) {
-    cy.xpath(`//button[text()="${title}"]`).should('be.visible');
+    cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
   selectAdvancedSearch() {

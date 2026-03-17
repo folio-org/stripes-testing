@@ -313,6 +313,10 @@ export default {
 
   selectFirstRecord: () => cy.do(MultiColumnListRow({ index: 0 }).find(Button()).click()),
 
+  selectAuthorityById(specialInternalId) {
+    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click());
+  },
+
   selectTitle: (title) => cy.do(Button(title).click()),
 
   selectIncludingTitle: (title) => cy.do(Button(including(title)).click()),
@@ -725,6 +729,11 @@ export default {
     ]);
   },
 
+  verifyEmptyAuthorityFieldInPlugin: () => {
+    cy.do(authoritySourceAccordion.clickHeader());
+    cy.expect(MultiSelect({ label: including('Authority source'), selectedCount: 0 }).exists());
+  },
+
   clickActionsButton() {
     cy.do(actionsButton.click());
   },
@@ -1132,8 +1141,6 @@ export default {
       cy.expect(selectedUpdate[0].headingOld).to.equal(expectedDataObject.headingOld);
       cy.expect(selectedUpdate[0].sourceFileNew).to.equal(expectedDataObject.sourceFileNew);
       cy.expect(selectedUpdate[0].sourceFileOld).to.equal(expectedDataObject.sourceFileOld);
-      cy.expect(selectedUpdate[0].lbTotal).to.equal(expectedDataObject.lbTotal);
-      cy.expect(selectedUpdate[0].lbUpdated).to.equal(expectedDataObject.lbUpdated);
       cy.expect(selectedUpdate[0].metadata.startedAt).to.have.string(expectedDataObject.startedAt);
       cy.expect(selectedUpdate[0].metadata.startedByUserFirstName).to.equal(
         expectedDataObject.startedByUserFirstName,
@@ -1165,8 +1172,6 @@ export default {
         cy.expect(update).to.have.property('headingOld');
         cy.expect(update).to.have.property('sourceFileNew');
         cy.expect(update).to.have.property('sourceFileOld');
-        cy.expect(update).to.have.property('lbTotal');
-        cy.expect(update).to.have.property('lbUpdated');
         cy.expect(update).to.have.property('metadata');
         cy.expect(update.metadata).to.have.property('startedAt');
         cy.expect(update.metadata).to.have.property('startedByUserFirstName');
@@ -1835,6 +1840,11 @@ export default {
 
   clickSaveCqlButton() {
     cy.do(saveCqlButton.click());
+    cy.wait(5000);
+  },
+
+  clickSaveUuidsButton() {
+    cy.do(saveUuidsButton.click());
     cy.wait(5000);
   },
 

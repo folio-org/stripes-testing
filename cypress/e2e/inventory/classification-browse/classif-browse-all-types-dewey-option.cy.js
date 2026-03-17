@@ -75,7 +75,7 @@ const classificationTestData = [
 const localClassificationTypeName = `AT_C468179_CNType_${randomPostfix}`;
 const localClassificationValue = `${randomLetters}_local_C468179`;
 const instanceTitle = `AT_C468179_FolioInstance_${randomPostfix}`;
-const querySearchOption = 'Query';
+const querySearchOption = 'Query search';
 const deweyBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id;
 const deweyBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
 

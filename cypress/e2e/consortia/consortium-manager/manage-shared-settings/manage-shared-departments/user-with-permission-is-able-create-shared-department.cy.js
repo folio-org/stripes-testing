@@ -1,10 +1,7 @@
 import moment from 'moment';
 
-import { calloutTypes } from '../../../../../../interactors';
-import {
-  APPLICATION_NAMES,
-  CONSORTIA_SYSTEM_USER,
-} from '../../../../../support/constants';
+// import { calloutTypes } from '../../../../../../interactors';
+import { APPLICATION_NAMES, CONSORTIA_SYSTEM_USER } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -42,7 +39,9 @@ const checkPermissionsLackMessage = () => {
   //   messages.noPermission(Affiliations.University),
   //   calloutTypes.error,
   // );
-  cy.log('Check message about lack of permissions to manage shared departments after fix of the bug with permissions (see https://folio-org.atlassian.net/browse/EUREKA-536)');
+  cy.log(
+    'Check message about lack of permissions to manage shared departments after fix of the bug with permissions (see https://folio-org.atlassian.net/browse/EUREKA-536)',
+  );
 };
 
 const lastUpdatedValue = `${moment().format('l')} by ${CONSORTIA_SYSTEM_USER}`;
@@ -62,29 +61,26 @@ describe('Consortia', () => {
           cy.log('Preconditions 2 and 3.3:');
           cy.log('Create user A in member-2 (University) tenant');
           cy.setTenant(Affiliations.University);
-          cy.createTempUser([Permissions.uiOrganizationsView.gui])
-            .then((userProperties) => {
-              userAData = userProperties;
+          cy.createTempUser([Permissions.uiOrganizationsView.gui]).then((userProperties) => {
+            userAData = userProperties;
 
-              cy.log('Assign affiliation to user A in member-1 (College) tenant');
-              cy.resetTenant(); // University -> Consortia
-              cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
+            cy.log('Assign affiliation to user A in member-1 (College) tenant');
+            cy.resetTenant(); // University -> Consortia
+            cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
 
-              cy.log('Precondition 3.1: Set permissions to user A in central (Consortia) tenant');
-              cy.setTenant(Affiliations.Consortia);
-              cy.assignPermissionsToExistingUser(userAData.userId, [
-                Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-                Permissions.consortiaSettingsConsortiumManagerShare.gui,
-                Permissions.consortiaSettingsConsortiumManagerView.gui,
-                Permissions.createEditViewDepartments.gui,
-              ]);
+            cy.log('Precondition 3.1: Set permissions to user A in central (Consortia) tenant');
+            cy.setTenant(Affiliations.Consortia);
+            cy.assignPermissionsToExistingUser(userAData.userId, [
+              Permissions.consortiaSettingsConsortiumManagerEdit.gui,
+              Permissions.consortiaSettingsConsortiumManagerShare.gui,
+              Permissions.consortiaSettingsConsortiumManagerView.gui,
+              Permissions.createEditViewDepartments.gui,
+            ]);
 
-              cy.log('Precondition 3.2: Set permissions to user A in member-1 (College) tenant');
-              cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(userAData.userId, [
-                Permissions.departmentsAll.gui,
-              ]);
-            });
+            cy.log('Precondition 3.2: Set permissions to user A in member-1 (College) tenant');
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(userAData.userId, [Permissions.departmentsAll.gui]);
+          });
 
           // User B creation and setup
           cy.log('Precondition 4-5.1:');
@@ -94,29 +90,35 @@ describe('Consortia', () => {
             .then((userProperties) => {
               userBData = userProperties;
 
-              cy.log('Assign affiliation to user B in member-1 (College) tenant and member-2 (University) tenant');
+              cy.log(
+                'Assign affiliation to user B in member-1 (College) tenant and member-2 (University) tenant',
+              );
               cy.assignAffiliationToUser(Affiliations.College, userBData.userId);
               cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
 
               cy.log('Precondition 5.2: Set permissions to user B in member-1 (College) tenant');
               cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(userBData.userId, [Permissions.departmentsAll.gui]);
+              cy.assignPermissionsToExistingUser(userBData.userId, [
+                Permissions.departmentsAll.gui,
+              ]);
 
               cy.log('Precondition 5.3: Set permissions to user B in member-2 (University) tenant');
               cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(userBData.userId, [Permissions.departmentsAll.gui]);
+              cy.assignPermissionsToExistingUser(userBData.userId, [
+                Permissions.departmentsAll.gui,
+              ]);
             })
             .then(() => {
               cy.log('Precondition 6: Create shared department in central tenant');
               cy.resetTenant();
-              DepartmentsConsortiumManager
-                .upsertSharedViaApi(testData.preconditionDepartment)
-                .then((department) => {
+              DepartmentsConsortiumManager.upsertSharedViaApi(testData.preconditionDepartment).then(
+                (department) => {
                   preconditionDepartment = department;
 
                   cy.log('Precondition 7: Assign shared department to user B in central tenant');
                   cy.assignDepartmentsToExistingUser(userBData.userId, [preconditionDepartment.id]);
-                });
+                },
+              );
             });
         });
 
@@ -209,7 +211,7 @@ describe('Consortia', () => {
                 1,
                 SHARED_SETTING_LIBRARIES,
               ],
-              [actionIcons.edit]
+              [actionIcons.edit],
             );
 
             /* <---------- STEP 4: END ----------> */
@@ -246,7 +248,7 @@ describe('Consortia', () => {
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
-              [actionIcons.edit, actionIcons.trash]
+              [actionIcons.edit, actionIcons.trash],
             );
 
             checkPermissionsLackMessage();
@@ -263,14 +265,12 @@ describe('Consortia', () => {
             // Verify shared department appears in Central tenant Settings > Users > Departments
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [
-                testData.sharedDepartment.name,
-                testData.sharedDepartment.code,
-                lastUpdatedValue,
-                '-',
-              ],
-            );
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+              testData.sharedDepartment.name,
+              testData.sharedDepartment.code,
+              lastUpdatedValue,
+              '-',
+            ]);
             /* <---------- STEP 12: END ----------> */
 
             /* <---------- STEP 13: BEGIN ----------> */
@@ -279,14 +279,12 @@ describe('Consortia', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [
-                testData.sharedDepartment.name,
-                testData.sharedDepartment.code,
-                lastUpdatedValue,
-                '-',
-              ],
-            );
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+              testData.sharedDepartment.name,
+              testData.sharedDepartment.code,
+              lastUpdatedValue,
+              '-',
+            ]);
             /* <---------- STEP 13: END ----------> */
 
             /* <---------- STEP 14: BEGIN ----------> */
@@ -295,14 +293,12 @@ describe('Consortia', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [
-                testData.sharedDepartment.name,
-                testData.sharedDepartment.code,
-                lastUpdatedValue,
-                '-',
-              ],
-            );
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+              testData.sharedDepartment.name,
+              testData.sharedDepartment.code,
+              lastUpdatedValue,
+              '-',
+            ]);
             /* <---------- STEP 14: END ----------> */
 
             /* <---------- STEP 15: BEGIN ----------> */
@@ -324,7 +320,10 @@ describe('Consortia', () => {
 
             /* <---------- STEP 17: BEGIN ----------> */
             cy.log('STEP 17');
-            ConsortiaControlledVocabularyPaneset.performAction(testData.sharedDepartment.name, actionIcons.edit);
+            ConsortiaControlledVocabularyPaneset.performAction(
+              testData.sharedDepartment.name,
+              actionIcons.edit,
+            );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
             ConsortiaControlledVocabularyPaneset.verifyShareCheckboxState({
               isChecked: true,
@@ -341,14 +340,18 @@ describe('Consortia', () => {
             /* <---------- STEP 19: BEGIN ----------> */
             cy.log('STEP 19');
             ConsortiaControlledVocabularyPaneset.clickSave();
-            ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({ name: messages.pleaseFillIn });
+            ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
+              name: messages.pleaseFillIn,
+            });
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(true);
             /* <---------- STEP 19: END ----------> */
 
             /* <---------- STEP 20: BEGIN ----------> */
             cy.log('STEP 20');
             testData.sharedDepartment.name = getTestEntityValue('C409514_SharedDepartment_Edited');
-            ConsortiaControlledVocabularyPaneset.fillInTextField({ name: testData.sharedDepartment.name });
+            ConsortiaControlledVocabularyPaneset.fillInTextField({
+              name: testData.sharedDepartment.name,
+            });
             /* <---------- STEP 20: END ----------> */
 
             /* <---------- STEP 21: BEGIN ----------> */
@@ -370,7 +373,7 @@ describe('Consortia', () => {
                 '-',
                 SHARED_SETTING_LIBRARIES,
               ],
-              [actionIcons.edit, actionIcons.trash]
+              [actionIcons.edit, actionIcons.trash],
             );
 
             checkPermissionsLackMessage();
@@ -379,17 +382,28 @@ describe('Consortia', () => {
             /* <---------- STEP 22: BEGIN ----------> */
             cy.log('STEP 22');
             // Delete created shared department
-            ConsortiaControlledVocabularyPaneset.performAction(testData.sharedDepartment.name, actionIcons.trash);
-            ConsortiaControlledVocabularyPaneset.verifyDeleteConfirmationMessage(DepartmentsConsortiumManager.entityName, testData.sharedDepartment.name);
+            ConsortiaControlledVocabularyPaneset.performAction(
+              testData.sharedDepartment.name,
+              actionIcons.trash,
+            );
+            ConsortiaControlledVocabularyPaneset.verifyDeleteConfirmationMessage(
+              DepartmentsConsortiumManager.entityName,
+              testData.sharedDepartment.name,
+            );
             /* <---------- STEP 22: END ----------> */
 
             /* <---------- STEP 23: BEGIN ----------> */
             cy.log('STEP 23');
             ConsortiaControlledVocabularyPaneset.confirmDelete();
             ConsortiumManagerApp.checkMessage(
-              messages.deleted(DepartmentsConsortiumManager.entityName, testData.sharedDepartment.name),
+              messages.deleted(
+                DepartmentsConsortiumManager.entityName,
+                testData.sharedDepartment.name,
+              ),
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.sharedDepartment.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+              testData.sharedDepartment.name,
+            );
             checkPermissionsLackMessage();
             /* <---------- STEP 23: END ----------> */
 
@@ -404,7 +418,9 @@ describe('Consortia', () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.sharedDepartment.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+              testData.sharedDepartment.name,
+            );
             /* <---------- STEP 25: END ----------> */
 
             /* <---------- STEP 26: BEGIN ----------> */
@@ -413,7 +429,9 @@ describe('Consortia', () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.sharedDepartment.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+              testData.sharedDepartment.name,
+            );
             /* <---------- STEP 26: END ----------> */
 
             /* <---------- STEP 27: BEGIN ----------> */
@@ -422,7 +440,9 @@ describe('Consortia', () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
             cy.visit(SettingsMenu.departments);
             Departments.waitLoading();
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.sharedDepartment.name);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+              testData.sharedDepartment.name,
+            );
             /* <---------- STEP 27: END ----------> */
           },
         );

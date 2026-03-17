@@ -1243,8 +1243,14 @@ export const CLASSIFICATION_IDENTIFIER_TYPES = {
   UDC: 'e8662436-75a8-4984-bebc-531e38c774a0',
 };
 
-export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","currency":"USD"}';
-export const DEFAULT_LOCALE_OBJECT = { locale: 'en-US', timezone: 'UTC', currency: 'USD' };
+export const DEFAULT_LOCALE_STRING =
+  '{"locale":"en-US","timezone":"UTC","currency":"USD","numberingSystem":"latn"}';
+export const DEFAULT_LOCALE_OBJECT = {
+  locale: 'en-US',
+  timezone: 'UTC',
+  currency: 'USD',
+  numberingSystem: 'latn',
+};
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
@@ -1416,8 +1422,6 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
     ELECTRONIC_ACCESS: 'Electronic access',
-    IS_BOUND_WITH: 'Is bound with',
-    BOUND_WITH_TITLES: 'Bound with titles',
     TAGS: 'Tags',
     HOLDINGS_UUID: 'Holdings UUID',
     MEMBER: 'Member',
@@ -1481,10 +1485,12 @@ export const INSTANCE_NOTE_TYPES = {
   AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  FORMATTED_CONTENTS_NOTE: 'Formatted Contents Note',
   DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
+  SUMMARY: 'Summary',
 };
 
 export const BULK_EDIT_ACTIONS = {
@@ -1847,4 +1853,41 @@ export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
   CREATE: 'createSettingsPCId',
   DELETE: 'pcId',
   UPDATE: 'updateSettingsPCId',
+};
+
+export const DELETE_HOLDINGS_ACTIONS = {
+  CANCEL: 'Cancel',
+  KEEP_HOLDINGS: 'Keep Holdings',
+  DELETE_HOLDINGS: 'Delete Holdings',
+};
+
+export const TRANSACTION_TYPES = {
+  ALLOCATION: 'Allocation',
+  CREDIT: 'Credit',
+  ENCUMBRANCE: 'Encumbrance',
+  PAYMENT: 'Payment',
+  PENDING_PAYMENT: 'Pending payment',
+  ROLLOVER_TRANSFER: 'Rollover transfer',
+  TRANSFER: 'Transfer',
+};
+
+export const POL_CREATE_INVENTORY_SETTINGS = {
+  INSTANCE: 'Instance',
+  INSTANCE_HOLDING: 'Instance, Holding',
+  INSTANCE_HOLDING_ITEM: 'Instance, Holding, Item',
+  NONE: 'None',
+};
+
+export const ORGANIZATION_STATUSES = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  PENDING: 'Pending',
+};
+
+export const INVOICE_POL_PAYMENT_STATUSES = {
+  AWAITING_PAYMENT: 'Awaiting Payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully Paid',
+  NO_CHANGE: 'No Change',
+  PARTIALLY_PAID: 'Partially Paid',
 };

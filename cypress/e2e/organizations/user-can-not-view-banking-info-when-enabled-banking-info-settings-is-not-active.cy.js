@@ -1,6 +1,7 @@
 import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
@@ -71,7 +72,7 @@ describe('Organizations', () => {
     'C423547 A user can not view banking information when "Enable banking information" setting is not active (thunderjet)',
     { tags: ['criticalPathFlaky', 'thunderjet', 'C423547'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsAbsent();
       Organizations.editOrganization();

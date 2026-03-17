@@ -88,14 +88,17 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404421');
 
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404421');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404421');
             cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -104,9 +107,9 @@ describe('MARC', () => {
           .then(() => {
             cy.resetTenant();
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'College') {
+              if (marcFile.tenant === tenantNames.college) {
                 cy.setTenant(Affiliations.College);
-              } else if (marcFile.tenant === 'University') {
+              } else if (marcFile.tenant === tenantNames.university) {
                 cy.setTenant(Affiliations.University);
               }
               DataImport.uploadFileViaApi(
@@ -158,7 +161,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', searchValue);
           verifySharedAndLocalRecordsFoundCheckBoxesUnchecked();
 
-          MarcAuthoritiesSearch.selectAuthorityByIndex(1);
+          MarcAuthorities.selectIncludingTitle(sharedAuthorityFromCentralTenant.heading);
           MarcAuthority.verifySharedAuthorityDetailsHeading(
             sharedAuthorityFromCentralTenant.heading,
           );

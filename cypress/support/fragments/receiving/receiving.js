@@ -20,6 +20,7 @@ import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
+import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
@@ -43,6 +44,9 @@ const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
+const routingListSection = rootsection.find(Section({ id: 'routing-list' }));
+const addRoutingListButton = routingListSection.find(Button('Add routing list'));
+const titleLookUpButton = Button('Title look-up');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -63,6 +67,25 @@ export default {
   filterOpenReceiving,
   selectFromResultsList(instanceName) {
     cy.do(receivingResultsSection.find(Link(instanceName)).click());
+    ReceivingDetails.waitLoading();
+
+    return ReceivingDetails;
+  },
+  selectFromResultsListByPolNumber(polNumber) {
+    cy.do(
+      receivingResultsSection
+        .find(MultiColumnListCell({ content: polNumber }))
+        .perform((element) => {
+          const rowIndex = element.closest('[data-row-index]').getAttribute('data-row-index');
+
+          cy.do(
+            receivingResultsSection
+              .find(MultiColumnListRow({ indexRow: rowIndex }))
+              .find(Link())
+              .click(),
+          );
+        }),
+    );
     ReceivingDetails.waitLoading();
 
     return ReceivingDetails;
@@ -269,7 +292,13 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, displaySummary, institutionId) => {
+  receiveAndChangeLocation: ({
+    rowNumber,
+    displaySummary,
+    institutionId,
+    deleteAction = null,
+    locations = [],
+  }) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -289,6 +318,14 @@ export default {
         .click(),
       receiveButton.click(),
     ]);
+
+    if (deleteAction) {
+      deleteHoldingsModalReceivingFullScreen.deleteHoldingsModal({
+        action: deleteAction,
+        locations,
+      });
+    }
+
     // Need to wait, while data will be loaded
     cy.wait(1000);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
@@ -499,16 +536,79 @@ export default {
     cy.expect(openedRequestModal.absent());
   },
 
-  varifyAddingRoutingList: (name) => {
+  openRoutingList: (name) => {
+    cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
+  },
+
+  verifyRoutingListExists: (name) => {
     cy.expect(Section({ id: 'routing-list' }).find(MultiColumnListCell(name)).exists());
   },
 
-  openRoutingListsSection: () => {
+  verifyRoutingListAbsent: (name) => {
+    cy.expect(Section({ id: 'routing-list' }).find(MultiColumnListCell(name)).absent());
+  },
+
+  openRoutingListsAccordionSection: () => {
     cy.do(Button({ id: 'accordion-toggle-button-routing-list' }).click());
   },
 
-  addRoutingListExist: () => {
-    cy.expect(Button('Add routing list').exists());
+  addRoutingListIsDisabled() {
+    cy.do(routingListSection.find(actionsButton).click());
+    cy.get('[class^=overlay-]')
+      .find('[data-test-routing-list-button="true"]')
+      .should('have.attr', 'disabled');
+  },
+
+  addRoutingListButtonExist: () => {
+    cy.expect([addRoutingListButton.exists(), addRoutingListButton.has({ disabled: false })]);
+  },
+
+  clickAddRoutingListButton: () => {
+    cy.do(addRoutingListButton.click());
+  },
+
+  addRoutingListByActions: () => {
+    cy.do([routingListSection.find(actionsButton).click(), Button('Add routing list').click()]);
+  },
+
+  verifyRoutingListWarning() {
+    cy.expect(rootsection.find(HTML(including('This title has routing.'))).exists());
+  },
+
+  checkAssignedUsersInRoutingList(usernames = [], options = {}) {
+    const { rowIndex = 0 } = options;
+
+    // Always use index-based selection to avoid multiple element matching
+    const targetRow = routingListSection.find(MultiColumnListRow({ index: rowIndex }));
+
+    if (usernames.length === 0) {
+      // Check for empty users column
+      cy.expect(targetRow.find(MultiColumnListCell({ column: 'Users' })).has({ content: '' }));
+      return;
+    }
+
+    // For single user, check directly
+    if (usernames.length === 1) {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: 'Users' }))
+          .has({ content: including(usernames[0]) }),
+      );
+      return;
+    }
+
+    // For multiple users, verify each username is present in the content
+    usernames.forEach((username) => {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: 'Users' }))
+          .has({ content: including(username) }),
+      );
+    });
+  },
+
+  checkNoRoutingListsText() {
+    cy.get('#routing-list').should('contain.text', 'No routing lists');
   },
 
   getPiecesViaApi(poLineId) {
@@ -629,9 +729,13 @@ export default {
     cy.do(Button('New').click());
   },
 
+  clickTitleLookUpButton() {
+    cy.do(titleLookUpButton.click());
+  },
+
   fillTitleLookup(titleName) {
     cy.do([
-      Button('Title look-up').click(),
+      titleLookUpButton.click(),
       Modal('Select instance')
         .find(TextField({ name: 'query' }))
         .fillIn(titleName),

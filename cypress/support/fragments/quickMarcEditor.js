@@ -1002,8 +1002,14 @@ export default {
   },
 
   clickSaveAndKeepEditing() {
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequest',
+    );
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(calloutAfterSaveAndClose.exists());
+    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
     cy.expect(rootSection.exists());
   },
 
@@ -1428,11 +1434,16 @@ export default {
   },
 
   verifyTagFieldAfterUnlinkingByTag(tag, secondBox, thirdBox, content) {
+    const targetRow = getRowInteractorByTagName(tag);
     cy.expect([
-      QuickMarcEditorRow({ tagValue: tag }).find(tagBox).has({ value: tag }),
-      QuickMarcEditorRow({ tagValue: tag }).find(firstIndicatorBox).has({ value: secondBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(secondIndicatorBox).has({ value: thirdBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ value: content }),
+      targetRow.find(tagBox).has({ value: tag, disabled: false }),
+      targetRow.find(firstIndicatorBox).has({ value: secondBox, disabled: false }),
+      targetRow.find(secondIndicatorBox).has({ value: thirdBox, disabled: false }),
+      targetRow.find(fourthBox).has({ value: content, disabled: false }),
+      targetRow.find(fourthBoxInLinkedField).absent(),
+      targetRow.find(fifthBoxInLinkedField).absent(),
+      targetRow.find(sixthBoxInLinkedField).absent(),
+      targetRow.find(seventhBoxInLinkedField).absent(),
     ]);
   },
 
@@ -2687,6 +2698,15 @@ export default {
     ]);
   },
 
+  verifyIconsAfterUnlinkingByTag(tag) {
+    const targetRow = getRowInteractorByTagName(tag);
+    cy.expect([
+      targetRow.find(unlinkIconButton).absent(),
+      targetRow.find(viewAuthorityIconButton).absent(),
+      targetRow.find(linkToMarcRecordButton).exists(),
+    ]);
+  },
+
   selectExistingHoldingsLocation(locationObject) {
     Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
       const institutionName = institution.name;
@@ -2740,6 +2760,16 @@ export default {
     cy.get('input[name^="records"][name$=".tag"][value="008"]')
       .parents('[data-testid="quick-marc-editorid"]')
       .find('[data-testid="bytes-field-col"] select')
+      .then((selects) => {
+        const values = Array.from(selects, (el) => el.value);
+        expect(values.join('')).to.match(/^\\+$/);
+      });
+  },
+
+  checkOnlyBackslashesIn008BoxesHoldings() {
+    cy.get('input[name^="records"][name$=".tag"][value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('[data-testid="bytes-field-col"] input')
       .then((selects) => {
         const values = Array.from(selects, (el) => el.value);
         expect(values.join('')).to.match(/^\\+$/);
@@ -3512,6 +3542,24 @@ export default {
     );
   },
 
+  focusOnBoxInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.do(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .focus(),
+    );
+    this.verifyBoxIsFocusedInLinkedField(tag, boxNumber);
+  },
+
   verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
@@ -3546,5 +3594,58 @@ export default {
         holdingsLocationInstitutionSelect.has({ optionsText: not(including(institutionName)) }),
       );
     }
+  },
+
+  focusOnContentBox(rowIndex) {
+    const targetBox = QuickMarcEditorRow({ index: rowIndex }).find(
+      TextArea({ name: including('.content') }),
+    );
+    cy.do(targetBox.focus());
+    cy.expect(targetBox.has({ focused: true }));
+  },
+
+  checkMarcHoldingsEditHeader({ status = 'Current', user } = {}) {
+    const dateMatchers = [];
+    for (let i = -2; i <= 2; i++) {
+      dateMatchers.push(
+        including(`Last updated: ${moment.utc().add(i, 'minutes').format(paneheaderDateFormat)}`),
+      );
+    }
+    const targetPane = Pane(including('Edit MARC holdings - Location:'));
+    cy.expect(targetPane.exists());
+    cy.expect(
+      targetPane.has({
+        subtitle: and(including('Status:'), including(status), including(`Source: ${user}`)),
+      }),
+    );
+    cy.expect(targetPane.has({ subtitle: or(...dateMatchers) }));
+  },
+
+  verifyAuthorityIdForViewAuthorityIcon(tag, authorityId, rowIndex = null) {
+    const targetField = rowIndex
+      ? getRowInteractorByRowNumber(rowIndex)
+      : getRowInteractorByTagName(tag);
+    cy.expect([
+      targetField.find(viewAuthorityIconButton).exists(),
+      targetField.find(Link({ href: including(`/authorities/${authorityId}`) })).exists(),
+    ]);
+  },
+
+  verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, expectedPosition) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      expect(el.selectionStart).to.equal(expectedPosition);
+      expect(el.selectionEnd).to.equal(expectedPosition);
+    });
+  },
+
+  setCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      el.focus();
+      el.selectionStart = position;
+      el.selectionEnd = position;
+      this.verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position);
+    });
   },
 };

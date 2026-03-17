@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -20,14 +21,17 @@ describe('Eureka', () => {
     userWithKeycloak.username = `at_c451589_username_kc_${getRandomPostfix()}`;
 
     before('Create data', () => {
-      Cypress.session.clearCurrentSessionData();
       cy.getAdminToken();
+      console.log('BEFORE block: After getting admin token');
       cy.getUserGroups().then((groupId) => {
+        console.log('BEFORE block: After getting user groups');
         userWithoutKeycloak.patronGroup = groupId;
         cy.createUserWithoutKeycloakInEurekaApi(userWithoutKeycloak).then((userId) => {
+          console.log('BEFORE block: After creating user without Keycloak');
           testData.userWithoutKeycloakId = userId;
         });
         Users.createViaApi(userWithKeycloak).then((user) => {
+          console.log('BEFORE block: After creating user with Keycloak');
           testData.userWithKeycloakId = user.id;
         });
       });
@@ -35,8 +39,11 @@ describe('Eureka', () => {
 
     after('Delete data', () => {
       cy.getAdminToken();
+      console.log('AFTER block: After getting admin token');
       Users.deleteViaApi(testData.userWithKeycloakId);
+      console.log('AFTER block: After deleting user with Keycloak');
       Users.deleteViaApi(testData.userWithoutKeycloakId);
+      console.log('AFTER block: After deleting user without Keycloak');
     });
 
     it(
@@ -44,7 +51,9 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'shiftLeft', 'C451589'] },
       () => {
         cy.getAdminToken().then(() => {
+          console.log('IT C451589 block: After getting admin token');
           cy.getUserWithBlUsersByUsername(userWithoutKeycloak.username).then((response) => {
+            console.log('IT C451589 block: After getting user without Keycloak by username');
             expect(response.status).to.eq(200);
             expect(response.body.user.username).to.eq(userWithoutKeycloak.username);
             expect(response.body.user.id).to.eq(testData.userWithoutKeycloakId);
@@ -53,6 +62,7 @@ describe('Eureka', () => {
           });
 
           cy.getUserWithBlUsersByUsername(userWithKeycloak.username).then((response) => {
+            console.log('IT C451589 block: After getting user with Keycloak by username');
             expect(response.status).to.eq(200);
             expect(response.body.user.username).to.eq(userWithKeycloak.username);
             expect(response.body.user.id).to.eq(testData.userWithKeycloakId);
