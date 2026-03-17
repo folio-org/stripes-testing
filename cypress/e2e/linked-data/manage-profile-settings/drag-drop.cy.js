@@ -1,10 +1,11 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import LinkedDataEditor from '../../../support/fragments/linked-data/linkedDataEditor';
+import WorkProfileModal from '../../../support/fragments/linked-data/workProfileModal';
+import EditResource from '../../../support/fragments/linked-data/editResource';
 import { LDE_ROLES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import ManageProfileSettings from '../../../support/fragments/linked-data/manageProfileSettings';
-import { id } from 'date-fns/locale';
 
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
@@ -77,11 +78,121 @@ describe('Manage profile settings', () => {
     });
   });
 
-  it.skip('settings are applied to linked data editor')
-
-  it.skip('changes to settings persist');
-
   it.only(
+    'settings are applied to linked data editor',
+    { tags: ['citation'] },
+    () => {
+      // Modify settings
+      LinkedDataEditor.openManageProfileSettings();
+      ManageProfileSettings.waitMainLoading();
+      ManageProfileSettings.waitProfilesLoading();
+      ManageProfileSettings.selectProfile('Books');
+      ManageProfileSettings.waitEditorLoading();
+      ManageProfileSettings.dragSelectedToUnusedContainer('Profile:Work:LanguageCode');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:LanguageCode');
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:CreatorOfWork');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:CreatorOfWork', 2);
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:CreatorOfWork');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:CreatorOfWork', 3);
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:CreatorOfWork');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:CreatorOfWork', 4);
+      ManageProfileSettings.saveAndClose();
+      ManageProfileSettings.modalUnusedSave();
+
+      // Check that settings apply, and also toggle profile default
+      LinkedDataEditor.openNewResourceForm();
+      WorkProfileModal.waitLoading();
+      WorkProfileModal.checkOptionSelected('Books');
+      WorkProfileModal.toggleDefaultProfile();
+      WorkProfileModal.selectDefaultOption();
+      EditResource.waitLoading();
+      EditResource.checkSectionIsNotVisible('Profile::0__Work::0___languages::0');
+      EditResource.checkSectionInPosition('Profile::0__Work::0___creatorReference::0', 4);
+      EditResource.clickCloseResourceButton();
+
+      /* Follow up required. For whatever reason, in the Cypress environment,
+         re-opening profile settings clearly shows the correct profile settings
+         on initial load, but somehow the 'default' radio is then selected, and all
+         settings are cleared as a result. This does not happen during actual use.
+         Either this is some sort of timing bug manifesting in Cypress, or it's
+         an issue with Cypress.
+
+      // Make more changes to settings
+      LinkedDataEditor.waitLoading();
+      LinkedDataEditor.openManageProfileSettings();
+      ManageProfileSettings.waitMainLoading();
+      ManageProfileSettings.waitProfilesLoading();
+      ManageProfileSettings.selectProfile('Books');
+      ManageProfileSettings.waitEditorLoading();
+      ManageProfileSettings.verifyPreferredProfile(true);
+      ManageProfileSettings.verifyCustomSettingsSelected();
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:LanguageCode');
+      ManageProfileSettings.dragUnusedToSelected('Profile:Work:LanguageCode', 'Profile:Work:DateOfWork');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:LanguageCode', 7);
+      ManageProfileSettings.moveComponentToOppositeListButton('Profile:Work:IntendedAudience');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:IntendedAudience');
+      ManageProfileSettings.moveComponentToOppositeListButton('Profile:Work:ContentType');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:ContentType');
+      ManageProfileSettings.saveAndClose();
+      ManageProfileSettings.modalUnusedSave();
+
+      // Check that modifications applied
+      LinkedDataEditor.openNewResourceForm();
+      // No modal this time, default was chosen
+      EditResource.waitLoading();
+      EditResource.checkSectionInPosition('Profile::0__Work::0___languages::0', 7);
+      EditResource.checkSectionIsNotVisible('Profile::0__Work::0__targetAudience::0');
+      EditResource.checkSectionIsNotVisible('Profile::0__Work::0__content::0');
+      */
+    }
+  );
+
+  it(
+    'changes to settings persist',
+    { tags: ['citation'] },
+    () => {
+      LinkedDataEditor.openManageProfileSettings();
+      ManageProfileSettings.waitMainLoading();
+      ManageProfileSettings.waitProfilesLoading();
+
+      ManageProfileSettings.selectProfile('Serials Work');
+      ManageProfileSettings.waitEditorLoading();
+      ManageProfileSettings.togglePreferredProfile();
+
+      ManageProfileSettings.dragSelectedToUnusedContainer('Profile:Work:ContentsNote');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:ContentsNote');
+      ManageProfileSettings.dragSelectedToUnusedContainer('Profile:Work:SummaryNote');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:SummaryNote');
+      ManageProfileSettings.dragReorderSelectedComponent('Profile:Work:TitleInformation', 'Profile:Work:CreatorOfWork');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:TitleInformation', 1);
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:Hubs');
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:Hubs');
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:Hubs');
+      ManageProfileSettings.nudgeComponentDownButton('Profile:Work:Hubs');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:Hubs', 7);
+      ManageProfileSettings.nudgeComponentUpButton('Profile:Work:ClassificationNumbers');
+      ManageProfileSettings.nudgeComponentUpButton('Profile:Work:ClassificationNumbers');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:ClassificationNumbers', 12);
+
+      // Save settings, swap to a different profile, then return to see that settings persisted.
+      ManageProfileSettings.saveAndKeepEditing();
+      ManageProfileSettings.modalUnusedSave();
+      ManageProfileSettings.selectProfile('Books');
+      ManageProfileSettings.waitEditorLoading();
+      ManageProfileSettings.verifyPreferredProfile(false);
+
+      ManageProfileSettings.selectProfile('Serials Work');
+      ManageProfileSettings.waitEditorLoading();
+      ManageProfileSettings.verifyPreferredProfile(true);
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:ContentsNote');
+      ManageProfileSettings.verifyUnusedComponent('Profile:Work:SummaryNote');
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:TitleInformation', 1);
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:Hubs', 7);
+      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:ClassificationNumbers', 12);
+    },
+  );
+
+  it(
     'required components cannot be moved to unused list',
     { tags: ['citation'] },
     () => {
@@ -91,6 +202,7 @@ describe('Manage profile settings', () => {
 
       ManageProfileSettings.selectProfile('Serials');
 
+      // TitleInformation is a required field and cannot be hidden
       ManageProfileSettings.keyboardDragSelectedToUnused('Profile:Instance:TitleInformation');
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Instance:TitleInformation', 1);
 
@@ -254,6 +366,9 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.togglePreferredProfile();
       ManageProfileSettings.verifyPreferredProfile(true);
       
+      ManageProfileSettings.selectProfile('Hubs');
+      ManageProfileSettings.verifyModalUnsavedOpen();
+      ManageProfileSettings.modalUnsavedClose();
       ManageProfileSettings.selectProfile('Hubs');
       ManageProfileSettings.verifyModalUnsavedOpen();
       ManageProfileSettings.modalUnsavedContinueWithSaving();

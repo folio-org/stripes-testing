@@ -1,3 +1,5 @@
+//const manageProfileSettingsPage = "//main[@data-testid='manage-profile-settings']";
+//const profilesSection = "//section[@data-testid='profiles-list']";
 const manageProfileSettingsPage = "//div[@data-testid='manage-profile-settings']";
 const profilesSection = "//div[@data-testid='profiles-list']";
 const editorSection = "//div[@data-testid='profile-settings-editor']";
@@ -10,6 +12,8 @@ const preferredProfileCheckbox = "//input[@data-testid='type-default-setting']";
 const defaultProfileSettingsRadio = "//input[@data-testid='settings-active-default']";
 const customProfileSettingsRadio = "//input[@data-testid='settings-active-custom']";
 
+//const selectedList = "//section[@data-testid='selected-component-list']";
+//const unusedList = "//section[@data-testid='unused-component-list']";
 const selectedList = "//div[@data-testid='selected-component-list']";
 const unusedList = "//div[@data-testid='unused-component-list']";
 const unusedContainer = "//div[@data-droppable-id='unused-container']";
@@ -132,6 +136,7 @@ const keyBackToStartingPosition = (list, listLength, initialPosition) => {
   Cypress._.times(initialPosition, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
 };
 
+// All position methods are 1-indexed.
 export default {
   waitMainLoading: () => {
     cy.xpath(manageProfileSettingsPage).should('be.visible');
@@ -496,5 +501,6 @@ export default {
       .should('be.enabled')
       .click();
     cy.xpath(modalUnused).should('not.exist')
+    cy.wait(2000);
   },
 };
