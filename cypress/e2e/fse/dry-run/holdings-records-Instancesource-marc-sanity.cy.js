@@ -32,6 +32,8 @@ describe('MARC', () => {
       cy.allure().logCommandSteps();
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
+
+      cy.getUserToken(user.username, user.password, { log: false });
       InventoryActions.import();
       InventoryInstance.getId().then((id) => {
         instanceId = id;

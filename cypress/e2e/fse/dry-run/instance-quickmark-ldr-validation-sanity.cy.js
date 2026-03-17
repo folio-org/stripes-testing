@@ -31,6 +31,7 @@ describe('MARC', () => {
         });
         cy.allure().logCommandSteps();
 
+        cy.getUserToken(user.username, user.password, { log: false });
         InventoryActions.import();
         InventoryInstance.getId().then((id) => {
           instanceID = id;

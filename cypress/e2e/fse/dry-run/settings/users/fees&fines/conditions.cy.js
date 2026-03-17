@@ -19,6 +19,7 @@ describe('Fees&Fines', () => {
         waiter: Conditions.waitLoading,
       });
       cy.allure().logCommandSteps();
+      cy.getUserToken(user.username, user.password, { log: false });
       Conditions.resetConditions();
     });
 
