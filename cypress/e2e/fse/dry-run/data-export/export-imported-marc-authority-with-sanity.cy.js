@@ -48,6 +48,15 @@ const expectedMarcFields = [
   ['953', '  ', 'a', 'xx00', 'b', 'fg10'],
 ];
 
+const logDownloads = (stage, expectedFileName = '') => {
+  const expectedSuffix = expectedFileName ? `, expected=${expectedFileName}` : '';
+
+  return cy.task('findFiles', 'cypress/downloads/*').then((files) => {
+    const filesList = files?.length ? files.join(', ') : 'NO_FILES';
+    cy.task('log', `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, files=${filesList}`);
+  });
+};
+
 describe('Data Export', () => {
   describe('Authority records export', () => {
     before('create test data', () => {
@@ -128,13 +137,25 @@ describe('Data Export', () => {
           );
           cy.getUserToken(user.username, user.password, { log: false });
 
+          logDownloads('before download click', exportedFileName);
+          cy.task(
+            'log',
+            `[DOWNLOAD_DEBUG] hrid=${firstJobHrid}, exportedFileName=${exportedFileName}`,
+          );
+
           DataExportLogs.clickButtonWithText(exportedFileName);
+
+          logDownloads('after download click', exportedFileName);
 
           // Wait longer for download to complete
           cy.wait(5000);
 
+          logDownloads('before readFile assert', exportedFileName);
+
           // Verify file exists before parsing (with extended timeout for slow downloads)
           cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
+
+          logDownloads('after readFile assert', exportedFileName);
 
           const assertionsOnMarcFileContent = [
             {
