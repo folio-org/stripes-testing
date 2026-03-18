@@ -63,7 +63,15 @@ describe('eHoldings', () => {
         cy.wait(1000);
         EHoldingsResourceView.checkHoldingStatus('Not selected');
         EHoldingsResourceView.verifyResourceSettingsAccordion();
-        EHoldingsResourceView.verifyProxy(testData.noneProxy);
+
+        EHoldingsResourceView.addToHoldings();
+        EHoldingsResourceView.goToEdit();
+        EHoldingsResourceEdit.waitLoading();
+        EHoldingsResourceEdit.changeProxy('None');
+        EHoldingsResourceEdit.saveAndClose();
+        cy.wait(1000);
+
+        EHoldingsResourceView.verifyProxy('None');
         EHoldingsResourceView.verifyProxiedURLNotDisplayed();
       },
     );

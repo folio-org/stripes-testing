@@ -258,8 +258,13 @@ describe('Data Export', () => {
       DataExportViewAllLogs.verifyRecordsFoundText();
       DataExportViewAllLogs.verifyLogsTable();
       DataExportViewAllLogs.verifyStartedRunningDateRangeFilter(currentDate, currentDate);
+      DataExportViewAllLogs.expandAccordion(accordionNames.JOB_PROFILE);
+      DataExportViewAllLogs.clickJobProfileDropdown();
+      DataExportViewAllLogs.selectFilterOption(DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.INSTANCES);
+
       DataExportViewAllLogs.getNumberOfFoundRecordsFromSubtitle().then((numberOfRecords) => {
         // Step 15: Click "x" icon of the "Started running" accordion
+        DataExportViewAllLogs.clickClearJobProfileFilter();
         DataExportViewAllLogs.clickClearStartedRunningAccordionFilters();
         DataExportViewAllLogs.verifyStartedRunningDateFields();
         DataExportViewAllLogs.verifyDateFieldValue(

@@ -196,7 +196,7 @@ describe('Inventory', () => {
         );
         cy.wait('@getInstances4').its('response.statusCode').should('eq', 200);
         InventorySearchAndFilter.verifyResultListExists();
-
+        cy.wait(2000);
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
           testData.filterNames.holdingsLocation,

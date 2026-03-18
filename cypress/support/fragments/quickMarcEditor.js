@@ -3503,6 +3503,19 @@ export default {
     if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
   },
 
+  verifyValuesInLdrNonEditableBoxesHoldings({
+    positions0to4BoxValues,
+    positions7to16BoxValues,
+    positions19to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions7to16Box = TextField({ name: 'records[0].content.7-16 positions' });
+    const positions19to23Box = TextField({ name: 'records[0].content.19-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions7to16BoxValues) cy.expect(positions7to16Box.has({ value: positions7to16BoxValues, disabled: true }));
+    if (positions19to23BoxValues) cy.expect(positions19to23Box.has({ value: positions19to23BoxValues, disabled: true }));
+  },
+
   checkMarcBibHeader({ instanceTitle, status }, userName) {
     const dateMatchers = [];
     for (let i = -2; i <= 2; i++) {
@@ -3647,5 +3660,18 @@ export default {
       el.selectionEnd = position;
       this.verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position);
     });
+  },
+
+  verifyInlineValidationErrorLink(rowIndex, linkText) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link(linkText))
+        .perform((elem) => {
+          const targetValue = elem.getAttribute('target');
+          const targetHref = elem.getAttribute('href');
+          expect(targetValue).to.equal('_blank');
+          expect(targetHref).to.equal(linkText);
+        }),
+    );
   },
 };
