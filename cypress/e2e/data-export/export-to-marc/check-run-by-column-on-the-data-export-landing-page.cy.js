@@ -11,6 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let instanceTypeId;
+let secondJobId;
 const numberOfInstances = 1;
 const csvFileName = `AT_C350717_instances_${getRandomPostfix()}.csv`;
 const instance = { title: `AT_C350717_FolioInstance_${getRandomPostfix()}` };
@@ -51,7 +52,10 @@ describe('Data Export', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.uuid);
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
+      cy.deleteDataExportJobExecutionFromLogs(secondJobId).then((response) => {
+        expect(response.status).to.equal(204);
+      });
+      FileManager.deleteFile(`cypress/fixtures/${csvFileName}F`);
     });
 
     it(
@@ -103,7 +107,7 @@ describe('Data Export', () => {
             const secondJobData = jobExecutions
               .filter(({ runBy }) => runBy.userId === user.userId)
               .sort((a, b) => b.hrId - a.hrId)[0];
-            const secondJobId = secondJobData.hrId;
+            secondJobId = secondJobData.hrId;
             const secondResultFileName = `${csvFileName.replace('.csv', '')}-${secondJobId}.mrc`;
 
             DataExportResults.verifySuccessExportResultCells(
