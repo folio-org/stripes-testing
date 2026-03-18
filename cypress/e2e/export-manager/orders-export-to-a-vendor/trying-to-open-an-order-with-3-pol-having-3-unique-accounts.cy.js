@@ -156,7 +156,7 @@ describe('Export Manager', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
-        Orders.checkModalDifferentAccountNumbersWithMessage(3);
+        Orders.checkModalDifferentAccountNumbers(3);
         Orders.checkOrderStatus('Pending');
       },
     );

@@ -137,36 +137,31 @@ export default {
     });
   },
 
-  openOrder() {
+  openOrder({ orderNumber } = {}) {
     cy.wait(4000);
     expandActionsDropdown();
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
+    if (orderNumber) {
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully opened`,
+      );
+    }
   },
 
-  checkModalDifferentAccountNumbers() {
-    cy.expect(Modal('Different account numbers').exists());
-    cy.do(Modal('Different account numbers').find(Button('Close')).click());
-    cy.expect(Modal('Different account numbers').absent());
-  },
-
-  checkModalDifferentAccountNumbersWithMessage(uniqueAccountCount) {
+  checkModalDifferentAccountNumbers(uniqueAccountCount) {
     const modal = Modal('Different account numbers');
     cy.expect(modal.exists());
     cy.expect(
       modal.has({
-        message: including(`${uniqueAccountCount} unique account numbers for export`),
+        message: including(
+          `This order includes ${uniqueAccountCount} unique account numbers for export. You can not open an order with more than one POL set to export if the POLs have different account numbers. Please edit the account number information of these POLs or move POLs with different account numbers to different orders before opening.`,
+        ),
       }),
     );
     cy.do(modal.find(Button('Close')).click());
     cy.expect(modal.absent());
-  },
-
-  checkOpenOrderCalloutMessage(orderNumber) {
-    InteractorsTools.checkCalloutMessage(
-      `The Purchase order - ${orderNumber} has been successfully opened`,
-    );
   },
 
   editOrder() {

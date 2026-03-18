@@ -157,8 +157,7 @@ describe('Export Manager', () => {
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
-        Orders.checkOpenOrderCalloutMessage(orderNumber);
+        Orders.openOrder({ orderNumber });
         Orders.checkOrderStatus('Open');
       },
     );
