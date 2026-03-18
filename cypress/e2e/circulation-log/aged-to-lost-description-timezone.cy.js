@@ -311,7 +311,7 @@ describe('Circulation log', () => {
 
   it(
     'C770456 "Description" field displays time according to current time zone in Circulation log for Aged to lost item (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C770456'] },
+    { tags: ['extendedPath', 'volaris', 'C770456', 'LongTest'] },
     () => {
       CheckOutActions.checkOutUser(testData.user.barcode);
       CheckOutActions.checkOutItem(testData.itemBarcode);
