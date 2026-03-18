@@ -52,16 +52,40 @@ const getDownloadsFolder = () => {
   return (Cypress.config('downloadsFolder') || 'cypress/downloads').replace(/\\/g, '/');
 };
 
+const getDownloadFoldersToInspect = () => {
+  const configuredDownloadsFolder = getDownloadsFolder();
+
+  return [
+    ...new Set([
+      configuredDownloadsFolder,
+      'cypress/downloads',
+      '/home/seluser/Downloads',
+      '/root/Downloads',
+      '/home/node/Downloads',
+    ]),
+  ];
+};
+
 const logDownloads = (stage, expectedFileName = '') => {
   const expectedSuffix = expectedFileName ? `, expected=${expectedFileName}` : '';
-  const downloadsFolder = getDownloadsFolder();
+  const foldersToInspect = getDownloadFoldersToInspect();
+  const configuredDownloadsFolder = getDownloadsFolder();
 
-  return cy.task('findFiles', `${downloadsFolder}/*`).then((files) => {
-    const filesList = files?.length ? files.join(', ') : 'NO_FILES';
-    cy.task(
-      'log',
-      `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, downloadsFolder=${downloadsFolder}, files=${filesList}`,
-    );
+  cy.task(
+    'log',
+    `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, configuredDownloadsFolder=${configuredDownloadsFolder}`,
+  );
+
+  return cy.wrap(null).then(() => {
+    foldersToInspect.forEach((folder) => {
+      cy.task('findFiles', `${folder}/*`).then((files) => {
+        const filesList = files?.length ? files.join(', ') : 'NO_FILES';
+        cy.task(
+          'log',
+          `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, folder=${folder}, files=${filesList}`,
+        );
+      });
+    });
   });
 };
 
@@ -151,11 +175,30 @@ describe('Data Export', () => {
             `[DOWNLOAD_DEBUG] hrid=${firstJobHrid}, exportedFileName=${exportedFileName}`,
           );
 
+          cy.intercept('GET', '**/download**').as('downloadNetwork');
+          cy.task('log', '[DOWNLOAD_DEBUG] network intercept registered: GET **/download**');
+
           cy.task(
             'log',
             `[DOWNLOAD_DEBUG] clicking download link directly for ${exportedFileName}`,
           );
           cy.get('[class^=downloadFile---]').contains(exportedFileName).click();
+
+          cy.get('@downloadNetwork.all', { timeout: 30000 })
+            .should((calls) => {
+              expect(calls.length, 'download network calls count').to.be.greaterThan(0);
+            })
+            .then((calls) => {
+              const latestCall = calls[calls.length - 1];
+              const requestMethod = latestCall?.request?.method || 'UNKNOWN';
+              const requestUrl = latestCall?.request?.url || 'UNKNOWN';
+              const responseStatusCode = latestCall?.response?.statusCode || 'NO_RESPONSE';
+
+              cy.task(
+                'log',
+                `[DOWNLOAD_DEBUG] network call detected: method=${requestMethod}, status=${responseStatusCode}, url=${requestUrl}`,
+              );
+            });
 
           logDownloads('after download click', exportedFileName);
 
