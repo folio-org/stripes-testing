@@ -920,7 +920,7 @@ const QueryBuilder = {
   },
 
   verifyPreviewOfRecordsMatched() {
-    cy.xpath('.//h3[starts-with(., "Query would return")]').then(($element) => {
+    cy.xpath('.//h3[starts-with(., "Query returns")]').then(($element) => {
       const text = $element.text();
       const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
       const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
