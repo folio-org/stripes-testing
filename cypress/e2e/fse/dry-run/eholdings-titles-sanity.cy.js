@@ -99,9 +99,9 @@ describe('eHoldings', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.eholdingsPath,
           waiter: eHoldingsTitlesSearch.waitLoading,
-          authRefresh: true,
         });
         cy.allure().logCommandSteps();
+        cy.getUserToken(user.username, user.password, { log: false });
         eHoldingSearch.switchToTitles();
         eHoldingsTitlesSearch.bySubject('chemical engineering');
         eHoldingsTitlesSearch.byPublicationType('Journal');

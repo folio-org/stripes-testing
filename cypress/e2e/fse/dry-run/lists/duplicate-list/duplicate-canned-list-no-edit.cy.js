@@ -36,6 +36,7 @@ describe('Lists', () => {
         });
         cy.allure().logCommandSteps();
         let listName;
+        cy.getUserToken(user.username, user.password);
         Lists.getViaApi()
           .then(({ body: { content } }) => {
             listName = content[0].name;

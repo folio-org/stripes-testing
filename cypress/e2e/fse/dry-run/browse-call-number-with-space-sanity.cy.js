@@ -91,6 +91,7 @@ describe('Inventory', () => {
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
       { tags: ['dryRun', 'spitfire', 'C358140'] },
       () => {
+        cy.getUserToken(user.username, user.password, { log: false });
         BrowseCallNumber.waitForCallNumberToAppear(testData.exactSearch);
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);

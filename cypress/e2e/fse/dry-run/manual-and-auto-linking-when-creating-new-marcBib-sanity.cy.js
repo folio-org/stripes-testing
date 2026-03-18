@@ -184,6 +184,7 @@ describe('MARC', () => {
               '',
             );
 
+            cy.getUserToken(user.username, user.password, { log: false });
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });

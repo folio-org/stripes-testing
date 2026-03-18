@@ -130,6 +130,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        cy.getUserToken(user.username, user.password, { log: false });
         BrowseCallNumber.waitForCallNumberToAppear(existingCallNumber);
         InventorySearchAndFilter.fillInBrowseSearch(existingCallNumber);
         InventorySearchAndFilter.verifySearchButtonDisabled(false);
