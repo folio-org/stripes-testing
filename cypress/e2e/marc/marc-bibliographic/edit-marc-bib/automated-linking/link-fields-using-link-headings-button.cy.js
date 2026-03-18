@@ -200,10 +200,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -217,7 +213,7 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -230,10 +226,6 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           });
         });
 
@@ -319,7 +311,7 @@ describe('MARC', () => {
                 `records[${matchs.rowIndex}].content`,
               );
             });
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndCloseButton();
 
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -360,7 +352,9 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.checkLinkHeadingsButton();
-            QuickMarcEditor.saveAndKeepEditingWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndKeepEditing(
+              'This record has successfully saved and is in process. Changes may not appear immediately.',
+            );
             QuickMarcEditor.verifyTagFieldAfterLinking(
               78,
               '700',
