@@ -53,10 +53,10 @@ describe('OAI-PMH', () => {
 
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
         cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((location) => {
-          InventoryInstances.getCallNumberTypes().then((callNumberTypes) => {
-            const holdingsCallNumberTypeId = callNumberTypes.find(
-              (type) => type.name === callNumberData.holdings.type,
-            ).id;
+          InventoryInstances.getCallNumberTypes({
+            query: `name="${callNumberData.holdings.type}"`,
+          }).then((callNumberTypes) => {
+            const holdingsCallNumberTypeId = callNumberTypes[0].id;
 
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
