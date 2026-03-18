@@ -191,13 +191,15 @@ describe('LDE Hubs: Create and edit local hub', () => {
       EditHubPage.saveAndClose().then((id) => {
         hubData.hubId = id;
       });
-      SearchAndFilter.switchToWorkInstancesTab();
-      SearchAndFilter.switchToHubsTab();
+
+      SearchAndFilter.fillHubsSearchInput(
+        `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
+      );
 
       // Verify updated title in the search results
       HubSearchResults.verifySearchResultsByTitle({
         creator: testData.authorityHeading,
-        title: `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
+        title: `${hubData.preferredTitle}${hubData.preferredTitleUpdated} ${hubData.otherTitle} ${hubData.partNumber} ${hubData.partName}`,
         language: hubData.languageLabel,
         source: 'Local',
       });
