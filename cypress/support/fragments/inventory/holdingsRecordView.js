@@ -11,6 +11,7 @@ import {
   PaneHeader,
   Section,
   matching,
+  or,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -20,7 +21,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
-const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
+const editInQuickMarcButton = Button({ id: or('clickable-edit-marc-holdings', 'edit-marc') });
 const editButton = Button({ id: 'edit-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });

@@ -111,11 +111,11 @@ describe('Inventory', () => {
           testData.filterNames.language,
           testData.instanceLanguageText,
         );
-        cy.wait('@getInstances1');
         InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
           testData.filterNames.language,
           testData.instanceLanguageText,
         );
+        cy.wait('@getInstances1').its('response.statusCode').should('eq', 200);
 
         InventorySearchAndFilter.verifyResultListExists();
 
@@ -146,11 +146,11 @@ describe('Inventory', () => {
           testData.filterNames.holdingsLocation,
           testData.locationName,
         );
-        cy.wait('@getInstances2');
         InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
           testData.filterNames.holdingsLocation,
           testData.locationName,
         );
+        cy.wait('@getInstances2').its('response.statusCode').should('eq', 200);
         InventorySearchAndFilter.verifyResultListExists();
 
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
@@ -172,26 +172,29 @@ describe('Inventory', () => {
         InventorySearchAndFilter.itemTabIsDefault();
 
         InventorySearchAndFilter.clickAccordionByName(testData.filterNames.materialType);
-        InventorySearchAndFilter.selectMultiSelectFilterOption(
-          testData.filterNames.materialType,
-          testData.materialType,
-        );
-        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
-          testData.filterNames.materialType,
-          testData.materialType,
-        );
-        InventorySearchAndFilter.verifyResultListExists();
-        InventorySearchAndFilter.clickAccordionByName(testData.filterNames.holdingsLocation);
         cy.intercept(testData.searchRequestPath).as('getInstances3');
         InventorySearchAndFilter.selectMultiSelectFilterOption(
+          testData.filterNames.materialType,
+          testData.materialType,
+        );
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+          testData.filterNames.materialType,
+          testData.materialType,
+        );
+        cy.wait('@getInstances3').its('response.statusCode').should('eq', 200);
+        InventorySearchAndFilter.verifyResultListExists();
+        InventoryInstances.verifySearchResultIncludingValue('');
+        InventorySearchAndFilter.clickAccordionByName(testData.filterNames.holdingsLocation);
+        cy.intercept(testData.searchRequestPath).as('getInstances4');
+        InventorySearchAndFilter.selectMultiSelectFilterOption(
           testData.filterNames.holdingsLocation,
           testData.locationName,
         );
-        cy.wait('@getInstances3');
         InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
           testData.filterNames.holdingsLocation,
           testData.locationName,
         );
+        cy.wait('@getInstances4').its('response.statusCode').should('eq', 200);
         InventorySearchAndFilter.verifyResultListExists();
 
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();

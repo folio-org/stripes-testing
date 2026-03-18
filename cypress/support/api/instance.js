@@ -88,6 +88,14 @@ Cypress.Commands.add('deleteModesOfIssuance', (modesOfIssuanceId) => {
   });
 });
 
+Cypress.Commands.add('getInstanceLinks', (instanceId) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: `links/instances/${instanceId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
 Cypress.Commands.add('checkInstanceLinkStatus', (createdRecordIDs, tenant) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
