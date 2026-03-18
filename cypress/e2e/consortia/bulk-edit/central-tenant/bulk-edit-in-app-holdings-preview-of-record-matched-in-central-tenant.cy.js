@@ -1,5 +1,7 @@
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -231,10 +233,17 @@ const verifyErrorsForCollegeHoldings = ({
   BulkEditActions.openActions();
   BulkEditActions.downloadErrors();
 
+  let expectedErrors = [];
   // Build expected error messages for all 11 College holdings
-  const expectedErrors = folioInstance[identifierKey].map(
-    (holdingIdentifier) => `ERROR,${holdingIdentifier},${errorTemplate(holdingIdentifier)}`,
-  );
+  if (identifier === 'Holdings UUIDs') {
+    expectedErrors = folioInstance[identifierKey].map(
+      (holdingIdentifier) => `ERROR,${holdingIdentifier},${errorTemplate}`,
+    );
+  } else {
+    expectedErrors = folioInstance[identifierKey].map(
+      (holdingIdentifier) => `ERROR,${holdingIdentifier},${errorTemplate(holdingIdentifier)}`,
+    );
+  }
 
   ExportFile.verifyFileIncludes(errorsFile, expectedErrors);
 };
@@ -508,7 +517,17 @@ describe('Bulk-edit', () => {
           });
 
           verifyErrorsForCollegeHoldings({
-            errorTemplate: errorNoAffiliationTemplate('id'),
+            errorTemplate: errorNoAffiliationTemplate('hrid'),
+            identifier: 'Holdings HRIDs',
+            identifiersFile: holdingsHRIDsFileName,
+            errorsFile: errorFileHoldingsHRID,
+            identifierKey: 'holdingHridsCollege',
+          });
+
+          BulkEditSearchPane.clickToBulkEditMainButton();
+
+          verifyErrorsForCollegeHoldings({
+            errorTemplate: ERROR_MESSAGES.NO_MATCH_FOUND,
             identifier: 'Holdings UUIDs',
             identifiersFile: holdingsUUIDsFileName,
             errorsFile: errorFileHoldingsUUID,

@@ -1,9 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
-import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  LOCATION_NAMES,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -33,6 +29,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 
 let user;
 let exportedFileName;
+let memberTenantLocationName;
 const recordsCount = 5;
 const userPermissions = [
   permissions.dataExportUploadExportDownloadFileViewLogs.gui,
@@ -130,8 +127,12 @@ describe('Data Export', () => {
                 InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                   const sourceId = folioSource.id;
 
-                  cy.getLocations({ limit: 1 }).then((res) => {
-                    const locationId = res.id;
+                  // Get available location from member tenant
+
+                  InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
+                    const locations = resp.filter((location) => location.name !== 'DCB');
+                    memberTenantLocationName = locations[0].name;
+                    const locationId = locations[1].id;
 
                     const sharedInstances = instances.filter(
                       (instance) => instance.affiliation === Affiliations.Consortia,
@@ -230,7 +231,7 @@ describe('Data Export', () => {
         InventoryInstance.pressAddHoldingsButton();
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.fillHoldingFields({
-          permanentLocation: LOCATION_NAMES.ANNEX,
+          permanentLocation: memberTenantLocationName,
         });
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
         InventoryInstance.waitLoading();
