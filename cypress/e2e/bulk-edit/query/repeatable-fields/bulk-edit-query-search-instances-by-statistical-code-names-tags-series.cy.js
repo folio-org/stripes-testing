@@ -70,7 +70,7 @@ const populateInstanceStringProperties = (instanceData, statCodes) => {
     const codeNames = instanceData.statisticalCodeIds.map(
       (id) => statCodes.find((c) => c.id === id).fullName,
     );
-    instanceData.expectedStatisticalCodeName = codeNames.join(' | ');
+    instanceData.expectedStatisticalCodeName = codeNames;
   }
 };
 
@@ -191,11 +191,17 @@ describe('Bulk-edit', () => {
           // Expected to find: Instance 1 and Instance 2 (both have the first statistical code)
           const expectedInstancesToFind = [testInstancesData[0], testInstancesData[1]];
 
-          expectedInstancesToFind.forEach((instance) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              instance.hrid,
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            testInstancesData[0].hrid,
+            instanceFieldValues.statisticalCodeNames,
+            testInstancesData[0].expectedStatisticalCodeName,
+          );
+
+          testInstancesData[1].expectedStatisticalCodeName.forEach((codeName) => {
+            QueryModal.verifyMatchedRecordsIncludesByIdentifier(
+              testInstancesData[1].hrid,
               instanceFieldValues.statisticalCodeNames,
-              instance.expectedStatisticalCodeName,
+              codeName,
             );
           });
 
@@ -277,6 +283,9 @@ describe('Bulk-edit', () => {
               testInstancesData[0].hrid,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE,
               testInstancesData[0].expectedStatisticalCodeName,
+            );
+            BulkEditSearchPane.verifySpecificItemsMatched(
+              ...testInstancesData[1].expectedStatisticalCodeName,
             );
 
             // Step 6: Download matched records (CSV) and check populating "Statistical code" column in the file
