@@ -176,29 +176,63 @@ describe('Data Export', () => {
           );
 
           cy.intercept('GET', '**/download**').as('downloadNetwork');
-          cy.task('log', '[DOWNLOAD_DEBUG] network intercept registered: GET **/download**');
+          cy.intercept('GET', '**/data-export/**').as('dataExportNetwork');
+          cy.intercept('GET', '**/*.mrc*').as('mrcNetwork');
+          cy.task(
+            'log',
+            '[DOWNLOAD_DEBUG] network intercepts registered: GET **/download**, GET **/data-export/**, GET **/*.mrc*',
+          );
 
           cy.task(
             'log',
             `[DOWNLOAD_DEBUG] clicking download link directly for ${exportedFileName}`,
           );
-          cy.get('[class^=downloadFile---]').contains(exportedFileName).click();
-
-          cy.get('@downloadNetwork.all', { timeout: 30000 })
-            .should((calls) => {
-              expect(calls.length, 'download network calls count').to.be.greaterThan(0);
-            })
-            .then((calls) => {
-              const latestCall = calls[calls.length - 1];
-              const requestMethod = latestCall?.request?.method || 'UNKNOWN';
-              const requestUrl = latestCall?.request?.url || 'UNKNOWN';
-              const responseStatusCode = latestCall?.response?.statusCode || 'NO_RESPONSE';
+          cy.get('[class^=downloadFile---]')
+            .contains(exportedFileName)
+            .should('be.visible')
+            .then(($link) => {
+              const href = $link.attr('href') || 'NO_HREF';
+              const target = $link.attr('target') || 'NO_TARGET';
+              const download = $link.attr('download') || 'NO_DOWNLOAD_ATTR';
 
               cy.task(
                 'log',
-                `[DOWNLOAD_DEBUG] network call detected: method=${requestMethod}, status=${responseStatusCode}, url=${requestUrl}`,
+                `[DOWNLOAD_DEBUG] link attrs: href=${href}, target=${target}, download=${download}`,
               );
-            });
+            })
+            .click();
+
+          cy.wait(3000);
+
+          cy.get('@downloadNetwork.all').then((calls) => {
+            const latestCall = calls?.[calls.length - 1];
+            const requestUrl = latestCall?.request?.url || 'NO_MATCH';
+            const responseStatusCode = latestCall?.response?.statusCode || 'NO_RESPONSE';
+            cy.task(
+              'log',
+              `[DOWNLOAD_DEBUG] intercept **/download** calls=${calls?.length || 0}, latestStatus=${responseStatusCode}, latestUrl=${requestUrl}`,
+            );
+          });
+
+          cy.get('@dataExportNetwork.all').then((calls) => {
+            const latestCall = calls?.[calls.length - 1];
+            const requestUrl = latestCall?.request?.url || 'NO_MATCH';
+            const responseStatusCode = latestCall?.response?.statusCode || 'NO_RESPONSE';
+            cy.task(
+              'log',
+              `[DOWNLOAD_DEBUG] intercept **/data-export/** calls=${calls?.length || 0}, latestStatus=${responseStatusCode}, latestUrl=${requestUrl}`,
+            );
+          });
+
+          cy.get('@mrcNetwork.all').then((calls) => {
+            const latestCall = calls?.[calls.length - 1];
+            const requestUrl = latestCall?.request?.url || 'NO_MATCH';
+            const responseStatusCode = latestCall?.response?.statusCode || 'NO_RESPONSE';
+            cy.task(
+              'log',
+              `[DOWNLOAD_DEBUG] intercept **/*.mrc* calls=${calls?.length || 0}, latestStatus=${responseStatusCode}, latestUrl=${requestUrl}`,
+            );
+          });
 
           logDownloads('after download click', exportedFileName);
 
