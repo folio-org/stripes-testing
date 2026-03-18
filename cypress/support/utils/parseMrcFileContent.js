@@ -43,7 +43,13 @@ export default function parseMrcFileContentAndVerify(
   expectedTotalRecords,
   isDefaultAssertionRequired = true,
 ) {
-  return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+  const downloadsFolder = (Cypress.config('downloadsFolder') || 'cypress/downloads').replace(
+    /\\/g,
+    '/',
+  );
+  const filePath = /[\\/]/.test(fileName) ? fileName : `${downloadsFolder}/${fileName}`;
+
+  return cy.readFile(filePath, 'binary').then((fileContent) => {
     if (!fileContent) {
       throw new Error('File content is undefined');
     }

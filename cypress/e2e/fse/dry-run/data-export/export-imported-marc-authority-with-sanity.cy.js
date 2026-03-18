@@ -48,12 +48,20 @@ const expectedMarcFields = [
   ['953', '  ', 'a', 'xx00', 'b', 'fg10'],
 ];
 
+const getDownloadsFolder = () => {
+  return (Cypress.config('downloadsFolder') || 'cypress/downloads').replace(/\\/g, '/');
+};
+
 const logDownloads = (stage, expectedFileName = '') => {
   const expectedSuffix = expectedFileName ? `, expected=${expectedFileName}` : '';
+  const downloadsFolder = getDownloadsFolder();
 
-  return cy.task('findFiles', 'cypress/downloads/*').then((files) => {
+  return cy.task('findFiles', `${downloadsFolder}/*`).then((files) => {
     const filesList = files?.length ? files.join(', ') : 'NO_FILES';
-    cy.task('log', `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, files=${filesList}`);
+    cy.task(
+      'log',
+      `[DOWNLOAD_DEBUG] ${stage}${expectedSuffix}, downloadsFolder=${downloadsFolder}, files=${filesList}`,
+    );
   });
 };
 
@@ -153,7 +161,9 @@ describe('Data Export', () => {
           logDownloads('before readFile assert', exportedFileName);
 
           // Verify file exists before parsing (with extended timeout for slow downloads)
-          cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
+          cy.readFile(`${getDownloadsFolder()}/${exportedFileName}`, { timeout: 90000 }).should(
+            'exist',
+          );
 
           logDownloads('after readFile assert', exportedFileName);
 
