@@ -677,6 +677,11 @@ export default {
     ]);
   },
 
+  verifyEmptyAuthorityFieldInPlugin: () => {
+    cy.do(authoritySourceAccordion.clickHeader());
+    cy.expect(MultiSelect({ label: including('Authority source'), selectedCount: 0 }).exists());
+  },
+
   clickActionsButton() {
     cy.do(actionsButton.click());
   },
