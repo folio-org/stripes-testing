@@ -13,6 +13,8 @@ import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLin
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import OpenConfirmationModal from '../../../support/fragments/orders/modals/openConfirmationModal';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -150,7 +152,8 @@ describe('Export Manager', () => {
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
+        OrderDetails.openOrder({ orderNumber, confirm: false });
+        OpenConfirmationModal.confirm();
         Orders.checkModalDifferentAccountNumbers(2);
         Orders.checkOrderStatus('Pending');
       },

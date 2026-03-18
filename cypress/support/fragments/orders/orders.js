@@ -137,17 +137,12 @@ export default {
     });
   },
 
-  openOrder({ orderNumber } = {}) {
+  openOrder() {
     cy.wait(4000);
     expandActionsDropdown();
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
-    if (orderNumber) {
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully opened`,
-      );
-    }
   },
 
   checkModalDifferentAccountNumbers(uniqueAccountCount) {
