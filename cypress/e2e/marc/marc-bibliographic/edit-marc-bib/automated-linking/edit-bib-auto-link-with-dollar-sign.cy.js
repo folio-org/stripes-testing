@@ -147,6 +147,7 @@ describe('MARC', () => {
                 cy.login(userData.username, userData.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                  authRefresh: true,
                 });
               }, 20_000);
             });
@@ -172,7 +173,7 @@ describe('MARC', () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateLDR06And07Positions();
 
-            QuickMarcEditor.updateFirstFieldByTag(testData.tags.tag100, field100UpdatedContent);
+            QuickMarcEditor.updateExistingField(testData.tags.tag100, field100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tags.tag100, field100UpdatedContent);
 
             QuickMarcEditor.addNewField(newField.tag, newField.content, 7);

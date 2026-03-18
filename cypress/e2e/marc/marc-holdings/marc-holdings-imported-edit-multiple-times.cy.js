@@ -65,23 +65,18 @@ describe('MARC', () => {
         cy.getAdminToken();
 
         cy.then(() => {
-          cy.getLocations({
-            limit: 1,
-            query: '(name<>"*autotest*" and name<>"AT_*" and name<>"*auto*")',
-          }).then((location) => {
-            cy.createSimpleMarcBibViaAPI(testData.marcBibTitle).then((instanceId) => {
-              recordId = instanceId;
-              cy.getInstanceById(instanceId).then((instanceData) => {
-                instanceHrid = instanceData.hrid;
+          cy.createSimpleMarcBibViaAPI(testData.marcBibTitle).then((instanceId) => {
+            recordId = instanceId;
+            cy.getInstanceById(instanceId).then((instanceData) => {
+              instanceHrid = instanceData.hrid;
 
-                // edit marc file adding instance hrid
-                DataImport.editMarcFile(
-                  marcFile.marc,
-                  marcFile.editedFileName,
-                  ['in00000000000', 'LCODE'],
-                  [instanceHrid, location.code],
-                );
-              });
+              // edit marc file adding instance hrid
+              DataImport.editMarcFile(
+                marcFile.marc,
+                marcFile.editedFileName,
+                ['in00000000000'],
+                [instanceHrid],
+              );
             });
           });
         })
@@ -105,6 +100,7 @@ describe('MARC', () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
       });
