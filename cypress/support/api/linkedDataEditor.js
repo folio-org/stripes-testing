@@ -56,9 +56,9 @@ Cypress.Commands.add('getProfileSettingsForUser', (id) => {
 
 Cypress.Commands.add('setProfileSettingsForUser', (id, settings) => {
   cy.okapiRequest({
-      method: 'POST',
-      path: `linked-data/profile/settings/${id}`,
-      body: JSON.stringify(settings),
-      isDefaultSearchParamsRequired: false,
+    method: 'POST',
+    path: `linked-data/profile/settings/${id}`,
+    body: JSON.stringify(settings),
+    isDefaultSearchParamsRequired: false,
   });
 });

@@ -177,7 +177,7 @@ export default {
   // 1-indexed
   checkSectionInPosition(section, position) {
     cy.xpath('//div[@id="edit-section"]/div[contains(@class,"edit-section-group")]/div[1]/div[1]')
-      .eq(position-1)
+      .eq(position - 1)
       .invoke('attr', 'id')
       .should('eq', section);
   },

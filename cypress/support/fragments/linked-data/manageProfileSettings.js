@@ -1,5 +1,5 @@
-//const manageProfileSettingsPage = "//main[@data-testid='manage-profile-settings']";
-//const profilesSection = "//section[@data-testid='profiles-list']";
+// const manageProfileSettingsPage = "//main[@data-testid='manage-profile-settings']";
+// const profilesSection = "//section[@data-testid='profiles-list']";
 const manageProfileSettingsPage = "//div[@data-testid='manage-profile-settings']";
 const profilesSection = "//div[@data-testid='profiles-list']";
 const editorSection = "//div[@data-testid='profile-settings-editor']";
@@ -12,13 +12,13 @@ const preferredProfileCheckbox = "//input[@data-testid='type-default-setting']";
 const defaultProfileSettingsRadio = "//input[@data-testid='settings-active-default']";
 const customProfileSettingsRadio = "//input[@data-testid='settings-active-custom']";
 
-//const selectedList = "//section[@data-testid='selected-component-list']";
-//const unusedList = "//section[@data-testid='unused-component-list']";
+// const selectedList = "//section[@data-testid='selected-component-list']";
+// const unusedList = "//section[@data-testid='unused-component-list']";
 const selectedList = "//div[@data-testid='selected-component-list']";
 const unusedList = "//div[@data-testid='unused-component-list']";
 const unusedContainer = "//div[@data-droppable-id='unused-container']";
-const profileComponent = "div.component";
-const draggingComponent = "div.drag-overlay";
+const profileComponent = 'div.component';
+const draggingComponent = 'div.drag-overlay';
 const componentActivateMenu = "//button[@data-testid='activate-menu']";
 const componentMoveAction = "//button[@data-testid='move-action']";
 const componentNudgeUp = "//button[@data-testid='nudge-up']";
@@ -29,7 +29,7 @@ const modalUnused = "//div[@data-testid='modal-save-unused-profile-components']"
 const modalCloseButton = ".//button[@class='close-button']";
 const modalCancelButton = ".//button[@data-testid='modal-button-cancel']";
 const modalSubmitButton = ".//button[@data-testid='modal-button-submit']";
-const loaderOverlay = "div.loader-overlay";
+const loaderOverlay = 'div.loader-overlay';
 
 const component = (id, selector, sub) => {
   return `${sub ? '.' : ''}//div[@data-testid='component-${id}']${selector}`;
@@ -55,21 +55,23 @@ const doDrag = (node, endCoords) => {
     .realMouseMove(0, 1, { position: 'center', steps: 2 })
     .then(($el) => {
       const doc = $el[0].ownerDocument;
-      const overlay = doc.querySelector('.drag-overlay')
+      const overlay = doc.querySelector('.drag-overlay');
       const ov = center(overlay);
 
       const dx = endCoords.x - ov.x;
       const dy = endCoords.y - ov.y;
 
       return { dx, dy };
-    }).then(({ dx, dy }) => {
+    })
+    .then(({ dx, dy }) => {
       cy.wrap(node)
         .realMouseMove(dx, dy, { position: 'center', steps: 14 })
         .wait(500)
         .realMouseUp({ button: 'left' });
-    });
-    cy.get(draggingComponent).should('not.exist')
-      .wait(1000);
+    }
+  );
+  cy.get(draggingComponent).should('not.exist')
+    .wait(1000);
 };
 
 const dragDropGeneral = (dragTarget, dragTargetList, dropTarget) => {
@@ -113,7 +115,7 @@ const getListLength = (list) => {
     .then((count) => {
       return count;
     });
-}
+};
 
 const keyBackToStartingPosition = (list, listLength, initialPosition) => {
   // Keyboard interactions suffer from the same recalibrating overlay
@@ -236,7 +238,7 @@ export default {
       .wait(100)
       .realClick();
     cy.xpath(component(id, componentMoveAction))
-      .should('not.exist')
+      .should('not.exist');
   },
 
   nudgeComponentUpButton: (id) => {
@@ -255,7 +257,7 @@ export default {
       cy.xpath(component(id, componentNudgeDown))
         .should('be.visible')
         .focus()
-        .wait(100)    
+        .wait(100)
         .click()
         .wait(500),
     );
@@ -266,8 +268,9 @@ export default {
   },
 
   verifySelectedComponentPosition: (id, position) => {
-    cy.xpath(selectedList).find(profileComponent).eq(position-1)
-      .invoke('attr', 'data-testid').should('eq', `component-${id}`);
+    cy.xpath(selectedList).find(profileComponent).eq(position - 1)
+      .invoke('attr', 'data-testid')
+      .should('eq', `component-${id}`);
     if (position === 1) {
       cy.xpath(component(id, componentNudgeUp))
         .should('not.exist');
@@ -285,8 +288,9 @@ export default {
   },
 
   verifyUnusedComponentPosition: (id, position) => {
-    cy.xpath(unusedList).find(profileComponent).eq(position-1)
-      .invoke('attr', 'data-testid').should('eq', `component-${id}`);
+    cy.xpath(unusedList).find(profileComponent).eq(position - 1)
+      .invoke('attr', 'data-testid')
+      .should('eq', `component-${id}`);
   },
 
   dragUnusedComponentAndCancel: (position) => {
@@ -305,7 +309,7 @@ export default {
     cy.do(
       cy.xpath(selectedList)
         .find(profileComponent)
-        .eq(position-1)
+        .eq(position - 1)
         .realMouseDown({ button: 'left', position: 'center' })
         .realMouseMove(0, 10, { position: 'center' })
         .wait(200),
@@ -350,24 +354,24 @@ export default {
   keyboardDragUnusedComponentAndCancel: (position) => {
     cy.xpath(unusedList)
       .find(profileComponent)
-      .eq(position-1)
+      .eq(position - 1)
       .focus()
-      .wait(200),
-    cy.realPress(' '),
-    cy.realPress('ArrowDown'),
-    cy.realPress('ArrowDown'),
+      .wait(200);
+    cy.realPress(' ');
+    cy.realPress('ArrowDown');
+    cy.realPress('ArrowDown');
     cy.realPress('Escape');
   },
 
   keyboardDragSelectedComponentAndCancel: (position) => {
     cy.xpath(selectedList)
       .find(profileComponent)
-      .eq(position-1)
+      .eq(position - 1)
       .focus()
-      .wait(200),
-    cy.realPress(' '),
-    cy.realPress('ArrowDown'),
-    cy.realPress('ArrowDown'),
+      .wait(200);
+    cy.realPress(' ');
+    cy.realPress('ArrowDown');
+    cy.realPress('ArrowDown');
     cy.realPress('Escape');
   },
 
@@ -379,11 +383,11 @@ export default {
             .xpath(component(id, '', true))
             .focus();
           cy.realPress(' ');
-          keyBackToStartingPosition('selected', length, focusedPosition-1);
+          keyBackToStartingPosition('selected', length, focusedPosition - 1);
           if (focusedPosition < targetPosition) {
-            Cypress._.times(targetPosition - focusedPosition-1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
+            Cypress._.times(targetPosition - focusedPosition - 1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
           } else if (focusedPosition > targetPosition) {
-            Cypress._.times(focusedPosition - targetPosition-1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
+            Cypress._.times(focusedPosition - targetPosition - 1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
           }
           cy.realPress('Enter');
         });
@@ -401,11 +405,11 @@ export default {
             .xpath(component(id, '', true))
             .focus();
           cy.realPress(' ');
-          keyBackToStartingPosition('unused', length, focusedPosition-1);
+          keyBackToStartingPosition('unused', length, focusedPosition - 1);
           if (focusedPosition < targetPosition) {
-            Cypress._.times(targetPosition - focusedPosition-1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
+            Cypress._.times(targetPosition - focusedPosition - 1, () => cy.realPress('ArrowDown', { pressDelay: 100 }));
           } else if (focusedPosition > targetPosition) {
-            Cypress._.times(focusedPosition - targetPosition-1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
+            Cypress._.times(focusedPosition - targetPosition - 1, () => cy.realPress('ArrowUp', { pressDelay: 100 }));
           }
           cy.realPress('Enter');
         });
@@ -431,7 +435,7 @@ export default {
       .wait(1000);
   },
 
-  keyboardDragUnusedToSelected: (id, targetId) => {
+  keyboardDragUnusedToSelected: (id) => {
     getListLength(unusedList).then((length) => {
       getComponentPosition(id, unusedList).then((focusedPosition) => {
         cy.xpath(unusedList)
@@ -484,7 +488,7 @@ export default {
       .xpath(modalCloseButton)
       .should('be.enabled')
       .click();
-    cy.xpath(modalUnused).should('not.exist')
+    cy.xpath(modalUnused).should('not.exist');
   },
 
   modalUnusedCancel: () => {
@@ -492,7 +496,7 @@ export default {
       .xpath(modalCancelButton)
       .should('be.enabled')
       .click();
-    cy.xpath(modalUnused).should('not.exist')
+    cy.xpath(modalUnused).should('not.exist');
   },
 
   modalUnusedSave: () => {
@@ -500,7 +504,7 @@ export default {
       .xpath(modalSubmitButton)
       .should('be.enabled')
       .click();
-    cy.xpath(modalUnused).should('not.exist')
+    cy.xpath(modalUnused).should('not.exist');
     cy.wait(2000);
   },
 };
