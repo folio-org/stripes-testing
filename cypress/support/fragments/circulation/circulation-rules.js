@@ -2,6 +2,7 @@
 import { kebabCase } from 'lodash';
 import { HTML, Button, CodeMirror, CodeMirrorHint } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import LoanPolicy from './loan-policy';
 
 const calloutMessages = {
   CIRCULATION_RULES_UPDATE_SUCCESS: 'Rules were successfully updated.',
@@ -69,6 +70,22 @@ export default {
 
   verifyDropdownContainsText(text) {
     cy.get('.CodeMirror-hints').should('contain.text', text);
+  },
+
+  verifyDropdownExists() {
+    cy.get('.CodeMirror-hints').should('exist').and('be.visible');
+  },
+
+  verifyDropdownHasItems() {
+    cy.get('.CodeMirror-hints .CodeMirror-hint').should('have.length.at.least', 1);
+  },
+
+  selectFirstHintItem() {
+    cy.get('.CodeMirror-hints .CodeMirror-hint').first().click();
+  },
+
+  verifyEditorContainsText(text) {
+    cy.get('.react-codemirror2').should('contain.text', text);
   },
 
   fillInFallbackPolicy(policyData) {
@@ -171,7 +188,23 @@ export default {
     return this.updateViaApi({ rulesAsText: updatedRules }).then((res) => {
       if (res.status >= 400 && res.status < 500 && res.body.message.includes('does not exist')) {
         let fixedRules = updatedRules.split('\n');
-        fixedRules.splice(res.body.line - 1, 1);
+        const brokenLineIndex = res.body.line - 1;
+        // Sometimes the "Example loan policy" is deleted, but "fallback-policy" line in circulation rules uses it by default in all envs,
+        // so circulation rules request returns an error about missing loan policy. This case breaks all the tests
+        // that try to update circulation rules or make a checkout. To fix it, we need to create a policy with the same ID,
+        // so here the "Example loan policy" is created if the error is about missing loan policy in "fallback-policy" line,
+        // otherwise the broken line is removed from circulation rules.
+        if (
+          fixedRules[brokenLineIndex].trimStart().startsWith('fallback-policy') &&
+          res.body.message.includes('The policy l does not exist')
+        ) {
+          const idAfterL = fixedRules[brokenLineIndex].match(/\s+l\s+([0-9a-f-]{36})/i)[1];
+          const examplePolicy = LoanPolicy.getExampleLoanPolicy();
+          examplePolicy.id = idAfterL;
+          cy.createLoanPolicy(examplePolicy);
+          return this.updateCirculationRules(updatedRules);
+        }
+        fixedRules.splice(brokenLineIndex, 1);
         fixedRules = fixedRules.join('\n');
         return this.updateCirculationRules(fixedRules);
       } else if (res.status >= 400) {
