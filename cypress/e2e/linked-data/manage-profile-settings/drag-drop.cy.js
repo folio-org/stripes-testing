@@ -74,11 +74,11 @@ describe('Manage profile settings', () => {
             children: [],
           });
         });
-      })
+      });
     });
   });
 
-  it.only(
+  it(
     'settings are applied to linked data editor',
     { tags: ['citation'] },
     () => {
@@ -144,7 +144,7 @@ describe('Manage profile settings', () => {
       EditResource.checkSectionIsNotVisible('Profile::0__Work::0__targetAudience::0');
       EditResource.checkSectionIsNotVisible('Profile::0__Work::0__content::0');
       */
-    }
+    },
   );
 
   it(
@@ -252,7 +252,7 @@ describe('Manage profile settings', () => {
 
       ManageProfileSettings.keyboardDragUnusedToSelected('Profile:Work:DateOfWork');
       ManageProfileSettings.verifySelectedComponent('Profile:Work:DateOfWork');
-    }
+    },
   );
 
   it(
@@ -276,11 +276,11 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.verifyUnusedComponentPosition('Profile:Hub:CreatorOfHub', 2);
       ManageProfileSettings.verifyUnusedComponentPosition('Profile:Hub:LanguageCode', 1);
 
-      ManageProfileSettings.dragUnusedToSelected('Profile:Hub:LanguageCode', 'Profile:Hub:TitleInformation')
+      ManageProfileSettings.dragUnusedToSelected('Profile:Hub:LanguageCode', 'Profile:Hub:TitleInformation');
       ManageProfileSettings.verifyUnusedComponentPosition('Profile:Hub:CreatorOfHub', 1);
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Hub:LanguageCode', 1);
 
-      ManageProfileSettings.dragSelectedToUnused('Profile:Hub:LanguageCode', 'Profile:Hub:CreatorOfHub')
+      ManageProfileSettings.dragSelectedToUnused('Profile:Hub:LanguageCode', 'Profile:Hub:CreatorOfHub');
       ManageProfileSettings.verifyUnusedComponentPosition('Profile:Hub:LanguageCode', 1);
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Hub:TitleInformation', 1);
 
@@ -297,7 +297,8 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.selectDefaultSettings();
       ManageProfileSettings.dragSelectedToUndroppableRegion('Profile:Hub:CreatorOfHub');
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Hub:CreatorOfHub', 1);
-    });
+    },
+  );
 
   it(
     'move component to other list by button press',
@@ -331,7 +332,8 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.saveAndKeepEditing();
       ManageProfileSettings.verifyModalUnusedOpen();
       ManageProfileSettings.modalUnusedSave();
-  });
+    },
+  );
 
   it(
     'nudge buttons in selected component list',
@@ -349,7 +351,8 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Instance:StatementOfResponsibility', 2);
       ManageProfileSettings.nudgeComponentDownButton('Profile:Instance:StatementOfResponsibility');
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Instance:StatementOfResponsibility', 3);
-  });
+    },
+  );
 
   it(
     'verifies preferred profile setting persists across profile selection changes',
@@ -365,7 +368,7 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.verifyPreferredProfile(false);
       ManageProfileSettings.togglePreferredProfile();
       ManageProfileSettings.verifyPreferredProfile(true);
-      
+
       ManageProfileSettings.selectProfile('Hubs');
       ManageProfileSettings.verifyModalUnsavedOpen();
       ManageProfileSettings.modalUnsavedClose();
@@ -378,5 +381,6 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.verifyPreferredProfile(true);
       ManageProfileSettings.togglePreferredProfile();
       ManageProfileSettings.verifyPreferredProfile(false);
-    });
+    },
+  );
 });
