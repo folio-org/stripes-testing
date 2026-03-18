@@ -38,7 +38,7 @@ const embeddedTableHeadersMap = {
     'URL relationship',
     'URI',
     'Link text',
-    'Material specified',
+    'Materials specified',
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
@@ -742,6 +742,17 @@ export default {
         buildQueryModal
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
           .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyMatchedRecordsIncludesByIdentifier(identifier, columnName, value) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        buildQueryModal
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: including(value) }))
           .exists(),
       );
     });
