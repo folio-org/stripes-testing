@@ -151,7 +151,11 @@ describe('Data Export', () => {
             `[DOWNLOAD_DEBUG] hrid=${firstJobHrid}, exportedFileName=${exportedFileName}`,
           );
 
-          DataExportLogs.clickButtonWithText(exportedFileName);
+          cy.task(
+            'log',
+            `[DOWNLOAD_DEBUG] clicking download link directly for ${exportedFileName}`,
+          );
+          cy.get('[class^=downloadFile---]').contains(exportedFileName).click();
 
           logDownloads('after download click', exportedFileName);
 
