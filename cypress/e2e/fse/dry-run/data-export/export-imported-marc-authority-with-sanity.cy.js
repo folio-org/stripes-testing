@@ -130,6 +130,12 @@ describe('Data Export', () => {
 
           DataExportLogs.clickButtonWithText(exportedFileName);
 
+          // Wait longer for download to complete
+          cy.wait(5000);
+
+          // Verify file exists before parsing (with extended timeout for slow downloads)
+          cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
+
           const assertionsOnMarcFileContent = [
             {
               uuid: marcAuthority.id,

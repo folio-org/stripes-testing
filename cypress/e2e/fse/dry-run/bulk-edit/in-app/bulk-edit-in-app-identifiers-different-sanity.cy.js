@@ -99,7 +99,7 @@ describe('Bulk-edit', () => {
           );
         });
 
-      cy.wait(5000);
+      cy.wait(10000);
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.bulkEditPath,

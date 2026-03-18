@@ -71,7 +71,7 @@ export default {
         doc.addEventListener('click', () => {
           setTimeout(() => {
             doc.location.reload();
-          }, 3000);
+          }, 6000);
         });
         cy.get('[class^=downloadFile---]').contains(name).click();
       });

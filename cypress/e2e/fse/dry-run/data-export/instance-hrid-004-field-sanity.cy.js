@@ -129,6 +129,13 @@ describe('Data Export', () => {
             'Default holdings',
           );
           DataExportLogs.clickButtonWithText(resultsFileName);
+
+          // Wait for download to complete
+          cy.wait(5000);
+
+          // Verify file exists before reading (with extended timeout for slow downloads)
+          cy.readFile(`cypress/downloads/${resultsFileName}`, { timeout: 90000 }).should('exist');
+
           ExportFile.verifyFileIncludes(resultsFileName, [holdingsUUID, instanceHRID]);
         });
       },
