@@ -33,7 +33,7 @@ describe('MARC', () => {
           searchOptions: {
             identifierAll: 'Identifier (all)',
           },
-          marcValue: 'C422149Radio "Vaticana"',
+          marcValue: 'C422149Radio "Vaticana". Hrvatski program',
         };
 
         const newFields = [

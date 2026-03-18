@@ -357,7 +357,6 @@ export default {
         }
       },
       {
-        limit: 20,
         delay: 5000,
         timeout: 120_000,
       },
