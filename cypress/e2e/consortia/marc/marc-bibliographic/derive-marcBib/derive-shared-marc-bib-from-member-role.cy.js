@@ -7,6 +7,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../../../support/constants';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -124,14 +125,10 @@ describe('MARC', () => {
         () => {
           // Step 1: Derive shared MARC bib record in Central tenant
           cy.resetTenant();
-          cy.waitForAuthRefresh(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
 
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);
@@ -152,6 +149,7 @@ describe('MARC', () => {
           // Step 4: Switch to Member tenant and derive local MARC bib record
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);
           InventoryInstances.selectInstanceById(createdInstanceIDs[0]);
           InventoryInstance.waitLoading();
