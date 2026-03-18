@@ -68,8 +68,7 @@ const doDrag = (node, endCoords) => {
         .realMouseMove(dx, dy, { position: 'center', steps: 14 })
         .wait(500)
         .realMouseUp({ button: 'left' });
-    }
-  );
+    });
   cy.get(draggingComponent).should('not.exist')
     .wait(1000);
 };
@@ -297,7 +296,7 @@ export default {
     cy.do(
       cy.xpath(unusedList)
         .find(profileComponent)
-        .eq(position-1)
+        .eq(position - 1)
         .realMouseDown({ button: 'left', position: 'center' })
         .realMouseMove(0, 10, { position: 'center' })
         .wait(200),
