@@ -4,6 +4,7 @@ import {
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
   REQUEST_TYPES,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -16,77 +17,80 @@ import NewRequest from '../../../support/fragments/requests/newRequest';
 import Requests from '../../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
     const testData = {
-      servicePointName: 'Circ Desk 2',
-      organization: NewOrganization.getDefaultOrganization({ accounts: 1 }),
+      servicePointName: 'Circ Desk 1',
+      organization: NewOrganization.getDefaultOrganization({ isDonor: true }),
       order: {},
       orderLine: {},
-      integration: {},
-      integrationName: '',
       user: {},
       enumeration: 'autotestCaption',
       itemBarcode: uuid(),
     };
 
     before(() => {
-      cy.getAdminToken().then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: `name=="${testData.servicePointName}"` }).then(
-          (servicePoints) => {
-            testData.effectiveLocationServicePoint = servicePoints[0];
-            NewLocation.createViaApi(
-              NewLocation.getDefaultLocation(testData.effectiveLocationServicePoint.id),
-            )
-              .then((locationResponse) => {
-                testData.location = locationResponse;
-                Organizations.createOrganizationViaApi(testData.organization).then(
-                  (organizationsResponse) => {
-                    testData.organization.id = organizationsResponse;
-                    testData.order.vendor = organizationsResponse;
-                  },
-                );
-              })
-              .then(() => {
-                cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
-                  testData.order = NewOrder.getDefaultOrder({
-                    vendorId: testData.organization.id,
-                    manualPo: false,
+      cy.getAdminToken();
+      ServicePoints.getViaApi({ limit: 1, query: `name=="${testData.servicePointName}"` }).then(
+        (servicePoints) => {
+          testData.effectiveLocationServicePoint = servicePoints[0];
+
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+            (locationResponse) => {
+              testData.location = locationResponse;
+
+              Organizations.createOrganizationViaApi(testData.organization).then(
+                (organizationsResponse) => {
+                  testData.organization.id = organizationsResponse;
+                  testData.order.vendor = organizationsResponse;
+
+                  cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
+                    testData.order = NewOrder.getDefaultOrder({
+                      vendorId: testData.organization.id,
+                      manualPo: false,
+                    });
+                    InventoryInstance.createInstanceViaApi().then((instanceData) => {
+                      testData.instanceId = instanceData.instanceData.instanceId;
+
+                      testData.orderLine = {
+                        ...BasicOrderLine.getDefaultOrderLine(),
+                        instanceId: testData.instanceId,
+                        cost: {
+                          listUnitPrice: 10,
+                          currency: 'USD',
+                          discountType: 'percentage',
+                          quantityPhysical: 1,
+                        },
+                        orderFormat: 'Physical Resource',
+                        physical: {
+                          createInventory: 'Instance, Holding, Item',
+                          materialType: materialTypeId,
+                        },
+                        locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
+                      };
+
+                      Orders.createOrderWithOrderLineViaApi(
+                        testData.order,
+                        testData.orderLine,
+                      ).then((order) => {
+                        testData.order = order;
+
+                        Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
+                      });
+                    });
                   });
-                  testData.orderLine = {
-                    ...BasicOrderLine.getDefaultOrderLine(),
-                    cost: {
-                      listUnitPrice: 10,
-                      currency: 'USD',
-                      discountType: 'percentage',
-                      quantityPhysical: 1,
-                    },
-                    orderFormat: 'Other',
-                    physical: {
-                      createInventory: 'Instance, Holding, Item',
-                      materialType: materialTypeId,
-                    },
-                    locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
-                  };
-
-                  Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
-                    (order) => {
-                      testData.order = order;
-
-                      Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
-                    },
-                  );
-                });
-              });
-          },
-        );
-        TitleLevelRequests.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: true });
-      });
+                },
+              );
+            },
+          );
+        },
+      );
+      TitleLevelRequests.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: true });
 
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,

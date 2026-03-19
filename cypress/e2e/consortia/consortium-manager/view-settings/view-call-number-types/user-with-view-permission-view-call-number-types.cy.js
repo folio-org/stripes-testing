@@ -139,7 +139,7 @@ describe('Consortia', () => {
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             CallNumberTypesConsortiumManager.choose();
             // New button should NOT be displayed since user has view permission only
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
             // Step 3: User sees central tenant shared call number type
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(

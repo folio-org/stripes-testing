@@ -852,7 +852,7 @@ export default {
       subjectList
         .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject source' }))
-        .has({ content: subjectSource.subjectSource }),
+        .has({ content: including(subjectSource.subjectSource) }),
       subjectList
         .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject type' }))

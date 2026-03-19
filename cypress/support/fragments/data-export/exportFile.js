@@ -222,6 +222,7 @@ export default {
       url: '/data-export/job-profiles?*',
     }).as('getProfiles');
     cy.wait('@getProfiles');
+    SelectJobProfile.searchForAJobProfile(profileName);
     cy.do([
       Pane({ id: 'pane-results' })
         .find(MultiColumnListCell({ content: profileName }))
