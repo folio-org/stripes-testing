@@ -126,9 +126,11 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
-          cy.getUserToken(user.username, user.password, { log: false }).then(() => {
-            DataExportLogs.clickButtonWithText(exportedFileName);
-          });
+          cy.getUserToken(user.username, user.password, { log: false }).then(() => {});
+
+          cy.wait(5000);
+
+          DataExportLogs.clickButtonWithText(exportedFileName);
 
           // Wait longer for download to complete
           cy.wait(5000);
