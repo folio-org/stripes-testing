@@ -48,7 +48,6 @@ describe('Inventory', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
-        authRefresh: true,
       });
       cy.allure().logCommandSteps();
     });
@@ -65,6 +64,7 @@ describe('Inventory', () => {
       'C353639 Browse contributors with exact match query (spitfire)',
       { tags: ['dryRun', 'spitfire', 'C353639'] },
       () => {
+        cy.getUserToken(user.username, user.password, { log: false });
         BrowseContributors.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.verifyBrowseOptions();
