@@ -87,13 +87,14 @@ describe('Invoices', () => {
 
   it(
     'C380406 Approve and pay invoice with currency different from default when "Export to accounting" option is active (thunderjet) (TaaS)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C380406'] },
+    { tags: ['criticalPath', 'thunderjet', 'C380406'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
 
       // * "Status" field is "Open"
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [
           { key: 'Fiscal year', value: testData.fiscalYear.code },

@@ -1426,7 +1426,7 @@ export default {
     cy.wait(3000);
   },
 
-  varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
+  verifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
     cy.wait(6000);
     cy.expect(
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
@@ -1437,7 +1437,7 @@ export default {
     );
   },
 
-  varifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
+  verifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
     cy.expect(
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
