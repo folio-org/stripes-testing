@@ -128,8 +128,9 @@ describe('Data Export', () => {
           );
           cy.getUserToken(user.username, user.password, { log: false }).then(() => {});
 
+          cy.log('token obtained, waiting for 5 seconsds...');
           cy.wait(5000);
-
+          cy.log('Waited for 5 seconds, proceeding to click the file link...');
           DataExportLogs.clickButtonWithText(exportedFileName);
 
           // Wait longer for download to complete
