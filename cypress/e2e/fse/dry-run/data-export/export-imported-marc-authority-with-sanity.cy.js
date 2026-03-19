@@ -126,12 +126,17 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
-          cy.getUserToken(user.username, user.password, { log: false }).then(() => {});
 
-          cy.log('token obtained, waiting for 5 seconsds...');
-          cy.wait(5000);
-          cy.log('Waited for 5 seconds, proceeding to click the file link...');
-          DataExportLogs.clickButtonWithText(exportedFileName);
+          cy.getUserToken(user.username, user.password, { log: false }).then(() => {
+            cy.intercept('GET', '**/*.mrc').as('mrcDownload');
+
+            DataExportLogs.clickButtonWithText(exportedFileName);
+
+            cy.wait('@mrcDownload').then(({ downloadResponse }) => {
+              expect(downloadResponse?.statusCode).to.eq(200);
+            });
+          });
+          // DataExportLogs.clickButtonWithText(exportedFileName);
 
           // Wait longer for download to complete
           cy.wait(5000);
