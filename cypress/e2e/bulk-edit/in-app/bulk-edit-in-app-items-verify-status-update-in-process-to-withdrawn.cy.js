@@ -35,7 +35,13 @@ const items = {
   inProcess: {
     instanceName: `AT_C594355_FolioInstance_${getRandomPostfix()}`,
     barcode: `inProcess${randomFourDigitNumber()}`,
-    fileName: `inProcessItemBarcodes_${getRandomPostfix()}.csv`,
+  },
+  lostAndPaid: {
+    instanceName: `AT_C594355_FolioInstance_${getRandomPostfix()}`,
+    barcode: `lostAndPaid${randomFourDigitNumber()}`,
+  },
+  withdrawnScenario: {
+    fileName: `inProcessAndLostPaidItemBarcodes_${getRandomPostfix()}.csv`,
   },
 };
 
@@ -45,18 +51,24 @@ const scenarios = [
     initialStatus: ITEM_STATUS_NAMES.AVAILABLE,
     targetStatus: ITEM_STATUS_NAMES.IN_PROCESS,
     shouldSucceed: true,
+    recordCount: 1,
+    barcodes: ['available'],
   },
   {
     itemKey: 'checkedOut',
     initialStatus: ITEM_STATUS_NAMES.CHECKED_OUT,
     targetStatus: ITEM_STATUS_NAMES.IN_PROCESS,
     shouldSucceed: false,
+    recordCount: 1,
+    barcodes: ['checkedOut'],
   },
   {
-    itemKey: 'inProcess',
-    initialStatus: ITEM_STATUS_NAMES.IN_PROCESS,
+    itemKey: 'withdrawnScenario',
+    initialStatuses: [ITEM_STATUS_NAMES.IN_PROCESS, ITEM_STATUS_NAMES.LOST_AND_PAID],
     targetStatus: ITEM_STATUS_NAMES.WITHDRAWN,
     shouldSucceed: true,
+    recordCount: 2,
+    barcodes: ['inProcess', 'lostAndPaid'],
   },
 ];
 
@@ -112,9 +124,26 @@ describe('Bulk-edit', () => {
           itemData.status = { name: ITEM_STATUS_NAMES.IN_PROCESS };
           cy.updateItemViaApi(itemData);
         });
+
+        // Create item with Lost and paid status
+        InventoryInstances.createInstanceViaApi(
+          items.lostAndPaid.instanceName,
+          items.lostAndPaid.barcode,
+        );
+        cy.getItems({
+          limit: 1,
+          expandAll: true,
+          query: `"barcode"=="${items.lostAndPaid.barcode}"`,
+        }).then((res) => {
+          const itemData = res;
+          itemData.status = { name: ITEM_STATUS_NAMES.LOST_AND_PAID };
+          cy.updateItemViaApi(itemData);
+        });
+
+        // Create CSV file with both In Process and Lost and paid barcodes
         FileManager.createFile(
-          `cypress/fixtures/${items.inProcess.fileName}`,
-          items.inProcess.barcode,
+          `cypress/fixtures/${items.withdrawnScenario.fileName}`,
+          `${items.inProcess.barcode}\n${items.lostAndPaid.barcode}`,
         );
 
         cy.login(user.username, user.password, {
@@ -129,19 +158,27 @@ describe('Bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(items.available.barcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(items.checkedOut.barcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(items.inProcess.barcode);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(items.lostAndPaid.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${items.available.fileName}`);
       FileManager.deleteFile(`cypress/fixtures/${items.checkedOut.fileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${items.inProcess.fileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${items.withdrawnScenario.fileName}`);
     });
 
     it(
-      'C594355 Verify update of Item records from "In Process" status to "Withdrawn" status (firebird)',
+      'C594355 Verify update of Item records from "In Process", "Lost and paid" statuses to "Withdrawn" status (firebird)',
       { tags: ['criticalPath', 'firebird', 'C594355'] },
       () => {
         scenarios.forEach((scenario) => {
-          const item = items[scenario.itemKey];
-          const fileNames = BulkEditFiles.getAllDownloadedFileNames(item.fileName, true);
+          // Determine fileName based on scenario type
+          let fileName;
+          if (scenario.itemKey === 'withdrawnScenario') {
+            fileName = items.withdrawnScenario.fileName;
+          } else {
+            fileName = items[scenario.itemKey].fileName;
+          }
+
+          const fileNames = BulkEditFiles.getAllDownloadedFileNames(fileName, true);
 
           // Select "Inventory - items" and upload CSV file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
@@ -150,20 +187,31 @@ describe('Bulk-edit', () => {
             'Items',
             ITEM_IDENTIFIERS.ITEM_BARCODES,
           );
-          BulkEditSearchPane.uploadFile(item.fileName);
+          BulkEditSearchPane.uploadFile(fileName);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyMatchedResults(item.barcode);
-          BulkEditSearchPane.verifyPaneRecordsCount('1 item');
+
+          // Verify matched results for all items in the scenario
+          scenario.barcodes.forEach((barcodeKey) => {
+            BulkEditSearchPane.verifySpecificItemsMatched(items[barcodeKey].barcode);
+          });
+          BulkEditSearchPane.verifyPaneRecordsCount(`${scenario.recordCount} item`);
 
           // Download matched records (CSV)
           BulkEditActions.downloadMatchedResults();
-          BulkEditFiles.verifyValueInRowByUUID(
-            fileNames.matchedRecordsCSV,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-            scenario.initialStatus,
-          );
+
+          // Verify matched records for all items
+          scenario.barcodes.forEach((barcodeKey, index) => {
+            const expectedStatus = scenario.initialStatuses
+              ? scenario.initialStatuses[index]
+              : scenario.initialStatus;
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.matchedRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              items[barcodeKey].barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+              expectedStatus,
+            );
+          });
 
           // Click "Actions" menu => Select "Start bulk edit"
           BulkEditActions.openStartBulkEditForm();
@@ -178,75 +226,101 @@ describe('Bulk-edit', () => {
 
           // Click "Confirm changes" button
           BulkEditActions.confirmChanges();
-          BulkEditActions.verifyAreYouSureForm(1);
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-            scenario.targetStatus,
-          );
+          BulkEditActions.verifyAreYouSureForm(scenario.recordCount);
+
+          // Verify preview for all items
+          scenario.barcodes.forEach((barcodeKey) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              items[barcodeKey].barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+              scenario.targetStatus,
+            );
+          });
 
           // Download preview in CSV format
           BulkEditActions.downloadPreview();
-          BulkEditFiles.verifyValueInRowByUUID(
-            fileNames.previewRecordsCSV,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            item.barcode,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-            scenario.targetStatus,
-          );
+
+          // Verify preview CSV for all items
+          scenario.barcodes.forEach((barcodeKey) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              fileNames.previewRecordsCSV,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              items[barcodeKey].barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+              scenario.targetStatus,
+            );
+          });
 
           // Commit changes
           BulkEditActions.commitChanges();
 
           if (scenario.shouldSucceed) {
             // Verify successful update
-            BulkEditActions.verifySuccessBanner(1);
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-              item.barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-              scenario.targetStatus,
-            );
+            BulkEditActions.verifySuccessBanner(scenario.recordCount);
+
+            // Verify changes for all items
+            scenario.barcodes.forEach((barcodeKey) => {
+              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+                items[barcodeKey].barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                scenario.targetStatus,
+              );
+            });
 
             // Download changed records (CSV)
             BulkEditActions.openActions();
             BulkEditActions.downloadChangedCSV();
-            BulkEditFiles.verifyValueInRowByUUID(
-              fileNames.changedRecordsCSV,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              item.barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-              scenario.targetStatus,
-            );
+
+            // Verify changed records CSV for all items
+            scenario.barcodes.forEach((barcodeKey) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                fileNames.changedRecordsCSV,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                items[barcodeKey].barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                scenario.targetStatus,
+              );
+            });
           } else {
             // Verify error scenario
             BulkEditSearchPane.verifyPaneRecordsChangedCount('0 item');
             BulkEditActions.verifySuccessBanner(0);
-            BulkEditSearchPane.verifyErrorLabel(1);
+            BulkEditSearchPane.verifyErrorLabel(scenario.recordCount);
 
             // Check error table - status transition not allowed
-            BulkEditSearchPane.verifyErrorByIdentifier(
-              item.barcode,
-              ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus),
-            );
+            scenario.barcodes.forEach((barcodeKey) => {
+              BulkEditSearchPane.verifyErrorByIdentifier(
+                items[barcodeKey].barcode,
+                ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus),
+              );
+            });
 
             // Download errors CSV
             BulkEditActions.openActions();
             BulkEditActions.downloadErrors();
-            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
-              `ERROR,${item.barcode},${ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus)}`,
-            ]);
+            scenario.barcodes.forEach((barcodeKey) => {
+              ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+                `ERROR,${items[barcodeKey].barcode},${ERROR_MESSAGES.getInvalidStatusValueMessage(scenario.targetStatus)}`,
+              ]);
+            });
           }
 
-          // Navigate to Inventory and verify item status
+          // Navigate to Inventory and verify item status for all items
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-          ItemRecordView.waitLoading();
-          ItemRecordView.verifyItemStatus(
-            scenario.shouldSucceed ? scenario.targetStatus : scenario.initialStatus,
-          );
-          ItemRecordView.closeDetailView();
-          InventorySearchAndFilter.resetAll();
+
+          scenario.barcodes.forEach((barcodeKey, index) => {
+            InventorySearchAndFilter.searchByParameter('Barcode', items[barcodeKey].barcode);
+            ItemRecordView.waitLoading();
+            const expectedStatus = scenario.shouldSucceed
+              ? scenario.targetStatus
+              : scenario.initialStatuses
+                ? scenario.initialStatuses[index]
+                : scenario.initialStatus;
+            ItemRecordView.verifyItemStatus(expectedStatus);
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
+          });
 
           // Clean up downloaded files
           BulkEditFiles.deleteAllDownloadedFiles(fileNames);
