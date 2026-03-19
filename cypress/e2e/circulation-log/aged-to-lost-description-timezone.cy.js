@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { KeyValue, MultiColumnListCell, including } from '../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -80,9 +79,6 @@ describe('Circulation log', () => {
 
   const ISO_LIKE_DATE_PARTS_LOCALE = 'en-US';
 
-  const descriptionDatePattern =
-    /Due date:\s(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(?:Z|[+-]\d{4}))/;
-
   const getDueDatePartsForTimezone = (dueDate, timezone, locale) => {
     const datePart = DateTools.getFormattedDateInTimezone(dueDate, timezone, locale);
     const timePart = DateTools.getFormattedTimeInTimezone(dueDate, timezone, locale);
@@ -116,33 +112,6 @@ describe('Circulation log', () => {
     const timezoneOffset = `${sign}${rawHours.padStart(2, '0')}${rawMinutes.padStart(2, '0')}`;
 
     return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}:${getPart('second')}.${String(date.getUTCMilliseconds()).padStart(3, '0')}${timezoneOffset}`;
-  };
-
-  const parseIsoLikeDescriptionDate = (value) => {
-    const [, year, month, day, hour, minute, second, milliseconds, timezoneOffset] = value.match(
-      /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})(Z|[+-]\d{4})/,
-    );
-
-    const utcTimestamp = Date.UTC(
-      Number(year),
-      Number(month) - 1,
-      Number(day),
-      Number(hour),
-      Number(minute),
-      Number(second),
-      Number(milliseconds),
-    );
-
-    if (timezoneOffset === 'Z') {
-      return utcTimestamp;
-    }
-
-    const offsetSign = timezoneOffset.startsWith('+') ? 1 : -1;
-    const offsetHours = Number(timezoneOffset.slice(1, 3));
-    const offsetMinutes = Number(timezoneOffset.slice(3, 5));
-    const totalOffsetMinutes = offsetSign * (offsetHours * 60 + offsetMinutes);
-
-    return utcTimestamp - totalOffsetMinutes * 60 * 1000;
   };
 
   const setTestTimezone = () => {
@@ -333,8 +302,7 @@ describe('Circulation log', () => {
         CheckOutActions.checkItemDueDate(datePart);
         CheckOutActions.checkItemDueDate(timePart);
         CheckOutActions.openLoanDetails();
-        cy.expect(KeyValue('Due date').has({ value: including(datePart) }));
-        cy.expect(KeyValue('Due date').has({ value: including(timePart) }));
+        CheckOutActions.checkLoanDetailsDueDate(datePart, timePart);
 
         cy.getAdminToken();
         // Return the timezone back to original while polling to avoid a conflict with other tests
@@ -363,23 +331,10 @@ describe('Circulation log', () => {
             rowIndex,
           );
 
-          cy.wrap(MultiColumnListCell({ row: Number(rowIndex), columnIndex: 7 }).text()).then(
-            (description) => {
-              const descriptionDateMatch = description.match(descriptionDatePattern);
-
-              expect(description).to.include('Due date:');
-              expect(descriptionDateMatch).to.not.equal(null);
-
-              const actualDescriptionDueDate = descriptionDateMatch[1];
-              const dueDateDriftMinutes =
-                Math.abs(
-                  parseIsoLikeDescriptionDate(actualDescriptionDueDate) -
-                    parseIsoLikeDescriptionDate(expectedDescriptionDueDate),
-                ) /
-                (1000 * 60);
-
-              expect(dueDateDriftMinutes).to.be.at.most(ALLOWED_DESCRIPTION_DUE_DATE_DRIFT_MINUTES);
-            },
+          SearchResults.checkDescriptionDueDateWithinDrift(
+            rowIndex,
+            expectedDescriptionDueDate,
+            ALLOWED_DESCRIPTION_DUE_DATE_DRIFT_MINUTES,
           );
 
           SearchResults.chooseActionByRow(rowIndex, 'Loan details');
