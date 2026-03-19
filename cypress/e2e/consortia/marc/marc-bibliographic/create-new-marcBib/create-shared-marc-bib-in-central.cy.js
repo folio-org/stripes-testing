@@ -2,6 +2,7 @@ import Affiliations, { tenantNames } from '../../../../../support/dictionary/aff
 import Permissions from '../../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -60,14 +61,10 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
       });
 
@@ -95,8 +92,6 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceID.push(id);
@@ -104,15 +99,14 @@ describe('MARC', () => {
           InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkContributor(testData.contributor);
-          cy.waitForAuthRefresh(() => {
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
           InventoryInstances.selectInstance();
           InventoryInstance.verifySharedIcon();

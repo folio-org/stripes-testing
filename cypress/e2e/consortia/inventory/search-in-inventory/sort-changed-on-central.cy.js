@@ -117,7 +117,7 @@ describe('Inventory', () => {
 
       it(
         'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C543872'] },
+        { tags: ['criticalPathECSFlaky', 'spitfire', 'nonParallel', 'C543872'] },
         () => {
           cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -143,6 +143,7 @@ describe('Inventory', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(1);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
@@ -151,6 +152,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.resetAll();
             InventorySearchAndFilter.verifyResultPaneEmpty();
             InventorySearchAndFilter.verifySearchFieldIsEmpty();
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(1);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
