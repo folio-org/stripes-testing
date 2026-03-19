@@ -23,6 +23,7 @@ const selectRolePlaceholderText = 'Select authorization role';
 const compareUsersButton = Button('Compare users');
 const selectUserDropdown = Button({ name: 'users' });
 const selectUserPlaceholderText = 'Select User';
+const selectMemberPlaceholderText = 'Select Member';
 
 export default {
   selectRolePlaceholderText,
@@ -43,6 +44,15 @@ export default {
       currentPane
         .find(selectUserDropdown)
         .has({ text: `Select control${selectUserPlaceholderText}`, disabled: true }),
+    );
+  },
+
+  checkMembersDropdownPlaceholder: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.expect(
+      currentPane
+        .find(selectMemberDropdown)
+        .has({ text: `Select control${selectMemberPlaceholderText}` }),
     );
   },
 
@@ -207,6 +217,7 @@ export default {
       ]);
       this.checkUsersDropdownDisabled(index);
       this.checkRolesDropdownDisabled(index);
+      this.checkMembersDropdownPlaceholder(index);
     });
   },
 

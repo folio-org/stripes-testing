@@ -85,6 +85,9 @@ const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 const closeIconButton = Button({ icon: 'times' });
 const preferredEmailCommunicationsField = KeyValue('Preferred email communications');
+const rolesAffiliationSelectionList = SelectionList({
+  id: including('user-assigned-affiliations-select'),
+});
 
 export default {
   errors,
@@ -939,5 +942,27 @@ export default {
         }),
       ),
     );
+  },
+
+  verifyUserType(userType) {
+    this.checkKeyValue('User type', userType.toLowerCase());
+  },
+
+  checkRolesAffiliationDropdownShown(isShown = true) {
+    if (isShown) cy.expect(rolesAffiliationSelect.exists());
+    else cy.expect(rolesAffiliationSelect.absent());
+  },
+
+  verifyRolesAffiliationOptions(affiliations) {
+    const affiliationsArray = Array.isArray(affiliations) ? affiliations : [affiliations];
+    cy.do(rolesAffiliationSelect.open());
+    affiliationsArray.forEach((affiliation) => {
+      cy.expect(
+        rolesAffiliationSelectionList.has({
+          optionList: or(including(affiliation), including(`${affiliation} (Primary)`)),
+        }),
+      );
+    });
+    cy.expect(rolesAffiliationSelectionList.has({ optionCount: affiliationsArray.length }));
   },
 };
