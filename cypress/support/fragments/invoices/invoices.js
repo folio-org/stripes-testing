@@ -870,13 +870,15 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedMessage);
   },
 
-  canNotApproveInvoice: (errorMessage) => {
+  canNotApproveInvoice: (fund) => {
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+    InteractorsTools.checkCalloutErrorMessage(
+      `Fund distribution amount exceeds the allowable expenditure amount in the ${fund.code} fund.`,
+    );
   },
 
   canNotApproveAndPayInvoice: (fund) => {
@@ -886,7 +888,7 @@ export default {
       submitButton.click(),
     ]);
     InteractorsTools.checkCalloutErrorMessage(
-      `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${fund.code}].`,
+      `Fund distribution amount exceeds the allowable expenditure amount in the ${fund.code} fund.`,
     );
   },
 
