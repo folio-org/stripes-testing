@@ -101,73 +101,71 @@ describe('Data Export', () => {
       'C423567 Export of imported MARC Authority record (firebird)',
       { tags: ['dryRun', 'firebird', 'C423567'] },
       () => {
-        cy.getUserToken(user.username, user.password, { log: false }).then(() => {
-          ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
-          ExportFileHelper.exportWithDefaultJobProfile(
-            marcAuthorityUUIDFileName,
-            'Default authority',
-            'Authorities',
-          );
-          DataExportLogs.verifyAreYouSureModalAbsent();
+        cy.getUserToken(user.username, user.password, { log: false });
 
-          cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-          cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
-            const exportedFile = marcAuthorityUUIDFileName.replace('.csv', '');
-            const { jobExecutions } = response.body;
-            const jobData = jobExecutions.find((jobExecution) => {
-              return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
-            });
-            firstJobHrid = jobData.hrId;
-            exportedFileName = `${marcAuthorityUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
+        ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
+        ExportFileHelper.exportWithDefaultJobProfile(
+          marcAuthorityUUIDFileName,
+          'Default authority',
+          'Authorities',
+        );
+        DataExportLogs.verifyAreYouSureModalAbsent();
 
-            DataExportResults.verifySuccessExportResultCells(
-              exportedFileName,
-              recordsCount,
-              firstJobHrid,
-              user.username,
-              'Default authority',
-            );
-
-            DataExportLogs.clickButtonWithText(exportedFileName);
-
-            // Wait longer for download to complete
-            cy.wait(5000);
-
-            // Verify file exists before parsing (with extended timeout for slow downloads)
-            cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should(
-              'exist',
-            );
-
-            const assertionsOnMarcFileContent = [
-              {
-                uuid: marcAuthority.id,
-                assertions: [
-                  (record) => {
-                    expect(record.leader).to.eq('00875cz  a2200265n  4500');
-                  },
-                  (record) => {
-                    expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
-                  },
-                  (record) => {
-                    expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-                  },
-                  ...expectedMarcFields.map((fieldData, index) => (record) => {
-                    expect(record.fields[index + 2]).to.deep.eq(fieldData);
-                  }),
-                  (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-                  (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-                  (record) => expect(record.get('999')[0].subf[1][1]).to.eq(marcAuthority.id),
-                ],
-              },
-            ];
-
-            parseMrcFileContentAndVerify(
-              exportedFileName,
-              assertionsOnMarcFileContent,
-              recordsCount,
-              false,
-            );
+        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+        cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const exportedFile = marcAuthorityUUIDFileName.replace('.csv', '');
+          const { jobExecutions } = response.body;
+          const jobData = jobExecutions.find((jobExecution) => {
+            return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
           });
+          firstJobHrid = jobData.hrId;
+          exportedFileName = `${marcAuthorityUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
+
+          DataExportResults.verifySuccessExportResultCells(
+            exportedFileName,
+            recordsCount,
+            firstJobHrid,
+            user.username,
+            'Default authority',
+          );
+
+          DataExportLogs.clickButtonWithText(exportedFileName);
+
+          // Wait longer for download to complete
+          cy.wait(5000);
+
+          // Verify file exists before parsing (with extended timeout for slow downloads)
+          cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
+
+          const assertionsOnMarcFileContent = [
+            {
+              uuid: marcAuthority.id,
+              assertions: [
+                (record) => {
+                  expect(record.leader).to.eq('00875cz  a2200265n  4500');
+                },
+                (record) => {
+                  expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
+                },
+                (record) => {
+                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
+                },
+                ...expectedMarcFields.map((fieldData, index) => (record) => {
+                  expect(record.fields[index + 2]).to.deep.eq(fieldData);
+                }),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
+                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(marcAuthority.id),
+              ],
+            },
+          ];
+
+          parseMrcFileContentAndVerify(
+            exportedFileName,
+            assertionsOnMarcFileContent,
+            recordsCount,
+            false,
+          );
         });
       },
     );

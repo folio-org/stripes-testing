@@ -62,7 +62,6 @@ describe('MARC', () => {
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
-          authRefresh: true,
         });
         cy.allure().logCommandSteps();
       });
@@ -79,6 +78,7 @@ describe('MARC', () => {
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
         { tags: ['dryRun', 'spitfire', 'C350667'] },
         () => {
+          cy.getUserToken(user.username, user.password, { log: false });
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
