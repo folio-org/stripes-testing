@@ -36,14 +36,14 @@ describe('Finance', () => {
     first: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${StringTools.randomTwoDigitNumber()}01`,
-      periodStart: new Date(), // Feb 4, 2026
-      periodEnd: new Date(date.getFullYear(), 11, 31), // Dec 31, 2026
+      periodStart: new Date(),
+      periodEnd: new Date(date.getFullYear(), 11, 31),
     },
     second: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${StringTools.randomTwoDigitNumber()}02`,
-      periodStart: new Date(date.getFullYear() + 1, 0, 1), // Jan 1, 2027
-      periodEnd: new Date(date.getFullYear() + 1, 11, 31), // Dec 31, 2027
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
     },
   };
 
@@ -136,14 +136,14 @@ describe('Finance', () => {
                     FiscalYears.updateFiscalYearViaApi({
                       ...fiscalYears.first,
                       _version: 1,
-                      periodStart: new Date(date.getFullYear() - 1, 0, 1), // Jan 1, 2025
-                      periodEnd: new Date(date.getFullYear() - 1, 11, 31), // Dec 31, 2025
+                      periodStart: new Date(date.getFullYear() - 1, 0, 1),
+                      periodEnd: new Date(date.getFullYear() - 1, 11, 31),
                     });
                     FiscalYears.updateFiscalYearViaApi({
                       ...fiscalYears.second,
                       _version: 1,
-                      periodStart: new Date(), // Feb 4, 2026
-                      periodEnd: fiscalYears.second.periodEnd, // Dec 31, 2027
+                      periodStart: new Date(),
+                      periodEnd: fiscalYears.second.periodEnd,
                     });
                     Invoices.updateInvoiceViaApi({
                       ...testData.invoice,
@@ -181,7 +181,7 @@ describe('Finance', () => {
   // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'false'
   it(
     'C375959 Meaningful error message appears when trying to approve invoice with related fund having only previous budget (thunderjet) (TaaS)',
-    { tags: ['extendedPathFlaky', 'thunderjet', 'C375959'] },
+    { tags: ['extendedPath', 'thunderjet', 'C375959'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

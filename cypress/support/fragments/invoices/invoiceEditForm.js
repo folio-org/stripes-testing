@@ -109,6 +109,7 @@ export default {
       cy.do([Selection('Batch group*').open(), SelectionList().select(invoice.batchGroupName)]);
     }
     if (invoice.currency) {
+      cy.get('#currency').scrollIntoView({ duration: 1000 });
       cy.do([Selection('Currency*').open(), SelectionList().select(invoice.currency)]);
     }
     if (invoice.exchangeRate) {

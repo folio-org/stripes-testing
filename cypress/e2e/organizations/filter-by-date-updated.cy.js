@@ -1,10 +1,9 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
-import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 
 const testData = {
   user: null,
@@ -62,7 +61,7 @@ describe('Organizations', () => {
       OrganizationsSearchAndFilter.filterByDateUpdated(today, today);
       OrganizationsSearchAndFilter.searchByParameters('Name', testData.organization.name);
       Organizations.checkSearchResults({ name: `${testData.organization.name}-edited` });
-      OrganizationsSearchAndFilter.resetFilters();
+      OrganizationsSearchAndFilter.resetFiltersIfActive();
       OrganizationsSearchAndFilter.filterByDateUpdated('01/01/2000', '12/31/2000');
       Organizations.checkZeroSearchResultsHeader();
       OrganizationsSearchAndFilter.filterByDateUpdated(today, yesterday);

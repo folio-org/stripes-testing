@@ -192,7 +192,7 @@ describe('Finance', () => {
         Funds.selectPreviousBudgetDetails();
         Funds.openTransactions();
         Funds.selectTransactionInList('Encumbrance');
-        Funds.varifyDetailsInTransaction(
+        Funds.verifyDetailsInTransaction(
           firstFiscalYear.code,
           '$100.00',
           `${orderNumber}-1`,
