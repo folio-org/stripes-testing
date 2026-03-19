@@ -13,6 +13,7 @@ import MarcAuthorityBrowse from '../../../../../../support/fragments/marcAuthori
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -114,14 +115,10 @@ describe('MARC', () => {
           { tags: ['criticalPathECS', 'spitfire', 'C422141'] },
           () => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -164,7 +161,7 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$e writer',
             );
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdRecordsID.push(id);
@@ -185,6 +182,8 @@ describe('MARC', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            InventoryInstances.waitContentLoading();
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
             InventoryInstances.selectInstance();
             InventoryInstance.verifySharedIcon();

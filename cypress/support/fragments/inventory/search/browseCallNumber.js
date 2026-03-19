@@ -8,6 +8,7 @@ import {
   Section,
   Accordion,
   Checkbox,
+  matching,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
@@ -228,11 +229,14 @@ export default {
   },
 
   checkValuePresentForRow(callNumber, columnIndex, value) {
-    cy.do(
-      MultiColumnListCell(callNumber).perform((element) => {
-        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
-        cy.expect(MultiColumnListCell(value, { row: rowNumber, columnIndex }).exists());
-      }),
+    const callNumberEscaped = callNumber.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    cy.expect(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${callNumberEscaped}\\n`)),
+        isContainer: true,
+      })
+        .find(MultiColumnListCell(value, { columnIndex }))
+        .exists(),
     );
   },
 
