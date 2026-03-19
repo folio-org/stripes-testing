@@ -147,7 +147,7 @@ describe('Data Import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['dryRun', 'folijet'] },
+      { tags: ['dryRun', 'folijet', 'C388505'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -157,6 +157,7 @@ describe('Data Import', () => {
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
         const marcFileName = `C388505 autotestFileName${getRandomPostfix()}.mrc`;
+        cy.getUserToken(user.username, user.password, { log: false });
 
         // upload .mrc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
