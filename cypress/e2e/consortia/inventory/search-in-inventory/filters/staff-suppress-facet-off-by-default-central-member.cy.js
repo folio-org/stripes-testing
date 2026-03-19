@@ -92,7 +92,7 @@ describe('Inventory', () => {
 
         it(
           'C466235 Staff suppress facet is OFF by default when user has permission to use facet in three segments (Instance|Holdings|Item) in Central and Member tenant (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C466235'] },
+          { tags: ['extendedPathECS', 'spitfire', 'C466235'] },
           () => {
             function checkNoStaffSuppressParamInUrl() {
               cy.url().then((url) => {

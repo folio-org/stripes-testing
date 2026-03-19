@@ -1859,8 +1859,8 @@ export const TRANSACTION_TYPES = {
 
 export const POL_CREATE_INVENTORY_SETTINGS = {
   INSTANCE: 'Instance',
-  INSTANCE_HOLDINGS: 'Instance, holdings',
-  INSTANCE_HOLDINGS_ITEM: 'Instance, holdings, item',
+  INSTANCE_HOLDING: 'Instance, Holding',
+  INSTANCE_HOLDING_ITEM: 'Instance, Holding, Item',
   NONE: 'None',
 };
 

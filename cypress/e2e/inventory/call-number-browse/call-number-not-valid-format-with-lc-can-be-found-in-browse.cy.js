@@ -135,6 +135,41 @@ describe('Inventory', () => {
         .flat();
     };
 
+    function runTest(callNumberTypeName) {
+      folioInstances.forEach((instance) => {
+        const callNumberQuery =
+          instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
+        InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
+        InventorySearchAndFilter.browseSearch(callNumberQuery);
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber: callNumberQuery }],
+        });
+        InventorySearchAndFilter.clickResetAllButton();
+      });
+
+      folioInstances.forEach((instance) => {
+        const callNumberQuery =
+          instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
+        const currentCallNumberType = getIdByName(callNumberTypeName);
+        const holdingsCallNumberType = instance.holdings[0]?.callNumberTypeId;
+        const itemsCallNumberType = instance.items[0]?.itemLevelCallNumberTypeId;
+        if (
+          holdingsCallNumberType !== currentCallNumberType ||
+          itemsCallNumberType !== currentCallNumberType
+        ) {
+          return;
+        }
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumberTypeName);
+        BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
+        InventorySearchAndFilter.browseSearch(callNumberQuery);
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber: callNumberQuery }],
+        });
+        InventorySearchAndFilter.clickResetAllButton();
+      });
+    }
+
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
@@ -161,10 +196,13 @@ describe('Inventory', () => {
         });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+      });
+    });
+
+    beforeEach('Login to the application', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
       });
     });
 
@@ -179,58 +217,42 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451466 C451468 C451469 C451470 Call number of not valid format and with selected call number type can be found via browse (spitfire)',
+      'C451468 Call number of not valid format and with selected "LC" call number type can be found via browse (spitfire)',
       {
-        tags: [
-          'criticalPathFlaky',
-          'spitfire',
-          'nonParallel',
-          'C451468',
-          'C451466',
-          'C451469',
-          'C451470',
-        ],
+        tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C451468'],
       },
       () => {
-        folioInstances.forEach((instance) => {
-          const callNumberQuery =
-            instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
-          InventorySearchAndFilter.selectBrowseCallNumbers();
-          BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
-          InventorySearchAndFilter.browseSearch(callNumberQuery);
-          InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-            records: [{ callNumber: callNumberQuery }],
-          });
-          InventorySearchAndFilter.clickResetAllButton();
-        });
+        runTest(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS);
+      },
+    );
 
-        [
-          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
-          CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL,
-          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
-          CALL_NUMBER_TYPE_NAMES.SUDOC,
-        ].forEach((callNumberType) => {
-          folioInstances.forEach((instance) => {
-            const callNumberQuery =
-              instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
-            const currentCallNumberType = getIdByName(callNumberType);
-            const holdingsCallNumberType = instance.holdings[0]?.callNumberTypeId;
-            const itemsCallNumberType = instance.items[0]?.itemLevelCallNumberTypeId;
-            if (
-              holdingsCallNumberType !== currentCallNumberType ||
-              itemsCallNumberType !== currentCallNumberType
-            ) {
-              return;
-            }
-            InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumberType);
-            BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
-            InventorySearchAndFilter.browseSearch(callNumberQuery);
-            InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-              records: [{ callNumber: callNumberQuery }],
-            });
-            InventorySearchAndFilter.clickResetAllButton();
-          });
-        });
+    it(
+      'C451466 Call number of not valid format and with selected "Dewey" call number type can be found via browse (spitfire)',
+      {
+        tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C451466'],
+      },
+      () => {
+        runTest(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL);
+      },
+    );
+
+    it(
+      'C451469 Call number of not valid format and with selected "NLM" call number type can be found via browse (spitfire)',
+      {
+        tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C451469'],
+      },
+      () => {
+        runTest(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE);
+      },
+    );
+
+    it(
+      'C451470 Call number of not valid format and with selected "SuDoc" call number type can be found via browse (spitfire)',
+      {
+        tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C451470'],
+      },
+      () => {
+        runTest(CALL_NUMBER_TYPE_NAMES.SUDOC);
       },
     );
   });

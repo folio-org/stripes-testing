@@ -1424,11 +1424,16 @@ export default {
   },
 
   verifyTagFieldAfterUnlinkingByTag(tag, secondBox, thirdBox, content) {
+    const targetRow = getRowInteractorByTagName(tag);
     cy.expect([
-      QuickMarcEditorRow({ tagValue: tag }).find(tagBox).has({ value: tag }),
-      QuickMarcEditorRow({ tagValue: tag }).find(firstIndicatorBox).has({ value: secondBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(secondIndicatorBox).has({ value: thirdBox }),
-      QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ value: content }),
+      targetRow.find(tagBox).has({ value: tag, disabled: false }),
+      targetRow.find(firstIndicatorBox).has({ value: secondBox, disabled: false }),
+      targetRow.find(secondIndicatorBox).has({ value: thirdBox, disabled: false }),
+      targetRow.find(fourthBox).has({ value: content, disabled: false }),
+      targetRow.find(fourthBoxInLinkedField).absent(),
+      targetRow.find(fifthBoxInLinkedField).absent(),
+      targetRow.find(sixthBoxInLinkedField).absent(),
+      targetRow.find(seventhBoxInLinkedField).absent(),
     ]);
   },
 
@@ -2670,6 +2675,15 @@ export default {
     ]);
   },
 
+  verifyIconsAfterUnlinkingByTag(tag) {
+    const targetRow = getRowInteractorByTagName(tag);
+    cy.expect([
+      targetRow.find(unlinkIconButton).absent(),
+      targetRow.find(viewAuthorityIconButton).absent(),
+      targetRow.find(linkToMarcRecordButton).exists(),
+    ]);
+  },
+
   selectExistingHoldingsLocation(locationObject) {
     Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
       const institutionName = institution.name;
@@ -3473,6 +3487,19 @@ export default {
     if (positions20to23BoxValues) cy.expect(positions20to23Box.has({ value: positions20to23BoxValues, disabled: true }));
   },
 
+  verifyValuesInLdrNonEditableBoxesHoldings({
+    positions0to4BoxValues,
+    positions7to16BoxValues,
+    positions19to23BoxValues,
+  } = {}) {
+    const positions0to4Box = TextField({ name: 'records[0].content.Record length' });
+    const positions7to16Box = TextField({ name: 'records[0].content.7-16 positions' });
+    const positions19to23Box = TextField({ name: 'records[0].content.19-23 positions' });
+    if (positions0to4BoxValues) cy.expect(positions0to4Box.has({ value: positions0to4BoxValues, disabled: true }));
+    if (positions7to16BoxValues) cy.expect(positions7to16Box.has({ value: positions7to16BoxValues, disabled: true }));
+    if (positions19to23BoxValues) cy.expect(positions19to23Box.has({ value: positions19to23BoxValues, disabled: true }));
+  },
+
   checkMarcBibHeader({ instanceTitle, status }, userName) {
     const dateMatchers = [];
     for (let i = -2; i <= 2; i++) {
@@ -3510,6 +3537,24 @@ export default {
         .find(boxes[boxNumber - 1])
         .has({ focused: true }),
     );
+  },
+
+  focusOnBoxInLinkedField(tag, boxNumber) {
+    const boxes = [
+      tagBox,
+      firstIndicatorBox,
+      secondIndicatorBox,
+      fourthBoxInLinkedField,
+      fifthBoxInLinkedField,
+      sixthBoxInLinkedField,
+      seventhBoxInLinkedField,
+    ];
+    cy.do(
+      getRowInteractorByTagName(tag)
+        .find(boxes[boxNumber - 1])
+        .focus(),
+    );
+    this.verifyBoxIsFocusedInLinkedField(tag, boxNumber);
   },
 
   verifyFieldTextBoxFocused(tag, boxLabel, isFocused = true, row = null) {
@@ -3581,5 +3626,36 @@ export default {
       targetField.find(viewAuthorityIconButton).exists(),
       targetField.find(Link({ href: including(`/authorities/${authorityId}`) })).exists(),
     ]);
+  },
+
+  verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, expectedPosition) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      expect(el.selectionStart).to.equal(expectedPosition);
+      expect(el.selectionEnd).to.equal(expectedPosition);
+    });
+  },
+
+  setCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position) {
+    cy.get(`div[data-row="record-row[${rowIndex}]"] :is(input, textarea)`).then(($input) => {
+      const el = $input[boxNumber - 1];
+      el.focus();
+      el.selectionStart = position;
+      el.selectionEnd = position;
+      this.verifyCursorPositionInBoxOfLinkedField(rowIndex, boxNumber, position);
+    });
+  },
+
+  verifyInlineValidationErrorLink(rowIndex, linkText) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link(linkText))
+        .perform((elem) => {
+          const targetValue = elem.getAttribute('target');
+          const targetHref = elem.getAttribute('href');
+          expect(targetValue).to.equal('_blank');
+          expect(targetHref).to.equal(linkText);
+        }),
+    );
   },
 };

@@ -97,7 +97,8 @@ const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
-const heldByAccordion = Accordion('Held by');
+const heldbyAccordionName = 'Held by';
+const heldByAccordion = Accordion(heldbyAccordionName);
 const dateRangeAccordion = Accordion('Date range');
 const dateFromField = TextField({ name: 'startDate' });
 const dateToField = TextField({ name: 'endDate' });
@@ -1824,5 +1825,18 @@ export default {
     const toField = Accordion(dateAccordionName).find(dateToField);
     if (errorFrom) this.verifyErrorMessageInTextField(fromField, true, errorFrom);
     if (errorTo) this.verifyErrorMessageInTextField(toField, true, errorTo);
+  },
+
+  clearDefaultHeldbyFilter() {
+    cy.wait(2000);
+    this.clearDefaultFilter(heldbyAccordionName);
+    cy.expect(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${heldbyAccordionName}"`,
+          `Clear selected ${heldbyAccordionName} filters`,
+        ),
+      }).absent(),
+    );
   },
 };

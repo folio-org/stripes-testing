@@ -125,7 +125,7 @@ describe('Inventory', () => {
         QuickMarcEditor.confirmUnlinkingField();
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false);
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false, 1);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();
         BrowseSubjects.browse(testData.subjectName);
