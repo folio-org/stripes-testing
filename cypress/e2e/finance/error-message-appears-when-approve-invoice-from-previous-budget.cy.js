@@ -193,9 +193,7 @@ describe('Finance', () => {
           fundCode: testData.fundA.code,
         },
       ]);
-      Invoices.canNotApproveInvoice(
-        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${testData.fundA.code}].`,
-      );
+      Invoices.canNotApproveInvoice(testData.fundA);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });
