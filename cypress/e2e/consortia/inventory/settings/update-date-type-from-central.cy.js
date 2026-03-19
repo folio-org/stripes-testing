@@ -9,6 +9,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import InventoryNewInstance from '../../../../support/fragments/inventory/inventoryNewInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Settings', () => {
@@ -98,18 +99,17 @@ describe('Inventory', () => {
                 )[0];
                 expect(matchedDateTypeMember.name).to.eq(testData.newName);
 
-                cy.waitForAuthRefresh(() => {
-                  cy.login(user.username, user.password, {
-                    path: TopMenu.inventoryPath,
-                    waiter: InventoryInstances.waitContentLoading,
-                  });
-                }, 20_000);
+                cy.login(user.username, user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
                 InventoryInstances.waitContentLoading();
                 InventoryInstances.addNewInventory();
                 InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
                 InstanceRecordEdit.verifyDateFieldsPresent();
                 InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.newName);
                 InventoryNewInstance.clickSaveCloseButton();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstances.searchByTitle(testData.instanceTitle);
                 InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
                 InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
@@ -120,6 +120,7 @@ describe('Inventory', () => {
 
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
+                InventorySearchAndFilter.clearDefaultHeldbyFilter();
                 InventoryInstances.searchByTitle(testData.instanceTitle);
                 InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
                 InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
@@ -138,6 +139,7 @@ describe('Inventory', () => {
                 InstanceRecordEdit.verifyDateFieldsPresent();
                 InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.newName);
                 InventoryNewInstance.clickSaveCloseButton();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstances.searchByTitle(testData.instanceTitleLocal);
                 InventoryInstances.selectInstanceByTitle(testData.instanceTitleLocal);
                 InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitleLocal);

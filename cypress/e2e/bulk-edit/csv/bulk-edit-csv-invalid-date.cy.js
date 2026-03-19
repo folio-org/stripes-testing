@@ -7,11 +7,15 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import DateTools from '../../../support/utils/dateTools';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(userBarcodesFileName);
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const date = DateTools.getFormattedDate({ date: new Date() });
 
 describe('Bulk-edit', () => {
   describe('Csv approach', () => {
@@ -22,6 +26,13 @@ describe('Bulk-edit', () => {
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
+          cy.updateUser({
+            ...users[0],
+            enrollmentDate: date,
+          });
+        });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -49,7 +60,6 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
 
-        const date = DateTools.getFormattedDate({ date: new Date() });
         const invalidDate = 'June 19';
         BulkEditActions.prepareValidBulkEditFile(
           matchedRecordsFileName,
@@ -64,8 +74,10 @@ describe('Bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
 
-        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditActions.openActions();
+        BulkEditActions.downloadErrors();
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [`ERROR,${user.barcode},`]);
       },
     );
   });

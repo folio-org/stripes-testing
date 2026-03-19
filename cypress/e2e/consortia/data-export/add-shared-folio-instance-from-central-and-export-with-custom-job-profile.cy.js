@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -35,6 +35,7 @@ import parseMrcFileContentAndVerify, {
 
 let user;
 let exportedFileName;
+let memberTenantLocationName;
 const postfix = getRandomPostfix();
 const recordsCount = 3;
 const userPermissions = [
@@ -135,9 +136,14 @@ describe('Data Export', () => {
           cy.withinTenant(Affiliations.College, () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C407653');
 
-            cy.getLocations({ limit: 1 }).then((res) => {
-              testData.locationId = res.id;
+            // Get available location from member tenant
+
+            InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
+              const locations = resp.filter((location) => location.name !== 'DCB');
+              memberTenantLocationName = locations[0].name;
+              testData.locationId = locations[1].id;
             });
+
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
             });
@@ -332,7 +338,7 @@ describe('Data Export', () => {
           InventoryInstance.pressAddHoldingsButton();
           HoldingsRecordEdit.waitLoading();
           HoldingsRecordEdit.fillHoldingFields({
-            permanentLocation: LOCATION_NAMES.ANNEX,
+            permanentLocation: memberTenantLocationName,
           });
           HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
           InventoryInstance.waitLoading();

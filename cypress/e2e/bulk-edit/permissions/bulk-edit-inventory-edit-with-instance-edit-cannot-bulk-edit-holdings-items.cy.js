@@ -6,6 +6,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
 const folioInstance = {
@@ -90,10 +91,13 @@ describe('Bulk-edit', () => {
         // Step 5: Upload CSV file with valid Item UUIDs and check result
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(folioInstance.itemBarcode);
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+        );
+        BulkEditSearchPane.verifyMatchedResults(folioInstance.itemId);
 
         // Step 6: Click "Actions" menu and verify available options
-        BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.startBulkEditAbsent();
       },
