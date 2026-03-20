@@ -1,7 +1,5 @@
-// const manageProfileSettingsPage = "//main[@data-testid='manage-profile-settings']";
-// const profilesSection = "//section[@data-testid='profiles-list']";
-const manageProfileSettingsPage = "//div[@data-testid='manage-profile-settings']";
-const profilesSection = "//div[@data-testid='profiles-list']";
+const manageProfileSettingsPage = "//main[@data-testid='manage-profile-settings']";
+const profilesSection = "//section[@data-testid='profiles-list']";
 const editorSection = "//div[@data-testid='profile-settings-editor']";
 
 const saveAndCloseButton = "//button[@data-testid='save-and-close']";
@@ -12,10 +10,8 @@ const preferredProfileCheckbox = "//input[@data-testid='type-default-setting']";
 const defaultProfileSettingsRadio = "//input[@data-testid='settings-active-default']";
 const customProfileSettingsRadio = "//input[@data-testid='settings-active-custom']";
 
-// const selectedList = "//section[@data-testid='selected-component-list']";
-// const unusedList = "//section[@data-testid='unused-component-list']";
-const selectedList = "//div[@data-testid='selected-component-list']";
-const unusedList = "//div[@data-testid='unused-component-list']";
+const selectedList = "//section[@data-testid='selected-component-list']";
+const unusedList = "//section[@data-testid='unused-component-list']";
 const unusedContainer = "//div[@data-droppable-id='unused-container']";
 const profileComponent = 'div.component';
 const draggingComponent = 'div.drag-overlay';
