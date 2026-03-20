@@ -14,6 +14,10 @@ export default {
       }
     });
   },
+  toggleDefaultProfile() {
+    cy.xpath('//input[@type="checkbox"][@name="My default work profile"]')
+      .click();
+  },
   selectDefaultOption() {
     cy.get(profileModalSelector).then((modal) => {
       if (modal.is(':visible')) {
