@@ -286,6 +286,48 @@ export default {
     })
     .then(({ body }) => body),
 
+  waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft = 360, pollIntervalMs = 10000) {
+    return cy
+      .getLoanHistory(loanId, {
+        searchParams: {
+          query: `(loan.id==${loanId} and loan.itemStatus=="${itemStatus}")`,
+        },
+        includeResponse: true,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        if (response.status === 401) {
+          return cy
+            .getAdminToken()
+            .then(() => this.waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft, pollIntervalMs));
+        }
+
+        if (response.status >= 400) {
+          throw new Error(`Failed to get loan history for loan ${loanId}: ${response.status}`);
+        }
+
+        const loansHistory = response.loansHistory;
+
+        if (loansHistory.length > 0) {
+          return loansHistory[0];
+        }
+
+        if (retriesLeft <= 0) {
+          throw new Error(
+            `Loan ${loanId} did not reach item status "${itemStatus}" in loan history`,
+          );
+        }
+
+        cy.wait(pollIntervalMs);
+        return this.waitForLoanItemStatusInHistory(
+          loanId,
+          itemStatus,
+          retriesLeft - 1,
+          pollIntervalMs,
+        );
+      });
+  },
+
   closeLoanViaApi: (userId, servicePointId) => {
     return cy
       .okapiRequest({
