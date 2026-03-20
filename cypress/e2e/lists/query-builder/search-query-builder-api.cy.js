@@ -235,12 +235,12 @@ describe('Lists', () => {
         'C436901 Search purchase order lines in the Query Builder using "PO — Order type" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C436901'] },
         () => {
-          const fqlQuery = { 'po.order_type': { $eq: 'One-Time' } };
+          const fqlQuery = { 'purchase_order.order_type': { $eq: 'One-Time' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['po.order_type']).to.be.equal('One-Time');
+                expect(item['purchase_order.order_type']).to.be.equal('One-Time');
               });
             });
           });
@@ -251,12 +251,12 @@ describe('Lists', () => {
         'C440056 Search purchase order lines in the Query Builder using "PO — Approved" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C440056'] },
         () => {
-          const fqlQuery = { 'po.approved': { $eq: 'true' } };
+          const fqlQuery = { 'purchase_order.approved': { $eq: 'true' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['po.approved']).to.be.equal('true');
+                expect(item['purchase_order.approved']).to.be.equal('true');
               });
             });
           });
@@ -328,12 +328,12 @@ describe('Lists', () => {
         'C442846 Search purchase order lines in the Query Builder using "PO — PO number" (corsair)',
         { tags: ['criticalPath', 'corsair', 'C442846'] },
         () => {
-          const fqlQuery = { 'po.po_number': { $contains: '1' } };
+          const fqlQuery = { 'purchase_order.po_number': { $contains: '1' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['po.po_number'].includes('1')).to.be.equal(true);
+                expect(item['purchase_order.po_number'].includes('1')).to.be.equal(true);
               });
             });
           });
@@ -362,18 +362,18 @@ describe('Lists', () => {
         () => {
           const fqlQuery = {
             $and: [
-              { 'po.updated_at': { $gt: '2020-01-01T00:00:00.000' } },
-              { 'po.updated_at': { $lt: '2040-01-01T00:00:00.000' } },
+              { 'purchase_order.updated_at': { $gt: '2020-01-01T00:00:00.000' } },
+              { 'purchase_order.updated_at': { $lt: '2040-01-01T00:00:00.000' } },
             ],
           };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(new Date(item['po.updated_at'])).to.be.greaterThan(
+                expect(new Date(item['purchase_order.updated_at'])).to.be.greaterThan(
                   new Date('2020-01-01T00:00:00.000'),
                 );
-                expect(new Date(item['po.updated_at'])).to.be.lessThan(
+                expect(new Date(item['purchase_order.updated_at'])).to.be.lessThan(
                   new Date('2040-01-01T00:00:00.000'),
                 );
               });

@@ -1,5 +1,7 @@
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -203,10 +205,18 @@ const verifyErrorsForCollegeItems = ({
   BulkEditSearchPane.verifyErrorLabel(2);
   BulkEditActions.openActions();
   BulkEditActions.downloadErrors();
-  ExportFile.verifyFileIncludes(errorsFile, [
-    `ERROR,${folioInstance[identifierKey][0]},${errorTemplate(folioInstance[identifierKey][0])}`,
-    `ERROR,${folioInstance[identifierKey][1]},${errorTemplate(folioInstance[identifierKey][1])}`,
-  ]);
+
+  if (identifier === 'Item UUIDs') {
+    ExportFile.verifyFileIncludes(errorsFile, [
+      `ERROR,${folioInstance[identifierKey][0]},${errorTemplate}`,
+      `ERROR,${folioInstance[identifierKey][1]},${errorTemplate}`,
+    ]);
+  } else {
+    ExportFile.verifyFileIncludes(errorsFile, [
+      `ERROR,${folioInstance[identifierKey][0]},${errorTemplate(folioInstance[identifierKey][0])}`,
+      `ERROR,${folioInstance[identifierKey][1]},${errorTemplate(folioInstance[identifierKey][1])}`,
+    ]);
+  }
 };
 
 const deleteItemsAndHoldingsForTenant = (affiliation, itemIdsArray, holdingId) => {
@@ -488,11 +498,21 @@ describe('Bulk-edit', () => {
           });
 
           verifyErrorsForCollegeItems({
-            errorTemplate: errorNoAffiliationTemplate('id'),
+            errorTemplate: ERROR_MESSAGES.NO_MATCH_FOUND,
             identifier: 'Item UUIDs',
             identifiersFile: itemUUIDsFileName,
             errorsFile: errorFileUUID,
             identifierKey: 'itemIdsCollege',
+          });
+
+          BulkEditSearchPane.clickToBulkEditMainButton();
+
+          verifyErrorsForCollegeItems({
+            errorTemplate: errorNoAffiliationTemplate('hrid'),
+            identifier: 'Item HRIDs',
+            identifiersFile: itemHRIDsFileName,
+            errorsFile: errorFileHRID,
+            identifierKey: 'hridsCollege',
           });
 
           // Return College affiliation and remove Roles from it to verify permissions errors

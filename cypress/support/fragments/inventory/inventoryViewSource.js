@@ -235,8 +235,9 @@ export default {
   },
 
   checkRowExistsWithTagAndValue(tag, value, isExist = true) {
+    const spacesAfterTag = tag === 'LEADER' ? ' ' : '  ';
     const targetRow = rootSection.find(
-      TableRow({ innerText: and(including(`${tag}  `), including(value)) }),
+      TableRow({ innerText: and(including(`${tag}${spacesAfterTag}`), including(value)) }),
     );
     if (isExist) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());

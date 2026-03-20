@@ -145,7 +145,7 @@ describe('Orders', () => {
       Orders.reOpenOrder(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbrance('$0.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -162,7 +162,7 @@ describe('Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($100.00)',
         defaultInvoice.invoiceNumber,

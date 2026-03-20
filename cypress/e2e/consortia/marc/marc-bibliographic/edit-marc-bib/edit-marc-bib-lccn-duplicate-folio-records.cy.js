@@ -71,12 +71,12 @@ describe('MARC', () => {
                       testData.instanceTypeId = instanceTypes[0].id;
                     },
                   );
-                  InventoryInstances.getIdentifierTypes({ query: 'name="LCCN"' }).then(
+                  InventoryInstances.getIdentifierTypes({ query: 'name=="LCCN"' }).then(
                     (identifier) => {
                       testData.lccnTypeId = identifier.id;
                     },
                   );
-                  InventoryInstances.getIdentifierTypes({ query: 'name="Canceled LCCN"' }).then(
+                  InventoryInstances.getIdentifierTypes({ query: 'name=="Canceled LCCN"' }).then(
                     (identifier) => {
                       testData.canceledLccnTypeId = identifier.id;
                     },
@@ -115,14 +115,10 @@ describe('MARC', () => {
               });
             }).then(() => {
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(user.username, user.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-              }, 20_000);
-              InventoryInstances.waitContentLoading();
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
 
               // Open MARC bib record in QuickMARC editor
               InventoryInstances.searchByTitle(marcInstanceTitle);
@@ -134,7 +130,9 @@ describe('MARC', () => {
               // Attempt to update "010 $a" with LCCN values
               testData.lccnValues.forEach((lccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${lccnValue}`);
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.verifyValidationCallout(0, 1);
+                QuickMarcEditor.closeAllCallouts();
                 QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
               });
 
@@ -142,6 +140,9 @@ describe('MARC', () => {
               testData.canceledLccnValues.forEach((canceledLccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnValue}`);
                 QuickMarcEditor.clickSaveAndKeepEditing();
+                QuickMarcEditor.closeAllCallouts();
+                QuickMarcEditor.verifySaveAndKeepEditingButtonDisabled();
+                cy.wait(1000);
               });
             });
           },
