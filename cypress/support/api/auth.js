@@ -192,3 +192,34 @@ Cypress.Commands.add('getLocateGuestToken', () => {
     Cypress.env('locate_guest_token', headers['x-okapi-token']);
   });
 });
+
+Cypress.Commands.add('getUserTokenForDownload', (username, password) => {
+  let pathToSet = 'bl-users/login-with-expiry';
+
+  if (!Cypress.env('rtrAuth')) {
+    pathToSet = 'bl-users/login';
+  }
+
+  if (Cypress.env('eureka')) {
+    pathToSet = 'authn/login';
+  }
+
+  const headersToSet = {
+    'x-okapi-tenant': Tenant.get(),
+    'Content-type': 'application/json',
+  };
+
+  return cy
+    .request({
+      method: 'POST',
+      url: `${Cypress.env('OKAPI_HOST')}/${pathToSet}`,
+      headers: headersToSet,
+      body: { username, password },
+      failOnStatusCode: true,
+    })
+    .then(({ headers }) => {
+      if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
+        Cypress.env('token', headers['x-okapi-token']);
+      }
+    });
+});

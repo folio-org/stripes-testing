@@ -101,7 +101,7 @@ describe('Data Export', () => {
       'C423567 Export of imported MARC Authority record (firebird)',
       { tags: ['dryRun', 'firebird', 'C423567'] },
       () => {
-        cy.getUserToken(user.username, user.password, { log: false });
+        cy.getUserTokenForDownload(user.username, user.password, { log: false });
 
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
         ExportFileHelper.exportWithDefaultJobProfile(
@@ -128,6 +128,8 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
+
+          cy.getUserTokenForDownload(user.username, user.password, { log: false });
 
           DataExportLogs.clickButtonWithText(exportedFileName);
 
