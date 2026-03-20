@@ -8,7 +8,6 @@ import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee
 import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -62,10 +61,8 @@ describe('Loans', () => {
       testData.folioInstances = InventoryInstances.generateFolioInstances();
 
       ServicePoints.createViaApi(testData.servicePoint);
-      testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      }).location;
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
+      cy.getLocations({ limit: 1 }).then((location) => {
+        testData.defaultLocation = location;
         InventoryInstances.createFolioInstancesViaApi({
           folioInstances: testData.folioInstances,
           location,
@@ -128,7 +125,6 @@ describe('Loans', () => {
       });
       UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Locations.deleteViaApi(testData.defaultLocation);
       Users.deleteViaApi(userData.userId);
       OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
       LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
