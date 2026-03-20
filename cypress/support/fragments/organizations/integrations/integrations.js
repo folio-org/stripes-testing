@@ -46,7 +46,7 @@ export default {
             scheduleParameters: {
               schedulePeriod: 'DAY',
               scheduleFrequency: 1,
-              scheduleTime,
+              scheduleTime: scheduleTime || '00:00:00',
             },
           },
           isDefaultConfig,
