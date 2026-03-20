@@ -23,6 +23,7 @@ const saveAndCloseButton = Button('Save & close');
 const closeButton = Button({ icon: 'times' });
 const cancelButton = Button('Cancel');
 const cannotDeleteModal = Modal('Cannot delete mapping profile');
+const deleteMappingProfileModal = Modal('Delete mapping profile');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -178,6 +179,21 @@ export default {
 
   clickXButton() {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyDeleteMappingProfileModal(mappingProfileName) {
+    const message = `The mapping profile ${mappingProfileName} will be deleted.`;
+
+    cy.expect([
+      deleteMappingProfileModal.exists(),
+      deleteMappingProfileModal.has({ message: including(message) }),
+      deleteMappingProfileModal.find(cancelButton).has({ disabled: false }),
+      deleteMappingProfileModal.find(Button('Delete')).has({ disabled: false, focused: true }),
+    ]);
+  },
+
+  verifyDeleteMappingProfileModalClosed() {
+    cy.expect(deleteMappingProfileModal.absent());
   },
 
   verifyCannotDeleteModalOpened() {
