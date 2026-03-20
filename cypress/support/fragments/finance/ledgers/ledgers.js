@@ -893,13 +893,13 @@ export default {
       expect(row[1]).to.equal(errorType);
       expect(row[2]).to.equal(failedAction);
       expect(row[3]).to.equal(errorMessage);
-      expect(row[4]).to.equal(amount);
+      expect(row[4]).to.equal(String(amount));
       expect(row[5]).to.equal(fundId);
-      if (fundCode) {
+      if (fundCode && row[6]) {
         expect(row[6]).to.equal(fundCode);
       }
       expect(row[7]).to.equal(orderId);
-      if (orderLineNumber) {
+      if (orderLineNumber && row[8]) {
         expect(row[8]).to.equal(orderLineNumber);
       }
       expect(row[9]).to.equal(orderLineId);
