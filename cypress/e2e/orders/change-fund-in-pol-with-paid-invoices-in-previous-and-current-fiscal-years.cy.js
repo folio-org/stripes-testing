@@ -236,7 +236,7 @@ describe('Orders', () => {
         `${secondFund.name}(${secondFund.code})`,
         '$10.00',
       );
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$10.00',
         `${orderNumber}-1`,
@@ -275,7 +275,7 @@ describe('Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -292,7 +292,7 @@ describe('Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.editFundInPOL(secondFund, '10', '100');
       OrderLines.openPageCurrentEncumbrance('$0.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -307,7 +307,7 @@ describe('Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '($10.00)',
         invoice.invoiceNumber,
