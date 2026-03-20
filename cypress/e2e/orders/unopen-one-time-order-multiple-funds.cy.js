@@ -202,7 +202,7 @@ describe('Orders', () => {
       Orders.checkOrderStatus(ORDER_STATUSES.PENDING);
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbranceInFund(`${firstFund.name}(${firstFund.code})`, '$0.00');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($0.00)',
         `${orderNumber}-1`,
