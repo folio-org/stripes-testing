@@ -248,7 +248,7 @@ describe('Finance: Transactions', () => {
       Orders.openOrder();
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbrance('$116.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$105.00',
         `${secondOrderNumber}-1`,
