@@ -169,6 +169,10 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickCloseWithoutSavingButton() {
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+  },
+
   verifyCancelButtonDisabled(isDisabled = true) {
     cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
