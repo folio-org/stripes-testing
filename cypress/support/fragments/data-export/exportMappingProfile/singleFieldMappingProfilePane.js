@@ -1,6 +1,7 @@
 import { including } from '@interactors/html';
 import {
   Accordion,
+  DropdownMenu,
   PaneHeader,
   MultiColumnListCell,
   KeyValue,
@@ -96,6 +97,21 @@ export default {
       duplicateButton.has({ disabled: false }),
       deleteButton.has({ disabled: false }),
     ]);
+  },
+
+  verifyActionsMenuItems(config = { edit: true, duplicate: true, delete: true }) {
+    const assertions = [];
+
+    if (config.edit) assertions.push(DropdownMenu().find(editButton).exists());
+    else assertions.push(DropdownMenu().find(editButton).absent());
+
+    if (config.duplicate) assertions.push(DropdownMenu().find(duplicateButton).exists());
+    else assertions.push(DropdownMenu().find(duplicateButton).absent());
+
+    if (config.delete) assertions.push(DropdownMenu().find(deleteButton).exists());
+    else assertions.push(DropdownMenu().find(deleteButton).absent());
+
+    cy.expect(assertions);
   },
 
   editFieldMappingProfile(newName, newDescription) {
