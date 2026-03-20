@@ -145,10 +145,18 @@ export default {
     cy.wait(4000);
   },
 
-  checkModalDifferentAccountNumbers() {
-    cy.expect(Modal('Different account numbers').exists());
-    cy.do(Modal('Different account numbers').find(Button('Close')).click());
-    cy.expect(Modal('Different account numbers').absent());
+  checkModalDifferentAccountNumbers(uniqueAccountCount) {
+    const modal = Modal('Different account numbers');
+    cy.expect(modal.exists());
+    cy.expect(
+      modal.has({
+        message: including(
+          `This order includes ${uniqueAccountCount} unique account numbers for export. You can not open an order with more than one POL set to export if the POLs have different account numbers. Please edit the account number information of these POLs or move POLs with different account numbers to different orders before opening.`,
+        ),
+      }),
+    );
+    cy.do(modal.find(Button('Close')).click());
+    cy.expect(modal.absent());
   },
 
   editOrder() {
