@@ -5,6 +5,8 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  HTML,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -28,6 +30,10 @@ const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({
   ariaLabelledby: 'accordion-toggle-button-servicePointId',
 });
+const selectUserModal = Modal('Select User');
+const userBarcodeField = TextField({ name: 'userBarcode' });
+const itemBarcodeField = TextField({ name: 'itemBarcode' });
+const descriptionField = TextField({ name: 'description' });
 
 export default {
   // TODO: will rework to interactor when we get section id
@@ -301,5 +307,52 @@ export default {
         content,
       }).exists(),
     );
+  },
+
+  clickPatronLookup() {
+    cy.do(Button({ id: 'clickable-plugin-find-user' }).click());
+  },
+
+  selectUserInLookupModal(username) {
+    cy.expect(selectUserModal.exists());
+    cy.do([
+      selectUserModal.find(TextField({ type: 'search' })).fillIn(username),
+      selectUserModal.find(Button('Search')).click(),
+    ]);
+    cy.expect(selectUserModal.find(HTML(including(username))).exists());
+    cy.do(selectUserModal.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).click());
+    cy.expect(Modal('Select User').absent());
+  },
+
+  verifyUserBarcodeFieldValue(value) {
+    cy.expect(userBarcodeField.has({ value }));
+  },
+
+  fillInItemBarcodeField(value) {
+    cy.do(itemBarcodeField.fillIn(value));
+    cy.expect(itemBarcodeField.has({ value }));
+  },
+
+  fillInDescriptionField(value) {
+    cy.do(descriptionField.fillIn(value));
+    cy.expect(descriptionField.has({ value }));
+  },
+
+  clearItemBarcodeField() {
+    cy.do(itemBarcodeField.clear());
+    cy.expect(itemBarcodeField.has({ value: '' }));
+  },
+
+  clearDescriptionField() {
+    cy.do(descriptionField.clear());
+    cy.expect(descriptionField.has({ value: '' }));
+  },
+
+  clickOnItemBarcodeField() {
+    cy.do(itemBarcodeField.click());
+  },
+
+  clickOnDescriptionField() {
+    cy.do(descriptionField.click());
   },
 };
