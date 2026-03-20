@@ -82,7 +82,7 @@ describe('Transactions', () => {
       );
       Funds.viewTransactions();
       Funds.selectTransactionInList('Transfer');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$10.00',
         'User',

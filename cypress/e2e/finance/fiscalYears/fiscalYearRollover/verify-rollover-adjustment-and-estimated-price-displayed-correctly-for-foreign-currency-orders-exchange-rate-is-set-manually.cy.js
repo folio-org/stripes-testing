@@ -160,7 +160,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectPlannedBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$4,200.00',
         `${firstOrderNumber}-1`,
@@ -180,7 +180,7 @@ describe('Fiscal Year Rollover', () => {
         costDetails: [{ key: 'Exchange rate', value: '42' }],
       });
       OrderLines.openPageCurrentEncumbrance('$4,200.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$4,200.00',
         `${firstOrderNumber}-1`,

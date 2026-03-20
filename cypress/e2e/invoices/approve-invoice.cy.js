@@ -161,7 +161,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$100.00',
         invoice.vendorInvoiceNo,
