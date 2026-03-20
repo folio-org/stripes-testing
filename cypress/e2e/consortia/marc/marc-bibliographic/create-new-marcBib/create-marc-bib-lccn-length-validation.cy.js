@@ -20,7 +20,7 @@ describe('MARC', () => {
           '200104594441', // 12 characters (digits only)
           'c20010459444', // 12 characters (letter + 11 digits)
           '20010459444', // 11 characters (digits only)
-          'cf20010459', // 10 characters (letters + 9 digits)
+          'c200104594', // 10 characters (letter + 9 digits)
           '200104594', // 9 characters (digits only)
           'c2001045', // 8 characters (letter + 7 digits)
           '2001045', // 7 characters (digits only)
@@ -44,12 +44,10 @@ describe('MARC', () => {
             });
           }).then(() => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, 20_000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
