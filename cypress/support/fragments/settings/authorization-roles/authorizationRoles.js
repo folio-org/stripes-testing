@@ -101,7 +101,7 @@ const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
-const createAccessErrorText = including('Role could not be created');
+const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
   'Could not load authorization roles. User does not have required permissions.',
@@ -114,7 +114,7 @@ const shareToAllModal = Modal('Confirm share to all');
 const submitButton = Button('Submit');
 const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
-const createNameErrorText = including('Role could not be created');
+const createNameErrorText = (name) => `Role could not be created: Failed to create keycloak role: name = ${name}`;
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
@@ -1070,10 +1070,10 @@ export default {
     ]);
   },
 
-  verifyCreateNameError: () => {
-    cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
-    InteractorsTools.dismissCallout(createNameErrorText);
-    cy.expect(Callout(createNameErrorText).absent());
+  verifyCreateNameError: (name) => {
+    cy.expect([Callout(createNameErrorText(name)).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createNameErrorText(name));
+    cy.expect(Callout(createNameErrorText(name)).absent());
   },
 
   verifyResourceOrAppPresent: (expectedText, columnIndex = 0, isPresent = true) => {

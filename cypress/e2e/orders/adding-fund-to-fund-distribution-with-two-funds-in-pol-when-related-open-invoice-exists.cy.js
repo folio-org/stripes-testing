@@ -324,10 +324,7 @@ describe('Orders', () => {
           currentEncumbrance: '$3.00',
         },
       ]);
-      InvoiceLineDetails.clickTheLinkInFundDetailsSection({
-        fundName: testData.funds.fundA.name,
-        linkText: '$6.00',
-      });
+      InvoiceLineDetails.openFundDetailsPane(testData.funds.fundA.name, 0);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
@@ -349,10 +346,7 @@ describe('Orders', () => {
       Invoices.searchByParameter('Vendor invoice number', testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
       InvoiceView.selectInvoiceLine();
-      InvoiceLineDetails.clickTheLinkInFundDetailsSection({
-        fundName: testData.funds.fundB.name,
-        linkText: '$3.00',
-      });
+      InvoiceLineDetails.openFundDetailsPane(testData.funds.fundB.name, 1);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');

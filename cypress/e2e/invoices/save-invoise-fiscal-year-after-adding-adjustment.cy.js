@@ -217,7 +217,7 @@ describe('Invoices', () => {
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$0.00');
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -226,7 +226,7 @@ describe('Invoices', () => {
       );
       Funds.checkStatusInTransactionDetails('Released');
       Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '($25.00)',
         `${orderNumber}-1`,
@@ -267,7 +267,7 @@ describe('Invoices', () => {
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$0.00');
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -276,7 +276,7 @@ describe('Invoices', () => {
       );
       Funds.checkStatusInTransactionDetails('Released');
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '($25.00)',
         `${orderNumber}-1`,
