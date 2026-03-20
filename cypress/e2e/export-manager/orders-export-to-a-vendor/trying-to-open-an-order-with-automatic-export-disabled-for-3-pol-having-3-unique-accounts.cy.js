@@ -101,7 +101,7 @@ describe('Export Manager', () => {
           return Cypress.Promise.all(integrationPromises);
         })
         .then(() => {
-          OrderLinesLimit.setPOLLimitViaApi(3);
+          OrderLinesLimit.setPOLLimit(3);
           return cy.createOrderApi(order);
         })
         .then((response) => {
@@ -147,7 +147,7 @@ describe('Export Manager', () => {
           );
         }
       });
-      OrderLinesLimit.setPOLLimitViaApi(1);
+      OrderLinesLimit.setPOLLimit(1);
       if (organization.id) Organizations.deleteOrganizationViaApi(organization.id);
       if (user) Users.deleteViaApi(user.userId);
     });

@@ -15,7 +15,6 @@ import Users from '../../../support/fragments/users/users';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
-    const now = moment();
     const today = moment().format('M/D/YYYY');
     const testData = {
       organization: NewOrganization.getDefaultOrganization({ accounts: 1 }),
@@ -37,22 +36,6 @@ describe('Export Manager', () => {
               ({ value }) => value === ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE,
             );
 
-            now.set('second', now.second() + 10);
-            testData.integration = Integrations.getDefaultIntegration({
-              vendorId: testData.organization.id,
-              acqMethodId: acqMethod.id,
-              ediFtp: {
-                ftpFormat: 'SFTP',
-                serverAddress: 'sftp://ftp.ci.folio.org',
-                orderDirectory: '/ftp/files/orders',
-              },
-              scheduleTime: now.utc().format('HH:mm:ss'),
-              isDefaultConfig: true,
-            });
-            testData.integrationName =
-              testData.integration.exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
-            Integrations.createIntegrationViaApi(testData.integration);
-
             testData.order = NewOrder.getDefaultOrder({
               vendorId: testData.organization.id,
               manualPo: false,
@@ -70,6 +53,23 @@ describe('Export Manager', () => {
                 Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Open' });
               },
             );
+
+            // Schedule export after order is opened to avoid "PurchaseOrder not found" error
+            const scheduleTime = moment().add(2, 'minutes');
+            testData.integration = Integrations.getDefaultIntegration({
+              vendorId: testData.organization.id,
+              acqMethodId: acqMethod.id,
+              ediFtp: {
+                ftpFormat: 'SFTP',
+                serverAddress: 'sftp://ftp.ci.folio.org',
+                orderDirectory: '/ftp/files/orders',
+              },
+              scheduleTime: scheduleTime.utc().format('HH:mm:ss'),
+              isDefaultConfig: true,
+            });
+            testData.integrationName =
+              testData.integration.exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
+            Integrations.createIntegrationViaApi(testData.integration);
           });
         });
       });
@@ -77,12 +77,14 @@ describe('Export Manager', () => {
       cy.createTempUser([Permissions.exportManagerView.gui]).then((userProperties) => {
         testData.user = userProperties;
 
+        // Wait for the scheduled export job to complete before logging in
+        cy.wait(120000);
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.exportManagerOrganizationsPath,
           waiter: ExportManagerSearchPane.waitLoading,
         });
       });
-      cy.wait(1000);
     });
 
     after('Delete test data', () => {
