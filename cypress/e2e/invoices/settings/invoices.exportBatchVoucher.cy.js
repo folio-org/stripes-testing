@@ -65,7 +65,7 @@ describe('Invoices', () => {
 
     after('Delete storage', () => {
       cy.getAdminToken();
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFileFromDownloadsByMask('*.json');
       Organizations.deleteOrganizationViaApi(organization.id);
     });
 

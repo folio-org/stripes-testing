@@ -13,7 +13,7 @@ import { Permissions } from '../../support/dictionary';
 import { DateTools } from '../../support/utils';
 import AppPaths from '../../support/fragments/app-paths';
 
-describe('Check in backdate', () => {
+describe('Check in', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
   };

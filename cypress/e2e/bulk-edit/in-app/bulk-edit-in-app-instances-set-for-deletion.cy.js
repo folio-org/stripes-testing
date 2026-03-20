@@ -13,7 +13,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_ACTIONS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../support/constants';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
@@ -252,13 +256,13 @@ describe('Bulk-edit', () => {
 
         // Step 7: Select "Set records for deletion" option and "Set true" action
         BulkEditActions.selectOption('Set records for deletion');
-        BulkEditActions.selectAction('Set true');
+        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 8: Add "Suppress from discovery" option
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Suppress from discovery', 1);
-        BulkEditActions.verifyActionSelected('Set true', 1);
+        BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_TRUE, 1);
         BulkEditActions.verifyActionsSelectDropdownDisabled(1);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
@@ -266,7 +270,7 @@ describe('Bulk-edit', () => {
         // Step 9: Add "Staff suppress" option
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Staff suppress', 2);
-        BulkEditActions.verifyActionSelected('Set true', 2);
+        BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_TRUE, 2);
         BulkEditActions.verifyActionsSelectDropdownDisabled(2);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 

@@ -50,9 +50,9 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
-            Cypress.env('users')[0].personal.lastName
-          }`.trim();
+          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
+            Cypress.env('users')[0].personal.firstName
+          } `;
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
@@ -76,16 +76,18 @@ export default {
     cy.expect(resultRow.fileName.find(HTML({ className: including('button') })).exists());
 
     // verify date (ended running)
-    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/;
+    let actualDate;
     cy.do(
       resultRow.endedRunning.perform((element) => {
-        const actualDate = element.innerText;
-        expect(actualDate).to.match(dateString);
-
-        const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-        DateTools.verifyDate(dateWithUTC, 180000);
+        actualDate = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualDate).to.match(dateString);
+      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
+      DateTools.verifyDate(dateWithUTC, 180000);
+    });
   },
 
   verifyFailedExportResultCells(
@@ -111,9 +113,7 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${
-            Cypress.env('users')[0].personal.lastName
-          }`;
+          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${Cypress.env('users')[0].personal.firstName} `;
           cy.expect([
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
@@ -138,16 +138,18 @@ export default {
     );
 
     // verify date (ended running)
-    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/;
+    let actualDate;
     cy.do(
       resultRow.endedRunning.perform((element) => {
-        const actualDate = element.innerText;
-        expect(actualDate).to.match(dateString);
-
-        const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-        DateTools.verifyDate(dateWithUTC, 180000);
+        actualDate = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualDate).to.match(dateString);
+      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
+      DateTools.verifyDate(dateWithUTC, 180000);
+    });
   },
 
   verifyCompletedWithErrorsExportResultCells(
@@ -172,7 +174,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.firstName} ${user.lastName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
 
     cy.expect([
       resultRow.status.is({ content: 'Completed with errors' }),
@@ -197,16 +199,18 @@ export default {
     );
 
     // verify date (ended running)
-    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/;
+    let actualDate;
     cy.do(
       resultRow.endedRunning.perform((element) => {
-        const actualDate = element.innerText;
-        expect(actualDate).to.match(dateString);
-
-        const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-        DateTools.verifyDate(dateWithUTC, 180000);
+        actualDate = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualDate).to.match(dateString);
+      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
+      DateTools.verifyDate(dateWithUTC, 180000);
+    });
   },
 
   verifyCompletedWithErrorsWithDuplicatesExportResultCells(
@@ -232,7 +236,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
 
-    const userNameToVerify = `${user.firstName} ${user.lastName}`;
+    const userNameToVerify = `${user.lastName}, ${user.firstName} `;
     const expectedFailedContent = failedRecordsCount
       ? `${failedRecordsCount}, ${duplicatesCount} duplicate(s)`
       : `${duplicatesCount} duplicate(s)`;
@@ -256,16 +260,18 @@ export default {
     );
 
     // verify date (ended running)
-    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+    const dateString = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/;
+    let actualDate;
     cy.do(
       resultRow.endedRunning.perform((element) => {
-        const actualDate = element.innerText;
-        expect(actualDate).to.match(dateString);
-
-        const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-        DateTools.verifyDate(dateWithUTC, 180000);
+        actualDate = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualDate).to.match(dateString);
+      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
+      DateTools.verifyDate(dateWithUTC, 180000);
+    });
   },
 
   verifyLastLog(fileName, status) {

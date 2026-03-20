@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import { APPLICATION_NAMES, NOTE_TYPES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, NOTE_TYPES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -34,6 +34,7 @@ let user;
 let exportedFileName;
 let instanceTypeId;
 let natureOfContentName;
+let memberTenantLocationName;
 const recordsCount = 5;
 const userPermissions = [
   permissions.dataExportUploadExportDownloadFileViewLogs.gui,
@@ -289,6 +290,14 @@ describe('Data Export', () => {
             userId: user.userId,
             permissions: userPermissions,
           }).then(() => {
+            // Get available location from member tenant
+            cy.withinTenant(Affiliations.College, () => {
+              InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
+                const locations = resp.filter((location) => location.name !== 'DCB');
+                memberTenantLocationName = locations[0].name;
+              });
+            });
+
             instances.forEach((instance) => {
               createInstance(instance);
             });
@@ -374,7 +383,7 @@ describe('Data Export', () => {
           InventoryInstance.pressAddHoldingsButton();
           HoldingsRecordEdit.waitLoading();
           HoldingsRecordEdit.fillHoldingFields({
-            permanentLocation: LOCATION_NAMES.ANNEX,
+            permanentLocation: memberTenantLocationName,
           });
           HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
           InventoryInstance.waitLoading();

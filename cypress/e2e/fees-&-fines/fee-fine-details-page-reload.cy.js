@@ -13,7 +13,7 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
-describe('Fees/Fines', () => {
+describe('Fees&Fines', () => {
   describe('Fee/fine details page reload', () => {
     const testData = {
       ownerData: {},

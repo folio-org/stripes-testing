@@ -1367,6 +1367,7 @@ export default {
       cy.do(holdingsSection.clickHeader());
     }
 
+    cy.wait(2000);
     cy.do(
       holdingsSection
         .find(MultiColumnListCell({ column: 'Item: barcode' }))

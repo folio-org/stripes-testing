@@ -13,7 +13,7 @@ const testData = {
   contact: { ...NewOrganization.defaultContact },
 };
 
-describe('Organizations: Add new contact and assign to an organization record', () => {
+describe('Organizations', () => {
   before('Create user and organization', () => {
     cy.getAdminToken();
     NewOrganization.createViaApi(testData.organization).then((responseOrganization) => {

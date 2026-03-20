@@ -94,24 +94,24 @@ describe('Inventory', () => {
               });
             });
           });
+        })
+        .then(() => {
           cy.setTenant(Affiliations.College);
           cy.getInstancesCountViaApi().then((count) => {
             instancesCount = count;
-          });
-          cy.resetTenant();
-          cy.waitForAuthRefresh(() => {
+
+            cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-          }, 20_000);
-          InventoryInstances.waitContentLoading();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          InventoryInstances.waitContentLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.instanceTabIsDefault();
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            InventorySearchAndFilter.validateSearchTabIsDefault();
+            InventorySearchAndFilter.instanceTabIsDefault();
+          });
         });
     });
 
@@ -131,6 +131,7 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'spitfire', 'C402330'] },
       () => {
         // 1 Expand the "Shared" accordion button by clicking on it.
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES);

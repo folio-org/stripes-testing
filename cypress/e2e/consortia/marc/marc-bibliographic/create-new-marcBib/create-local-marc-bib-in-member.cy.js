@@ -72,14 +72,10 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C422124'] },
         () => {
           cy.resetTenant();
-          cy.waitForAuthRefresh(() => {
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstance.newMarcBibRecord();
           // Verify pane header label
@@ -92,7 +88,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(4, newField.tag, newField.content);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceID.push(id);

@@ -18,18 +18,22 @@ export default {
 
   switchToHubsTab: () => {
     cy.do(hubsTabButton.click());
+    cy.wait(500);
   },
 
   switchToWorkInstancesTab: () => {
     cy.do(workInstancesTabButton.click());
+    cy.wait(500);
   },
 
   selectSourceLocalOption: () => {
     cy.xpath(sourceLocalOption).click();
+    cy.wait(500);
   },
 
   selectSourceLoCOption: () => {
     cy.xpath(sourceLoCOption).click();
+    cy.wait(500);
   },
 
   verifyActiveButtons: (isActive) => {
@@ -99,7 +103,7 @@ export default {
   },
 
   checkSearchResultsByTitle(title) {
-    cy.xpath(`//button[text()="${title}"]`).should('be.visible');
+    cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
   selectAdvancedSearch() {

@@ -1,4 +1,4 @@
-import { Button } from '@interactors/html';
+import { Button } from '../../../../interactors';
 
 const hubsSearchResults = "//div[@data-testid='hubs-search-result-list']";
 const noSearchResultsMessage = "//div[text()='No resource descriptions match your query']";
@@ -11,7 +11,7 @@ export default {
     cy.xpath(hubsSearchResults).should('be.visible');
   },
 
-  verifiNoSearchResults: () => {
+  verifyNoSearchResults: () => {
     cy.xpath(hubsSearchResults).should('not.exist');
     cy.xpath(noSearchResultsMessage).should('be.visible');
   },
@@ -35,6 +35,11 @@ export default {
         'contain',
         `Resource ${state}. Expect a short delay before changes are visible in FOLIO.`,
       );
+  },
+
+  clickImportEditButton: () => {
+    cy.do(hubLoCImportEditButton.click());
+    cy.wait(1000);
   },
 
   verifyLoCSearchResultsByTitle: ({ title, source, actionButton = 'Import/Edit' }) => {
@@ -73,5 +78,10 @@ export default {
       .parents('[data-testid="table-row"]')
       .contains('button', 'Edit')
       .click();
+  },
+
+  openPreviewByTitle(hubID) {
+    cy.do(Button({ dataTestID: `hub-preview-link-${hubID}` }).click());
+    cy.wait(500);
   },
 };
