@@ -1891,3 +1891,10 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   NO_CHANGE: 'No Change',
   PARTIALLY_PAID: 'Partially Paid',
 };
+
+export const POLINE_DETAILS_FIELDS = {
+  HOLDING_NAME: 'Holding',
+  LOCATION_NAME: 'Name (code)',
+  QUANTITY_PHYSICAL: 'Quantity physical',
+  QUANTITY_ELECTRONIC: 'Quantity electronic',
+};
