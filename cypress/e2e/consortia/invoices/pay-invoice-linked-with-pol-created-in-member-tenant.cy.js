@@ -3,7 +3,6 @@ import Permissions from '../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
@@ -27,26 +26,17 @@ import Approvals from '../../../support/fragments/settings/invoices/approvals';
 
 describe('Invoices', () => {
   describe('Consortium (Invoices)', () => {
-    const randomPostfix = getRandomPostfix();
-    const instancePrefix = `C411683-B Instance ${randomPostfix}`;
-    const subjectPrefix = `C411683-B Subject ${randomPostfix}`;
     const testData = {
-      collegeHoldings: [],
-      universityHoldings: [],
-      sharedInstance: {
-        title: `${instancePrefix} Shared`,
-        subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
-      },
-      sharedAccordionName: 'Shared',
-      subjectBrowseoption: 'Subjects',
-      organization: NewOrganization.getDefaultOrganization(),
-      order: {},
       user: {},
     };
-    const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-    const defaultLedger = { ...Ledgers.defaultUiLedger };
-    const defaultFund = { ...Funds.defaultUiFund };
-    const firstOrder = {
+    const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+    const ledger = { ...Ledgers.defaultUiLedger };
+    const fund = { ...Funds.defaultUiFund };
+    const budget = {
+      ...Budgets.getDefaultBudget(),
+      allocated: 100,
+    };
+    const order = {
       id: uuid(),
       vendor: '',
       orderType: 'One-Time',
@@ -54,13 +44,9 @@ describe('Invoices', () => {
       reEncumber: true,
     };
     const organization = { ...NewOrganization.defaultUiOrganizations };
-    const firstBudget = {
-      ...Budgets.getDefaultBudget(),
-      allocated: 100,
-    };
     let servicePointId;
     let location;
-    let firstInvoice;
+    let invoice;
     let orderNumber;
 
     before('Create user, data', () => {
@@ -79,19 +65,19 @@ describe('Invoices', () => {
           Permissions.uiInvoicesPayInvoices.gui,
           Permissions.uiOrdersView.gui,
         ]);
-        FiscalYears.createViaApi(firstFiscalYear)
+        FiscalYears.createViaApi(fiscalYear)
           .then((firstFiscalYearResponse) => {
-            firstFiscalYear.id = firstFiscalYearResponse.id;
-            firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-            defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-              defaultLedger.id = ledgerResponse.id;
-              defaultFund.ledgerId = defaultLedger.id;
+            fiscalYear.id = firstFiscalYearResponse.id;
+            budget.fiscalYearId = firstFiscalYearResponse.id;
+            ledger.fiscalYearOneId = fiscalYear.id;
+            Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+              ledger.id = ledgerResponse.id;
+              fund.ledgerId = ledger.id;
 
-              Funds.createViaApi(defaultFund).then((fundResponse) => {
-                defaultFund.id = fundResponse.fund.id;
-                firstBudget.fundId = fundResponse.fund.id;
-                Budgets.createViaApi(firstBudget);
+              Funds.createViaApi(fund).then((fundResponse) => {
+                fund.id = fundResponse.fund.id;
+                budget.fundId = fundResponse.fund.id;
+                Budgets.createViaApi(budget);
                 ServicePoints.getViaApi().then((servicePoint) => {
                   servicePointId = servicePoint[0].id;
                   NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
@@ -107,8 +93,8 @@ describe('Invoices', () => {
                           Organizations.createOrganizationViaApi(organization).then(
                             (responseOrganizations) => {
                               organization.id = responseOrganizations;
-                              firstOrder.vendor = organization.id;
-                              const firstOrderLine = {
+                              order.vendor = organization.id;
+                              const orderLine = {
                                 ...BasicOrderLine.defaultOrderLine,
                                 cost: {
                                   listUnitPrice: 10.0,
@@ -118,7 +104,7 @@ describe('Invoices', () => {
                                   poLineEstimatedPrice: 10.0,
                                 },
                                 fundDistribution: [
-                                  { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
+                                  { code: fund.code, fundId: fund.id, value: 100 },
                                 ],
                                 locations: [
                                   { locationId: location.id, quantity: 1, quantityPhysical: 1 },
@@ -131,29 +117,29 @@ describe('Invoices', () => {
                                   volumes: [],
                                 },
                               };
-                              Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                                firstOrder.id = firstOrderResponse.id;
-                                orderNumber = firstOrderResponse.poNumber;
-                                firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                              Orders.createOrderViaApi(order).then((orderResponse) => {
+                                order.id = orderResponse.id;
+                                orderNumber = orderResponse.poNumber;
+                                orderLine.purchaseOrderId = orderResponse.id;
 
-                                OrderLines.createOrderLineViaApi(firstOrderLine);
+                                OrderLines.createOrderLineViaApi(orderLine);
                                 Orders.updateOrderViaApi({
-                                  ...firstOrderResponse,
+                                  ...orderResponse,
                                   workflowStatus: ORDER_STATUSES.OPEN,
                                 });
                                 Invoices.createInvoiceWithInvoiceLineViaApi({
                                   vendorId: organization.id,
-                                  fiscalYearId: firstFiscalYear.id,
-                                  poLineId: firstOrderLine.id,
-                                  fundDistributions: firstOrderLine.fundDistribution,
+                                  fiscalYearId: fiscalYear.id,
+                                  poLineId: orderLine.id,
+                                  fundDistributions: orderLine.fundDistribution,
                                   accountingCode: organization.erpCode,
                                   releaseEncumbrance: true,
                                   subTotal: 40,
                                 }).then((invoiceRescponse) => {
-                                  firstInvoice = invoiceRescponse;
+                                  invoice = invoiceRescponse;
 
                                   Invoices.changeInvoiceStatusViaApi({
-                                    invoice: firstInvoice,
+                                    invoice,
                                     status: INVOICE_STATUSES.APPROVED,
                                   });
                                 });
@@ -189,22 +175,22 @@ describe('Invoices', () => {
     });
 
     it(
-      'C610245: Pay invoice linked with POL created in Member tenant (consortia) (thunderjet)',
+      'C610245 Pay invoice linked with POL created in Member tenant (consortia) (thunderjet)',
       { tags: ['smokeECS', 'thunderjet', 'C610245'] },
       () => {
-        Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
-        Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
+        Invoices.searchByNumber(invoice.vendorInvoiceNo);
+        Invoices.selectInvoice(invoice.vendorInvoiceNo);
         Invoices.payInvoice();
         Invoices.selectInvoiceLine();
         Invoices.openPOLFromInvoiceLineInCurrentPage(`${orderNumber}-1`);
         OrderLines.openPageCurrentEncumbrance('$0.00');
         Funds.selectTransactionInList('Payment');
         Funds.varifyDetailsInTransaction(
-          firstFiscalYear.code,
+          fiscalYear.code,
           '($40.00)',
-          firstInvoice.vendorInvoiceNo,
+          invoice.vendorInvoiceNo,
           'Encumbrance',
-          `${defaultFund.name} (${defaultFund.code})`,
+          `${fund.name} (${fund.code})`,
         );
       },
     );

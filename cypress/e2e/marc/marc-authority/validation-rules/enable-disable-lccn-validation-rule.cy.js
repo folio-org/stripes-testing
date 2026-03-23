@@ -48,7 +48,7 @@ describe('MARC Authority - Validation rules', () => {
 
   it(
     'C569562 Enable / disable MARC authority "LCCN" structure validation rule (API) (spitfire)',
-    { tags: ['C569562', 'criticalPath', 'spitfire'] },
+    { tags: ['C569562', 'criticalPathECS', 'spitfire'] },
     () => {
       cy.getUserToken(user.username, user.password);
 
