@@ -2056,10 +2056,18 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
     ]);
   },
-  setPhysicalQuantity(quantity) {
-    cy.do([quantityPhysicalLocationField.clear(), quantityPhysicalLocationField.fillIn(quantity)]);
-    cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+  setPhysicalQuantity({ quantity, index = 0, changeQuantity = true } = {}) {
+    cy.wait(1500);
+    const quantityField = TextField({ name: `locations[${index}].quantityPhysical` });
+
+    if (changeQuantity) {
+      cy.do([quantityField.clear(), quantityField.fillIn(quantity)]);
+    } else {
+      cy.do(quantityField.fillIn(quantity));
+    }
+    cy.expect(quantityField.has({ value: quantity }));
   },
+
   setElectronicQuantity(quantity) {
     cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
     cy.expect(quantityElectronicField.has({ value: quantity }));
