@@ -9,7 +9,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
-  describe('Search in inventory', () => {
+  describe('Search in Inventory', () => {
     describe('Correct page title inventory search', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
