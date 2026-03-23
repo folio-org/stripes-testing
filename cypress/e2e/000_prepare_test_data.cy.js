@@ -124,7 +124,7 @@ describe('Prepare test data', () => {
     );
   };
 
-  it('001 Assign service points to admin user', { tags: ['prepareTestData', 'smoke'] }, () => {
+  it('C00001 Assign service points to admin user', { tags: ['prepareTestData', 'smoke', 'C00001'] }, () => {
     const servicePointIds = [];
     let defaultServicePointId;
     let userId;
