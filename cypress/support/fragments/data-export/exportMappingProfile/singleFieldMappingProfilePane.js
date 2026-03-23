@@ -12,6 +12,7 @@ import {
   HTML,
   MetaSection,
   Modal,
+  Select,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -70,6 +71,26 @@ export default {
     cy.expect(Checkbox('Lock profile').has({ checked: isChecked, disabled: isDisabled }));
   },
 
+  verifyNoTransformationsMessage() {
+    cy.expect(Accordion('Transformations').find(HTML('No transformations found')).exists());
+  },
+
+  verifyCheckboxChecked(name) {
+    cy.expect(Checkbox(name).has({ checked: true }));
+  },
+
+  verifyCheckboxNotChecked(name, isDisabled = false) {
+    cy.expect(Checkbox(name).has({ checked: false, disabled: isDisabled }));
+  },
+
+  verifyOutputFormatValue(format) {
+    cy.expect(Select('Output format*').has({ checkedOptionText: format }));
+  },
+
+  verifyFieldsSuppressionTextAreaValue(value) {
+    cy.expect(TextArea('Fields suppression').has({ value }));
+  },
+
   verifyElements() {
     cy.expect([
       Accordion({ label: 'Summary', open: true }).exists(),
@@ -126,6 +147,10 @@ export default {
 
   verifyNameTextField(name) {
     cy.expect(nameTextfield.has({ value: name }));
+  },
+
+  verifyDescriptionTextArea(description) {
+    cy.expect(descriptionTextarea.has({ value: description }));
   },
 
   verifyMetadataSectionExists() {
