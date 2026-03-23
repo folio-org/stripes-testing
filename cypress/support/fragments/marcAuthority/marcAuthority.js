@@ -125,6 +125,9 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('Export (MARC)').click());
   },
+  clickExportMarcOption: () => {
+    cy.do(Button('Export (MARC)').click());
+  },
   contains: (expectedText, { regexp = false } = {}) => {
     if (regexp) cy.expect(rootSection.find(HTML(matching(new RegExp(expectedText)))).exists());
     else cy.expect(rootSection.find(HTML(including(expectedText))).exists());
