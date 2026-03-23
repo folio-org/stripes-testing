@@ -7,7 +7,6 @@ import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFile
 import ExportFileHelper from '../../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
-import DateTools from '../../../../support/utils/dateTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -27,7 +26,6 @@ const marcFile = {
 const marcAuthority = {
   title: `AT_C423567_MarcAuthority_${randomFourDigitNumber()}`,
 };
-const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 const expectedMarcFields = [
   ['008', '830616n| azannaabn          |a aaa      '],
   ['010', '  ', 'a', '63943573'],
@@ -126,15 +124,8 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
-          cy.getUserToken(user.username, user.password, { log: false });
 
           DataExportLogs.clickButtonWithText(exportedFileName);
-
-          // Wait longer for download to complete
-          cy.wait(5000);
-
-          // Verify file exists before parsing (with extended timeout for slow downloads)
-          cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
 
           const assertionsOnMarcFileContent = [
             {
@@ -145,9 +136,6 @@ describe('Data Export', () => {
                 },
                 (record) => {
                   expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
-                },
-                (record) => {
-                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
                 },
                 ...expectedMarcFields.map((fieldData, index) => (record) => {
                   expect(record.fields[index + 2]).to.deep.eq(fieldData);

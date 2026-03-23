@@ -161,16 +161,9 @@ describe('Data Export', () => {
           user.username,
           'Default instances',
         );
-        cy.getUserToken(user.username, user.password, { log: false });
 
         // Step 3: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
         DataExportLogs.clickButtonWithText(exportedFileName);
-
-        // Wait for download to complete
-        cy.wait(5000);
-
-        // Verify file exists before parsing (with extended timeout for slow downloads)
-        cy.readFile(`cypress/downloads/${exportedFileName}`, { timeout: 90000 }).should('exist');
 
         // Step 4: Check exported records included in the file
         const assertionsOnMarcFileContent = [
@@ -260,14 +253,6 @@ describe('Data Export', () => {
 
         // Step 12: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
         DataExportLogs.clickButtonWithText(secondExportedFileName);
-
-        // Wait for download to complete
-        cy.wait(5000);
-
-        // Verify file exists before parsing (with extended timeout for slow downloads)
-        cy.readFile(`cypress/downloads/${secondExportedFileName}`, { timeout: 90000 }).should(
-          'exist',
-        );
 
         const assertionsOnUpdatedMarcFileContent = [
           {
