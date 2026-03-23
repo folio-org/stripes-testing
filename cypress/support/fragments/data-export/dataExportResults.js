@@ -50,9 +50,15 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
-            Cypress.env('users')[0].personal.firstName
-          } `;
+          let userNameToVerify;
+
+          if (!Cypress.env('users')[0].personal.firstName) {
+            userNameToVerify = `${Cypress.env('users')[0].personal.lastName}  `;
+          } else {
+            userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
+              Cypress.env('users')[0].personal.firstName
+            } `;
+          }
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
