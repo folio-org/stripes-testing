@@ -13,10 +13,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let instanceTypeId;
+let jobId;
 const instanceIds = [];
 const numberOfInstances = 20;
-const csvFileName = `AT_C350717_instances_${getRandomPostfix()}.csv`;
-const instance = { title: `AT_C350717_FolioInstance_${getRandomPostfix()}` };
+const csvFileName = `AT_C1273176_instances_${getRandomPostfix()}.csv`;
+const instance = { title: `AT_C1273176_FolioInstance_${getRandomPostfix()}` };
 
 describe('Data Export', () => {
   describe('Export to MARC', () => {
@@ -29,29 +30,40 @@ describe('Data Export', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.getInstanceTypes({ limit: 1 })
-          .then((types) => {
-            instanceTypeId = types[0].id;
+        // Modify user to remove firstName
+        cy.getUsers({ query: `username==${user.username}` }).then((usersFound) => {
+          const fullUserRecord = usersFound[0];
+          fullUserRecord.personal.firstName = '';
+          cy.updateUser(fullUserRecord).then(() => {
+            cy.getUsers({ query: `username==${user.username}` }).then((editedUser) => {
+              user.firstName = editedUser[0].personal.firstName;
 
-            // Create instances for first CSV file
-            for (let i = 0; i < numberOfInstances; i++) {
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId,
-                  title: instance.title,
-                },
-              }).then((createdInstanceData) => {
-                instanceIds.push(createdInstanceData.instanceId);
+              cy.getInstanceTypes({ limit: 1 })
+                .then((types) => {
+                  instanceTypeId = types[0].id;
+
+                  // Create instances for CSV file
+                  for (let i = 0; i < numberOfInstances; i++) {
+                    InventoryInstances.createFolioInstanceViaApi({
+                      instance: {
+                        instanceTypeId,
+                        title: instance.title,
+                      },
+                    }).then((createdInstanceData) => {
+                      instanceIds.push(createdInstanceData.instanceId);
+                    });
+                  }
+                })
+                .then(() => {
+                  FileManager.createFile(`cypress/fixtures/${csvFileName}`, instanceIds.join('\n'));
+                });
+
+              cy.login(user.username, user.password, {
+                path: TopMenu.dataExportPath,
+                waiter: DataExportLogs.waitLoading,
               });
-            }
-          })
-          .then(() => {
-            FileManager.createFile(`cypress/fixtures/${csvFileName}`, instanceIds.join('\n'));
+            });
           });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
         });
       });
     });
@@ -62,13 +74,19 @@ describe('Data Export', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
       });
 
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${csvFileName}F`);
+      if (jobId) {
+        cy.deleteDataExportJobExecutionFromLogs(jobId).then((response) => {
+          expect(response.status).to.equal(204);
+        });
+      }
+
+      Users.deleteViaApi(user.id);
+      FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
     });
 
     it(
-      'C350717 Check name of the User triggered data export displayed under “Running“ accordion, "Run by" column (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350717'] },
+      'C1273176 Check name of the User triggered data export displayed under “Running“ accordion, "Run by" column - User without first name (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C1273176'] },
       () => {
         // Step 1: Go to Data Export app (already landed via login) - verify Jobs pane visible
         DataExportLogs.waitLoading();
@@ -80,22 +98,23 @@ describe('Data Export', () => {
         SelectJobProfile.selectJobProfile(DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.INSTANCES);
         SelectJobProfile.clickRunButton();
 
-        // Step 4: Verify name of the User triggered data export displayed under “Running“ accordion
+        // Step 4: Verify name of the User triggered data export displayed under "Running" accordion
         DataExportLogs.verifyExportJobInRunningAccordion(csvFileName.replace('.csv', ''), user);
         DataExportLogs.verifyFileExistsInLogs(csvFileName.replace('.csv', ''));
 
         // Step 5: As soon as the job completes check the "Run by" column for data export job in the "Logs" main page
-        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('firstJob');
-        cy.wait('@firstJob', getLongDelay()).then(({ response }) => {
+        cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('job');
+        cy.wait('@job', getLongDelay()).then(({ response }) => {
           const { jobExecutions } = response.body;
           const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);
-          const firstJobId = jobData.hrId;
-          const firstResultFileName = `${csvFileName.replace('.csv', '')}-${firstJobId}.mrc`;
+          const jobHrId = jobData.hrId;
+          jobId = jobData.id;
+          const resultFileName = `${csvFileName.replace('.csv', '')}-${jobHrId}.mrc`;
 
           DataExportResults.verifySuccessExportResultCells(
-            firstResultFileName,
+            resultFileName,
             numberOfInstances,
-            firstJobId,
+            jobHrId,
             user.username,
           );
         });

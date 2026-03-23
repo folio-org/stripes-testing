@@ -191,7 +191,7 @@ describe('LDE Hubs: Create and edit local hub', () => {
       EditHubPage.saveAndClose().then((id) => {
         hubData.hubId = id;
       });
-
+      cy.wait(60000); // Wait for the search index to update
       SearchAndFilter.fillHubsSearchInput(
         `${hubData.preferredTitle}${hubData.preferredTitleUpdated}`,
       );
