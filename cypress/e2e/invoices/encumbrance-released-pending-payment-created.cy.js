@@ -158,7 +158,7 @@ describe('Invoices', () => {
     });
 
     cy.then(() => {
-      Approvals.setApprovePayValue(false);
+      Approvals.setApprovePayValueViaApi(false);
     });
 
     cy.createTempUser([

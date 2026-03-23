@@ -101,7 +101,7 @@ describe('Eureka', () => {
         AuthorizationRoles.clickNewButton();
         AuthorizationRoles.fillRoleNameDescription(testData.existingRoleName);
         AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.verifyCreateNameError();
+        AuthorizationRoles.verifyCreateNameError(testData.existingRoleName);
         AuthorizationRoles.fillRoleNameDescription(testData.roleName);
         AuthorizationRoles.clickSelectApplication();
         AuthorizationRoles.selectApplicationInModal(testData.applicationName);

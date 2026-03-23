@@ -915,7 +915,7 @@ export default {
       fundDistributionField.fillIn(value),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      createNewLocationButton.click(),
+      Button({ id: 'location-lookup-locations[0].locationId' }).click(),
     ]);
     SelectLocationModal.selectLocation(location);
     cy.do([quantityElectronicField.fillIn(quantity), saveAndCloseButton.click()]);
@@ -1951,10 +1951,18 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
     ]);
   },
-  setPhysicalQuantity(quantity) {
+  setPhysicalQuantity(quantity, changeQuantity = true) {
     cy.wait(1500);
-    cy.do([quantityPhysicalLocationField.clear(), quantityPhysicalLocationField.fillIn(quantity)]);
-    cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+    if (changeQuantity) {
+      cy.do([
+        quantityPhysicalLocationField.clear(),
+        quantityPhysicalLocationField.fillIn(quantity),
+      ]);
+      cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+    } else {
+      cy.do([quantityPhysicalLocationField.fillIn(quantity)]);
+      cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+    }
   },
   setElectronicQuantity(quantity) {
     cy.wait(1500);

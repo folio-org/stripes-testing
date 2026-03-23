@@ -17,6 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
   Spinner,
+  Tooltip,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
@@ -48,6 +49,7 @@ const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' 
 const areYouSureForm = Modal('Are you sure?');
 const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
+const resetAllButton = Button('Reset all');
 const getScrollableElementInForm = (formName) => {
   return cy
     .get('[class^=previewAccordion-]')
@@ -378,12 +380,33 @@ export default {
     ]);
   },
 
+  clickResetAllButton() {
+    cy.do(resetAllButton.click());
+  },
+
+  verifyResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
+  },
+
   verifyRecordIdentifierEmpty() {
     cy.expect(recordIdentifierDropdown.find(HTML('')).exists());
   },
 
   verifyRecordTypesEmpty() {
     cy.expect(recordTypesAccordion.find(HTML('')).exists());
+  },
+
+  verifySelectRecordIdentifierRequired(isRequired = true) {
+    if (isRequired) {
+      cy.expect(Select('Record identifier*').has({ required: true }));
+    } else {
+      cy.expect(Select('Record identifier').has({ required: false }));
+    }
+  },
+
+  verifyToolTip() {
+    cy.do(Select('Record identifier').hoverMouse());
+    cy.expect(Tooltip({ text: 'To enable this field, select a Record type.' }).exists());
   },
 
   verifyRecordIdentifiers(identifiers) {

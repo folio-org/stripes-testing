@@ -67,7 +67,15 @@ describe('MARC', () => {
                 createdInstanceIDs.push(record.instance.id);
               });
             });
-
+          })
+          .then(() => {
+            cy.resetTenant();
+            cy.setDefaultLocaleApi();
+            cy.setTenant(Affiliations.College);
+            cy.setDefaultLocaleApi();
+          })
+          .then(() => {
+            cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
