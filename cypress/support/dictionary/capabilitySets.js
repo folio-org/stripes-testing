@@ -134,6 +134,11 @@ export default {
     resource: 'UI-Consortia-Settings Consortium-Manager',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiConsortiaSettingsConsortiaAffiliationsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Consortia-Settings Consortia Affiliations',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiCheckout: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Checkout',
