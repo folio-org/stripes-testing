@@ -6,14 +6,12 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Finance: Groups', () => {
+describe('Acquisition Units', () => {
   const defaultGroup = { ...Groups.defaultUiGroup };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   let userA;
 
   before(() => {
-    cy.getAdminToken();
-
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
