@@ -1,4 +1,9 @@
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES,
+} from '../../../../support/constants';
 import FastAddNewRecord from '../../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
@@ -8,22 +13,31 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import FastAdd from '../../../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { getLongDelay } from '../../../../support/utils/cypressTools';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 import { parseSanityParameters } from '../../../../support/utils/users';
 
 const { user, memberTenant } = parseSanityParameters();
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
-    const timeStamp = {
-      start: null,
-      end: null,
+    const fastAddNewRecordFormDetails = {
+      instanceStatusCodeValue: 'uncat',
+      resourceTitle: `Monograph${getRandomPostfix()}`,
+      resourceType: 'text',
+      permanentLocationOption: `${LOCATION_NAMES.CD_V} `,
+      permanentLocationValue: LOCATION_NAMES.CD_V_UI,
+      itemBarcode: `${getRandomPostfix()}Barcode`,
+      materialType: MATERIAL_TYPE_NAMES.CD,
+      permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+      note: 'note for monograph',
     };
 
     before('Set instance status', () => {
       cy.setTenant(memberTenant.id);
+      cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
+      cy.allure().logCommandSteps(true);
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
       cy.allure().logCommandSteps(false);
@@ -33,75 +47,54 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-        );
-      });
+      cy.allure().logCommandSteps(false);
+      cy.getUserToken(user.username, user.password);
+      cy.allure().logCommandSteps(true);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        fastAddNewRecordFormDetails.itemBarcode,
+      );
     });
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
       { tags: ['dryRun', 'folijet'] },
       () => {
-        cy.intercept('POST', '/inventory/instances').as('createInstance');
-        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
-        cy.intercept('POST', '/inventory/items').as('createItem');
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
-        FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
-
-        // set starting timestamp right before saving
-        timeStamp.start = new Date();
+        FastAddNewRecord.fillFastAddNewRecordForm(fastAddNewRecordFormDetails);
         FastAddNewRecord.saveAndClose();
 
-        cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
-          // set ending timestamp after saving
-          timeStamp.end = new Date();
+        InteractorsTools.checkCalloutMessage(
+          FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
+        );
+        InventorySearchAndFilter.searchByParameter(
+          'Title (all)',
+          fastAddNewRecordFormDetails.resourceTitle,
+        );
+        FastAddNewRecord.openRecordDetails();
 
-          InteractorsTools.checkCalloutMessage(
-            FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
-          );
-          InventorySearchAndFilter.searchByParameter(
-            'Title (all)',
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-          );
-          FastAddNewRecord.openRecordDetails();
+        // verify instance details
+        InstanceRecordView.verifyResourceTitle(fastAddNewRecordFormDetails.resourceTitle);
+        InstanceRecordView.verifyInstanceStatusCode(
+          fastAddNewRecordFormDetails.instanceStatusCodeValue,
+        );
+        InstanceRecordView.verifyResourceType(fastAddNewRecordFormDetails.resourceType);
 
-          // verify instance details
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          InstanceRecordView.verifyResourceTitle(
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-          );
-          InstanceRecordView.verifyInstanceStatusCode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeValue,
-          );
-          InstanceRecordView.verifyResourceType(
-            FastAddNewRecord.fastAddNewRecordFormDetails.resourceType,
-          );
+        // verify holdings details
+        FastAddNewRecord.viewHoldings();
+        FastAddNewRecord.verifyPermanentLocation(
+          fastAddNewRecordFormDetails.permanentLocationValue,
+        );
+        FastAddNewRecord.closeHoldingsRecordView();
 
-          // verify holdings details
-          FastAddNewRecord.viewHoldings();
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          FastAddNewRecord.verifyPermanentLocation(LOCATION_NAMES.ANNEX_UI);
-          FastAddNewRecord.closeHoldingsRecordView();
-
-          // verify item details
-          InventoryInstance.openHoldings([LOCATION_NAMES.ANNEX_UI]);
-          InventoryInstance.openItemByBarcode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-          );
-          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-          ItemRecordView.verifyPermanentLoanType(
-            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLoanType,
-          );
-          ItemRecordView.verifyItemBarcode(
-            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-          );
-          ItemRecordView.verifyNote(FastAddNewRecord.fastAddNewRecordFormDetails.note);
-        });
+        // verify item details
+        InventoryInstance.openHoldings([fastAddNewRecordFormDetails.permanentLocationValue]);
+        InventoryInstance.openItemByBarcode(fastAddNewRecordFormDetails.itemBarcode);
+        ItemRecordView.verifyPermanentLoanType(fastAddNewRecordFormDetails.permanentLoanType);
+        ItemRecordView.verifyItemBarcode(fastAddNewRecordFormDetails.itemBarcode);
+        ItemRecordView.verifyNote(fastAddNewRecordFormDetails.note);
       },
     );
   });

@@ -15,7 +15,6 @@ describe('Inventory', () => {
     before('Login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
-
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
@@ -25,13 +24,14 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
-          (id) => {
-            InventoryInstance.deleteInstanceViaApi(id, true);
-          },
-        );
-      });
+      cy.allure().logCommandSteps(false);
+      cy.getUserToken(user.username, user.password);
+      cy.allure().logCommandSteps(true);
+      InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
+        (id) => {
+          InventoryInstance.deleteInstanceViaApi(id, true);
+        },
+      );
     });
 
     it('C598 Create new instance with add "New" (folijet)', { tags: ['dryRun', 'folijet'] }, () => {

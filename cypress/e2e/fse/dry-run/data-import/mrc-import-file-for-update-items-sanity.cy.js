@@ -10,6 +10,7 @@ import {
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
@@ -73,12 +74,12 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C343335 create holdings mapping profile ${getRandomPostfix()}`,
-      permanentLocation: 'Main Library (KU/CC/DI/M)',
+      permanentLocation: LOCATION_NAMES.CD_R,
     };
     const itemMappingProfileForCreate = {
       name: `C343335 create item mapping profile ${getRandomPostfix()}`,
-      materialType: 'book',
-      permanentLoanType: 'Can circulate',
+      materialType: MATERIAL_TYPE_NAMES.CD,
+      permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
       status: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const actionProfilesForCreate = [
@@ -143,9 +144,9 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C343335 autotestMappingItem${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+          permanentLoanType: LOAN_TYPE_NAMES.EEB,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -213,7 +214,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
-      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+      ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
         Location.createViaApi(Location.getDefaultLocation(servicePoint.id)).then(
           (locationResponse) => {
             Object.assign(location, locationResponse);
@@ -352,7 +353,7 @@ describe('Data Import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.addItemNotes(
-        '"Electronic bookplate"',
+        '"Nota"',
         '"Smith Family Foundation"',
         'Mark for all affected records',
       );

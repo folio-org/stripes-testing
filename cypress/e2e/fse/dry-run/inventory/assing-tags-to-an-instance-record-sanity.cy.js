@@ -55,10 +55,11 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
-        cy.deleteTagApi(tag.id);
-        InventoryInstance.deleteInstanceViaApi(instanceId);
-      });
+      cy.allure().logCommandSteps(false);
+      cy.getUserToken(user.username, user.password);
+      cy.deleteTagApi(tag.id);
+      InventoryInstance.deleteInstanceViaApi(instanceId);
+      cy.allure().logCommandSteps(true);
     });
 
     it(
@@ -73,7 +74,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstance.checkAddedTag(tag.label, instanceTitle);
         InventoryInstance.deleteTag(tag.label);
-        cy.reload();
       },
     );
   });

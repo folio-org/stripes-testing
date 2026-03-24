@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 import Helper from '../../../../support/fragments/finance/financeHelper';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
@@ -18,7 +18,7 @@ describe('Inventory', () => {
       instanceTitle: `AT_C3501_Instance_${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
     };
-    const anotherPermanentLocation = 'Main Library';
+    const anotherPermanentLocation = LOCATION_NAMES.CD_R;
     let testInstanceId;
     let instanceHrid;
 
@@ -35,7 +35,7 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             itemData.instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 1, query: 'name="Online"' }).then((res) => {
+          cy.getLocations({ limit: 1 }).then((res) => {
             itemData.locationId = res.id;
           });
           cy.getHoldingTypes({ limit: 1 }).then((res) => {

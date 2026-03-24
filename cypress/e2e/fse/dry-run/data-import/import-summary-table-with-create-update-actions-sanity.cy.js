@@ -97,8 +97,8 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
-          pernanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+          permanentLocation: `"${LOCATION_NAMES.CD_R}"`,
+          permanentLocationUI: LOCATION_NAMES.CD_R_UI,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -109,9 +109,9 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+          permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -140,8 +140,8 @@ describe('Data Import', () => {
           name: `C356791 autotest instance mapping profile.${getRandomPostfix()}`,
           catalogingDate: '###TODAY###',
           statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-          statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-          statisticalCodeUI: 'Book, print (books)',
+          statisticalCode: 'RVBI: artigo de jornal - art-jor',
+          statisticalCodeUI: 'RVBI',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -154,8 +154,8 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanetLocation: `"${LOCATION_NAMES.ONLINE}"`,
-          permanetLocationUI: LOCATION_NAMES.ONLINE_UI,
+          permanetLocation: `"${LOCATION_NAMES.CD_P}"`,
+          permanetLocationUI: LOCATION_NAMES.CD_P_UI,
           callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           callNumber: '050$a " " 050$b',
         },
@@ -169,12 +169,12 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
-          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
-          noteType: '"Electronic bookplate"',
+          materialType: MATERIAL_TYPE_NAMES.CD,
+          noteType: '"Nota"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+          permanentLoanType: LOAN_TYPE_NAMES.EEB,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
@@ -575,7 +575,7 @@ describe('Data Import', () => {
             collectionOfProfilesForUpdate[1].mappingProfile.callNumberType,
           );
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.CD_P_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.verifyMaterialType(
             collectionOfProfilesForUpdate[2].mappingProfile.materialType,
