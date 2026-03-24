@@ -71,7 +71,7 @@ describe('Inventory', () => {
 
       it(
         'C466115 (CONSORTIA) Verify the permission for MARC editing shared instance on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C466115'] },
+        { tags: ['extendedPathECS', 'folijet', 'C466115'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
