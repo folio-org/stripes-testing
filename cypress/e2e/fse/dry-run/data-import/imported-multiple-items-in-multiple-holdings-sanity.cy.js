@@ -36,11 +36,11 @@ const { user, memberTenant } = parseSanityParameters();
 describe('Data Import', () => {
   describe('Log details', () => {
     const holdingsData = [
-      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 },
-      { permanentLocation: LOCATION_NAMES.ANNEX_UI, itemsQuqntity: 2 },
-      { permanentLocation: LOCATION_NAMES.ONLINE_UI, itemsQuqntity: 1 },
+      { permanentLocation: LOCATION_NAMES.CD_P_UI, itemsQuqntity: 3 },
+      { permanentLocation: LOCATION_NAMES.CD_R_UI, itemsQuqntity: 2 },
+      { permanentLocation: LOCATION_NAMES.CD_V_UI, itemsQuqntity: 1 },
     ];
-    const fileWioutErrorsPathForUpload = 'marcBibFileForMultipleWithoutErrors.mrc';
+    const fileWioutErrorsPathForUpload = 'marcBibFileForMultipleWithoutErrors_1.mrc';
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -58,7 +58,7 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+          permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
@@ -149,11 +149,7 @@ describe('Data Import', () => {
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
       { tags: ['dryRun', 'folijet'] },
       () => {
-        const arrayOfHoldingsStatuses = [
-          'Created (KU/CC/DI/M)',
-          'Created (KU/CC/DI/A)',
-          'Created (E)',
-        ];
+        const arrayOfHoldingsStatuses = ['Created (CDP)', 'Created (CDR)', 'Created (CDV)'];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
         const marcFileName = `C388505 autotestFileName${getRandomPostfix()}.mrc`;
