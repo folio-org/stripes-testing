@@ -79,7 +79,7 @@ export default {
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 
-  createNewFieldMappingProfileViaApi: (nameProfile) => {
+  createNewFieldMappingProfileViaApi: (nameProfile, isLocked = false) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -89,6 +89,7 @@ export default {
           recordTypes: ['SRS'],
           outputFormat: 'MARC',
           name: nameProfile,
+          locked: isLocked,
         },
         isDefaultSearchParamsRequired: false,
       })

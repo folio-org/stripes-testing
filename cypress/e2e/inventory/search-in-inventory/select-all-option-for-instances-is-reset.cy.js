@@ -7,7 +7,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
-  describe('Search In Inventory', () => {
+  describe('Search in Inventory', () => {
     const testData = {
       instanceTitle: `C366119 autoTestInstanceTitle${getRandomPostfix()}`,
       barcode: uuid(),
