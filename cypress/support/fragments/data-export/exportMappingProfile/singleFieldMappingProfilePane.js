@@ -1,6 +1,7 @@
 import { including } from '@interactors/html';
 import {
   Accordion,
+  DropdownMenu,
   PaneHeader,
   MultiColumnListCell,
   KeyValue,
@@ -11,6 +12,7 @@ import {
   HTML,
   MetaSection,
   Modal,
+  Select,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -23,6 +25,7 @@ const saveAndCloseButton = Button('Save & close');
 const closeButton = Button({ icon: 'times' });
 const cancelButton = Button('Cancel');
 const cannotDeleteModal = Modal('Cannot delete mapping profile');
+const deleteMappingProfileModal = Modal('Delete mapping profile');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -68,6 +71,26 @@ export default {
     cy.expect(Checkbox('Lock profile').has({ checked: isChecked, disabled: isDisabled }));
   },
 
+  verifyNoTransformationsMessage() {
+    cy.expect(Accordion('Transformations').find(HTML('No transformations found')).exists());
+  },
+
+  verifyCheckboxChecked(name) {
+    cy.expect(Checkbox(name).has({ checked: true }));
+  },
+
+  verifyCheckboxNotChecked(name, isDisabled = false) {
+    cy.expect(Checkbox(name).has({ checked: false, disabled: isDisabled }));
+  },
+
+  verifyOutputFormatValue(format) {
+    cy.expect(Select('Output format*').has({ checkedOptionText: format }));
+  },
+
+  verifyFieldsSuppressionTextAreaValue(value) {
+    cy.expect(TextArea('Fields suppression').has({ value }));
+  },
+
   verifyElements() {
     cy.expect([
       Accordion({ label: 'Summary', open: true }).exists(),
@@ -97,6 +120,21 @@ export default {
     ]);
   },
 
+  verifyActionsMenuItems(config = { edit: true, duplicate: true, delete: true }) {
+    const assertions = [];
+
+    if (config.edit) assertions.push(DropdownMenu().find(editButton).exists());
+    else assertions.push(DropdownMenu().find(editButton).absent());
+
+    if (config.duplicate) assertions.push(DropdownMenu().find(duplicateButton).exists());
+    else assertions.push(DropdownMenu().find(duplicateButton).absent());
+
+    if (config.delete) assertions.push(DropdownMenu().find(deleteButton).exists());
+    else assertions.push(DropdownMenu().find(deleteButton).absent());
+
+    cy.expect(assertions);
+  },
+
   editFieldMappingProfile(newName, newDescription) {
     // Need to wait for page to reload
     cy.wait(2000);
@@ -109,6 +147,10 @@ export default {
 
   verifyNameTextField(name) {
     cy.expect(nameTextfield.has({ value: name }));
+  },
+
+  verifyDescriptionTextArea(description) {
+    cy.expect(descriptionTextarea.has({ value: description }));
   },
 
   verifyMetadataSectionExists() {
@@ -168,6 +210,10 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  clickCloseWithoutSavingButton() {
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+  },
+
   verifyCancelButtonDisabled(isDisabled = true) {
     cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
@@ -178,6 +224,21 @@ export default {
 
   clickXButton() {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyDeleteMappingProfileModal(mappingProfileName) {
+    const message = `The mapping profile ${mappingProfileName} will be deleted.`;
+
+    cy.expect([
+      deleteMappingProfileModal.exists(),
+      deleteMappingProfileModal.has({ message: including(message) }),
+      deleteMappingProfileModal.find(cancelButton).has({ disabled: false }),
+      deleteMappingProfileModal.find(Button('Delete')).has({ disabled: false, focused: true }),
+    ]);
+  },
+
+  verifyDeleteMappingProfileModalClosed() {
+    cy.expect(deleteMappingProfileModal.absent());
   },
 
   verifyCannotDeleteModalOpened() {
