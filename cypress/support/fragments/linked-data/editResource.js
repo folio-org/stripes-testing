@@ -165,7 +165,7 @@ export default {
   },
 
   checkHeadingProfile(profileName) {
-    cy.xpath(`//strong[@class='heading' and contains(text(), '${profileName}')]`)
+    cy.xpath(`//*[contains(@class, 'heading') and contains(text(), '${profileName}')]`)
       .scrollIntoView()
       .should('be.visible');
   },

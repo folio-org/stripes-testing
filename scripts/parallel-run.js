@@ -35,25 +35,32 @@ console.log(`Tags: ${grepTags}\n`);
 const parsedGrep = parseGrep(null, grepTags);
 
 const specFiles = globby.sync('cypress/e2e/**/*.cy.js');
-let testIds = [];
+const testSpecsIds = [];
 const chunks = Array.from({ length: numberOfThreads }, (_) => ({ totalDuration: 0, testIds: [] }));
-
 specFiles.forEach((specFile) => {
+  const testsInSpecFile = [];
   const text = fs.readFileSync(specFile, { encoding: 'utf8' });
   const testInfo = getTestNames(text);
   testInfo.tests.forEach((info) => {
     const shouldRun = shouldTestRun(parsedGrep, null, info.tags);
     if (shouldRun) {
-      testIds.push(info.tags.filter((tag) => tag.startsWith('C') || tag.startsWith('TC')));
+      const filteredTags = info.tags.filter((tag) => tag.startsWith('C') || tag.startsWith('TC'));
+      if (filteredTags.includes(undefined)) {
+        console.log(`Test without ID found in file ${specFile} - ${info.tags}`);
+      }
+      testsInSpecFile.push(filteredTags[0]);
     }
   });
+  if (testsInSpecFile.length > 0) {
+    testSpecsIds.push(Array.from(new Set(testsInSpecFile)));
+  }
 });
-testIds = Array.from(new Set(testIds.flat()));
-if (testIds.length === 0) {
+
+if (testSpecsIds.length === 0) {
   throw new Error('No tests found with provided tags.');
 }
 
-console.log('Matched test IDs: ', testIds);
+console.log('Matched test IDs: ', testSpecsIds);
 
 let testsExecutionTimes = {};
 try {
@@ -65,6 +72,7 @@ try {
   console.error(`Error reading ${TESTS_EXECUTION_TIME_FILE} file.`, err);
 }
 
+
 function getTestDuration(testId) {
   if (testId in testsExecutionTimes) {
     return testsExecutionTimes[testId];
@@ -72,12 +80,19 @@ function getTestDuration(testId) {
     return 2 * 60 * 1000; // fallback duration for unknown test (2 minutes)
   }
 }
-testIds.sort((a, b) => getTestDuration(b) - getTestDuration(a));
 
-for (const testId of testIds) {
+function getTestDurationForSpec(testSpecId) {
+  let duration = 0;
+  testSpecId.forEach((testId) => {
+    duration += getTestDuration(testId);
+  });
+  return duration;
+}
+
+for (const testSpecId of testSpecsIds) {
   chunks.sort((a, b) => a.totalDuration - b.totalDuration);
-  chunks[0].testIds.push(testId);
-  chunks[0].totalDuration += getTestDuration(testId);
+  chunks[0].testIds.push(...testSpecId);
+  chunks[0].totalDuration += getTestDurationForSpec(testSpecId);
 }
 
 const fileJson = {};

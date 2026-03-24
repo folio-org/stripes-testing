@@ -1891,3 +1891,10 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   NO_CHANGE: 'No Change',
   PARTIALLY_PAID: 'Partially Paid',
 };
+
+export const USER_TYPES = {
+  STAFF: 'Staff',
+  PATRON: 'Patron',
+  SYSTEM: 'System',
+  SHADOW: 'Shadow',
+};
