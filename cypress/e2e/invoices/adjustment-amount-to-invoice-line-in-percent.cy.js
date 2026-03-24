@@ -172,7 +172,7 @@ describe('Invoices', () => {
       Funds.viewTransactions();
       Funds.selectTransactionInList('Payment');
 
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($11.00)',
         invoice.vendorInvoiceNo,

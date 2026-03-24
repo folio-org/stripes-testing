@@ -44,7 +44,7 @@ describe('MARC', () => {
               // Precondition moved in `it` block to ensure `after` hook is always triggered
               cy.resetTenant();
               cy.getAdminToken();
-              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C569534_');
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C569534');
               cy.createTempUser([
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
                 Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -83,7 +83,8 @@ describe('MARC', () => {
               invalidLccnValues.forEach((lccn) => {
                 QuickMarcEditor.updateExistingFieldContent(5, `$a ${lccn}`);
                 QuickMarcEditor.checkContent(`$a ${lccn}`, 5);
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.verifyValidationCallout();
                 QuickMarcEditor.checkErrorMessage(5, errorInvalidLccn);
                 QuickMarcEditor.closeAllCallouts();
               });

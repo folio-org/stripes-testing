@@ -116,7 +116,7 @@ describe('Orders', () => {
         SelectLocationModal.selectLocation(testData.location.name);
 
         // Fill the following fields & click "Save"
-        OrderLines.setPhysicalQuantity('1');
+        OrderLines.setPhysicalQuantity('1', false);
         OrderLines.savePol();
         OrderLines.checkTitle(testData.instance.instanceTitle);
 

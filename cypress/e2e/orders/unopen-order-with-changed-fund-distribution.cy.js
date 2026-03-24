@@ -239,7 +239,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
       Transactions.waitLoading();
       Funds.selectTransactionInList('Encumbrance');
       TransactionDetails.waitLoading();
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -267,7 +267,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
       Funds.selectBudgetDetails(); // Fund details -> Budget details
       Funds.viewTransactions(); // Budget details -> Transactions
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($20.00)',
         firstInvoice.vendorInvoiceNo,

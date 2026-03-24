@@ -101,7 +101,7 @@ const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
-const createAccessErrorText = including('Role could not be created');
+const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
   'Could not load authorization roles. User does not have required permissions.',
@@ -114,7 +114,7 @@ const shareToAllModal = Modal('Confirm share to all');
 const submitButton = Button('Submit');
 const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
-const createNameErrorText = including('Role could not be created');
+const createNameErrorText = (name) => `Role could not be created: Failed to create keycloak role: name = ${name}`;
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
@@ -131,6 +131,7 @@ const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
   );
 };
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
+const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.DATA]: [
     CAPABILITY_ACTIONS.VIEW,
@@ -423,12 +424,12 @@ export default {
     cy.do([targetActionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
-      editRolePane.find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.exists(),
       unassignAllCapabilitiesButton.exists(),
       selectApplicationButton.exists(),
+      editRolePane.find(Spinner()).absent(),
     ]);
   },
 
@@ -1054,12 +1055,14 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false } = {}) {
+  shareRole(roleName, { verifyModal = false, notShared = false } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
-    this.checkRoleCentrallyManaged(roleName, true);
+    if (!notShared) {
+      cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+      this.checkRoleCentrallyManaged(roleName, true);
+    }
   },
 
   verifyConfirmShareModal(roleName) {
@@ -1070,10 +1073,10 @@ export default {
     ]);
   },
 
-  verifyCreateNameError: () => {
-    cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
-    InteractorsTools.dismissCallout(createNameErrorText);
-    cy.expect(Callout(createNameErrorText).absent());
+  verifyCreateNameError: (name) => {
+    cy.expect([Callout(createNameErrorText(name)).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createNameErrorText(name));
+    cy.expect(Callout(createNameErrorText(name)).absent());
   },
 
   verifyResourceOrAppPresent: (expectedText, columnIndex = 0, isPresent = true) => {
@@ -1198,5 +1201,17 @@ export default {
         }),
       );
     });
+  },
+
+  verifyShareNameError: (tenantNames) => {
+    const tenantNamesArray = Array.isArray(tenantNames) ? tenantNames : [tenantNames];
+    cy.expect([Callout(shareNameErrorText(tenantNamesArray)).exists(), shareToAllModal.exists()]);
+    InteractorsTools.dismissCallout(shareNameErrorText(tenantNamesArray));
+    cy.expect(Callout(shareNameErrorText(tenantNamesArray)).absent());
+  },
+
+  closeConfirmShareModal: () => {
+    cy.do(shareToAllModal.find(cancelButton).click());
+    cy.expect(shareToAllModal.absent());
   },
 };

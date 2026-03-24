@@ -410,7 +410,7 @@ Cypress.Commands.add('getAuthorizationRoleApi', (roleId) => {
 Cypress.Commands.add('shareRoleApi', (consotiaId, { id, name, description = '' }) => {
   cy.okapiRequest({
     method: 'POST',
-    path: `/consortia/${consotiaId}/sharing/roles`,
+    path: `consortia/${consotiaId}/sharing/roles`,
     isDefaultSearchParamsRequired: false,
     body: {
       roleId: id,
@@ -431,7 +431,7 @@ Cypress.Commands.add(
   (consortiaId, { id, name, capabilitiesArray = [] }) => {
     cy.okapiRequest({
       method: 'POST',
-      path: `/consortia/${consortiaId}/sharing/roles/capabilities`,
+      path: `consortia/${consortiaId}/sharing/roles/capabilities`,
       isDefaultSearchParamsRequired: false,
       body: {
         roleId: id,
@@ -451,7 +451,7 @@ Cypress.Commands.add(
   (consortiaId, { id, name, capabilitySetsArray = [] }) => {
     cy.okapiRequest({
       method: 'POST',
-      path: `/consortia/${consortiaId}/sharing/roles/capability-sets`,
+      path: `consortia/${consortiaId}/sharing/roles/capability-sets`,
       isDefaultSearchParamsRequired: false,
       body: {
         roleId: id,
@@ -472,7 +472,7 @@ Cypress.Commands.add(
     cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: 'DELETE',
-        path: `/consortia/${consortiaId}/sharing/roles/${id}`,
+        path: `consortia/${consortiaId}/sharing/roles/${id}`,
         isDefaultSearchParamsRequired: false,
         body: {
           roleId: id,

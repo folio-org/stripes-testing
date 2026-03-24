@@ -96,19 +96,17 @@ describe('MARC', () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
 
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
@@ -132,6 +130,7 @@ describe('MARC', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchByParameter(
             testData.instanceSearchOption,
             testData.tag245Content,
