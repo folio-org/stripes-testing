@@ -75,7 +75,7 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
@@ -134,7 +134,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);

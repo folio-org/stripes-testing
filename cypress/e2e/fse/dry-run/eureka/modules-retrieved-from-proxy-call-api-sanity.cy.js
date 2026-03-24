@@ -96,7 +96,7 @@ describe('Eureka', () => {
       () => {
         cy.setTenant(memberTenant.id);
         cy.allure().logCommandSteps(false);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.allure().logCommandSteps();
 
         cy.getApplicationsForTenantApi(testData.tenant, false).then((appsResponse) => {

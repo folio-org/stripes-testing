@@ -18,10 +18,14 @@ describe('MARC', () => {
     const propertyName = 'instance';
     let createdInstanceID = null;
     let holdingsID = null;
+    let locationName = null;
 
     before('Setup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
+      cy.getLocations().then((location) => {
+        locationName = `${location.name} (${location.code}) `;
+      });
       DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun)
         .then((response) => {
           response.forEach((record) => {
@@ -39,7 +43,7 @@ describe('MARC', () => {
     });
 
     after('Cleanup', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       if (holdingsID) {
         cy.deleteHoldingRecordViaApi(holdingsID);
       }
@@ -55,7 +59,7 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(createdInstanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.createHoldingsRecord();
+        InventoryInstance.createHoldingsRecord(locationName);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.getId().then((id) => {
           holdingsID = id;

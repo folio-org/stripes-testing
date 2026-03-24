@@ -10,7 +10,6 @@ import {
   Section,
   TextField,
 } from '../../../../../interactors';
-import { add } from 'date-fns';
 
 const customFieldsPane = Pane('Custom fields');
 const editCustomFieldsPane = Pane('Edit custom fields');
@@ -206,13 +205,13 @@ export default {
 
   // API methods
 
-  getCustomFieldsViaApi() {
+  getCustomFieldsViaApi(modUsersId) {
     return cy
       .okapiRequest({
         method: 'GET',
         path: 'custom-fields?limit=2147483647',
         isDefaultSearchParamsRequired: false,
-        additionalHeaders: { 'x-okapi-module-id': 'mod-users-19.6.0-SNAPSHOT.369' },
+        additionalHeaders: { 'x-okapi-module-id': modUsersId },
       })
       .then((response) => {
         return response.body;
@@ -228,5 +227,16 @@ export default {
       .then((response) => {
         return response.body;
       });
+  },
+
+  updateCustomFieldsViaApi(updatedBody, modUsersId, ignoreErrors = false) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: 'custom-fields',
+      isDefaultSearchParamsRequired: false,
+      additionalHeaders: { 'x-okapi-module-id': modUsersId },
+      body: { ...updatedBody, entityType: 'user' },
+      failOnStatusCode: !ignoreErrors,
+    });
   },
 };

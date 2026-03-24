@@ -31,6 +31,7 @@ describe('MARC', () => {
         });
         cy.allure().logCommandSteps();
 
+        cy.getUserToken(user.username, user.password, { log: false });
         InventoryActions.import();
         InventoryInstance.getId().then((id) => {
           instanceID = id;
@@ -39,7 +40,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         if (instanceID) {
           InventoryInstance.deleteInstanceViaApi(instanceID);
         }

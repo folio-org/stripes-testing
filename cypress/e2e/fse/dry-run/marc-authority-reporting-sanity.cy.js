@@ -48,7 +48,7 @@ describe('MARC', () => {
 
       before('Setup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.getUserDetailsByUsername(user.username).then((details) => {
           user.id = details.id;
           user.personal = details.personal;
@@ -78,7 +78,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         if (createdAuthorityID[0]) {
           InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         }
@@ -131,7 +131,7 @@ describe('MARC', () => {
             '100',
             '$a C375231Beethoven, Ludwig Jr, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           );
-          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.saveAndCheck();
 
           const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');

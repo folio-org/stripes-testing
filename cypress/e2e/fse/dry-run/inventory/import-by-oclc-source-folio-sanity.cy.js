@@ -33,7 +33,7 @@ describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         instanceRecord = instanceData;
@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
       });
     });
@@ -58,6 +58,7 @@ describe('Inventory', () => {
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
       { tags: ['dryRun', 'folijet'] },
       () => {
+        cy.getUserToken(user.username, user.password, { log: false });
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
           instanceRecord.instanceTitle,

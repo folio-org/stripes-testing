@@ -5,9 +5,11 @@ export default {
   addMarcHoldingRecord: () => {
     InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+    QuickMarcEditor.getExistingLocation().then((location) => {
+      QuickMarcEditor.updateExistingField('852', location);
+    });
     cy.intercept('POST', '/records-editor/records').as('getStatus');
-    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.pressSaveAndCloseButton();
     cy.wait('@getStatus', { timeout: 5_000 }).its('response.statusCode').should('eq', 201);
   },
 

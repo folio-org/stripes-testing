@@ -1,4 +1,5 @@
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -15,9 +16,10 @@ describe('Inventory', () => {
     beforeEach('Creating user and "Instance" records with contributors', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
+      InventoryInstances.deleteInstanceByTitleViaApi('Test_title*');
       cy.getInstanceTypes({ limit: 1 }).then((res) => {
         instanceA.instanceTypeId = res[0].id;
         instanceZ.instanceTypeId = res[0].id;
@@ -34,7 +36,6 @@ describe('Inventory', () => {
 
       BrowseContributors.createInstanceWithContributorViaApi(instanceA);
       BrowseContributors.createInstanceWithContributorViaApi(instanceZ);
-      BrowseContributors.waitForContributorToAppear(instanceA.contributors[0].name);
 
       cy.getInstanceById(instanceA.id).then((res) => {
         testData.instanceAProps = res;
@@ -54,7 +55,7 @@ describe('Inventory', () => {
 
     afterEach('Deleting user', () => {
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
       InventoryInstance.deleteInstanceViaApi(instanceA.id);
       InventoryInstance.deleteInstanceViaApi(instanceZ.id);
@@ -71,6 +72,7 @@ describe('Inventory', () => {
         BrowseContributors.checkSearch();
 
         BrowseContributors.waitForContributorToAppear(instanceA.contributors[0].name);
+        BrowseContributors.waitForContributorToAppear(instanceZ.contributors[0].name);
         BrowseContributors.browse(instanceA.contributors[0].name);
         BrowseContributors.checkSearchResultsTable();
         BrowseContributors.checkExactSearchResult(

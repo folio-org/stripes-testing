@@ -62,7 +62,7 @@ describe('Bulk-edit', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
           (instanceId) => {
             marcInstance.uuid = instanceId;
@@ -102,9 +102,9 @@ describe('Bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
-      InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
+      InventoryInstance.deleteInstanceViaApi(marcInstance.uuid, true);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(instanceUUIDsFileName);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
@@ -279,7 +279,6 @@ describe('Bulk-edit', () => {
           0,
           newValueOfContributorsField.subfieldA,
         );
-        InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '710',

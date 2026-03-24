@@ -23,7 +23,7 @@ describe('MARC', () => {
 
     before('Setup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       });
 
@@ -32,6 +32,8 @@ describe('MARC', () => {
       cy.allure().logCommandSteps();
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
+
+      cy.getUserToken(user.username, user.password, { log: false });
       InventoryActions.import();
       InventoryInstance.getId().then((id) => {
         instanceId = id;
@@ -41,7 +43,7 @@ describe('MARC', () => {
 
     after('Cleanup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
 
       if (newHoldingsRecordId) {
         cy.deleteHoldingRecordViaApi(newHoldingsRecordId);
@@ -50,7 +52,7 @@ describe('MARC', () => {
         cy.deleteHoldingRecordViaApi(initialHoldingsRecordId);
       }
       if (instanceId) {
-        InventoryInstance.deleteInstanceViaApi(instanceId);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
       }
     });
 

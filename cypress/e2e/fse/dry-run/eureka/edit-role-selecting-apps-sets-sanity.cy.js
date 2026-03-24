@@ -126,7 +126,7 @@ describe('Eureka', () => {
       before('Create role, user', () => {
         cy.setTenant(memberTenant.id);
         cy.allure().logCommandSteps(false);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.allure().logCommandSteps();
         cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then((role) => {
           testData.roleId = role.id;
@@ -162,7 +162,7 @@ describe('Eureka', () => {
 
       after('Delete user, role', () => {
         cy.allure().logCommandSteps(false);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.allure().logCommandSteps();
         cy.deleteAuthorizationRoleApi(testData.roleId);
       });

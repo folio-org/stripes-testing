@@ -1,0 +1,2 @@
+# This directory is used for temporary backup of MARC specifications during test execution
+# Backup files are automatically created by 0000-setup-specs-backup.cy.js and cleaned by 9999-restore-specs-backup.cy.js

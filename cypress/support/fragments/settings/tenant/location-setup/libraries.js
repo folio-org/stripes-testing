@@ -30,8 +30,8 @@ export default {
   defaultUiLibraries: {
     body: getDefaultTenant({ campusId: uuid() }),
   },
-  getViaApi() {
-    return TenantPane.getViaApi({ path: 'location-units/libraries' });
+  getViaApi(searchParams = {}) {
+    return TenantPane.getViaApi({ path: 'location-units/libraries', searchParams });
   },
   createViaApi(librariesProperties = getDefaultTenant({ campusId: uuid() })) {
     return TenantPane.createViaApi({

@@ -195,6 +195,29 @@ export default {
   waitLandingPageOpened,
   uploadFile,
   removeMarcField,
+
+  /**
+   * Wait for a file to be downloaded with retry logic
+   * Handles variable download times across different environments (local vs Jenkins)
+   * @param {string} fileName - The name of the file to wait for
+   * @param {number} timeout - Maximum time to wait in milliseconds (default: 90000)
+   * @param {number} delay - Delay between retry attempts in milliseconds (default: 2000)
+   * @returns {Cypress.Chainable} Chain that resolves when file is downloaded
+   */
+  waitFileIsDownloaded(fileName, timeout = 90000, delay = 2000) {
+    return recurse(
+      () => FileManager.findDownloadedFilesByMask(fileName),
+      (foundFiles) => foundFiles && foundFiles.length > 0,
+      {
+        log: true,
+        timeout,
+        delay,
+      },
+    ).then(() => {
+      cy.log(`File downloaded: ${fileName}`);
+    });
+  },
+
   exportWithDefaultJobProfile: (
     fileName,
     jobType = 'Default instances',

@@ -24,7 +24,7 @@ describe('Bulk-edit', () => {
   describe('Query', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           // Fetch required type IDs
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -78,7 +78,7 @@ describe('Bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     });

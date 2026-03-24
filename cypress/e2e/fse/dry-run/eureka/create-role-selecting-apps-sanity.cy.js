@@ -79,7 +79,7 @@ describe(
 
         afterEach(() => {
           cy.allure().logCommandSteps(false);
-          cy.getUserToken(user.username, user.password);
+          cy.getUserToken(user.username, user.password, { log: false });
           cy.allure().logCommandSteps();
           cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
             cy.deleteAuthorizationRoleApi(roleId);

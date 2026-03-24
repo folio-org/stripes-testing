@@ -111,8 +111,11 @@ export default {
     overlay = false,
     expandIdentifiers = false,
   ) {
+    cy.intercept('POST', '**/copycat/imports').as('importRecord');
     cy.do(importButtonInModal.click());
-    cy.wait(2000);
+    cy.wait('@importRecord', { timeout: 15000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [200, 201]);
     InteractorsTools.checkCalloutMessage(
       singleImportSuccessCalloutText(specialOCLCWorldCatidentifier, overlay),
     );

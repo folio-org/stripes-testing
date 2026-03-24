@@ -24,7 +24,7 @@ describe('Inventory', () => {
 
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             itemData.loanTypeId = res[0].id;
@@ -72,7 +72,7 @@ describe('Inventory', () => {
         });
 
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
@@ -83,7 +83,7 @@ describe('Inventory', () => {
 
     afterEach('Delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password).then(() => {
+      cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         cy.wrap(
           testInstanceId.holdingIds.forEach((holdingsId) => {
             cy.wrap(

@@ -84,7 +84,7 @@ const expectedMarcFields = [
 describe('Data Export', () => {
   before('create test data', () => {
     cy.setTenant(memberTenant.id);
-    cy.getUserToken(user.username, user.password)
+    cy.getUserToken(user.username, user.password, { log: false })
       .then(() => {
         // Fetch user details
         cy.getUserDetailsByUsername(user.username).then((details) => {
@@ -123,7 +123,7 @@ describe('Data Export', () => {
   });
 
   after('delete test data', () => {
-    cy.getUserToken(user.username, user.password);
+    cy.getUserToken(user.username, user.password, { log: false });
     cy.setTenant(memberTenant.id);
     InventoryInstance.deleteInstanceViaApi(marcInstance.id);
     FileManager.deleteFile(`cypress/fixtures/${marcInstanceUUIDFileName}`);
@@ -146,10 +146,13 @@ describe('Data Export', () => {
 
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
       cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
         const { jobExecutions } = response.body;
-        const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.id);
+        const jobData = jobExecutions.find((jobExecution) => {
+          return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
+        });
         firstJobHrid = jobData.hrId;
-        exportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
+        exportedFileName = `${exportedFile}-${firstJobHrid}.mrc`;
 
         DataExportResults.verifySuccessExportResultCells(
           exportedFileName,
@@ -158,7 +161,6 @@ describe('Data Export', () => {
           user.username,
           'Default instances',
         );
-        cy.getUserToken(user.username, user.password);
 
         // Step 3: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
         DataExportLogs.clickButtonWithText(exportedFileName);
@@ -233,9 +235,10 @@ describe('Data Export', () => {
       cy.wait(2000);
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
       cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
+        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
         const jobs = response.body.jobExecutions;
         const jobData = jobs.find(
-          (job) => job.runBy.userId === user.id && job.hrId !== firstJobHrid,
+          (job) => job.exportedFiles[0].fileName.includes(exportedFile) && job.hrId !== firstJobHrid,
         );
         const jobId = jobData.hrId;
         secondExportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${jobId}.mrc`;

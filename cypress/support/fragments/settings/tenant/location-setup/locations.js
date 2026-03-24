@@ -175,8 +175,8 @@ export default {
     }
     cy.expect(pane.find(MultiColumnList()).absent());
   },
-  getViaApi() {
-    return TenantPane.getViaApi({ path: 'locations' });
+  getViaApi(searchParams = {}) {
+    return TenantPane.getViaApi({ path: 'locations', searchParams });
   },
   createViaApi: ({
     id,

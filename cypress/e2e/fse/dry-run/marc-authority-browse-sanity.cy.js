@@ -24,7 +24,7 @@ describe('MARC', () => {
 
       before('Setup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(querySearch);
         DataImport.uploadFileViaApi('marcAuthFileForC350902.mrc', fileName, jobProfileToRun).then(
           (response) => {
@@ -43,7 +43,7 @@ describe('MARC', () => {
 
       after('Cleanup', () => {
         cy.setTenant(memberTenant.id);
-        cy.getUserToken(user.username, user.password);
+        cy.getUserToken(user.username, user.password, { log: false });
         if (createdAuthorityID) {
           MarcAuthority.deleteViaAPI(createdAuthorityID);
         }

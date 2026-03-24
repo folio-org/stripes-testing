@@ -50,7 +50,7 @@ describe('Inventory', () => {
     before('Creating user and instance with item with call number', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
 
       InventoryInstances.createInstanceViaApi(
@@ -64,17 +64,22 @@ describe('Inventory', () => {
 
     before('Login to application', () => {
       cy.allure().logCommandSteps(false);
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-        authRefresh: true,
-      });
+      cy.login(
+        user.username,
+        user.password,
+        {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+          authRefresh: true,
+        },
+        { log: false },
+      );
       cy.allure().logCommandSteps();
     });
 
     after('Deleting user and instance', () => {
       cy.allure().logCommandSteps(false);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.allure().logCommandSteps();
       barcodes.forEach((barcode) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
@@ -86,6 +91,7 @@ describe('Inventory', () => {
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
       { tags: ['dryRun', 'spitfire', 'C358140'] },
       () => {
+        cy.getUserToken(user.username, user.password, { log: false });
         BrowseCallNumber.waitForCallNumberToAppear(testData.exactSearch);
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);

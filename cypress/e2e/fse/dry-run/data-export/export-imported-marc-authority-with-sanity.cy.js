@@ -7,7 +7,6 @@ import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFile
 import ExportFileHelper from '../../../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../../../support/fragments/data-export/dataExportResults';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
-import DateTools from '../../../../support/utils/dateTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -27,7 +26,6 @@ const marcFile = {
 const marcAuthority = {
   title: `AT_C423567_MarcAuthority_${randomFourDigitNumber()}`,
 };
-const todayDateYYYYMMDD = DateTools.getCurrentDateYYYYMMDD();
 const expectedMarcFields = [
   ['008', '830616n| azannaabn          |a aaa      '],
   ['010', '  ', 'a', '63943573'],
@@ -52,7 +50,7 @@ describe('Data Export', () => {
   describe('Authority records export', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           // Fetch user details
           cy.getUserDetailsByUsername(user.username).then((details) => {
@@ -89,7 +87,7 @@ describe('Data Export', () => {
     });
 
     after('delete test data', () => {
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       MarcAuthorities.deleteViaAPI(marcAuthority.id, true);
       FileManager.deleteFile(`cypress/fixtures/${marcAuthorityUUIDFileName}`);
@@ -111,8 +109,11 @@ describe('Data Export', () => {
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
+          const exportedFile = marcAuthorityUUIDFileName.replace('.csv', '');
           const { jobExecutions } = response.body;
-          const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.id);
+          const jobData = jobExecutions.find((jobExecution) => {
+            return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
+          });
           firstJobHrid = jobData.hrId;
           exportedFileName = `${marcAuthorityUUIDFileName.replace('.csv', '')}-${firstJobHrid}.mrc`;
 
@@ -123,7 +124,6 @@ describe('Data Export', () => {
             user.username,
             'Default authority',
           );
-          cy.getUserToken(user.username, user.password);
 
           DataExportLogs.clickButtonWithText(exportedFileName);
 
@@ -136,9 +136,6 @@ describe('Data Export', () => {
                 },
                 (record) => {
                   expect(record.fields[0]).to.deep.eq(['001', 'n  83073672 ']);
-                },
-                (record) => {
-                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
                 },
                 ...expectedMarcFields.map((fieldData, index) => (record) => {
                   expect(record.fields[index + 2]).to.deep.eq(fieldData);

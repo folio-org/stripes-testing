@@ -14,7 +14,7 @@ describe('Bulk-edit', () => {
   describe('Query', () => {
     before('setup', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {

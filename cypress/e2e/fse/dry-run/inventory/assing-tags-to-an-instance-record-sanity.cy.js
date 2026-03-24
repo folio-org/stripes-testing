@@ -21,7 +21,7 @@ describe('Inventory', () => {
 
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password)
+      cy.getUserToken(user.username, user.password, { log: false })
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
           cy.getInstanceIdentifierTypes({ limit: 1 });
@@ -43,7 +43,7 @@ describe('Inventory', () => {
       });
 
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password);
+      cy.getUserToken(user.username, user.password, { log: false });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {

@@ -7,7 +7,7 @@ describe('Lists', () => {
     const { user, memberTenant } = parseSanityParameters();
 
     const duplicateListData = {
-      name: 'Inactive patrons 0 with open loans - copy',
+      name: '1a Inactive patrons 0 with open loans - copy',
       description: 'Returns all loans with a status of open by inactive users',
       recordType: 'Loans',
       status: 'Active',
@@ -35,23 +35,33 @@ describe('Lists', () => {
           waiter: Lists.waitLoading,
         });
         cy.allure().logCommandSteps();
+        let listName;
+        cy.getUserToken(user.username, user.password);
+        Lists.getViaApi()
+          .then(({ body: { content } }) => {
+            listName = content[0].name;
+            duplicateListData.status = content[0].isActive ? 'Active' : 'Inactive';
+            duplicateListData.visibility = content[0].isPrivate ? 'Local' : 'Shared';
+            duplicateListData.recordType = content[0].entityTypeName;
+          })
+          .then(() => {
+            Lists.verifyListIsPresent(listName);
+            Lists.openList(listName);
+            Lists.openActions();
+            Lists.duplicateList();
+            Lists.setName(duplicateListData.name);
 
-        Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
-        Lists.openList(Lists.cannedListInactivePatronsWithOpenLoans);
-        Lists.openActions();
-        Lists.duplicateList();
-        Lists.setName(duplicateListData.name);
+            Lists.saveList();
+            Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
+            Lists.waitForCompilingToComplete(5000);
 
-        Lists.saveList();
-        Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
-        Lists.waitForCompilingToComplete(5000);
-
-        Lists.closeListDetailsPane();
-        Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
-        Lists.verifyListIsPresent(duplicateListData.name);
-        Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {
-          Lists.checkResultSearch(duplicateListData, rowIndex);
-        });
+            Lists.closeListDetailsPane();
+            Lists.verifyListIsPresent(listName);
+            Lists.verifyListIsPresent(duplicateListData.name);
+            Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {
+              Lists.checkResultSearch(duplicateListData, rowIndex);
+            });
+          });
       },
     );
   });
