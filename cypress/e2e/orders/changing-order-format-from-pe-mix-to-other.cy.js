@@ -97,7 +97,7 @@ describe('Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.addOrderFormat(ORDER_FORMAT_NAMES.OTHER);
       OrderLines.fillCostDetailsForPhysicalOrderType('10', '1');
-      OrderLines.setPhysicalQuantity('1');
+      OrderLines.setPhysicalQuantity({ quantity: '1' });
       OrderLines.setElectronicQuantity('0');
       OrderLines.save();
       InteractorsTools.checkCalloutMessage(

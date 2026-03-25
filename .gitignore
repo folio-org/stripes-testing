@@ -30,3 +30,5 @@ scripts/update_permission_names/permissions_backups/*
 mcp.json
 parallelWorkers.json
 failed.cy.js
+
+environments.js
