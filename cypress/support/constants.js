@@ -1897,4 +1897,9 @@ export const POLINE_DETAILS_FIELDS = {
   LOCATION_NAME: 'Name (code)',
   QUANTITY_PHYSICAL: 'Quantity physical',
   QUANTITY_ELECTRONIC: 'Quantity electronic',
+export const USER_TYPES = {
+  STAFF: 'Staff',
+  PATRON: 'Patron',
+  SYSTEM: 'System',
+  SHADOW: 'Shadow',
 };

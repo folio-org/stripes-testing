@@ -185,6 +185,13 @@ export default {
     cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
 
+  checkLoanDetailsDueDate(datePart, timePart) {
+    cy.expect([
+      KeyValue('Due date').has({ value: including(datePart) }),
+      KeyValue('Due date').has({ value: including(timePart) }),
+    ]);
+  },
+
   openCheckOutNotes() {
     cy.wait(500);
     cy.do(actionsButton.click());

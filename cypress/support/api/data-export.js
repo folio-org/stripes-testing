@@ -103,3 +103,15 @@ Cypress.Commands.add('downloadDataExportRecordViaApi', (recordId, idType, suppre
       return response.body;
     });
 });
+
+Cypress.Commands.add('configureDataExportFileLimit', (key, value) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'data-export/configuration',
+    body: {
+      key,
+      value: value.toString(),
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
