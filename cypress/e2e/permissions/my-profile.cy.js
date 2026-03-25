@@ -55,7 +55,7 @@ describe('Permissions', () => {
         'C374116 Verify that validation violations are displayed immediately in the "Change password" section (volaris)',
         { tags: ['extendedPath', 'volaris', 'C374116'] },
         () => {
-          cy.intercept('GET', '*/rules ').as('rules');
+          cy.intercept('GET', '*/rules?limit=100').as('rules');
           ChangePassword.openChangePasswordViaUserProfile();
           ChangePassword.checkInitialState();
 

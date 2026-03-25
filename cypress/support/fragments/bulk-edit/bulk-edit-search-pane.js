@@ -17,6 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
   Spinner,
+  Tooltip,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
@@ -48,6 +49,7 @@ const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' 
 const areYouSureForm = Modal('Are you sure?');
 const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
+const resetAllButton = Button('Reset all');
 const getScrollableElementInForm = (formName) => {
   return cy
     .get('[class^=previewAccordion-]')
@@ -169,6 +171,7 @@ export const ERROR_MESSAGES = {
   OPTIMISTIC_LOCKING:
     'The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. View latest version',
   DUPLICATE_ENTRY: 'Duplicate entry',
+  DUPLICATES_ACROSS_TENANTS: 'Duplicates across tenants',
   SHADOW_RECORDS_CANNOT_BE_BULK_EDITED: 'Shadow records cannot be bulk edited.',
   MULTIPLE_MATCHES_FOR_IDENTIFIER: 'Multiple matches for the same identifier.',
   INVALID_MARC_RECORD:
@@ -178,7 +181,10 @@ export const ERROR_MESSAGES = {
     'Multiple SRS records are associated with the instance. The following SRS have been identified:',
   ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC:
     'Change note type for administrative notes is not supported for MARC Instances.',
+  LINKED_DATA_SOURCE_NOT_SUPPORTED:
+    'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
+  noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
@@ -374,12 +380,33 @@ export default {
     ]);
   },
 
+  clickResetAllButton() {
+    cy.do(resetAllButton.click());
+  },
+
+  verifyResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
+  },
+
   verifyRecordIdentifierEmpty() {
     cy.expect(recordIdentifierDropdown.find(HTML('')).exists());
   },
 
   verifyRecordTypesEmpty() {
     cy.expect(recordTypesAccordion.find(HTML('')).exists());
+  },
+
+  verifySelectRecordIdentifierRequired(isRequired = true) {
+    if (isRequired) {
+      cy.expect(Select('Record identifier*').has({ required: true }));
+    } else {
+      cy.expect(Select('Record identifier').has({ required: false }));
+    }
+  },
+
+  verifyToolTip() {
+    cy.do(Select('Record identifier').hoverMouse());
+    cy.expect(Tooltip({ text: 'To enable this field, select a Record type.' }).exists());
   },
 
   verifyRecordIdentifiers(identifiers) {

@@ -21,7 +21,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
-describe('ui-orders: Orders', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -183,7 +183,7 @@ describe('ui-orders: Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',
         invoice.invoiceNumber,
@@ -205,7 +205,7 @@ describe('ui-orders: Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',
         `${orderNumber}-1`,

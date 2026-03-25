@@ -94,7 +94,8 @@ describe('MARC', () => {
               invalidLccnValues.forEach((lccn) => {
                 QuickMarcEditor.updateExistingFieldContent(5, `$a ${lccn}`);
                 QuickMarcEditor.checkContent(`$a ${lccn}`, 5);
-                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.verifyValidationCallout();
                 QuickMarcEditor.checkErrorMessage(5, errorInvalidLccn);
                 QuickMarcEditor.closeAllCallouts();
               });

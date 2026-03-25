@@ -1485,10 +1485,12 @@ export const INSTANCE_NOTE_TYPES = {
   AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  FORMATTED_CONTENTS_NOTE: 'Formatted Contents Note',
   DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
+  SUMMARY: 'Summary',
 };
 
 export const BULK_EDIT_ACTIONS = {
@@ -1871,8 +1873,8 @@ export const TRANSACTION_TYPES = {
 
 export const POL_CREATE_INVENTORY_SETTINGS = {
   INSTANCE: 'Instance',
-  INSTANCE_HOLDINGS: 'Instance, holdings',
-  INSTANCE_HOLDINGS_ITEM: 'Instance, holdings, item',
+  INSTANCE_HOLDING: 'Instance, Holding',
+  INSTANCE_HOLDING_ITEM: 'Instance, Holding, Item',
   NONE: 'None',
 };
 
@@ -1888,4 +1890,11 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   FULLY_PAID: 'Fully Paid',
   NO_CHANGE: 'No Change',
   PARTIALLY_PAID: 'Partially Paid',
+};
+
+export const USER_TYPES = {
+  STAFF: 'Staff',
+  PATRON: 'Patron',
+  SYSTEM: 'System',
+  SHADOW: 'Shadow',
 };

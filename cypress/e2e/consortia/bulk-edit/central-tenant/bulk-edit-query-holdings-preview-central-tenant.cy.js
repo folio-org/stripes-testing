@@ -545,11 +545,8 @@ describe('Bulk-edit', () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
 
-          cy.wait('@errors', getLongDelay()).then((interception6) => {
-            const interceptedUuid6 = interception6.request.url.match(
-              /bulk-operations\/([a-f0-9-]+)\/errors/,
-            )[1];
-            errorsFileHoldingsUUID = `*-Matching-Records-Errors-Query-${interceptedUuid6}.csv`;
+          cy.wait('@errors', getLongDelay()).then(() => {
+            errorsFileHoldingsUUID = '*-Errors.csv';
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');

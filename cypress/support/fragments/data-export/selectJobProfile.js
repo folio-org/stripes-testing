@@ -1,3 +1,4 @@
+import { including, matching } from '@interactors/html';
 import {
   Pane,
   Button,
@@ -5,7 +6,10 @@ import {
   PaneHeader,
   TextFieldIcon,
   MultiColumnListCell,
-  matching,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Modal,
+  Select,
 } from '../../../../interactors';
 
 const searchResults = MultiColumnList({ id: 'search-results-list' });
@@ -85,5 +89,43 @@ export default {
 
   verifySubtitle() {
     cy.expect(Pane({ subtitle: matching(/^\d+ job profiles$/) }).exists());
+  },
+
+  verifyTableColumns() {
+    cy.expect(searchResults.find(MultiColumnListHeader('Name')).exists());
+    cy.expect(searchResults.find(MultiColumnListHeader('Description')).exists());
+    cy.expect(searchResults.find(MultiColumnListHeader('Updated')).exists());
+    cy.expect(searchResults.find(MultiColumnListHeader('Updated by')).exists());
+    cy.expect(searchResults.find(MultiColumnListHeader('Status')).exists());
+  },
+
+  verifyJobProfileStatus(profileName, expectedStatus) {
+    const targetRow = MultiColumnListRow(including(profileName), { isContainer: false });
+
+    cy.expect(
+      targetRow.find(MultiColumnListCell({ column: 'Status', content: expectedStatus })).exists(),
+    );
+  },
+
+  selectJobProfile(profileName) {
+    cy.do(
+      searchResults.find(MultiColumnListCell({ content: profileName, columnIndex: 0 })).click(),
+    );
+  },
+
+  selectRecordType(selectType) {
+    cy.do(Modal('Are you sure you want to run this job?').find(Select()).choose(selectType));
+  },
+
+  verifyJobProfileAbsentInModal(profileName) {
+    cy.expect(searchResults.find(MultiColumnListCell(profileName)).absent());
+  },
+
+  clickRunButton() {
+    cy.do(Button('Run').click());
+  },
+
+  closeModal() {
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

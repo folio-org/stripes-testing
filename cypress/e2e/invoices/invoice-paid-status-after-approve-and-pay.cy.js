@@ -16,10 +16,10 @@ import InvoiceStates from '../../support/fragments/invoices/invoiceStates';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const defaultBudget = {
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const ledger = { ...Ledgers.defaultUiLedger };
+  const fund = { ...Funds.defaultUiFund };
+  const budget = {
     ...Budgets.getDefaultBudget(),
     allocated: 100,
   };
@@ -50,22 +50,21 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
+    FiscalYears.createViaApi(fiscalYear).then((fiscalYearResponse) => {
+      fiscalYear.id = fiscalYearResponse.id;
+      budget.fiscalYearId = fiscalYearResponse.id;
+      ledger.fiscalYearOneId = fiscalYear.id;
 
-    FiscalYears.createViaApi(defaultFiscalYear).then((fiscalYearResponse) => {
-      defaultFiscalYear.id = fiscalYearResponse.id;
-      defaultBudget.fiscalYearId = fiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        ledger.id = ledgerResponse.id;
+        fund.ledgerId = ledger.id;
 
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+        Funds.createViaApi(fund).then((fundResponse) => {
+          fund.id = fundResponse.fund.id;
+          budget.fundId = fundResponse.fund.id;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-          defaultBudget.fundId = fundResponse.fund.id;
-
-          Budgets.createViaApi(defaultBudget).then((budgetResponse) => {
-            defaultBudget.id = budgetResponse.id;
+          Budgets.createViaApi(budget).then((budgetResponse) => {
+            budget.id = budgetResponse.id;
 
             Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
               organization.id = organizationResponse;
@@ -75,7 +74,7 @@ describe('Invoices', () => {
               cy.getBatchGroups().then((batchGroup) => {
                 invoice.batchGroup = batchGroup.name;
 
-                Approvals.setApprovePayValue(true);
+                Approvals.setApprovePayValueViaApi(true);
 
                 cy.createTempUser([
                   permissions.uiInvoicesApproveInvoices.gui,
@@ -101,7 +100,6 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
     // Budget, Fund, Ledger, and FiscalYear cannot be deleted because they have related transactions from paid invoice
-    Approvals.setApprovePayValue(false);
   });
 
   it(
@@ -111,7 +109,7 @@ describe('Invoices', () => {
       Invoices.createDefaultInvoiceWithoutAddress(invoice);
       Invoices.checkCreatedInvoice(invoice);
 
-      Invoices.createInvoiceLineWithFund(invoiceLine, defaultFund);
+      Invoices.createInvoiceLineWithFund(invoiceLine, fund);
 
       Invoices.approveAndPayInvoice();
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedAndPaidMessage);

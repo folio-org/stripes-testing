@@ -101,8 +101,6 @@ describe('Data Export', () => {
         });
         QuickMarcEditor.checkContentByTag('001', authorityIdentifier);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
 
         MarcAuthorities.closeMarcViewPane();
