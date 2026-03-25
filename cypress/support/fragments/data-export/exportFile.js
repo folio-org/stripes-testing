@@ -1,5 +1,6 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
+import JSZip from 'jszip';
 import uuid from 'uuid';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -419,5 +420,36 @@ export default {
               });
           });
       });
+  },
+
+  /**
+   * Verify zip file contains expected number of .mrc files based on slice size
+   * @param {string} fileName - Name of the zip file in downloads folder
+   * @param {number} totalRecords - Total number of records exported
+   * @param {number} sliceSize - Configured slice size limit
+   */
+  verifyZipFileContents(fileName, totalRecords, sliceSize) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((zipContent) => {
+      return JSZip.loadAsync(zipContent).then((zip) => {
+        const allFiles = Object.keys(zip.files);
+
+        // Get all non-directory files
+        const actualFiles = allFiles.filter((name) => !zip.files[name].dir);
+
+        // Verify all files have .mrc extension
+        const nonMrcFiles = actualFiles.filter((name) => !name.endsWith('.mrc'));
+        expect(nonMrcFiles.length).to.equal(
+          0,
+          `Expected all files to have .mrc extension, but found files with other extensions: ${JSON.stringify(nonMrcFiles)}`,
+        );
+
+        // Verify the correct number of .mrc files
+        const expectedMrcFileCount = Math.ceil(totalRecords / sliceSize);
+        expect(actualFiles.length).to.equal(
+          expectedMrcFileCount,
+          `Expected ${expectedMrcFileCount} .mrc files in zip folder, but found ${actualFiles.length}. Files: ${JSON.stringify(actualFiles)}`,
+        );
+      });
+    });
   },
 };
