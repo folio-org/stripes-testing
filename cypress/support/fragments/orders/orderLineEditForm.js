@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  HTML,
   KeyValue,
   RepeatableFieldItem,
   Section,
@@ -311,10 +312,29 @@ export default {
     cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
     cy.wait(1000);
   },
+
+  checkLocationDropdownOptions(expectedLocations) {
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expect(actualOptions.sort()).to.deep.equal(
+        expectedLocations.sort(),
+        `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
+      );
+    });
+  },
+
   selectLocationFromDropdown(locationName) {
     cy.do(SelectionOption(including(locationName)).click());
     cy.wait(1000);
   },
+
+  checkIsLocationRequired(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(locationSection.has({ error: 'At least one location must be entered' }));
+    } else {
+      cy.expect(locationSection.find(HTML({ className: including('feedbackError') })).absent());
+    }
+  },
+
   selectExpenseClass(expenseClass, index) {
     this.selectDropDownValue('Expense class', expenseClass, index);
   },
