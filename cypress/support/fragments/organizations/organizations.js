@@ -1710,6 +1710,15 @@ export default {
     );
   },
 
+  verifyAccountNumberIsNotAvailableInIntegrationForm: (accountNo) => {
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
+    ).then(($select) => {
+      const options = Array.from($select[0].options).map((opt) => opt.value);
+      expect(options).not.to.include(accountNo);
+    });
+  },
+
   checkIntegrationsAdd: (integrationName, integartionDescription) => {
     cy.do([openintegrationDetailsSectionButton.click()]);
     cy.expect(
