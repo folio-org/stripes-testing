@@ -323,8 +323,9 @@ export default {
     return FileManager.findDownloadedFilesByMask(downloadedFileMask).then((downloadedFilenames) => {
       const downloadedFile = downloadedFilenames[0];
       const originalFileName = FileManager.getFileNameFromFilePath(downloadedFile);
+      const fixturePath = `cypress/fixtures/${originalFileName}`;
       return FileManager.readFile(downloadedFile).then((actualContent) => {
-        return FileManager.createFile(`cypress/fixtures/${originalFileName}`, actualContent);
+        return FileManager.createFile(fixturePath, actualContent).then(() => cy.wrap(fixturePath));
       });
     });
   },
