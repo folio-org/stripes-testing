@@ -115,7 +115,7 @@ describe('Orders: Inventory interaction', () => {
       SelectLocationModal.selectLocation(testData.location.name);
 
       // Fill the following fields & click "Save"
-      OrderLines.setPhysicalQuantity('1');
+      OrderLines.setPhysicalQuantity({ quantity: '1', changeQuantity: false });
       OrderLines.savePol();
       OrderLines.checkTitle(testData.instance.instanceTitle);
 
