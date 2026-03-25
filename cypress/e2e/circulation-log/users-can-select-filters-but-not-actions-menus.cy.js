@@ -81,7 +81,9 @@ describe('Circulation log', () => {
       SearchPane.filterByLastWeek();
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('request', 'Created');
-      SearchPane.checkResultSearch({ object: 'Request' });
+      SearchPane.findResultRowIndexByContent('Request').then((rowIndex) => {
+        SearchPane.checkResultSearch({ object: 'Request' }, rowIndex);
+      });
       SearchPane.checkExportResultIsUnavailable();
     },
   );
