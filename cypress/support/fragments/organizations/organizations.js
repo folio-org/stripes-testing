@@ -685,6 +685,13 @@ export default {
   },
 
   fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (information) => {
+    if (information.integrationType) {
+      cy.do(
+        Section({ id: 'integrationInfo' })
+          .find(Select(including('Integration type')))
+          .choose(information.integrationType),
+      );
+    }
     if (information.integrationName) {
       cy.do([
         Section({ id: 'integrationInfo' })
@@ -694,13 +701,6 @@ export default {
     }
     if (information.integrationDescription) {
       cy.do([TextArea('Description').fillIn(information.integrationDescription)]);
-    }
-    if (information.integrationType) {
-      cy.do(
-        Section({ id: 'integrationInfo' })
-          .find(Select(including('Integration type')))
-          .choose(information.integrationType),
-      );
     }
     if (information.transmissionMethod) {
       cy.do([Select('Transmission method*').choose(information.transmissionMethod)]);
@@ -713,6 +713,13 @@ export default {
     }
     if (information.libraryEDICode) {
       cy.do([ediSection.find(TextField('Library EDI code*')).fillIn(information.libraryEDICode)]);
+    }
+    if (information.sendAccountNumber) {
+      cy.do(
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.sendAccountNumber',
+        }).click(),
+      );
     }
     if (information.ordersMessageForVendor) {
       cy.do([
@@ -753,6 +760,22 @@ export default {
         ftpSection.find(TextField('Username')).fillIn('folio'),
         ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
         ftpSection.find(TextField('Order directory')).fillIn('/files'),
+      ]);
+    }
+    if (information.ftpWithoutCredentials) {
+      cy.do([
+        ftpSection.find(TextField(including('Server address'))).fillIn(serverAddress),
+        ftpSection.find(TextField(including('FTP port'))).fillIn(FTPport),
+      ]);
+    }
+    if (information.enableScheduling) {
+      cy.do([
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
+        }).click(),
+        schedulingSection.find(Select('Schedule period*')).choose('Daily'),
+        schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+        schedulingSection.find(TextField('Time*')).fillIn(DateTools.getUTCDateForScheduling()),
       ]);
     }
   },
