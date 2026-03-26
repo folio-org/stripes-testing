@@ -46,7 +46,7 @@ describe('Data Import', () => {
         '',
       ],
       updated700Field: [
-        75,
+        80,
         '700',
         '1',
         '\\',

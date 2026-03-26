@@ -543,3 +543,19 @@ Cypress.Commands.add('verifyAssignedRolesCountForUserApi', (userId, rolesCount) 
     },
   );
 });
+
+Cypress.Commands.add('getUserCapabilitiesApi', (searchParams = { limit: 1000 }) => {
+  return cy.okapiRequest({
+    path: 'users/capabilities',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getUserCapabilitySetsApi', (searchParams = { limit: 1000 }) => {
+  return cy.okapiRequest({
+    path: 'users/capability-sets',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  });
+});

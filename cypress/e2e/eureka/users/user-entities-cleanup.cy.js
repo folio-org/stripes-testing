@@ -55,14 +55,20 @@ describe('Eureka', () => {
             cy.expect(response.body.userRoles.length).equals(0);
             cy.expect(response.body.totalRecords).equals(0);
           });
-          cy.getCapabilitiesForUserApi(testData.user.userId).then((response) => {
+          cy.getUserCapabilitiesApi({
+            limit: 1000,
+            query: `userId=="${testData.user.userId}"`,
+          }).then((response) => {
             cy.expect(response.status).equals(200);
-            cy.expect(response.body.capabilities.length).equals(0);
+            cy.expect(response.body.userCapabilities.length).equals(0);
             cy.expect(response.body.totalRecords).equals(0);
           });
-          cy.getCapabilitySetsForUserApi(testData.user.userId).then((response) => {
+          cy.getUserCapabilitySetsApi({
+            limit: 1000,
+            query: `userId=="${testData.user.userId}"`,
+          }).then((response) => {
             cy.expect(response.status).equals(200);
-            cy.expect(response.body.capabilitySets.length).equals(0);
+            cy.expect(response.body.userCapabilitySets.length).equals(0);
             cy.expect(response.body.totalRecords).equals(0);
           });
         });
