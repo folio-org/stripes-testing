@@ -17,7 +17,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
 
       const testData = {
-        authorityHeading: `AT_C503162_MarcAuthority_${randomPostfix}`,
+        authorityHeading: `AT_C514945_MarcAuthority_${randomPostfix}`,
         tag100: '100',
         tag130: '130',
         tag983: '983',
@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       const localFieldPayload = {
         tag: '983',
-        label: `AT_C503162_LocalField_${randomPostfix}`,
+        label: `AT_C514945_LocalField_${randomPostfix}`,
         url: 'http://www.example.org/field983.html',
         repeatable: true,
         required: false,
@@ -87,7 +87,7 @@ describe('MARC', () => {
           toggleAllUndefinedValidationRules(specId, { enable: true });
         });
 
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C503162_MarcAuthority');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514945_MarcAuthority');
 
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -142,8 +142,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503162 Edit MARC authority record with undefined indicators and subfields in 1XX and local field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503162'] },
+        'C514945 Edit MARC authority record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C514945'] },
         () => {
           // Step 1: Search for the authority record, open detail view and click edit
           MarcAuthorities.searchBy('Keyword', testData.authorityHeading);
