@@ -1,3 +1,5 @@
+import { Button } from '@interactors/html';
+
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
 const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
@@ -10,6 +12,8 @@ const selectMarcAuthModal =
 const editResourceSection = "//div[@id='edit-section']";
 const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
 const newInstanceButton = "//button[@data-testid='new-instance']";
+const saveKeepEditingButton = Button('Save & keep editing');
+const saveAndCloseButton = Button('Save & close');
 
 export default {
   waitLoading() {
@@ -17,12 +21,12 @@ export default {
   },
 
   saveAndKeepEditing() {
-    cy.xpath('//button[@data-testid="save-record-and-keep-editing"]').click();
+    cy.do(saveKeepEditingButton.click());
     cy.wait(1000);
   },
 
   saveAndClose() {
-    cy.xpath('//button[@data-testid="save-record-and-close"]').click();
+    cy.do(saveAndCloseButton.click());
     cy.wait(1000);
   },
 
@@ -165,7 +169,7 @@ export default {
   },
 
   checkHeadingProfile(profileName) {
-    cy.xpath(`//*[contains(@class, 'heading') and contains(text(), '${profileName}')]`)
+    cy.xpath(`//h3[@class='heading' and contains(text(), '${profileName}')]`)
       .scrollIntoView()
       .should('be.visible');
   },
