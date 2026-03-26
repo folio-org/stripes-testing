@@ -1,19 +1,17 @@
-import permissions from '../../../support/dictionary/permissions';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import Groups from '../../../support/fragments/finance/groups/groups';
-import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
+import permissions from '../../support/dictionary/permissions';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import Groups from '../../support/fragments/finance/groups/groups';
+import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
-describe('Finance: Groups', () => {
+describe('Acquisition Units', () => {
   const defaultGroup = { ...Groups.defaultUiGroup };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   let userA;
 
   before(() => {
-    cy.getAdminToken();
-
     cy.createTempUser([
       permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
