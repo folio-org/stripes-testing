@@ -62,10 +62,16 @@ describe('Fees&Fines', () => {
       { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
       () => {
         const name = 'Shared';
-        UsersOwners.startNewLineAdding();
-        UsersOwners.fillOwner({ name });
-        UsersOwners.saveOwner();
-        ownerNames.push(name);
+
+        // If "Shared" owner already exists, do not create a new one.
+        UsersOwners.getOwnerViaApi({ query: `owner==${name}` }).then((owner) => {
+          if (!owner?.id) {
+            UsersOwners.startNewLineAdding();
+            UsersOwners.fillOwner({ name });
+            UsersOwners.saveOwner(name);
+            ownerNames.push(name);
+          }
+        });
 
         UsersOwners.startNewLineAdding();
         UsersOwners.fillOwner({ name, servicePoint: servicePoints.at(-1).name });

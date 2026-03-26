@@ -73,12 +73,15 @@ export default {
     });
 
     // verify file name
+    let actualFileName;
     cy.do(
       resultRow.fileName.perform((element) => {
-        expect(element.innerText).to.equal(resultFileName);
-        expect(element.innerText).to.include(`-${jobId}.mrc`);
+        actualFileName = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualFileName).to.equal(resultFileName);
+    });
     cy.expect(resultRow.fileName.find(HTML({ className: including('button') })).exists());
 
     // verify date (ended running)

@@ -45,8 +45,14 @@ export default {
     // TODO need to wait until data will be filled
     cy.wait(1500);
   },
-  addJobProfileForImportCreate: () => cy.do(jobProfileForImportCreateButton.click()),
-  addJobProfileForOverlayUpdate: () => cy.do(jobProfileForOverlayUpdateButton.click()),
+  addJobProfileForImportCreate: () => {
+    cy.wait(1500);
+    cy.do(jobProfileForImportCreateButton.click());
+  },
+  addJobProfileForOverlayUpdate: () => {
+    cy.wait(1500);
+    cy.do(jobProfileForOverlayUpdateButton.click());
+  },
   selectJobProfileForImportCreate: (profileName, profileNumber = 0, rowNumber = 0) => {
     cy.do(Button({ name: `allowedCreateJobProfileIds[${profileNumber}]` }).click());
     cy.get('[class^=selectionList-]')
