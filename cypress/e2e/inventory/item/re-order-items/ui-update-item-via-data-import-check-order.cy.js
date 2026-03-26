@@ -2,7 +2,6 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORD_NAMES,
   ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
 } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -41,8 +40,7 @@ describe('Inventory', () => {
         {
           mappingProfile: {
             name: `C808507 holdings mapping profile_${randomPostfix}`,
-            permanentLocation: LOCATION_NAMES.ONLINE,
-            pernanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+            permanentLocation: null,
           },
           actionProfile: {
             name: `C808507 holdings action profile_${randomPostfix}`,
@@ -111,6 +109,12 @@ describe('Inventory', () => {
           });
           cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((matType) => {
             collectionOfProfilesForCreate[1].mappingProfile.materialType = matType.name;
+          });
+          cy.getLocations({
+            limit: 1,
+            query: '(isActive=true and name<>"*auto*" and name<>"AT_*")',
+          }).then((location) => {
+            collectionOfProfilesForCreate[0].mappingProfile.permanentLocation = `${location.name} (${location.code})`;
           });
           ActionProfiles.getActionProfilesViaApi({
             query: `name="${instanceActionProfileName}"`,
@@ -207,18 +211,18 @@ describe('Inventory', () => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitle);
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
-          collectionOfProfilesForCreate.forEach((profile) => {
-            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-              profile.mappingProfile.name,
-            );
-          });
           SettingsActionProfiles.deleteActionProfileByNameViaApi(
             collectionOfProfilesForUpdate.actionProfile.name,
           );
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(
             collectionOfProfilesForUpdate.matchProfile.profileName,
           );
+          collectionOfProfilesForCreate.forEach((profile) => {
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
+          });
         });
       });
 
