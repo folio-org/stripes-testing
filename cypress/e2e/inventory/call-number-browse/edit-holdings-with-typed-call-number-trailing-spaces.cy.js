@@ -13,6 +13,7 @@ import {
   BROWSE_CALL_NUMBER_OPTIONS,
   ITEM_STATUS_NAMES,
 } from '../../../support/constants';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -78,6 +79,15 @@ describe('Inventory', () => {
             Permissions.uiInventoryViewCreateEditItems.gui,
           ]).then((userProps) => {
             testData.user = userProps;
+
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+              callNumberTypes: [],
+            });
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+              callNumberTypes: [],
+            });
           });
         });
     });
