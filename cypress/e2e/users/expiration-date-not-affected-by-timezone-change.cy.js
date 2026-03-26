@@ -15,8 +15,8 @@ describe('Users', () => {
     selectedExpirationDate: '',
     selectedExpirationDatePlusOne: '',
     selectedExpirationDatePlusOneInDetailPaneFormat: '',
-    westernTimezone: 'Pacific/Nauru',
-    easternTimezone: 'Pacific/Auckland',
+    westernTimezone: 'Pacific/Pago_Pago',
+    easternTimezone: 'Pacific/Apia',
     utcTimezone: 'UTC',
   };
 
@@ -99,7 +99,7 @@ describe('Users', () => {
       TenantPane.waitLoading();
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
 
-      // Change Time zone to a more Eastern one (Pacific/Auckland)
+      // Change Time zone to a more Eastern one (Pacific/Apia)
       Localization.changeTimezone(testData.easternTimezone);
       Localization.clickSaveButton();
 
