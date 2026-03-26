@@ -118,6 +118,7 @@ const searchInput = SearchField({ id: 'input-record-search' });
 const startDateField = TextField({ name: 'startDate' });
 const endDateField = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
+const schedulePeriodSelect = 'select[name$="schedulePeriod"]';
 
 export default {
   waitLoading: () => {
@@ -513,7 +514,7 @@ export default {
 
   fillScheduleInfo: (info) => {
     cy.get('[aria-labelledby="accordion-toggle-button-scheduling"]').within(() => {
-      cy.get('select[name$="schedulePeriod"]').select(String(info.period));
+      cy.get(schedulePeriodSelect).select(String(info.period));
 
       const setNativeValue = (input, value) => {
         const proto = Object.getPrototypeOf(input);
@@ -597,6 +598,18 @@ export default {
 
   checkDayFieldError(expectedError = 'Value must be less than or equal to 31') {
     cy.get('[class^=feedbackError]').should('contain.text', expectedError);
+  },
+
+  verifySchedulePeriodOptions(expectedOptions = []) {
+    cy.get(schedulePeriodSelect).then(($select) => {
+      const actualOptions = [...$select[0].options].map((o) => o.text);
+      expectedOptions.forEach((option) => {
+        expect(actualOptions).to.include(option);
+      });
+      expect(
+        actualOptions.filter((o) => o !== '' && o !== 'Please select schedule period'),
+      ).to.have.lengthOf(expectedOptions.length);
+    });
   },
 
   fillIntegrationInformation: (
@@ -749,6 +762,9 @@ export default {
     }
     if (information.ediFTP) {
       cy.do(ftpSection.find(Select('EDI FTP')).choose(information.ediFTP));
+    }
+    if (information.ftpMode) {
+      cy.do(ftpSection.find(Select('FTP mode')).choose(information.ftpMode));
     }
     if (information.connectionMode) {
       cy.do(ftpSection.find(Select('FTP connection mode')).choose(information.connectionMode));
