@@ -51,6 +51,7 @@ describe('Data Export', () => {
 
         // Step 5: Click "Job profiles" option under "Profiles" label
         ExportJobProfiles.goToJobProfilesTab();
+        ExportJobProfiles.verifyDefaultProfiles();
         ExportJobProfiles.verifyJobProfilesElements();
         ExportJobProfiles.verifyNewButtonEnabled();
 

@@ -136,7 +136,9 @@ describe('Settings: Tenant', () => {
       CreateLocations.selectServicePoint();
       CreateLocations.saveAndClose();
       TenantPane.verifyPageTitle(`Tenant settings - ${locationName} - FOLIO`);
+      cy.wait(2000);
       LocationDetails.openEditLocationForm();
+      cy.wait(2000);
       TenantPane.verifyPageTitle(`Tenant settings - Edit: ${locationName} - FOLIO`);
       const newLocationName = `newLocation_${getRandomPostfix()}`;
       CreateLocations.fillFolioName(newLocationName);
