@@ -29,6 +29,7 @@ import {
   ORDER_PAYMENT_STATUS,
   RECEIPT_STATUS_SELECTED,
   RECEIVING_WORKFLOW_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -2192,9 +2193,11 @@ export default {
   checkCreateInventory() {
     cy.expect([
       physicalResourceDetailsAccordion
-        .find(KeyValue({ value: 'Instance, Holding, Item' }))
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
         .exists(),
-      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
+      eResourcesDetails
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
+        .exists(),
     ]);
   },
 
