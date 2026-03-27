@@ -137,6 +137,7 @@ describe('Data Import', () => {
             );
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            cy.waitForInstanceLinkStatus(createdAuthorityIDs[0]);
           })
           .then(() => {
             // create Match profile
@@ -249,6 +250,7 @@ describe('Data Import', () => {
           '\\',
           '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
         );
+        cy.waitForInstanceLinkStatus(createdAuthorityIDs[0], false);
 
         QuickMarcEditor.closeEditorPane();
         InventoryInstance.viewSource();

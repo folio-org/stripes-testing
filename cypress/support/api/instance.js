@@ -111,6 +111,27 @@ Cypress.Commands.add('checkInstanceLinkStatus', (createdRecordIDs, tenant) => {
   });
 });
 
+Cypress.Commands.add('waitForInstanceLinkStatus', (instanceId, isLinked = true) => {
+  cy.recurse(
+    () => {
+      return cy.okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: `links/instances/${instanceId}`,
+        isDefaultSearchParamsRequired: false,
+      });
+    },
+    (response) => {
+      const links = response.body.links || [];
+      return isLinked ? links.length > 0 : links.length === 0;
+    },
+    {
+      limit: 60,
+      timeout: 60000,
+      delay: 1000,
+    },
+  );
+});
+
 Cypress.Commands.add('getSrsRecordsByInstanceId', (instanceId) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,

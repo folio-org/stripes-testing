@@ -203,6 +203,9 @@ describe('Data Import', () => {
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
               InventoryInstance.verifySearchOptions();
+              cy.ifConsortia(true, () => {
+                InventorySearchAndFilter.byShared('No');
+              });
               InventoryInstance.searchResults(linking.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
@@ -215,6 +218,9 @@ describe('Data Import', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
         });
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
       });
@@ -283,6 +289,10 @@ describe('Data Import', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+        MarcAuthorities.waitLoading();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.verifyEmptyNumberOfTitles();
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
