@@ -18,6 +18,7 @@ import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemRecordView from '../inventory/item/itemRecordView';
 import CheckInModal from './checkInModal';
+import FeeFineDetails from '../users/feeFineDetails';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -70,6 +71,7 @@ export default {
   waitLoading: () => {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
+    cy.wait(10000);
   },
   clickOnCloseIcon() {
     cy.do(closeIconButton.click());
@@ -230,6 +232,11 @@ export default {
     cy.expect(Modal(including('New fee/fine')).exists());
   },
 
+  openFeeFineDetails: () => {
+    cy.do([availableActionsButton.click(), feeFineDetailsButton.click()]);
+    FeeFineDetails.waitLoading();
+  },
+
   openCheckInNotes: (notes) => {
     cy.wait(500);
     cy.do(availableActionsButton.click());
@@ -365,6 +372,14 @@ export default {
   closeAccessDeniedModal: () => {
     cy.do(accessDeniedModal.find(Button('Close')).click());
     cy.expect(accessDeniedModal.absent());
+  },
+
+  checkFeesFinesOwedPresent: () => {
+    cy.expect(MultiColumnListCell({ row: 0, content: including('(fees/fines owed)') }).exists());
+  },
+
+  checkFeeFinesDetailsByFields(allContentToCheck) {
+    allContentToCheck.forEach((contentToCheck) => cy.expect(feeFinePane.find(HTML(including(contentToCheck))).exists()));
   },
 
   closeModalIfPresent() {
