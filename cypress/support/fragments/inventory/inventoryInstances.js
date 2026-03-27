@@ -1473,8 +1473,12 @@ export default {
     });
   },
 
-  verifyInventorySearchPaneheader() {
-    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  verifyInventorySearchPaneheader(checkRecordsFound = true) {
+    if (checkRecordsFound) {
+      cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+    } else {
+      cy.expect(paneHeaderSearch.exists());
+    }
   },
 
   checkActionsButtonInSecondPane() {
