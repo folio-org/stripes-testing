@@ -62,10 +62,9 @@ const search = (nameForSearch) => {
 };
 
 const duplicate = () => {
-  cy.do([
-    Pane({ id: 'full-screen-view' }).find(actionsButton).click(),
-    Button('Duplicate').click(),
-  ]);
+  cy.do(Pane({ id: 'full-screen-view' }).find(actionsButton).click());
+  cy.wait(1000);
+  cy.do(Button('Duplicate').click());
 };
 
 export default {

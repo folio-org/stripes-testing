@@ -79,6 +79,7 @@ describe('MARC', () => {
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
         { tags: ['dryRun', 'spitfire', 'C350667'] },
         () => {
+          DataImport.verifyUploadState();
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();

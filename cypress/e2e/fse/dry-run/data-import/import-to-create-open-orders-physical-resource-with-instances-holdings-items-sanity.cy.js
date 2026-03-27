@@ -56,7 +56,7 @@ describe('Data Import', () => {
           name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
           orderStatus: ORDER_STATUSES.OPEN,
           approved: true,
-          vendor: VENDOR_NAMES.GOBI,
+          vendor: VENDOR_NAMES.MOSAIC,
           title: '245$a',
           acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
           orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
@@ -64,8 +64,8 @@ describe('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
-          materialType: MATERIAL_TYPE_NAMES.BOOK,
-          locationName: `"${LOCATION_NAMES.ANNEX}"`,
+          materialType: MATERIAL_TYPE_NAMES.CD,
+          locationName: `"${LOCATION_NAMES.CD_P}"`,
           locationQuantityPhysical: '"1"',
         },
         actionProfile: {
@@ -77,7 +77,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C380474 Create simple holdings for open order ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocation: `"${LOCATION_NAMES.CD_P}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -88,8 +88,8 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C380474 Create simple item for open order ${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
+          permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
@@ -235,11 +235,11 @@ describe('Data Import', () => {
             instanceHrid = initialInstanceHrId;
           });
           InstanceRecordView.verifyHotlinkToPOL(polNumber);
-          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.ANNEX_UI} >`]);
+          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.CD_P_UI} >`]);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.CD_P_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.waitLoading();
           ItemRecordView.checkHotlinksToCreatedPOL(polNumber);

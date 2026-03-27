@@ -11,6 +11,7 @@ import {
   matching,
 } from '../../../../interactors';
 import { columnNames } from './dataExportViewAllLogs';
+import ExportFileHelper from './exportFile';
 
 const jobsPane = Pane('Jobs');
 const logsPane = Pane('Logs');
@@ -71,11 +72,12 @@ export default {
         doc.addEventListener('click', () => {
           setTimeout(() => {
             doc.location.reload();
-          }, 6000);
+          }, 10_000);
         });
         cy.get('[class^=downloadFile---]').contains(name).click();
       });
     cy.wait(1000);
+    ExportFileHelper.waitFileIsDownloaded(name);
   },
 
   clickFileNameFromTheList(fileName) {

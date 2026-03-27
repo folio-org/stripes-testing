@@ -59,6 +59,7 @@ export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
   COURSE_RESERVES: 'Course reserves',
   SELECTED: 'Selected',
+  EEB: 'EEB',
 };
 
 export const MATERIAL_TYPE_NAMES = {
@@ -70,6 +71,7 @@ export const MATERIAL_TYPE_NAMES = {
   TEXT: 'text',
   UNSPECIFIED: 'unspecified',
   VIDEO_RECORDING: 'video recording',
+  CD: 'CD',
 };
 
 export const ITEM_STATUS_NAMES = {
@@ -311,6 +313,12 @@ export const LOCATION_NAMES = {
   SECOND_FLOOR: 'Second Floor (KU/CC/DI/2)',
   SECOND_FLOOR_UI: 'Second Floor',
   DCB_UI: 'DCB',
+  CD_R: 'CD-R (CDR)',
+  CD_R_UI: 'CD-R',
+  CD_P: 'CD-P (CDP)',
+  CD_P_UI: 'CD-P',
+  CD_V: 'CD-V (CDV)',
+  CD_V_UI: 'CD-V',
 };
 
 export const LOCATION_IDS = {
@@ -397,6 +405,7 @@ export const VENDOR_NAMES = {
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
   AMAZON: 'Amazon.com',
+  MOSAIC: 'Mosaic',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
