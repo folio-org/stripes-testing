@@ -14,6 +14,8 @@ const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
 const newInstanceButton = "//button[@data-testid='new-instance']";
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
+const editionStatementInput =
+  '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
 
 export default {
   waitLoading() {
@@ -82,15 +84,8 @@ export default {
 
   setEdition(edition) {
     cy.wait(1000);
-    cy.xpath('//div[@class="label" and text()="Edition Statement"]/../../div/div[2]/input')
-      .focus()
-      .should('not.be.disabled')
-      .clear();
-    // break the chain since test fails here from time to time otherwise
+    cy.xpath(editionStatementInput).focus().type(`{selectall}${edition}`);
     cy.wait(1000);
-    cy.xpath('//div[@class="label" and text()="Edition Statement"]/../../div/div[2]/input').type(
-      edition,
-    );
   },
 
   viewMarc() {
