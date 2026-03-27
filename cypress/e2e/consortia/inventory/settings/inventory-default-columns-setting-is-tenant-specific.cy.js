@@ -57,7 +57,6 @@ describe('Inventory', () => {
               permissions: [Permissions.uiInventoryViewInstances.gui],
             });
 
-            // cy.resetTenant();
             cy.login(user.username, user.password, {
               path: TopMenu.settingsPath,
               waiter: SettingsPane.waitLoading,
@@ -188,7 +187,6 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
 
             // Step 13: Run search on Central - only Central-configured columns should show
-            // InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(instanceTitlePrefix);
             InventorySearchAndFilter.validateSearchTableColumnsShown([
               INVENTORY_COLUMN_HEADERS.TITLE,
