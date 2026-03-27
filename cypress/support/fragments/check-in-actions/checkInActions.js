@@ -3,6 +3,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import {
   Button,
+  KeyValue,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -379,7 +380,11 @@ export default {
   },
 
   checkFeeFinesDetailsByFields(allContentToCheck) {
-    allContentToCheck.forEach((contentToCheck) => cy.expect(feeFinePane.find(HTML(including(contentToCheck))).exists()));
+    Object.entries(allContentToCheck).forEach(([label, value]) => cy.expect(
+      KeyValue(label)
+        .find(HTML(including(value)))
+        .exists(),
+    ));
   },
 
   closeModalIfPresent() {

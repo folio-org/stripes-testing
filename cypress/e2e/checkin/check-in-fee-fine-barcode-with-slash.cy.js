@@ -165,13 +165,13 @@ describe('Check in', () => {
 
           // // 4. Click on "..." button under the "Actions" column > select "Fee/Fine details" action
           CheckInActions.openFeeFineDetails();
-          CheckInActions.checkFeeFinesDetailsByFields([
-            itemData.barcode,
-            itemData.instanceTitle,
-            testData.owner,
-            testData.feeFineType,
-            testData.feeFineAmount,
-          ]);
+          CheckInActions.checkFeeFinesDetailsByFields({
+            Barcode: itemData.barcode,
+            'Instance (Material type)': itemData.instanceTitle,
+            'Fee/fine owner': testData.owner,
+            'Fee/fine type': testData.feeFineType,
+            'Billed amount': testData.feeFineAmount,
+          });
         },
       );
     },

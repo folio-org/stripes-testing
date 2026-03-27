@@ -124,4 +124,17 @@ export default {
       ]);
     });
   },
+  checkViewOnly(name) {
+    cy.get('[data-test-pane-header-title]').should('contain', name);
+    cy.get('#clickable-edit-item').should('not.exist');
+  },
+  openPreviewModal() {
+    cy.wait(1000);
+    cy.get('[class*=pane]').contains('Preview').click();
+    cy.get('#preview-modal').should('be.visible');
+  },
+  closePreviewModal() {
+    cy.get('#preview-modal').contains('Close').click();
+    cy.get('#preview-modal').should('not.exist');
+  },
 };
