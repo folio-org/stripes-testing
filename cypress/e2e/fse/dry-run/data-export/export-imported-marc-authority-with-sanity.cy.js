@@ -106,7 +106,7 @@ describe('Data Export', () => {
           'Authorities',
         );
         DataExportLogs.verifyAreYouSureModalAbsent();
-
+        cy.getUserToken(user.username, user.password, { log: false });
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
         cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
           const exportedFile = marcAuthorityUUIDFileName.replace('.csv', '');
