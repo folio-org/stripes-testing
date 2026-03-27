@@ -106,7 +106,7 @@ describe('MARC', () => {
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValueForBrowse);
-        MarcAuthorities.checkRow(testData.marcValueForBrowse);
+        MarcAuthorities.checkRowByContent(testData.marcValueForBrowse);
         MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.marcValueForBrowse, '1');
         MarcAuthorities.clickNumberOfTitlesByHeading(testData.marcValueForBrowse);
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);

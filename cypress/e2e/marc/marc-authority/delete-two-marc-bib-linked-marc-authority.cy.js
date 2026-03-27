@@ -152,7 +152,7 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
 
-        MarcAuthorities.selectTitle(testData.marcValue);
+        MarcAuthorities.selectIncludingTitle(testData.marcValue);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthoritiesDelete.clickDeleteButton();
         MarcAuthoritiesDelete.checkDeleteModal();
