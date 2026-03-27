@@ -5,7 +5,12 @@ import { NewOrder, Orders, BasicOrderLine, OrderLines } from '../../support/frag
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import { InventoryHoldings } from '../../support/fragments/inventory';
 import { OrderLinesLimit } from '../../support/fragments/settings/orders';
-import { ORDER_STATUSES } from '../../support/constants';
+import {
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -116,8 +121,8 @@ describe('Orders', () => {
       OrderLineDetails.cancelOrderLine({ orderLineNumber: `${testData.order.poNumber}-1` });
       OrderLineDetails.checkOrderLineDetails({
         purchaseOrderLineInformation: [
-          { key: 'Payment status', value: 'Cancelled' },
-          { key: 'Receipt status', value: 'Cancelled' },
+          { key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS, value: ORDER_LINE_PAYMENT_STATUS.CANCELLED },
+          { key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS, value: RECEIPT_STATUS_VIEW.CANCELLED },
         ],
       });
 
@@ -163,8 +168,14 @@ describe('Orders', () => {
       OrderDetails.openPolDetails(testData.orderLines[1].titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
         purchaseOrderLineInformation: [
-          { key: 'Payment status', value: 'Awaiting Payment' },
-          { key: 'Receipt status', value: 'Awaiting Receipt' },
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,
+          },
+          {
+            key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+            value: RECEIPT_STATUS_VIEW.AWAITING_RECEIPT,
+          },
         ],
       });
 

@@ -11,7 +11,13 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../support/fragments/topMenu';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Users from '../../support/fragments/users/users';
@@ -167,34 +173,58 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderDetails.openPolDetails(testData.orderLine1.titleOrPackage);
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Awaiting Receipt' } },
-        { label: 'Payment status', conditions: { value: 'Awaiting Payment' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.AWAITING_RECEIPT },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT },
+        },
       ]);
       OrderLineDetails.openOrderLineEditForm();
       OrderLineEditForm.fillOrderLineFields({
-        receiptStatus: 'Fully received',
-        paymentStatus: 'Fully paid',
+        receiptStatus: RECEIPT_STATUS_VIEW.FULLY_RECEIVED,
+        paymentStatus: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID,
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Fully Received' } },
-        { label: 'Payment status', conditions: { value: 'Fully Paid' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.FULLY_RECEIVED },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID },
+        },
       ]);
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openPolDetails(testData.orderLine2.titleOrPackage);
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Awaiting Receipt' } },
-        { label: 'Payment status', conditions: { value: 'Awaiting Payment' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.AWAITING_RECEIPT },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT },
+        },
       ]);
       OrderLineDetails.openOrderLineEditForm();
       OrderLineEditForm.fillOrderLineFields({
-        receiptStatus: 'Fully received',
-        paymentStatus: 'Fully paid',
+        receiptStatus: RECEIPT_STATUS_VIEW.FULLY_RECEIVED,
+        paymentStatus: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID,
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Fully Received' } },
-        { label: 'Payment status', conditions: { value: 'Fully Paid' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.FULLY_RECEIVED },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID },
+        },
       ]);
       OrderLineDetails.backToOrderDetails();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
@@ -204,8 +234,14 @@ describe('Orders', () => {
       OrderDetails.openPolDetails(testData.orderLine1.titleOrPackage);
       OrderLineDetails.checkWarningMessage('Purchase order is closed - Complete');
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Fully Received' } },
-        { label: 'Payment status', conditions: { value: 'Fully Paid' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.FULLY_RECEIVED },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID },
+        },
       ]);
     },
   );
