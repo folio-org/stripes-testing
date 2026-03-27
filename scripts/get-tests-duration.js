@@ -59,7 +59,9 @@ executionTimeList.forEach((test) => {
 
 // Merge with old data, keeping the maximum duration for each test ID
 for (const [testId, duration] of Object.entries(testsExecutionTime)) {
-  if (!oldData[testId] || duration > oldData[testId]) {
+  if (oldData[testId]) {
+    oldData[testId] = Math.round((oldData[testId] + duration) / 2);
+  } else {
     oldData[testId] = duration;
   }
 }

@@ -380,4 +380,24 @@ export default {
       });
     });
   },
+
+  verifyTwoCSVFilesHaveSameContent(firstFilePath, secondFilePath) {
+    // Read both files and compare line by line
+    return FileManager.readFile(firstFilePath).then((firstFileContent) => {
+      return FileManager.readFile(secondFilePath).then((secondFileContent) => {
+        // Split files by newlines
+        const firstFileLines = firstFileContent.split('\n').filter((line) => line.trim() !== '');
+        const secondFileLines = secondFileContent.split('\n').filter((line) => line.trim() !== '');
+
+        // Verify both files have the same number of lines
+        expect(firstFileLines.length).to.equal(secondFileLines.length);
+
+        // Verify each line matches
+        firstFileLines.forEach((firstLine, index) => {
+          const secondLine = secondFileLines[index];
+          expect(firstLine).to.equal(secondLine);
+        });
+      });
+    });
+  },
 };

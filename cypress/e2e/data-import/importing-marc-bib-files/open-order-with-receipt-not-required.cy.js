@@ -4,6 +4,8 @@ import {
   JOB_STATUS_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  RECEIPT_STATUS_VIEW,
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
@@ -141,7 +143,12 @@ describe('Data Import', () => {
           orderNumber = initialNumber.replace(/-\d+$/, '');
         });
         OrderLineDetails.checkOrderLineDetails({
-          purchaseOrderLineInformation: [{ key: 'Receipt status', value: 'Receipt Not Required' }],
+          purchaseOrderLineInformation: [
+            {
+              key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+              value: RECEIPT_STATUS_VIEW.RECEIPT_NOT_REQUIRED,
+            },
+          ],
         });
       },
     );
