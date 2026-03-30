@@ -280,7 +280,7 @@ export default {
         this.checkRelatedInvoiceColumnItem(index, 'Status', record.status);
       }
       if (record.invoiceAmount) {
-        this.checkRelatedInvoiceColumnItem(index, 'Invoice amount', record.invoiceAmount);
+        this.checkRelatedInvoiceColumnItem(index, 'Expended amount', record.invoiceAmount);
       }
     });
   },
