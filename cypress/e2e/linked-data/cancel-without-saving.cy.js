@@ -24,8 +24,8 @@ const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 describe('Citation: cancel without saving', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C624234 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C624234 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C656342 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C656342 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,

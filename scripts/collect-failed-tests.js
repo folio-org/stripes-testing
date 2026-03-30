@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { glob } = require('glob');
+const globby = require('globby');
 const fs = require('fs');
 const { getTestNames } = require('find-test-names');
 const { status, team, getTestRunResults } = require('./helpers/test.rail.helper');
@@ -33,6 +33,7 @@ let filteredFiles = [];
 const shuffle = true;
 const numberOfChunks = 1;
 const chunks = [];
+const chunksId = [];
 
 function parseCommand() {
   getTests()
@@ -49,7 +50,7 @@ function parseCommand() {
       });
     })
     .then(() => {
-      glob('cypress/e2e/**/*')
+      globby('cypress/e2e/**/*')
         .then((res) => {
           res.forEach((file) => {
             if (file.includes('.cy.js')) {
@@ -60,7 +61,13 @@ function parseCommand() {
         .then(() => {
           arrayOfFiles.forEach((file) => {
             const text = fs.readFileSync(file, { encoding: 'utf8' });
-            const names = getTestNames(text);
+            let names;
+            try {
+              names = getTestNames(text);
+            } catch (err) {
+              console.error('Could not determine test names in file: %s', file);
+              names = { tests: [] };
+            }
             names.tests.forEach((test) => {
               if (test.type === 'test' && titleContainsId(test.name, ids)) {
                 filteredFiles.push(file);
@@ -72,18 +79,23 @@ function parseCommand() {
           filteredFiles = Array.from(new Set(filteredFiles));
           console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);
           filteredFiles.sort();
+          ids.sort();
           if (shuffle) {
             filteredFiles.sort(() => Math.random() - 0.5);
+            ids.sort(() => Math.random() - 0.5);
           }
           if (numberOfChunks > 1) {
             const chunkSize = Math.ceil(filteredFiles.length / numberOfChunks);
             // Loop to split array into chunks
             for (let i = 0; i < filteredFiles.length; i += chunkSize) {
               const chunk = [];
+              const chunkId = [];
               for (let j = i; j < i + chunkSize && j < filteredFiles.length; j++) {
                 chunk.push(filteredFiles[j]);
+                chunkId.push(ids[j]);
               }
               chunks.push(chunk);
+              chunksId.push(chunkId);
             }
           }
         })
@@ -92,12 +104,13 @@ function parseCommand() {
           if (numberOfChunks === 1) {
             console.log(parsedCommand);
             // To print test cases IDs (NOT FILTERED!!!)
-            console.log(`--env grepTags="${ids.join('')}"\n`);
+            console.log(`\ntags="${ids.join('')}"`);
           } else {
             console.log(`Number of chunks: ${chunks.length}\n`);
             chunks.forEach((chunk, index) => {
               console.log(`Chunk #${index + 1}: `, chunk.length);
-              console.log(`--spec "${chunk.join(',')}"\n`);
+              // console.log(`--spec "${chunk.join(',')}"`);
+              console.log(`tags="${chunksId[index].join('')}"\n`);
             });
           }
           return parsedCommand;

@@ -69,7 +69,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select сheckbox field mapping' },
+          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -97,7 +97,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select сheckbox field mapping' },
+          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -216,7 +216,7 @@ describe('Data Import', () => {
         // Change the value in "Statistical codes" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
           adminData: {
-            suppressFromDiscovery: 'Select сheckbox field mapping',
+            suppressFromDiscovery: 'Select checkbox field mapping',
             statisticalCodes: 'Select action',
           },
         });
@@ -246,7 +246,7 @@ describe('Data Import', () => {
         // Change the value in "Statistical codes" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
           adminData: {
-            suppressFromDiscovery: 'Select сheckbox field mapping',
+            suppressFromDiscovery: 'Select checkbox field mapping',
             statisticalCodes: 'Select action',
           },
         });
