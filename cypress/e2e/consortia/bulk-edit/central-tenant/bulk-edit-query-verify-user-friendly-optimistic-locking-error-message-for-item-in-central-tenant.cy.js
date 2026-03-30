@@ -207,7 +207,6 @@ describe('Bulk-edit', () => {
           });
 
           // Step 3-4: Verify Item UUID column and UUIDs in Results table
-          BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
           );
@@ -224,19 +223,14 @@ describe('Bulk-edit', () => {
           // (Simulating another user editing the record in a different browser/session)
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${folioInstance.uuid}"`,
-          }).then((instance) => {
-            const itemToUpdate = instance.items.find((item) => item.id === items[0]);
+          InventoryItems.getItemViaApi({ query: `"id"=="${items[0]}"` }).then((itemsRes) => {
+            const itemToUpdate = itemsRes[0];
             itemToUpdate.administrativeNotes = [adminNote];
             cy.updateItemViaApi(itemToUpdate);
           });
           cy.resetTenant();
 
           // Step 8: Open In-app bulk edit form
-          BulkEditActions.openActions();
           BulkEditActions.openStartBulkEditForm();
           BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
