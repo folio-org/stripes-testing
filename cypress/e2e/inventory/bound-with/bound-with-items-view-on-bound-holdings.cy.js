@@ -148,7 +148,7 @@ describe('Inventory', () => {
 
     it(
       'C409512 Verify the Bound-with items view on bound holdings (sif)',
-      { tags: ['criticalPath', 'sif', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'sif', 'C409512'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.firstInstanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

@@ -1,7 +1,7 @@
 import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import SettingsOrganizations from '../../support/fragments/settings/organizations/settingsOrganizations';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
@@ -52,7 +52,7 @@ describe('Organizations', () => {
     'C423518 A user cannot edit banking information without organization edit permission (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C423518'] },
     () => {
-      Organizations.searchByParameters('Name', organization.name);
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.verifyBankingInformationAccordionIsPresent();
       Organizations.checkAvailableActionsInTheActionsField();

@@ -55,7 +55,7 @@ describe('Inventory', () => {
         value: `C627505.${getRandomLetters(7)}`,
       },
     ];
-    const querySearchOption = 'Query';
+    const querySearchOption = 'Query search';
     let tempUser;
     let locationId;
     let loanTypeId;

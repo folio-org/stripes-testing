@@ -1,14 +1,15 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import Organizations from '../../support/fragments/organizations/organizations';
+import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
   const organization = {
-    name: `1_autotest_name_${getRandomPostfix()}`,
+    name: `AT_name_${getRandomPostfix()}`,
     status: 'Active',
-    code: `autotest_code_${getRandomPostfix()}`,
+    code: `AT_code_${getRandomPostfix()}`,
     isVendor: true,
     erpCode: `ERP-${getRandomPostfix()}`,
   };
@@ -16,7 +17,7 @@ describe('Organizations', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -41,14 +42,15 @@ describe('Organizations', () => {
     () => {
       Organizations.createDonorOrganization(organization);
       Organizations.closeDetailsPane();
-      Organizations.selectIsDonorFilter('Yes');
+      OrganizationsSearchAndFilter.filterByIsDonor('Yes');
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.checkOrganizationInfo(organization);
       Organizations.closeDetailsPane();
-      Organizations.resetFilters();
-      Organizations.selectIsDonorFilter('No');
+      OrganizationsSearchAndFilter.resetFiltersIfActive();
+      OrganizationsSearchAndFilter.filterByIsDonor('No');
+      OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.organizationIsAbsent(organization.name);
-      Organizations.resetFilters();
     },
   );
 });

@@ -123,8 +123,6 @@ describe('MARC', () => {
             headingOld: marcFiles[1].authorityHeading,
             sourceFileNew: testData.sourceFileName,
             sourceFileOld: testData.sourceFileName,
-            lbTotal: 1,
-            lbUpdated: 1,
             startedAt: today,
             startedByUserFirstName: testData.userProperties.firstName,
             startedByUserLastName: testData.userProperties.lastName,

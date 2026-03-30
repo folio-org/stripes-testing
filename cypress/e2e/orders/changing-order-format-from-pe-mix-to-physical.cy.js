@@ -1,4 +1,10 @@
-import { APPLICATION_NAMES, LOCATION_NAMES, ORDER_STATUSES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  ORDER_FORMAT_NAMES,
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
@@ -11,51 +17,48 @@ describe('Orders', () => {
     organization,
     order: {},
     user: {},
+    location: LOCATION_NAMES.ANNEX_UI,
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(testData.organization);
-    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-      (locationResponse) => {
-        cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
-          testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
-          testData.orderLine = {
-            ...BasicOrderLine.getDefaultOrderLine(),
-            cost: {
-              currency: 'USD',
-              discountType: 'percentage',
+    cy.getLocations({ query: `name="${testData.location}"` }).then((locationResponse) => {
+      cy.getDefaultMaterialType().then(({ id: materialTypeId }) => {
+        testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
+        testData.orderLine = {
+          ...BasicOrderLine.getDefaultOrderLine(),
+          cost: {
+            currency: 'USD',
+            discountType: 'percentage',
+            quantityPhysical: 1,
+            quantityElectronic: 1,
+            listUnitPriceElectronic: 10,
+            listUnitPrice: 10,
+          },
+          orderFormat: 'P/E Mix',
+          eresource: {
+            createInventory: 'Instance, Holding',
+            accessProvider: testData.organization.id,
+          },
+          physical: {
+            createInventory: 'Instance, Holding, Item',
+            materialType: materialTypeId,
+          },
+          locations: [
+            {
+              locationId: locationResponse.id,
               quantityPhysical: 1,
               quantityElectronic: 1,
-              listUnitPriceElectronic: 10,
-              listUnitPrice: 10,
             },
-            orderFormat: 'P/E Mix',
-            eresource: {
-              createInventory: 'Instance, Holding',
-              accessProvider: testData.organization.id,
-            },
-            physical: {
-              createInventory: 'Instance, Holding, Item',
-              materialType: materialTypeId,
-            },
-            locations: [
-              {
-                locationId: locationResponse.id,
-                quantityPhysical: 1,
-                quantityElectronic: 1,
-              },
-            ],
-          };
+          ],
+        };
 
-          Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
-            (order) => {
-              testData.order = order;
-            },
-          );
+        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+          testData.order.poNumber = order.poNumber;
         });
-      },
-    );
+      });
+    });
 
     cy.createTempUser([Permissions.uiOrdersEdit.gui, Permissions.uiOrdersView.gui]).then(
       (userProperties) => {
@@ -87,7 +90,9 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'P/E Mix' }],
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.PE_MIX },
+        ],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -95,7 +100,7 @@ describe('Orders', () => {
 
       // Choose "Physical resource" from "Order format" dropdown, Click "Save & close" button
       OrderLineEditForm.fillOrderLineFields({
-        poLineDetails: { orderFormat: 'Physical resource' },
+        poLineDetails: { orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE },
         costDetails: {
           physicalUnitPrice: '10',
           quantityPhysical: '1',
@@ -104,7 +109,7 @@ describe('Orders', () => {
       OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
       OrderLineEditForm.checkValidatorError({
         locationDetails: {
-          label: 'Quantity electronic',
+          label: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC,
           error:
             'Locations electronic quantity should be empty or match with PO line electronic quantity',
         },
@@ -116,7 +121,9 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE },
+        ],
       });
 
       // #7 Click "Back to PO" arrow on the top of "PO Line details" pane
@@ -130,7 +137,9 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE },
+        ],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -142,16 +151,18 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE },
+        ],
         costDetails: [
-          { key: 'Quantity physical', value: '1' },
-          { key: 'Quantity electronic', value: '-' },
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: '1' },
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: '-' },
         ],
         locationDetails: [
           [
-            { key: 'Holding', value: LOCATION_NAMES.MAIN_LIBRARY_UI },
-            { key: 'Quantity physical', value: 1 },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.HOLDING, value: LOCATION_NAMES.MAIN_LIBRARY_UI },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });

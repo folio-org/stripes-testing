@@ -3,6 +3,7 @@ import {
   Accordion,
   Button,
   Callout,
+  DropdownMenu,
   Link,
   Modal,
   MultiColumnList,
@@ -244,5 +245,20 @@ export default {
   openLinkedProfileById: (id) => {
     cy.wait(2000);
     cy.do(viewPane.find(Link({ href: including(`${id}`) })).click());
+  },
+
+  checkActionsMenuOptionsEnabled({
+    editEnabled = true,
+    duplicateEnabled = true,
+    deleteEnabled = true,
+  } = {}) {
+    cy.wait(2000);
+    cy.do(viewPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().find(Button('Edit')).has({ disabled: !editEnabled }));
+    cy.expect(DropdownMenu().find(Button('Duplicate')).has({ disabled: !duplicateEnabled }));
+    cy.expect(DropdownMenu().find(Button('Delete')).has({ disabled: !deleteEnabled }));
+
+    cy.do(viewPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().absent());
   },
 };

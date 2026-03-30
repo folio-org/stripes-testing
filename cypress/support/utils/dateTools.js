@@ -373,6 +373,34 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
+  getFormattedDateInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'numeric',
+      timeZone: timezone,
+      year: 'numeric',
+    }).format(new Date(date));
+  },
+
+  getFormattedTimeInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: timezone,
+    }).format(new Date(date));
+  },
+
+  getFormattedEndDateWithTimeInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      month: 'numeric',
+      timeZone: timezone,
+      year: 'numeric',
+    }).format(new Date(date));
+  },
+
   getFormattedEndDateWithTimUTC(date, noComma = false) {
     if (noComma) return moment.utc(date).format('M/D/YYYY h:mm A');
     return moment.utc(date).format('M/D/YYYY, h:mm A');
@@ -392,7 +420,17 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 2;
-    const ampm = hours >= 12 ? 'P' : 'A';
+
+    // Handle minute overflow
+    if (minutes >= 60) {
+      hours += Math.floor(minutes / 60);
+      minutes %= 60;
+    }
+
+    // Handle hour overflow - needed for correct AM/PM calculation
+    hours %= 24;
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
@@ -403,7 +441,17 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 3;
-    const ampm = hours >= 12 ? 'P' : 'A';
+
+    // Handle minute overflow
+    if (minutes >= 60) {
+      hours += Math.floor(minutes / 60);
+      minutes %= 60;
+    }
+
+    // Handle hour overflow - needed for correct AM/PM calculation
+    hours %= 24;
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;

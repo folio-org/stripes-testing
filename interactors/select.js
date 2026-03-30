@@ -57,4 +57,5 @@ export default HTML.extend('select')
       choose(...args);
       return blur(...args);
     },
+    hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
   });

@@ -134,6 +134,9 @@ const preferredEmailCommunicationsSelect = MultiSelect({
 });
 const resetExpirationDateButton = Button('Reset');
 const resetExpirationDateModal = Modal('Set expiration date?');
+const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
+const userTypeChangeModalText =
+  "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
 
@@ -644,12 +647,6 @@ export default {
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
     cy.expect(rootPane.absent());
-  },
-
-  confirmChangingUserType() {
-    cy.wait(1000);
-    cy.do(Modal().find(Button('Confirm')).click());
-    cy.wait(500);
   },
 
   saveEditedUser() {
@@ -1463,5 +1460,32 @@ export default {
 
   scrollToTheLastCustomField() {
     cy.get('[data-test-record-edit-custom-field]').last().scrollIntoView();
+  },
+
+  verifyUserTypeChangeModal() {
+    cy.expect([
+      userTypeChangeModal.find(cancelButton).exists(),
+      userTypeChangeModal.find(confirmButton).exists(),
+      userTypeChangeModal.has({ message: userTypeChangeModalText }),
+    ]);
+  },
+
+  confirmUserTypeChange() {
+    cy.do(userTypeChangeModal.find(confirmButton).click());
+    cy.expect(userTypeChangeModal.absent());
+  },
+
+  cancelUserTypeChange() {
+    cy.do(userTypeChangeModal.find(cancelButton).click());
+    cy.expect(userTypeChangeModal.absent());
+  },
+
+  verifyUsernameRequired(isRequired = true) {
+    cy.expect(usernameField.has({ required: isRequired }));
+  },
+
+  checkRolesAffiliationDropdownShown(isShown = true) {
+    if (isShown) cy.expect(rolesAffiliationSelect.exists());
+    else cy.expect(rolesAffiliationSelect.absent());
   },
 };

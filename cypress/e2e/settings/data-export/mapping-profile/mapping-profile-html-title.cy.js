@@ -73,6 +73,7 @@ describe('Data Export', () => {
         ExportJobProfiles.clickProfileNameFromTheList(mappingProfile.name);
         SettingsDataExport.verifyPageTitle(`Data export settings - ${mappingProfile.name} - FOLIO`);
         SingleFieldMappingProfilePane.openActions();
+        SingleFieldMappingProfilePane.clickEditButton();
         SingleFieldMappingProfilePane.editFieldMappingProfile(
           mappingProfile.newName,
           mappingProfile.newDescription,

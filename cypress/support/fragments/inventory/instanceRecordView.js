@@ -59,6 +59,7 @@ const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
+
 const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
@@ -626,6 +627,14 @@ export default {
     });
   },
 
+  verifySubjectWithoutMarcAppIcon: (row, value) => {
+    cy.expect(
+      subjectList
+        .find(MultiColumnListCell({ row, content: including(value) }))
+        .has({ content: not(including('Linked to MARC authority')) }),
+    );
+  },
+
   verifyInstanceAdministrativeNote: (note) => {
     cy.expect(instanceAdministrativeNote.find(HTML(including(note))).exists());
   },
@@ -962,10 +971,13 @@ export default {
     ]);
   },
 
-  verifySubHoldingsAccordion(memberId, holdingId, isOpen = true) {
-    cy.wait(1000);
+  verifySubHoldingsAccordion(memberId, holdingId, isOpen = 'false') {
+    cy.wait(2000);
     cy.expect([
-      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingId}` }).exists(),
+      Button({ id: `accordion-toggle-button-consortialHoldings.${memberId}.${holdingId}` }).has({
+        ariaExpanded: isOpen,
+      }),
     ]);
   },
 
@@ -978,8 +990,8 @@ export default {
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
-  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
-    if (isEnubled) {
+  verifyMoveToButtonState(holdingToBeOpened, isEnabled = true) {
+    if (isEnabled) {
       cy.expect(
         Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
           .find(Button({ id: including('clickable-move-holdings-') }))

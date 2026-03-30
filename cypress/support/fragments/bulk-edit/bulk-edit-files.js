@@ -94,9 +94,7 @@ export default {
       errorsFromCommitting: isDateIncluded
         ? `${todayDate}-Committing-changes-Errors-Query-${bulkEditJobId}.csv`
         : `*-Committing-changes-Errors-Query-${bulkEditJobId}.csv`,
-      errorsFromMatching: isDateIncluded
-        ? `${todayDate}-Matching-Records-Errors-Query-${bulkEditJobId}.csv`
-        : `*-Matching-Records-Errors-Query-${bulkEditJobId}.csv`,
+      errorsFromMatching: isDateIncluded ? `${todayDate}-Errors.csv` : '*-Errors.csv',
     };
   },
 
@@ -378,6 +376,26 @@ export default {
 
         columnHeaders.forEach((columnHeader) => {
           expect(stringWithHeaders).to.include(columnHeader);
+        });
+      });
+    });
+  },
+
+  verifyTwoCSVFilesHaveSameContent(firstFilePath, secondFilePath) {
+    // Read both files and compare line by line
+    return FileManager.readFile(firstFilePath).then((firstFileContent) => {
+      return FileManager.readFile(secondFilePath).then((secondFileContent) => {
+        // Split files by newlines
+        const firstFileLines = firstFileContent.split('\n').filter((line) => line.trim() !== '');
+        const secondFileLines = secondFileContent.split('\n').filter((line) => line.trim() !== '');
+
+        // Verify both files have the same number of lines
+        expect(firstFileLines.length).to.equal(secondFileLines.length);
+
+        // Verify each line matches
+        firstFileLines.forEach((firstLine, index) => {
+          const secondLine = secondFileLines[index];
+          expect(firstLine).to.equal(secondLine);
         });
       });
     });

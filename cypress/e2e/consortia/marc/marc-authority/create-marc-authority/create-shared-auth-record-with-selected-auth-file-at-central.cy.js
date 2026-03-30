@@ -67,14 +67,10 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              });
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
       });
 
@@ -98,8 +94,6 @@ describe('MARC', () => {
           MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
           MarcAuthority.addNewField(3, newField.tag, newField.content);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

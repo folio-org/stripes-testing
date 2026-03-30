@@ -36,14 +36,14 @@ describe('Finance', () => {
     first: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${StringTools.randomTwoDigitNumber()}01`,
-      periodStart: new Date(), // Feb 4, 2026
-      periodEnd: new Date(date.getFullYear(), 11, 31), // Dec 31, 2026
+      periodStart: new Date(),
+      periodEnd: new Date(date.getFullYear(), 11, 31),
     },
     second: {
       ...FiscalYears.getDefaultFiscalYear(),
       code: `${code}${StringTools.randomTwoDigitNumber()}02`,
-      periodStart: new Date(date.getFullYear() + 1, 0, 1), // Jan 1, 2027
-      periodEnd: new Date(date.getFullYear() + 1, 11, 31), // Dec 31, 2027
+      periodStart: new Date(date.getFullYear() + 1, 0, 1),
+      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
     },
   };
 
@@ -136,14 +136,14 @@ describe('Finance', () => {
                     FiscalYears.updateFiscalYearViaApi({
                       ...fiscalYears.first,
                       _version: 1,
-                      periodStart: new Date(date.getFullYear() - 1, 0, 1), // Jan 1, 2025
-                      periodEnd: new Date(date.getFullYear() - 1, 11, 31), // Dec 31, 2025
+                      periodStart: new Date(date.getFullYear() - 1, 0, 1),
+                      periodEnd: new Date(date.getFullYear() - 1, 11, 31),
                     });
                     FiscalYears.updateFiscalYearViaApi({
                       ...fiscalYears.second,
                       _version: 1,
-                      periodStart: new Date(), // Feb 4, 2026
-                      periodEnd: fiscalYears.second.periodEnd, // Dec 31, 2027
+                      periodStart: new Date(),
+                      periodEnd: fiscalYears.second.periodEnd,
                     });
                     Invoices.updateInvoiceViaApi({
                       ...testData.invoice,
@@ -193,9 +193,7 @@ describe('Finance', () => {
           fundCode: testData.fundA.code,
         },
       ]);
-      Invoices.canNotApproveInvoice(
-        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${testData.fundA.code}].`,
-      );
+      Invoices.canNotApproveInvoice(testData.fundA);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });

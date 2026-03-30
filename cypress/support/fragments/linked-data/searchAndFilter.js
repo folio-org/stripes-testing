@@ -7,6 +7,7 @@ const workInstancesTabButton = Button({ dataTestID: 'id-search-segment-button-re
 const sourceLocalOption = "//input[@id='search-source-option-local']";
 const sourceLoCOption = "//input[@id='search-source-option-libraryOfCongress']";
 const hubsSearchInput = TextInput({ id: 'id-search-input' });
+const advancedSearchButton = Button('Advanced');
 
 export default {
   waitLoading: () => {
@@ -18,18 +19,22 @@ export default {
 
   switchToHubsTab: () => {
     cy.do(hubsTabButton.click());
+    cy.wait(500);
   },
 
   switchToWorkInstancesTab: () => {
     cy.do(workInstancesTabButton.click());
+    cy.wait(500);
   },
 
   selectSourceLocalOption: () => {
     cy.xpath(sourceLocalOption).click();
+    cy.wait(500);
   },
 
   selectSourceLoCOption: () => {
     cy.xpath(sourceLoCOption).click();
+    cy.wait(500);
   },
 
   verifyActiveButtons: (isActive) => {
@@ -99,11 +104,11 @@ export default {
   },
 
   checkSearchResultsByTitle(title) {
-    cy.xpath(`//button[text()="${title}"]`).should('be.visible');
+    cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
   selectAdvancedSearch() {
-    cy.xpath('//button[@class="button button-link search-button"]').click();
+    cy.do(advancedSearchButton.click());
   },
 
   fillHubsSearchInput(searchQuery) {

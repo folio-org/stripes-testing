@@ -29,6 +29,7 @@ import {
   ORDER_PAYMENT_STATUS,
   RECEIPT_STATUS_SELECTED,
   RECEIVING_WORKFLOW_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -39,8 +40,6 @@ import OrderLineDetails from './orderLineDetails';
 
 const path = require('path');
 
-const addRoutingListButton = Button('Add routing list');
-const routingListSection = Section({ id: 'routing-list' });
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const resetButton = Button('Reset all');
@@ -109,6 +108,7 @@ const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const addDonorsModal = Modal('Add donors');
 const titleLookUpButton = Button('Title look-up');
+const donorsInformationSection = Section({ id: 'donorsInformation' });
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 const locationLookUpButton = Button('Location look-up');
@@ -120,11 +120,6 @@ const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
 const selectLocationsModal = Modal('Select locations');
-const findUserButton = Button({ id: 'clickable-plugin-find-user' });
-const userSearchModal = Modal('Select User');
-const searchTextField = TextField({ type: 'search' });
-const firstSearchResult = MultiColumnListCell({ row: 0, columnIndex: 0 });
-const checkboxAll = Checkbox();
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -284,14 +279,6 @@ export default {
   closeThirdPane: () => {
     cy.do(
       PaneHeader({ id: 'paneHeaderorder-details' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
-  },
-
-  closeRoutingListDetails: () => {
-    cy.do(
-      PaneHeader({ id: 'paneHeaderrouting-list-pane' })
         .find(Button({ icon: 'times' }))
         .click(),
     );
@@ -929,7 +916,7 @@ export default {
       fundDistributionField.fillIn(value),
       Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      createNewLocationButton.click(),
+      Button({ id: 'location-lookup-locations[0].locationId' }).click(),
     ]);
     SelectLocationModal.selectLocation(location);
     cy.do([quantityElectronicField.fillIn(quantity), saveAndCloseButton.click()]);
@@ -966,7 +953,7 @@ export default {
     SelectLocationModal.selectLocation(location);
   },
 
-  addReveivingNoteToItemDetailsAndSave() {
+  addReceivingNoteToItemDetailsAndSave() {
     cy.do([TextArea('Receiving note').fillIn(note), saveAndCloseButton.click()]);
     submitOrderLine();
   },
@@ -1931,6 +1918,7 @@ export default {
   },
 
   addOrderFormat: (format) => {
+    cy.wait(2000);
     cy.do(orderFormatSelect.choose(format));
   },
 
@@ -1964,10 +1952,18 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
     ]);
   },
-  setPhysicalQuantity(quantity) {
-    cy.do([quantityPhysicalLocationField.clear(), quantityPhysicalLocationField.fillIn(quantity)]);
-    cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+  setPhysicalQuantity({ quantity, index = 0, changeQuantity = true } = {}) {
+    cy.wait(1500);
+    const quantityField = TextField({ name: `locations[${index}].quantityPhysical` });
+
+    if (changeQuantity) {
+      cy.do([quantityField.clear(), quantityField.fillIn(quantity)]);
+    } else {
+      cy.do(quantityField.fillIn(quantity));
+    }
+    cy.expect(quantityField.has({ value: quantity }));
   },
+
   setElectronicQuantity(quantity) {
     cy.wait(1500);
     cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
@@ -2197,9 +2193,11 @@ export default {
   checkCreateInventory() {
     cy.expect([
       physicalResourceDetailsAccordion
-        .find(KeyValue({ value: 'Instance, Holding, Item' }))
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
         .exists(),
-      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
+      eResourcesDetails
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
+        .exists(),
     ]);
   },
 
@@ -2557,7 +2555,7 @@ export default {
 
   checkAddDonorButtomisActive() {
     cy.expect([
-      Section({ id: 'donorsInformation' })
+      donorsInformationSection
         .find(Button({ id: 'donorOrganizationIds-plugin' }))
         .is({ disabled: false }),
     ]);
@@ -2663,112 +2661,6 @@ export default {
     cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
   },
 
-  openRoutingLists: () => {
-    cy.do(Button({ id: 'accordion-toggle-button-routing-list' }).click());
-  },
-
-  addRoutingListExist: () => {
-    cy.expect(routingListSection.find(addRoutingListButton).exists());
-  },
-
-  addRoutingList: () => {
-    cy.do(routingListSection.find(addRoutingListButton).click());
-  },
-
-  addRoutingListByActions: () => {
-    cy.do([routingListSection.find(actionsButton).click(), addRoutingListButton.click()]);
-  },
-
-  addRoutingListAbsent: () => {
-    cy.expect(routingListSection.find(addRoutingListButton).absent());
-  },
-
-  fillInRoutingListInfoAndSave: (name) => {
-    cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
-  },
-
-  fillInRoutingListInfoWithNotesAndSave: (name, notes) => {
-    cy.do([
-      TextField({ id: 'input-routing-list-name' }).fillIn(name),
-      TextArea({ name: 'notes' }).fillIn(notes),
-      saveAndCloseButton.click(),
-    ]);
-  },
-
-  varifyAddingRoutingList: (name) => {
-    cy.expect(routingListSection.find(MultiColumnListCell(name)).exists());
-  },
-
-  openRoutingList: (name) => {
-    cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
-  },
-
-  checkRoutingListNameDetails(name) {
-    cy.expect(KeyValue('Name').has({ value: name }));
-  },
-
-  checkRoutingListNotesDetails(notes) {
-    cy.expect(KeyValue('Notes').has({ value: notes }));
-  },
-
-  addRoutingListIsDisabled() {
-    cy.expect(addRoutingListButton.is({ disabled: true }));
-  },
-
-  clickActionsButtonInRoutingList() {
-    cy.do(routingListSection.find(actionsButton).click());
-  },
-
-  deleteRoutingList() {
-    cy.do([
-      actionsButton.click(),
-      Button('Delete').click(),
-      Modal('Delete Routing list')
-        .find(Button({ id: 'clickable-delete-routing-list-confirmation-confirm' }))
-        .click(),
-    ]);
-  },
-
-  editRoutingList() {
-    cy.do([actionsButton.click(), Button('Edit').click()]);
-  },
-
-  addUserToRoutingList() {
-    cy.do(Button({ id: 'clickable-plugin-find-user' }).click());
-  },
-
-  unAssignAllUsers() {
-    cy.do([
-      Button({ id: 'clickable-remove-all-permissions' }).click(),
-      Modal('Unassign all users').find(Button('Yes')).click(),
-    ]);
-  },
-
-  deleteUserFromRoutingList(user) {
-    cy.do(Button({ id: `clickable-remove-user-${user}` }).click());
-  },
-
-  assignUser: (userName) => {
-    cy.do([
-      findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn(userName),
-      searchButton.click(),
-    ]);
-    cy.wait(4000);
-    cy.do([
-      userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
-      userSearchModal.find(Button('Save')).click(),
-    ]);
-  },
-
-  checkUserIsAdded(user) {
-    cy.expect(MultiColumnListCell(including(user)).exists());
-  },
-
-  checkUserIsAbsent(user) {
-    cy.expect(MultiColumnListCell(including(user)).absent());
-  },
-
   checkBinderyActiveStatus(status) {
     cy.get('label:contains("Bindery active")').within(() => {
       cy.get('input[type="checkbox"]').should('have.prop', 'checked', status);
@@ -2776,21 +2668,17 @@ export default {
   },
 
   checkDonorInformation(donors) {
-    for (let i = 0; i < donors.length; i++) {
+    donors.forEach((donor) => {
       cy.expect(
-        Section({ id: 'donorsInformation' })
-          .find(MultiColumnListCell({ row: i, column: 'Name' }))
-          .has({ content: donors[i] }),
+        donorsInformationSection
+          .find(MultiColumnListCell({ column: 'Name', content: donor }))
+          .exists(),
       );
-    }
+    });
   },
 
   checkDonorIsAbsent(donor) {
-    cy.expect(
-      Section({ id: 'donorsInformation' })
-        .find(MultiColumnListCell({ content: donor }))
-        .absent(),
-    );
+    cy.expect(donorsInformationSection.find(MultiColumnListCell({ content: donor })).absent());
   },
 
   changeExpenseClassInPOLWithoutSave(indexOfPreviousExpenseClass, expenseClass) {

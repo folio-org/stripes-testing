@@ -5,6 +5,7 @@ const status = {
   Untested: 3,
   Retest: 4,
   Failed: 5,
+  Unassigned: 6,
 };
 
 const team = {
@@ -122,4 +123,13 @@ async function getTestCase(api, caseId) {
   }
 }
 
-module.exports = { getAllTestCases, getTestHistory, getCaseHistory, getTestRunResults, updateTestResult, getTestCase, team, status };
+module.exports = {
+  getAllTestCases,
+  getTestHistory,
+  getCaseHistory,
+  getTestRunResults,
+  updateTestResult,
+  getTestCase,
+  team,
+  status,
+};

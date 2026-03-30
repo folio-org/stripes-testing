@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
-describe('orders: Test Po line search', () => {
+describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
@@ -113,7 +113,7 @@ describe('orders: Test Po line search', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke'] }, () => {
+    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke', 'C6719'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

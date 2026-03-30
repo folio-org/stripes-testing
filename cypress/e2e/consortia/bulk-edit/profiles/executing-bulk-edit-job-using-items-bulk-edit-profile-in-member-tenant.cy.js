@@ -377,6 +377,7 @@ describe('Bulk-edit', () => {
           // Check "Inventory - items" checkbox under "Record types" accordion
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkItemsCheckbox();
+          BulkEditLogs.scrollLogsTableTo('right');
           BulkEditLogs.clickActionsRunBy(testData.user.username);
 
           // Step 11: Click on the "..." action element in the row with recently completed bulk edit job
@@ -449,7 +450,7 @@ describe('Bulk-edit', () => {
             testData.actionNote,
           );
           ItemRecordView.checkCheckInNote(testData.editedCheckInNote, 'No');
-          ItemRecordView.checkCheckOutNote('No value set-', 'No');
+          ItemRecordView.verifyTextAbsent('Check out note');
           ItemRecordView.verifyPermanentLocation(testData.newLocationName);
         },
       );

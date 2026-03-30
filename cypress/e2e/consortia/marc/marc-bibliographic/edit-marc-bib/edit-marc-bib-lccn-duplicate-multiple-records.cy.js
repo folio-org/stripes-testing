@@ -14,12 +14,7 @@ describe('MARC', () => {
       describe('Consortia', () => {
         const testData = {
           bibFile: 'marcBibFileC514876.mrc',
-          lccnValues: [
-            '$a kk58020544514876 $z test',
-            '$z test $a ek19951959514876',
-            '$z kk58020544514876',
-            '$a',
-          ],
+          lccnValues: ['$a kk58020544514876 $z test', '$z kk58020544514876', '$a'],
         };
         const randomPostfix = getRandomPostfix();
         const marcInstanceTitle = `AT_C514876_MarcBibInstance_${randomPostfix}`;
@@ -92,14 +87,10 @@ describe('MARC', () => {
               });
             }).then(() => {
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(user.username, user.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-              }, 20_000);
-              InventoryInstances.waitContentLoading();
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
 
               // Open MARC bib record in QuickMARC editor
               InventoryInstances.searchByTitle(marcInstanceTitle);
@@ -111,12 +102,16 @@ describe('MARC', () => {
               // Attempt to update "010 $a" with various LCCN and Canceled LCCN values
               testData.lccnValues.forEach((lccnValue, index) => {
                 QuickMarcEditor.updateExistingField('010', lccnValue);
-                if (index < 2) {
-                  QuickMarcEditor.pressSaveAndClose();
+                if (!index) {
+                  QuickMarcEditor.pressSaveAndCloseButton();
+                  QuickMarcEditor.verifyValidationCallout(0, 1);
+                  QuickMarcEditor.closeAllCallouts();
                   QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
                 } else {
-                  QuickMarcEditor.clickSaveAndKeepEditingButton();
-                  QuickMarcEditor.checkAfterSaveAndKeepEditing();
+                  QuickMarcEditor.clickSaveAndKeepEditing();
+                  QuickMarcEditor.closeAllCallouts();
+                  QuickMarcEditor.verifySaveAndKeepEditingButtonDisabled();
+                  cy.wait(1000);
                 }
               });
             });

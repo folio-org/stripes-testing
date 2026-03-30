@@ -5,6 +5,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   including,
+  ValueChipRoot,
   not,
   matching,
 } from '../../../../interactors';
@@ -30,6 +31,13 @@ const lineDetailsFields = {
 
 const cancelButton = receivingEditForm.find(Button('Cancel'));
 const saveAndCloseButton = receivingEditForm.find(Button('Save & close'));
+const acqUnitsInputSelector = '#title-acq-units input';
+const acqUnitsRemoveButton = itemDetailsFields.acquisitionUnits.find(
+  ValueChipRoot().find(Button({ icon: 'times' })),
+);
+const acqUnitsToggleButton = itemDetailsFields.acquisitionUnits.find(
+  Button({ className: including('multiSelectToggleButton') }),
+);
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -121,5 +129,16 @@ export default {
   },
   verifySaveButtonEnabled(isEnabled = true) {
     cy.expect(saveAndCloseButton.has({ disabled: !isEnabled }));
+  },
+  verifyAcquisitionUnitsDropdownDisabled() {
+    cy.get(acqUnitsInputSelector).should('be.disabled');
+  },
+  tryRemoveAcquisitionUnit(acquisitionUnitName) {
+    cy.expect(acqUnitsRemoveButton.has({ disabled: true }));
+    cy.expect(itemDetailsFields.acquisitionUnits.has({ selected: including(acquisitionUnitName) }));
+  },
+  tryExpandAcquisitionUnitsDropdown() {
+    cy.expect(acqUnitsToggleButton.has({ disabled: true }));
+    cy.expect(itemDetailsFields.acquisitionUnits.has({ open: false }));
   },
 };

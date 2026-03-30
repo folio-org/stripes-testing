@@ -6,14 +6,12 @@ import Capabilities from '../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import { AUTHORIZATION_ROLE_TYPES, APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import { including } from '../../../../interactors';
 
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        createErrorText: 'Role could not be created: Failed to create keycloak role',
+        createErrorTextAPI: (name) => `Failed to create keycloak role: name = ${name}`,
       };
 
       const defaultRoles = [];
@@ -45,13 +43,11 @@ describe('Eureka', () => {
             capabsToAssign,
             capabSetsToAssign,
           );
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password);
-            TopMenuNavigation.navigateToApp(
-              APPLICATION_NAMES.SETTINGS,
-              SETTINGS_SUBSECTION_AUTH_ROLES,
-            );
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
           AuthorizationRoles.waitContentLoading();
         });
       });
@@ -76,11 +72,11 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveButton();
           cy.wait('@createCall').then(({ response }) => {
             expect(response.statusCode).to.eq(409);
-            expect(response.body.errors[0].message).to.include(
-              testData.createErrorText.split(': ')[1],
+            expect(response.body.errors[0].message).to.eq(
+              testData.createErrorTextAPI(defaultSystemRoles[0].name),
             );
           });
-          InteractorsTools.checkCalloutErrorMessage(including(testData.createErrorText));
+          AuthorizationRoles.verifyCreateNameError(defaultSystemRoles[0].name);
 
           AuthorizationRoles.closeRoleCreateView();
           AuthorizationRoles.searchRole(defaultRoles[1].name);

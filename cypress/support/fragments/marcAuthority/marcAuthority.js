@@ -203,6 +203,9 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('Export (MARC)').click());
   },
+  clickExportMarcOption: () => {
+    cy.do(Button('Export (MARC)').click());
+  },
   contains: (expectedText, { regexp = false } = {}) => {
     if (regexp) cy.expect(rootSection.find(HTML(matching(new RegExp(expectedText)))).exists());
     else cy.expect(rootSection.find(HTML(including(expectedText))).exists());
@@ -585,6 +588,14 @@ export default {
     defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().forEach((property) => {
       cy.do(property.interactor.choose(property.defaultValue));
       cy.expect(property.interactor.has({ checkedOptionText: property.defaultValue }));
+    });
+  },
+
+  getVersionHistoryViaAPI(authorityUUID) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `audit-data/marc/authority/${authorityUUID}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 };

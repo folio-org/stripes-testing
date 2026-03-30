@@ -76,9 +76,14 @@ export default {
     cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
   },
 
-  checkJobProfilePresented: (jobProfileTitle) => {
+  checkJobProfilePresented(jobProfileTitle) {
     search(jobProfileTitle);
-    cy.expect(MultiColumnListCell(jobProfileTitle).exists());
+    this.verifyJobProfileShownInList(jobProfileTitle, true);
+  },
+
+  verifyJobProfileShownInList(jobProfileTitle, isShown = true) {
+    if (isShown) cy.expect(MultiColumnListCell(jobProfileTitle).exists());
+    else cy.expect(MultiColumnListCell(jobProfileTitle).absent());
   },
 
   selectJobProfile: () => {
@@ -196,5 +201,9 @@ export default {
         const numberOfTrashButtons = trashButtons.length;
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });
+  },
+  openJobProfileView(jobProfileTitle) {
+    cy.do(MultiColumnListCell(jobProfileTitle).click());
+    cy.expect(waitSelector.find(HTML(jobProfileTitle)).exists());
   },
 };

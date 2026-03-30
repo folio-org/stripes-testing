@@ -23,16 +23,7 @@ export const deleteCalendarUI = (calendarName) => {
 
 export const createCalendar = (testCalendarRequestBody, callback = null) => {
   function makeRequest() {
-    cy.request({
-      url: Cypress.env('OKAPI_HOST') + '/calendar/calendars',
-      method: 'POST',
-      body: testCalendarRequestBody,
-      headers: {
-        'x-okapi-tenant': Cypress.env('okapi_tenant'),
-        'x-okapi-token': Cypress.env('token'),
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
+    cy.createCalendar(testCalendarRequestBody).then((response) => {
       if (response.status === 409) {
         deleteCalendarUI(testCalendarRequestBody.name);
         createCalendar(testCalendarRequestBody, callback);
@@ -53,7 +44,6 @@ export const createCalendar = (testCalendarRequestBody, callback = null) => {
     makeRequest();
   }
 };
-
 export const deleteCalendar = (calendarID, callback = null) => {
   cy.okapiRequest({
     method: 'DELETE',
@@ -112,4 +102,10 @@ export const deleteServicePoint = async (
   } else {
     makeRequest();
   }
+};
+
+export default {
+  waitCalendarPaneToLoad: () => {
+    cy.expect(Pane('Calendar').exists());
+  },
 };

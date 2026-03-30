@@ -22,7 +22,14 @@ const createNewHoldingForLocationButton = editPieceModal.find(
 const cancelButton = editPieceModal.find(Button('Cancel'));
 const deleteButton = Button('Delete');
 const quickReceiveButton = Button('Quick receive');
+const saveAndCreateAnotherButton = Button('Save and create another');
+const markLateButton = Button('Mark late');
+const sendClaimButton = Button('Send claim');
+const delayClaimButton = Button('Delay claim');
+const unreceivableButton = Button('Unreceivable');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
+const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
+const unreceiveButton = Button('Unreceive');
 
 const editPieceFields = {
   Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
@@ -103,6 +110,28 @@ export default {
     cy.expect(saveAndCloseButton.has({ disabled }));
   },
   verifyActionsMenuState({ disabled = true } = {}) {
-    cy.expect(Button({ dataTestID: 'dropdown-trigger-button' }).has({ disabled }));
+    cy.expect(actionsDropdownButton.has({ disabled }));
+  },
+  openActionsMenu() {
+    cy.do(actionsDropdownButton.click());
+  },
+  verifyActionsMenuOptionsStates(options = []) {
+    const optionButtonsMap = {
+      'Save and create another': saveAndCreateAnotherButton,
+      'Quick receive': quickReceiveButton,
+      'Mark late': markLateButton,
+      'Send claim': sendClaimButton,
+      'Delay claim': delayClaimButton,
+      Unreceivable: unreceivableButton,
+      Delete: deleteButton,
+    };
+
+    options.forEach(({ option, disabled }) => {
+      cy.expect(optionButtonsMap[option].has({ disabled }));
+    });
+  },
+  verifyUnreceiveOptionState({ disabled = true } = {}) {
+    cy.do(actionsDropdownButton.click());
+    cy.expect(unreceiveButton.has({ disabled }));
   },
 };

@@ -185,6 +185,13 @@ export default {
     cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
 
+  checkLoanDetailsDueDate(datePart, timePart) {
+    cy.expect([
+      KeyValue('Due date').has({ value: including(datePart) }),
+      KeyValue('Due date').has({ value: including(timePart) }),
+    ]);
+  },
+
   openCheckOutNotes() {
     cy.wait(500);
     cy.do(actionsButton.click());
@@ -298,14 +305,14 @@ export default {
     cy.do(Link(barcode).click());
   },
 
-  checkLoanPolicyInLoanDetails(loanPolicyId) {
-    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyId)).exists());
+  checkLoanPolicyInLoanDetails(loanPolicyName) {
+    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyName)).exists());
   },
-  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyId) {
-    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyId)).exists());
+  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyName) {
+    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyName)).exists());
   },
-  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyId) {
-    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyId)).exists());
+  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyName) {
+    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyName)).exists());
   },
 
   verifyFeeFinesOwed(amount) {

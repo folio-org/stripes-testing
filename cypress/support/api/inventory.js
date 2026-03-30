@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { recurse } from 'cypress-recurse';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
 import QuickMarcEditor from '../fragments/quickMarcEditor';
 
@@ -70,6 +69,29 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
 Cypress.Commands.add('deleteLoanType', (loanId) => {
   return cy.okapiRequest({
     path: `loan-types/${loanId}`,
+    method: 'DELETE',
+  });
+});
+
+Cypress.Commands.add('createIllPolicy', (illPolicyName) => {
+  return cy
+    .okapiRequest({
+      path: 'ill-policies',
+      method: 'POST',
+      body: {
+        id: uuid(),
+        name: illPolicyName,
+        source: 'local',
+      },
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});
+
+Cypress.Commands.add('deleteIllPolicy', (illPolicyId) => {
+  return cy.okapiRequest({
+    path: `ill-policies/${illPolicyId}`,
     method: 'DELETE',
   });
 });
@@ -445,26 +467,9 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 14,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
-
-      return cy.get('@createdMarcBibliographicId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 
@@ -508,28 +513,9 @@ Cypress.Commands.add(
         marcFormat: 'HOLDINGS',
         suppressDiscovery: false,
       },
-    }).then(({ body }) => {
-      cy.expect(body.status === 'IN_PROGRESS');
-
-      recurse(
-        () => {
-          return cy.okapiRequest({
-            method: 'GET',
-            path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-            isDefaultSearchParamsRequired: false,
-          });
-        },
-        (response) => response.body.status === 'CREATED',
-        {
-          limit: 10,
-          timeout: 80000,
-          delay: 5000,
-        },
-      ).then((response) => {
-        cy.wrap(response.body.externalId).as('createdMarcHoldingId');
-
-        return cy.get('@createdMarcHoldingId');
-      });
+    }).then(({ status, body }) => {
+      expect(status).to.eq(201);
+      return body.externalId;
     });
   },
 );
@@ -556,26 +542,9 @@ Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 14,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
-
-      return cy.get('@createdMarcBibliographicId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 
@@ -868,26 +837,9 @@ Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
       marcFormat: 'HOLDINGS',
       suppressDiscovery: false,
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 10,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcHoldingId');
-
-      return cy.get('@createdMarcHoldingId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 

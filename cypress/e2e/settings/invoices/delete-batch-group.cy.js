@@ -1,73 +1,71 @@
-import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
+import Permissions from '../../../support/dictionary/permissions';
+import { Invoices, NewInvoice } from '../../../support/fragments/invoices';
 import NewBatchGroup from '../../../support/fragments/invoices/newBatchGroup';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import BatchGroups from '../../../support/fragments/settings/invoices/batchGroups';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
-import TopMenu from '../../../support/fragments/topMenu';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-invoices-settings: System Batch Group deletion', () => {
-  const firstBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
-  const secondBatchGroup = {
-    name: `000autotest_group_${getRandomPostfix()}`,
-    description: 'Created by autotest',
-  };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+describe('Invoices', () => {
+  describe('Settings (Invoices)', () => {
+    let user;
+    const firstBatchGroup = {
+      ...NewBatchGroup.defaultUiBatchGroup,
+      name: `first_autotest_group_${getRandomPostfix()}`,
+    };
+    const secondBatchGroup = {
+      name: `second_autotest_group_${getRandomPostfix()}`,
+      description: 'Created by autotest',
+    };
+    const invoice = { ...NewInvoice.defaultUiInvoice };
+    const organization = { ...NewOrganization.defaultUiOrganizations };
 
-  let user;
-  before(() => {
-    cy.getAdminToken();
-    BatchGroups.createBatchGroupViaApi(firstBatchGroup).then((response) => {
-      invoice.batchGroup = response.name;
-    });
-    BatchGroups.createBatchGroupViaApi(secondBatchGroup);
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      cy.loginAsAdmin({
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+    before(() => {
+      cy.getAdminToken();
+      BatchGroups.createBatchGroupViaApi(firstBatchGroup).then((firstResponse) => {
+        invoice.batchGroupId = firstResponse.id;
+        firstBatchGroup.id = firstResponse.id;
+
+        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+          organization.id = responseOrganizations;
+          invoice.accountingCode = organization.erpCode;
+          invoice.vendorId = organization.id;
+
+          Invoices.createInvoiceViaApi(invoice).then((responseInvoice) => {
+            invoice.id = responseInvoice.id;
+          });
+        });
       });
-      Invoices.createDefaultInvoiceWithoutAddress(invoice);
-    });
-    cy.createTempUser([permissions.invoiceSettingsAll.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.invoiceBatchGroupsPath,
-        waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+      BatchGroups.createBatchGroupViaApi(secondBatchGroup);
+
+      cy.createTempUser([Permissions.invoiceSettingsAll.gui]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.invoiceBatchGroupsPath,
+          waiter: SettingsOrganizations.waitLoadingOrganizationSettings,
+        });
       });
     });
-  });
 
-  after(() => {
-    cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
+    after(() => {
+      cy.getAdminToken();
+      Invoices.deleteInvoiceViaApi(invoice.id);
+      BatchGroups.deleteBatchGroupViaApi(firstBatchGroup.id);
+      Users.deleteViaApi(user.userId);
     });
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.deleteInvoiceViaActions();
-    Invoices.confirmInvoiceDeletion();
-    cy.visit(SettingsMenu.invoiceBatchGroupsPath);
-    SettingsInvoices.deleteBatchGroup(firstBatchGroup);
-    Users.deleteViaApi(user.userId);
-  });
 
-  it(
-    'C367942 Delete Batch group (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C367942'] },
-    () => {
-      SettingsInvoices.waitBatchGroupsLoading();
-      SettingsInvoices.canNotDeleteBatchGroup(firstBatchGroup);
-      SettingsInvoices.deleteBatchGroup(secondBatchGroup);
-    },
-  );
+    it(
+      'C367942 Delete Batch group (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet', 'C367942'] },
+      () => {
+        SettingsInvoices.waitBatchGroupsLoading();
+        SettingsInvoices.canNotDeleteBatchGroup(firstBatchGroup);
+        SettingsInvoices.deleteBatchGroup(secondBatchGroup);
+      },
+    );
+  });
 });

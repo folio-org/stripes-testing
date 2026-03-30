@@ -63,6 +63,22 @@ export default {
     cy.expect([jobsPane.exists(), logsPane.exists()]);
   },
 
+  verifyExportJobInRunningAccordion(fileName, userObject) {
+    const expectedText = userObject.firstName
+      ? `Triggered by ${userObject.lastName}, ${userObject.firstName}`
+      : `Triggered by ${userObject.lastName}`;
+
+    cy.get('[data-test-jobs-list="true"]')
+      .find('[data-test-job-item="true"]')
+      .contains('[data-test-running-job-file-name="true"]', fileName)
+      .parents('[data-test-job-item="true"]')
+      .within(() => {
+        cy.get('[data-test-running-job-triggered-by="true"]')
+          .should('be.visible')
+          .and('contain', expectedText);
+      });
+  },
+
   clickButtonWithText: (name) => {
     // We have to manually reload the page on, since cypress waits for it, but we have a single-page application
     cy.window()
@@ -240,5 +256,28 @@ export default {
 
   scrollTo(direction) {
     cy.get('div[class*="mclScrollable-"]').scrollTo(direction);
+  },
+
+  verifyDeletedJobProfileNotation(profileName) {
+    cy.expect(logsList.find(MultiColumnListCell({ content: `${profileName} (deleted)` })).exists());
+  },
+
+  verifyFileNameReadOnly(fileName) {
+    cy.expect(
+      logsList
+        .find(MultiColumnListCell({ content: including(fileName) }))
+        .find(Button())
+        .absent(),
+    );
+  },
+
+  verifyErrorLogsDoNotOpen(fileName) {
+    cy.do(logsList.find(MultiColumnListCell({ content: including(fileName) })).click());
+    cy.wait(1000);
+    cy.get('[class^="errorLogsContainer"]').should('not.exist');
+  },
+
+  verifyFileExistsInLogs(fileName) {
+    cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
   },
 };

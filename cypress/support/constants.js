@@ -217,9 +217,10 @@ export const ORDER_PAYMENT_STATUS = {
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting Payment',
+  AWAITING_PAYMENT: 'Awaiting payment',
   CANCELLED: 'Cancelled',
   FULLY_PAID: 'Fully paid',
+  ONGOING: 'Ongoing',
   PARTIALLY_PAID: 'Partially paid',
   PAYMENT_NOT_REQUIRED: 'Payment not required',
 };
@@ -265,9 +266,13 @@ export const RECEIPT_STATUS_SELECTED = {
 };
 
 export const RECEIPT_STATUS_VIEW = {
-  PENDING: 'Pending',
-  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+  AWAITING_RECEIPT: 'Awaiting receipt',
   CANCELLED: 'Cancelled',
+  PENDING: 'Pending',
+  FULLY_RECEIVED: 'Fully received',
+  ONGOING: 'Ongoing',
+  PARTIALLY_RECEIVED: 'Partially received',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -1485,10 +1490,12 @@ export const INSTANCE_NOTE_TYPES = {
   AWARDS_NOTE: 'Awards note',
   BIBLIOGRAPHY_NOTE: 'Bibliography note',
   COPY_AND_VERSION_IDENTIFICATION_NOTE: 'Copy and Version Identification note',
+  FORMATTED_CONTENTS_NOTE: 'Formatted Contents Note',
   DATA_QUALITY_NOTE: 'Data quality note',
   REPRODUCTION_NOTE: 'Reproduction note',
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
+  SUMMARY: 'Summary',
 };
 
 export const BULK_EDIT_ACTIONS = {
@@ -1857,4 +1864,62 @@ export const DELETE_HOLDINGS_ACTIONS = {
   CANCEL: 'Cancel',
   KEEP_HOLDINGS: 'Keep Holdings',
   DELETE_HOLDINGS: 'Delete Holdings',
+};
+
+export const TRANSACTION_TYPES = {
+  ALLOCATION: 'Allocation',
+  CREDIT: 'Credit',
+  ENCUMBRANCE: 'Encumbrance',
+  PAYMENT: 'Payment',
+  PENDING_PAYMENT: 'Pending payment',
+  ROLLOVER_TRANSFER: 'Rollover transfer',
+  TRANSFER: 'Transfer',
+};
+
+export const POL_CREATE_INVENTORY_SETTINGS = {
+  INSTANCE: 'Instance',
+  INSTANCE_HOLDING: 'Instance, Holding',
+  INSTANCE_HOLDING_ITEM: 'Instance, Holding, Item',
+  NONE: 'None',
+};
+
+export const ORGANIZATION_STATUSES = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  PENDING: 'Pending',
+};
+
+export const INVOICE_POL_PAYMENT_STATUSES = {
+  AWAITING_PAYMENT: 'Awaiting Payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully Paid',
+  NO_CHANGE: 'No Change',
+  PARTIALLY_PAID: 'Partially Paid',
+};
+
+export const POLINE_DETAILS_FIELDS = {
+  ORDER_FORMAT: 'Order format',
+  RECEIPT_STATUS: 'Receipt status',
+  PAYMENT_STATUS: 'Payment status',
+  HOLDING_NAME: 'Holding',
+  LOCATION_NAME: 'Name (code)',
+  PHYSICAL_UNIT_PRICE: 'Physical unit price',
+  QUANTITY_PHYSICAL: 'Quantity physical',
+  ELECTRONIC_UNIT_PRICE: 'Electronic unit price',
+  QUANTITY_ELECTRONIC: 'Quantity electronic',
+  CREATE_INVENTORY: 'Create inventory',
+};
+
+export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
+  INSTANCE: 'Instance',
+  INSTANCE_HOLDING: 'Instance, holdings',
+  INSTANCE_HOLDING_ITEM: 'Instance, holdings, item',
+  NONE: 'None',
+};
+
+export const USER_TYPES = {
+  STAFF: 'Staff',
+  PATRON: 'Patron',
+  SYSTEM: 'System',
+  SHADOW: 'Shadow',
 };
