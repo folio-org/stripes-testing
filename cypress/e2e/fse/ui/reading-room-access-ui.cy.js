@@ -9,13 +9,8 @@ describe('fse-reading-room-access - UI (no data manipulation)', () => {
       ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
         const servicePointId = servicePoints[0].id;
         cy.getAdminUserId().then((adminUserId) => {
-          cy.okapiRequest({
-            method: 'GET',
-            path: 'service-points-users',
-            searchParams: { query: `(userId==${adminUserId})` },
-            isDefaultSearchParamsRequired: false,
-          }).then(({ body }) => {
-            const existing = body.servicePointsUsers[0];
+          cy.getUserServicePoints(adminUserId).then((servicePointsUsers) => {
+            const existing = servicePointsUsers[0];
             if (existing && existing.servicePointsIds.includes(servicePointId)) {
               return;
             }
