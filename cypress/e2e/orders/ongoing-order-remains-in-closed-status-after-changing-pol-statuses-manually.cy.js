@@ -3,6 +3,9 @@ import {
   INVOICE_STATUSES,
   ORDER_STATUSES,
   ORDER_SYSTEM_CLOSING_REASONS,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -247,15 +250,27 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Ongoing' } },
-        { label: 'Payment status', conditions: { value: 'Ongoing' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.ONGOING },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.ONGOING },
+        },
       ]);
       OrderLineDetails.openOrderLineEditForm();
-      OrderLineEditForm.fillOrderLineFields({ paymentStatus: 'Cancelled' });
+      OrderLineEditForm.fillOrderLineFields({ paymentStatus: ORDER_LINE_PAYMENT_STATUS.CANCELLED });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Ongoing' } },
-        { label: 'Payment status', conditions: { value: 'Cancelled' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.ONGOING },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.CANCELLED },
+        },
       ]);
       OrderLineDetails.backToOrderDetails();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
