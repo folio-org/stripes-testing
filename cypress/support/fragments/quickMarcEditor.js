@@ -632,9 +632,9 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest', { timeout: 10_000 }).then(({ response }) => {
       if (response.body?.issues && response.body?.issues?.length > 0) {
-        cy.wait(500);
+        cy.wait(1_000);
         this.closeAllCallouts();
-        cy.wait(500);
+        cy.wait(1_000);
         cy.do(saveAndCloseButton.click());
       }
     });
