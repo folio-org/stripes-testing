@@ -18,6 +18,9 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   INVOICE_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Users from '../../support/fragments/users/users';
@@ -253,8 +256,14 @@ describe('Orders', () => {
       Orders.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkFieldsConditions([
-        { label: 'Receipt status', conditions: { value: 'Fully Received' } },
-        { label: 'Payment status', conditions: { value: 'Partially Paid' } },
+        {
+          label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+          conditions: { value: RECEIPT_STATUS_VIEW.FULLY_RECEIVED },
+        },
+        {
+          label: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+          conditions: { value: ORDER_LINE_PAYMENT_STATUS.PARTIALLY_PAID },
+        },
       ]);
     },
   );

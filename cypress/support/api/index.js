@@ -50,3 +50,4 @@ import './oa';
 import './smtp';
 import './aoi-pmh';
 import './timers';
+import './calendar';

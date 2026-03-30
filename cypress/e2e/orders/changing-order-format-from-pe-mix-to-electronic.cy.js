@@ -3,6 +3,8 @@ import {
   LOCATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  RECORD_STATUSES,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -107,9 +109,18 @@ describe('Orders', () => {
       );
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Electronic Resource' }],
-        costDetails: [{ key: 'Physical unit price', value: 'No value set-' }],
-        locationDetails: [{ key: 'Quantity physical', value: 'No value set-' }],
+        poLineInformation: [
+          {
+            key: POLINE_DETAILS_FIELDS.ORDER_FORMAT,
+            value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
+          },
+        ],
+        costDetails: [
+          { key: POLINE_DETAILS_FIELDS.PHYSICAL_UNIT_PRICE, value: RECORD_STATUSES.DASH },
+        ],
+        locationDetails: [
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: RECORD_STATUSES.DASH },
+        ],
       });
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openOrder({ orderNumber: testData.order.poNumber });
@@ -122,9 +133,18 @@ describe('Orders', () => {
       );
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Electronic Resource' }],
-        costDetails: [{ key: 'Physical unit price', value: 'No value set-' }],
-        locationDetails: [{ key: 'Quantity physical', value: 'No value set-' }],
+        poLineInformation: [
+          {
+            key: POLINE_DETAILS_FIELDS.ORDER_FORMAT,
+            value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
+          },
+        ],
+        costDetails: [
+          { key: POLINE_DETAILS_FIELDS.PHYSICAL_UNIT_PRICE, value: RECORD_STATUSES.DASH },
+        ],
+        locationDetails: [
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: RECORD_STATUSES.DASH },
+        ],
       });
     },
   );

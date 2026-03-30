@@ -60,28 +60,36 @@ describe('Circulation log', () => {
       SearchPane.checkExportResultIsUnavailable();
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('loan', 'Checked out');
-      SearchPane.checkResultSearch({ object: 'Loan' });
+      SearchPane.findResultRowIndexByContent('Loan').then((rowIndex) => {
+        SearchPane.checkResultSearch({ object: 'Loan' }, rowIndex);
+      });
       SearchPane.checkExportResultIsUnavailable();
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('notice', 'Send');
-      SearchPane.checkResultSearch({ object: 'Notice' });
+      SearchPane.findResultRowIndexByContent('Notice').then((rowIndex) => {
+        SearchPane.checkResultSearch({ object: 'Notice' }, rowIndex);
+      });
       SearchPane.checkExportResultIsUnavailable();
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');
-      SearchPane.checkResultSearch({ object: 'Fee/fine' });
+      SearchPane.findResultRowIndexByContent('Fee/fine').then((rowIndex) => {
+        SearchPane.checkResultSearch({ object: 'Fee/fine' }, rowIndex);
+      });
       SearchPane.checkExportResultIsUnavailable();
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('request', 'Created');
-      SearchPane.checkResultSearch({ object: 'Request' });
+      SearchPane.findResultRowIndexByContent('Request').then((rowIndex) => {
+        SearchPane.checkResultSearch({ object: 'Request' }, rowIndex);
+      });
       SearchPane.checkExportResultIsUnavailable();
     },
   );
