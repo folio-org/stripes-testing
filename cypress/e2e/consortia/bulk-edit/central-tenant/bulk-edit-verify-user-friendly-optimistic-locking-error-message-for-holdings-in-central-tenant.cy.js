@@ -201,6 +201,7 @@ describe('Bulk-edit', () => {
           });
 
           cy.resetTenant();
+          cy.getUserToken(user.username, user.password);
 
           // Step 10: Open In-app bulk edit form
           BulkEditActions.openStartBulkEditForm();
@@ -256,55 +257,48 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
 
           // Step 15: Verify error details for the first holding (no link to latest version in ECS)
-          cy.url().then((bulkEditUrl) => {
-            BulkEditSearchPane.verifyNonMatchedResults(holdings[0], optimisticLockingErrorMessage);
+          BulkEditSearchPane.verifyNonMatchedResults(holdings[0], optimisticLockingErrorMessage);
 
-            // Step 16: Download changed records (CSV)
-            cy.visit(bulkEditUrl);
-            BulkEditSearchPane.verifyErrorLabel(1);
-            BulkEditActions.openActions();
-            BulkEditActions.downloadChangedCSV();
+          // Step 16: Download changed records (CSV)
+          BulkEditActions.openActions();
+          BulkEditActions.downloadChangedCSV();
 
-            BulkEditFiles.verifyValueInRowByUUID(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-              holdings[1],
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-              noteAddedDuringBulkEdit,
-            );
+          BulkEditFiles.verifyValueInRowByUUID(
+            changedRecordsFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            holdings[1],
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+            noteAddedDuringBulkEdit,
+          );
 
-            // Step 17-18: Download errors CSV and verify optimistic locking message with partial URL
-            BulkEditActions.downloadErrors();
-            FileManager.verifyFileIncludes(errorsFromCommittingFileName, [
-              `ERROR,${holdings[0]},The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. /inventory/view/${folioInstance.id}/${holdings[0]}`,
-            ]);
+          // Step 17-18: Download errors CSV and verify optimistic locking message with partial URL
+          BulkEditActions.downloadErrors();
+          FileManager.verifyFileIncludes(errorsFromCommittingFileName, [
+            `ERROR,${holdings[0]},The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. /inventory/view/${folioInstance.id}/${holdings[0]}`,
+          ]);
 
-            // Step 19: Switch to member tenant and verify changes were applied to the second holding
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.waitLoading();
-            InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[1]);
-            InventorySearchAndFilter.selectViewHoldings();
-            HoldingsRecordView.waitLoading();
+          // Step 19: Switch to member tenant and verify changes were applied to the second holding
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[1]);
+          InventorySearchAndFilter.selectViewHoldings();
+          HoldingsRecordView.waitLoading();
 
-            // The second holding was successfully changed - verify admin note added by bulk edit
-            HoldingsRecordView.checkAdministrativeNote(noteAddedDuringBulkEdit);
-            HoldingsRecordView.close();
+          // The second holding was successfully changed - verify admin note added by bulk edit
+          HoldingsRecordView.checkAdministrativeNote(noteAddedDuringBulkEdit);
+          HoldingsRecordView.close();
 
-            // Step 20: Search for errored first holding and verify bulk edit changes were NOT applied
-            InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[0]);
-            InventorySearchAndFilter.selectViewHoldings();
-            HoldingsRecordView.waitLoading();
+          // Step 20: Search for errored first holding and verify bulk edit changes were NOT applied
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[0]);
+          InventorySearchAndFilter.selectViewHoldings();
+          HoldingsRecordView.waitLoading();
 
-            // The first holding still has the manually-added note but NOT the bulk edit note
-            HoldingsRecordView.checkAdministrativeNote(adminNote);
-            HoldingsRecordView.checkHoldingNoteTypeAbsent(
-              'Administrative note',
-              noteAddedDuringBulkEdit,
-            );
-          });
+          // The first holding still has the manually-added note but NOT the bulk edit note
+          HoldingsRecordView.checkAdministrativeNote(adminNote);
+          HoldingsRecordView.verifyTextAbsent(noteAddedDuringBulkEdit);
         },
       );
     });
