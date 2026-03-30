@@ -1767,6 +1767,48 @@ export default {
       .should('eq', `1 - ${recordsNumber}`);
   },
 
+  clickNextPaginationButton() {
+    cy.do(nextPaginationButton.click());
+    cy.wait(1000);
+  },
+
+  clickPreviousPaginationButton() {
+    cy.do(previousPaginationButton.click());
+    cy.wait(1000);
+  },
+
+  clickNextInChangedAccordion() {
+    cy.do(changesAccordion.find(nextPaginationButton).click());
+    cy.wait(1000);
+  },
+
+  clickPreviousInChangedAccordion() {
+    cy.do(changesAccordion.find(previousPaginationButton).click());
+    cy.wait(1000);
+  },
+
+  verifyPaginationButtonStatesInMatchedAccordion(previousDisabled, nextDisabled) {
+    cy.expect([
+      matchedAccordion.find(previousPaginationButton).has({ disabled: previousDisabled }),
+      matchedAccordion.find(nextPaginationButton).has({ disabled: nextDisabled }),
+    ]);
+  },
+
+  verifyPaginationButtonStatesInChangedAccordion(previousDisabled, nextDisabled) {
+    cy.expect([
+      changesAccordion.find(previousPaginationButton).has({ disabled: previousDisabled }),
+      changesAccordion.find(nextPaginationButton).has({ disabled: nextDisabled }),
+    ]);
+  },
+
+  verifyPaginationDisplay(startNumber, endNumber) {
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .first()
+      .find('div')
+      .invoke('text')
+      .should('eq', `${startNumber} - ${endNumber}`);
+  },
+
   verifyInstanceNoteColumns(instanceNoteColumnNames) {
     cy.get('[class*="DropdownMenu"] [class*="labelText"]').then((columns) => {
       const columnNames = Cypress.$(columns)
