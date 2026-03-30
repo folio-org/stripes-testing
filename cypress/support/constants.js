@@ -1923,3 +1923,19 @@ export const USER_TYPES = {
   SYSTEM: 'System',
   SHADOW: 'Shadow',
 };
+export const ORDER_LINE_ACCORDION_NAMES = {
+  ITEM_DETAILS: 'Item details',
+  PURCHASE_ORDER_LINE: 'Purchase order line',
+  DONOR_INFORMATION: 'Donor information',
+  VENDOR: 'Vendor',
+  COST_DETAILS: 'Cost details',
+  FUND_DISTRIBUTION: 'Fund distribution',
+  LOCATION: 'Location',
+  PHYSICAL_RESOURCE_DETAILS: 'Physical resource details',
+  E_RESOURCES_DETAILS: 'E-resources details',
+  ROUTING_LISTS: 'Routing lists',
+  NOTES: 'Notes',
+  RELATED_INVOICE_LINES: 'Related invoice lines',
+  LINKED_INSTANCE: 'Linked instance',
+  CUSTOM_FIELDS: 'Custom fields',
+};
