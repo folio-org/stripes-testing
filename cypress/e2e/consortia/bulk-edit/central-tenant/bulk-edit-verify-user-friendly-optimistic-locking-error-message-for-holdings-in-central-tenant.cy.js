@@ -95,26 +95,17 @@ describe('Bulk-edit', () => {
                   holdingSource = folioSource.id;
                 })
                 .then(() => {
-                  // Create first holding (will be edited to cause optimistic lock conflict)
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: folioInstance.id,
-                    permanentLocationId: collegeLocationId,
-                    sourceId: holdingSource,
-                  }).then((holding) => {
-                    holdings.push(holding.id);
-                    holdingHrids.push(holding.hrid);
-                  });
-                })
-                .then(() => {
-                  // Create second holding (should be successfully updated by bulk edit)
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: folioInstance.id,
-                    permanentLocationId: collegeLocationId,
-                    sourceId: holdingSource,
-                  }).then((holding) => {
-                    holdings.push(holding.id);
-                    holdingHrids.push(holding.hrid);
-                  });
+                  for (let i = 0; i < 2; i++) {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: folioInstance.id,
+                      permanentLocationId: collegeLocationId,
+                      sourceId: holdingSource,
+                    }).then((holding) => {
+                      holdings.push(holding.id);
+                      holdingHrids.push(holding.hrid);
+                    });
+                    cy.wait(500);
+                  }
                 })
                 .then(() => {
                   FileManager.createFile(
