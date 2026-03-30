@@ -68,14 +68,19 @@ export default {
 
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     open();
+    const defaultImportProfileName = 'OCLC WorldCat';
     cy.do(importButtonInActions.click());
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
-      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
-        cy.do(importTypeSelect.choose('OCLC WorldCat'));
+      if (
+        importProfiles.filter((profile) => profile.enabled === true).length > 1 &&
+        importProfiles.some((profile) => profile.name === defaultImportProfileName)
+      ) {
+        cy.do(importTypeSelect.choose(defaultImportProfileName));
       }
+      cy.wait(1000);
       cy.expect(OCLWorldCatIdentifierTextField.exists());
       this.fillImportFields(specialOCLCWorldCatidentifier);
-
+      cy.wait(1000);
       this.pressImportInModal(specialOCLCWorldCatidentifier);
       // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
       // InteractorsTools.closeCalloutMessage();
