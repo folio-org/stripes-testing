@@ -25,6 +25,9 @@ const folioInstance = {
   title: `AT_C594345_FolioInstance_${getRandomPostfix()}`,
 };
 
+const holdings = [];
+const holdingHrids = [];
+
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName, true);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName, true);
@@ -98,8 +101,8 @@ describe('Bulk-edit', () => {
                     permanentLocationId: collegeLocationId,
                     sourceId: holdingSource,
                   }).then((holding) => {
-                    folioInstance.holdingId1 = holding.id;
-                    folioInstance.holdingHrid1 = holding.hrid;
+                    holdings.push(holding.id);
+                    holdingHrids.push(holding.hrid);
                   });
                 })
                 .then(() => {
@@ -109,14 +112,14 @@ describe('Bulk-edit', () => {
                     permanentLocationId: collegeLocationId,
                     sourceId: holdingSource,
                   }).then((holding) => {
-                    folioInstance.holdingId2 = holding.id;
-                    folioInstance.holdingHrid2 = holding.hrid;
+                    holdings.push(holding.id);
+                    holdingHrids.push(holding.hrid);
                   });
                 })
                 .then(() => {
                   FileManager.createFile(
                     `cypress/fixtures/${holdingUUIDsFileName}`,
-                    `${folioInstance.holdingId1}\n${folioInstance.holdingId2}`,
+                    `${holdings[0]}\n${holdings[1]}`,
                   );
 
                   cy.resetTenant();
@@ -135,12 +138,9 @@ describe('Bulk-edit', () => {
         cy.getAdminToken();
 
         cy.setTenant(Affiliations.College);
-        if (folioInstance.holdingId1) {
-          cy.deleteHoldingRecordViaApi(folioInstance.holdingId1);
-        }
-        if (folioInstance.holdingId2) {
-          cy.deleteHoldingRecordViaApi(folioInstance.holdingId2);
-        }
+        holdings.forEach((holdingId) => {
+          cy.deleteHoldingRecordViaApi(holdingId);
+        });
 
         cy.resetTenant();
         cy.getAdminToken();
@@ -176,48 +176,38 @@ describe('Bulk-edit', () => {
           // Step 4: Download matched records (CSV)
           BulkEditActions.downloadMatchedResults();
 
-          BulkEditFiles.verifyValueInRowByUUID(
-            matchedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId1,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId1,
-          );
-          BulkEditFiles.verifyValueInRowByUUID(
-            matchedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId2,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId2,
-          );
+          holdings.forEach((holdingId) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              matchedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+              holdingId,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+              holdingId,
+            );
+          });
 
           // Steps 5-6: Show Holdings UUID column and verify UUIDs
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
           );
 
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            folioInstance.holdingId1,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId1,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            folioInstance.holdingId2,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId2,
-          );
+          holdings.forEach((holdingId) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+              holdingId,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+              holdingId,
+            );
+          });
 
           // Step 7-9: Edit the holding via API to create an optimistic locking version conflict
           // (Simulating another user editing the record in a different browser/session)
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
-          cy.getHoldings({ limit: 1, query: `"id"="${folioInstance.holdingId1}"` }).then(
-            (holdings) => {
-              const holdingToUpdate = holdings[0];
-              holdingToUpdate.administrativeNotes = [adminNote];
-              cy.updateHoldingRecord(holdingToUpdate.id, holdingToUpdate);
-            },
-          );
+          cy.getHoldings({ limit: 1, query: `"id"="${holdings[0]}"` }).then((holdingsResponse) => {
+            const holdingToUpdate = holdingsResponse[0];
+            holdingToUpdate.administrativeNotes = [adminNote];
+            cy.updateHoldingRecord(holdingToUpdate.id, holdingToUpdate);
+          });
 
           cy.resetTenant();
 
@@ -236,35 +226,28 @@ describe('Bulk-edit', () => {
           // Step 12: Confirm changes
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(2);
 
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-            folioInstance.holdingId1,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            noteAddedDuringBulkEdit,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-            folioInstance.holdingId2,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            noteAddedDuringBulkEdit,
-          );
+          holdings.forEach((holdingId) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              holdingId,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+              noteAddedDuringBulkEdit,
+            );
+          });
 
           // Step 13: Download preview in CSV format
           BulkEditActions.downloadPreview();
 
-          BulkEditFiles.verifyValueInRowByUUID(
-            previewFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId1,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            noteAddedDuringBulkEdit,
-          );
-          BulkEditFiles.verifyValueInRowByUUID(
-            previewFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-            folioInstance.holdingId2,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            noteAddedDuringBulkEdit,
-          );
+          holdings.forEach((holdingId) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              previewFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+              holdingId,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+              noteAddedDuringBulkEdit,
+            );
+          });
 
           // Step 14: Commit changes and verify partial success with optimistic locking error
           BulkEditActions.commitChanges();
@@ -272,7 +255,7 @@ describe('Bulk-edit', () => {
 
           // The second holding (not edited outside bulk edit) should have the change applied
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            folioInstance.holdingId2,
+            holdings[1],
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
             noteAddedDuringBulkEdit,
           );
@@ -283,10 +266,7 @@ describe('Bulk-edit', () => {
 
           // Step 15: Verify error details for the first holding (no link to latest version in ECS)
           cy.url().then((bulkEditUrl) => {
-            BulkEditSearchPane.verifyNonMatchedResults(
-              folioInstance.holdingId1,
-              optimisticLockingErrorMessage,
-            );
+            BulkEditSearchPane.verifyNonMatchedResults(holdings[0], optimisticLockingErrorMessage);
 
             // Step 16: Download changed records (CSV)
             cy.visit(bulkEditUrl);
@@ -297,25 +277,23 @@ describe('Bulk-edit', () => {
             BulkEditFiles.verifyValueInRowByUUID(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-              folioInstance.holdingId2,
+              holdings[1],
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
               noteAddedDuringBulkEdit,
             );
 
             // Step 17-18: Download errors CSV and verify optimistic locking message with partial URL
             BulkEditActions.downloadErrors();
-            FileManager.verifyFile(
-              errorsFromCommittingFileName,
-              `ERROR,${folioInstance.holdingId1},The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. /inventory/view/${folioInstance.id}/${folioInstance.holdingId1}`,
-              true,
-            );
+            FileManager.verifyFileIncludes(errorsFromCommittingFileName, [
+              `ERROR,${holdings[0]},The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. /inventory/view/${folioInstance.id}/${holdings[0]}`,
+            ]);
 
             // Step 19: Switch to member tenant and verify changes were applied to the second holding
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.waitLoading();
             InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.searchHoldingsByHRID(folioInstance.holdingHrid2);
+            InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[1]);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
@@ -325,7 +303,7 @@ describe('Bulk-edit', () => {
 
             // Step 20: Search for errored first holding and verify bulk edit changes were NOT applied
             InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.searchHoldingsByHRID(folioInstance.holdingHrid1);
+            InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[0]);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
