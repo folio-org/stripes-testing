@@ -144,14 +144,7 @@ describe('Lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus('Active');
         Lists.buildQuery();
-        cy.get('#field-option-0').click();
-        cy.contains('User — Active').click();
-        cy.get('[data-testid="operator-option-0"]').select('==');
-        cy.get('[data-testid="data-input-select-boolType"]').select('False');
-        cy.get('button:contains("Test query")').click();
-        cy.wait(7000);
-        cy.get('button:contains("Run query & save")').click();
-        cy.wait(1000);
+        Lists.queryBuilderActions();
         Lists.openActions();
         Lists.cancelRefresh();
         cy.contains(

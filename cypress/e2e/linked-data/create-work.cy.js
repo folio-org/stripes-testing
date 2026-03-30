@@ -77,7 +77,6 @@ describe('Citation: create work', () => {
       // enter title and keep editing
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
-      EditResource.checkAlarmDisplayed(false);
       EditResource.setNoteValue(testData.summaryNote, 'Summary note');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed

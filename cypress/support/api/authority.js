@@ -1,4 +1,3 @@
-import { recurse } from 'cypress-recurse';
 import getRandomPostfix, { getRandomLetters } from '../utils/stringTools';
 import { REQUEST_METHOD } from '../constants';
 
@@ -168,26 +167,9 @@ Cypress.Commands.add('createMarcAuthorityViaAPI', (LDR, fields) => {
       suppressDiscovery: false,
       marcFormat: 'AUTHORITY',
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 10,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcAuthorityId');
-
-      return cy.get('@createdMarcAuthorityId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 

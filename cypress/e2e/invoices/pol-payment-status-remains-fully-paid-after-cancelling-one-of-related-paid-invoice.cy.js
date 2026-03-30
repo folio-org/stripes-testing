@@ -5,6 +5,8 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import { Budgets, FiscalYears, Funds, Ledgers } from '../../support/fragments/finance';
@@ -205,7 +207,12 @@ describe('Invoices', () => {
       });
       TransactionDetails.openSourceInTransactionDetails(`${orderNumber}-1`);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Payment status', value: 'Fully Paid' }],
+        poLineInformation: [
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.FULLY_PAID,
+          },
+        ],
       });
     },
   );
