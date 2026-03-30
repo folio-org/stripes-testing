@@ -50,7 +50,7 @@ describe('Bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        // Build and run query to find users by unique last name prefix
+        // Build and run query to find users
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
@@ -88,10 +88,7 @@ describe('Bulk-edit', () => {
         Users.deleteViaApi(testUser.userId);
       });
 
-      // Delete the user with permissions
       Users.deleteViaApi(user.userId);
-
-      // Delete downloaded files
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
@@ -153,8 +150,6 @@ describe('Bulk-edit', () => {
 
         // Step 11: Click Commit changes button
         BulkEditActions.commitChanges();
-
-        // Wait for changes to be committed
         BulkEditSearchPane.verifyBulkEditQueryPaneExists();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyInputLabel(
