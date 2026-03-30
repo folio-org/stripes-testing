@@ -164,6 +164,7 @@ describe('Bulk-edit', () => {
 
                 BulkEditSearchPane.verifyBulkEditQueryPaneExists();
                 BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
+                BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
               });
             });
         });
@@ -245,6 +246,7 @@ describe('Bulk-edit', () => {
           // Step 10: Confirm changes
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
+          BulkEditSearchPane.verifyPaginatorInAreYouSureForm(2);
 
           items.forEach((id) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -302,11 +304,9 @@ describe('Bulk-edit', () => {
 
             // Step 15-16: Download errors CSV and verify optimistic locking message with partial URL
             BulkEditActions.downloadErrors();
-            FileManager.verifyFile(
-              fileNames.errorsFromCommitting,
+            FileManager.verifyFileIncludes(fileNames.errorsFromCommitting, [
               `ERROR,${items[0]},The record cannot be saved because it is not the most recent version. Stored version is 2, bulk edit version is 1. /inventory/view/${folioInstance.uuid}/${folioInstance.holdingId}/${items[0]}`,
-              true,
-            );
+            ]);
 
             // Step 17: Switch to member tenant and verify changes were applied to the second item
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
