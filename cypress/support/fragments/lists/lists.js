@@ -20,6 +20,7 @@ import {
   RadioButton,
   TextArea,
   TextField,
+  SelectionList,
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
@@ -163,7 +164,8 @@ const UI = {
   verifyEditorContainsQuery(query) {
     cy.get('[id^=selected-field-option]').contains(query.field);
     cy.get('[data-testid="operator-option-0"]').contains(query.operator);
-    cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
+    // Check the selected value in the Selection component by looking at the button text
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').should('contain', query.value);
   },
 
   closeQueryEditor() {
@@ -790,7 +792,8 @@ const QueryBuilder = {
     cy.get('#field-option-0').click();
     cy.contains(parameter).click();
     cy.get('[data-testid="operator-option-0"]').select(operator);
-    cy.get('[data-testid="data-input-select-boolType"]').select(value);
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').click();
+    cy.do(SelectionList().select(value));
     cy.do(testQuery.click());
     cy.wait(2000);
     cy.do(runQueryAndSave.click());
@@ -813,7 +816,10 @@ const QueryBuilder = {
       valueToSet = 'True';
     }
     cy.wait(1000);
-    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
+    // Click the button to open the selection dropdown
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').click();
+    // Select the value from the now-open SelectionList
+    cy.do(SelectionList().select(valueToSet));
     cy.wait(500);
   },
 

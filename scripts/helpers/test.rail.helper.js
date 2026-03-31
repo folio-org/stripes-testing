@@ -20,6 +20,12 @@ const team = {
   Eureka: 21,
 };
 
+const testTypes = {
+  smoke: 1,
+  criticalPath: 2,
+  extendedPath: 3,
+};
+
 async function getTestHistory(api, caseId, runId) {
   try {
     const response = await api.get(`get_results_for_case/${runId}/${caseId}`, {
@@ -132,4 +138,5 @@ module.exports = {
   getTestCase,
   team,
   status,
+  testTypes,
 };

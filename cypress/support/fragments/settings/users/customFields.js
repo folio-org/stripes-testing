@@ -192,7 +192,7 @@ export default {
 
   editButton() {
     cy.expect(editNewButton.exists());
-    // wait needs to fill the fileds
+    // wait needs to fill the fields
     cy.wait(1000);
     this.clickEditNewButton();
     cy.expect(Pane('Edit custom fields').exists());
@@ -214,17 +214,19 @@ export default {
   // API methods
 
   getCustomFieldsViaApi() {
-    return cy
-      .okapiRequest({
+    return cy.getModUsersVersion().then((modUsersVersion) => {
+      return cy.okapiRequest({
         method: 'GET',
-        path: 'custom-fields?limit=2147483647',
+        path: 'custom-fields',
         isDefaultSearchParamsRequired: false,
-        additionalHeaders: { 'x-okapi-module-id': 'mod-users-19.6.0-SNAPSHOT.369' },
+        additionalHeaders: { 'x-okapi-module-id': modUsersVersion },
       })
-      .then((response) => {
-        return response.body;
-      });
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
+
   getCustomFieldsConfigViaApi() {
     return cy
       .okapiRequest({
