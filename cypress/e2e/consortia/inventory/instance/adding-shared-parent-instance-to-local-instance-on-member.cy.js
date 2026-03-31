@@ -4,6 +4,7 @@ import InstanceRecordEdit from '../../../../support/fragments/inventory/instance
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -56,6 +57,7 @@ describe('Inventory', () => {
         'C413368 (CONSORTIA) Adding Shared parent Instance to Local Instance on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C413368'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.localInstance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
