@@ -100,7 +100,7 @@ describe('Orders', () => {
       OrderLines.fillCostDetailsForElectronicOrderType('10', '1');
       OrderLines.save();
       OrderLines.verifyFieldWarningMessage();
-      OrderLines.setPhysicalQuantity('0');
+      OrderLines.setPhysicalQuantity({ quantity: '0' });
       OrderLines.save();
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${testData.order.poNumber}-1 was successfully updated`,

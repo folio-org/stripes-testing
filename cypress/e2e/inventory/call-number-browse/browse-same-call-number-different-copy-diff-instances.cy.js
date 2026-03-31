@@ -129,7 +129,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(browseQuery, true, 'lc');
+        BrowseCallNumber.waitForCallNumberToAppear(browseQuery, true, 'lc', 5);
         InventorySearchAndFilter.fillInBrowseSearch(browseQuery);
         InventorySearchAndFilter.clickSearch();
         // Assert exact match row, number of titles, and blank title

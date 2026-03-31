@@ -39,6 +39,7 @@ export default {
     ['Name', 'Updated', 'Updated by'].forEach((title) => {
       cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
+    this.scrollDownIfListOfResultsIsLong();
     cy.expect([
       searchField.exists(),
       searchButton.has({ disabled: true }),

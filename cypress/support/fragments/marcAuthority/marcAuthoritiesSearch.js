@@ -58,7 +58,7 @@ export default {
           .checkIfNotSelected(),
       ]);
       // need to wait until filter will be applied
-      cy.wait(1000);
+      cy.wait(2000);
     }
     if (checkbox === REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO) {
       cy.do([
@@ -67,7 +67,7 @@ export default {
           .checkIfNotSelected(),
       ]);
       // need to wait until filter will be applied
-      cy.wait(1000);
+      cy.wait(2000);
     }
   },
 

@@ -159,6 +159,7 @@ const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
+const inventoriesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -465,7 +466,8 @@ export default {
 
   selectTopRecord() {
     cy.do(
-      MultiColumnListRow({ index: 0 })
+      inventoriesList
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .find(Button())
         .click(),

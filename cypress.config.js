@@ -10,7 +10,24 @@ const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 
+let activeEnvironment = null;
+let environments = {};
+try {
+  // eslint-disable-next-line global-require
+  ({ activeEnvironment, environments } = require('./environments'));
+} catch (e) {
+  // cypress/environments.js is gitignored and proceed with defaults
+}
+
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
+
+const envOverrides = (activeEnvironment && environments[activeEnvironment]) || {};
+if (activeEnvironment && !environments[activeEnvironment]) {
+  const available = Object.keys(environments).join(', ');
+  throw new Error(
+    `Environment "${activeEnvironment}" not found in cypress/environments.js\nAvailable: ${available}`,
+  );
+}
 
 const reportportalOptions = {
   apiKey: process.env.CI_API_KEY ? process.env.CI_API_KEY : '',
@@ -55,6 +72,7 @@ module.exports = defineConfig({
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: false,
+    ...(envOverrides.env || {}),
   },
   reporterOptions: reportportalOptions,
   e2e: {
@@ -158,7 +176,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://bugfest-sunflower-aqa.int.aws.folio.org',
+    baseUrl: envOverrides.baseUrl || 'https://bugfest-sunflower-aqa.int.aws.folio.org',
     testIsolation: false,
   },
 });

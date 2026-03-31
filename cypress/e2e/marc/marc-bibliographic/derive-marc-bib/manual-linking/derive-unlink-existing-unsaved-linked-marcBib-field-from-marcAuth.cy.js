@@ -116,7 +116,6 @@ describe('MARC', () => {
         ];
 
         before('Creating user and test data', () => {
-          cy.loginAsAdmin();
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
@@ -124,7 +123,7 @@ describe('MARC', () => {
             }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 }
               });
             });

@@ -65,8 +65,6 @@ describe('Inventory', () => {
           waiter: DataImport.waitLoading,
           authRefresh: true,
         });
-        cy.reload();
-        DataImport.waitLoading();
       }, 20_000).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(query);

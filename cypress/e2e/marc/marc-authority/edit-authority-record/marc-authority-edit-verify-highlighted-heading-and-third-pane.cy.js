@@ -124,7 +124,7 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
         Users.deleteViaApi(testData.userProperties.userId);
         Users.deleteViaApi(testData.preconditionUserId);

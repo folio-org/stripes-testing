@@ -38,13 +38,12 @@ describe('Data Import', () => {
     const testData = {
       markedValue: 'C385660 Lee, Stan,',
       createdRecordIDs: [],
-      marcFileForModify: 'marcBibFileForC385660_1.mrc',
-      modifiedMarcFile: `C385660 editedMarcFile${getRandomPostfix()}.mrc`,
-      uploadModifiedMarcFile: `C385660 testMarcFile${getRandomPostfix()}.mrc`,
+      modifiedMarcFile: `C385660_editedMarcFile${getRandomPostfix()}.mrc`,
+      uploadModifiedMarcFile: `C385660_testMarcFile${getRandomPostfix()}.mrc`,
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        74,
+        78,
         '700',
         '1',
         '\\',
@@ -202,7 +201,7 @@ describe('Data Import', () => {
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${testData.exportedFileName}.*`);
     });
 
     it(
@@ -224,8 +223,8 @@ describe('Data Import', () => {
           DataImport.editMarcFile(
             testData.exportedFileName,
             testData.modifiedMarcFile,
-            ['Lee, Stan', 'ecreator.'],
-            ['Lee, Stanley', 'eauthor.'],
+            ['Lee, Stan', 'creator.'],
+            ['Lee, Stanley', 'author.'],
           );
         });
 
