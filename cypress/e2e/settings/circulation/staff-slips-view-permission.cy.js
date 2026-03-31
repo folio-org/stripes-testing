@@ -8,6 +8,14 @@ import { STAFF_SLIP_NAMES } from '../../../support/constants';
 
 describe('Permissions -> Circulation', () => {
   let tempUser;
+  const staffSlipNamesWithoutTransitMediatedRequests = [
+    STAFF_SLIP_NAMES.DUE_DATE_RECEIPT,
+    STAFF_SLIP_NAMES.HOLD,
+    STAFF_SLIP_NAMES.PICK_SLIP,
+    STAFF_SLIP_NAMES.REQUEST_DELIVERY,
+    STAFF_SLIP_NAMES.SEARCH_SLIP_HOLD_REQUESTS,
+    STAFF_SLIP_NAMES.TRANSIT,
+  ];
 
   before('Create user with view staff slips permission', () => {
     cy.getAdminToken().then(() => {
@@ -33,7 +41,7 @@ describe('Permissions -> Circulation', () => {
     'C449393 Check permission "Settings (Circulation): Can view staff slips" (vega)',
     { tags: ['extendedPath', 'vega', 'C449393'] },
     () => {
-      Object.values(STAFF_SLIP_NAMES).forEach((slipName) => {
+      staffSlipNamesWithoutTransitMediatedRequests.forEach((slipName) => {
         cy.contains('nav', slipName).should('be.visible');
         StaffSlips.chooseStaffClip(slipName);
         StaffSlip.checkViewOnly(slipName);
