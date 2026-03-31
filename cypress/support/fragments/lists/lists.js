@@ -15,9 +15,11 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectOption,
   not,
   Pane,
   RadioButton,
+  SelectionList,
   TextArea,
   TextField,
 } from '../../../../interactors';
@@ -69,12 +71,14 @@ const constants = {
 };
 
 const UI = {
-  waitLoading: () => {
+  waitLoading() {
     cy.expect(HTML(including('Lists')).exists());
     cy.wait(3000);
+    // have to duplicate code because cannot use this.waitForSpinnerToDisappear() for some reason...
+    cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
   },
 
-  filtersWaitLoading: () => {
+  filtersWaitLoading() {
     cy.expect(activeCheckbox.exists());
     cy.expect(inactiveCheckbox.exists());
     cy.expect(sharedCheckbox.exists());
@@ -329,6 +333,9 @@ const UI = {
 
   openNewListPane() {
     cy.do(newLink.click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.expect(listNameTextField.exists());
   },
 
   verifyNewButtonIsEnabled() {
@@ -378,8 +385,8 @@ const UI = {
     cy.expect(listDescriptionTextArea.has({ value }));
   },
 
-  selectRecordTypeOld(option) {
-    cy.get('select[name=recordType]').select(option);
+  selectRecordTypeOld(type) {
+    cy.get('select[name=recordType]').select(type);
     cy.wait(500);
   },
 
@@ -401,15 +408,59 @@ const UI = {
     cy.wait(500);
   },
 
-  selectRecordType(option) {
+  selectRecordType(type) {
     cy.get('button[name=recordType]')
       .click()
       .then(() => {
         cy.wait(500);
-        cy.get('li[role=option]').contains(option).click();
+        cy.get('li[role=option]').contains(type).click();
         cy.wait(500);
       });
     cy.wait(500);
+  },
+
+  verifySelectedOptionsInRecordTypeDropdown(type) {
+    cy.get('[data-test-selection-option-segment=true]').contains(type).should('be.visible');
+  },
+
+  openRecordTypeDropdown() {
+    cy.get('button[name=recordType]').click();
+    cy.wait(1000);
+  },
+
+  searchOptionInRecordTypeDropdown(type) {
+    cy.do(new SelectionList().filter(type));
+    cy.wait(1000);
+  },
+
+  selectOptionInRecordTypeDropdown(type) {
+    cy.get('li[role=option]').contains(type).click();
+    cy.wait(1000);
+  },
+
+  openRecordTypeDropdownAndSearchOption(type) {
+    this.openRecordTypeDropdown();
+    this.searchOptionInRecordTypeDropdown(type);
+  },
+
+  searchOptionInRecordTypeDropdownAndSelectIt(type) {
+    this.searchOptionInRecordTypeDropdown(type);
+    this.selectOptionInRecordTypeDropdown(type);
+  },
+
+  openRecordTypeDropdownSearchOptionAndSelectIt(type) {
+    this.openRecordTypeDropdown();
+    this.searchOptionInRecordTypeDropdownAndSelectIt(type);
+  },
+
+  verifyRecordTypeDropdownOptions(type) {
+    cy.then(() => new SelectionList().optionList()).then((options) => {
+      cy.expect(options).to.include(type);
+    });
+  },
+
+  verifyRecordTypeAbsentInDropdownOptions() {
+    this.verifyRecordTypeDropdownOptions('-List is empty-');
   },
 
   checkKeyValue(label, value) {
@@ -603,9 +654,29 @@ const UI = {
     cy.wait(1000);
   },
 
-  selectRecordTypeFilter(type) {
-    cy.do(MultiSelect().choose(type));
+  openRecordTypeFilter() {
+    cy.do(filterPane.find(MultiSelect()).open());
     cy.wait(1000);
+  },
+
+  searchRecordTypeFilterInDropdown(type) {
+    cy.do(filterPane.find(MultiSelect()).filter(type));
+    cy.wait(1000);
+  },
+
+  selectRecordTypeFilter(type) {
+    cy.do(filterPane.find(MultiSelect()).choose(type));
+    cy.wait(1000);
+  },
+
+  verifyRecordTypeFilterDropdownContainsOptions(options) {
+    options.forEach((option) => {
+      cy.expect(MultiSelectOption(including(option)).exists());
+    });
+  },
+
+  verifyRecordTypeFilterDropdownNoMatchingItem() {
+    cy.get('[class^=multiSelectEmptyMessage-]').contains('No matching items found!').should('be.visible');
   },
 
   verifyCheckboxChecked(name) {
@@ -687,6 +758,18 @@ const UI = {
     cy.wait(1000);
     cy.contains('You do not have permission to view this list', { timeout: 15000 }).should(
       'be.visible',
+    );
+  },
+
+  verifyNoPermissionWarning() {
+    cy.expect(HTML("You don't have permission to view this app/record").exists());
+  },
+
+  verifyNoEntityTypePermissionsWarning() {
+    cy.expect(
+      HTML(
+        including('You do not have the required permissions to use the Lists app'),
+      ).exists(),
     );
   },
 
