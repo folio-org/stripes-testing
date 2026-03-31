@@ -68,6 +68,7 @@ describe('Inventory', () => {
         'C422078 (CONSORTIA) Verify the link in Data export app after exporting shared MARC Source Instance from Instance search results pane on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C422078'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
