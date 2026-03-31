@@ -19,10 +19,9 @@ describe('Inventory', () => {
         oclcNumberForImport: '1202462670',
         oclcNumberForOverlay: '3213213',
         OCLCAuthentication: '100481406/PAOLF',
-        instanceId: '',
         instanceTitle: 'Cooking Light Soups & Stew.',
         updatedInstanceTitle:
-          'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+          'Cues for church camping : for counselors of juniors and junior highs.',
       };
 
       before('Create test data', () => {
@@ -48,7 +47,6 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       });
 
       it(
@@ -66,6 +64,7 @@ describe('Inventory', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           Logs.openViewAllLogs();
           LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Update Instance');
+          LogsViewAll.openUserIdAccordion();
           LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
           LogsViewAll.waitUIToBeFiltered();
           LogsViewAll.openFileDetails('No file name');
