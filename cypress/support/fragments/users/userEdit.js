@@ -1099,7 +1099,7 @@ export default {
     cy.wait(2000);
   },
 
-  checkUserEditPaneOpened: (isOpened = true) => {
+  checkUserEditPaneOpened(isOpened = true) {
     cy.expect(Spinner().absent());
     if (isOpened) {
       cy.expect(userEditPane.exists(), userInformationAccordion.exists());
