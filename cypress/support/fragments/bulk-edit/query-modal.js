@@ -10,6 +10,7 @@ import {
   RepeatableFieldItem,
   Select,
   Selection,
+  SelectionList,
   Spinner,
   TextField,
   Checkbox,
@@ -29,6 +30,7 @@ const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = Button('Show columns');
+const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 
 const booleanValues = ['AND'];
 
@@ -368,7 +370,11 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Selection({ id: `field-option-${row}` }))
+        .choose(selection),
+    );
     cy.wait(1000);
   },
 
@@ -387,7 +393,7 @@ export default {
 
   verifySelectedField(selection, row = 0) {
     cy.get(
-      `[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectionControl"] [class^="singleValue"]`,
+      `[data-testid="row-${row}"] [class^="col-sm-4"] [id="selected-field-option-${row}-item"]`,
     ).should('have.text', selection);
   },
 
@@ -439,11 +445,8 @@ export default {
   },
 
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
-    cy.expect([
-      RepeatableFieldItem({ index: row })
-        .find(Select('input-value-0'))
-        .has({ optionsText: expectedOptions }),
-    ]);
+    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).open());
+    cy.expect(SelectionList().has({ optionList: expectedOptions }));
   },
 
   pickDate(date, row = 0) {
@@ -516,24 +519,56 @@ export default {
   },
 
   chooseValueSelect(choice, row = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: row })
-        .find(Select({ content: including('Select value') }))
-        .choose(choice),
-    );
+    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).choose(choice));
     cy.wait(1000);
   },
 
   verifySelectedValue(expectedValue, row = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: row })
-        .find(Select({ content: including('Select value') }))
-        .has({ checkedOptionText: expectedValue }),
+      RepeatableFieldItem({ index: row }).find(valueSelection).has({ singleValue: expectedValue }),
     );
   },
 
-  chooseValueSelectByValue(value, row = 0) {
-    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectControl"]`).select(value);
+  selectDuplicateOptionByText(value, row = 0, optionIndex = 0) {
+    // Open the dropdown if not already open - target the Value column button
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"]`)
+      .eq(1)
+      .find('[class^="selectionControl"] button')
+      .first()
+      .then(($button) => {
+        const isOpen = $button.attr('aria-expanded') === 'true';
+        if (!isOpen) {
+          cy.wrap($button).click();
+          cy.wait(500);
+        }
+      });
+
+    // Find all options matching the value text and click the one at the specified index
+    cy.get('[class^="selectionListRoot"][id*="container-selection"]').within(() => {
+      cy.get('li[role="option"]').then(($options) => {
+        const matchingOptions = [];
+        $options.each((index, option) => {
+          const optionText = Cypress.$(option).find('[data-test-selection-option-segment]').text();
+          if (optionText === value) {
+            matchingOptions.push(index);
+          }
+        });
+
+        if (matchingOptions.length === 0) {
+          throw new Error(`No option found with value: "${value}"`);
+        }
+
+        if (optionIndex >= matchingOptions.length) {
+          throw new Error(
+            `Option index ${optionIndex} is out of bounds. Found ${matchingOptions.length} option(s) with value "${value}"`,
+          );
+        }
+
+        const targetIndex = matchingOptions[optionIndex];
+        cy.get('li[role="option"]').eq(targetIndex).click();
+      });
+    });
+
     cy.wait(1000);
   },
 
@@ -594,7 +629,7 @@ export default {
   selectValueFromSelect(selection, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
-        .find(Select({ dataTestID: 'data-input-select-boolType' }))
+        .find(Selection({ dataTestId: 'data-input-select-boolType' }))
         .choose(selection),
     );
   },
