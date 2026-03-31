@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   MultiSelect,
+  Popover,
   Section,
   Select,
   Selection,
@@ -142,6 +143,18 @@ export default {
     cy.do(orderInfoSection.find(Button('Organization look-up')).click());
     SearchHelper.searchByName(organizationName);
     SearchHelper.selectFromResultsList();
+  },
+  clickManualInfoIcon() {
+    cy.do(orderInfoSection.find(Button({ icon: 'info' })).click());
+  },
+  verifyManualInfoPopover(expectedMessage) {
+    cy.expect(Popover().has({ content: including(expectedMessage) }));
+  },
+  checkManualCheckbox() {
+    cy.do(Checkbox({ name: 'manualPo' }).click());
+  },
+  verifyManualCheckboxChecked(checked = true) {
+    cy.expect(Checkbox({ name: 'manualPo' }).has({ checked }));
   },
   cliskCollapseAllButton() {
     cy.do(collapseAllButton.click());
