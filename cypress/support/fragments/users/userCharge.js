@@ -1,6 +1,5 @@
 import { not } from '@interactors/html';
 import { Button, Modal, Select, TextField } from '../../../../interactors';
-import UsersCard from './usersCard';
 
 const rootModal = Modal('New fee/fine');
 
@@ -14,13 +13,15 @@ export default {
     cy.wait(500);
     cy.do(rootModal.find(Select({ id: 'feeFineType' })).choose(feeFineType));
     cy.wait(500);
-    if (!feeFineAmount) {
+    if (feeFineAmount) {
+      cy.do(rootModal.find(TextField({ id: 'amount' })).fillIn(feeFineAmount));
+      cy.wait(500);
+    } else {
       cy.expect(rootModal.find(TextField('Fee/fine amount*')).has({ text: not('') }));
     }
   },
   chargeOnly: () => {
     cy.wait(500);
     cy.do(rootModal.find(Button({ id: 'chargeOnly' })).click());
-    UsersCard.waitLoading();
   },
 };

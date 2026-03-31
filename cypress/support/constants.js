@@ -1552,6 +1552,7 @@ export const STAFF_SLIP_NAMES = {
   REQUEST_DELIVERY: 'Request delivery',
   SEARCH_SLIP_HOLD_REQUESTS: 'Search slip (Hold requests)',
   TRANSIT: 'Transit',
+  TRANSIT_MEDIATED_REQUESTS: 'Transit (mediated requests)',
 };
 
 export const INSTANCE_DATE_TYPES = {

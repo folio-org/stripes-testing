@@ -1085,7 +1085,7 @@ export default {
     ]);
   },
 
-  fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
+  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
     if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
     cy.do([
@@ -1096,7 +1096,7 @@ export default {
     cy.wait(2000);
   },
 
-  checkUserEditPaneOpened: (isOpened = true) => {
+  checkUserEditPaneOpened(isOpened = true) {
     cy.expect(Spinner().absent());
     if (isOpened) {
       cy.expect(userEditPane.exists(), userInformationAccordion.exists());
