@@ -1,6 +1,7 @@
 # Change history for stripes-testing
 
-## IN PROGRESS
+## [5.0.1](https://github.com/folio-org/stripes-testing/tree/v5.0.1) (2026-03-31)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v5.0.0...v5.0.1)
 
 * Lock `axios` to `1.14.0` to avoid other compromised versions.
 
