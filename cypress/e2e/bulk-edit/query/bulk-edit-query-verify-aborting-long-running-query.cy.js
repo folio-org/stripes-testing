@@ -56,11 +56,9 @@ describe('Bulk-edit', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(users.active == )');
 
-        // Step 5: Click "Select value" dropdown in "Value" column
-        QueryModal.verifyOptionsInValueSelect(['True', 'False']);
-
-        // Step 6: Select "True" in "Select value" dropdown
+        // Step 5-6: Select "True" in "Select value" dropdown
         QueryModal.chooseValueSelect('True');
+        QueryModal.verifyOptionsInValueSelect(['True', 'False']);
         QueryModal.verifyQueryAreaContent('(users.active == true)');
         QueryModal.testQueryDisabled(false);
 
