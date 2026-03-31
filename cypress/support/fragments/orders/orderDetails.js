@@ -251,7 +251,7 @@ export default {
     }
   },
 
-  checkAccordionColumnItem(rowIndex, columnName, value) {
+  checkRelatedInvoiceColumnItem(rowIndex, columnName, value) {
     cy.expect(
       relatedInvoicesSection
         .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
@@ -262,25 +262,25 @@ export default {
   checkRelatedInvoicesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.invoiceNumber) {
-        this.checkAccordionColumnItem(index, 'Invoice #', record.invoiceNumber);
+        this.checkRelatedInvoiceColumnItem(index, 'Invoice #', record.invoiceNumber);
       }
       if (record.fiscalYear) {
-        this.checkAccordionColumnItem(index, 'Fiscal year', record.fiscalYear);
+        this.checkRelatedInvoiceColumnItem(index, 'Fiscal year', record.fiscalYear);
       }
       if (record.invoiceDate) {
-        this.checkAccordionColumnItem(index, 'Invoice date', record.invoiceDate);
+        this.checkRelatedInvoiceColumnItem(index, 'Invoice date', record.invoiceDate);
       }
       if (record.vendorCode) {
-        this.checkAccordionColumnItem(index, 'Vendor code', record.vendorCode);
+        this.checkRelatedInvoiceColumnItem(index, 'Vendor code', record.vendorCode);
       }
       if (record.vendorInvoiceNumber) {
-        this.checkAccordionColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNumber);
+        this.checkRelatedInvoiceColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNumber);
       }
       if (record.status) {
-        this.checkAccordionColumnItem(index, 'Status', record.status);
+        this.checkRelatedInvoiceColumnItem(index, 'Status', record.status);
       }
       if (record.invoiceAmount) {
-        this.checkAccordionColumnItem(index, 'Invoice amount', record.invoiceAmount);
+        this.checkRelatedInvoiceColumnItem(index, 'Invoice amount', record.invoiceAmount);
       }
     });
   },

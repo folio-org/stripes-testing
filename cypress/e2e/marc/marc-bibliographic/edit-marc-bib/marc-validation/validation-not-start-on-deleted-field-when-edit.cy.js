@@ -97,7 +97,7 @@ describe('MARC', () => {
           MarcAuthority.edit();
 
           MarcAuthority.updateDataByRowIndex(fields['110_1'].index, fields['110_1'].newValue);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
 
           QuickMarcEditor.checkErrorMessageForField(fields['110_1'].index, fields['110_1'].message);
           QuickMarcEditor.checkWarningMessageForField(fields['900'].index, fields[900].message);

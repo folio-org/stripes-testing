@@ -100,7 +100,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
         BulkEditActions.checkApplyToItemsRecordsCheckbox();
 
-        // Сlick on "Confirm changes" button
+        // Click on "Confirm changes" button
         BulkEditActions.confirmChanges();
 
         // Click on "Download preview" button

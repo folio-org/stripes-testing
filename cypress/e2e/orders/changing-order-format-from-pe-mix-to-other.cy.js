@@ -3,6 +3,8 @@ import {
   LOCATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  RECORD_STATUSES,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -97,7 +99,7 @@ describe('Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.addOrderFormat(ORDER_FORMAT_NAMES.OTHER);
       OrderLines.fillCostDetailsForPhysicalOrderType('10', '1');
-      OrderLines.setPhysicalQuantity('1');
+      OrderLines.setPhysicalQuantity({ quantity: '1' });
       OrderLines.setElectronicQuantity('0');
       OrderLines.save();
       InteractorsTools.checkCalloutMessage(
@@ -105,12 +107,16 @@ describe('Orders', () => {
       );
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Other' }],
-        costDetails: [
-          { key: 'Electronic unit price', value: 'No value set-' },
-          { key: 'Quantity electronic', value: 'No value set-' },
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.OTHER },
         ],
-        locationDetails: [{ key: 'Quantity electronic', value: 'No value set-' }],
+        costDetails: [
+          { key: POLINE_DETAILS_FIELDS.ELECTRONIC_UNIT_PRICE, value: RECORD_STATUSES.DASH },
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: RECORD_STATUSES.DASH },
+        ],
+        locationDetails: [
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: RECORD_STATUSES.DASH },
+        ],
       });
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openOrder({ orderNumber: testData.order.poNumber });
@@ -123,12 +129,16 @@ describe('Orders', () => {
       );
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Order format', value: 'Other' }],
-        costDetails: [
-          { key: 'Electronic unit price', value: 'No value set-' },
-          { key: 'Quantity electronic', value: 'No value set-' },
+        poLineInformation: [
+          { key: POLINE_DETAILS_FIELDS.ORDER_FORMAT, value: ORDER_FORMAT_NAMES.OTHER },
         ],
-        locationDetails: [{ key: 'Quantity electronic', value: 'No value set-' }],
+        costDetails: [
+          { key: POLINE_DETAILS_FIELDS.ELECTRONIC_UNIT_PRICE, value: RECORD_STATUSES.DASH },
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: RECORD_STATUSES.DASH },
+        ],
+        locationDetails: [
+          { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: RECORD_STATUSES.DASH },
+        ],
       });
     },
   );

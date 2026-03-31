@@ -12,12 +12,16 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check out: Circulation rules', () => {
   const userData = {
     group: getTestEntityValue('staff$'),
     personal: {},
   };
+  const BARCODE = 'barcode';
+  const getPrefPatronIdentifier = (otherSettings) => otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
+  let shouldRemoveBarcodeAfterTest = false;
   let patronGroupId = '';
 
   const itemData = {
@@ -26,7 +30,6 @@ describe('Check out: Circulation rules', () => {
   };
   let defaultLocation;
   let servicePoint;
-  let loanPolicyId;
   let loanPolicy;
   let overdueFinePolicy;
   let lostItemFeePolicy;
@@ -67,7 +70,6 @@ describe('Check out: Circulation rules', () => {
         LoanPolicy.getApi({ query: 'name="One Hour" or name="one-hour"', limit: 1 }).then(
           (response) => {
             if (response.body.loanPolicies.length > 0) {
-              loanPolicyId = response.body.loanPolicies[0].id;
               loanPolicy = response.body.loanPolicies[0].name;
             } else {
               // Create one-hour loan policy if it doesn't exist using LoanPolicy.createViaApi
@@ -87,7 +89,6 @@ describe('Check out: Circulation rules', () => {
               };
               LoanPolicy.createViaApi(loanPolicyData).then((policy) => {
                 loanPolicy = policy.name;
-                loanPolicyId = policy.id;
               });
             }
           },
@@ -192,6 +193,22 @@ describe('Check out: Circulation rules', () => {
           });
         });
       });
+
+    // Fetching the current "Other settings" values.
+    // Checking if "Patron id(s) for checkout scanning" is enabled by "Barcode".
+    // Enabling it if not already enabled.
+    OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+      if (!prefPatronIdentifier.includes(BARCODE)) {
+        shouldRemoveBarcodeAfterTest = true;
+        const updatedValue = prefPatronIdentifier ? `${prefPatronIdentifier},${BARCODE}` : BARCODE;
+
+        OtherSettings.setOtherSettingsViaApi({
+          prefPatronIdentifier: updatedValue,
+        });
+      }
+    });
   });
 
   after('Delete test data', () => {
@@ -206,7 +223,29 @@ describe('Check out: Circulation rules', () => {
       defaultLocation.libraryId,
       defaultLocation.id,
     );
-    LoanPolicy.deleteApi(loanPolicyId);
+    // Fetching the current "Other settings" values.
+    // Checking if "Patron id(s) for checkout scanning" is enabled by "Barcode".
+    // Verifying that it was enabled earlier.
+    // Ensuring that "Barcode" is not the only enabled value, since at least one value is required.
+    // Disabling "Barcode" if appropriate.
+    OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+      if (
+        shouldRemoveBarcodeAfterTest &&
+        prefPatronIdentifier.includes(BARCODE) &&
+        prefPatronIdentifier !== BARCODE
+      ) {
+        const updatedValue = prefPatronIdentifier
+          .split(',')
+          .filter((id) => id !== BARCODE)
+          .join(',');
+
+        OtherSettings.setOtherSettingsViaApi({
+          prefPatronIdentifier: updatedValue,
+        });
+      }
+    });
   });
 
   it(

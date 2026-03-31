@@ -12,7 +12,24 @@ const webpackPreprocessor = require('@cypress/webpack-batteries-included-preproc
 const testRailPlugin = require('cypress-testrail-simple/src/plugin');
 const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
+let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
+let environments = {};
+try {
+  // eslint-disable-next-line global-require
+  ({ activeEnvironment, environments } = require('./environments'));
+} catch (e) {
+  // cypress/environments.js is gitignored and proceed with defaults
+}
+
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
+
+const envOverrides = (activeEnvironment && environments[activeEnvironment]) || {};
+if (activeEnvironment && !environments[activeEnvironment]) {
+  const available = Object.keys(environments).join(', ');
+  throw new Error(
+    `Environment "${activeEnvironment}" not found in cypress/environments.js\nAvailable: ${available}`,
+  );
+}
 
 /**
  * Chains after:spec handlers to ensure both TestRail and flaky marker handlers execute.
@@ -93,6 +110,7 @@ module.exports = defineConfig({
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: false,
+    ...(envOverrides.env || {}),
   },
   reporterOptions: reportportalOptions,
   e2e: {
@@ -198,7 +216,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: envOverrides.baseUrl || 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });
