@@ -81,7 +81,7 @@ describe('Inventory', () => {
 
         it(
           'C813588 Verify that Inventory "Default columns" setting is tenant specific (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C813588'] },
+          { tags: ['extendedPathECS', 'spitfire', 'C813588', 'nonParallel'] },
           () => {
             // Go to Settings > Inventory > Display settings on Central tenant
             SettingsInventory.goToSettingsInventory();

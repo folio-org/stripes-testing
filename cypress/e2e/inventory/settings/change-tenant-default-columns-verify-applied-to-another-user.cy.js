@@ -58,7 +58,7 @@ describe('Inventory', () => {
 
     it(
       'C813587 Change tenant preferences of Inventory "Default columns" setting by User A and verify that changes has been applied to User B (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813587'] },
+      { tags: ['extendedPath', 'spitfire', 'C813587', 'nonParallel'] },
       () => {
         // Step 1: Go to Inventory app and run any search
         InventoryInstances.searchByTitle(instanceTitlePrefix);

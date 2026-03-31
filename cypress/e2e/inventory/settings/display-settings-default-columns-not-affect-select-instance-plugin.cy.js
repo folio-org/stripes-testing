@@ -58,7 +58,7 @@ describe('Inventory', () => {
 
     it(
       'C813586 Change user preferences of Inventory "Default columns" at the "Settings" >> "Inventory" >> "Display settings" pane and verify tha plugin Select instance is not affected (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813586'] },
+      { tags: ['extendedPath', 'spitfire', 'C813586', 'nonParallel'] },
       () => {
         // Step 1: Go to Settings > Inventory > Display settings
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
