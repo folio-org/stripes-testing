@@ -535,6 +535,10 @@ export default {
     internal: 'ui-circulation.settings.other-settings',
     gui: 'Settings (Circulation): Can create, edit and remove other settings',
   },
+  uiCirculationViewStaffSlips: {
+    internal: 'ui-circulation.settings.view-staff-slips',
+    gui: 'Settings (Circulation): Can view staff slips',
+  },
   uiCirculationCreateEditRemoveStaffSlips: {
     internal: 'ui-circulation.settings.staff-slips',
     gui: 'Settings (Circulation): Can create, edit and remove staff slips',
