@@ -18,17 +18,20 @@ const testData = {
   createdRecordIDs: [],
   tags: ['130', '240'],
   instanceRecords: [
-    'Prayer Bible (Test record with 130 linked field).',
-    'Prayer Bible (Test record with 240 linked field).',
+    'AT_C375255_Prayer Bible (Test record with 130 linked field).',
+    'AT_C375255_Prayer Bible (Test record with 240 linked field).',
   ],
-  searchQueries: ['Bible. Polish. Biblia Płocka 1992', 'Abraham, Angela, 1958- Hosanna Bible'],
-  instanceSearchQueries: ['Prayer Bible', 'The Gospel'],
-  alternativeTitles: ['Biblia Płocka', 'Hosanna Bible'],
+  searchQueries: [
+    'AT_C375255_Bible. Polish. Biblia Płocka 1992',
+    'AT_C375255_Abraham, Angela, 1958- Hosanna Bible',
+  ],
+  instanceSearchQueries: ['AT_C375255_Prayer Bible', 'AT_C375255_The Gospel'],
+  alternativeTitles: ['AT_C375255_Bible. Polish. Biblia Płocka 1992', 'AT_C375255_Hosanna Bible'],
   searchResults: [
-    'Prayer Bible (Test record with 130 linked field).',
-    'Prayer Bible (Test record with 240 linked field).',
-    'Prayer Bible (Test record without linked field: 246).',
-    'Prayer Bible (Test record without linked field: 270).',
+    'AT_C375255_Prayer Bible (Test record with 130 linked field).',
+    'AT_C375255_Prayer Bible (Test record with 240 linked field).',
+    'AT_C375255_Prayer Bible (Test record without linked field: 246).',
+    'AT_C375255_Prayer Bible (Test record without linked field: 270).',
   ],
   marcFiles: [
     {
@@ -59,13 +62,11 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-          authRefresh: true,
-        });
-      }, 20_000).then(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
+        authRefresh: true,
+      }).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(query);
         });
@@ -127,7 +128,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.byShared('No');
           InventoryInstances.waitLoading();
         });
-        InventoryInstances.searchByTitle('Bible');
+        InventoryInstances.searchByTitle('AT_C375255_Bible');
         testData.searchResults.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });
