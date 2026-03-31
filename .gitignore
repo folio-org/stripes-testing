@@ -30,6 +30,5 @@ scripts/update_permission_names/permissions_backups/*
 mcp.json
 parallelWorkers.json
 cypress/e2e/failed.cy.js
-failed.cy.js
 environments.js
 CLAUDE.md

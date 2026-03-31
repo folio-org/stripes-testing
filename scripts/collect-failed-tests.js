@@ -5,19 +5,15 @@ require('dotenv').config();
 
 const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 
-const selectedTestTypes = [
-  testTypes.smoke,
-  testTypes.criticalPath,
-  testTypes.extendedPath,
-];
+const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
 
 const selectedStatus = [
-  // status.Passed,
-  // status.Blocked,
-  // status.Untested,
-  // status.Retest,
+  status.Passed,
+  status.Blocked,
+  status.Untested,
+  status.Retest,
   status.Failed,
-  // status.Unassigned,
+  status.Unassigned,
 ];
 const selectedTeams = [
   team.Firebird,
@@ -39,7 +35,7 @@ const testRailClient = createTestRailClient(testUsername, testPassword);
 const getTests = getTestRunResults.bind(null, testRailClient, runId);
 
 const ids = [];
-const numberOfChunks = 3;
+const numberOfChunks = 1;
 const envVars = '';
 const printSpecs = true;
 
@@ -56,7 +52,8 @@ function grepTests() {
           ids.push('C' + test.case_id);
         }
       });
-    }).then(() => {
+    })
+    .then(() => {
       console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
       splitTestsOnChunks(numberOfChunks, ids.join(' '), envVars, printSpecs);
     });
