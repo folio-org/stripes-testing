@@ -14,7 +14,12 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import { TransactionDetails } from '../../support/fragments/finance';
@@ -295,8 +300,8 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.reOpenOrder({ orderNumber: testData.oneTimeOrder.poNumber });
       OrderDetails.openPolDetails(testData.oneTimeOrderLine.titleOrPackage);
-      OrderLines.checkPaymentStatusInPOL('Awaiting Payment');
-      OrderLines.checkPOLReceiptStatus('Partially Received');
+      OrderLines.checkPaymentStatusInPOL(ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT);
+      OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.PARTIALLY_RECEIVED);
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
@@ -327,8 +332,8 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.reOpenOrder({ orderNumber: testData.ongoingOrder.poNumber });
       OrderDetails.openPolDetails(testData.ongoingOrderLine.titleOrPackage);
-      OrderLines.checkPaymentStatusInPOL('Ongoing');
-      OrderLines.checkPOLReceiptStatus('Ongoing');
+      OrderLines.checkPaymentStatusInPOL(ORDER_LINE_PAYMENT_STATUS.ONGOING);
+      OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.ONGOING);
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
