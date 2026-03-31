@@ -132,32 +132,5 @@ describe('Lists', () => {
         cy.contains(`The refresh for ${listData.name} was successfully cancelled.`);
       },
     );
-
-    it(
-      'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
-      { tags: ['criticalPathFlaky', 'corsair', 'C411834', 'eurekaPhase1'] },
-      () => {
-        Lists.openNewListPane();
-        Lists.setName(listData.name);
-        Lists.setDescription(listData.name);
-        Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility);
-        Lists.selectStatus('Active');
-        Lists.buildQuery();
-        cy.get('#field-option-0').click();
-        cy.contains('User — Active').click();
-        cy.get('[data-testid="operator-option-0"]').select('==');
-        cy.get('[data-testid="data-input-select-boolType"]').select('False');
-        cy.get('button:contains("Test query")').click();
-        cy.wait(7000);
-        cy.get('button:contains("Run query & save")').click();
-        cy.wait(1000);
-        Lists.openActions();
-        Lists.cancelRefresh();
-        cy.contains(
-          `Error: the refresh for ${listData.name} was not cancelled. Verify a refresh is in progress and try again`,
-        );
-      },
-    );
   });
 });

@@ -25,7 +25,7 @@ const checkIsDeleted = (newMaterialTypeName) => {
   cy.expect(pane.find(HTML(including(newMaterialTypeName))).absent());
 };
 
-const verifyMessageOfDeteted = (newMaterialTypeName) => {
+const verifyMessageOfDeleted = (newMaterialTypeName) => {
   InteractorsTools.checkCalloutMessage(
     `The Material type ${newMaterialTypeName} was successfully deleted`,
   );
@@ -38,7 +38,7 @@ function getEditableListRow(rowNumber) {
 export default {
   isPresented,
   checkIsDeleted,
-  verifyMessageOfDeteted,
+  verifyMessageOfDeleted,
   getDefaultMaterialType() {
     return { id: uuid(), name: `autotest_material_type_${getRandomPostfix()}`, source: 'local' };
   },

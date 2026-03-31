@@ -5,6 +5,7 @@ const status = {
   Untested: 3,
   Retest: 4,
   Failed: 5,
+  Unassigned: 6,
 };
 
 const team = {
@@ -17,6 +18,12 @@ const team = {
   Citation: 18,
   Corsair: 19,
   Eureka: 21,
+};
+
+const testTypes = {
+  smoke: 1,
+  criticalPath: 2,
+  extendedPath: 3,
 };
 
 async function getTestHistory(api, caseId, runId) {
@@ -131,4 +138,5 @@ module.exports = {
   getTestCase,
   team,
   status,
+  testTypes,
 };
