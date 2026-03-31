@@ -15,6 +15,7 @@ describe('Inventory', () => {
       let user;
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
           user = userProperties;
 

@@ -181,18 +181,18 @@ describe('Data Import', () => {
         FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
         FileManager.deleteFileFromDownloadsByMask(testData.marcFile.exportedFileName);
         cy.resetTenant();
+        cy.getAdminToken();
         cy.withinTenant(Affiliations.College, () => {
           InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingsId);
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
           SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
           SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-          cy.resetTenant();
-          cy.getAdminToken();
-          Users.deleteViaApi(users.userAProperties.userId);
-          Users.deleteViaApi(users.userBProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
         });
+        cy.getAdminToken();
+        Users.deleteViaApi(users.userAProperties.userId);
+        Users.deleteViaApi(users.userBProperties.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       });
 
       it(
@@ -204,6 +204,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -276,8 +277,8 @@ describe('Data Import', () => {
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.verifyPanesExist();
-          cy.reload();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           cy.wait(5000);
           InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);

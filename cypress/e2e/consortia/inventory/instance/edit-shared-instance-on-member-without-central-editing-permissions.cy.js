@@ -16,7 +16,6 @@ describe('Inventory', () => {
   describe('Instance', () => {
     describe('Consortia', () => {
       const testData = {
-        heldByAccordionName: 'Held by',
         newInstanceTitle: `C407750 instanceTitle${getRandomPostfix()}`,
         servicePoint: ServicePoints.defaultServicePoint,
       };
@@ -43,11 +42,13 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;
+
           cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
+          cy.resetTenant();
         });
       });
 
@@ -64,13 +65,12 @@ describe('Inventory', () => {
         'C407750 (CONSORTIA) Verify that user cant edit shared instance on Member tenant without Central tenant Instance editing permission (folijet)',
         { tags: ['smokeECS', 'folijet', 'C407750'] },
         () => {
-          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance1.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -82,17 +82,17 @@ describe('Inventory', () => {
 
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InstanceRecordView.verifyResourceTitle(testData.newInstanceTitle);
-
+          cy.wait(5000);
           cy.login(testData.user.username, testData.user.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.wait(3000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance2.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-
           InventoryInstance.checkEditInstanceButtonIsAbsent();
         },
       );
