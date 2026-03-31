@@ -117,13 +117,12 @@ describe('Title Level Request', () => {
               userData.userId,
               servicePoint1.id,
             );
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+              authRefresh: true,
+            });
           });
-        cy.waitForAuthRefresh(() => {
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.requestsPath,
-            waiter: Requests.waitLoading,
-          });
-        });
       });
   });
 
