@@ -12,6 +12,7 @@ describe('fse-circulation-bff', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getCirculationBffAllowerServicePoints().then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('totalRecords');
       });
     },
   );

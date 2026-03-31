@@ -12,6 +12,7 @@ describe('fse-export-manager', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getExportManagerJobByStatus('SUCCESSFUL').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('jobRecords');
       });
     },
   );

@@ -12,6 +12,7 @@ describe('fse-data-import', { retries: { runMode: 1 } }, () => {
     () => {
       cy.dataImportGetJobByStatus('COMMITTED').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('jobExecutions');
       });
     },
   );

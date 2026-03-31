@@ -16,7 +16,16 @@ describe('fse-circulation-log - UI (no data manipulation)', () => {
     `TC195286 - verify that circulation log module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'circulation-log', 'TC195286'] },
     () => {
-      CirculationLog.waitLoading();
+      CirculationLog.searchByLoanType('Checked in');
+      cy.get('body').then(($body) => {
+        if ($body.find('#circulation-log-list').length) {
+          cy.get('#circulation-log-list').should('be.visible');
+        } else {
+          cy.log(
+            `No checked-in loan records found on ${Cypress.env('OKAPI_HOST')} - results table is empty`,
+          );
+        }
+      });
     },
   );
 });

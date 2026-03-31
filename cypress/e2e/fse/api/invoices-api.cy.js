@@ -12,6 +12,7 @@ describe('fse-invoices', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getInvoiceByStatus('Paid').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('invoices');
       });
     },
   );

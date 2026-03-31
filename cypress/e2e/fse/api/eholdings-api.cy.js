@@ -12,6 +12,7 @@ describe('fse-eholdings', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getEHoldingsTitlesViaAPI('time').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('titles');
       });
     },
   );

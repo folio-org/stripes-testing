@@ -12,6 +12,7 @@ describe('fse-orders', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getOrderByWorkflowStatus('Closed').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('purchaseOrders');
       });
     },
   );

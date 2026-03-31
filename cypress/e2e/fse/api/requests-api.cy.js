@@ -14,6 +14,7 @@ describe('fse-requests', { retries: { runMode: 1 } }, () => {
         query: '(status=="Closed - Filled") sortby requestDate',
       }).then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('requests');
       });
     },
   );

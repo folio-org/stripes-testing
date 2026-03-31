@@ -12,6 +12,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getAgreementsByStatus('active').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('results');
       });
     },
   );

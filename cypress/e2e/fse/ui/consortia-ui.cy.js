@@ -23,7 +23,7 @@ describe('fse-consortia - UI (no data manipulation)', () => {
           // get primary tenant
           const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
           cy.reload();
-          cy.wait(3000);
+          ConsortiumMgr.waitLoading();
           ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
         });
         cy.getUserAffiliationsCount().then((count) => {

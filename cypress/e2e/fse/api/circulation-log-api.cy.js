@@ -12,6 +12,7 @@ describe('fse-circulation-log', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getByLoan('Checked in').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('logRecords');
       });
     },
   );

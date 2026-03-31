@@ -23,7 +23,17 @@ describe('fse-organizations - UI (no data manipulation)', () => {
     `TC195376 - verify that organizations page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'organizations', 'TC195376'] },
     () => {
-      Organizations.waitLoading();
+      Organizations.searchByParameters('Status', 'Active');
+      cy.get('#organizations-results-pane').should('be.visible');
+      cy.get('body').then(($body) => {
+        if ($body.find('#organizations-list').length) {
+          cy.get('#organizations-list').should('be.visible');
+        } else {
+          cy.log(
+            `No active organizations found on ${Cypress.env('OKAPI_HOST')} - results pane is empty`,
+          );
+        }
+      });
     },
   );
 });
@@ -104,10 +114,9 @@ describe('fse-organizations - UI (data manipulation)', () => {
       Agreements.waitLoading();
       SearchAgreements.search(defaultAgreement.name);
       Agreements.selectRecord(defaultAgreement.name);
-      cy.wait(1000);
+      Agreements.waitLoading();
       Agreements.editAgreement();
       EditAgreement.waitLoading();
-      cy.wait(1000);
       EditAgreement.addOrganization(organization.name, 'Content Provider');
       EditAgreement.waitLoading();
       EditAgreement.saveAndClose();

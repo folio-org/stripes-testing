@@ -12,6 +12,7 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getLicensesByStatus('active').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('results');
       });
     },
   );

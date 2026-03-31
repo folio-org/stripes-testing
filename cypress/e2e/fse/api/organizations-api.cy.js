@@ -12,6 +12,7 @@ describe('fse-organizations', { retries: { runMode: 1 } }, () => {
     () => {
       cy.getOrganizationsByStatus('Active').then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('organizations');
       });
     },
   );
