@@ -10,7 +10,7 @@ const testPassword = process.env.TESTRAIL_API_KEY;
 const runId = 3075;
 const projectId = 14;
 
-delete team.Citation; // Exclude Citation team from the report
+// delete team.Citation; // Exclude Citation team from the report
 
 const testRailClient = createTestRailClient(testUsername, testPassword);
 const getTests = getTestRunResults.bind(null, testRailClient, runId);

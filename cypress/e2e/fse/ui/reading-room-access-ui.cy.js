@@ -9,7 +9,13 @@ describe('fse-reading-room-access - UI (no data manipulation)', () => {
       ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
         const servicePointId = servicePoints[0].id;
         cy.getAdminUserId().then((adminUserId) => {
-          UserEdit.addServicePointViaApi(servicePointId, adminUserId, servicePointId);
+          cy.getUserServicePoints(adminUserId).then((servicePointsUsers) => {
+            const existing = servicePointsUsers[0];
+            if (existing && existing.servicePointsIds.includes(servicePointId)) {
+              return;
+            }
+            UserEdit.addServicePointViaApi(servicePointId, adminUserId, servicePointId);
+          });
         });
       });
     });
