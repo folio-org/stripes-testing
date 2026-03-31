@@ -12,7 +12,7 @@ const webpackPreprocessor = require('@cypress/webpack-batteries-included-preproc
 const testRailPlugin = require('cypress-testrail-simple/src/plugin');
 const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
-let activeEnvironment = null;  // DO NOT SET ENV HERE, do it in ./environments.js file
+let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
 let environments = {};
 try {
   // eslint-disable-next-line global-require
