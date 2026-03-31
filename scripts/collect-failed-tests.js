@@ -1,13 +1,20 @@
 /* eslint-disable no-console */
-const { glob } = require('glob');
-const fs = require('fs');
-const { getTestNames } = require('find-test-names');
-const { status, team, getTestRunResults } = require('./helpers/test.rail.helper');
+const { status, team, testTypes, getTestRunResults } = require('./helpers/test.rail.helper');
 const { createTestRailClient } = require('./helpers/api.client');
-const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed, status.Retest, status.Untested];
+const { splitTestsOnChunks } = require('./split-tests-on-chunks');
+
+const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
+
+const selectedStatus = [
+  status.Passed,
+  status.Blocked,
+  status.Untested,
+  status.Retest,
+  status.Failed,
+  status.Unassigned,
+];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,
@@ -28,81 +35,27 @@ const testRailClient = createTestRailClient(testUsername, testPassword);
 const getTests = getTestRunResults.bind(null, testRailClient, runId);
 
 const ids = [];
-const arrayOfFiles = [];
-let filteredFiles = [];
-const shuffle = true;
 const numberOfChunks = 1;
-const chunks = [];
+const envVars = '';
+const printSpecs = true;
 
-function parseCommand() {
+function grepTests() {
   getTests()
     .then((tests) => {
       console.log(`\nNumber of all tests in the #${runId} run: ${tests.length}\n`);
       tests.forEach((test) => {
         if (
           selectedStatus.includes(test.status_id) &&
-          selectedTeams.includes(test.custom_dev_team)
-          // && test.custom_test_group === 1     // ---> to select smoke tests (1), critical (2), extended (3)
+          selectedTeams.includes(test.custom_dev_team) &&
+          selectedTestTypes.includes(test.custom_test_group)
         ) {
-          ids.push('C' + test.case_id + ' ');
+          ids.push('C' + test.case_id);
         }
       });
     })
     .then(() => {
-      glob('cypress/e2e/**/*')
-        .then((res) => {
-          res.forEach((file) => {
-            if (file.includes('.cy.js')) {
-              arrayOfFiles.push(removeRootPath(file).replace(/\\/g, '/'));
-            }
-          });
-        })
-        .then(() => {
-          arrayOfFiles.forEach((file) => {
-            const text = fs.readFileSync(file, { encoding: 'utf8' });
-            const names = getTestNames(text);
-            names.tests.forEach((test) => {
-              if (test.type === 'test' && titleContainsId(test.name, ids)) {
-                filteredFiles.push(file);
-              }
-            });
-          });
-          console.log(`Number of filtered tests with duplicates: ${filteredFiles.length}\n`);
-          // remove duplicates
-          filteredFiles = Array.from(new Set(filteredFiles));
-          console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);
-          filteredFiles.sort();
-          if (shuffle) {
-            filteredFiles.sort(() => Math.random() - 0.5);
-          }
-          if (numberOfChunks > 1) {
-            const chunkSize = Math.ceil(filteredFiles.length / numberOfChunks);
-            // Loop to split array into chunks
-            for (let i = 0; i < filteredFiles.length; i += chunkSize) {
-              const chunk = [];
-              for (let j = i; j < i + chunkSize && j < filteredFiles.length; j++) {
-                chunk.push(filteredFiles[j]);
-              }
-              chunks.push(chunk);
-            }
-          }
-        })
-        .then(() => {
-          const parsedCommand = `--spec "${filteredFiles.join(',')}"\n`;
-          if (numberOfChunks === 1) {
-            console.log(parsedCommand);
-            // To print test cases IDs (NOT FILTERED!!!)
-            console.log(`\n${ids.join('')}\n`);
-          } else {
-            console.log(`Number of chunks: ${chunks.length}\n`);
-            chunks.forEach((chunk, index) => {
-              console.log(`Chunk #${index + 1}: `, chunk.length);
-              console.log(`--spec "${chunk.join(',')}"\n`);
-            });
-          }
-          return parsedCommand;
-        });
+      console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
+      splitTestsOnChunks(numberOfChunks, ids.join(' '), envVars, printSpecs);
     });
 }
-
-parseCommand();
+grepTests();
