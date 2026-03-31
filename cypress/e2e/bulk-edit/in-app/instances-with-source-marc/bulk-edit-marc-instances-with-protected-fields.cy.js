@@ -329,7 +329,7 @@ describe(
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             marcInstance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            `${fieldData.existing_505_0_a} ${fieldData.append_505_0_g} ${fieldData.existing_505_0_g} | ${fieldData.existing_505_00_a} ${fieldData.append_505_00_g} ${fieldData.existing_505_00_t}`,
+            `${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} ${fieldData.append_505_0_g} | ${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} ${fieldData.append_505_00_g}`,
           );
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             marcInstance.hrid,
@@ -353,9 +353,9 @@ describe(
                     'a',
                     fieldData.existing_505_0_a,
                     'g',
-                    fieldData.append_505_0_g,
-                    'g',
                     fieldData.existing_505_0_g,
+                    'g',
+                    fieldData.append_505_0_g,
                   ]);
                 },
                 // Index 5: 505 00 - Should show appended subfield g in preview
@@ -365,10 +365,10 @@ describe(
                     '00',
                     'a',
                     fieldData.existing_505_00_a,
-                    'g',
-                    fieldData.append_505_00_g,
                     't',
                     fieldData.existing_505_00_t,
+                    'g',
+                    fieldData.append_505_00_g,
                   ]);
                 },
                 // Index 6: 520 0\ - Should show unchanged field (protected, but removal not applied)
@@ -439,7 +439,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
-            `Copy and Version Identification note;${fieldData.new_562_a};false | Copy and Version Identification note;${fieldData.existing_562_e} ${fieldData.existing_562_b};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.append_505_0_g} ${fieldData.existing_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.append_505_00_g} ${fieldData.existing_505_00_t};false | Summary;${fieldData.existing_520_0_a};false`,
+            `Copy and Version Identification note;${fieldData.new_562_a};false | Copy and Version Identification note;${fieldData.existing_562_e} ${fieldData.existing_562_b};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} ${fieldData.append_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} ${fieldData.append_505_00_g};false | Summary;${fieldData.existing_520_0_a};false`,
           );
 
           // Step 15: Commit changes
@@ -458,7 +458,7 @@ describe(
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
             marcInstance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            `${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} | ${fieldData.existing_505_0_a} ${fieldData.append_505_0_g} ${fieldData.existing_505_0_g} | ${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} | ${fieldData.existing_505_00_a} ${fieldData.append_505_00_g} ${fieldData.existing_505_00_t}`,
+            `${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} | ${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} ${fieldData.append_505_0_g} | ${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} | ${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} ${fieldData.append_505_00_g}`,
           );
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
             marcInstance.hrid,
@@ -506,9 +506,9 @@ describe(
                     'a',
                     fieldData.existing_505_0_a,
                     'g',
-                    fieldData.append_505_0_g,
-                    'g',
                     fieldData.existing_505_0_g,
+                    'g',
+                    fieldData.append_505_0_g,
                   ]);
                 },
                 // Verify 505 00 fields - 2 instances (original protected + new with appended $g)
@@ -532,10 +532,10 @@ describe(
                     '00',
                     'a',
                     fieldData.existing_505_00_a,
-                    'g',
-                    fieldData.append_505_00_g,
                     't',
                     fieldData.existing_505_00_t,
+                    'g',
+                    fieldData.append_505_00_g,
                   ]);
                 },
                 // Verify 520 0\ fields - 2 instances (original with $u + new without $u)
@@ -652,7 +652,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
-            `Copy and Version Identification note;${fieldData.existing_562_e} ${fieldData.existing_562_b};false | Copy and Version Identification note;${fieldData.new_562_a};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.append_505_0_g} ${fieldData.existing_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.append_505_00_g} ${fieldData.existing_505_00_t};false | Summary;${fieldData.existing_520_a};false | Summary;${fieldData.existing_520_0_a} ${fieldData.existing_520_0_u} ${fieldData.existing_520_0_u};false | Summary;${fieldData.existing_520_0_a};false`,
+            `Copy and Version Identification note;${fieldData.existing_562_e} ${fieldData.existing_562_b};false | Copy and Version Identification note;${fieldData.new_562_a};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} ${fieldData.append_505_0_g};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t};false | Formatted Contents Note;${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} ${fieldData.append_505_00_g};false | Summary;${fieldData.existing_520_a};false | Summary;${fieldData.existing_520_0_a} ${fieldData.existing_520_0_u} ${fieldData.existing_520_0_u};false | Summary;${fieldData.existing_520_0_a};false`,
           );
 
           // Step 18: Verify in Inventory UI
@@ -689,7 +689,7 @@ describe(
             1,
             'No',
             INSTANCE_NOTE_TYPES.FORMATTED_CONTENTS_NOTE,
-            `${fieldData.existing_505_0_a} ${fieldData.append_505_0_g} ${fieldData.existing_505_0_g}`.replace(
+            `${fieldData.existing_505_0_a} ${fieldData.existing_505_0_g} ${fieldData.append_505_0_g}`.replace(
               /\.$/,
               '',
             ),
@@ -706,7 +706,7 @@ describe(
             1,
             'No',
             INSTANCE_NOTE_TYPES.FORMATTED_CONTENTS_NOTE,
-            `${fieldData.existing_505_00_a} ${fieldData.append_505_00_g} ${fieldData.existing_505_00_t}`.replace(
+            `${fieldData.existing_505_00_a} ${fieldData.existing_505_00_t} ${fieldData.append_505_00_g}`.replace(
               /\.$/,
               '',
             ),
@@ -755,7 +755,7 @@ describe(
           );
           // New 505 0\ field with appended $g
           InventoryViewSource.contains(
-            `505\t0  \t$a ${fieldData.existing_505_0_a} $g ${fieldData.append_505_0_g} $g ${fieldData.existing_505_0_g}`,
+            `505\t0  \t$a ${fieldData.existing_505_0_a} $g ${fieldData.existing_505_0_g} $g ${fieldData.append_505_0_g} `,
           );
           // Original 505 00 field
           InventoryViewSource.contains(
@@ -763,7 +763,7 @@ describe(
           );
           // New 505 00 field with appended $g
           InventoryViewSource.contains(
-            `505\t0 0\t$a ${fieldData.existing_505_00_a} $g ${fieldData.append_505_00_g} $t ${fieldData.existing_505_00_t}`,
+            `505\t0 0\t$a ${fieldData.existing_505_00_a} $t ${fieldData.existing_505_00_t} $g ${fieldData.append_505_00_g}`,
           );
 
           // Verify 520 fields - protection creates duplicates (original + new without $u)
