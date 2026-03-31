@@ -230,6 +230,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkIconInTagField(field700RowIndex);
             MarcAuthorities.switchToSearch();
             MarcAuthorities.searchByParameter('Keyword', testData.authorityRecord.searchValue);
+            MarcAuthority.waitLoading();
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               testData.field700_1.tag,
@@ -285,7 +286,7 @@ describe('MARC', () => {
 
             // Step 10: Click "Save & close" and verify validation errors
             QuickMarcEditor.pressSaveAndCloseButton();
-            QuickMarcEditor.verifyValidationCallout(0, 12);
+            QuickMarcEditor.verifyValidationCallout(0, 13);
 
             // Verify inline errors for linked 700 field
             QuickMarcEditor.checkErrorMessage(
