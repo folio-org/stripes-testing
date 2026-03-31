@@ -10,7 +10,7 @@ const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 
-let activeEnvironment = null;
+let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
 let environments = {};
 try {
   // eslint-disable-next-line global-require

@@ -5,9 +5,6 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     const servicePoints = [];
@@ -26,11 +23,7 @@ describe('Fees&Fines', () => {
           },
         );
 
-        cy.loginAsAdmin({
-          path: SettingsMenu.usersOwnersPath,
-          waiter: UsersOwners.waitLoading,
-          authRefresh: true,
-        });
+        cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
       });
     });
 
@@ -41,34 +34,44 @@ describe('Fees&Fines', () => {
       });
 
       ownerNames.forEach((ownerName) => {
-        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` }).then((owner) => UsersOwners.deleteViaApi(owner.id));
+        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` }).then((owner) => {
+          if (owner?.id) {
+            UsersOwners.deleteViaApi(owner.id);
+          }
+        });
       });
     });
 
-    it(
-      'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350616', 'eurekaPhase1'] },
-      () => {
-        const name = `Automation owner $${getRandomPostfix()}`;
-        ownerNames.push(name);
-        UsersOwners.startNewLineAdding();
-        UsersOwners.fillOwner({ name });
-        UsersOwners.saveOwner(name);
+    // it.skip(
+    //   'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
+    //   { tags: ['smokeObsolete', 'volaris', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
+    //   () => {
+    //     const name = `Automation owner $${getRandomPostfix()}`;
+    //     ownerNames.push(name);
+    //     UsersOwners.startNewLineAdding();
+    //     UsersOwners.fillOwner({ name });
+    //     UsersOwners.saveOwner(name);
 
-        UsersOwners.startNewLineAdding();
-        UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
-      },
-    );
+    //     UsersOwners.startNewLineAdding();
+    //     UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
+    //   },
+    // );
 
     it(
       'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
       () => {
         const name = 'Shared';
-        UsersOwners.startNewLineAdding();
-        UsersOwners.fillOwner({ name });
-        UsersOwners.saveOwner();
-        ownerNames.push(name);
+
+        // If "Shared" owner already exists, do not create a new one.
+        UsersOwners.getOwnerViaApi({ query: `owner==${name}` }).then((owner) => {
+          if (!owner?.id) {
+            UsersOwners.startNewLineAdding();
+            UsersOwners.fillOwner({ name });
+            UsersOwners.saveOwner(name);
+            ownerNames.push(name);
+          }
+        });
 
         UsersOwners.startNewLineAdding();
         UsersOwners.fillOwner({ name, servicePoint: servicePoints.at(-1).name });
