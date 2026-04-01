@@ -7,8 +7,8 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `US1499848 - edge-sip2 configurations verification for ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'edge-sip2'] },
+    `US1499848 - sip2 configurations verification for ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'sip2', 'configurations'] },
     () => {
       cy.okapiRequest({
         method: 'GET',
