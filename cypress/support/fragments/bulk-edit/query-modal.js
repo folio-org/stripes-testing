@@ -14,6 +14,7 @@ import {
   Spinner,
   TextField,
   Checkbox,
+  Calendar,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
@@ -108,6 +109,7 @@ export const holdingsFieldValues = {
     'Holdings — Statements for indexes — Statement for indexes public note',
   statementsForIndexesStaffNote:
     'Holdings — Statements for indexes — Statement for indexes staff note',
+  suppressFromDiscovery: 'Holdings — Suppress from discovery',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -118,6 +120,7 @@ export const holdingsFieldValues = {
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
   holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
   holdingsTags: 'Holdings — Tags',
+  affiliationName: 'Holdings — Tenant ID',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -129,6 +132,7 @@ export const instanceFieldValues = {
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
   createdDate: 'Instance — Created date',
+  updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
@@ -196,10 +200,12 @@ export const itemFieldValues = {
   electronicAccessURI: 'Items — Electronic access — URI',
   electronicAccessURLPublicNote: 'Items — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Items — Electronic access — URL relationship',
-  yearCaption: 'Item — Year, caption',
-  itemStatisticalCodeNames: 'Item — Statistical code',
+  yearCaption: 'Items — Year, caption',
+  itemStatisticalCodeNames: 'Items — Statistical code',
   itemTags: 'Item — Tags',
-  itemFormerIdentifiers: 'Item — Former identifiers',
+  itemFormerIdentifiers: 'Items — Former identifiers',
+  affiliationName: 'Items — Tenant ID',
+  instanceShared: 'Instances — Shared',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -447,6 +453,45 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
   },
 
+  verifyDatePlaceholder(row = 0) {
+    cy.expect([
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .exists(),
+    ]);
+  },
+
+  openCalendar(row = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Button({ icon: 'calendar' }))
+        .click(),
+    );
+  },
+
+  verifyCalendarOpenedDate(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const [month, day, year] = date.split('/');
+    const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' });
+
+    cy.expect(Calendar().has({ day, month: monthName, year }));
+  },
+
+  selectDayFromCalendar(date) {
+    // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
+    const day = date.split('/')[1];
+
+    cy.do(Calendar().clickDay(day));
+  },
+
+  verifySelectedDateInCalendar(date, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(TextField({ placeholder: 'MM/DD/YYYY' }))
+        .has({ value: date }),
+    );
+  },
+
   populateFiled(filedType, value) {
     switch (filedType) {
       case 'input':
@@ -465,12 +510,29 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },
 
+  verifyTextFieldValue(expectedValue, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(TextField()).has({ value: expectedValue }));
+  },
+
   chooseValueSelect(choice, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
         .find(Select({ content: including('Select value') }))
         .choose(choice),
     );
+    cy.wait(1000);
+  },
+
+  verifySelectedValue(expectedValue, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ content: including('Select value') }))
+        .has({ checkedOptionText: expectedValue }),
+    );
+  },
+
+  chooseValueSelectByValue(value, row = 0) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectControl"]`).select(value);
     cy.wait(1000);
   },
 
@@ -484,6 +546,40 @@ export default {
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([MultiSelectOption(text).click(), buildQueryModal.click()]);
+    cy.wait(1000);
+  },
+
+  verifySelectedMultiselectValue(text, row = 0) {
+    cy.expect(RepeatableFieldItem({ index: row }).find(MultiSelect()).has({ selected: text }));
+  },
+
+  selectAllMatchingFromMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.wait(1500);
+
+    const clickNext = () => {
+      cy.get('body').then(($body) => {
+        const $unselected = $body.find(
+          '[role="listbox"]:visible [role="option"][aria-selected="false"]',
+        );
+
+        let found = false;
+        $unselected.each((i, el) => {
+          if (!found && Cypress.$(el).text().trim().includes(text)) {
+            found = true;
+            cy.wrap(el).click();
+            cy.wait(1000);
+            clickNext();
+            return false; // break the loop
+          }
+          return true; // continue the loop
+        });
+      });
+    };
+
+    clickNext();
+    cy.wait(500);
+    cy.do(buildQueryModal.click());
     cy.wait(1000);
   },
 
