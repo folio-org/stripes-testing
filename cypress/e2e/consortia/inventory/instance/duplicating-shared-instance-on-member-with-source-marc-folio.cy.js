@@ -6,6 +6,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewInstance from '../../../../support/fragments/inventory/inventoryNewInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -85,6 +86,7 @@ describe('Inventory', () => {
         'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C410925'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceC410925.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
@@ -106,6 +108,7 @@ describe('Inventory', () => {
         'C410926 (CONSORTIA) Duplicating shared instance on Member tenant with Source MARC (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C410926'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceC410926.id);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
