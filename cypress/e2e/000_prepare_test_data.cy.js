@@ -85,14 +85,26 @@ describe('Prepare test data', () => {
               return null;
             }
 
-            const budget = {
-              ...Budgets.getDefaultBudget(),
-              allocated: 1000,
-              fiscalYearId: resp.fiscalYears[0].id,
-              fundId: body.funds[0].id,
-            };
+            return ExpenseClasses.getExpenseClassesViaApi({
+              query: 'name=="Electronic"',
+              limit: 1,
+            }).then((respEc) => {
+              const budget = {
+                ...Budgets.getDefaultBudget(),
+                allocated: 1000,
+                statusExpenseClasses: [
+                  {
+                    status: 'Active',
+                    expenseClassId: respEc?.[0]?.id,
+                  },
+                ],
 
-            return Budgets.createViaApi(budget);
+                fiscalYearId: resp.fiscalYears[0].id,
+                fundId: body.funds[0].id,
+              };
+
+              return Budgets.createViaApi(budget);
+            });
           });
         });
       });
@@ -101,69 +113,44 @@ describe('Prepare test data', () => {
     });
   };
 
-  const addElectronicExpenseClassToBudget = () => {
-    return ExpenseClasses.getExpenseClassesViaApi({ query: 'name="Auto"' }).then((ecList = []) => {
-      const expenseClassResp = ecList.find((ec) => ec.name === 'Auto');
-
-      if (!expenseClassResp) {
-        cy.log('Auto expense class not found, skipping budget update');
-        return null;
-      }
-
-      return Budgets.getBudgetViaApi({ query: 'code=EUROHIST' }).then(({ budgetResp }) => {
-        if (!budgetResp) {
-          cy.log('EUROHIST budget not found, skipping expense class assignment');
-          return null;
-        }
-
-        return Budgets.updateBudgetViaApi({
-          ...budgetResp,
-          statusExpenseClasses: [
-            {
-              status: 'Active',
-              expenseClassId: expenseClassResp.id,
-            },
-          ],
-        });
+  it(
+    'C00001 Assign service points to admin user',
+    { tags: ['prepareTestData', 'smoke', 'C00001'] },
+    () => {
+      const servicePointIds = [];
+      let defaultServicePointId;
+      let userId;
+      cy.getAdminToken().then(() => {
+        cy.getAdminUserId()
+          .then((id) => {
+            userId = id;
+          })
+          .then(() => {
+            // Get or create Circ Desk 1 service point
+            ServicePoints.getOrCreateCircDesk1ServicePointViaApi().then((servicePoint) => {
+              servicePointIds.push(servicePoint.id);
+              defaultServicePointId = servicePoint.id;
+            });
+            // Get or create Circ Desk 2 service point
+            ServicePoints.getOrCreateCircDesk2ServicePointViaApi().then((servicePoint) => {
+              servicePointIds.push(servicePoint.id);
+            });
+            // Get Online service point (assuming it exists or should be created elsewhere)
+            ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
+              servicePointIds.push(servicePoint.id);
+            });
+          })
+          .then(() => {
+            UserEdit.changeServicePointPreferenceViaApi(
+              userId,
+              servicePointIds,
+              defaultServicePointId,
+            );
+          })
+          .then(() => ensureFolioBatchGroupExists())
+          .then(() => ensureElectronicAndPrintExpenseClasses())
+          .then(() => ensureBudgetsExist());
       });
-    });
-  };
-
-  it('C00001 Assign service points to admin user', { tags: ['prepareTestData', 'smoke', 'C00001'] }, () => {
-    const servicePointIds = [];
-    let defaultServicePointId;
-    let userId;
-    cy.getAdminToken().then(() => {
-      cy.getAdminUserId()
-        .then((id) => {
-          userId = id;
-        })
-        .then(() => {
-          // Get or create Circ Desk 1 service point
-          ServicePoints.getOrCreateCircDesk1ServicePointViaApi().then((servicePoint) => {
-            servicePointIds.push(servicePoint.id);
-            defaultServicePointId = servicePoint.id;
-          });
-          // Get or create Circ Desk 2 service point
-          ServicePoints.getOrCreateCircDesk2ServicePointViaApi().then((servicePoint) => {
-            servicePointIds.push(servicePoint.id);
-          });
-          // Get Online service point (assuming it exists or should be created elsewhere)
-          ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
-            servicePointIds.push(servicePoint.id);
-          });
-        })
-        .then(() => {
-          UserEdit.changeServicePointPreferenceViaApi(
-            userId,
-            servicePointIds,
-            defaultServicePointId,
-          );
-        })
-        .then(() => ensureFolioBatchGroupExists())
-        .then(() => ensureElectronicAndPrintExpenseClasses())
-        .then(() => ensureBudgetsExist())
-        .then(() => addElectronicExpenseClassToBudget());
-    });
-  });
+    },
+  );
 });

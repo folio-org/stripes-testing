@@ -192,7 +192,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           marcInstance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink800Field} Inspector Banks series 24. | ${authorityHeadingToLink830Field} english no. 19.`,
+          `${authorityHeadingToLink830Field} english no. 19. | ${authorityHeadingToLink800Field} Inspector Banks series 24.`,
         );
 
         // Step 2: Uncheck "Series statements" checkbox to hide column

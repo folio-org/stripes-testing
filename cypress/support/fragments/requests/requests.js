@@ -264,7 +264,21 @@ export default {
   waitContentLoading,
   waitLoadingTags,
 
-  waitLoading: () => cy.expect(Pane({ title: 'Requests' }).exists()),
+  verifyMovedRequestAtEndOfQueue(itemId, requesterId) {
+    getRequestApi({ query: `(itemId=="${itemId}") sortby position` }).then((queueRequests) => {
+      const totalRequests = queueRequests.length;
+      const movedRequest = queueRequests.find((r) => r.requesterId === requesterId);
+      // eslint-disable-next-line no-unused-expressions
+      expect(movedRequest, 'Moved request should be in destination queue').to.exist;
+      expect(movedRequest.position, 'Moved request should be at end of queue').to.equal(
+        totalRequests,
+      );
+    });
+  },
+
+  waitLoading() {
+    return cy.expect(Pane({ title: 'Requests' }).exists());
+  },
   resetAllFilters() {
     cy.do(Button('Reset all').click());
     cy.wait(1000);

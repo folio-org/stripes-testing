@@ -72,6 +72,7 @@ describe('Inventory', () => {
         'C402760 (CONSORTIA) Verify the Source of a MARC, Local Instance on Member tenant (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C402760'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402760testData.instanceSource);
           cy.wait(1500);
@@ -89,6 +90,7 @@ describe('Inventory', () => {
         'C402761 (CONSORTIA) Verify the Source of a FOLIO, local Instance on Member tenant (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C402761'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402761testData.instanceSource);
           cy.wait(1500);
