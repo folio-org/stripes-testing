@@ -6,6 +6,7 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -23,6 +24,7 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
@@ -63,10 +65,12 @@ describe('Inventory', () => {
         'C418585 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = FOLIO Instance (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C418585'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InventoryInstance.startOverlaySourceBibRecord();
+          cy.setTenant(Affiliations.College);
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();
 
@@ -80,12 +84,14 @@ describe('Inventory', () => {
             testData.updatedInstanceTitle,
             FileDetails.columnNameInResultList.title,
           );
-          [
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          });
+          );
         },
       );
     });

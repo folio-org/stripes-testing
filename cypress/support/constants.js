@@ -203,12 +203,12 @@ export const ORDER_TYPES = {
 
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic resource',
-  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource', // Deprecated, need to be removed after all tests will be updated
   PE_MIX: 'P/E mix',
   PE_MIX_Check: 'P/E Mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
-  PHYSICAL_RESOURCE_Check: 'Physical Resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource', // Deprecated, need to be removed after all tests will be updated
 };
 
 export const ORDER_PAYMENT_STATUS = {

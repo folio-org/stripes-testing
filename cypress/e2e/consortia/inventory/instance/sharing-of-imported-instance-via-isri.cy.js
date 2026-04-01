@@ -85,6 +85,7 @@ describe('Inventory', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
             InventoryInstance.waitLoading();
             InventoryInstance.verifyInstanceTitle(testData.instanceTitle);

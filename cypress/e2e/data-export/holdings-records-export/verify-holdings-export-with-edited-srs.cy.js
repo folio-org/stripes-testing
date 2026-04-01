@@ -148,8 +148,8 @@ describe('Data Export', () => {
                 (record) => {
                   const field999 = record.get('999')[0];
 
-                  expect(field999.subf[1][0]).to.eq('i');
-                  expect(field999.subf[1][1]).to.eq(holdingId);
+                  expect(field999.subf[0][0]).to.eq('i');
+                  expect(field999.subf[0][1]).to.eq(holdingId);
                 },
               ],
             },
@@ -245,8 +245,8 @@ describe('Data Export', () => {
                 (record) => {
                   const field999 = record.get('999')[0];
 
-                  expect(field999.subf[1][0]).to.eq('i');
-                  expect(field999.subf[1][1]).to.eq(holdingId);
+                  expect(field999.subf[0][0]).to.eq('i');
+                  expect(field999.subf[0][1]).to.eq(holdingId);
                 },
               ],
             },
