@@ -262,7 +262,7 @@ export default {
   checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
-      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
       fund,
     );
     cy.expect(locationSection.find(KeyValue({ value: quantityPhysical })).exists());
@@ -270,7 +270,7 @@ export default {
   checkCreatedPOLineElectronicResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
-      ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+      ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
       fund,
     );
     cy.expect(locationSection.find(KeyValue({ value: quantityElectronic })).exists());
