@@ -76,6 +76,7 @@ describe('Inventory', () => {
         'C402335 (CONSORTIA) Verify limited Edit permissions for Shared MARC instance on Member tenant (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C402335'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402335testData.instanceSource);
           cy.wait(1500);
@@ -92,6 +93,7 @@ describe('Inventory', () => {
         'C402376 (CONSORTIA) Verify limited Edit permissions for Shared FOLIO instance on Member tenant (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C402376'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402376testData.instanceSource);
           cy.wait(1500);

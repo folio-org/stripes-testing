@@ -48,7 +48,7 @@ describe('Data Import', () => {
       },
       {
         fund: 'European History(EUROHIST)',
-        expenseClass: 'Auto',
+        expenseClass: 'Electronic',
         value: '100%',
         amount: '$19.95',
       },
@@ -56,7 +56,7 @@ describe('Data Import', () => {
     const dataForChangeFundAndExpenseClass = [
       {
         fundId: '981$b',
-        expenseClass: '"Auto (Auto)"',
+        expenseClass: '"Electronic (Elec)"',
         value: '100',
       },
       {
@@ -66,7 +66,7 @@ describe('Data Import', () => {
       },
       {
         fundId: '"European History (EUROHIST)"',
-        expenseClass: '982$c; else "Auto (Auto)"',
+        expenseClass: '982$c; else "Electronic (Elec)"',
         value: '100',
       },
     ];
