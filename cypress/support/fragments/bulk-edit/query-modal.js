@@ -109,6 +109,7 @@ export const holdingsFieldValues = {
     'Holdings — Statements for indexes — Statement for indexes public note',
   statementsForIndexesStaffNote:
     'Holdings — Statements for indexes — Statement for indexes staff note',
+  suppressFromDiscovery: 'Holdings — Suppress from discovery',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -119,6 +120,7 @@ export const holdingsFieldValues = {
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
   holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
   holdingsTags: 'Holdings — Tags',
+  affiliationName: 'Holdings — Tenant ID',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -198,10 +200,12 @@ export const itemFieldValues = {
   electronicAccessURI: 'Items — Electronic access — URI',
   electronicAccessURLPublicNote: 'Items — Electronic access — URL public note',
   electronicAccessURLRelationship: 'Items — Electronic access — URL relationship',
-  yearCaption: 'Item — Year, caption',
-  itemStatisticalCodeNames: 'Item — Statistical code',
+  yearCaption: 'Items — Year, caption',
+  itemStatisticalCodeNames: 'Items — Statistical code',
   itemTags: 'Item — Tags',
-  itemFormerIdentifiers: 'Item — Former identifiers',
+  itemFormerIdentifiers: 'Items — Former identifiers',
+  affiliationName: 'Items — Tenant ID',
+  instanceShared: 'Instances — Shared',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
