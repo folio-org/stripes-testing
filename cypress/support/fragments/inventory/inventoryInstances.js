@@ -352,9 +352,25 @@ export default {
     );
   },
 
+  scrollToRow(rowNumber) {
+    cy.do(
+      inventoriesList
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}`, isContainer: true }))
+        .perform((el) => el.scrollIntoView()),
+    );
+  },
+
   selectInstance: (rowNumber = 0) => {
     cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);
     InventoryInstance.waitInventoryLoading();
+  },
+
+  verifyRowIsHighlighted(rowNumber) {
+    cy.expect(
+      inventoriesList
+        .find(MultiColumnListRow({ index: rowNumber, selected: true, isContainer: false }))
+        .exists(),
+    );
   },
 
   selectInstanceById(specialInternalId) {
@@ -1545,6 +1561,13 @@ export default {
   checkColumnHeaderSort(headerName, isAscending = true) {
     const sort = isAscending ? 'ascending' : 'descending';
     cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+  },
+
+  getResultsCount() {
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .then(($rows) => $rows.length);
   },
 
   getResultsListByColumn(columnIndex) {
