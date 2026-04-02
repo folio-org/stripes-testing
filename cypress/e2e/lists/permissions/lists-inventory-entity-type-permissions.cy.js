@@ -49,7 +49,7 @@ describe('Lists', () => {
 
     it(
       'C478274 Verify that it\'s not possible to access the "Holdings/Items/Instances" without a proper permission although Lists app permissions assigned (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C478274', 'ecsUnsupported'] },
+      { tags: ['criticalPath', 'corsair', 'C478274'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
