@@ -1,18 +1,20 @@
-import editResource from './editResource';
+import { Button } from '../../../../interactors';
 
-const continueButton = "//button[@data-testid='continue-external-preview-button']";
-const cancelButton = "//button[@data-testid='close-external-preview-button']";
+const continueButton = Button('Continue');
+const cancelButton = Button('Cancel');
 
 export default {
   waitLoading() {
     cy.xpath("//div[@class='preview-panel preview-panel-row']").should('be.visible');
-    cy.xpath(continueButton).should('be.visible');
-    cy.xpath(cancelButton).should('be.visible');
+    cy.expect(continueButton.exists());
+    cy.expect(cancelButton.exists());
     cy.wait(1000);
   },
 
   clickContinue() {
-    cy.xpath(continueButton).click();
-    editResource.waitLoading();
+    cy.do(continueButton.click());
+    cy.wait(1000);
+    cy.reload();
+    cy.wait(1000);
   },
 };
