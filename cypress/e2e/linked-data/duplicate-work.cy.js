@@ -129,7 +129,7 @@ describe('Citation: duplicate resource', () => {
       UncontrolledAuthModal.closeIfDisplayed();
       // check that duplicated work has 'Books' profile - same as original work has
       EditResource.checkHeadingProfile('Books');
-      // add instance
+      // add Instance
       // click on new instance button since resource was duplicated without instances
       EditResource.openNewInstanceFormViaNewInstanceButton();
       InstanceProfileModal.waitLoading();
