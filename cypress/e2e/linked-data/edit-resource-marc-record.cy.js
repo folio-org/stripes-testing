@@ -121,7 +121,7 @@ describe('Citation: MARC Authority integration', () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
-      EditResource.duplicateResource();
+      EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       // generate random valid lccn in order to prevent unique validation error later
