@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Section,
   KeyValue,
@@ -24,6 +25,8 @@ const titleInformationSection = receivingDetailsSection.find(Section({ id: 'info
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
+const routingListSection = receivingDetailsSection.find(Section({ id: 'routing-list' }));
+const routingListAccordionButton = Button({ id: 'accordion-toggle-button-routing-list' });
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
 
@@ -230,5 +233,55 @@ export default {
     OrderLineDetails.waitLoading();
 
     return OrderLineDetails;
+  },
+
+  checkRoutingListSectionExpanded(isExpanded = true) {
+    cy.expect(routingListAccordionButton.has({ ariaExpanded: isExpanded ? 'true' : 'false' }));
+  },
+
+  expandRoutingListAccordion() {
+    cy.do(routingListAccordionButton.click());
+  },
+  checkRoutingListSectionCounter(count) {
+    cy.expect(routingListSection.find(Badge()).has({ text: count }));
+  },
+
+  checkAccordionPosition({ previousAccordionLabel, targetAccordionLabel, nextAccordionLabel }) {
+    cy.get('#pane-title-details [id^="accordion-toggle-button-"]').then((accordions) => {
+      const labels = [...accordions].map((accordionButton) => accordionButton.textContent.trim());
+      const prevIndex = labels.findIndex((label) => label.includes(previousAccordionLabel));
+      const targetIndex = labels.findIndex((label) => label.includes(targetAccordionLabel));
+      const nextIndex = labels.findIndex((label) => label.includes(nextAccordionLabel));
+
+      expect(targetIndex).to.equal(prevIndex + 1);
+      expect(targetIndex).to.equal(nextIndex - 1);
+    });
+  },
+
+  checkRoutingListTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.name) {
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Name' }))
+            .has({ content: including(record.name) }),
+        );
+      }
+      if (record.notes) {
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Notes' }))
+            .has({ content: including(record.notes) }),
+        );
+      }
+      if (record.users) {
+        const users = Array.isArray(record.users) ? record.users.join(', ') : record.users;
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Users' }))
+            .has({ content: including(users) }),
+        );
+      }
+    });
   },
 };
