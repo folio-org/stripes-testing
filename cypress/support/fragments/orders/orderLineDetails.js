@@ -425,7 +425,7 @@ export default {
   },
 
   checkAccordionPosition({ previousAccordionLabel, targetAccordionLabel, nextAccordionLabel }) {
-    cy.get('[id^="accordion-toggle-button-"]').then((accordions) => {
+    cy.get('#order-lines-details [id^="accordion-toggle-button-"]').then((accordions) => {
       const labels = [...accordions].map((accordionButton) => accordionButton.textContent.trim());
       const prevIndex = labels.findIndex((label) => label.includes(previousAccordionLabel));
       const targetIndex = labels.findIndex((label) => label.includes(targetAccordionLabel));
