@@ -122,7 +122,7 @@ describe('Citation: duplicate resource', () => {
       LinkedDataEditor.selectFromSearchTable(1);
       LinkedDataEditor.editWork();
       // duplicate work
-      EditResource.duplicateResource();
+      EditResource.duplicateWork();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       // close uncontrolled authority modal
