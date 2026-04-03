@@ -1891,6 +1891,7 @@ export const USER_TYPES = {
   SYSTEM: 'System',
   SHADOW: 'Shadow',
 };
+
 export const ORDER_LINE_ACCORDION_NAMES = {
   ITEM_DETAILS: 'Item details',
   PURCHASE_ORDER_LINE: 'Purchase order line',
@@ -1906,4 +1907,14 @@ export const ORDER_LINE_ACCORDION_NAMES = {
   RELATED_INVOICE_LINES: 'Related invoice lines',
   LINKED_INSTANCE: 'Linked instance',
   CUSTOM_FIELDS: 'Custom fields',
+};
+
+export const RECEIVING_TITILE_ACCORDION_NAMES = {
+  TITLE_INFORMATION: 'Title information',
+  POL_DETAILS: 'POL details',
+  EXPECTED: 'Expected',
+  RECEIVED: 'Received',
+  ROUTING_LISTS: 'Routing lists',
+  UNRECEIVABLE: 'Unreceivable',
+  BOUND_ITEMS: 'Bound items',
 };

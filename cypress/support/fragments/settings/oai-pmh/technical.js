@@ -19,4 +19,16 @@ export default {
   verifySaveButton(disabled = false) {
     cy.expect(saveButton.has({ disabled }));
   },
+
+  verifyCleanErrorsIntervalInConfig(expectedValue = '30') {
+    cy.intercept('GET', '/oai-pmh/configuration-settings?name=technical').as('getTechnicalConfig');
+    cy.reload();
+    cy.wait('@getTechnicalConfig').then((interception) => {
+      const responseBody = JSON.parse(interception.response.body);
+      const configValue = responseBody.configurationSettings[0].configValue;
+
+      expect(configValue).to.have.property('cleanErrorsInterval');
+      expect(configValue.cleanErrorsInterval).to.equal(expectedValue);
+    });
+  },
 };
