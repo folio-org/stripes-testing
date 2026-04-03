@@ -3,6 +3,7 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Popover,
   RepeatableFieldItem,
   Section,
   Select,
@@ -30,6 +31,8 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
+const automaticExportCheckboxName = 'automaticExport';
+const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndOpenOrderButton = Button('Save & open order');
@@ -410,5 +413,26 @@ export default {
   checkSelectOptions(selectField, expectedOptions) {
     cy.do(selectField.focus());
     cy.expect(selectField.has({ optionsText: expectedOptions }));
+  },
+  verifyAutomaticExportCheckboxDisabled() {
+    cy.expect(
+      orderLineDetailsSection
+        .find(Checkbox({ name: automaticExportCheckboxName }))
+        .has({ disabled: true }),
+    );
+  },
+  clickAutomaticExportInfoIcon() {
+    // Find the info popover trigger button associated with the automaticExport checkbox.
+    // The checkbox and info icon share a common ancestor container.
+    cy.get(`[name="${automaticExportCheckboxName}"]`).then(($checkbox) => {
+      cy.wrap($checkbox)
+        .closest('[class*="col-"]')
+        .find(automaticExportInfoIconSelector)
+        .first()
+        .click();
+    });
+  },
+  verifyAutomaticExportInfoPopover(expectedMessage) {
+    cy.expect(Popover().has({ content: including(expectedMessage) }));
   },
 };
