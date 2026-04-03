@@ -8,13 +8,11 @@ export default {
     cy.xpath("//div[@class='preview-panel preview-panel-row']").should('be.visible');
     cy.expect(continueButton.exists());
     cy.expect(cancelButton.exists());
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   clickContinue() {
     cy.do(continueButton.click());
-    cy.wait(1000);
-    cy.reload();
-    cy.wait(1000);
+    cy.wait(4000);
   },
 };
