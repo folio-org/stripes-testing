@@ -116,7 +116,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       // open instance for editing
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // duplicate instance
-      EditResource.duplicateResource();
+      EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
@@ -127,7 +127,7 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // duplicate first instane once again
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
-      EditResource.duplicateResource();
+      EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');

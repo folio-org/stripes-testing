@@ -8,6 +8,8 @@ import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewRoutingList from '../../support/fragments/orders/routingLists/newRoutingList';
+import Receiving from '../../support/fragments/receiving/receiving';
+import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import RoutingListDetails from '../../support/fragments/orders/routingLists/routingListDetails';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
@@ -17,8 +19,10 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_LINE_ACCORDION_NAMES,
+  ORDER_STATUSES,
   ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
+  RECEIVING_TITILE_ACCORDION_NAMES,
 } from '../../support/constants';
 
 describe('Orders', () => {
@@ -85,7 +89,7 @@ describe('Orders', () => {
         return NewRoutingList.createFullRoutingListViaApi(routingList).then(
           (routingListResponse) => {
             return {
-              order: { ...order, id: orderResponse.id },
+              order: orderResponse,
               orderNumber: orderResponse.poNumber,
               orderLine: orderLineResponse,
               routingList: routingListResponse,
@@ -142,10 +146,17 @@ describe('Orders', () => {
         return createOrderData(materialType.id, acquisitionMethod.id);
       })
       .then(() => {
+        return Orders.updateOrderViaApi({
+          ...testData.order.order,
+          workflowStatus: ORDER_STATUSES.OPEN,
+        });
+      })
+      .then(() => {
         return cy.createTempUser([
           Permissions.uiOrdersView.gui,
           Permissions.uiNotesItemView.gui,
           Permissions.uiSettingsOrdersCanViewAllSettings.gui,
+          Permissions.uiReceivingView.gui,
         ]);
       })
       .then((userProperties) => {
@@ -158,18 +169,27 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
-    RoutingListDetails.deleteRoutingListViaApi(testData.order.routingList.id);
-    Orders.deleteOrderViaApi(testData.order.order.id);
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      testData.location.institutionId,
-      testData.location.campusId,
-      testData.location.libraryId,
-      testData.location.id,
-    );
-    Organizations.deleteOrganizationViaApi(testData.organization.id);
-    Users.deleteViaApi(testData.user.userId);
-    Users.deleteViaApi(testData.routingUser.userId);
+    cy.getAdminToken().then(() => {
+      Orders.updateOrderViaApi(
+        {
+          ...testData.order.order,
+          workflowStatus: ORDER_STATUSES.PENDING,
+        },
+        true,
+      ).then(() => {
+        RoutingListDetails.deleteRoutingListViaApi(testData.order.routingList.id);
+        Orders.deleteOrderViaApi(testData.order.order.id);
+        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+          testData.location.institutionId,
+          testData.location.campusId,
+          testData.location.libraryId,
+          testData.location.id,
+        );
+        Organizations.deleteOrganizationViaApi(testData.organization.id);
+        Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.routingUser.userId);
+      });
+    });
   });
 
   it(
@@ -186,6 +206,22 @@ describe('Orders', () => {
         nextAccordionLabel: ORDER_LINE_ACCORDION_NAMES.NOTES,
       });
       OrderLineDetails.checkRoutingListTableContent([
+        {
+          name: testData.order.routingList.name,
+          notes: testData.order.routingList.notes,
+          users: [`${testData.routingUser.lastName} ${testData.routingUser.firstName}`],
+        },
+      ]);
+      OrderLines.receiveOrderLinesViaActions();
+      Receiving.selectFromResultsList(testData.order.orderLine.titleOrPackage);
+      Receiving.verifyRoutingListWarning();
+      ReceivingDetails.checkRoutingListSectionExpanded();
+      ReceivingDetails.checkAccordionPosition({
+        previousAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.RECEIVED,
+        targetAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.ROUTING_LISTS,
+        nextAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.UNRECEIVABLE,
+      });
+      ReceivingDetails.checkRoutingListTableContent([
         {
           name: testData.order.routingList.name,
           notes: testData.order.routingList.notes,

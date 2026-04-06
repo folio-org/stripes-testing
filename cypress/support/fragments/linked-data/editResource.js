@@ -1,25 +1,38 @@
-import { Button } from '@interactors/html';
+import { Button } from '../../../../interactors';
 
-const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
+const actionsButton = Button('Actions');
+const workActionsButton = Button({ dataTestID: 'block-actions-toggle' });
 const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
-const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
+const duplicateButton = Button('Duplicate');
+const instanceEditActionButton =
+  "//button[@data-testid='preview-actions-dropdown__option-ld.edit']";
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
-const viewMarcButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.viewMarc']";
+const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
 const editWorkButton = "//button[text()='Edit work']";
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
 const editResourceSection = "//div[@id='edit-section']";
+const duplicateWorkSection = "//div[@id='app-root']//h2[text()='Duplicate work']";
 const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
 const newInstanceButton = "//button[@data-testid='new-instance']";
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
+const editWorkBut = Button('Edit work');
 
 export default {
   waitLoading() {
     cy.xpath(editResourceSection).should('be.visible');
+  },
+
+  editWorkEditInstance() {
+    cy.do(editWorkBut.click());
+    cy.wait(1000);
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
+    cy.wait(1000);
   },
 
   saveAndKeepEditing() {
@@ -66,10 +79,22 @@ export default {
       .clear();
   },
 
-  duplicateResource() {
-    cy.xpath(actionsButton).click();
-    cy.xpath(duplicateButton).click();
+  duplicateInstance() {
+    cy.expect(actionsButton.exists());
+    cy.do(actionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.do(duplicateButton.click());
+    cy.wait(1000);
     cy.xpath(editResourceSection).should('be.visible');
+  },
+
+  duplicateWork() {
+    cy.expect(workActionsButton.exists());
+    cy.do(workActionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.do(duplicateButton.click());
+    cy.wait(1000);
+    cy.xpath(duplicateWorkSection).should('be.visible');
   },
 
   openNewInstanceFormViaActions() {
@@ -89,7 +114,7 @@ export default {
   },
 
   viewMarc() {
-    cy.xpath(actionsButton).click();
+    cy.do(actionsButton.click());
     cy.xpath(viewMarcButton).click();
     cy.xpath("//div[@class='view-marc-modal']").should('be.visible');
   },

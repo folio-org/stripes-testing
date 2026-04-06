@@ -80,6 +80,7 @@ describe('Citation: MARC Authority integration', () => {
       previousFieldTag: testData.tag010,
       tag: testData.tag100,
       content: `$a ${testData.authorityHeading}`,
+      indicator0: '1',
     },
   ];
 
@@ -170,6 +171,8 @@ describe('Citation: MARC Authority integration', () => {
           newField.previousFieldTag,
           newField.tag,
           newField.content,
+          newField.indicator0,
+          newField.indicator1,
         );
       });
       QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);

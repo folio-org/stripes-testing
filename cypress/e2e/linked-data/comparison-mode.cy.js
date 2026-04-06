@@ -116,7 +116,7 @@ describe('Citation: edit existing instance', () => {
       // open instance for editing
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // duplicate instance
-      EditResource.duplicateResource();
+      EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
