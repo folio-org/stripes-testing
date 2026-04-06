@@ -205,9 +205,6 @@ export default {
       selectAppSearchInput.exists(),
       selectApplicationModal.find(MultiColumnListRow()).exists(),
     ]);
-    const listSelector = 'div#applications-paneset [class^="mclScrollable"]';
-    cy.get(listSelector).scrollTo('bottom').scrollTo('top');
-    cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
   verifySelectApplicationModal() {
