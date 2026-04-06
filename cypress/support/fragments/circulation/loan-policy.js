@@ -199,6 +199,13 @@ export default {
     });
   },
 
+  verifyPoliciesCreated(policiesData, expectedCount) {
+    this.getLoanPoliciesViaAPI().then((policies) => {
+      const testPolicies = policies.filter((p) => policiesData.some((cp) => cp.id === p.id));
+      cy.expect(testPolicies.length).to.be.at.least(expectedCount);
+    });
+  },
+
   createViaApi(loanPolicy) {
     return cy
       .okapiRequest({
