@@ -81,6 +81,22 @@ export default {
     });
   },
 
+  verifyGroupDisplayed(groupName) {
+    cy.expect(NavListItem(groupName).exists());
+  },
+
+  verifyGroupNotDisplayed(groupName) {
+    cy.expect(NavListItem(groupName).absent());
+  },
+
+  verifyLimitsAreEmpty() {
+    cy.wrap(limitTypes).each((limitName) => {
+      this.getLimitIdViaApi(limitName).then((limitId) => {
+        cy.expect(TextField({ name: limitId }).has({ value: '' }));
+      });
+    });
+  },
+
   verifySaveIsDisabled() {
     cy.expect(saveButton.is({ disabled: true }));
   },

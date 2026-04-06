@@ -109,6 +109,10 @@ export default {
     cy.do(Button('Charge only').click());
     cy.wait(1000);
   },
+  clickNewFeeFine(barcode) {
+    openActionsMenuOfLoanByBarcode(barcode);
+    cy.do(newFeeFineButton.click());
+  },
   declareLoanLostViaApi: (
     {
       comment = 'Reason why the item is declared lost',
