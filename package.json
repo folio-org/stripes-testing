@@ -30,11 +30,12 @@
     ]
   },
   "resolutions": {
+    "axios": "1.14.0",
     "chromedriver": "107.0.0",
     "cypress": "12.0.0",
     "sharp": "0.32.6",
     "tsx": "3.14.0",
-    "glob": "10.4.5",
+    "glob": "13.0.6",
     "eslint-visitor-keys": "4.2.1"
   },
   "dependencies": {
@@ -52,7 +53,7 @@
     "@reportportal/agent-js-cypress": ">=5.3.1 <6.0.0",
     "@shelex/cypress-allure-plugin": "^2.40.0",
     "axe-core": "4.3.3",
-    "axios": "^1.7.7",
+    "axios": "1.14.0",
     "babel-loader": "^9.2.1",
     "cypress": "12.0.0",
     "cypress-cloud": "^1.9.6",
@@ -71,7 +72,7 @@
     "eslint-plugin-cypress": "^2.11.2",
     "find-test-names": "^1.28.28",
     "fs-extra": "7.0.1",
-    "glob": "10.4.5",
+    "glob": "13.0.6",
     "globby": "^11.1.0",
     "husky": "^8.0.3",
     "json-2-csv": "^5.0.1",
@@ -90,6 +91,7 @@
     "registry": "https://repository.folio.org/repository/npm-folio/"
   },
   "overrides": {
+    "axios": "1.14.0",
     "bigtest": {
       "chromedriver": "107.0.0",
       "tsx": "3.14.0"

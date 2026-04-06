@@ -29,6 +29,7 @@ import {
   ORDER_PAYMENT_STATUS,
   RECEIPT_STATUS_SELECTED,
   RECEIVING_WORKFLOW_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -261,7 +262,7 @@ export default {
   checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
-      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
       fund,
     );
     cy.expect(locationSection.find(KeyValue({ value: quantityPhysical })).exists());
@@ -269,7 +270,7 @@ export default {
   checkCreatedPOLineElectronicResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
-      ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+      ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
       fund,
     );
     cy.expect(locationSection.find(KeyValue({ value: quantityElectronic })).exists());
@@ -1951,19 +1952,18 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
     ]);
   },
-  setPhysicalQuantity(quantity, changeQuantity = true) {
+  setPhysicalQuantity({ quantity, index = 0, changeQuantity = true } = {}) {
     cy.wait(1500);
+    const quantityField = TextField({ name: `locations[${index}].quantityPhysical` });
+
     if (changeQuantity) {
-      cy.do([
-        quantityPhysicalLocationField.clear(),
-        quantityPhysicalLocationField.fillIn(quantity),
-      ]);
-      cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+      cy.do([quantityField.clear(), quantityField.fillIn(quantity)]);
     } else {
-      cy.do([quantityPhysicalLocationField.fillIn(quantity)]);
-      cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+      cy.do(quantityField.fillIn(quantity));
     }
+    cy.expect(quantityField.has({ value: quantity }));
   },
+
   setElectronicQuantity(quantity) {
     cy.wait(1500);
     cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
@@ -2193,9 +2193,11 @@ export default {
   checkCreateInventory() {
     cy.expect([
       physicalResourceDetailsAccordion
-        .find(KeyValue({ value: 'Instance, Holding, Item' }))
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
         .exists(),
-      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
+      eResourcesDetails
+        .find(KeyValue({ value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM }))
+        .exists(),
     ]);
   },
 

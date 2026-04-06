@@ -3,7 +3,6 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
-  VENDOR_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -192,11 +191,9 @@ describe('Inventory', () => {
             }).then((params) => {
               memberData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.MOSAIC}"` }).then(
-              (organization) => {
-                memberData.vendorId = organization.id;
-              },
-            );
+            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
+              memberData.vendorId = organization.id;
+            });
           })
           .then(() => {
             // create holding on member tenant
@@ -238,11 +235,9 @@ describe('Inventory', () => {
             }).then((params) => {
               centralData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.MOSAIC}"` }).then(
-              (organization) => {
-                centralData.vendorId = organization.id;
-              },
-            );
+            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
+              centralData.vendorId = organization.id;
+            });
           })
           .then(() => {
             // create order with order line on central tenant

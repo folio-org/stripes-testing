@@ -1,5 +1,4 @@
 node_modules
-yarn.lock
 .yarnclean
 yarn-error.log
 .idea
@@ -29,4 +28,6 @@ scripts/update_permission_names/permissions_backups/*
 
 mcp.json
 parallelWorkers.json
-failed.cy.js
+cypress/e2e/failed.cy.js
+environments.js
+CLAUDE.md

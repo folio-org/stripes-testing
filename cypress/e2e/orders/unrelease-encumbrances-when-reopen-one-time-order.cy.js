@@ -1,4 +1,9 @@
-import { ORDER_STATUSES } from '../../support/constants';
+import {
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -83,8 +88,14 @@ describe('Orders', () => {
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
         poLineInformation: [
-          { key: 'Payment status', value: 'Awaiting Payment' },
-          { key: 'Receipt status', value: 'Awaiting Receipt' },
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,
+          },
+          {
+            key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+            value: RECEIPT_STATUS_VIEW.AWAITING_RECEIPT,
+          },
         ],
       });
 

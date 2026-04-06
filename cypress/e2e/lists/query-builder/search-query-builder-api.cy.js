@@ -43,6 +43,14 @@ describe('Lists', () => {
       });
     };
 
+    // const getFirstValue = (fieldName, labelName) => {
+    //   return getValues(fieldName, labelName).then((items) => {
+    //     const values = items.map((item) => item.value);
+    //     const labels = items.map((item) => item.label);
+    //     return cy.wrap({ values: values[0], labels: labels[0] });
+    //   });
+    // };
+
     const getFilteredValues = (fieldName, labelName, [labels]) => {
       return getValues(fieldName, labelName).then((content) => {
         const filteredValues = content

@@ -312,7 +312,7 @@ describe('Data Export', () => {
             `"Instance UUID": "${testData.marcInstance.uuid}"`,
             `"Instance HRID": "${testData.marcInstance.hrid}"`,
             `"Instance Title": "${testData.marcInstance.title}"`,
-            `"Inventory record link": /inventory/view/${testData.marcInstance.uuid}`,
+            `"Inventory record link": ${Cypress.config().baseUrl}/inventory/view/${testData.marcInstance.uuid}`,
           ];
 
           errorMessages.forEach((error) => {

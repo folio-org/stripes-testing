@@ -203,12 +203,12 @@ export const ORDER_TYPES = {
 
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic resource',
-  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource', // Deprecated, need to be removed after all tests will be updated
   PE_MIX: 'P/E mix',
   PE_MIX_Check: 'P/E Mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
-  PHYSICAL_RESOURCE_Check: 'Physical Resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource', // Deprecated, need to be removed after all tests will be updated
 };
 
 export const ORDER_PAYMENT_STATUS = {
@@ -217,9 +217,10 @@ export const ORDER_PAYMENT_STATUS = {
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting Payment',
+  AWAITING_PAYMENT: 'Awaiting payment',
   CANCELLED: 'Cancelled',
   FULLY_PAID: 'Fully paid',
+  ONGOING: 'Ongoing',
   PARTIALLY_PAID: 'Partially paid',
   PAYMENT_NOT_REQUIRED: 'Payment not required',
 };
@@ -265,9 +266,13 @@ export const RECEIPT_STATUS_SELECTED = {
 };
 
 export const RECEIPT_STATUS_VIEW = {
-  PENDING: 'Pending',
-  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+  AWAITING_RECEIPT: 'Awaiting receipt',
   CANCELLED: 'Cancelled',
+  PENDING: 'Pending',
+  FULLY_RECEIVED: 'Fully received',
+  ONGOING: 'Ongoing',
+  PARTIALLY_RECEIVED: 'Partially received',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -1547,6 +1552,7 @@ export const STAFF_SLIP_NAMES = {
   REQUEST_DELIVERY: 'Request delivery',
   SEARCH_SLIP_HOLD_REQUESTS: 'Search slip (Hold requests)',
   TRANSIT: 'Transit',
+  TRANSIT_MEDIATED_REQUESTS: 'Transit (mediated requests)',
 };
 
 export const INSTANCE_DATE_TYPES = {
@@ -1892,9 +1898,56 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   PARTIALLY_PAID: 'Partially Paid',
 };
 
+export const POLINE_DETAILS_FIELDS = {
+  ORDER_FORMAT: 'Order format',
+  RECEIPT_STATUS: 'Receipt status',
+  PAYMENT_STATUS: 'Payment status',
+  HOLDING_NAME: 'Holding',
+  LOCATION_NAME: 'Name (code)',
+  PHYSICAL_UNIT_PRICE: 'Physical unit price',
+  QUANTITY_PHYSICAL: 'Quantity physical',
+  ELECTRONIC_UNIT_PRICE: 'Electronic unit price',
+  QUANTITY_ELECTRONIC: 'Quantity electronic',
+  CREATE_INVENTORY: 'Create inventory',
+};
+
+export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
+  INSTANCE: 'Instance',
+  INSTANCE_HOLDING: 'Instance, holdings',
+  INSTANCE_HOLDING_ITEM: 'Instance, holdings, item',
+  NONE: 'None',
+};
+
 export const USER_TYPES = {
   STAFF: 'Staff',
   PATRON: 'Patron',
   SYSTEM: 'System',
   SHADOW: 'Shadow',
+};
+
+export const ORDER_LINE_ACCORDION_NAMES = {
+  ITEM_DETAILS: 'Item details',
+  PURCHASE_ORDER_LINE: 'Purchase order line',
+  DONOR_INFORMATION: 'Donor information',
+  VENDOR: 'Vendor',
+  COST_DETAILS: 'Cost details',
+  FUND_DISTRIBUTION: 'Fund distribution',
+  LOCATION: 'Location',
+  PHYSICAL_RESOURCE_DETAILS: 'Physical resource details',
+  E_RESOURCES_DETAILS: 'E-resources details',
+  ROUTING_LISTS: 'Routing lists',
+  NOTES: 'Notes',
+  RELATED_INVOICE_LINES: 'Related invoice lines',
+  LINKED_INSTANCE: 'Linked instance',
+  CUSTOM_FIELDS: 'Custom fields',
+};
+
+export const RECEIVING_TITILE_ACCORDION_NAMES = {
+  TITLE_INFORMATION: 'Title information',
+  POL_DETAILS: 'POL details',
+  EXPECTED: 'Expected',
+  RECEIVED: 'Received',
+  ROUTING_LISTS: 'Routing lists',
+  UNRECEIVABLE: 'Unreceivable',
+  BOUND_ITEMS: 'Bound items',
 };

@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, or } from '@interactors/html';
 import {
   Button,
   Modal,
@@ -10,6 +10,7 @@ import {
 const rootModal = Modal('Select instance');
 const searchField = SearchField('Search field index');
 const searchButton = Button('Search');
+const heldbyAccordionName = 'Held by';
 
 export default {
   waitLoading() {
@@ -62,5 +63,29 @@ export default {
   close() {
     cy.do(rootModal.dismiss());
     cy.expect(rootModal.absent());
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
+  },
+
+  clearDefaultHeldbyFilter() {
+    cy.wait(2000);
+    this.clearDefaultFilter(heldbyAccordionName);
+    cy.expect(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${heldbyAccordionName}"`,
+          `Clear selected ${heldbyAccordionName} filters`,
+        ),
+      }).absent(),
+    );
   },
 };
