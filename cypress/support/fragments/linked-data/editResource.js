@@ -4,6 +4,8 @@ const actionsButton = Button('Actions');
 const workActionsButton = Button({ dataTestID: 'block-actions-toggle' });
 const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
 const duplicateButton = Button('Duplicate');
+const instanceEditActionButton =
+  "//button[@data-testid='preview-actions-dropdown__option-ld.edit']";
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
@@ -18,10 +20,19 @@ const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
+const editWorkBut = Button('Edit work');
 
 export default {
   waitLoading() {
     cy.xpath(editResourceSection).should('be.visible');
+  },
+
+  editWorkEditInstance() {
+    cy.do(editWorkBut.click());
+    cy.wait(1000);
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
+    cy.wait(1000);
   },
 
   saveAndKeepEditing() {
