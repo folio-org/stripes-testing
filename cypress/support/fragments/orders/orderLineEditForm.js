@@ -3,6 +3,7 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Popover,
   RepeatableFieldItem,
   Section,
   Select,
@@ -30,6 +31,8 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
+const automaticExportCheckboxName = 'automaticExport';
+const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndOpenOrderButton = Button('Save & open order');
@@ -403,5 +406,30 @@ export default {
   checkSelectOptions(selectField, expectedOptions) {
     cy.do(selectField.focus());
     cy.expect(selectField.has({ optionsText: expectedOptions }));
+  },
+  verifyAutomaticExportCheckboxDisabled() {
+    cy.expect(
+      orderLineDetailsSection
+        .find(Checkbox({ name: automaticExportCheckboxName }))
+        .has({ disabled: true }),
+    );
+  },
+  clickAutomaticExportInfoIcon() {
+    cy.get(`[name="${automaticExportCheckboxName}"]`).then(($checkbox) => {
+      cy.wrap($checkbox)
+        .closest('[class*="col-"]')
+        .find(automaticExportInfoIconSelector)
+        .first()
+        .click();
+    });
+  },
+  verifyAutomaticExportInfoPopover() {
+    cy.expect(
+      Popover().has({
+        content: including(
+          'This is a Manual PO so all POLs are excluded from automated export workflows',
+        ),
+      }),
+    );
   },
 };

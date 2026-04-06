@@ -140,6 +140,7 @@ const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]'
 const contactInformationSection = Button({
   id: 'accordion-toggle-button-contactInformationSection',
 });
+const schedulePeriodSelect = 'select[name$="schedulePeriod"]';
 
 export default {
   waitLoading: () => {
@@ -603,7 +604,7 @@ export default {
 
   fillScheduleInfo: (info) => {
     cy.get('[aria-labelledby="accordion-toggle-button-scheduling"]').within(() => {
-      cy.get('select[name$="schedulePeriod"]').select(String(info.period));
+      cy.get(schedulePeriodSelect).select(String(info.period));
 
       const setNativeValue = (input, value) => {
         const proto = Object.getPrototypeOf(input);
@@ -658,6 +659,19 @@ export default {
 
   checkDayFieldError(expectedError = 'Value must be less than or equal to 31') {
     cy.get('[class^=feedbackError]').should('contain.text', expectedError);
+  },
+
+  verifySchedulePeriodOptions() {
+    const expectedOptions = ['Daily', 'Weekly', 'Hourly', 'Monthly'];
+    cy.get(schedulePeriodSelect).then(($select) => {
+      const actualOptions = [...$select[0].options].map((o) => o.text);
+      expectedOptions.forEach((option) => {
+        expect(actualOptions).to.include(option);
+      });
+      expect(
+        actualOptions.filter((o) => o !== '' && o !== 'Please select schedule period'),
+      ).to.have.lengthOf(expectedOptions.length);
+    });
   },
 
   fillIntegrationInformation: (
@@ -746,6 +760,13 @@ export default {
   },
 
   fillIntegrationInformationWithoutSchedulingWithDifferentInformation: (information) => {
+    if (information.integrationType) {
+      cy.do(
+        Section({ id: 'integrationInfo' })
+          .find(Select(including('Integration type')))
+          .choose(information.integrationType),
+      );
+    }
     if (information.integrationName) {
       cy.do([
         Section({ id: 'integrationInfo' })
@@ -755,13 +776,6 @@ export default {
     }
     if (information.integrationDescription) {
       cy.do([TextArea('Description').fillIn(information.integrationDescription)]);
-    }
-    if (information.integrationType) {
-      cy.do(
-        Section({ id: 'integrationInfo' })
-          .find(Select(including('Integration type')))
-          .choose(information.integrationType),
-      );
     }
     if (information.transmissionMethod) {
       cy.do([Select('Transmission method*').choose(information.transmissionMethod)]);
@@ -774,6 +788,13 @@ export default {
     }
     if (information.libraryEDICode) {
       cy.do([ediSection.find(TextField('Library EDI code*')).fillIn(information.libraryEDICode)]);
+    }
+    if (information.sendAccountNumber) {
+      cy.do(
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.sendAccountNumber',
+        }).click(),
+      );
     }
     if (information.ordersMessageForVendor) {
       cy.do([
@@ -804,6 +825,9 @@ export default {
     if (information.ediFTP) {
       cy.do(ftpSection.find(Select('EDI FTP')).choose(information.ediFTP));
     }
+    if (information.ftpMode) {
+      cy.do(ftpSection.find(Select('FTP mode')).choose(information.ftpMode));
+    }
     if (information.connectionMode) {
       cy.do(ftpSection.find(Select('FTP connection mode')).choose(information.connectionMode));
     }
@@ -814,6 +838,22 @@ export default {
         ftpSection.find(TextField('Username')).fillIn('folio'),
         ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
         ftpSection.find(TextField('Order directory')).fillIn('/files'),
+      ]);
+    }
+    if (information.ftpWithoutCredentials) {
+      cy.do([
+        ftpSection.find(TextField(including('Server address'))).fillIn(serverAddress),
+        ftpSection.find(TextField(including('FTP port'))).fillIn(FTPport),
+      ]);
+    }
+    if (information.enableScheduling) {
+      cy.do([
+        Checkbox({
+          name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
+        }).click(),
+        schedulingSection.find(Select('Schedule period*')).choose('Daily'),
+        schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+        schedulingSection.find(TextField('Time*')).fillIn(DateTools.getUTCDateForScheduling()),
       ]);
     }
   },
@@ -1777,6 +1817,15 @@ export default {
         expect(span.scrollWidth).to.be.greaterThan(span.clientWidth);
       }),
     );
+  },
+
+  verifyAccountNumberIsNotAvailableInIntegrationForm: (accountNo) => {
+    cy.get(
+      'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]',
+    ).then(($select) => {
+      const options = Array.from($select[0].options).map((opt) => opt.value);
+      expect(options).not.to.include(accountNo);
+    });
   },
 
   checkIntegrationsAdd: (integrationName, integartionDescription) => {
