@@ -147,8 +147,14 @@ export default {
   clickManualInfoIcon() {
     cy.do(orderInfoSection.find(Button({ icon: 'info' })).click());
   },
-  verifyManualInfoPopover(expectedMessage) {
-    cy.expect(Popover().has({ content: including(expectedMessage) }));
+  verifyManualInfoPopover() {
+    cy.expect(
+      Popover().has({
+        content: including(
+          'When this checkbox is active the order will be excluded from any automated transmission. No matter what other settings are active for the order lines or related organization.',
+        ),
+      }),
+    );
   },
   checkManualCheckbox() {
     cy.do(Checkbox({ name: 'manualPo' }).click());

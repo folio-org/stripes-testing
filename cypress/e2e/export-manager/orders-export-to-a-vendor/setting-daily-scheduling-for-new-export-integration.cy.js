@@ -4,6 +4,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import ExportDetails from '../../../support/fragments/exportManager/exportDetails';
 import IntegrationEditForm from '../../../support/fragments/organizations/integrations/integrationEditForm';
+import IntegrationStates from '../../../support/fragments/organizations/integrations/integrationStates';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OrganizationDetails from '../../../support/fragments/organizations/organizationDetails';
 import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
@@ -15,6 +16,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
     const now = moment();
+    const today = moment().format('M/D/YYYY');
     const testData = {
       organization: NewOrganization.getDefaultOrganization({ accounts: 1 }),
       user: {},
@@ -76,7 +78,7 @@ describe('Export Manager', () => {
         });
 
         Organizations.clickSchedulingEDICheckbox();
-        Organizations.verifySchedulePeriodOptions(['Daily', 'Weekly', 'Hourly', 'Monthly']);
+        Organizations.verifySchedulePeriodOptions();
         Organizations.clickSchedulingEDICheckbox();
 
         now.set('minutes', now.minutes() + 1);
@@ -87,7 +89,7 @@ describe('Export Manager', () => {
         });
 
         Organizations.saveOrganization();
-        InteractorsTools.checkCalloutMessage('Integration was saved');
+        InteractorsTools.checkCalloutMessage(IntegrationStates.integrationSaved);
 
         TopMenu.openExportManagerApp();
         ExportManagerSearchPane.waitLoading();
@@ -99,9 +101,13 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
         ExportDetails.checkExportJobDetails({
           exportInformation: [
+            { key: 'Status', value: 'Failed' },
             { key: 'Source', value: 'System' },
+            { key: 'Start time', value: today },
+            { key: 'End time', value: today },
             { key: 'Organization', value: testData.organization.name },
             { key: 'Export method', value: integrationName },
+            { key: 'Sent to', value: 'ftp://ftp.ci.folio.org/files' },
           ],
         });
       },

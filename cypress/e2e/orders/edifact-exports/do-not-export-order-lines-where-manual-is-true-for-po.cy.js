@@ -11,6 +11,7 @@ import {
   NewOrganization,
   Organizations,
 } from '../../../support/fragments/organizations';
+import ExportDetails from '../../../support/fragments/exportManager/exportDetails';
 import { ExportManagerSearchPane } from '../../../support/fragments/exportManager';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -98,9 +99,7 @@ describe('Orders', () => {
       () => {
         Orders.clickCreateNewOrder();
         OrderEditForm.clickManualInfoIcon();
-        OrderEditForm.verifyManualInfoPopover(
-          'When this checkbox is active the order will be excluded from any automated transmission. No matter what other settings are active for the order lines or related organization.',
-        );
+        OrderEditForm.verifyManualInfoPopover();
         OrderEditForm.clickCancelButton();
 
         Orders.createOrder(
@@ -121,9 +120,7 @@ describe('Orders', () => {
             });
 
             OrderLineForm.clickAutomaticExportInfoIcon();
-            OrderLineForm.verifyAutomaticExportInfoPopover(
-              'This is a Manual PO so all POLs are excluded from automated export workflows',
-            );
+            OrderLineForm.verifyAutomaticExportInfoPopover();
 
             OrderLineForm.verifyAutomaticExportCheckboxDisabled();
 
@@ -146,6 +143,15 @@ describe('Orders', () => {
                 .configName;
             ExportManagerSearchPane.selectExportMethod(integrationName);
             ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
+            ExportDetails.checkExportJobDetails({
+              exportInformation: [
+                { key: 'Status', value: 'Failed' },
+                {
+                  key: 'Error details',
+                  value: 'Entities not found: PurchaseOrder (NotFoundException)',
+                },
+              ],
+            });
 
             ExportManagerSearchPane.rerunJob();
             cy.reload();

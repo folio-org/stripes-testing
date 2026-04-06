@@ -2,6 +2,7 @@ import permissions from '../../support/dictionary/permissions';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
+import IntegrationStates from '../../support/fragments/organizations/integrations/integrationStates';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
@@ -91,7 +92,7 @@ describe('Organizations', () => {
         enableScheduling: true,
       });
       Organizations.saveOrganization();
-      InteractorsTools.checkCalloutMessage('Integration was saved');
+      InteractorsTools.checkCalloutMessage(IntegrationStates.integrationSaved);
       Organizations.checkIntegrationsAdd(integrationName1, integrationDescription1);
 
       Organizations.addIntegration();
@@ -111,7 +112,7 @@ describe('Organizations', () => {
         enableScheduling: true,
       });
       Organizations.saveOrganization();
-      InteractorsTools.checkCalloutMessage('Integration was saved');
+      InteractorsTools.checkCalloutMessage(IntegrationStates.integrationSaved);
       Organizations.checkTwoIntegationsAdd(
         integrationName1,
         integrationDescription1,

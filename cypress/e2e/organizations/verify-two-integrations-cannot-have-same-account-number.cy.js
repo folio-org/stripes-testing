@@ -3,6 +3,7 @@ import newOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import IntegrationStates from '../../support/fragments/organizations/integrations/integrationStates';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
@@ -75,7 +76,7 @@ describe('Organizations', () => {
         enableScheduling: true,
       });
       Organizations.saveOrganization();
-      InteractorsTools.checkCalloutMessage('Integration was saved');
+      InteractorsTools.checkCalloutMessage(IntegrationStates.integrationSaved);
       Organizations.checkIntegrationsAdd(integrationName, integrationDescription);
 
       Organizations.addIntegration();

@@ -402,8 +402,6 @@ export default {
     );
   },
   clickAutomaticExportInfoIcon() {
-    // Find the info popover trigger button associated with the automaticExport checkbox.
-    // The checkbox and info icon share a common ancestor container.
     cy.get(`[name="${automaticExportCheckboxName}"]`).then(($checkbox) => {
       cy.wrap($checkbox)
         .closest('[class*="col-"]')
@@ -412,7 +410,13 @@ export default {
         .click();
     });
   },
-  verifyAutomaticExportInfoPopover(expectedMessage) {
-    cy.expect(Popover().has({ content: including(expectedMessage) }));
+  verifyAutomaticExportInfoPopover() {
+    cy.expect(
+      Popover().has({
+        content: including(
+          'This is a Manual PO so all POLs are excluded from automated export workflows',
+        ),
+      }),
+    );
   },
 };

@@ -600,7 +600,8 @@ export default {
     cy.get('[class^=feedbackError]').should('contain.text', expectedError);
   },
 
-  verifySchedulePeriodOptions(expectedOptions = []) {
+  verifySchedulePeriodOptions() {
+    const expectedOptions = ['Daily', 'Weekly', 'Hourly', 'Monthly'];
     cy.get(schedulePeriodSelect).then(($select) => {
       const actualOptions = [...$select[0].options].map((o) => o.text);
       expectedOptions.forEach((option) => {
