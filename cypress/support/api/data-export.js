@@ -20,6 +20,17 @@ Cypress.Commands.add('runDataExportAuthorityDeleted', (query) => {
     .then((response) => response);
 });
 
+Cypress.Commands.add('runDataExportMarcBibDeleted', (body) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-export/export-deleted',
+      body,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response);
+});
+
 Cypress.Commands.add('createDataExportCustomMappingProfile', (body) => {
   return cy
     .okapiRequest({
