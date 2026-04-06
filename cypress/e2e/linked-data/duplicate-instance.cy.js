@@ -119,7 +119,7 @@ describe('Citation: duplicate resource', () => {
       // open instance for editing
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // duplicate instance
-      EditResource.duplicateResource();
+      EditResource.duplicateInstance();
       // check duplicated instance has 'Monographs' profile same as original instance
       EditResource.checkHeadingProfile('Monographs');
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
