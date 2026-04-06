@@ -1951,3 +1951,8 @@ export const RECEIVING_TITILE_ACCORDION_NAMES = {
   UNRECEIVABLE: 'Unreceivable',
   BOUND_ITEMS: 'Bound items',
 };
+
+export const FUND_DISTRIBUTION_TYPES = {
+  AMOUNT: 'amount',
+  PERCENTAGE: 'percentage',
+};
