@@ -69,8 +69,8 @@ function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());
 }
 
-function chooseStatisticalCode(code) {
-  cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
+function chooseStatisticalCode(code, index = 0) {
+  cy.do(Button({ name: `statisticalCodeIds[${index}]` }).click());
   cy.do(SelectionList().select(code));
 }
 
@@ -316,9 +316,9 @@ export default {
     cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
     cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
   },
-  addStatisticalCode: (code) => {
+  addStatisticalCode: (code, index = 0) => {
     clickAddStatisticalCodeButton();
-    chooseStatisticalCode(code);
+    chooseStatisticalCode(code, index);
   },
   clickAddNoteButton(noteType, note) {
     cy.do([
@@ -439,6 +439,14 @@ export default {
   deleteStatisticalCode(statisticalCode) {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
     cy.expect(Selection({ value: including(statisticalCode) }).absent());
+  },
+  deleteStatisticalCodeByName(statisticalCode) {
+    cy.contains(statisticalCode)
+      .should('be.visible')
+      .closest('[data-test-repeatable-field-list-item="true"]')
+      .find('button[data-test-repeatable-field-remove-item-button="true"]')
+      .click();
+    cy.contains(statisticalCode).should('not.exist');
   },
   selectParentRelationshipType(type) {
     cy.do(

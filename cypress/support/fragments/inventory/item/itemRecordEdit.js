@@ -44,6 +44,15 @@ const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporar
 const permanentLocationDropdown = Button({ id: 'additem_permanentlocation' });
 const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanentlocation' });
 
+function clickAddStatisticalCodeButton() {
+  cy.do(Button('Add statistical code').click());
+}
+
+function chooseStatisticalCode(code, index = 0) {
+  cy.do(Button({ name: `statisticalCodeIds[${index}]` }).click());
+  cy.do(SelectionList().select(code));
+}
+
 export default {
   waitLoading: (itemTitle) => {
     cy.expect([
@@ -164,5 +173,19 @@ export default {
       TextArea({ id: 'additem_callnumberprefix' }).fillIn(numberPrefix),
       TextArea({ id: 'additem_callnumber' }).fillIn(number),
     ]);
+  },
+
+  addStatisticalCode: (code, index = 0) => {
+    clickAddStatisticalCodeButton();
+    chooseStatisticalCode(code, index);
+  },
+
+  deleteStatisticalCodeByName(statisticalCode) {
+    cy.contains(statisticalCode)
+      .should('be.visible')
+      .closest('[data-test-repeatable-field-list-item="true"]')
+      .find('button[data-test-repeatable-field-remove-item-button="true"]')
+      .click();
+    cy.contains(statisticalCode).should('not.exist');
   },
 };

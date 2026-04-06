@@ -1001,8 +1001,8 @@ export default {
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
-  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
-    if (isEnubled) {
+  verifyMoveToButtonState(holdingToBeOpened, isEnabled = true) {
+    if (isEnabled) {
       cy.expect(
         Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
           .find(Button({ id: including('clickable-move-holdings-') }))
