@@ -31,7 +31,9 @@ const getDefaultAssertions = () => {
  *       located within any MARC field/subfield in the exported record.
  *     - `assertions` {Array<Function>}: An array of assertion functions to validate the record.
  *       Each function receives the record as its argument and performs specific checks.
- * @param {number} expectedTotalRecords - The expected total number of records in the file.
+ * @param {number|null} [expectedTotalRecords=null] - The expected total number of records in the file.
+ *   If provided, performs an exact count check. If null/undefined, only verifies that all
+ *   specified records are present (useful when you can't control the total count).
  * @param {boolean} [isDefaultAssertionRequired=true] - Whether to run default assertions
  *   (leader, 001, 005, 008 fields) in addition to custom ones.
  * @returns {Promise<void>} - A promise that resolves when all assertions pass, or rejects with an error.
@@ -40,7 +42,7 @@ const getDefaultAssertions = () => {
 export default function parseMrcFileContentAndVerify(
   fileName,
   recordsToVerify,
-  expectedTotalRecords,
+  expectedTotalRecords = null,
   isDefaultAssertionRequired = true,
 ) {
   return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
@@ -104,7 +106,14 @@ export default function parseMrcFileContentAndVerify(
       reader.on('error', (error) => reject(error));
       reader.on('end', () => {
         try {
-          expect(totalRecordsCount).to.equal(expectedTotalRecords);
+          // Only check exact count if expectedTotalRecords is provided
+          if (expectedTotalRecords != null) {
+            expect(totalRecordsCount).to.equal(expectedTotalRecords);
+          } else {
+            // If no exact count specified, verify we found at least the records we were looking for
+            expect(totalRecordsCount).to.be.at.least(recordsToVerify.length);
+          }
+
           if (uuidAssertionsMap.size > 0) {
             const missingUuids = Array.from(uuidAssertionsMap.keys());
             reject(

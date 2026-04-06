@@ -1,6 +1,7 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
+  DropdownMenu,
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
@@ -713,6 +714,10 @@ export default {
     });
   },
 
+  verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
+    cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
   clickRunQueryAndSave() {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
@@ -759,9 +764,11 @@ export default {
         .then((text) => {
           if (numberOfMatchedRecords) {
             const recordText = pluralize(numberOfMatchedRecords, 'record');
+            const previewCount = numberOfMatchedRecords > 100 ? 100 : numberOfMatchedRecords;
+            const previewText = pluralize(previewCount, 'record');
 
             expect(text).to.equal(
-              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${numberOfMatchedRecords} ${recordText}:`,
+              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${previewCount} ${previewText}:`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');
@@ -993,13 +1000,25 @@ export default {
     cy.do(showColumnsButton.click());
   },
 
+  verifyShowColumnsMenuDisplayed(isDisplayed = true) {
+    if (isDisplayed) {
+      cy.expect(DropdownMenu().exists());
+    } else {
+      cy.expect(DropdownMenu().absent());
+    }
+  },
+
   clickCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).click());
     cy.wait(2000);
   },
 
-  verifyColumnDisplayed(columnName) {
-    cy.expect(MultiColumnListHeader(columnName).exists());
+  verifyColumnDisplayed(columnName, isDisplayed = true) {
+    if (isDisplayed) {
+      cy.expect(MultiColumnListHeader(columnName).exists());
+    } else {
+      cy.expect(MultiColumnListHeader(columnName).absent());
+    }
   },
 
   scrollResultTable(direction) {
@@ -1013,5 +1032,14 @@ export default {
   verifyHeadlineQueryWouldReturnAbsent() {
     cy.get('[class^="col-xs-10"]').should('not.exist');
     cy.expect(HTML(including('Query would return')).absent());
+  },
+
+  verifyCheckedCheckboxesPresentInTheTable() {
+    cy.wait(2000);
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
+      });
+    });
   },
 };
