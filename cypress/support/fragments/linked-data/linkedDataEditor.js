@@ -90,6 +90,8 @@ export default {
     InventoryInstance.editInstanceInLde();
     PreviewResource.waitLoading();
     PreviewResource.clickContinue();
+    // temporal workaround
+    EditResource.editWorkEditInstance();
     // edit edition
     EditResource.waitLoading();
     EditResource.setEdition(title);
