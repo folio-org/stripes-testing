@@ -466,4 +466,12 @@ export default {
       });
     });
   },
+
+  verifyMrcFileDoesNotIncludeRecords(fileName, recordIds) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+      recordIds.forEach((recordId) => {
+        expect(fileContent).to.not.include(recordId);
+      });
+    });
+  },
 };
