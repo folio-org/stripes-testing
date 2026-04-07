@@ -981,8 +981,29 @@ export default {
     ]);
   },
 
+  checkVersionHistoryButtonToolTipText() {
+    cy.do(rootSection.find(Button({ id: 'version-history-btn' })).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
+  },
+
+  checkButtonsStateWhenVersionHistoryPaneIsOpen() {
+    cy.expect([
+      // rootSection.find(actionsButton).has({ disabled: true }),
+      rootSection.find(versionHistoryButton).has({ disabled: true }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: true }),
+    ]);
+  },
+
+  checkButtonsStateWhenVersionHistoryPaneClosed() {
+    cy.expect([
+      rootSection.find(actionsButton).has({ disabled: false }),
+      rootSection.find(versionHistoryButton).has({ disabled: false }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: false }),
+    ]);
   },
 
   moveItemsWithinAnInstance() {
