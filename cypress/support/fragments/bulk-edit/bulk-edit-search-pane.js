@@ -165,6 +165,8 @@ export const ERROR_MESSAGES = {
   NO_CHANGE_IN_MARC_FIELDS_REQUIRED: 'No change in MARC fields required',
   NO_CHANGE_INSTANCE_SUPPRESSED_RECORDS_UPDATED:
     'No change in value for instance required, suppressed associated records have been updated.',
+  NO_CHANGE_HOLDINGS_SUPPRESSED_ITEMS_UPDATED:
+    'No change in value for holdings record required, associated suppressed item(s) have been updated.',
   NO_MATCH_FOUND: 'No match found',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
@@ -189,6 +191,9 @@ export const ERROR_MESSAGES = {
   noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
   getUserAffiliationError: (username, recordType, recordIdentifier, tenantId) => {
     return `User ${username} does not have required affiliation to edit the ${recordType} record - ${recordIdentifier} on the tenant ${tenantId}`;
+  },
+  getUserPermissionError: (username, recordType, recordIdentifier, tenantId) => {
+    return `User ${username} does not have required permission to edit the ${recordType} record - id=${recordIdentifier} on the tenant ${tenantId}`;
   },
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
