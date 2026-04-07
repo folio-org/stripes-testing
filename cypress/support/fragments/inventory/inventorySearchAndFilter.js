@@ -855,8 +855,9 @@ export default {
     cy.expect(tagsButton.find(HTML(`${count}`)).exists());
   },
 
-  verifyInstanceDetailsView() {
-    cy.expect(instanceDetailsSection.exists());
+  verifyInstanceDetailsView(isShown = true) {
+    if (isShown) cy.expect(instanceDetailsSection.exists());
+    else cy.expect(instanceDetailsSection.absent());
   },
 
   selectFoundInstance(instanceTitle) {
