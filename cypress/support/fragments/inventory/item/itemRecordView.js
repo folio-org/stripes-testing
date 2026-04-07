@@ -33,6 +33,7 @@ const tagsAccordion = Accordion('Tags');
 const hridKeyValue = KeyValue('Item HRID');
 const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 const closeIcon = Button({ icon: 'times' });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -688,5 +689,9 @@ export default {
 
   checkInstanceTitle: (instanceTitle) => {
     cy.expect(Pane(including('Item')).find(Link(instanceTitle)).exists());
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
   },
 };
