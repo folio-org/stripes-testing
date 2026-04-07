@@ -163,6 +163,8 @@ export const ERROR_MESSAGES = {
   NO_CHANGE_REQUIRED: 'No change in value required',
   NO_CHANGE_IN_ADMINISTRATIVE_DATA_REQUIRED: 'No change in administrative data required',
   NO_CHANGE_IN_MARC_FIELDS_REQUIRED: 'No change in MARC fields required',
+  NO_CHANGE_INSTANCE_SUPPRESSED_RECORDS_UPDATED:
+    'No change in value for instance required, suppressed associated records have been updated.',
   NO_MATCH_FOUND: 'No match found',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
@@ -185,6 +187,9 @@ export const ERROR_MESSAGES = {
     'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
   noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
+  getUserAffiliationError: (username, recordType, recordIdentifier, tenantId) => {
+    return `User ${username} does not have required affiliation to edit the ${recordType} record - ${recordIdentifier} on the tenant ${tenantId}`;
+  },
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
