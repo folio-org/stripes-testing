@@ -315,7 +315,7 @@ describe('Inventory', () => {
           // Create all instances
           cy.then(() => {
             instanceTitles.forEach((title, index) => {
-              if (recordsData.find(el => el.instanceIndex === index && el.isMarcInstance) {
+              if (recordsData.find(el => el.instanceIndex === index && el.isMarcInstance)) {
                 cy.createSimpleMarcBibViaAPI(title).then((instanceId) => {
                   instanceIds[index] = instanceId;
                 });
