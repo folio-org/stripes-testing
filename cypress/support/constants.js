@@ -1952,15 +1952,7 @@ export const RECEIVING_TITILE_ACCORDION_NAMES = {
   BOUND_ITEMS: 'Bound items',
 };
 
-export const FUND_DISTRIBUTION_TYPES = {
-  AMOUNT: 'amount',
-  PERCENTAGE: 'percentage',
-};
-
-export const FINANCIAL_SUMMARY_FIELD_LABELS = {
-  INITIAL_ALLOCATION: 'Initial allocation',
-  TOTAL_ALLOCATED: 'Total allocated',
-  TOTAL_FUNDING: 'Total funding',
+export const FINANCIAL_ACTIVITY_OVERRAGES = {
   ENCUMBERED: 'Encumbered',
   AWAITING_PAYMENT: 'Awaiting payment',
   EXPENDED: 'Expended',
@@ -1968,4 +1960,40 @@ export const FINANCIAL_SUMMARY_FIELD_LABELS = {
   UNAVAILABLE: 'Unavailable',
   OVER_ENCUMBRANCE: 'Over encumbrance',
   OVER_EXPENDED: 'Over expended',
+  AVAILABLE_BALANCE: 'Available balance',
+};
+
+export const TRANSACTION_DETAIL_FIELDS = {
+  FISCAL_YEAR: 'Fiscal year',
+  TRANSACTION_DATE: 'Transaction date',
+  AMOUNT: 'Amount',
+  SOURCE: 'Source',
+  TYPE: 'Type',
+  FROM: 'From',
+  TO: 'To',
+  EXPENSE_CLASS: 'Expense class',
+  TAGS: 'Tags',
+  INITIAL_ENCUMBRANCE: 'Initial encumbrance',
+  AWAITING_PAYMENT: 'Awaiting payment',
+  EXPENDED: 'Expended',
+  STATUS: 'Status',
+  DESCRIPTION: 'Description',
+};
+
+export const ENCUMBRANCE_STATUSES = {
+  RELEASED: 'Released',
+  UNRELEASED: 'Unreleased',
+};
+
+export const INVOICE_VIEW_FIELDS = {
+  FISCAL_YEAR: 'Fiscal year',
+  INVOICE_STATUS: 'Status',
+  SUB_TOTAL: 'Sub-total',
+  VENDOR_NAME: 'Vendor name',
+  VOUCHER_STATUS: 'Status',
+};
+
+export const INVOICE_LINE_VIEW_FIELDS = {
+  STATUS: 'Status',
+  SUB_TOTAL: 'Sub-total',
 };
