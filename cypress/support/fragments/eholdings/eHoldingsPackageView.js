@@ -67,6 +67,16 @@ const agreementsAccordion = Accordion('Agreements');
 const deleteAgreementModal = Modal('Delete agreement line');
 const accessStatusTypeKeyValue = KeyValue('Access status type');
 const byAccessStatusTypesCheckbox = Checkbox('Search by access status types only');
+const titlesShowColumns = [
+  'Status',
+  'Managed coverage',
+  'Custom coverage',
+  'Managed embargo period',
+  'Custom embargo period',
+  'Publication type',
+  'Access status type',
+  'Tag(s)',
+];
 
 export default {
   getCalloutMessageText,
@@ -502,5 +512,105 @@ export default {
         .find(KeyValue('Records found'))
         .has({ value: expectedCount.toLocaleString('en-US') }),
     );
+  },
+
+  verifyTitlesActionsMenuOptions() {
+    cy.expect([
+      DropdownMenu().find(Checkbox('Search by tags only')).exists(),
+      DropdownMenu().find(byAccessStatusTypesCheckbox).exists(),
+      DropdownMenu().find(RadioButton('Relevance')).exists(),
+      DropdownMenu().find(RadioButton('Title')).exists(),
+      DropdownMenu().find(RadioButton('All')).exists(),
+      DropdownMenu().find(RadioButton('Selected')).exists(),
+      DropdownMenu().find(RadioButton('Not selected')).exists(),
+      DropdownMenu().find(Select()).exists(),
+    ]);
+  },
+
+  verifyPublicationTypeDropdownOptions() {
+    const publicationTypes = [
+      'All',
+      'Audiobook',
+      'Book',
+      'Book Series',
+      'Database',
+      'Journal',
+      'Newsletter',
+      'Newspaper',
+      'Proceedings',
+      'Report',
+      'Streaming Audio',
+      'Streaming Video',
+      'Thesis & Dissertation',
+      'Website',
+      'Unspecified',
+    ];
+    publicationTypes.forEach((type) => {
+      cy.expect(
+        DropdownMenu()
+          .find(Select())
+          .has({ content: including(type) }),
+      );
+    });
+  },
+
+  verifyTitlesShowColumnsCheckboxes() {
+    titlesShowColumns.forEach((column) => {
+      cy.expect(DropdownMenu().find(Checkbox(column)).is({ checked: true }));
+    });
+  },
+
+  uncheckAllShowColumnsCheckboxes() {
+    titlesShowColumns.forEach((column) => {
+      cy.do(DropdownMenu().find(Checkbox(column)).uncheckIfSelected());
+    });
+  },
+
+  checkAllShowColumnsCheckboxes() {
+    titlesShowColumns.forEach((column) => {
+      cy.do(DropdownMenu().find(Checkbox(column)).checkIfNotSelected());
+    });
+  },
+
+  verifyOnlyTitleColumnDisplayed() {
+    cy.expect(titlesSection.find(HTML(including('Title'))).exists());
+    titlesShowColumns.forEach((column) => {
+      cy.expect(titlesSection.find(HTML(column)).absent());
+    });
+  },
+
+  collapseTitlesSection() {
+    cy.do(titlesSection.toggle());
+    cy.expect(titlesSection.is({ expanded: false }));
+  },
+
+  expandTitlesSection() {
+    cy.do(titlesSection.toggle());
+    cy.expect(titlesSection.is({ expanded: true }));
+  },
+
+  checkShowColumnCheckboxAndVerify(columnName) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).checkIfNotSelected());
+    cy.expect(titlesSection.find(HTML(including(columnName))).exists());
+  },
+
+  uncheckShowColumnCheckbox(columnName) {
+    cy.do(DropdownMenu().find(Checkbox(columnName)).uncheckIfSelected());
+  },
+
+  verifyColumnNotDisplayed(columnName) {
+    cy.expect(titlesSection.find(HTML(columnName)).absent());
+  },
+
+  searchWithinTitles(titleName) {
+    cy.do(titlesSection.find(TextField({ type: 'search' })).fillIn(titleName));
+    cy.intercept('GET', '**/eholdings/packages/*/resources?**').as('getTitleResults');
+    cy.get('#packageShowTitles input[type="search"]').type('{enter}');
+    cy.wait('@getTitleResults').its('response.statusCode').should('eq', 200);
+  },
+
+  filterTitlesBySelectionStatus(status) {
+    cy.do(DropdownMenu().find(RadioButton(status)).click());
+    cy.wait(1000);
   },
 };
