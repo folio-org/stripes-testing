@@ -5,11 +5,11 @@ export class ExecutionFlowManager {
   }
 
   get context() {
-    return this.ctx();
+    return this._ctx;
   }
 
   set(key, value, cleanupFn) {
-    this._ctx.set(key, value);
+    this.context.set(key, value);
 
     if (cleanupFn) {
       this.cleanupSteps.set(key, () => cleanupFn(value));
@@ -18,11 +18,11 @@ export class ExecutionFlowManager {
   }
 
   ctx() {
-    return this._ctx;
+    return Object.fromEntries(this.context);
   }
 
   get(key) {
-    return this.ctx().get(key);
+    return this.context.get(key);
   }
 
   step(callback) {
@@ -38,7 +38,7 @@ export class ExecutionFlowManager {
       const keys = Array.from(this.cleanupSteps.keys()).reverse();
 
       keys.forEach((key) => {
-        this.cleanupSteps.get(key)(this.ctx());
+        this.cleanupSteps.get(key)(this.context);
       });
     });
   }

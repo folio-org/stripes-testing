@@ -3,32 +3,37 @@ import moment from 'moment';
 import permissions from '../../../support/dictionary/permissions';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  FINANCIAL_SUMMARY_FIELD_LABELS,
+  FINANCIAL_ACTIVITY_OVERRAGES,
   FUND_DISTRIBUTION_TYPES,
+  FUNDING_INFORMATION_NAMES,
   INVOICE_STATUSES, ORDER_STATUSES,
 } from '../../../support/constants';
-import { LedgerRollovers } from '../../../support/fragments/finance';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import FiscalYearDetails from '../../../support/fragments/finance/fiscalYears/fiscalYearDetails';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import FinanceHelper from '../../../support/fragments/finance/financeHelper';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Groups from '../../../support/fragments/finance/groups/groups';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
+import {
+  Budgets,
+  FinanceHelper,
+  FiscalYearDetails,
+  FiscalYears,
+  Funds,
+  Groups,
+  LedgerRollovers,
+  Ledgers,
+} from '../../../support/fragments/finance';
+import { Invoices } from '../../../support/fragments/invoices';
+import {
+  BasicOrderLine,
+  NewOrder,
+  Orders,
+  OrderLines,
+} from '../../../support/fragments/orders';
+import { NewOrganization } from '../../../support/fragments/organizations';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import DateTools from '../../../support/utils/dateTools';
-import getRandomStringCode from '../../../support/utils/generateTextCode';
 import {
+  DateTools,
   ExecutionFlowManager,
   NumberTools,
 } from '../../../support/utils';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 
 /* Resource keys */
 const R = {
@@ -86,41 +91,42 @@ describe('Finance | Fiscal Year', () => {
     'C1030041 Verify that correct data is displayed for two consecutive fiscal years (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C1030041'] },
     () => {
-      const ctx = flow.context;
-
-      const initialFiscalYear = ctx.get(R.INITIAL_FISCAL_YEAR);
-      const nextFiscalYear = ctx.get(R.NEXT_FISCAL_YEAR);
-      const ledgerA = ctx.get(R.LEDGER_A);
-      const ledgerB = ctx.get(R.LEDGER_B);
-      const ledgerC = ctx.get(R.LEDGER_C);
-      const groupA = ctx.get(R.GROUP_A);
-      const groupB = ctx.get(R.GROUP_B);
-      const fundA = ctx.get(R.FUND_A);
-      const fundB = ctx.get(R.FUND_B);
-      const fundC = ctx.get(R.FUND_C);
-      const locale = ctx.get(R.LOCALE);
+      const {
+        initialFiscalYear,
+        nextFiscalYear,
+        ledgerA,
+        ledgerB,
+        ledgerC,
+        groupA,
+        groupB,
+        fundA,
+        fundB,
+        fundC,
+        locale,
+      } = flow.ctx();
 
       const format = (value) => NumberTools.formatCurrency(value, locale);
 
       // Check Fiscal year #1 details
       FinanceHelper.searchByCode(initialFiscalYear.code);
-      FinanceHelper.selectFirstFinance(initialFiscalYear.name);
+      FiscalYears.selectFY(initialFiscalYear.name);
+      FiscalYears.expectFY(initialFiscalYear.name);
       FiscalYearDetails.checkFiscalYearDetails({
         financialSummary: {
           information: [
             // Funding information
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.INITIAL_ALLOCATION, value: format(2000) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.TOTAL_ALLOCATED, value: format(2000) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.TOTAL_FUNDING, value: format(2000) },
+            { key: FUNDING_INFORMATION_NAMES.INITIAL_ALLOCATION, value: format(2000) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: format(2000) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING, value: format(2000) },
 
             // Financial activity & overages
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.ENCUMBERED, value: format(5) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.AWAITING_PAYMENT, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.EXPENDED, value: format(20) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.CREDITED, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.UNAVAILABLE, value: format(25) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.OVER_ENCUMBRANCE, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.OVER_EXPENDED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: format(5) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: format(20) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.CREDITED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.UNAVAILABLE, value: format(25) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_ENCUMBRANCE, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_EXPENDED, value: format(0) },
           ],
           balance: { cash: format(1980), available: format(1975) },
         },
@@ -183,23 +189,24 @@ describe('Finance | Fiscal Year', () => {
 
       // Check Fiscal year #2 details
       FinanceHelper.searchByCode(nextFiscalYear.code);
-      FinanceHelper.selectFirstFinance(nextFiscalYear.name);
+      FiscalYears.selectFY(nextFiscalYear.name);
+      FiscalYears.expectFY(nextFiscalYear.name);
       FiscalYearDetails.checkFiscalYearDetails({
         financialSummary: {
           information: [
             // Funding information
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.INITIAL_ALLOCATION, value: format(3000) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.TOTAL_ALLOCATED, value: format(3000) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.TOTAL_FUNDING, value: format(3000) },
+            { key: FUNDING_INFORMATION_NAMES.INITIAL_ALLOCATION, value: format(3000) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: format(3000) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING, value: format(3000) },
 
             // Financial activity & overages
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.ENCUMBERED, value: format(5) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.AWAITING_PAYMENT, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.EXPENDED, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.CREDITED, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.UNAVAILABLE, value: format(5) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.OVER_ENCUMBRANCE, value: format(0) },
-            { key: FINANCIAL_SUMMARY_FIELD_LABELS.OVER_EXPENDED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: format(5) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.CREDITED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.UNAVAILABLE, value: format(5) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_ENCUMBRANCE, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_EXPENDED, value: format(0) },
           ],
           balance: { cash: format(3000), available: format(2995) },
         },
@@ -223,7 +230,7 @@ describe('Finance | Fiscal Year', () => {
             code: ledgerC.code,
             allocated: format(1000),
             unavailable: format(0),
-            available: format(0),
+            available: format(1000),
           },
         ],
         groups: [
@@ -272,7 +279,7 @@ describe('Finance | Fiscal Year', () => {
 
 // --- API calls and support functions ---
 function getPreconditionSteps() {
-  const createActiveConsecutiveFiscalYears = (flowManager) => {
+  const createActiveConsecutiveFiscalYears = (flow) => {
     const defaultRolloverFiscalYear = FiscalYears.defaultRolloverFiscalYear;
     const series = getRandomStringCode(4);
 
@@ -286,12 +293,12 @@ function getPreconditionSteps() {
           series,
           code: `${series}${new Date(periods.periodStart).getFullYear()}`,
         })
-        .then((fiscalYear) => flowManager.set(fiscalYearKey, fiscalYear));
+        .then((fiscalYear) => flow.set(fiscalYearKey, fiscalYear));
     });
   };
 
   const createActiveLedgersForInitialFiscalYear = (flow) => {
-    const fiscalYearOneId = flow.ctx().get(R.INITIAL_FISCAL_YEAR).id;
+    const fiscalYearOneId = flow.get(R.INITIAL_FISCAL_YEAR).id;
 
     [R.LEDGER_A, R.LEDGER_B].forEach((ledgerKey, index) => {
       const { name, ...base } = Ledgers.getDefaultLedger();
@@ -316,19 +323,18 @@ function getPreconditionSteps() {
     });
   };
 
-  const createActiveFundsForWithGroups = (flowManager) => {
-    const ctx = flowManager.context;
-    const fiscalYearOneId = ctx.get(R.INITIAL_FISCAL_YEAR).id;
-
-    const ledgerAId = ctx.get(R.LEDGER_A).id;
-    const ledgerBId = ctx.get(R.LEDGER_B).id;
-
-    const groupAId = ctx.get(R.GROUP_A).id;
-    const groupBId = ctx.get(R.GROUP_B).id;
+  const createActiveFundsForWithGroups = (flow) => {
+    const {
+      initialFiscalYear,
+      ledgerA,
+      ledgerB,
+      groupA,
+      groupB,
+    } = flow.ctx();
 
     [
-      [ledgerAId, groupAId, R.FUND_A, R.BUDGET_A],
-      [ledgerBId, groupBId, R.FUND_B, R.BUDGET_B],
+      [ledgerA.id, groupA.id, R.FUND_A, R.BUDGET_A],
+      [ledgerB.id, groupB.id, R.FUND_B, R.BUDGET_B],
     ].forEach(([ledgerId, groupId, fundKey, budgetKey], index) => {
       const { name, ...base } = Funds.getDefaultFund();
 
@@ -341,38 +347,38 @@ function getPreconditionSteps() {
           },
           [groupId],
         )
-        .then((fundData) => flowManager.set(fundKey, fundData))
+        .then((fundData) => flow.set(fundKey, fundData))
         .then(({ context }) => (
           Budgets
             .createViaApi({
               ...Budgets.getDefaultBudget(),
               fundId: context.get(fundKey).fund.id,
-              fiscalYearId: fiscalYearOneId,
+              fiscalYearId: initialFiscalYear.id,
               allocated: 1000,
             })
         ))
-        .then((budget) => flowManager.set(budgetKey, budget));
+        .then((budget) => flow.set(budgetKey, budget));
     });
   };
 
-  const createPurchaseOrderWithLine = (flowManager) => {
-    flowManager
-      .step(() => {
+  const createPurchaseOrderWithLine = (flow) => {
+    flow
+      .step(({ context }) => {
         NewOrganization
           .createViaApi(NewOrganization.getDefaultOrganization())
-          .then((organization) => flowManager.set(R.VENDOR, organization));
+          .then((organization) => context.set(R.VENDOR, organization));
       })
-      .step((fm) => {
+      .step(({ context }) => {
         Orders
           .createOrderViaApi({
-            ...NewOrder.getDefaultOrder({ vendorId: fm.context.get(R.VENDOR)?.id }),
+            ...NewOrder.getDefaultOrder({ vendorId: context.get(R.VENDOR)?.id }),
             reEncumber: true,
           })
-          .then((order) => fm.set(R.ORDER, order));
+          .then((order) => context.set(R.ORDER, order));
       })
-      .step((fm) => {
+      .step(({ context }) => {
         const fundDistribution = [R.FUND_A, R.FUND_B].map((fundKey) => ({
-          fundId: fm.context.get(fundKey).fund.id,
+          fundId: context.get(fundKey).fund.id,
           distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
           value: 50,
         }));
@@ -382,62 +388,60 @@ function getPreconditionSteps() {
             OrderLines
               .createOrderLineViaApi(BasicOrderLine.getDefaultOrderLine({
                 acquisitionMethod: body.acquisitionMethods[0].id,
-                purchaseOrderId: fm.context.get(R.ORDER)?.id,
+                purchaseOrderId: context.get(R.ORDER)?.id,
                 listUnitPrice: 25,
                 fundDistribution,
               }))
           ))
-          .then((orderLine) => fm.set(R.ORDER_LINE, orderLine));
+          .then((orderLine) => context.set(R.ORDER_LINE, orderLine));
       })
-      .step((fm) => {
+      .step(({ context }) => {
         Orders
-          .updateOrderViaApi({ ...fm.context.get(R.ORDER), workflowStatus: ORDER_STATUSES.OPEN })
-          .then(({ body }) => fm.set(R.ORDER, body));
+          .updateOrderViaApi({ ...context.get(R.ORDER), workflowStatus: ORDER_STATUSES.OPEN })
+          .then(({ body }) => context.set(R.ORDER, body));
       });
   };
 
-  const createPaidInvoiceWithInvoiceLines = (flowManager) => {
-    const ctx = flowManager.context;
-
-    flowManager
-      .step(() => {
+  const createPaidInvoiceWithInvoiceLines = (flow) => {
+    flow
+      .step(({ context }) => {
         Invoices
           .createInvoiceViaApi({
-            vendorId: ctx.get(R.VENDOR)?.id,
-            accountingCode: ctx.get(R.VENDOR)?.erpCode,
-            fiscalYearId: ctx.get(R.INITIAL_FISCAL_YEAR)?.id,
+            vendorId: context.get(R.VENDOR)?.id,
+            accountingCode: context.get(R.VENDOR)?.erpCode,
+            fiscalYearId: context.get(R.INITIAL_FISCAL_YEAR)?.id,
             exportToAccounting: true,
           })
-          .then((invoice) => flowManager.set(R.INVOICE, invoice));
+          .then((invoice) => context.set(R.INVOICE, invoice));
       })
-      .step((fm) => {
+      .step(({ context }) => {
         Invoices
           .createInvoiceLineViaApi(Invoices.getDefaultInvoiceLine({
-            invoiceId: fm.context.get(R.INVOICE)?.id,
+            invoiceId: context.get(R.INVOICE)?.id,
             invoiceLineStatus: INVOICE_STATUSES.OPEN,
-            poLineId: fm.context.get(R.ORDER_LINE)?.id,
-            fundDistributions: fm.context.get(R.ORDER_LINE)?.fundDistribution,
+            poLineId: context.get(R.ORDER_LINE)?.id,
+            fundDistributions: context.get(R.ORDER_LINE)?.fundDistribution,
             subTotal: 20,
-            accountingCode: fm.context.get(R.VENDOR)?.erpCode,
+            accountingCode: context.get(R.VENDOR)?.erpCode,
             releaseEncumbrance: false,
           }));
       })
-      .step((fm) => {
+      .step(({ context }) => {
         Invoices
           .changeInvoiceStatusViaApi({
-            invoice: fm.context.get(R.INVOICE),
+            invoice: context.get(R.INVOICE),
             status: INVOICE_STATUSES.PAID,
           });
       });
   };
 
-  const rolloverLedgers = (flowManager) => {
-    const fromFiscalYear = flowManager.context.get(R.INITIAL_FISCAL_YEAR);
-    const toFiscalYear = flowManager.context.get(R.NEXT_FISCAL_YEAR);
+  const rolloverLedgers = (flow) => {
+    const fromFiscalYear = flow.get(R.INITIAL_FISCAL_YEAR);
+    const toFiscalYear = flow.get(R.NEXT_FISCAL_YEAR);
 
     [R.LEDGER_A, R.LEDGER_B].forEach((ledgerKey) => {
       LedgerRollovers.createLedgerRolloverViaApi(LedgerRollovers.generateLedgerRollover({
-        ledger: flowManager.context.get(ledgerKey),
+        ledger: flow.get(ledgerKey),
         fromFiscalYear,
         toFiscalYear,
         encumbrancesRollover: [
@@ -451,8 +455,8 @@ function getPreconditionSteps() {
   };
 
   const updateFiscalYearDates = (flow) => {
-    const initialFiscalYear = flow.context.get(R.INITIAL_FISCAL_YEAR);
-    const nextFiscalYear = flow.context.get(R.NEXT_FISCAL_YEAR);
+    const initialFiscalYear = flow.get(R.INITIAL_FISCAL_YEAR);
+    const nextFiscalYear = flow.get(R.NEXT_FISCAL_YEAR);
 
     FiscalYears.updateFiscalYearViaApi({
       ...initialFiscalYear,
@@ -469,7 +473,7 @@ function getPreconditionSteps() {
     Ledgers
       .createViaApi({
         ...Ledgers.getDefaultLedger(),
-        fiscalYearOneId: flow.context.get(R.NEXT_FISCAL_YEAR).id,
+        fiscalYearOneId: flow.get(R.NEXT_FISCAL_YEAR).id,
       })
       .then((ledger) => flow.set(R.LEDGER_C, ledger));
   };
@@ -477,8 +481,8 @@ function getPreconditionSteps() {
   const createActiveFundsForLedgerC = (flow) => {
     Funds
       .createViaApi(
-        { ...Funds.getDefaultFund(), ledgerId: flow.context.get(R.LEDGER_C).id },
-        [flow.context.get(R.GROUP_A).id, flow.context.get(R.GROUP_B).id],
+        { ...Funds.getDefaultFund(), ledgerId: flow.get(R.LEDGER_C).id },
+        [flow.get(R.GROUP_A).id, flow.get(R.GROUP_B).id],
       )
       .then((fundData) => flow.set(R.FUND_C, fundData))
       .then(({ context }) => (
@@ -502,8 +506,8 @@ function getPreconditionSteps() {
       ));
   };
 
-  const loginToHeFinanceApp = ({ context }) => {
-    const userProperties = context.get(R.USER_PROPERTIES);
+  const loginToHeFinanceApp = (flow) => {
+    const userProperties = flow.get(R.USER_PROPERTIES);
 
     cy.login(userProperties.username, userProperties.password, {
       path: TopMenu.fiscalYearPath,
