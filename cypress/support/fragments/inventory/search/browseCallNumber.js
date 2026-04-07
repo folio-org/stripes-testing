@@ -292,7 +292,7 @@ export default {
           const cells = row.querySelectorAll('[class*="mclCell"]');
           return cells[0]?.textContent === callNumber;
         });
-        expect(matchingRows).to.have.length(expectedCount);
+        expect(matchingRows.length).to.equal(expectedCount);
         matchingRows.forEach((row, index) => {
           if (isHighlighted) {
             const strong = row.querySelector('strong');

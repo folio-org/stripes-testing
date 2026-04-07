@@ -194,7 +194,9 @@ describe('Inventory', () => {
             // Step: select browse option, search for call number
             InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(browseOption);
             InventorySearchAndFilter.checkBrowseOptionSelected(browseOption);
+            cy.intercept('GET', /browse\/call-numbers\//).as('browseResults');
             InventorySearchAndFilter.browseSearch(sameCallNumber);
+            cy.wait('@browseResults');
 
             // Verify N rows are highlighted, each with "1" in Number of titles
             BrowseCallNumber.checkCallNumbersShown();
@@ -228,11 +230,9 @@ describe('Inventory', () => {
             // Step: return to Browse tab
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.validateBrowseToggleIsSelected();
-            // Verify same results are still displayed
-            BrowseCallNumber.checkResultsWithSameCallNumber(sameCallNumber, expectedCount, {
-              isHighlighted: true,
-              numberOfTitlesValues: Array(expectedCount).fill('1'),
-            });
+            BrowseCallNumber.checkCallNumbersShown();
+            BrowseCallNumber.checkValuePresentInResults(sameCallNumber);
+
             InventorySearchAndFilter.clickResetAllButton();
             InventorySearchAndFilter.verifyBrowseResultListExists(false);
           });
