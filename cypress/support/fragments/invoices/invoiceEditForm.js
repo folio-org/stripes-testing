@@ -13,12 +13,14 @@ import {
   including,
   MultiSelect,
   MultiSelectOption,
+  Pane,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
+import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
@@ -28,13 +30,14 @@ const vendorInformationSection = invoiceEditFormRoot.find(
 const extendedInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-extendedInformation' }),
 );
+const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const deleteButton = Button({ icon: 'trash' });
 const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
 const linkNameTextField = TextField('Link name*');
 const externalUrlTextField = TextField('External URL');
-
+const unsavedChangesMessage = 'There are unsaved changes';
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
   note: informationSection.find(TextArea({ id: 'note' })),
@@ -154,6 +157,21 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(invoiceEditFormRoot.absent());
   },
+
+  cancelWithUnsavedChanges(keepEditing = false) {
+    cy.do(cancelButton.click());
+    areYouSureModal.verifyModalElements(unsavedChangesMessage);
+
+    if (keepEditing) {
+      areYouSureModal.clickKeepEditing();
+      cy.expect(invoiceEditFormRoot.exists());
+    } else {
+      areYouSureModal.clickCloseWithoutSaving();
+      cy.expect(invoiceEditFormRoot.absent());
+      cy.expect(invoiceDetailsPane.absent());
+    }
+  },
+
   clickSaveButton({ invoiceCreated = true, invoiceLineCreated = false } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
     cy.do(saveButton.click());
