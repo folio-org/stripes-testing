@@ -73,6 +73,12 @@ export default {
     cy.do(Button({ id: including('clickable-save-addresses') }).click());
     cy.wait(500);
   },
+  verifyAddressIsInEditMode() {
+    cy.get('input[name$=".name"]').should('be.visible');
+  },
+  verifyAddressIsNotInEditMode() {
+    cy.get('input[name$=".name"]').should('not.exist');
+  },
   openLastUpdated(name) {
     cy.do(
       MultiColumnListRow({ content: including(name), isContainer: true })
