@@ -1,4 +1,4 @@
-export class ResourceFlowManager {
+export class ExecutionFlowManager {
   constructor() {
     this._ctx = new Map();
     this.cleanupSteps = new Map();

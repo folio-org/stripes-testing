@@ -1956,3 +1956,16 @@ export const FUND_DISTRIBUTION_TYPES = {
   AMOUNT: 'amount',
   PERCENTAGE: 'percentage',
 };
+
+export const FINANCIAL_SUMMARY_FIELD_LABELS = {
+  INITIAL_ALLOCATION: 'Initial allocation',
+  TOTAL_ALLOCATED: 'Total allocated',
+  TOTAL_FUNDING: 'Total funding',
+  ENCUMBERED: 'Encumbered',
+  AWAITING_PAYMENT: 'Awaiting payment',
+  EXPENDED: 'Expended',
+  CREDITED: 'Credited',
+  UNAVAILABLE: 'Unavailable',
+  OVER_ENCUMBRANCE: 'Over encumbrance',
+  OVER_EXPENDED: 'Over expended',
+};
