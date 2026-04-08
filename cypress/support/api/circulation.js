@@ -143,3 +143,16 @@ Cypress.Commands.add('getByLoan', (loanStatus) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getCirculationLogs', ({ failOnStatusCode, searchParams = {} } = {}) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: 'audit-data/circulation/logs',
+    searchParams: {
+      limit: 1000,
+      ...searchParams,
+    },
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
+  });
+});

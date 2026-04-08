@@ -1,9 +1,10 @@
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import DateTools from '../../support/utils/dateTools';
-import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
 import Invoices from '../../support/fragments/invoices/invoices';
 import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
+import InvoiceLineEditForm from '../../support/fragments/invoices/invoiceLineEditForm';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -14,7 +15,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
-import Approvals from '../../support/fragments/settings/invoices/approvals';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -22,9 +22,11 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ENCUMBRANCE_STATUSES,
   FINANCIAL_ACTIVITY_OVERRAGES,
+  INVOICE_LINE_VIEW_FIELDS,
   INVOICE_STATUSES,
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
+  ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
   TRANSACTION_DETAIL_FIELDS,
   TRANSACTION_TYPES,
@@ -34,7 +36,9 @@ import { CodeTools, StringTools } from '../../support/utils';
 
 describe('Invoices', () => {
   const code = CodeTools(4);
-  const invoiceAmount = 150;
+  const orderLineAmount = 20;
+  const secondInvoiceAmount = 80;
+  const editedInvoiceLineAmount = 30;
   const testData = {
     fiscalYears: {
       first: {
@@ -47,29 +51,19 @@ describe('Invoices', () => {
         code: `${code}${StringTools.randomTwoDigitNumber()}02`,
         ...DateTools.getFullFiscalYearStartAndEnd(1),
       },
-      third: {
-        ...FiscalYears.getDefaultFiscalYear(),
-        code: `${code}${StringTools.randomTwoDigitNumber()}03`,
-        ...DateTools.getFullFiscalYearStartAndEnd(2),
-      },
-      fourth: {
-        ...FiscalYears.getDefaultFiscalYear(),
-        code: `${code}${StringTools.randomTwoDigitNumber()}04`,
-        ...DateTools.getFullFiscalYearStartAndEnd(3),
-      },
     },
     ledger: {},
     fund: {},
     budget: {},
     order: {},
     orderLine: {},
-    invoice: {},
+    firstInvoice: {},
+    secondInvoice: {},
     organization: {},
     acquisitionMethodId: null,
     batchGroupId: null,
-    expenseClass: {},
     user: {},
-    rollovers: {},
+    rollover: {},
   };
 
   const createFiscalYear = (fiscalYearKey) => {
@@ -81,10 +75,7 @@ describe('Invoices', () => {
   };
 
   const createFiscalYearsData = () => {
-    return createFiscalYear('first')
-      .then(() => createFiscalYear('second'))
-      .then(() => createFiscalYear('third'))
-      .then(() => createFiscalYear('fourth'));
+    return createFiscalYear('first').then(() => createFiscalYear('second'));
   };
 
   const createLedgerAndFund = () => {
@@ -92,7 +83,7 @@ describe('Invoices', () => {
       ...Ledgers.getDefaultLedger(),
       fiscalYearOneId: testData.fiscalYears.first.id,
       restrictExpenditures: true,
-      restrictEncumbrance: false,
+      restrictEncumbrance: true,
     }).then((ledgerResponse) => {
       testData.ledger = ledgerResponse;
 
@@ -109,20 +100,6 @@ describe('Invoices', () => {
           allocated: 100,
         }).then((budgetResponse) => {
           testData.budget = budgetResponse;
-
-          const expenseClass = ExpenseClasses.getDefaultExpenseClass();
-          return ExpenseClasses.createExpenseClassViaApi(expenseClass).then((response) => {
-            testData.expenseClass = response;
-            return Budgets.updateBudgetViaApi({
-              ...testData.budget,
-              statusExpenseClasses: [
-                {
-                  status: 'Active',
-                  expenseClassId: response.id,
-                },
-              ],
-            });
-          });
         });
       });
     });
@@ -155,6 +132,8 @@ describe('Invoices', () => {
   const createOrderWithLine = () => {
     const order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+      orderType: ORDER_TYPES.ONGOING,
+      ongoing: { isSubscription: false, manualRenewal: false },
       approved: true,
       reEncumber: true,
     };
@@ -168,17 +147,16 @@ describe('Invoices', () => {
         acquisitionMethod: testData.acquisitionMethodId,
         cost: {
           ...BasicOrderLine.defaultOrderLine.cost,
-          listUnitPrice: invoiceAmount,
+          listUnitPrice: orderLineAmount,
           quantityPhysical: 1,
-          poLineEstimatedPrice: invoiceAmount,
+          poLineEstimatedPrice: orderLineAmount,
         },
         fundDistribution: [
           {
             code: testData.fund.code,
             fundId: testData.fund.id,
-            distributionType: 'amount',
-            value: invoiceAmount,
-            expenseClassId: testData.expenseClass.id,
+            distributionType: 'percentage',
+            value: 100,
           },
         ],
         locations: [],
@@ -195,29 +173,75 @@ describe('Invoices', () => {
           ...orderResponse,
           workflowStatus: ORDER_STATUSES.OPEN,
         }).then(() => {
-          return Orders.getOrderByIdViaApi(orderResponse.id).then((updatedOrder) => {
-            testData.order = updatedOrder;
-          });
+          return OrderLines.getOrderLineByIdViaApi(orderLineResponse.id).then(
+            (updatedOrderLine) => {
+              testData.orderLine = updatedOrderLine;
+            },
+          );
         });
       });
     });
   };
 
-  const performRollover = (fromFiscalYearKey, toFiscalYearKey) => {
+  const createFirstInvoice = () => {
+    return Invoices.createInvoiceWithInvoiceLineViaApi({
+      vendorId: testData.organization.id,
+      poLineId: testData.orderLine.id,
+      fiscalYearId: testData.fiscalYears.first.id,
+      invoiceStatus: INVOICE_STATUSES.REVIEWED,
+      batchGroupId: testData.batchGroupId,
+      fundDistributions: testData.orderLine.fundDistribution,
+      accountingCode: testData.organization.erpCode,
+      subTotal: orderLineAmount,
+    }).then((invoiceResponse) => {
+      testData.firstInvoice = invoiceResponse;
+    });
+  };
+
+  const createSecondInvoice = () => {
+    return Invoices.createInvoiceWithInvoiceLineWithoutOrderViaApi({
+      vendorId: testData.organization.id,
+      fiscalYearId: testData.fiscalYears.first.id,
+      batchGroupId: testData.batchGroupId,
+      invoiceStatus: INVOICE_STATUSES.OPEN,
+      fundDistributions: [
+        {
+          code: testData.fund.code,
+          fundId: testData.fund.id,
+          distributionType: 'percentage',
+          value: 100,
+        },
+      ],
+      accountingCode: testData.organization.erpCode,
+      subTotal: secondInvoiceAmount,
+    }).then((invoiceResponse) => {
+      testData.secondInvoice = invoiceResponse;
+
+      return Invoices.changeInvoiceStatusViaApi({
+        invoice: testData.secondInvoice,
+        status: INVOICE_STATUSES.PAID,
+      });
+    });
+  };
+
+  const performRollover = () => {
     const rollover = LedgerRollovers.generateLedgerRollover({
       ledger: testData.ledger,
-      fromFiscalYear: testData.fiscalYears[fromFiscalYearKey],
-      toFiscalYear: testData.fiscalYears[toFiscalYearKey],
+      fromFiscalYear: testData.fiscalYears.first,
+      toFiscalYear: testData.fiscalYears.second,
       needCloseBudgets: false,
-      encumbrancesRollover: [{ orderType: 'One-time', basedOn: 'InitialAmount' }],
+      budgetsRollover: [
+        {
+          rolloverAllocation: true,
+          rolloverBudgetValue: 'None',
+          addAvailableTo: 'Available',
+        },
+      ],
+      encumbrancesRollover: [{ orderType: ORDER_TYPES.ONGOING, basedOn: 'InitialAmount' }],
     });
 
-    return LedgerRollovers.createLedgerRolloverViaApi({
-      ...rollover,
-      restrictEncumbrance: false,
-    }).then((rolloverResponse) => {
-      const rolloverKey = `${fromFiscalYearKey}_to_${toFiscalYearKey}`;
-      testData.rollovers[rolloverKey] = rolloverResponse;
+    return LedgerRollovers.createLedgerRolloverViaApi(rollover).then((rolloverResponse) => {
+      testData.rollover = rolloverResponse;
     });
   };
 
@@ -232,19 +256,6 @@ describe('Invoices', () => {
         ...updatedFY,
         _version: updatedFY._version + 1,
       };
-    });
-  };
-
-  const createInvoice = () => {
-    return Invoices.createInvoiceWithInvoiceLineViaApi({
-      vendorId: testData.organization.id,
-      poLineId: testData.orderLine.id,
-      batchGroupId: testData.batchGroupId,
-      fundDistributions: testData.orderLine.fundDistribution,
-      accountingCode: testData.organization.erpCode,
-      subTotal: invoiceAmount,
-    }).then((invoiceResponse) => {
-      testData.invoice = invoiceResponse;
     });
   };
 
@@ -268,173 +279,117 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    Approvals.setApprovePayValueViaApi(false);
+    Approvals.setApprovePayValueViaApi(true);
     return createFiscalYearsData()
       .then(() => createLedgerAndFund())
       .then(() => createOrganizationAndReferenceData())
       .then(() => createOrderWithLine())
-      .then(() => performRollover('first', 'second'))
+      .then(() => createFirstInvoice())
+      .then(() => createSecondInvoice())
+      .then(() => performRollover())
       .then(() => updateFiscalYearDates('first', -1))
       .then(() => updateFiscalYearDates('second', 0))
-      .then(() => createInvoice())
-      .then(() => performRollover('second', 'third'))
-      .then(() => updateFiscalYearDates('second', -1))
-      .then(() => updateFiscalYearDates('third', 0))
-      .then(() => performRollover('third', 'fourth'))
-      .then(() => updateFiscalYearDates('third', -1))
-      .then(() => updateFiscalYearDates('fourth', 0))
       .then(() => createUserAndLogin());
   });
 
   after(() => {
     cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValueViaApi(false);
       Users.deleteViaApi(testData.user.userId);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
     });
   });
 
   it(
-    'C389493 User is not able to approve and pay Invoice created in the past when Invoice amount exceeds available budget amount (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C389493'] },
+    'C396385 User is not able to approve and pay invoice when related budget has not enough money (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C396385'] },
     () => {
-      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.firstInvoice.vendorInvoiceNo);
       InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNo,
+        title: testData.firstInvoice.vendorInvoiceNo,
         invoiceInformation: [
-          { key: INVOICE_VIEW_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.second.code },
+          { key: INVOICE_VIEW_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
         ],
         invoiceLines: [{ poNumber: testData.order.poNumber }],
         vendorDetails: [
           { key: INVOICE_VIEW_FIELDS.VENDOR_NAME, value: testData.organization.name },
         ],
       });
-      Invoices.canNotApproveInvoice(testData.fund);
-      InvoiceView.checkInvoiceDetails({
-        invoiceInformation: [
-          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.OPEN },
-        ],
-      });
       Invoices.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          expenseClass: testData.expenseClass.name,
+          expenseClass: '-',
           value: '100%',
-          amount: `$${invoiceAmount}.00`,
-          initialEncumbrance: `$${invoiceAmount}.00`,
-          currentEncumbrance: `$${invoiceAmount}.00`,
+          amount: `$${orderLineAmount}.00`,
+          initialEncumbrance: `$${orderLineAmount}.00`,
+          currentEncumbrance: `$${orderLineAmount}.00`,
+        },
+      ]);
+      Invoices.editInvoiceLine();
+      InvoiceLineEditForm.fillInvoiceLineFields({ subTotal: editedInvoiceLineAmount.toString() });
+      InvoiceLineEditForm.clickSaveButton();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
+        ],
+      });
+      Invoices.canNotApproveAndPayInvoice(testData.fund);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
+        ],
+      });
+      Invoices.selectInvoiceLine();
+      InvoiceLineDetails.checkInvoiceLineDetails({
+        invoiceLineInformation: [
+          { key: INVOICE_LINE_VIEW_FIELDS.STATUS, value: INVOICE_STATUSES.REVIEWED },
+          { key: INVOICE_LINE_VIEW_FIELDS.SUB_TOTAL, value: `$${editedInvoiceLineAmount}.00` },
+        ],
+      });
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        {
+          name: testData.fund.name,
+          expenseClass: '-',
+          value: '100%',
+          amount: `$${editedInvoiceLineAmount}.00`,
+          initialEncumbrance: `$${orderLineAmount}.00`,
+          currentEncumbrance: `$${orderLineAmount}.00`,
         },
       ]);
       Invoices.openPageCurrentEncumbrance(`${testData.fund.name}(${testData.fund.code})`);
-      Funds.selectPreviousBudgetDetails(2);
-      BudgetDetails.checkBudgetDetails({
-        summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: `$${invoiceAmount}.00`,
-          awaitingPayment: '$0.00',
-          expended: '$0.00',
-        },
-      });
+      Funds.selectPreviousBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
       Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
+      Funds.checkTransactionCount(TRANSACTION_TYPES.PAYMENT, 1);
+      Funds.selectTransactionInList(TRANSACTION_TYPES.PAYMENT);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${secondInvoiceAmount}.00)` },
+          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.secondInvoice.vendorInvoiceNo },
+          { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.PAYMENT },
+          {
+            key: TRANSACTION_DETAIL_FIELDS.FROM,
+            value: `${testData.fund.name} (${testData.fund.code})`,
+          },
+        ],
+      });
+      TransactionDetails.closeTransactionDetails();
       Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.TRANSACTION_DATE,
-            value: DateTools.getFormattedEndDateWithTimUTC(testData.order.dateOrdered),
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${invoiceAmount}.00)` },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${orderLineAmount}.00)` },
           { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
           { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
           {
             key: TRANSACTION_DETAIL_FIELDS.FROM,
             value: `${testData.fund.name} (${testData.fund.code})`,
           },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
-          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${invoiceAmount}.00` },
-          { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
-          { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
-        ],
-      });
-      Transactions.closeTransactionsPage();
-      Funds.closeBudgetDetails();
-      Funds.selectPreviousBudgetDetailsByFY(testData.fund, testData.fiscalYears.second);
-      BudgetDetails.checkBudgetDetails({
-        summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: `$${invoiceAmount}.00`,
-          awaitingPayment: '$0.00',
-          expended: '$0.00',
-        },
-      });
-      Funds.viewTransactions();
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
-      Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.second.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.TRANSACTION_DATE,
-            value: DateTools.getFormattedEndDateWithTimUTC(
-              testData.rollovers.first_to_second.metadata.createdDate,
-            ),
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${invoiceAmount}.00)` },
-          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
-          { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.FROM,
-            value: `${testData.fund.name} (${testData.fund.code})`,
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
-          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${invoiceAmount}.00` },
-          { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
-          { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
-        ],
-      });
-      Transactions.closeTransactionsPage();
-      Funds.closeBudgetDetails();
-      Funds.selectPreviousBudgetDetailsByFY(testData.fund, testData.fiscalYears.third);
-      BudgetDetails.checkBudgetDetails({
-        summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: `$${invoiceAmount}.00`,
-          awaitingPayment: '$0.00',
-          expended: '$0.00',
-        },
-      });
-      Funds.viewTransactions();
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
-      Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.third.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.TRANSACTION_DATE,
-            value: DateTools.getFormattedEndDateWithTimUTC(
-              testData.rollovers.second_to_third.metadata.createdDate,
-            ),
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${invoiceAmount}.00)` },
-          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
-          { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.FROM,
-            value: `${testData.fund.name} (${testData.fund.code})`,
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
-          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${invoiceAmount}.00` },
+          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${orderLineAmount}.00` },
           { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
@@ -444,36 +399,26 @@ describe('Invoices', () => {
       Funds.closeBudgetDetails();
       Funds.selectBudgetDetails();
       BudgetDetails.checkBudgetDetails({
-        summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: `$${invoiceAmount}.00`,
-          awaitingPayment: '$0.00',
-          expended: '$0.00',
-        },
+        summary: [
+          { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: '$0.00' },
+          { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' },
+        ],
       });
       Funds.viewTransactions();
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
       Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
+      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
       Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
       TransactionDetails.checkTransactionDetails({
         information: [
-          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.fourth.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.TRANSACTION_DATE,
-            value: DateTools.getFormattedEndDateWithTimUTC(
-              testData.rollovers.third_to_fourth.metadata.createdDate,
-            ),
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${invoiceAmount}.00)` },
+          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.second.code },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${orderLineAmount}.00)` },
           { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
           { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
           {
             key: TRANSACTION_DETAIL_FIELDS.FROM,
             value: `${testData.fund.name} (${testData.fund.code})`,
           },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
-          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${invoiceAmount}.00` },
+          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${orderLineAmount}.00` },
           { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },

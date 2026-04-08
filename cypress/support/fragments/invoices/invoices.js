@@ -201,6 +201,13 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+  deleteInvoiceLineViaApi(invoiceLineId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `invoice/invoice-lines/${invoiceLineId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
   approveInvoiceViaApi({ invoice }) {
     return this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
       ({ invoices }) => {

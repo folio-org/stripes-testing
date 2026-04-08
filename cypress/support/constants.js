@@ -1952,6 +1952,12 @@ export const RECEIVING_TITILE_ACCORDION_NAMES = {
   BOUND_ITEMS: 'Bound items',
 };
 
+export const FUNDING_INFORMATION_NAMES = {
+  INITIAL_ALLOCATION: 'Initial allocation',
+  TOTAL_ALLOCATED: 'Total allocated',
+  TOTAL_FUNDING: 'Total funding',
+};
+
 export const FINANCIAL_ACTIVITY_OVERRAGES = {
   ENCUMBERED: 'Encumbered',
   AWAITING_PAYMENT: 'Awaiting payment',
@@ -1991,4 +1997,14 @@ export const INVOICE_VIEW_FIELDS = {
   SUB_TOTAL: 'Sub-total',
   VENDOR_NAME: 'Vendor name',
   VOUCHER_STATUS: 'Status',
+};
+
+export const INVOICE_LINE_VIEW_FIELDS = {
+  STATUS: 'Status',
+  SUB_TOTAL: 'Sub-total',
+};
+
+export const FUND_DISTRIBUTION_TYPES = {
+  AMOUNT: 'amount',
+  PERCENTAGE: 'percentage',
 };
