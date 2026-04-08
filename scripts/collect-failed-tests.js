@@ -8,12 +8,12 @@ const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
 
 const selectedStatus = [
-  //status.Passed,
+  // status.Passed,
   status.Blocked,
   status.Untested,
   status.Retest,
   status.Failed,
-  //status.Unassigned,
+  // status.Unassigned,
 ];
 const selectedTeams = [
   team.Firebird,
