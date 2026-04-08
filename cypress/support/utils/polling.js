@@ -30,6 +30,9 @@ export const poll = (
       if (response.status === 401) {
         return cy.getAdminToken().then(() => fetchWithTokenRefresh());
       }
+      if (response.status >= 400) {
+        throw new Error(`Failed: ${response.status}`);
+      }
       return response;
     });
   };
