@@ -176,16 +176,17 @@ export default {
   },
 
   addToken(noticePolicyTemplateToken) {
+    tokenButton.exists();
     cy.do(tokenButton.click());
-    cy.expect([Modal({ header: 'Add token' }).exists(), Heading(titles.addToken).exists()]);
+    cy.expect(Modal({ header: 'Add token' }).exists());
+    cy.expect(Heading(titles.addToken).exists());
+    cy.expect(Checkbox(`${noticePolicyTemplateToken}`).exists());
     cy.do(Checkbox(`${noticePolicyTemplateToken}`).click());
-    // waiting for the html body input to be available for adding symbols
-    cy.wait(3000);
+    cy.expect(Checkbox(`${noticePolicyTemplateToken}`).has({ checked: true }));
+    cy.expect(addTokenButton.has({ disabled: false }));
     cy.do(addTokenButton.click());
-    cy.expect([
-      Modal({ header: 'Add token' }).absent(),
-      bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }),
-    ]);
+    cy.expect(Modal({ header: 'Add token' }).absent());
+    cy.expect(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
   },
 
@@ -327,14 +328,6 @@ export default {
   },
 
   createPatronNoticeTemplate(template, duplicate = false) {
-    cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
-      statusCode: 201,
-      body: {
-        templates: [],
-        totalRecords: 0,
-      },
-    });
-
     if (duplicate) {
       this.duplicateTemplate();
       this.typeTemplateName(template.name);
