@@ -1992,3 +1992,8 @@ export const INVOICE_VIEW_FIELDS = {
   VENDOR_NAME: 'Vendor name',
   VOUCHER_STATUS: 'Status',
 };
+
+export const INVOICE_LINE_VIEW_FIELDS = {
+  STATUS: 'Status',
+  SUB_TOTAL: 'Sub-total',
+};
