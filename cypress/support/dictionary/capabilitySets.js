@@ -239,6 +239,21 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiQuickMarcQuickMarcHoldingsEditorView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
