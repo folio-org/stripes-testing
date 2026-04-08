@@ -37,6 +37,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { poll } from '../../support/utils/polling';
 
 describe('Patron notices', () => {
   describe(
@@ -357,10 +358,6 @@ describe('Patron notices', () => {
           cy.getAdminToken();
           UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
-          // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(200000);
-
           cy.login(userData.username, userData.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
@@ -372,6 +369,27 @@ describe('Patron notices', () => {
           UserLoans.openLoanDetails(itemData.barcode);
           UserLoans.renewItem(itemData.barcode, true);
           LoanDetails.checkAction(0, 'Renewed');
+
+          const descriptions = noticeTemplates.map((template) => {
+            return searchResultsData(template.name).desc;
+          });
+
+          poll(
+            () => cy.getCirculationLogs({
+              searchParams: {
+                query: [
+                  `userBarcode=="${userData.barcode}"`,
+                  descriptions.map((desc) => `description=="${desc}"`).join(' OR '),
+                ].join(' AND '),
+              },
+              failOnStatusCode: false,
+            }),
+            (response) => {
+              return descriptions.every((desc) => {
+                return response.body.logRecords.some((record) => record.description === desc);
+              });
+            },
+          );
 
           cy.login(userData.username, userData.password, {
             path: TopMenu.circulationLogPath,
@@ -396,8 +414,15 @@ describe('Patron notices', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(100000);
+          poll(
+            () => cy.getCirculationLogs({
+              searchParams: {
+                query: `userBarcode=="${userData.barcode}" AND action=="Paid fully" AND object=="Fee/fine"`,
+              },
+              failOnStatusCode: false,
+            }),
+            (response) => response.body.logRecords.length > 0,
+          );
           SearchPane.searchByUserBarcode(userData.barcode);
           SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
         },
