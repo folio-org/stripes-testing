@@ -85,6 +85,7 @@ export default {
   },
 
   waitLoading() {
+    cy.expect(Link(titles.templates).exists());
     cy.do(Link(titles.templates).click());
     cy.expect(Heading(titles.templates).exists());
   },
