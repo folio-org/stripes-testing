@@ -1,5 +1,4 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import moment from 'moment';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
@@ -56,7 +55,12 @@ export const createNoticeTemplate = ({
     description: 'Created by autotest team',
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
+    // The date at the end of the previewText must not be added here — the
+    // date portion is appended dynamically in createPatronNoticeTemplate using
+    // the tenant timezone from cy.getTenantLocaleApi(). The locale is hardcoded
+    // to en-US because FOLIO's preview renders dates in the user's session locale
+    // (en-US), which may differ from the tenant locale returned by the API.
+    previewText: 'Test email body The Wines of Italy',
     // notice option
     notice: {
       templateName,
@@ -81,6 +85,7 @@ export default {
   },
 
   waitLoading() {
+    cy.expect(Link(titles.templates).exists());
     cy.do(Link(titles.templates).click());
     cy.expect(Heading(titles.templates).exists());
   },
@@ -116,6 +121,7 @@ export default {
     cy.wait(1000);
     cy.do(nameField.fillIn(noticePolicyTemplate.name));
     cy.expect(nameField.has({ value: noticePolicyTemplate.name }));
+    cy.wait(2000);
 
     cy.do(descriptionField.fillIn(noticePolicyTemplate.description));
     cy.expect(descriptionField.has({ value: noticePolicyTemplate.description }));
@@ -335,7 +341,15 @@ export default {
     }
 
     cy.wait(2000);
-    this.checkPreview(template.previewText);
+    cy.getTenantLocaleApi().then(({ timezone = 'UTC' }) => {
+      const dateStr = new Intl.DateTimeFormat('en-US', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: timezone,
+        year: 'numeric',
+      }).format(new Date());
+      this.checkPreview(`${template.previewText} ${dateStr}`);
+    });
     cy.wait(2000);
     this.saveAndClose();
     cy.wait(4000);
