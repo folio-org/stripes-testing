@@ -104,6 +104,7 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.title);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.pressSaveAndClose();
+          InventoryInstance.waitInstanceRecordViewOpened();
         });
       });
 
@@ -112,6 +113,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         MarcAuthority.deleteViaAPI(createdAuthorityID[1], true);
         Users.deleteViaApi(user2.userId);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
 
       it(
@@ -133,6 +135,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('155', `$a ${testData.updatedTitle}`);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
+          MarcAuthority.contains(testData.updatedTitle);
 
           cy.login(user2.username, user2.password, {
             path: TopMenu.usersPath,
@@ -185,7 +188,6 @@ describe('MARC', () => {
                 'Unknown User',
               ],
             );
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
           });
         },
       );

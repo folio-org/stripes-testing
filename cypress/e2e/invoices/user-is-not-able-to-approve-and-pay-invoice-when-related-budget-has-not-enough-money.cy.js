@@ -1,13 +1,11 @@
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import DateTools from '../../support/utils/dateTools';
-import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import Invoices from '../../support/fragments/invoices/invoices';
-import InvoiceStates from '../../support/fragments/invoices/invoiceStates';
-import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import InvoiceLineEditForm from '../../support/fragments/invoices/invoiceLineEditForm';
+import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -17,13 +15,14 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
-import Approvals from '../../support/fragments/settings/invoices/approvals';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ENCUMBRANCE_STATUSES,
   FINANCIAL_ACTIVITY_OVERRAGES,
+  INVOICE_LINE_VIEW_FIELDS,
   INVOICE_STATUSES,
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
@@ -35,8 +34,11 @@ import {
 import { BudgetDetails, TransactionDetails, Transactions } from '../../support/fragments/finance';
 import { CodeTools, StringTools } from '../../support/utils';
 
-describe('Invoices', { retries: { runMode: 1 } }, () => {
+describe('Invoices', () => {
   const code = CodeTools(4);
+  const orderLineAmount = 20;
+  const secondInvoiceAmount = 80;
+  const editedInvoiceLineAmount = 30;
   const testData = {
     fiscalYears: {
       first: {
@@ -55,12 +57,13 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     budget: {},
     order: {},
     orderLine: {},
-    invoice: { ...NewInvoice.defaultUiInvoice },
+    firstInvoice: {},
+    secondInvoice: {},
     organization: {},
     acquisitionMethodId: null,
-    batchGroup: {},
-    expenseClass: {},
+    batchGroupId: null,
     user: {},
+    rollover: {},
   };
 
   const createFiscalYear = (fiscalYearKey) => {
@@ -97,20 +100,6 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
           allocated: 100,
         }).then((budgetResponse) => {
           testData.budget = budgetResponse;
-
-          const expenseClass = ExpenseClasses.getDefaultExpenseClass();
-          return ExpenseClasses.createExpenseClassViaApi(expenseClass).then((response) => {
-            testData.expenseClass = response;
-            return Budgets.updateBudgetViaApi({
-              ...testData.budget,
-              statusExpenseClasses: [
-                {
-                  status: 'Active',
-                  expenseClassId: response.id,
-                },
-              ],
-            });
-          });
         });
       });
     });
@@ -125,16 +114,14 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
           ...NewOrganization.defaultUiOrganizations,
           id: organizationId,
         };
-        testData.invoice.accountingCode = NewOrganization.defaultUiOrganizations.erpCode;
       })
       .then(() => cy.getBatchGroups())
       .then((batchGroup) => {
-        testData.batchGroup = batchGroup;
-        testData.invoice.batchGroup = batchGroup.name;
+        testData.batchGroupId = batchGroup.id;
       })
       .then(() => {
         return cy.getAcquisitionMethodsApi({
-          query: 'value="Purchase"',
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
         });
       })
       .then((acquisitionMethod) => {
@@ -160,9 +147,9 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
         acquisitionMethod: testData.acquisitionMethodId,
         cost: {
           ...BasicOrderLine.defaultOrderLine.cost,
-          listUnitPrice: 10,
+          listUnitPrice: orderLineAmount,
           quantityPhysical: 1,
-          poLineEstimatedPrice: 10,
+          poLineEstimatedPrice: orderLineAmount,
         },
         fundDistribution: [
           {
@@ -170,7 +157,6 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
             fundId: testData.fund.id,
             distributionType: 'percentage',
             value: 100,
-            expenseClassId: testData.expenseClass.id,
           },
         ],
         locations: [],
@@ -187,10 +173,53 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
           ...orderResponse,
           workflowStatus: ORDER_STATUSES.OPEN,
         }).then(() => {
-          return Orders.getOrderByIdViaApi(orderResponse.id).then((updatedOrder) => {
-            testData.order = updatedOrder;
-          });
+          return OrderLines.getOrderLineByIdViaApi(orderLineResponse.id).then(
+            (updatedOrderLine) => {
+              testData.orderLine = updatedOrderLine;
+            },
+          );
         });
+      });
+    });
+  };
+
+  const createFirstInvoice = () => {
+    return Invoices.createInvoiceWithInvoiceLineViaApi({
+      vendorId: testData.organization.id,
+      poLineId: testData.orderLine.id,
+      fiscalYearId: testData.fiscalYears.first.id,
+      invoiceStatus: INVOICE_STATUSES.REVIEWED,
+      batchGroupId: testData.batchGroupId,
+      fundDistributions: testData.orderLine.fundDistribution,
+      accountingCode: testData.organization.erpCode,
+      subTotal: orderLineAmount,
+    }).then((invoiceResponse) => {
+      testData.firstInvoice = invoiceResponse;
+    });
+  };
+
+  const createSecondInvoice = () => {
+    return Invoices.createInvoiceWithInvoiceLineWithoutOrderViaApi({
+      vendorId: testData.organization.id,
+      fiscalYearId: testData.fiscalYears.first.id,
+      batchGroupId: testData.batchGroupId,
+      invoiceStatus: INVOICE_STATUSES.OPEN,
+      fundDistributions: [
+        {
+          code: testData.fund.code,
+          fundId: testData.fund.id,
+          distributionType: 'percentage',
+          value: 100,
+        },
+      ],
+      accountingCode: testData.organization.erpCode,
+      subTotal: secondInvoiceAmount,
+    }).then((invoiceResponse) => {
+      testData.secondInvoice = invoiceResponse;
+
+      return Invoices.changeInvoiceStatusViaApi({
+        invoice: testData.secondInvoice,
+        status: INVOICE_STATUSES.PAID,
       });
     });
   };
@@ -205,13 +234,15 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
         {
           rolloverAllocation: true,
           rolloverBudgetValue: 'None',
-          addAvailableTo: 'Allocation',
+          addAvailableTo: 'Available',
         },
       ],
-      encumbrancesRollover: [{ orderType: 'Ongoing', basedOn: 'InitialAmount' }],
+      encumbrancesRollover: [{ orderType: ORDER_TYPES.ONGOING, basedOn: 'InitialAmount' }],
     });
 
-    return LedgerRollovers.createLedgerRolloverViaApi(rollover);
+    return LedgerRollovers.createLedgerRolloverViaApi(rollover).then((rolloverResponse) => {
+      testData.rollover = rolloverResponse;
+    });
   };
 
   const updateFiscalYearDates = (fiscalYearKey, offset) => {
@@ -232,17 +263,16 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     return cy
       .createTempUser([
         Permissions.uiInvoicesApproveInvoices.gui,
-        Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+        Permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
         Permissions.uiInvoicesPayInvoices.gui,
         Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
         Permissions.uiFinanceViewFundAndBudget.gui,
-        Permissions.uiOrdersView.gui,
       ])
       .then((userProperties) => {
         testData.user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
         });
       });
   };
@@ -253,122 +283,142 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     return createFiscalYearsData()
       .then(() => createLedgerAndFund())
       .then(() => createOrganizationAndReferenceData())
+      .then(() => createOrderWithLine())
+      .then(() => createFirstInvoice())
+      .then(() => createSecondInvoice())
       .then(() => performRollover())
       .then(() => updateFiscalYearDates('first', -1))
       .then(() => updateFiscalYearDates('second', 0))
-      .then(() => createOrderWithLine())
       .then(() => createUserAndLogin());
   });
 
   after(() => {
     cy.getAdminToken().then(() => {
-      Users.deleteViaApi(testData.user.userId);
       Approvals.setApprovePayValueViaApi(false);
+      Users.deleteViaApi(testData.user.userId);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
     });
   });
 
   it(
-    'C388526 Approve and pay invoice created in current FY for previous FY when related order line was created in current FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C388526'] },
+    'C396385 User is not able to approve and pay invoice when related budget has not enough money (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C396385'] },
     () => {
-      Orders.searchByParameter('PO number', testData.order.poNumber);
-      Orders.selectFromResultsList(testData.order.poNumber);
-      Orders.newInvoiceFromOrder();
-      Invoices.createInvoiceFromOrder(testData.invoice, testData.fiscalYears.first.code);
-      Invoices.approveAndPayInvoice();
-      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedAndPaidMessage);
+      Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.firstInvoice.vendorInvoiceNo);
       InvoiceView.checkInvoiceDetails({
+        title: testData.firstInvoice.vendorInvoiceNo,
         invoiceInformation: [
-          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.PAID },
+          { key: INVOICE_VIEW_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
         ],
-        invoiceLines: [
-          {
-            poNumber: testData.order.poNumber,
-            receiptStatus: ORDER_TYPES.ONGOING,
-            paymentStatus: ORDER_TYPES.ONGOING,
-          },
+        invoiceLines: [{ poNumber: testData.order.poNumber }],
+        vendorDetails: [
+          { key: INVOICE_VIEW_FIELDS.VENDOR_NAME, value: testData.organization.name },
         ],
       });
       Invoices.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          expenseClass: testData.expenseClass.name,
+          expenseClass: '-',
           value: '100%',
-          amount: testData.orderLine.cost.poLineEstimatedPrice,
-          initialEncumbrance: '-',
-          currentEncumbrance: '-',
+          amount: `$${orderLineAmount}.00`,
+          initialEncumbrance: `$${orderLineAmount}.00`,
+          currentEncumbrance: `$${orderLineAmount}.00`,
+        },
+      ]);
+      Invoices.editInvoiceLine();
+      InvoiceLineEditForm.fillInvoiceLineFields({ subTotal: editedInvoiceLineAmount.toString() });
+      InvoiceLineEditForm.clickSaveButton();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
+        ],
+      });
+      Invoices.canNotApproveAndPayInvoice(testData.fund);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [
+          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.REVIEWED },
+        ],
+      });
+      Invoices.selectInvoiceLine();
+      InvoiceLineDetails.checkInvoiceLineDetails({
+        invoiceLineInformation: [
+          { key: INVOICE_LINE_VIEW_FIELDS.STATUS, value: INVOICE_STATUSES.REVIEWED },
+          { key: INVOICE_LINE_VIEW_FIELDS.SUB_TOTAL, value: `$${editedInvoiceLineAmount}.00` },
+        ],
+      });
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        {
+          name: testData.fund.name,
+          expenseClass: '-',
+          value: '100%',
+          amount: `$${editedInvoiceLineAmount}.00`,
+          initialEncumbrance: `$${orderLineAmount}.00`,
+          currentEncumbrance: `$${orderLineAmount}.00`,
         },
       ]);
       Invoices.openPageCurrentEncumbrance(`${testData.fund.name}(${testData.fund.code})`);
       Funds.selectPreviousBudgetDetails();
-      BudgetDetails.checkBudgetDetails({
-        summary: [
-          {
-            key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED,
-            value: `$${testData.orderLine.cost.poLineEstimatedPrice}.00`,
-          },
-        ],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: '$0.00',
-          awaitingPayment: '$0.00',
-          expended: `$${testData.orderLine.cost.poLineEstimatedPrice}.00`,
-        },
-      });
       Funds.viewTransactions();
+      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
+      Funds.checkTransactionCount(TRANSACTION_TYPES.PAYMENT, 1);
       Funds.selectTransactionInList(TRANSACTION_TYPES.PAYMENT);
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.AMOUNT,
-            value: `($${testData.orderLine.cost.poLineEstimatedPrice}.00)`,
-          },
-          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.invoice.invoiceNumber },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${secondInvoiceAmount}.00)` },
+          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.secondInvoice.vendorInvoiceNo },
           { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.PAYMENT },
           {
             key: TRANSACTION_DETAIL_FIELDS.FROM,
             value: `${testData.fund.name} (${testData.fund.code})`,
           },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
         ],
       });
-      Transactions.closeTransactionsPage();
-      Funds.closeBudgetDetails();
-      Funds.selectBudgetDetails();
-      BudgetDetails.checkBudgetDetails({
-        summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
-        expenseClass: {
-          name: testData.expenseClass.name,
-          encumbered: `$${testData.orderLine.cost.poLineEstimatedPrice}.00`,
-          awaitingPayment: '$0.00',
-          expended: '$0.00',
-        },
-      });
-      Funds.viewTransactions();
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
-      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
+      TransactionDetails.closeTransactionDetails();
       Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
       TransactionDetails.checkTransactionDetails({
         information: [
-          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.second.code },
-          {
-            key: TRANSACTION_DETAIL_FIELDS.AMOUNT,
-            value: `($${testData.orderLine.cost.poLineEstimatedPrice}.00)`,
-          },
+          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.first.code },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${orderLineAmount}.00)` },
           { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
           { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
           {
             key: TRANSACTION_DETAIL_FIELDS.FROM,
             value: `${testData.fund.name} (${testData.fund.code})`,
           },
-          { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: testData.expenseClass.name },
+          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${orderLineAmount}.00` },
+          { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
+          { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
+          { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
+        ],
+      });
+      Transactions.closeTransactionsPage();
+      Funds.closeBudgetDetails();
+      Funds.selectBudgetDetails();
+      BudgetDetails.checkBudgetDetails({
+        summary: [
+          { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: '$0.00' },
+          { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' },
+        ],
+      });
+      Funds.viewTransactions();
+      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PENDING_PAYMENT);
+      Funds.checkNoTransactionOfType(TRANSACTION_TYPES.PAYMENT);
+      Funds.selectTransactionInList(TRANSACTION_TYPES.ENCUMBRANCE);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYears.second.code },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `($${orderLineAmount}.00)` },
+          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
+          { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
           {
-            key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE,
-            value: `$${testData.orderLine.cost.poLineEstimatedPrice}.00`,
+            key: TRANSACTION_DETAIL_FIELDS.FROM,
+            value: `${testData.fund.name} (${testData.fund.code})`,
           },
+          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: `$${orderLineAmount}.00` },
           { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
           { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },

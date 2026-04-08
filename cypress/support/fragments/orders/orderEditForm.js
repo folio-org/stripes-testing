@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   MultiSelect,
+  Popover,
   Section,
   Select,
   Selection,
@@ -142,6 +143,24 @@ export default {
     cy.do(orderInfoSection.find(Button('Organization look-up')).click());
     SearchHelper.searchByName(organizationName);
     SearchHelper.selectFromResultsList();
+  },
+  clickManualInfoIcon() {
+    cy.do(orderInfoSection.find(Button({ icon: 'info' })).click());
+  },
+  verifyManualInfoPopover() {
+    cy.expect(
+      Popover().has({
+        content: including(
+          'When this checkbox is active the order will be excluded from any automated transmission. No matter what other settings are active for the order lines or related organization.',
+        ),
+      }),
+    );
+  },
+  checkManualCheckbox() {
+    cy.do(Checkbox({ name: 'manualPo' }).click());
+  },
+  verifyManualCheckboxChecked(checked = true) {
+    cy.expect(Checkbox({ name: 'manualPo' }).has({ checked }));
   },
   cliskCollapseAllButton() {
     cy.do(collapseAllButton.click());

@@ -84,6 +84,9 @@ describe('Eureka', () => {
           // Step 3: Click "Select application" button
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.verifySelectApplicationModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
 
           // Step 4: Input leading word of existing application
           // Step 5: Click "Search" button
@@ -96,6 +99,9 @@ describe('Eureka', () => {
 
           // Step 6: Click "Reset all" button
           AuthorizationRoles.clickResetAllInSelectAppModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({
             resetAll: false,
             search: false,
@@ -113,6 +119,9 @@ describe('Eureka', () => {
 
           // Step 8: Click "Reset all" button
           AuthorizationRoles.clickResetAllInSelectAppModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({
             resetAll: false,
             search: false,
@@ -143,6 +152,9 @@ describe('Eureka', () => {
           // Step 12: Click "Select application" button
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.verifySelectApplicationModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
 
           // Step 13: Input leading word of already existing and selected application
           // Step 14: Click "Search" button
@@ -155,6 +167,9 @@ describe('Eureka', () => {
 
           // Step 15: Click "Reset all" button
           AuthorizationRoles.clickResetAllInSelectAppModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({
             resetAll: false,
             search: false,
@@ -172,6 +187,9 @@ describe('Eureka', () => {
 
           // Step 17: Click "Reset all" button
           AuthorizationRoles.clickResetAllInSelectAppModal();
+          allTenantApplications.forEach((app) => {
+            AuthorizationRoles.checkApplicationShownInModal(app);
+          });
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({
             resetAll: false,
             search: false,
