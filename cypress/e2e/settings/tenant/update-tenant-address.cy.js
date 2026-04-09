@@ -39,7 +39,7 @@ describe('Tenant', () => {
     });
 
     it(
-      'C6732 Update Tenant address (firebird) (TaaS)',
+      'C6732 Update Tenant address (firebird)',
       { tags: ['extendedPath', 'firebird', 'C6732'] },
       () => {
         // Go to Settings/Tenant/Addresses

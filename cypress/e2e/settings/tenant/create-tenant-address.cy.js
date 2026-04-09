@@ -62,21 +62,29 @@ describe('Tenant', () => {
     });
 
     it(
-      'C374197 Create a new Tenant address (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C374197'] },
+      'C6731 Create a new Tenant address (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C6731'] },
       () => {
         // Go to Settings/Tenant/Addresses
         TenantPane.selectTenant(TENANTS.ADDRESSES);
         Addresses.waitLoading();
 
         // Click New, add address name, fill in the address, Save — first address
+        cy.intercept('POST', '/tenant-addresses').as('createAddress');
         Addresses.createAddressViaUi(testData.addresses[0]);
+        cy.wait('@createAddress').then(({ response }) => {
+          testData.addresses[0].id = response.body.id;
+        });
 
         // Verify first address appears in the list
         Addresses.verifyAddressInList(testData.addresses[0].name);
 
         // Click New, add address name, fill in the address, Save — second address
+        cy.intercept('POST', '/tenant-addresses').as('createAddress');
         Addresses.createAddressViaUi(testData.addresses[1]);
+        cy.wait('@createAddress').then(({ response }) => {
+          testData.addresses[1].id = response.body.id;
+        });
 
         // Verify second address appears in the list
         Addresses.verifyAddressInList(testData.addresses[1].name);
