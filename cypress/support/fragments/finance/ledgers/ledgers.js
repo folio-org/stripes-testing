@@ -25,9 +25,11 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import FinanceHelper from '../financeHelper';
 import LedgerDetails from './ledgerDetails';
+import LedgerEditForm from './ledgerEditForm';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
+const newButton = Button('New');
 const rolloverButton = Button('Rollover');
 const continueButton = Button('Continue');
 const confirmButton = Button('Confirm');
@@ -1792,5 +1794,12 @@ export default {
 
   checkNoResultsMessage(absenceMessage) {
     cy.expect(ledgerResultsPaneSection.find(HTML(including(absenceMessage))).exists());
+  },
+
+  clickNewLedger() {
+    cy.do([actionsButton.click(), newButton.click()]);
+    LedgerEditForm.waitLoading();
+
+    return LedgerEditForm;
   },
 };

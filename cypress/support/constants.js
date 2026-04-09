@@ -1964,3 +1964,20 @@ export const INVOICE_LINE_VIEW_FIELDS = {
   STATUS: 'Status',
   SUB_TOTAL: 'Sub-total',
 };
+
+export const FUND_DISTRIBUTION_TYPES = {
+  AMOUNT: 'amount',
+  PERCENTAGE: 'percentage',
+};
+export const LEDGER_VIEW_FIELDS = {
+  NAME: 'Name',
+  CODE: 'Code',
+  CURRENT_FISCAL_YEAR: 'Current fiscal year',
+  STATUS: 'Status',
+};
+
+export const LEDGER_STATUSES = {
+  ACTIVE: 'Active',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+};
