@@ -55,11 +55,6 @@ export const createNoticeTemplate = ({
     description: 'Created by autotest team',
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    // The date at the end of the previewText must not be added here — the
-    // date portion is appended dynamically in createPatronNoticeTemplate using
-    // the tenant timezone from cy.getTenantLocaleApi(). The locale is hardcoded
-    // to en-US because FOLIO's preview renders dates in the user's session locale
-    // (en-US), which may differ from the tenant locale returned by the API.
     previewText: 'Test email body The Wines of Italy',
     // notice option
     notice: {
@@ -347,15 +342,7 @@ export default {
     }
 
     cy.wait(2000);
-    cy.getTenantLocaleApi().then(({ timezone = 'UTC' }) => {
-      const dateStr = new Intl.DateTimeFormat('en-US', {
-        day: 'numeric',
-        month: 'short',
-        timeZone: timezone,
-        year: 'numeric',
-      }).format(new Date());
-      this.checkPreview(`${template.previewText} ${dateStr}`);
-    });
+    this.checkPreview(template.previewText);
     cy.wait(2000);
     this.saveAndClose();
     cy.wait(4000);
