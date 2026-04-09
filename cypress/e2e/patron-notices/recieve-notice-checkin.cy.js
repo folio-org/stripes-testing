@@ -23,6 +23,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import { poll } from '../../support/utils/polling';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
@@ -269,6 +270,23 @@ describe('Patron notices', () => {
         CheckInActions.endCheckInSession();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+
+        poll(
+          () => cy.getCirculationLogs({
+            searchParams: {
+              limit: 1,
+              query: [
+                `userBarcode=="${searchResultsData.userBarcode}"`,
+                `object=="${searchResultsData.object}"`,
+                `action=="${searchResultsData.circAction}"`,
+                `source=="${searchResultsData.source}"`,
+                `description=="${searchResultsData.desc}"`,
+              ].join(' AND '),
+            },
+            failOnStatusCode: false,
+          }),
+          (response) => response.body.logRecords.length > 0,
+        );
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);
