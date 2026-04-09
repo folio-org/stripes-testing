@@ -280,4 +280,22 @@ export default {
     cy.do(targetCard.find(Link({ href: including('/users/preview/') })).click());
     UsersCard.waitLoading();
   },
+
+  verifyOriginalVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Original version') }));
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
+  },
+
+  verifyCurrentVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Current version') }));
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
+  },
 };

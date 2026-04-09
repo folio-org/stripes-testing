@@ -133,9 +133,10 @@ export default {
         .choose(including(code)),
     ]);
   },
-  addStatisticalCode(code) {
+  addStatisticalCode(code, index = 1) {
     this.clickAddStatisticalCode();
-    this.chooseStatisticalCode(code);
+    cy.wait(1000);
+    this.chooseStatisticalCode(code, index);
   },
   openStatisticalCodeDropdown() {
     cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
