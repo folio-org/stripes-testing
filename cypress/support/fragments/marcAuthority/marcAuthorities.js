@@ -677,8 +677,8 @@ export default {
     cy.do(multiSelect.fillIn(notFullValue));
     cy.wait(1000);
     if (isFound) {
-      cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
-    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+      cy.expect(MultiSelectOption(including(fullValue)).exists());
+    } else cy.expect(MultiSelectOption(including(fullValue)).absent());
   },
 
   chooseTypeOfHeading: (headingTypes) => {
