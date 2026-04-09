@@ -14,7 +14,7 @@ describe('Inventory', () => {
     describe('Instance', () => {
       const testData = {
         marcFilePath: 'oneMarcBib.mrc',
-        marcFileName: `C358136 autotestFileName${getRandomPostfix()}.mrc`,
+        marcFileName: `C651500 autotestFileName${getRandomPostfix()}.mrc`,
         jobProfileName: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
 

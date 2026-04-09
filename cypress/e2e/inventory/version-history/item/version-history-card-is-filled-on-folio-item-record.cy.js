@@ -28,7 +28,6 @@ describe('Inventory', () => {
         item: {
           barcode: `${getRandomPostfix()}`,
         },
-        statisticalCodes: [],
       };
 
       before('Create test data', () => {
