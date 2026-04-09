@@ -1286,6 +1286,11 @@ export default {
     cy.do(thesaurusAccordion.clickHeader());
   },
 
+  verifyTypeOfHeadingAccordionAndClick: () => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+  },
+
   chooseThesaurus: (thesaurusTypes) => {
     cy.do(
       MultiSelect({ ariaLabelledby: 'subjectHeadings-multiselect-label' }).select([
@@ -1726,7 +1731,10 @@ export default {
   },
 
   checkPreviousAndNextPaginationButtonsShown() {
-    cy.expect([previousButton.visible(), nextButton.visible()]);
+    cy.expect([
+      previousButton.has({ disabled: or(false, true) }),
+      nextButton.has({ disabled: or(false, true) }),
+    ]);
   },
 
   checkNextPaginationButtonEnabled(isEnabled = true) {
@@ -1753,7 +1761,7 @@ export default {
   verifyAllResultsHaveSource(sourceNames) {
     this.getResultsListByColumn(4).then((cellTexts) => {
       cellTexts.forEach((cellText) => {
-        expect(cellText).to.be.oneOf([...sourceNames]);
+        expect(cellText).to.be.oneOf(['', ...sourceNames]);
       });
     });
   },

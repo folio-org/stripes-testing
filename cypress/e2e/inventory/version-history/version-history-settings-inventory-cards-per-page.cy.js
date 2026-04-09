@@ -2,7 +2,6 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import VersionHistorySection from '../../../support/fragments/inventory/versionHistorySection';
 import SettingsInventory from '../../../support/fragments/settings/inventory/settingsInventory';
 import VersionHistorySettings from '../../../support/fragments/settings/inventory/versionHistory';
@@ -37,14 +36,13 @@ describe('Inventory', () => {
 
       function openVersionHistory(initial = false) {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        if (initial) InventoryInstances.waitContentLoading();
-        else InventoryInstances.waitLoading();
-        InventoryInstances.searchByTitle(testData.createdRecordId);
-        InventoryInstances.selectInstanceById(testData.createdRecordId);
+        if (initial) {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.createdRecordId);
+          InventoryInstances.selectInstanceById(testData.createdRecordId);
+        } else InventoryInstances.waitLoading();
         InventoryInstance.waitLoading();
-        InventoryInstance.viewSource();
-        InventoryViewSource.verifyVersionHistoryButtonShown();
-        InventoryViewSource.clickVersionHistoryButton();
+        InventoryInstance.clickVersionHistoryButton();
         VersionHistorySection.waitLoading();
       }
 
@@ -62,12 +60,11 @@ describe('Inventory', () => {
 
       function closeVersionHistory() {
         VersionHistorySection.clickCloseButton();
-        InventoryViewSource.close();
+        InventoryInstance.waitLoading();
       }
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstances.deleteInstanceByTitleViaApi('C655274_');
 
         cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
@@ -80,6 +77,8 @@ describe('Inventory', () => {
             cy.createTempUser(permissions).then((userProperties) => {
               testData.userProperties = userProperties;
             });
+
+            cy.setVersionHistoryRecordsPerPage(10);
           });
         });
       });
@@ -92,7 +91,6 @@ describe('Inventory', () => {
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
-      // Will FAIL due to https://folio-org.atlassian.net/browse/UIQM-815
       it(
         'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C655274'] },

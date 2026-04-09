@@ -1275,6 +1275,10 @@ export default {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
   },
+  uiMarcAuthoritiesSettingsVersionHistory: {
+    internal: 'ui-marc-authorities.settings.version-history',
+    gui: 'Settings (MARC authority): Configure Version history',
+  },
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
