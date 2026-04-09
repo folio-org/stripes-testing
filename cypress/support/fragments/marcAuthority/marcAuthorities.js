@@ -176,6 +176,7 @@ export default {
   },
   clickActionsAndNewAuthorityButton() {
     cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    cy.wait(1000);
     QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {

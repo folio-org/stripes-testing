@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import LinkedDataEditor from '../../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../../support/fragments/linked-data/marigold';
 import { LDE_ROLES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
@@ -11,7 +11,7 @@ import PreviewHubPage from '../../../support/fragments/linked-data/previewHubPag
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
-describe('LDE Hubs: Import and edit LoC hub', () => {
+describe('MG Hubs: Import and edit LoC hub', () => {
   const testData = {
     roleIds: [],
     // Test hub data - will search for existing LoC hub
@@ -58,7 +58,7 @@ describe('LDE Hubs: Import and edit LoC hub', () => {
   beforeEach(() => {
     cy.login(user.username, user.password, {
       path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
+      waiter: Marigold.waitLoading,
       authRefresh: true,
     });
   });
