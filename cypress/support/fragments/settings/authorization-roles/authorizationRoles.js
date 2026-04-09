@@ -1021,9 +1021,10 @@ export default {
   },
 
   verifyResourceOrAppPresent: (expectedText, columnIndex = 0, isPresent = true) => {
-    const matchingCell = MultiColumnListCell(or(expectedText, matching(expectedText)), {
-      columnIndex,
-    });
+    const matchingCell =
+      expectedText instanceof RegExp
+        ? MultiColumnListCell(matching(expectedText), { columnIndex })
+        : MultiColumnListCell(expectedText, { columnIndex });
     if (isPresent) cy.expect(matchingCell.exists());
     else cy.expect(matchingCell.absent());
   },

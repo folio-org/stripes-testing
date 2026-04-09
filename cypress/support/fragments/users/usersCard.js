@@ -84,6 +84,12 @@ const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 const closeIconButton = Button({ icon: 'times' });
 const preferredEmailCommunicationsField = KeyValue('Preferred email communications');
+const rolesAffiliationSelectionList = SelectionList({
+  id: including('user-assigned-affiliations-select'),
+});
+const popupNoteModal = Modal({ id: 'popup-note-modal' });
+const popupNoteDeleteButton = popupNoteModal.find(Button('Delete note'));
+const popupNoteCloseButton = popupNoteModal.find(Button('Close'));
 
 export default {
   errors,
@@ -925,7 +931,7 @@ export default {
   verifyNotesCounter(expectedCount) {
     cy.expect([
       notesAccordion.find(Spinner()).absent(),
-      notesAccordion.has({ counter: expectedCount }),
+      notesAccordion.has({ counter: `${expectedCount}` }),
     ]);
   },
 
@@ -938,5 +944,50 @@ export default {
         }),
       ),
     );
+  },
+
+  verifyUserType(userType) {
+    this.checkKeyValue('User type', userType.toLowerCase());
+  },
+
+  checkRolesAffiliationDropdownShown(isShown = true) {
+    if (isShown) cy.expect(rolesAffiliationSelect.exists());
+    else cy.expect(rolesAffiliationSelect.absent());
+  },
+
+  verifyRolesAffiliationOptions(affiliations) {
+    const affiliationsArray = Array.isArray(affiliations) ? affiliations : [affiliations];
+    cy.do(rolesAffiliationSelect.open());
+    affiliationsArray.forEach((affiliation) => {
+      cy.expect(
+        rolesAffiliationSelectionList.has({
+          optionList: or(including(affiliation), including(`${affiliation} (Primary)`)),
+        }),
+      );
+    });
+    cy.expect(rolesAffiliationSelectionList.has({ optionCount: affiliationsArray.length }));
+  },
+
+  checkPopupNoteDisplayed: (isShown = true) => {
+    if (isShown) cy.expect(popupNoteModal.exists());
+    else cy.expect(popupNoteModal.absent());
+  },
+
+  deleteNoteInPopupModal: () => {
+    cy.do(popupNoteDeleteButton.click());
+    cy.expect(popupNoteModal.absent());
+  },
+  closeNoteInPopupModal: () => {
+    cy.do(popupNoteCloseButton.click());
+    cy.expect(popupNoteModal.absent());
+  },
+
+  verifyPopupNote: ({ title, details }) => {
+    cy.expect([
+      popupNoteModal.find(HTML(including(`Title: ${title}`))).exists(),
+      popupNoteModal.find(HTML(including(details))).exists(),
+      popupNoteDeleteButton.exists(),
+      popupNoteCloseButton.exists(),
+    ]);
   },
 };

@@ -1028,12 +1028,16 @@ export default {
   },
 
   checkResultsListRecordsCountGreaterThan(totalRecord) {
-    this.waitLoading();
     cy.intercept('GET', '/search/authorities?*').as('getItems');
+    this.waitLoading();
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
       cy.expect(
-        Pane({ subtitle: `${totalRecords.toLocaleString('en-US')} records found` }).exists(),
+        Pane({
+          subtitle: matching(
+            new RegExp(`${totalRecords.toLocaleString('en-US')} (record|result)s{0,1} found`),
+          ),
+        }).exists(),
       );
       expect(totalRecords).greaterThan(totalRecord);
     });
@@ -1680,6 +1684,16 @@ export default {
     cy.expect([previousButton.visible(), nextButton.visible()]);
   },
 
+  checkNextPaginationButtonEnabled(isEnabled = true) {
+    if (isEnabled) cy.expect(nextButton.has({ disabled: false }));
+    else cy.expect(nextButton.has({ disabled: true }));
+  },
+
+  checkPreviousPaginationButtonEnabled(isEnabled = true) {
+    if (isEnabled) cy.expect(previousButton.has({ disabled: false }));
+    else cy.expect(previousButton.has({ disabled: true }));
+  },
+
   verifySharedIcon(row = 0) {
     cy.expect(
       rootSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists(),
@@ -1892,5 +1906,51 @@ export default {
     cy.xpath(
       `(//div[contains(@class, "mclCell-")]/button[text()="${heading}"])[${index + 1}]`,
     ).click();
+  },
+
+  verifyMultiSelectOptionNumber(accordionName, optionName, expectedCount) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.expect(
+      MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))).has({
+        totalRecords: expectedCount,
+      }),
+    );
+  },
+
+  verifyMultiSelectFilterNumberOfSelectedOptions(accordionName, numberOfOptions) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(MultiSelect({ selectedCount: numberOfOptions }))
+        .exists(),
+    );
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
+    cy.expect(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }).exists());
+  },
+
+  verifyOptionAvailableMultiselect(accordionName, optionName, isShown = true) {
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const option = MultiSelectOption(matching(escapedValue));
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
+    if (isShown) cy.expect(option.exists());
+    else cy.expect(option.absent());
+  },
+
+  typeNotFullValueInMultiSelectFilterFieldAndCheck(
+    accordionName,
+    notFullValue,
+    fullValue,
+    isFound = true,
+  ) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(notFullValue));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect(MultiSelectOption(including(fullValue)).exists());
+    } else cy.expect(MultiSelectOption(including(fullValue)).absent());
   },
 };
