@@ -10,6 +10,8 @@ import {
   HTML,
   including,
   Link,
+  TextArea,
+  TextField,
 } from '../../../../../../interactors';
 import SettingsPane, { rootPane } from '../../settingsPane';
 import LocationDetails from '../locations/locationDetails';
@@ -28,6 +30,54 @@ export default {
   rootPane,
   waitLoading() {
     cy.expect(Pane('Addresses').exists());
+  },
+  clickNewButton() {
+    cy.do(Button({ id: 'clickable-add-addresses' }).click());
+  },
+  fillInAddressName(name) {
+    cy.do(TextField({ name: 'items[0].name' }).fillIn(name));
+  },
+  fillInAddressDetails(address) {
+    cy.do(TextArea({ name: 'items[0].address' }).fillIn(address));
+  },
+  saveNewAddress() {
+    cy.do(Button({ id: 'clickable-save-addresses-0' }).click());
+    cy.wait(500);
+  },
+  createAddressViaUi({ name, address }) {
+    this.clickNewButton();
+    this.fillInAddressName(name);
+    this.fillInAddressDetails(address);
+    this.saveNewAddress();
+  },
+  verifyAddressInList(name) {
+    cy.expect(MultiColumnListRow(including(name)).exists());
+  },
+  clickEditButtonForAddress(name) {
+    cy.do(
+      MultiColumnListRow(including(name), { isContainer: false })
+        .find(Button({ icon: 'edit' }))
+        .click(),
+    );
+  },
+  fillInEditAddressName(newName) {
+    cy.get('input[name$=".name"]').clear().type(newName);
+  },
+  fillInEditAddressDetails(newAddress) {
+    cy.get('textarea[name$=".address"]').clear().type(newAddress);
+  },
+  clickCancelEditButton() {
+    cy.do(Button({ id: including('clickable-cancel-addresses') }).click());
+  },
+  clickSaveEditButton() {
+    cy.do(Button({ id: including('clickable-save-addresses') }).click());
+    cy.wait(500);
+  },
+  verifyAddressIsInEditMode() {
+    cy.get('input[name$=".name"]').should('be.visible');
+  },
+  verifyAddressIsNotInEditMode() {
+    cy.get('input[name$=".name"]').should('not.exist');
   },
   openLastUpdated(name) {
     cy.do(

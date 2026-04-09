@@ -5,16 +5,27 @@ Cypress.Commands.add('dataExportGetJobByStatus', (jobStatus) => {
   });
 });
 
-Cypress.Commands.add('runDataExportAuthorityDeleted', (query) => {
+Cypress.Commands.add('runDataExportAuthorityDeleted', (query, offset = 0, limit = 2000) => {
   return cy
     .okapiRequest({
       method: 'POST',
       path: 'data-export/export-authority-deleted',
       body: {
-        offset: 0,
-        limit: 2000,
+        offset,
+        limit,
         query,
       },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response);
+});
+
+Cypress.Commands.add('runDataExportMarcBibDeleted', (body) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-export/export-deleted',
+      body,
       isDefaultSearchParamsRequired: false,
     })
     .then((response) => response);
