@@ -77,13 +77,13 @@ describe('Inventory', () => {
 
           // Update the MARC record multiple times to create 100+ versions
           cy.then(() => {
+            cy.setVersionHistoryRecordsPerPage(10);
+
             updateRecordNTimes(testData.createdRecordId, 1);
           }).then(() => {
             cy.createTempUser(permissions).then((userProperties) => {
               testData.userProperties = userProperties;
             });
-
-            cy.setVersionHistoryRecordsPerPage(10);
           });
         });
       });

@@ -90,13 +90,13 @@ describe('MARC', () => {
             testData.authorityId = authorityId;
 
             cy.then(() => {
+              cy.setMarcAuthorityVersionHistoryRecordsPerPage(10);
+
               updateRecordNTimes(testData.authorityId, 1);
             }).then(() => {
               cy.createTempUser(permissions).then((userProperties) => {
                 testData.userProperties = userProperties;
               });
-
-              cy.setMarcAuthorityVersionHistoryRecordsPerPage(10);
             });
           });
         });
