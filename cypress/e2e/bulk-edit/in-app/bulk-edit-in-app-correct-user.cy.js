@@ -17,8 +17,6 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-// TODO: identify how to stabilize flaky test
-
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
@@ -36,12 +34,14 @@ describe('Bulk-edit', () => {
       });
 
       InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+
       cy.getInstance({
         limit: 1,
         expandAll: true,
         query: `"items.barcode"=="${item.itemBarcode}"`,
       }).then((instance) => {
         item.itemId = instance.items[0].id;
+
         FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
         FileManager.createFile(
           `cypress/fixtures/${userBarcodesFileName}`,
@@ -61,66 +61,106 @@ describe('Bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: ['criticalPathBroken', 'firebird', 'C380393'] },
+      { tags: ['extendedPath', 'firebird', 'C380393'] },
       () => {
-        cy.login(user1.username, user1.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
+        // Repeat steps 1-11 several times
+        for (let i = 0; i < 3; i++) {
+          // Step 1: Log into FOLIO as User_1 with open DevTools: Select "Inventory - items" radio button and "Item UUIDs" identifier
+          cy.login(user1.username, user1.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          BulkEditSearchPane.checkItemsRadio();
+          BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
-        cy.intercept('/bulk-operations/*').as('fileUpload');
-        BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
-        cy.wait('@fileUpload', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user1.userId);
-        });
-        BulkEditSearchPane.waitFileUploading();
+          const user1Id = user1.userId;
+          // Step 2: Upload a .csv file with valid Item UUIDs
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`fileUpload_${i}`);
+          BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
 
-        const newLocation = 'Online';
-        BulkEditActions.openActions();
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
-        cy.intercept('/bulk-operations/*').as('confirmChanges');
-        BulkEditActions.confirmChanges();
-        cy.wait('@confirmChanges', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user1.userId);
-        });
-        cy.intercept('/bulk-operations/*').as('commitChanges');
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-        cy.wait('@commitChanges', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user1.userId);
-        });
+          // Step 3: Check userId for the endpoint in DevTools
+          cy.wait(`@fileUpload_${i}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user1Id);
+          });
+          BulkEditSearchPane.waitFileUploading();
 
-        cy.login(user2.username, user2.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        BulkEditSearchPane.checkUsersRadio();
-        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+          const newLocation = 'Online';
 
-        cy.intercept('/bulk-operations/*').as('fileUpload2');
-        BulkEditSearchPane.uploadFile(userBarcodesFileName);
-        cy.wait('@fileUpload2', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user2.userId);
-        });
-        BulkEditSearchPane.waitFileUploading();
+          // Step 4: Click "Actions" menu => Select "Start bulk edit"
+          BulkEditActions.openActions();
+          BulkEditActions.openStartBulkEditForm();
 
-        BulkEditActions.openActions();
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.fillPatronGroup('staff (Staff Member)');
-        cy.intercept('/bulk-operations/*').as('confirmChanges2');
-        BulkEditActions.confirmChanges();
-        cy.wait('@confirmChanges2', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user2.userId);
-        });
-        BulkEditActions.commitChanges();
-        cy.intercept('/bulk-operations/*').as('commitChanges2');
-        BulkEditSearchPane.waitFileUploading();
-        cy.wait('@commitChanges2', getLongDelay()).then((res) => {
-          expect(res.response.body.userId).to.eq(user2.userId);
-        });
+          // Step 5-7: Replace temporary location with
+          BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
+
+          // Step 8: Click "Confirm changes" button
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`confirmChanges_${i}`);
+          BulkEditActions.confirmChanges();
+
+          // Step 9: Check userId in DevTools (should equal step 3)
+          cy.wait(`@confirmChanges_${i}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user1Id);
+          });
+
+          // Step 10: Click "Commit changes" button
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`commitChanges_${i}`);
+          BulkEditActions.commitChanges(false);
+
+          // Step 11: Check userId in DevTools (should equal step 3 and 9)
+          cy.wait(`@commitChanges_${i}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user1Id);
+          });
+          BulkEditSearchPane.waitFileUploading();
+        }
+
+        // Repeat steps 13-21 several times
+        for (let j = 0; j < 3; j++) {
+          // Step 13: Log into FOLIO as User_2: Select "Users" radio button and "User barcodes" identifier
+          cy.login(user2.username, user2.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          BulkEditSearchPane.checkUsersRadio();
+          BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+          const user2Id = user2.userId;
+
+          // Step 14: Upload a .csv file with valid users' barcodes
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`fileUpload2_${j}`);
+          BulkEditSearchPane.uploadFile(userBarcodesFileName);
+
+          // Step 15: Check userId in DevTools (should correspond to User_2)
+          cy.wait(`@fileUpload2_${j}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user2Id);
+          });
+          BulkEditSearchPane.waitFileUploading();
+
+          // Step 16: Click "Actions" menu => Select "Start bulk edit"
+          BulkEditActions.openActions();
+          BulkEditActions.openStartBulkEditForm();
+
+          // Step 17: Click "Select Option" dropdown => Select "Patron group" => Select different patron group
+          BulkEditActions.fillPatronGroup('staff (Staff Member)');
+
+          // Step 18: Click "Confirm changes" option
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`confirmChanges2_${j}`);
+          BulkEditActions.confirmChanges();
+
+          // Step 19: Check userId in DevTools (should correspond to User_2 and step 15)
+          cy.wait(`@confirmChanges2_${j}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user2Id);
+          });
+
+          // Step 20: Click "Commit changes" button
+          cy.intercept('GET', /\/bulk-operations\/[a-f0-9-]{36}$/).as(`commitChanges2_${j}`);
+          BulkEditActions.commitChanges(false);
+
+          // Step 21: Check userId in DevTools (should correspond to User_2 and step 15, 19)
+          cy.wait(`@commitChanges2_${j}`, getLongDelay()).then((res) => {
+            expect(res.response.body.userId).to.eq(user2Id);
+          });
+          BulkEditSearchPane.waitFileUploading();
+        }
       },
     );
   });

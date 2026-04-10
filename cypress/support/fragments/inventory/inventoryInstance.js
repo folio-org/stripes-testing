@@ -155,7 +155,7 @@ const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
-const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
+const editInMGButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
@@ -1922,17 +1922,18 @@ export default {
     );
   },
 
-  editInstanceInLde: () => {
-    cy.wait(2000);
+  editInstanceInMG: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
-    cy.do(editInLdeButton.click());
+    cy.wait(500);
+    cy.do(editInMGButton.click());
     cy.wait(2000);
   },
 
-  checkEditInstanceInLdeButtonNotDisplayed: () => {
+  checkEditInstanceInMGButtonNotDisplayed: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
-    cy.expect(editInLdeButton.absent());
+    cy.expect(editInMGButton.absent());
     cy.wait(1000);
   },
 

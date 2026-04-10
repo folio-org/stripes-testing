@@ -295,7 +295,7 @@ describe('Invoices', () => {
 
   it(
     'C389493 User is not able to approve and pay Invoice created in the past when Invoice amount exceeds available budget amount (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C389493'] },
+    { tags: ['extendedPath', 'thunderjet', 'C389493'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
