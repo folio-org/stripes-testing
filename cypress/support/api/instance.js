@@ -152,3 +152,18 @@ Cypress.Commands.add('updateSrsRecord', (srsRecordId, srsRecordBody) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add(
+  'getSourceStorageMarcRecordIdentifiers',
+  (leaderSearchExpression, fieldsSearchExpression) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'source-storage/stream/marc-record-identifiers',
+      body: {
+        leaderSearchExpression,
+        fieldsSearchExpression,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => body);
+  },
+);
