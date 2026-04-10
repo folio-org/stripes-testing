@@ -2,6 +2,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import VersionHistorySection from '../../../support/fragments/inventory/versionHistorySection';
 import SettingsInventory from '../../../support/fragments/settings/inventory/settingsInventory';
 import VersionHistorySettings from '../../../support/fragments/settings/inventory/versionHistory';
@@ -9,7 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { Pane } from '../../../../interactors';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Inventory', () => {
   describe('Settings', () => {
@@ -42,7 +43,9 @@ describe('Inventory', () => {
           InventoryInstances.selectInstanceById(testData.createdRecordId);
         } else InventoryInstances.waitLoading();
         InventoryInstance.waitLoading();
-        InventoryInstance.clickVersionHistoryButton();
+        InventoryInstance.viewSource();
+        InventoryViewSource.verifyVersionHistoryButtonShown();
+        InventoryViewSource.clickVersionHistoryButton();
         VersionHistorySection.waitLoading();
       }
 
@@ -51,6 +54,7 @@ describe('Inventory', () => {
         cy.getMarcRecordDataViaAPI(instanceId).then((marcData) => {
           const field245 = marcData.fields.find((f) => f.tag === '245');
           field245.content = `$a ${testData.instanceTitle} v${iteration}`;
+          marcData.relatedRecordVersion = iteration;
           cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData).then(({ status }) => {
             expect(status).to.be.greaterThan(200);
             updateRecordNTimes(instanceId, iteration + 1);
@@ -60,12 +64,14 @@ describe('Inventory', () => {
 
       function closeVersionHistory() {
         VersionHistorySection.clickCloseButton();
+        InventoryViewSource.close();
         InventoryInstance.waitLoading();
       }
 
       before('Create test data', () => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C655274_');
+        cy.setVersionHistoryRecordsPerPage(10);
 
         cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
           testData.createdRecordId = instanceId;
@@ -77,8 +83,6 @@ describe('Inventory', () => {
             cy.createTempUser(permissions).then((userProperties) => {
               testData.userProperties = userProperties;
             });
-
-            cy.setVersionHistoryRecordsPerPage(10);
           });
         });
       });
@@ -97,7 +101,7 @@ describe('Inventory', () => {
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.settingsPath,
-            waiter: () => cy.expect(Pane('Settings').exists()),
+            waiter: SettingsPane.waitLoading,
           });
 
           // Step 1-2: Go to Settings > Inventory > Version history
