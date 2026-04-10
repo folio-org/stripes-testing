@@ -74,6 +74,8 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
+          cy.setMarcAuthorityVersionHistoryRecordsPerPage(10);
+
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C655287');
 
           MarcAuthorities.createMarcAuthorityViaAPI('', `655287${randomDigits}`, [
@@ -96,8 +98,6 @@ describe('MARC', () => {
               cy.createTempUser(permissions).then((userProperties) => {
                 testData.userProperties = userProperties;
               });
-
-              cy.setMarcAuthorityVersionHistoryRecordsPerPage(10);
             });
           });
         });
