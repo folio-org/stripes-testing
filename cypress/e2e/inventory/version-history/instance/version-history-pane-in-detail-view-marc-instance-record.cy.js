@@ -76,7 +76,6 @@ describe('Inventory', () => {
             index: 0,
             firstName: testData.user.firstName,
             lastName: testData.user.lastName,
-            isCurrent: true,
             changes: ['Statistical codes (Added)'],
           });
           VersionHistorySection.openChangesForCard();

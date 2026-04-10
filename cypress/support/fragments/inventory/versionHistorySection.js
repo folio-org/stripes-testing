@@ -281,7 +281,7 @@ export default {
     UsersCard.waitLoading();
   },
 
-  verifyOriginalVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+  verifyOriginalVersionCard({ index = 1, firstName, lastName, changes = [] } = {}) {
     const targetCard = rootSection.find(Card({ index }));
     cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
     cy.expect(targetCard.has({ text: including('Original version') }));
@@ -294,6 +294,17 @@ export default {
     const targetCard = rootSection.find(Card({ index }));
     cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
     cy.expect(targetCard.has({ text: including('Current version') }));
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
+  },
+
+  verifySharedVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Shared') }));
+    cy.expect(targetCard.find(HTML({ text: including('Current version') })).absent());
+    cy.expect(targetCard.find(HTML({ text: including('Original version') })).absent());
     changes.forEach((change) => {
       cy.expect(targetCard.find(ListItem({ text: change })).exists());
     });
