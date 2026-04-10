@@ -9,7 +9,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 
-describe('Citation: LDE permissions', () => {
+describe('Citation: No LDE permissions', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -60,13 +60,13 @@ describe('Citation: LDE permissions', () => {
   });
 
   it(
-    'C651425 [User journey] LDE - no LDE permissions for the User (citation)',
-    { tags: ['criticalPath', 'citation', 'C651425', 'linked-data-editor', 'shiftLeft'] },
+    'C651425 [User journey] Marigold - no LDE permissions for the User (citation)',
+    { tags: ['criticalPath', 'citation', 'C651425', 'marigold', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);
-      // 'Edit in LDE' not displayed
-      InventoryInstance.checkEditInstanceInLdeButtonNotDisplayed();
+      // 'Edit in MG' not displayed
+      InventoryInstance.checkEditInstanceInMGButtonNotDisplayed();
     },
   );
 });
