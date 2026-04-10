@@ -10,7 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { Pane } from '../../../../interactors';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Inventory', () => {
   describe('Settings', () => {
@@ -37,10 +37,11 @@ describe('Inventory', () => {
 
       function openVersionHistory(initial = false) {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        if (initial) InventoryInstances.waitContentLoading();
-        else InventoryInstances.waitLoading();
-        InventoryInstances.searchByTitle(testData.createdRecordId);
-        InventoryInstances.selectInstanceById(testData.createdRecordId);
+        if (initial) {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.createdRecordId);
+          InventoryInstances.selectInstanceById(testData.createdRecordId);
+        } else InventoryInstances.waitLoading();
         InventoryInstance.waitLoading();
         InventoryInstance.viewSource();
         InventoryViewSource.verifyVersionHistoryButtonShown();
@@ -64,6 +65,7 @@ describe('Inventory', () => {
       function closeVersionHistory() {
         VersionHistorySection.clickCloseButton();
         InventoryViewSource.close();
+        InventoryInstance.waitLoading();
       }
 
       before('Create test data', () => {
@@ -93,7 +95,7 @@ describe('Inventory', () => {
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
-      // Will FAIL due to https://folio-org.atlassian.net/browse/UIQM-815
+      // Will FAIL due to https://folio-org.atlassian.net/browse/UISMRCCOMP-41
       it(
         'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C655274'] },
@@ -101,7 +103,7 @@ describe('Inventory', () => {
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.settingsPath,
-              waiter: () => cy.expect(Pane('Settings').exists()),
+              waiter: SettingsPane.waitLoading,
             });
 
             // Step 1-2: Go to Settings > Inventory > Version history
