@@ -70,7 +70,6 @@ describe('Inventory', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstances.deleteInstanceByTitleViaApi('C655274_');
 
         cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
@@ -83,6 +82,8 @@ describe('Inventory', () => {
             cy.createTempUser(permissions).then((userProperties) => {
               testData.userProperties = userProperties;
             });
+
+            cy.setVersionHistoryRecordsPerPage(10);
           });
         });
       });
@@ -99,15 +100,13 @@ describe('Inventory', () => {
         'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C655274'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.settingsPath,
-              waiter: SettingsPane.waitLoading,
-            });
-
-            // Step 1-2: Go to Settings > Inventory > Version history
-            SettingsInventory.goToSettingsInventory();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
           });
+
+          // Step 1-2: Go to Settings > Inventory > Version history
+          SettingsInventory.goToSettingsInventory();
           SettingsInventory.selectSettingsTab(testData.versionHistoryTab);
           VersionHistorySettings.waitLoading();
           VersionHistorySettings.verifyDefaultCardsPerPage();
