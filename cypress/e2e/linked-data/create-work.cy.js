@@ -1,7 +1,7 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import { APPLICATION_NAMES, LDE_ROLES } from '../../support/constants';
@@ -53,17 +53,17 @@ describe('Citation: create work', () => {
   beforeEach(() => {
     cy.login(user.username, user.password, {
       path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
+      waiter: Marigold.waitLoading,
       authRefresh: true,
     });
   });
 
   it(
-    'C624167 [User journey] LDE - Create new work only from blank workform (citation)',
-    { tags: ['smoke', 'citation', 'C624167', 'linked-data-editor', 'shiftLeft'] },
+    'C624167 [User journey] Marigold - Create new work only from blank workform (citation)',
+    { tags: ['smoke', 'citation', 'C624167', 'marigold', 'shiftLeft'] },
     () => {
       // open new resource form
-      LinkedDataEditor.openNewResourceForm();
+      Marigold.openNewResourceForm();
       // check that modal is displayed
       WorkProfileModal.waitLoading();
       // check that default option 'Books' is there
@@ -80,7 +80,7 @@ describe('Citation: create work', () => {
       EditResource.setNoteValue(testData.summaryNote, 'Summary note');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);

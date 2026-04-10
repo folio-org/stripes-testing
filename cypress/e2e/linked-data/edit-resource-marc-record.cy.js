@@ -10,7 +10,7 @@ import {
 } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Work from '../../support/fragments/linked-data/work';
@@ -111,29 +111,29 @@ describe('Citation: MARC Authority integration', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
-    { tags: ['criticalPath', 'citation', 'C627245', 'linked-data-editor', 'shiftLeft'] },
+    'C627245 [User journey] Marigold - Edit existing resource | create MARC derived record (citation)',
+    { tags: ['criticalPath', 'citation', 'C627245', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       // generate random valid lccn in order to prevent unique validation error later
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
       EditResource.saveAndClose();
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // navigate to the inventory module
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       // search by LDE source and unique title
       InventoryInstances.searchBySource(source);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      InventoryInstance.editInstanceInLde();
+      InventoryInstance.editInstanceInMG();
       // edit edition
       EditResource.waitLoading();
       cy.wait(6000);
@@ -146,7 +146,7 @@ describe('Citation: MARC Authority integration', () => {
       ViewMarc.closeMarcView();
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitle);

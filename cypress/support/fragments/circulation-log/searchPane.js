@@ -37,6 +37,7 @@ export default {
   },
   waitLoading() {
     cy.expect(Accordion({ id: 'loan' }).exists());
+    cy.wait(3000);
   },
 
   searchByCheckedOut() {
