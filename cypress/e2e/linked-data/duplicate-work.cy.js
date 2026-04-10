@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
@@ -109,18 +109,18 @@ describe('Citation: duplicate resource', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['smoke', 'citation', 'C624234', 'linked-data-editor', 'shiftLeft'] },
+    'C624234 [User journey] Marigold - Duplicate existing work (citation)',
+    { tags: ['smoke', 'citation', 'C624234', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
       // duplicate work
       EditResource.duplicateWork();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
@@ -140,7 +140,7 @@ describe('Citation: duplicate resource', () => {
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueDuplicateTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueDuplicateTitle);

@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -97,32 +97,32 @@ describe('Citation: check navigation', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked (citation)',
-    { tags: ['smoke', 'citation', 'C491276', 'linked-data-editor', 'shiftLeft'] },
+    'C491276 Marigold: Verify user is navigated to Marigold home page when Application header icon is clicked (citation)',
+    { tags: ['smoke', 'citation', 'C491276', 'marigold', 'shiftLeft'] },
     () => {
       // check search is displayed with lccn option
-      LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
+      Marigold.checkSearchOptionIsDisplayed('lccn');
       // open new resource form
-      LinkedDataEditor.openNewResourceForm();
+      Marigold.openNewResourceForm();
       // check that modal is displayed
       WorkProfileModal.waitLoading();
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading();
       // navigate back to the main module
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.LINKED_DATA_EDITOR);
-      LinkedDataEditor.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARIGOLD);
+      Marigold.waitLoading();
       // search by any title
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work
-      LinkedDataEditor.selectFromSearchTable(1);
+      Marigold.selectFromSearchTable(1);
       // navigate back to the main module
-      LinkedDataEditor.selectModuleMainHeading();
-      LinkedDataEditor.waitLoading();
-      LinkedDataEditor.checkSearchOptionIsDisplayed('title');
+      Marigold.selectModuleMainHeading();
+      Marigold.waitLoading();
+      Marigold.checkSearchOptionIsDisplayed('title');
     },
   );
 });

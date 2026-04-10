@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import {
@@ -107,27 +107,27 @@ describe('Citation: duplicate resource', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings (citation)',
-    { tags: ['criticalPath', 'citation', 'C624280', 'linked-data-editor', 'shiftLeft'] },
+    'C624280 [User journey] Marigold - Create new instance by duplicating existing Instance plus holdings (citation)',
+    { tags: ['criticalPath', 'citation', 'C624280', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open instance for editing
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // duplicate instance
       EditResource.duplicateInstance();
       // check duplicated instance has 'Monographs' profile same as original instance
       EditResource.checkHeadingProfile('Monographs');
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search work by instance title
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitle);

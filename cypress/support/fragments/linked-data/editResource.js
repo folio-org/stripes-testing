@@ -1,4 +1,4 @@
-import { Button } from '../../../../interactors';
+import { Button, HTML } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const workActionsButton = Button({ dataTestID: 'block-actions-toggle' });
@@ -9,26 +9,24 @@ const instanceEditActionButton =
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
-const editWorkButton = "//button[text()='Edit work']";
+const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
-const editResourceSection = "//div[@id='edit-section']";
-const duplicateWorkSection = "//div[@id='app-root']//h2[text()='Duplicate work']";
-const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
+const editResourceSection = HTML({ id: 'edit-section' });
+const searchMarcAuthInputField = '#id-search-textarea';
 const newInstanceButton = "//button[@data-testid='new-instance']";
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
-const editWorkBut = Button('Edit work');
 
 export default {
   waitLoading() {
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.expect(editResourceSection.exists());
   },
 
   editWorkEditInstance() {
-    cy.do(editWorkBut.click());
+    cy.do(editWorkButton.click());
     cy.wait(1000);
     cy.xpath(instanceActionsButton).click();
     cy.xpath(instanceEditActionButton).click();
@@ -85,7 +83,7 @@ export default {
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.expect(editResourceSection.exists());
   },
 
   duplicateWork() {
@@ -94,7 +92,7 @@ export default {
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
-    cy.xpath(duplicateWorkSection).should('be.visible');
+    cy.expect(HTML({ id: 'duplicate-work-section' }).exists());
   },
 
   openNewInstanceFormViaActions() {
@@ -120,48 +118,53 @@ export default {
   },
 
   clickEditWork() {
-    cy.xpath(editWorkButton).click();
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.do(editWorkButton.click());
+    cy.wait(1000);
+    cy.expect(HTML({ id: 'edit-section' }).exists());
+    cy.wait(1000);
   },
 
   selectChangeCreatorOfWork(buttonNumber) {
     cy.xpath(
-      `(//button[contains(@data-testid, 'changeComplexFieldValue')])[${buttonNumber}]`,
+      `(//button[contains(@class, 'complex-lookup-select-button')])[${buttonNumber}]`,
     ).should('be.visible');
     cy.xpath(
-      `(//button[contains(@data-testid, 'changeComplexFieldValue')])[${buttonNumber}]`,
+      `(//button[contains(@class, 'complex-lookup-select-button')])[${buttonNumber}]`,
     ).click();
     // check that modal is displayed
     cy.xpath(selectMarcAuthModal).should('be.visible');
   },
 
   switchToSearchTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-authorities:search']").click();
+    cy.do(Button({ dataTestID: 'id-search-segment-button-authorities:search' }).click());
   },
 
   switchToBrowseTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-browse']").click();
+    cy.do(Button({ dataTestID: 'id-search-segment-button-browse' }).click());
   },
 
   selectSearchParameterMarcAuthModal(option) {
     cy.wait(1000);
     cy.xpath("//select[@id='id-search-select']").select(option);
+    cy.wait(1000);
   },
 
   searchMarcAuthority(keyword) {
     cy.wait(1000);
-    cy.xpath(searchMarcAuthInputField).focus().should('not.be.disabled').clear();
-    // break the chain since test fails here from time to time otherwise
-    cy.xpath(searchMarcAuthInputField).type(keyword);
+    cy.get(searchMarcAuthInputField).should('not.be.disabled').focus();
+    cy.get(searchMarcAuthInputField).type(keyword);
     // click on search button
-    cy.xpath("//button[@data-testid='id-search-button']").click();
+    cy.do(Button({ dataTestID: 'id-search-button' }).click());
   },
 
   selectAssignMarcAuthorityButton(rowNumber) {
-    cy.xpath(`(//button[contains(@data-testid, 'assign-button')])[${rowNumber}]`).click();
+    cy.get('[data-testid="table-row"]')
+      .eq(rowNumber - 1)
+      .find('[data-testid*="assign-button"]')
+      .click();
     // modal should be closed
     cy.xpath(selectMarcAuthModal).should('not.be.visible');
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.expect(HTML({ id: 'edit-section' }).exists());
   },
 
   checkLabelTextValue(sectionName, textValue) {
