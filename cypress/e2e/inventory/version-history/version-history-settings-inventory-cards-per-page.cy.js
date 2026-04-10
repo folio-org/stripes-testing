@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { Pane } from '../../../../interactors';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Inventory', () => {
   describe('Settings', () => {
@@ -97,7 +97,7 @@ describe('Inventory', () => {
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.settingsPath,
-            waiter: () => cy.expect(Pane('Settings').exists()),
+            waiter: SettingsPane.waitLoading,
           });
 
           // Step 1-2: Go to Settings > Inventory > Version history
