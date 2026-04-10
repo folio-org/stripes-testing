@@ -2,7 +2,6 @@ import {
   Button,
   Checkbox,
   HTML,
-  Link,
   Pane,
   Section,
   KeyValue,
@@ -21,7 +20,6 @@ import {
   DropdownMenu,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
-import EHoldingsProviderView from './eHoldingsProviderView';
 import EHoldingsResourceView from './eHoldingsResourceView';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import FilterTitlesModal from './modals/filterTitlesModal';
@@ -386,13 +384,6 @@ export default {
       Button('Save & close').has({ disabled: true }),
       Button('Cancel').has({ disabled: true }),
     ]);
-  },
-
-  clickProviderLink() {
-    cy.do(
-      packageInformationSection.find(Link({ href: including('/eholdings/providers/') })).click(),
-    );
-    EHoldingsProviderView.waitLoading();
   },
 
   verifyDeleteAgreementIconExists(agreementName) {
