@@ -71,14 +71,13 @@ describe('Inventory', () => {
       before('Create test data', () => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C655274_');
+        cy.setVersionHistoryRecordsPerPage(10);
 
         cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
           testData.createdRecordId = instanceId;
 
           // Update the MARC record multiple times to create 100+ versions
           cy.then(() => {
-            cy.setVersionHistoryRecordsPerPage(10);
-
             updateRecordNTimes(testData.createdRecordId, 1);
           }).then(() => {
             cy.createTempUser(permissions).then((userProperties) => {
