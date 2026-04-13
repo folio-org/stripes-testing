@@ -22,7 +22,7 @@ import PreviewResource from '../../support/fragments/linked-data/previewResource
 import FileManager from '../../support/utils/fileManager';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 import Users from '../../support/fragments/users/users';
 import Permissions from '../../support/dictionary/permissions';
@@ -156,8 +156,8 @@ describe('Citation: MARC Authority integration', () => {
   });
 
   it(
-    'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C633470', 'linked-data-editor'] },
+    'C633470 [User journey] Marigold - Create new MARC authority (citation)',
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C633470', 'marigold'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -188,7 +188,7 @@ describe('Citation: MARC Authority integration', () => {
       // search for inventory item (created in precondition via data import) and edit it in LDE
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
-      InventoryInstance.editInstanceInLde();
+      InventoryInstance.editInstanceInMG();
       PreviewResource.waitLoading();
       PreviewResource.clickContinue();
       EditResource.waitLoading();
@@ -210,8 +210,8 @@ describe('Citation: MARC Authority integration', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // open work
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
       EditResource.waitLoading();
       // check that marc value is displayed on the 'creator of work' section
       EditResource.checkLabelTextValue('Creator of Work', testData.authorityHeading);
