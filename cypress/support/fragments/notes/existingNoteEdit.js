@@ -22,6 +22,10 @@ export default class ExistingNoteEdit {
     cy.do([this.#titleTextField.fillIn(note.title), this.#detailsTextField.fillIn(note.details)]);
   }
 
+  static changeNoteType(noteType) {
+    cy.do(this.#noteTypeSelect.choose(noteType));
+  }
+
   static saveNote() {
     cy.do(this.#saveButton.click());
   }
