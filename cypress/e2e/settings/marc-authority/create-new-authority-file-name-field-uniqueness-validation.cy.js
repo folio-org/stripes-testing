@@ -88,14 +88,14 @@ describe('MARC', () => {
             localAuthorityFile.name,
             `${localAuthorityFile.newPrefix}a`,
             localAuthorityFile.newStartWithNumber,
-            `${localAuthorityFile.newUrl}/v2`,
+            `${localAuthorityFile.newUrl}v2/`,
             true,
           );
           ManageAuthorityFiles.checkCancelButtonEnabled();
           ManageAuthorityFiles.checkSaveButtonEnabled();
           ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
-            `${localAuthorityFile.newUrl}/v2/`,
+            `${localAuthorityFile.newUrl}v2/`,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME,
             errorNameUnique,
           );
