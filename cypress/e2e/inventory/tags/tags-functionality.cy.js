@@ -475,8 +475,10 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.inventoryPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     after('Deleting created entities', () => {
