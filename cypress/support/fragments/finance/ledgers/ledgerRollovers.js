@@ -111,7 +111,7 @@ export default {
   deleteLedgerRolloverViaApi(ledgerId) {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `finance/ledger-rollovers/${ledgerId}`,
+      path: `finance-storage/ledger-rollovers/${ledgerId}`,
     });
   },
 };

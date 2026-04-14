@@ -2020,3 +2020,67 @@ export const LEDGER_STATUSES = {
   FROZEN: 'Frozen',
   INACTIVE: 'Inactive',
 };
+
+export const EXPORT_FUND_FIELDS = {
+  FUND_NAME: 'Name (Fund)',
+  FUND_CODE: 'Code (Fund)',
+  FUND_STATUS: 'Status (Fund)',
+  FUND_TYPE: 'Type',
+  FUND_GROUPS: 'Group (Code)',
+  ACQ_UNITS: 'Acquisition unit',
+  TRANSFER_FROM: 'Transfer from',
+  TRANSFER_TO: 'Transfer to',
+  EXTERNAL_ACCOUNT_NO: 'External account number',
+  FUND_DESCRIPTION: 'Description',
+};
+
+export const EXPORT_BUDGET_FIELDS = {
+  BUDGET_NAME: 'Name (Budget)',
+  BUDGET_STATUS: 'Status (Budget)',
+  ALLOWABLE_ENCUMBRANCE: 'Allowable encumbrance',
+  ALLOWABLE_EXPENDITURE: 'Allowable expenditure',
+  CREATED_DATE: 'Date created (Budget)',
+  INITIAL_ALLOCATION: 'Initial allocation',
+  ALLOCATED_INCREASE: 'Increase',
+  ALLOCATED_DECREASE: 'Decrease',
+  TOTAL_ALLOCATED: 'Total allocation',
+  TRANSFERS: 'Transfers',
+  TOTAL_FUNDING: 'Total Funding',
+  BUDGET_ENCUMBERED: 'Encumbered (Budget)',
+  AWAITING_PAYMENT: 'Awaiting payment (Budget)',
+  EXPENDED: 'Expended (Budget)',
+  CREDITED: 'Credited (Budget)',
+  UNAVAILABLE: 'Unavailable',
+  OVER_ENCUMBERED: 'Over encumbered',
+  OVER_EXPENDED: 'Over expended',
+  CASH_BALANCE: 'Cash balance',
+  AVAILABLE: 'Available',
+};
+
+export const EXPORT_EXPENSE_CLASS_FIELDS = {
+  EXPENSE_CLASS_NAME: 'Name (Exp Class)',
+  EXPENSE_CLASS_CODE: 'Code (Exp Class)',
+  EXPENSE_CLASS_STATUS: 'Status (Exp Class)',
+  EXPENSE_CLASS_ENCUMBERED: 'Encumbered (Exp Class)',
+  EXPENSE_CLASS_AWAITING_PAYMENT: 'Awaiting payment (Exp Class)',
+  EXPENSE_CLASS_EXPENDED: 'Expended (Exp Class)',
+  EXPENSE_CLASS_CREDITED: 'Credited (Exp Class)',
+  PERCENTAGE_OF_TOTAL_EXPENDED: 'Percentage of total expended',
+};
+
+export const LEDGER_ROLLOVER_TYPES = {
+  COMMIT: 'Commit',
+  PREVIEW: 'Preview',
+  ROLLBACK: 'Rollback',
+};
+
+export const LEDGER_ROLLOVER_SOURCE_LABELS = {
+  [LEDGER_ROLLOVER_TYPES.COMMIT]: 'Rollover',
+  [LEDGER_ROLLOVER_TYPES.PREVIEW]: 'Rollover test',
+};
+
+export const LEDGER_ROLLOVER_STATUS_LABELS = {
+  IN_PROCESS: 'In process',
+  NOT_STARTED: 'Not started',
+  SUCCESS: 'Successful',
+};

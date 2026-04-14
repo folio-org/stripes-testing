@@ -109,7 +109,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375195 GetRecord: Verify Item FOLIO suppressed from discovery in case Transfer suppressed records with discovery flag value (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C375195', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C375195', 'nonParallel'] },
       () => {
         // Step 1: Click on the "Add item" button in the "Holdings" accordion
         InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);
