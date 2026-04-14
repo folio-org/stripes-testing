@@ -183,10 +183,10 @@ describe('Orders', () => {
 
       // Click "Delete" button
       Receiving.openDropDownInEditPieceModal();
-      const DeletePieceModal = EditPieceModal.clickDeleteButton();
+      const DeletePieceModal = EditPieceModal.clickDeleteButton({ isLastPiece: false });
 
-      // Click "Delete item" button
-      DeletePieceModal.clickDeleteItemButton();
+      // Click "Confirm" button
+      DeletePieceModal.clickConfirmButton();
       ReceivingDetails.checkReceivingDetails({
         orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
         expected: [],
