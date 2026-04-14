@@ -22,7 +22,7 @@ import {
   ORDER_STATUSES,
   ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
-  RECEIVING_TITILE_ACCORDION_NAMES,
+  RECEIVING_TITLE_ACCORDION_NAMES,
 } from '../../support/constants';
 
 describe('Orders', () => {
@@ -217,9 +217,9 @@ describe('Orders', () => {
       Receiving.verifyRoutingListWarning();
       ReceivingDetails.checkRoutingListSectionExpanded();
       ReceivingDetails.checkAccordionPosition({
-        previousAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.RECEIVED,
-        targetAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.ROUTING_LISTS,
-        nextAccordionLabel: RECEIVING_TITILE_ACCORDION_NAMES.UNRECEIVABLE,
+        previousAccordionLabel: RECEIVING_TITLE_ACCORDION_NAMES.RECEIVED,
+        targetAccordionLabel: RECEIVING_TITLE_ACCORDION_NAMES.ROUTING_LISTS,
+        nextAccordionLabel: RECEIVING_TITLE_ACCORDION_NAMES.UNRECEIVABLE,
       });
       ReceivingDetails.checkRoutingListTableContent([
         {
