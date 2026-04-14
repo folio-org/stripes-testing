@@ -9,26 +9,50 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 let user;
+const testData = {};
 const invalidInstanceUUIDsFileName = `AT_C965838_InvalidInstanceUUIDs_${getRandomPostfix()}.csv`;
 const invalidInstanceHRIDsFileName = `AT_C965838_InvalidInstanceHRIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingUUIDsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
   invalidInstanceUUIDsFileName,
+  true,
 );
 const errorsFromMatchingHRIDsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
   invalidInstanceHRIDsFileName,
+  true,
 );
 
-const invalidInstanceUUIDs = [];
-const invalidInstanceHRIDs = [];
+const sharedInstanceWithoutHoldings = {
+  title: `AT_C965838_SharedNoHoldings_${getRandomPostfix()}`,
+};
+const sharedInstanceWithHoldings = {
+  title: `AT_C965838_SharedWithHoldings_${getRandomPostfix()}`,
+};
+const instanceSharedFromMember = {
+  title: `AT_C965838_SharedFromMember_${getRandomPostfix()}`,
+};
+const sharedInstances = [
+  sharedInstanceWithoutHoldings,
+  sharedInstanceWithHoldings,
+  instanceSharedFromMember,
+];
 
-for (let i = 0; i < 10; i++) {
-  invalidInstanceUUIDs.push(
+const nonExistentInstanceUUIDs = [];
+const nonExistentInstanceHRIDs = [];
+
+for (let i = 0; i < 7; i++) {
+  nonExistentInstanceUUIDs.push(
     `${getRandomPostfix()}-${getRandomPostfix()}-${getRandomPostfix()}-${getRandomPostfix()}-${getRandomPostfix()}`,
   );
-  invalidInstanceHRIDs.push(`hrid${getRandomPostfix()}`);
+  nonExistentInstanceHRIDs.push(`hrid${getRandomPostfix()}`);
 }
+
+const invalidInstanceUUIDs = [...nonExistentInstanceUUIDs];
+const invalidInstanceHRIDs = [...nonExistentInstanceHRIDs];
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -36,6 +60,9 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
         cy.getAdminToken();
+        cy.getConsortiaId().then((consortiaId) => {
+          testData.consortiaId = consortiaId;
+        });
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
@@ -48,17 +75,96 @@ describe('Bulk-edit', () => {
             permissions.bulkEditEdit.gui,
             permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
-
-          FileManager.createFile(
-            `cypress/fixtures/${invalidInstanceUUIDsFileName}`,
-            invalidInstanceUUIDs.join('\n'),
-          );
-          FileManager.createFile(
-            `cypress/fixtures/${invalidInstanceHRIDsFileName}`,
-            invalidInstanceHRIDs.join('\n'),
-          );
-
           cy.resetTenant();
+
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            testData.instanceTypeId = instanceTypes[0].id;
+          });
+
+          // Create shared Instance without Holdings (in Central tenant)
+          cy.then(() => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: testData.instanceTypeId,
+                title: sharedInstanceWithoutHoldings.title,
+              },
+            }).then((createdInstanceData) => {
+              sharedInstanceWithoutHoldings.uuid = createdInstanceData.instanceId;
+              cy.getInstanceById(createdInstanceData.instanceId).then((instanceData) => {
+                sharedInstanceWithoutHoldings.hrid = instanceData.hrid;
+              });
+            });
+          });
+
+          // Create shared Instance with Holdings in member tenant
+          cy.then(() => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: testData.instanceTypeId,
+                title: sharedInstanceWithHoldings.title,
+              },
+            }).then((createdInstanceData) => {
+              sharedInstanceWithHoldings.uuid = createdInstanceData.instanceId;
+              cy.getInstanceById(createdInstanceData.instanceId).then((instanceData) => {
+                sharedInstanceWithHoldings.hrid = instanceData.hrid;
+              });
+            });
+          });
+
+          // Create holdings for the shared instance in College (member) tenant
+          cy.then(() => {
+            cy.setTenant(Affiliations.College);
+            cy.getLocations({ query: 'name="DCB"' }).then((location) => {
+              testData.locationId = location.id;
+            });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              testData.sourceId = folioSource.id;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: sharedInstanceWithHoldings.uuid,
+                permanentLocationId: testData.locationId,
+                sourceId: testData.sourceId,
+              }).then((holding) => {
+                sharedInstanceWithHoldings.collegeHoldingId = holding.id;
+              });
+            });
+          });
+
+          // Create local Instance in member tenant, then share it to Central
+          cy.then(() => {
+            cy.setTenant(Affiliations.College);
+            InventoryInstance.createInstanceViaApi({
+              instanceTitle: instanceSharedFromMember.title,
+            }).then(({ instanceData }) => {
+              instanceSharedFromMember.uuid = instanceData.instanceId;
+              InventoryInstance.shareInstanceViaApi(
+                instanceSharedFromMember.uuid,
+                testData.consortiaId,
+                Affiliations.College,
+                Affiliations.Consortia,
+              );
+              cy.getInstanceById(instanceSharedFromMember.uuid).then((fetched) => {
+                instanceSharedFromMember.hrid = fetched.hrid;
+              });
+            });
+            cy.resetTenant();
+          });
+
+          cy.then(() => {
+            sharedInstances.forEach((instance) => {
+              invalidInstanceUUIDs.push(instance.uuid);
+              invalidInstanceHRIDs.push(instance.hrid);
+            });
+
+            FileManager.createFile(
+              `cypress/fixtures/${invalidInstanceUUIDsFileName}`,
+              invalidInstanceUUIDs.join('\n'),
+            );
+            FileManager.createFile(
+              `cypress/fixtures/${invalidInstanceHRIDsFileName}`,
+              invalidInstanceHRIDs.join('\n'),
+            );
+          });
+
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -72,6 +178,12 @@ describe('Bulk-edit', () => {
       after('delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+        cy.deleteHoldingRecordViaApi(sharedInstanceWithHoldings.collegeHoldingId);
+        cy.resetTenant();
+        sharedInstances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        });
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${invalidInstanceUUIDsFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${invalidInstanceHRIDsFileName}`);
