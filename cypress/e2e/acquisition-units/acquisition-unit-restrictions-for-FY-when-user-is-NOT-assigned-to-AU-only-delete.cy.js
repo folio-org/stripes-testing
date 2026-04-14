@@ -87,7 +87,7 @@ describe('Acquisition Units', () => {
     { tags: ['criticalPath', 'thunderjet', 'C375080'] },
     () => {
       FinanceHelp.searchByAll(fiscalYear.name);
-      FiscalYears.selectFisacalYear(fiscalYear.name);
+      FiscalYears.selectFiscalYear(fiscalYear.name);
       FiscalYearDetails.checkFiscalYearDetails({
         information: [{ key: 'Acquisition units', value: acquisitionUnit.name }],
       });
