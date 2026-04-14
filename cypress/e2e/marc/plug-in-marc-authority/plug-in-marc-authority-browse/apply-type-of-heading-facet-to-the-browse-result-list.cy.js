@@ -61,16 +61,8 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+
           testData.marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -103,6 +95,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstance();
@@ -135,8 +128,6 @@ describe('MARC', () => {
             testData.authSearchOption.CORPORATE_NAME,
             testData.searchQuery,
           );
-          // Need to wait, while data will be updated
-          cy.wait(1000);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
@@ -145,7 +136,6 @@ describe('MARC', () => {
           });
 
           MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[1]);
-          cy.wait(1000);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes[1],
@@ -154,7 +144,6 @@ describe('MARC', () => {
           MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1]);
 
           MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[0]);
-          cy.wait(1000);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes,

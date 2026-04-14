@@ -57,16 +57,8 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+
+          InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
         });
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
           .then(() => {
@@ -92,6 +84,7 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
             InventoryInstances.searchByTitle(testData.instanceTitle);
             InventoryInstances.selectInstance();

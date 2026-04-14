@@ -1406,28 +1406,41 @@ export default {
   },
 
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
-    let actualValues = [];
-
-    cy.then(() => authoritiesList.rowCount())
-      .then((rowsCount) => {
-        Array.from({ length: rowsCount }).forEach((_, index) => {
-          authoritiesList
-            .find(MultiColumnListCell({ column, row: index }))
-            .content()
-            .then((content) => {
-              actualValues.push(content);
-            });
+    const collectValues = () => {
+      const actualValues = [];
+      return cy
+        .then(() => authoritiesList.rowCount())
+        .then((rowsCount) => {
+          Array.from({ length: rowsCount }).forEach((_, index) => {
+            authoritiesList
+              .find(MultiColumnListCell({ column, row: index }))
+              .content()
+              .then((content) => {
+                actualValues.push(content);
+              });
+          });
+        })
+        .then(() => {
+          if (browsePane && actualValues.includes('')) {
+            return actualValues
+              .slice(0, actualValues.indexOf(''))
+              .concat(actualValues.slice(actualValues.indexOf('') + 1));
+          }
+          return actualValues;
         });
-      })
-      .then(() => {
-        if (browsePane && actualValues.includes('')) {
-          actualValues = actualValues
-            .slice(0, actualValues.indexOf(''))
-            .concat(actualValues.slice(actualValues.indexOf('') + 1));
-        }
-        const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
-        expect(isOnlyValuesExist).to.equal(true);
-      });
+    };
+
+    cy.recurse(collectValues, (values) => values.every((value) => expectedValues.includes(value)), {
+      limit: 10,
+      delay: 2000,
+      timeout: 22_000,
+      error: (values) => {
+        const unexpected = [...new Set(values.filter((value) => !expectedValues.includes(value)))];
+        return `Column "${column}" contains unexpected values: [${unexpected.join(', ')}]`;
+      },
+    }).then((values) => {
+      cy.log(`Column "${column}" has expected values: [${[...new Set(values)].join(', ')}]`);
+    });
   },
 
   unselectHeadingType: (headingType) => {
