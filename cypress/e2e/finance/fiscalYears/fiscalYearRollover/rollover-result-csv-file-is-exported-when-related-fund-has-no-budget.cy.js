@@ -89,8 +89,8 @@ describe('Finance | Fiscal Year Rollover', () => {
       const { ledger } = flow.ctx();
 
       const fileNameDate = DateTools.getCurrentDateForFileNaming();
-      const todayDate = DateTools.getCurrentDate();
       const resultFileName = `${fileNameDate}-result.csv`;
+      const resultsColumnValue = `${DateTools.getCurrentDate()}-result`;
 
       /* STEP 1 */
       FinanceHelper.searchByName(ledger.name);
@@ -105,12 +105,12 @@ describe('Finance | Fiscal Year Rollover', () => {
         records: [
           {
             status: LEDGER_ROLLOVER_STATUS_LABELS.SUCCESS,
-            results: `${todayDate}-result`,
+            results: resultsColumnValue,
             source: LEDGER_ROLLOVER_SOURCE_LABELS[LEDGER_ROLLOVER_TYPES.COMMIT],
           },
           {
             status: LEDGER_ROLLOVER_STATUS_LABELS.SUCCESS,
-            results: `${todayDate}-result`,
+            results: resultsColumnValue,
             source: LEDGER_ROLLOVER_SOURCE_LABELS[LEDGER_ROLLOVER_TYPES.PREVIEW],
           },
         ],
