@@ -86,7 +86,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C385650 verb=ListIdentifiers: SRS & Inventory - Verify that Instance FOLIO is retrieved in case its suppressed from discovery Item and Holdings are deleted (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C385650', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C385650', 'nonParallel'] },
       () => {
         afterItemCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 
