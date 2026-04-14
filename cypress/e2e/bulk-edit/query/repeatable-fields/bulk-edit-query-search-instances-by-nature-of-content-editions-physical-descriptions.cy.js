@@ -169,11 +169,17 @@ describe('Bulk-edit', () => {
           // Expected to find: Instances 1, 2 (both have "audiobook" in nature of content)
           const expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
 
-          expectedInstancesToFind.forEach((instance) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              instance.hrid,
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedInstances[0].hrid,
+            instanceFieldValues.natureOfContent,
+            expectedInstances[0].natureOfContentString,
+          );
+
+          expectedInstances[1].natureOfContent.forEach((natureOfContentValue) => {
+            QueryModal.verifyMatchedRecordsIncludesByIdentifier(
+              expectedInstances[1].hrid,
               instanceFieldValues.natureOfContent,
-              instance.natureOfContentString,
+              natureOfContentValue,
             );
           });
 
