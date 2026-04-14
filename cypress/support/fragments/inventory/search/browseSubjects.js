@@ -178,6 +178,24 @@ export default {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
 
+  navigateToFirstPage() {
+    cy.get('#browse-results-list-browseSubjects-prev-paging-button').then(($btn) => {
+      if (!$btn.prop('disabled')) {
+        cy.wrap($btn).click();
+        this.navigateToFirstPage();
+      }
+    });
+  },
+
+  navigateToLastPage() {
+    cy.get('#browse-results-list-browseSubjects-next-paging-button').then(($btn) => {
+      if (!$btn.prop('disabled')) {
+        cy.wrap($btn).click();
+        this.navigateToLastPage();
+      }
+    });
+  },
+
   clearSearchTextfield() {
     cy.do(TextArea({ id: 'input-record-search' }).fillIn(''));
   },

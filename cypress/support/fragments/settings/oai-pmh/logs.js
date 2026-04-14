@@ -11,7 +11,7 @@ import FileManager from '../../../utils/fileManager';
 
 const logsPane = Pane('Logs');
 const logsLabel = HTML(
-  'Logs are available for completed harvests and kept for 30 days. Time in UTC.',
+  "Logs are available for completed harvests and kept for 30 days based on UTC time. The time displayed in the 'Last update' column is based on the time zone selected in tenant settings.",
 );
 const logsList = MultiColumnList();
 

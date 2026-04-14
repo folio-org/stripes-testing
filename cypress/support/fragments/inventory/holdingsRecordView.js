@@ -32,6 +32,7 @@ const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
 const numberOfItemsKeyValue = KeyValue('Number of items');
+const versionHistoryButton = Button({ icon: 'clock' });
 
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists()]);
@@ -485,5 +486,9 @@ export default {
 
   verifyTextAbsent(text) {
     cy.expect(HTML(including(text)).absent());
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
   },
 };

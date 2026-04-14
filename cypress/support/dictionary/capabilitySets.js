@@ -286,4 +286,9 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Editor Derive',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiInventorySingleRecordImport: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Single-Record-Import',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
 };
