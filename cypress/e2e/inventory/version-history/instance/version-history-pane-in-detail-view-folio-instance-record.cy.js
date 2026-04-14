@@ -15,7 +15,6 @@ describe('Inventory', () => {
       const testData = {
         resourceTitle: `C651477 autotestInstanceTitle${getRandomPostfix()}`,
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
-        // instanceStatusTerm: 'Cataloged',
       };
 
       before('Create test data', () => {
@@ -64,16 +63,21 @@ describe('Inventory', () => {
           InstanceRecordView.clickVersionHistoryButton();
           InstanceRecordView.checkButtonsStateWhenVersionHistoryPaneIsOpen();
           VersionHistorySection.verifyVersionHistoryPane(numberOfVersions);
-          VersionHistorySection.verifyVersionHistoryCard(
-            currentCardIndex,
-            testData.date,
-            testData.user.firstName,
-            testData.user.lastName,
-            false,
-            true,
-          );
+          VersionHistorySection.verifyCurrentVersionCard({
+            index: 0,
+            firstName: testData.user.firstName,
+            lastName: testData.user.lastName,
+            isCurrent: true,
+            changes: ['Title (Edited)'],
+          });
           VersionHistorySection.openChangesForCard(currentCardIndex);
           VersionHistorySection.verifyChangesModal();
+          VersionHistorySection.checkChangeInModal(
+            VersionHistorySection.fieldActions.EDITED,
+            'Title',
+            testData.instance.instanceTitle,
+            testData.resourceTitle,
+          );
           VersionHistorySection.closeChangesModal();
           VersionHistorySection.clickCloseButton();
           InstanceRecordView.checkButtonsStateWhenVersionHistoryPaneClosed();

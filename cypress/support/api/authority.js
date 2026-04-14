@@ -183,6 +183,16 @@ Cypress.Commands.add('getAuthoritiesCountViaAPI', () => {
   });
 });
 
+Cypress.Commands.add('getAuthoritiesPersonalNameCountViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'browse/authorities?query=(headingRef>="a" or headingRef<"a") and isTitleHeadingRef==false and headingType==("Personal Name")&limit=2',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.totalRecords;
+  });
+});
+
 Cypress.Commands.add('getSrsRecordsByAuthorityId', (instanceId) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
