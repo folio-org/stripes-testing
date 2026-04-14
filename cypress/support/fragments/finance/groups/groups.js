@@ -18,6 +18,8 @@ import {
   Link,
   SearchField,
   including,
+  matching,
+  or,
   HTML,
 } from '../../../../../interactors';
 import GroupDetails from './groupDetails';
@@ -27,10 +29,20 @@ const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
+const prevPageButton = Button({ dataTestID: 'prev-page-button', disabled: or(true, false) });
+const nextPageButton = Button({ dataTestID: 'next-page-button', disabled: or(true, false) });
 const resetButton = Button({ id: 'reset-groups-filters' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
 const summarySection = Section({ id: 'financial-summary' });
+const fundResultsList = MultiColumnList({ id: 'list-plugin-find-records' });
+const fundResultsSelectAllCheckbox = fundResultsList
+  .find(MultiColumnListHeader({ id: 'list-column-ischecked' }))
+  .find(Checkbox());
+const ledgerAccordionToggle = Button({ id: 'accordion-toggle-button-ledgerId' });
+const ledgerSelection = Button({ id: 'ledgerId-selection' });
+const statusAccordionToggle = Button({ id: 'accordion-toggle-button-fundStatus' });
+const fundSection = Section({ id: 'fund' });
 
 export default {
   defaultUiGroup: {
@@ -91,6 +103,12 @@ export default {
       Button('Delete').click(),
       Button('Delete', { id: 'clickable-group-remove-confirmation-confirm' }).click(),
     ]);
+  },
+
+  openSelectFundsModal() {
+    cy.do(fundSection.find(Button('Add to group')).click());
+    cy.expect(fundModal.exists());
+    cy.wait(2000);
   },
 
   addLedgerToGroup: (ledgerName) => {
@@ -326,5 +344,90 @@ export default {
 
   filterByStatus(statusName) {
     cy.do([Button({ text: 'Status' }).click(), Checkbox({ name: statusName }).click()]);
+  },
+
+  filterByLedgerInModal(ledgerName) {
+    cy.do([
+      fundModal.find(ledgerAccordionToggle).click(),
+      fundModal.find(ledgerSelection).click(),
+      SelectionOption(ledgerName).click(),
+    ]);
+    cy.wait(4000);
+  },
+
+  filterByStatusInModal(statusName) {
+    cy.get('#accordion-toggle-button-fundStatus').then(($btn) => {
+      const isExpanded = $btn.attr('aria-expanded') === 'true';
+      if (!isExpanded) {
+        cy.do(fundModal.find(statusAccordionToggle).click());
+      }
+    });
+    cy.do(
+      fundModal
+        .find(Checkbox({ id: `clickable-filter-fundStatus-${statusName.toLowerCase()}` }))
+        .click(),
+    );
+    cy.wait(4000);
+  },
+
+  verifyTotalSelectedInModal(count) {
+    cy.get('[data-test-find-records-modal-save="true"]')
+      .siblings('div')
+      .should(($div) => {
+        expect($div).to.have.length(1);
+        expect($div.text().trim()).to.eq(`Total selected: ${count}`);
+      });
+  },
+
+  verifyPreviousButtonInModal(enabled) {
+    cy.expect(fundModal.find(prevPageButton).has({ disabled: !enabled }));
+  },
+
+  verifyNextButtonInModal(enabled) {
+    cy.expect(fundModal.find(nextPageButton).has({ disabled: !enabled }));
+  },
+
+  clickNextButtonInModal() {
+    cy.do(fundModal.find(nextPageButton).click());
+    cy.wait(2000);
+  },
+
+  clickPreviousButtonInModal() {
+    cy.do(fundModal.find(prevPageButton).click());
+    cy.wait(2000);
+  },
+
+  selectAllFundsOnPage() {
+    cy.do(fundModal.find(fundResultsSelectAllCheckbox).click());
+  },
+
+  verifySelectAllCheckboxInModal(checked) {
+    cy.expect(fundModal.find(fundResultsSelectAllCheckbox).has({ checked }));
+  },
+
+  selectFundInModalByIndex(rowIndex) {
+    cy.do(
+      fundResultsList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Checkbox())
+        .click(),
+    );
+  },
+
+  verifyFundsCountInModal(count) {
+    cy.expect(fundResultsList.has({ rowCount: count }));
+  },
+
+  verifyRecordsFoundTextInModal() {
+    cy.expect(fundModal.find(PaneHeader({ subtitle: matching(/\d+ records? found/) })).exists());
+  },
+
+  verifyPaginationIndicatorInModal() {
+    cy.expect(fundModal.find(prevPageButton).exists());
+  },
+
+  clickSaveInModal() {
+    cy.do(fundModal.find(Button('Save')).click());
+    cy.wait(2000);
   },
 };
