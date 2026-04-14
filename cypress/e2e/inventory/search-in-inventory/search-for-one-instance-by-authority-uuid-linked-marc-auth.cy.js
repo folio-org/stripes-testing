@@ -54,30 +54,12 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         testData.instanceRecords.forEach((record) => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title= ${record}`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(record);
+        });
+        testData.searchAuthorityQueries.forEach((query) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
 
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id, true);
-              });
-            }
-          });
-        });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

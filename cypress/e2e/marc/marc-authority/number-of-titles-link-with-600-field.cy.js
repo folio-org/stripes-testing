@@ -49,26 +49,8 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Creating user', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: `title="${testData.instanceTitle}"`,
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
-      MarcAuthorities.getMarcAuthoritiesViaApi({
-        limit: 100,
-        query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-      }).then((authorities) => {
-        if (authorities) {
-          authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id, true);
-          });
-        }
-      });
+      InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(
