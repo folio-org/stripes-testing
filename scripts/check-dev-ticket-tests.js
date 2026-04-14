@@ -1,8 +1,8 @@
 /*
-This script's goal is to find Karate tickets for tests which were already automated by AQA.
+This script's goal is to find Karate/Cypress tickets for developers for tests which were already automated.
 (So that we can close them in Jira)
 Script does the following:
-- retrieves all Karate tickets for specified team(s)
+- retrieves all Karate/Cypress tickets for specified team(s)
 - extracts TestRail case IDs from ticket descriptions
 - fetches TestRail cases to check their automation type
 - outputs list of Jira tickets for test cases which have "Automated" execution type in TestRail,
@@ -32,6 +32,7 @@ const automationTypeMap = {
 };
 
 const karateEpic = 'FAT-20607';
+const cypressEpic = 'FAT-22828';
 const targetAutomationType = 1; // Automated
 
 const { createJiraClient, createTestRailClient } = require('./helpers/api.client');
@@ -46,7 +47,7 @@ const jiraClient = createJiraClient(JIRA_API_KEY);
 const testrailClient = createTestRailClient(API_USER, API_KEY);
 
 // JQL query for Karate tickets under FAT-20607 for all dev teams
-const JQL = `parent=${karateEpic} and "Development Team[Dropdown]" in (${devTeams.join(', ')}) and summary ~ Karate`;
+const JQL = `parent in (${karateEpic}, ${cypressEpic}) and "Development Team[Dropdown]" in (${devTeams.join(', ')}) and (summary ~ Karate OR summary ~ "Create Cypress tests")`;
 
 // Regex to extract TestRail case ID from URL
 const TESTRAIL_LINK_REGEX = /https:\/\/foliotest\.testrail\.io\/index\.php\?\/cases\/view\/(\d+)/g;
