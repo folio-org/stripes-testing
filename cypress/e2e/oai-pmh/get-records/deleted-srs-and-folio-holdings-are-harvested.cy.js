@@ -105,7 +105,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375979 GetRecords: SRS & Inventory - Verify that deleted SRS and FOLIO Holdings are harvested (marc21_withholdings) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C375979', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C375979', 'nonParallel'] },
       () => {
         // Steps 1-4: Delete SRS Holdings
         InventoryInstances.searchByTitle(marcInstance.title);
