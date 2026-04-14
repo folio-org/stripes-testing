@@ -1,6 +1,7 @@
 export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
+  CLAIMING: 'Claiming',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -95,14 +96,6 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
-export const BUDGET_STATUSES = {
-  ACTIVE: 'Active',
-  CLOZED: 'Clozed',
-  FROZEN: 'Frozed',
-  INACTIVE: 'Inactive',
-  PLANNED: 'Planned',
-};
-
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -172,20 +165,6 @@ export const BATCH_GROUP = {
   AMHERST: '"Amherst (AC)"',
 };
 
-export const INVOICE_STATUSES = {
-  OPEN: 'Open',
-  REVIEWED: 'Reviewed',
-  APPROVED: 'Approved',
-  CANCELLED: 'Cancelled',
-  PAID: 'Paid',
-};
-
-export const ORDER_STATUSES = {
-  OPEN: 'Open',
-  PENDING: 'Pending',
-  CLOSED: 'Closed',
-};
-
 export const RECORD_STATUSES = {
   CREATED: 'Created',
   UPDATED: 'Updated',
@@ -193,101 +172,6 @@ export const RECORD_STATUSES = {
   DASH: 'No value set-',
   BLANK: 'No value set',
   ERROR: 'Error',
-};
-
-export const ORDER_TYPES = {
-  ONE_TIME: 'One-time',
-  ONGOING: 'Ongoing',
-};
-
-export const ORDER_FORMAT_NAMES = {
-  ELECTRONIC_RESOURCE: 'Electronic resource',
-  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
-  PE_MIX: 'P/E mix',
-  PE_MIX_Check: 'P/E Mix',
-  OTHER: 'Other',
-  PHYSICAL_RESOURCE: 'Physical resource',
-  PHYSICAL_RESOURCE_Check: 'Physical Resource',
-};
-
-export const ORDER_PAYMENT_STATUS = {
-  PENDING: 'Pending',
-  PAYMENT_NOT_REQUIRED: 'Payment not required',
-};
-
-export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting Payment',
-  CANCELLED: 'Cancelled',
-  FULLY_PAID: 'Fully paid',
-  PARTIALLY_PAID: 'Partially paid',
-  PAYMENT_NOT_REQUIRED: 'Payment not required',
-};
-
-export const ORDER_FORMAT_NAMES_IN_PROFILE = {
-  ELECTRONIC_RESOURCE: 'Electronic Resource',
-  PE_MIX: 'P/E Mix',
-  OTHER: 'Other',
-  PHYSICAL_RESOURCE: 'Physical Resource',
-};
-
-export const ORDER_SYSTEM_CLOSING_REASONS = {
-  CANCELLED: 'Cancelled',
-  CEASED: 'Ceased',
-  COMPLETE: 'Complete',
-  TRANSFERRED_TO_ANOTHER_PUBLISHER: 'Transferred to another publisher',
-  MERGED_WITH_ANOTHER_TITLE: 'Merged with another title',
-  SPLIT_INTO_OTHER_TITLES: 'Split into other titles',
-  LACK_OF_FUNDS: 'Lack of funds',
-  LACK_OF_USE: 'Lack of use',
-  DUPLICATION: 'Duplication',
-  UNRESPONSIVE_VENDOR: 'Unresponsive vendor',
-  LICENSING_TERMS: 'Licensing terms (unacceptable)',
-  LOW_QUALITY: 'Low quality',
-  UNPREFERRED_FORMAT: 'Unpreferred format',
-  ERROR: 'Error',
-  TITLE_WONT_BE_PUBLISHED_THIS_YEAR: "Title won't be published this year",
-  TITLE_WONT_BE_PUBLISHED: "Title won't be published",
-  TITLE_OUT_OF_PRINT: 'Title is out of print',
-  TITLE_RECEIVED_AS_GIFT: 'Title received as a gift',
-};
-
-export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
-  APPROVAL_PLAN: 'Approval plan',
-  PURCHASE: 'Purchase',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
-  OTHER: 'Other',
-};
-
-export const RECEIPT_STATUS_SELECTED = {
-  PENDING: 'Pending',
-  RECEIPT_NOT_REQUIRED: 'Receipt not required',
-};
-
-export const RECEIPT_STATUS_VIEW = {
-  PENDING: 'Pending',
-  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
-  CANCELLED: 'Cancelled',
-};
-
-export const RECEIVING_WORKFLOW_NAMES = {
-  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
-  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
-};
-
-export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval plan',
-  DDA: 'Demand driven acquisitions (DDA)',
-  DEPOSITORY: 'Depository',
-  EBA: 'Evidence based acquisitions (EBA)',
-  EXCHANGE: 'Exchange',
-  FREE: 'Free',
-  GIFT: 'Gift',
-  INTERNAL_TRANSFER: 'Internal transfer',
-  MEMBERSHIP: 'Membership',
-  OTHER: 'Other',
-  PURCHASE: 'Purchase',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
-  TECHNICAL: 'Technical',
 };
 
 export const INSTITUTION_NAMES = {
@@ -412,22 +296,6 @@ export const NOTE_TYPES = {
   GENERAL: 'General note',
   NOTE_1516: 'Note type 1516',
   NOTE_1654: 'Note-type-1654',
-};
-
-export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
-  APPROVAL_PLAN: 'Approval Plan',
-  DDA: 'Demand Driven Acquisitions (DDA)',
-  DEPOSITORY: 'Depository',
-  EBA: 'Evidence Based Acquisitions (EBA)',
-  EXCHANGE: 'Exchange',
-  FREE: 'Free',
-  GIFT: 'Gift',
-  INTERNAL_TRANSFER: 'Internal transfer',
-  MEMBERSHIP: 'Membership',
-  OTHER: 'Other',
-  PURCHASE: 'Purchase',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
-  TECHNICAL: 'Technical',
 };
 
 export const REMOTE_STORAGE_PROVIDER_NAMES = {
@@ -1827,62 +1695,10 @@ export const EHOLDINGS_KB_SETTINGS_TABS = {
   USAGE_CONSOLIDATION: 'Usage consolidation',
 };
 
-export const CONSORTIA_SYSTEM_USER = 'System, System user - mod-consortia-keycloak';
-
-export const PUBLISH_COORDINATOR_STATUSES = {
-  COMPLETE: 'COMPLETE',
-  ERROR: 'ERROR',
-  IN_PROGRESS: 'IN_PROGRESS',
-};
-
-export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
-  CREATE: 'createSettingsPCId',
-  DELETE: 'pcId',
-  UPDATE: 'updateSettingsPCId',
-};
-
 export const DELETE_HOLDINGS_ACTIONS = {
   CANCEL: 'Cancel',
   KEEP_HOLDINGS: 'Keep Holdings',
   DELETE_HOLDINGS: 'Delete Holdings',
-};
-
-export const TRANSACTION_TYPES = {
-  ALLOCATION: 'Allocation',
-  CREDIT: 'Credit',
-  ENCUMBRANCE: 'Encumbrance',
-  PAYMENT: 'Payment',
-  PENDING_PAYMENT: 'Pending payment',
-  ROLLOVER_TRANSFER: 'Rollover transfer',
-  TRANSFER: 'Transfer',
-};
-
-export const POL_CREATE_INVENTORY_SETTINGS = {
-  INSTANCE: 'Instance',
-  INSTANCE_HOLDING: 'Instance, Holding',
-  INSTANCE_HOLDING_ITEM: 'Instance, Holding, Item',
-  NONE: 'None',
-};
-
-export const ORGANIZATION_STATUSES = {
-  ACTIVE: 'Active',
-  INACTIVE: 'Inactive',
-  PENDING: 'Pending',
-};
-
-export const INVOICE_POL_PAYMENT_STATUSES = {
-  AWAITING_PAYMENT: 'Awaiting Payment',
-  CANCELLED: 'Cancelled',
-  FULLY_PAID: 'Fully Paid',
-  NO_CHANGE: 'No Change',
-  PARTIALLY_PAID: 'Partially Paid',
-};
-
-export const POLINE_DETAILS_FIELDS = {
-  HOLDING_NAME: 'Holding',
-  LOCATION_NAME: 'Name (code)',
-  QUANTITY_PHYSICAL: 'Quantity physical',
-  QUANTITY_ELECTRONIC: 'Quantity electronic',
 };
 
 export const USER_TYPES = {
@@ -1890,94 +1706,4 @@ export const USER_TYPES = {
   PATRON: 'Patron',
   SYSTEM: 'System',
   SHADOW: 'Shadow',
-};
-
-export const ORDER_LINE_ACCORDION_NAMES = {
-  ITEM_DETAILS: 'Item details',
-  PURCHASE_ORDER_LINE: 'Purchase order line',
-  DONOR_INFORMATION: 'Donor information',
-  VENDOR: 'Vendor',
-  COST_DETAILS: 'Cost details',
-  FUND_DISTRIBUTION: 'Fund distribution',
-  LOCATION: 'Location',
-  PHYSICAL_RESOURCE_DETAILS: 'Physical resource details',
-  E_RESOURCES_DETAILS: 'E-resources details',
-  ROUTING_LISTS: 'Routing lists',
-  NOTES: 'Notes',
-  RELATED_INVOICE_LINES: 'Related invoice lines',
-  LINKED_INSTANCE: 'Linked instance',
-  CUSTOM_FIELDS: 'Custom fields',
-};
-
-export const RECEIVING_TITILE_ACCORDION_NAMES = {
-  TITLE_INFORMATION: 'Title information',
-  POL_DETAILS: 'POL details',
-  EXPECTED: 'Expected',
-  RECEIVED: 'Received',
-  ROUTING_LISTS: 'Routing lists',
-  UNRECEIVABLE: 'Unreceivable',
-  BOUND_ITEMS: 'Bound items',
-};
-
-export const FINANCIAL_ACTIVITY_OVERRAGES = {
-  ENCUMBERED: 'Encumbered',
-  AWAITING_PAYMENT: 'Awaiting payment',
-  EXPENDED: 'Expended',
-  CREDITED: 'Credited',
-  UNAVAILABLE: 'Unavailable',
-  OVER_ENCUMBRANCE: 'Over encumbrance',
-  OVER_EXPENDED: 'Over expended',
-  AVAILABLE_BALANCE: 'Available balance',
-};
-
-export const TRANSACTION_DETAIL_FIELDS = {
-  FISCAL_YEAR: 'Fiscal year',
-  TRANSACTION_DATE: 'Transaction date',
-  AMOUNT: 'Amount',
-  SOURCE: 'Source',
-  TYPE: 'Type',
-  FROM: 'From',
-  TO: 'To',
-  EXPENSE_CLASS: 'Expense class',
-  TAGS: 'Tags',
-  INITIAL_ENCUMBRANCE: 'Initial encumbrance',
-  AWAITING_PAYMENT: 'Awaiting payment',
-  EXPENDED: 'Expended',
-  STATUS: 'Status',
-  DESCRIPTION: 'Description',
-};
-
-export const ENCUMBRANCE_STATUSES = {
-  RELEASED: 'Released',
-  UNRELEASED: 'Unreleased',
-};
-
-export const INVOICE_VIEW_FIELDS = {
-  FISCAL_YEAR: 'Fiscal year',
-  INVOICE_STATUS: 'Status',
-  SUB_TOTAL: 'Sub-total',
-  VENDOR_NAME: 'Vendor name',
-  VOUCHER_STATUS: 'Status',
-};
-
-export const INVOICE_LINE_VIEW_FIELDS = {
-  STATUS: 'Status',
-  SUB_TOTAL: 'Sub-total',
-};
-
-export const FUND_DISTRIBUTION_TYPES = {
-  AMOUNT: 'amount',
-  PERCENTAGE: 'percentage',
-};
-export const LEDGER_VIEW_FIELDS = {
-  NAME: 'Name',
-  CODE: 'Code',
-  CURRENT_FISCAL_YEAR: 'Current fiscal year',
-  STATUS: 'Status',
-};
-
-export const LEDGER_STATUSES = {
-  ACTIVE: 'Active',
-  FROZEN: 'Frozen',
-  INACTIVE: 'Inactive',
 };
