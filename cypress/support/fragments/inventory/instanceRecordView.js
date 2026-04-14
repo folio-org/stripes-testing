@@ -992,7 +992,7 @@ export default {
 
   checkButtonsStateWhenVersionHistoryPaneIsOpen() {
     cy.expect([
-      rootSection.find(actionsButton).has({ disabled: true }),
+      rootSection.find(actionsButton).absent(),
       rootSection.find(versionHistoryButton).has({ disabled: true }),
       rootSection.find(Button({ icon: 'tag' })).has({ disabled: true }),
     ]);
