@@ -47,6 +47,7 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 const saveAndKeepEditingButton = footerPane.find(Button('Save & keep editing'));
 const holdingsTypeSelect = Select({ id: 'additem_holdingstype' });
 const numberOfItemsField = TextField('Number of items');
+const receiptStatusField = TextField({ name: 'receiptStatus' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -337,5 +338,8 @@ export default {
   },
   verifyNumberOfItems(numberOfItems) {
     cy.expect(numberOfItemsField.has({ value: numberOfItems }));
+  },
+  fillReceiptStatus(status) {
+    cy.do(receiptStatusField.fillIn(status));
   },
 };
