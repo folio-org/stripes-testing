@@ -1,8 +1,4 @@
-import {
-  APPLICATION_NAMES,
-  MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import FastAddNewRecord from '../../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
@@ -27,8 +23,8 @@ describe('Inventory', () => {
       permanentLocationOption: '',
       permanentLocationValue: '',
       itemBarcode: `${getRandomPostfix()}Barcode`,
-      materialType: MATERIAL_TYPE_NAMES.CD,
-      permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+      materialType: '',
+      permanentLoanType: '',
       note: 'note for monograph',
     };
 
@@ -40,6 +36,12 @@ describe('Inventory', () => {
       cy.getLocations({ limit: 1 }).then((location) => {
         fastAddNewRecordFormDetails.permanentLocationOption = location.name;
         fastAddNewRecordFormDetails.permanentLocationValue = location.name;
+      });
+      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
+        fastAddNewRecordFormDetails.materialType = materialType.name;
+      });
+      cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+        fastAddNewRecordFormDetails.permanentLoanType = loanTypes[0].name;
       });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
