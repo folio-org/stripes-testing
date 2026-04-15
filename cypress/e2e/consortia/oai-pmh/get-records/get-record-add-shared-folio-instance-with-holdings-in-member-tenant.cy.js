@@ -1,22 +1,15 @@
 import {
   APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-  JOB_STATUS_NAMES,
-  RECORD_STATUSES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../../support/fragments/inventory/inventoryNewHoldings';
+import InventoryNewInstance from '../../../../support/fragments/inventory/inventoryNewInstance';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import OaiPmh from '../../../../support/fragments/oai-pmh/oaiPmh';
 import OaiPmhEdge from '../../../../support/fragments/oai-pmh/oaiPmhEdge';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -29,11 +22,9 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {
   user: {},
-  marcFile: {
-    marc: 'marcBibFileForC402361.mrc',
-    fileName: `C402361_testMarcFile${getRandomPostfix()}.mrc`,
+  folioInstance: {
+    title: `AT_C405928_SharedFolioInstance_${getRandomPostfix()}`,
   },
-  instanceTitle: 'AT_C402361_MarcInstance',
   holdingsData: {
     callNumber: `Holdings_CN_${getRandomPostfix()}`,
   },
@@ -46,11 +37,7 @@ const testData = {
   },
 };
 const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
-const userPermissions = [
-  Permissions.moduleDataImportEnabled.gui,
-  Permissions.inventoryAll.gui,
-  Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-];
+const userPermissions = [Permissions.inventoryAll.gui];
 
 describe('OAI-PMH', () => {
   describe('Consortia', () => {
@@ -68,7 +55,7 @@ describe('OAI-PMH', () => {
         cy.setTenant(Affiliations.College);
         Behavior.updateBehaviorConfigViaApi(
           BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
-          BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+          BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.INVENTORY,
         );
 
         // Get location for holdings from College tenant
@@ -94,8 +81,8 @@ describe('OAI-PMH', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        if (testData.marcInstance?.uuid) {
-          InventoryInstance.deleteInstanceViaApi(testData.marcInstance.uuid);
+        if (testData.folioInstance?.id) {
+          InventoryInstance.deleteInstanceViaApi(testData.folioInstance.id);
         }
         cy.setTenant(Affiliations.College);
         Behavior.updateBehaviorConfigViaApi();
@@ -104,57 +91,43 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402361 Consortia | SRS | GetRecord: Add shared MARC instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402361', 'nonParallel'] },
+        'C405928 Consortia | Inventory | GetRecord: Add shared FOLIO instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
+        { tags: ['extendedPathECS', 'firebird', 'C405928', 'nonParallel'] },
         () => {
-          // Step 1: Login and navigate to Data Import in Central tenant
+          // Step 1-3: Login to Central tenant and create shared FOLIO instance
           cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
-          // Step 2-3: Upload MARC file and run default job profile
-          DataImport.verifyUploadState();
-          DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.fileName);
+          // Step 1: Select Actions => New shared record
+          InventoryInstances.addNewInventory();
 
-          // Step 4: Verify import completed successfully
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(testData.marcFile.fileName);
-          FileDetails.checkStatusInColumn(
-            RECORD_STATUSES.CREATED,
-            FileDetails.columnNameInResultList.srsMarc,
-          );
-          FileDetails.checkStatusInColumn(
-            RECORD_STATUSES.CREATED,
-            FileDetails.columnNameInResultList.instance,
-          );
+          // Step 2: Fill in Resource title
+          InventoryNewInstance.fillResourceTitle(testData.folioInstance.title);
 
-          // Step 5: Open instance in Inventory
-          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
+          // Step 3: Select Resource type
+          InventoryNewInstance.fillResourceType();
 
-          // Step 6: View source and extract UUID from 999 field
-          InventoryInstance.viewSource();
-          InventoryViewSource.extructDataFrom999Field().then((result) => {
-            testData.marcInstance = {
-              uuid: result[0],
-            };
-            InventoryViewSource.close();
+          // Step 4: Click Save and close
+          InventoryNewInstance.clickSaveAndCloseButton();
+          InventoryInstance.waitLoading();
+          InventoryInstance.verifyInstanceTitle(testData.folioInstance.title);
 
-            // Step 7: Switch to member tenant and search for the instance
+          // Get instance ID
+          InventoryInstance.getId().then((instanceId) => {
+            testData.folioInstance.id = instanceId;
+
+            // Step 5: Switch to member tenant and search for the instance
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.waitContentLoading();
-            InventoryInstances.searchByTitle(testData.marcInstance.uuid);
-            InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventoryInstances.searchByTitle(testData.folioInstance.title);
+            InventoryInstance.waitInstanceRecordViewOpened(testData.folioInstance.title);
 
-            // Step 8: Add holdings record with call number, electronic access, and location
+            // Step 6-7: Add holdings record with call number, electronic access, and location
             InventoryInstance.pressAddHoldingsButton();
             InventoryNewHoldings.fillPermanentLocation(testData.locationName);
             InventoryNewHoldings.fillCallNumber(testData.holdingsData.callNumber);
@@ -168,70 +141,73 @@ describe('OAI-PMH', () => {
             HoldingsRecordEdit.saveAndClose();
             InventoryInstance.checkIsHoldingsCreated([testData.locationName]);
 
-            // Step 10: Verify GetRecord response with marc21 metadata format
+            // Step 8: Verify GetRecord response with marc21 metadata format
             cy.resetTenant();
             cy.getAdminToken();
             cy.setTenant(Affiliations.College);
             OaiPmhEdge.getRecordRequest(
-              testData.marcInstance.uuid,
+              testData.folioInstance.id,
               Affiliations.College,
               'marc21',
               collegeApiKey,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 false,
                 true,
                 Affiliations.College,
               );
               OaiPmh.verifyMarcField(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 '999',
                 { ind1: 'f', ind2: 'f' },
-                { t: '0' },
+                { t: '0', i: testData.folioInstance.id },
               );
               OaiPmh.verifyMarcField(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 '245',
-                { ind1: '0', ind2: '4' },
-                { a: testData.instanceTitle },
+                { ind1: '0', ind2: '0' },
+                { a: testData.folioInstance.title },
               );
             });
 
-            // Step 11: Verify GetRecord response with marc21_withholdings metadata format
+            // Step 9: Verify GetRecord response with marc21_withholdings metadata format
             OaiPmhEdge.getRecordRequest(
-              testData.marcInstance.uuid,
+              testData.folioInstance.id,
               Affiliations.College,
               'marc21_withholdings',
               collegeApiKey,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 false,
                 true,
                 Affiliations.College,
               );
               OaiPmh.verifyMarcField(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 '999',
                 { ind1: 'f', ind2: 'f' },
-                { t: '0' },
+                { t: '0', i: testData.folioInstance.id },
               );
               OaiPmh.verifyMarcField(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 '952',
                 { ind1: 'f', ind2: 'f' },
-                { t: '0' },
+                {
+                  t: '0',
+                  e: testData.holdingsData.callNumber,
+                },
               );
               OaiPmh.verifyMarcField(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 '856',
                 { ind1: '4', ind2: '0' },
                 {
@@ -243,22 +219,22 @@ describe('OAI-PMH', () => {
               );
             });
 
-            // Step 12: Verify GetRecord response with oai_dc metadata format
+            // Step 10: Verify GetRecord response with oai_dc metadata format
             OaiPmhEdge.getRecordRequest(
-              testData.marcInstance.uuid,
+              testData.folioInstance.id,
               Affiliations.College,
               'oai_dc',
               collegeApiKey,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
-                testData.marcInstance.uuid,
+                testData.folioInstance.id,
                 false,
                 true,
                 Affiliations.College,
               );
-              OaiPmh.verifyDublinCoreField(response, testData.marcInstance.uuid, {
-                title: testData.instanceTitle,
+              OaiPmh.verifyDublinCoreField(response, testData.folioInstance.id, {
+                title: testData.folioInstance.title,
               });
             });
           });

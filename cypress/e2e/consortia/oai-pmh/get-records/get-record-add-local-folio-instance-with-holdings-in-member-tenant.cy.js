@@ -94,7 +94,7 @@ describe('OAI-PMH', () => {
 
       it(
         'C407761 Consortia | Inventory | GetRecord: Add local FOLIO instance to Member tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C407761'] },
+        { tags: ['extendedPathECS', 'firebird', 'C407761', 'nonParallel'] },
         () => {
           // Step 1: Go to "Inventory" app => Select "Actions" => Select "New local record" button
           InventoryInstances.addNewInventory();
