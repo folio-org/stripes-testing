@@ -200,6 +200,7 @@ describe('Patron notices', () => {
         CirculationRules.saveCirculationRules();
 
         CirculationRules.checkUpdateCirculationRulesCalloutAppeared();
+        cy.getUserToken(user.username, user.password);
         CirculationRules.checkNoticePolicyAddedToCirculationRules(defaultNoticePolicy.id);
       },
     );
