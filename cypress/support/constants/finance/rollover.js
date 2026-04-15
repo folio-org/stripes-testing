@@ -1,7 +1,19 @@
-export const ROLLOVER_BUDGET_VALUE = {
-  NONE: 'None',
+export const LEDGER_ROLLOVER_BUDGET_VALUE = {
   AVAILABLE: 'Available',
   CASH_BALANCE: 'CashBalance',
+  NONE: 'None',
+};
+
+export const LEDGER_ROLLOVER_BUDGET_VALUE_LABELS = {
+  AVAILABLE: 'Available',
+  CASH_BALANCE: 'Cash balance',
+  NONE: 'None',
+};
+
+export const LEDGER_ROLLOVER_ENCUMBRANCE_BASE_LABELS = {
+  EXPENDED: 'Expended',
+  INITIAL_ENCUMBRANCE: 'Initial encumbrance',
+  REMAINING: 'Remaining',
 };
 
 export const LEDGER_ROLLOVER_TYPES = {
