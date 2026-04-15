@@ -26,7 +26,7 @@ export const ROLLOVER_BUDGET_VALUE_AS = {
   TRANSFER: 'Transfer',
 };
 
-export const ORDER_TYPES_FOR_ROLLOVER = {
+export const LEDGER_ROLLOVER_ORDER_TYPES = {
   ONE_TIME: 'One-time',
   ONGOING: 'Ongoing',
   ONGOING_SUBSCRIPTION: 'Ongoing-Subscription',

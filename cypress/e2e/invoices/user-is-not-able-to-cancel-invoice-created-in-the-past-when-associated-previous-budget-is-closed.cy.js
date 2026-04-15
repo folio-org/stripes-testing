@@ -23,7 +23,7 @@ import {
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
   ORDER_TYPES,
-  ORDER_TYPES_FOR_ROLLOVER,
+  LEDGER_ROLLOVER_ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
   ROLLOVER_ENCUMBRANCE_BASED_ON,
   ROLLOVER_BUDGET_VALUE,
@@ -188,7 +188,7 @@ describe('Invoices', () => {
       ],
       encumbrancesRollover: [
         {
-          orderType: ORDER_TYPES_FOR_ROLLOVER.ONE_TIME,
+          orderType: LEDGER_ROLLOVER_ORDER_TYPES.ONE_TIME,
           basedOn: ROLLOVER_ENCUMBRANCE_BASED_ON.INITIAL_AMOUNT,
         },
       ],
