@@ -28,6 +28,10 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    duplicateInstanceId: null,
+    duplicateInstanceId2: null,
   };
 
   const resourceData = {
@@ -80,20 +84,10 @@ describe('Citation: create new instance by duplicating - for a multiple instance
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    // delete work created in pre-condition
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete both duplicated instances data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitleUpdated);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.duplicateInstanceId2) Work.deleteInstanceViaApi(testData.duplicateInstanceId2);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -103,8 +97,11 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    // create test data based on uploaded marc file and capture IDs for cleanup
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
+      testData.workId = workId;
+      testData.instanceId = instanceId;
+    });
   });
 
   it(
@@ -120,7 +117,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
+        testData.duplicateInstanceId = duplicateInstanceId;
+      });
       // wait for LDE page to be displayed
       Marigold.waitLoading();
       // search by work title again
@@ -131,7 +130,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId2) => {
+        testData.duplicateInstanceId2 = duplicateInstanceId2;
+      });
       // wait for LDE page to be displayed
       Marigold.waitLoading();
       // search work by instance title
