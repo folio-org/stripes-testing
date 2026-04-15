@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Helper from '../../../../support/fragments/finance/financeHelper';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
@@ -18,7 +18,7 @@ describe('Inventory', () => {
       instanceTitle: `AT_C3501_Instance_${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
     };
-    const anotherPermanentLocation = LOCATION_NAMES.CD_R;
+    let anotherPermanentLocation;
     let testInstanceId;
     let instanceHrid;
 
@@ -35,8 +35,10 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             itemData.instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ limit: 2 }).then((res) => {
             itemData.locationId = res.id;
+            const [, secondLocation] = Cypress.env('locations');
+            anotherPermanentLocation = `${secondLocation.name} (${secondLocation.code})`;
           });
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             itemData.holdingTypeId = res[0].id;
@@ -102,7 +104,7 @@ describe('Inventory', () => {
 
     it(
       'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-      { tags: ['dryRun', 'folijet'] },
+      { tags: ['dryRun', 'folijet', 'C3501'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
