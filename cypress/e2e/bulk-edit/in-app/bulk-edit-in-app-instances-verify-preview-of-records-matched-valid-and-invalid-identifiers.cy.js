@@ -4,6 +4,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   instanceIdentifiers,
+  ERROR_MESSAGES,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -16,15 +17,27 @@ import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 let user;
 let instanceTypeId;
 let instanceTypeName;
-const numberOfRecords = 10;
+const numberOfRecords = 9;
 const createdInstanceTitles = [];
 const invalidInstanceIds = [];
 const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
-const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+const instanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
+const matchedRecordsUUIDsFileName = BulkEditFiles.getMatchedRecordsFileName(
   instanceUUIDsFileName,
+  true,
+);
+const errorsFromMatchingUUIDsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  instanceUUIDsFileName,
+  true,
+);
+const matchedRecordsHRIDsFileName = BulkEditFiles.getMatchedRecordsFileName(
+  instanceHRIDsFileName,
+  true,
+);
+const errorsFromMatchingHRIDsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  instanceHRIDsFileName,
   true,
 );
 
@@ -72,9 +85,14 @@ describe('Bulk-edit', () => {
             });
           })
           .then(() => {
+            // Add duplicate valid identifier to test warnings
             FileManager.createFile(
               `cypress/fixtures/${instanceUUIDsFileName}`,
-              `${createdInstanceIds.join('\n')}\n${invalidInstanceIds.join('\n')}`,
+              `${createdInstanceIds.join('\n')}\n${createdInstanceIds[0]}\n${invalidInstanceIds.join('\n')}`,
+            );
+            FileManager.createFile(
+              `cypress/fixtures/${instanceHRIDsFileName}`,
+              `${createdInstanceHrids.join('\n')}\n${createdInstanceHrids[0]}\n${invalidInstanceIds.join('\n')}`,
             );
           });
         cy.login(user.username, user.password, {
@@ -91,7 +109,13 @@ describe('Bulk-edit', () => {
       });
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, errorsFromMatchingFileName);
+      FileManager.deleteFile(`cypress/fixtures/${instanceHRIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsUUIDsFileName,
+        errorsFromMatchingUUIDsFileName,
+        matchedRecordsHRIDsFileName,
+        errorsFromMatchingHRIDsFileName,
+      );
     });
 
     it(
@@ -114,11 +138,23 @@ describe('Bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyErrorLabel(10);
+        BulkEditSearchPane.verifyErrorLabel(9, 1);
 
         invalidInstanceIds.forEach((invalidInstanceId) => {
-          BulkEditSearchPane.verifyNonMatchedResults(invalidInstanceId);
+          BulkEditSearchPane.verifyErrorByIdentifier(
+            invalidInstanceId,
+            ERROR_MESSAGES.NO_MATCH_FOUND,
+            'Error',
+          );
         });
+
+        // Verify duplicate warning for the repeated valid identifier
+        BulkEditSearchPane.clickShowWarningsCheckbox();
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          createdInstanceIds[0],
+          ERROR_MESSAGES.DUPLICATE_ENTRY,
+          'Warning',
+        );
 
         createdInstanceHrids.forEach((instanceHrid) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -219,14 +255,79 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
 
         createdInstanceIds.forEach((instanceId) => {
-          ExportFile.verifyFileIncludes(matchedRecordsFileName, [instanceId]);
+          ExportFile.verifyFileIncludes(matchedRecordsUUIDsFileName, [instanceId]);
         });
 
         BulkEditActions.downloadErrors();
 
         invalidInstanceIds.forEach((invalidInstanceId) => {
-          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [invalidInstanceId]);
+          ExportFile.verifyFileIncludes(errorsFromMatchingUUIDsFileName, [
+            `ERROR,${invalidInstanceId},${ERROR_MESSAGES.NO_MATCH_FOUND}`,
+          ]);
         });
+        // Verify duplicate warning in CSV
+        ExportFile.verifyFileIncludes(errorsFromMatchingUUIDsFileName, [
+          `WARNING,${createdInstanceIds[0]},${ERROR_MESSAGES.DUPLICATE_ENTRY}`,
+        ]);
+
+        // Step 12: Test with Instance HRIDs
+        BulkEditSearchPane.clickToBulkEditMainButton();
+        BulkEditSearchPane.checkInstanceRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
+
+        BulkEditSearchPane.uploadFile(instanceHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyPaneTitleFileName(instanceHRIDsFileName);
+        BulkEditSearchPane.verifyPaneRecordsCount(`${numberOfRecords} instance`);
+        BulkEditSearchPane.verifyFileNameHeadLine(instanceHRIDsFileName);
+
+        createdInstanceHrids.forEach((instanceHrid, index) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+            instanceHrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
+            createdInstanceTitles[index],
+          );
+        });
+
+        // Step 13: Check the columns in the error table - verify errors and warnings
+        BulkEditSearchPane.verifyErrorLabel(9, 1);
+
+        invalidInstanceIds.forEach((invalidInstanceId) => {
+          BulkEditSearchPane.verifyErrorByIdentifier(
+            invalidInstanceId,
+            ERROR_MESSAGES.NO_MATCH_FOUND,
+            'Error',
+          );
+        });
+
+        // Verify duplicate warning for the repeated valid HRID
+        BulkEditSearchPane.clickShowWarningsCheckbox();
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          createdInstanceHrids[0],
+          ERROR_MESSAGES.DUPLICATE_ENTRY,
+          'Warning',
+        );
+
+        // Step 14: Download matched records for HRIDs
+        BulkEditActions.downloadMatchedResults();
+
+        createdInstanceHrids.forEach((instanceHrid) => {
+          ExportFile.verifyFileIncludes(matchedRecordsHRIDsFileName, [instanceHrid]);
+        });
+
+        // Step 15: Download errors for HRIDs
+        BulkEditActions.downloadErrors();
+
+        invalidInstanceIds.forEach((invalidInstanceId) => {
+          ExportFile.verifyFileIncludes(errorsFromMatchingHRIDsFileName, [
+            `ERROR,${invalidInstanceId},${ERROR_MESSAGES.NO_MATCH_FOUND}`,
+          ]);
+        });
+        // Verify duplicate warning in CSV
+        ExportFile.verifyFileIncludes(errorsFromMatchingHRIDsFileName, [
+          `WARNING,${createdInstanceHrids[0]},${ERROR_MESSAGES.DUPLICATE_ENTRY}`,
+        ]);
       },
     );
   });
