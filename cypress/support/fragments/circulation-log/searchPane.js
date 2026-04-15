@@ -37,7 +37,7 @@ export default {
   },
   waitLoading() {
     cy.expect(Accordion({ id: 'loan' }).exists());
-    cy.wait(2000);
+    cy.wait(3000);
   },
 
   searchByCheckedOut() {
@@ -129,6 +129,7 @@ export default {
         .absent(),
     );
     cy.do(Checkbox(checkboxOption).click());
+    cy.wait(300);
   },
 
   resetFilters() {
@@ -236,7 +237,7 @@ export default {
     const lastWeek = DateTools.getLastWeekDateObj();
     const today = new Date();
 
-    return cy.do([
+    cy.do([
       TextField({ name: 'endDate' }).fillIn(
         DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'),
       ),
@@ -245,6 +246,7 @@ export default {
       ),
       Accordion({ id: 'date' }).find(Button('Apply')).click(),
     ]);
+    cy.wait(300);
   },
   resetResults() {
     cy.wait(2000);

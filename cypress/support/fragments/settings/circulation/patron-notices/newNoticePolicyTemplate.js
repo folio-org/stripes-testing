@@ -1,5 +1,4 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import moment from 'moment';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
@@ -56,7 +55,7 @@ export const createNoticeTemplate = ({
     description: 'Created by autotest team',
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
+    previewText: 'Test email body The Wines of Italy',
     // notice option
     notice: {
       templateName,
@@ -81,6 +80,7 @@ export default {
   },
 
   waitLoading() {
+    cy.expect(Link(titles.templates).exists());
     cy.do(Link(titles.templates).click());
     cy.expect(Heading(titles.templates).exists());
   },
@@ -116,6 +116,7 @@ export default {
     cy.wait(1000);
     cy.do(nameField.fillIn(noticePolicyTemplate.name));
     cy.expect(nameField.has({ value: noticePolicyTemplate.name }));
+    cy.wait(2000);
 
     cy.do(descriptionField.fillIn(noticePolicyTemplate.description));
     cy.expect(descriptionField.has({ value: noticePolicyTemplate.description }));

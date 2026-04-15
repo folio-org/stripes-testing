@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
@@ -117,18 +117,18 @@ describe('Citation: create instance in central tenant + holdings in member', () 
     });
     // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C736677 [User journey] LDE - Create new instance in central tenant (citation)',
-    { tags: ['criticalPathECS', 'citation', 'linked-data-editor', 'C736677'] },
+    'C736677 [User journey] Marigold - Create new instance in central tenant (citation)',
+    { tags: ['criticalPathECS', 'citation', 'marigold', 'C736677'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
       EditResource.waitLoading();
       // add new instance
       EditResource.openNewInstanceFormViaActions();
@@ -138,7 +138,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // switch to member tenant
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

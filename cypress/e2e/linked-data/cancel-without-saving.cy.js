@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import AdvancedSearch from '../../support/fragments/linked-data/advancedSearch';
 import {
@@ -97,7 +97,7 @@ describe('Citation: cancel without saving', () => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueDuplicateTitle,
       );
-      Work.deleteById(filteredInstances[0].id);
+      Work.deleteById(filteredInstances[0]?.id);
     });
     Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
     Users.deleteViaApi(user.userId);
@@ -110,12 +110,12 @@ describe('Citation: cancel without saving', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C656342', 'linked-data-editor'] },
+    'C656342 [User journey] Marigold - Cancel without saving (Yes/No) (citation)',
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C656342', 'marigold'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();
@@ -137,12 +137,12 @@ describe('Citation: cancel without saving', () => {
       );
       AdvancedSearch.clickSearch();
       // open instance for editing
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // edit instance
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
       // click on Cancel - YES
       EditResource.clickCancelWithOption('yes');
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
 
       // TODO: uncomment once UILD-170 implemented
       // SearchAndFilter.selectAdvancedSearch();
@@ -166,7 +166,7 @@ describe('Citation: cancel without saving', () => {
 
       // as for now - search by title
       SearchAndFilter.searchResourceByTitle(resourceData.title);
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // verify value was not changed
       EditResource.checkTextValueOnField(testData.uniqueTitle, instanceMainTitleField);
       // edit instance again
@@ -175,11 +175,11 @@ describe('Citation: cancel without saving', () => {
       EditResource.clickCancelWithOption('no');
       // save changes
       EditResource.saveAndClose();
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
 
       // check that value was changed
       SearchAndFilter.searchResourceByTitle(resourceData.title);
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.checkTextValueOnField(testData.uniqueDuplicateTitle, instanceMainTitleField);
     },
   );
