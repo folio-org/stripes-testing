@@ -27,11 +27,12 @@ const API = {
         return response;
       });
   },
-  deleteViaApi(id) {
+  deleteViaApi(id, { ignoreErrors = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `classification-types/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   getViaApi() {
