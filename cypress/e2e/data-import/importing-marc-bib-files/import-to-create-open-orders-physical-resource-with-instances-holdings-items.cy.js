@@ -233,7 +233,7 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace(/-\d+$/, '');
 
-          OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
+          OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, holdings, item');
           OrderLines.openLinkedInstance();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
