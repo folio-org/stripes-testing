@@ -131,6 +131,7 @@ describe('Finance', () => {
         cy.wait(4000);
         BatchEditBudget.assertTotalAllocatedAfter(funds[0].name, '50.00');
         BatchEditBudget.cancelBatchEditBudget();
+        BatchEditBudget.closeWithoutSavingBatchEditBudget();
         BatchEditBudget.clickBatchAllocationButton();
         BatchEditBudget.saveAndCloseBatchAllocation();
         BatchEditBudget.setAllocationChange(funds[0].name, '50');

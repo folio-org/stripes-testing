@@ -42,6 +42,8 @@ const errorsFromMatchingFileNameWithInstanceHRIDs = BulkEditFiles.getErrorsFromM
   instanceHRIDsFileName,
   true,
 );
+const DCBHoldingUUID = '10cd3a5a-d36f-4c7a-bc4f-e1ae3cf820c9'; // DCB holding with hardcoded id and hrid is created during env creation
+const DCBHoldingHRID = 'ho00000000001';
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -82,8 +84,14 @@ describe('Bulk-edit', () => {
             });
           })
           .then(() => {
-            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, invalidHoldingUUID);
-            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, invalidHoldingHRID);
+            FileManager.createFile(
+              `cypress/fixtures/${holdingUUIDsFileName}`,
+              `${invalidHoldingUUID}\n${DCBHoldingUUID}`,
+            );
+            FileManager.createFile(
+              `cypress/fixtures/${holdingHRIDsFileName}`,
+              `${invalidHoldingHRID}\n${DCBHoldingHRID}`,
+            );
             FileManager.createFile(
               `cypress/fixtures/${instanceHRIDsFileName}`,
               `${sharedInstance.hrid}\n${invalidInstanceHRID}`,
@@ -125,21 +133,30 @@ describe('Bulk-edit', () => {
               identifierType: 'Holdings UUIDs',
               fileName: holdingUUIDsFileName,
               errorsFileName: errorsFromMatchingFileNameWithUUIDs,
-              identifiers: [invalidHoldingUUID],
+              identifiers: [
+                { value: invalidHoldingUUID, error: ERROR_MESSAGES.NO_MATCH_FOUND },
+                { value: DCBHoldingUUID, error: ERROR_MESSAGES.DUPLICATES_ACROSS_TENANTS },
+              ],
               recordType: 'holdings',
             },
             {
               identifierType: 'Holdings HRIDs',
               fileName: holdingHRIDsFileName,
               errorsFileName: errorsFromMatchingFileNameWithHRIDs,
-              identifiers: [invalidHoldingHRID],
+              identifiers: [
+                { value: invalidHoldingHRID, error: ERROR_MESSAGES.NO_MATCH_FOUND },
+                { value: DCBHoldingHRID, error: ERROR_MESSAGES.DUPLICATES_ACROSS_TENANTS },
+              ],
               recordType: 'holdings',
             },
             {
               identifierType: 'Instance HRIDs',
               fileName: instanceHRIDsFileName,
               errorsFileName: errorsFromMatchingFileNameWithInstanceHRIDs,
-              identifiers: [sharedInstance.hrid, invalidInstanceHRID],
+              identifiers: [
+                { value: sharedInstance.hrid, error: ERROR_MESSAGES.NO_MATCH_FOUND },
+                { value: invalidInstanceHRID, error: ERROR_MESSAGES.NO_MATCH_FOUND },
+              ],
               recordType: 'holdings',
             },
           ];
@@ -161,7 +178,7 @@ describe('Bulk-edit', () => {
               BulkEditSearchPane.verifyPaginatorInErrorsAccordion(identifiers.length);
 
               identifiers.forEach((identifier) => {
-                BulkEditSearchPane.verifyNonMatchedResults(identifier);
+                BulkEditSearchPane.verifyErrorByIdentifier(identifier.value, identifier.error);
               });
 
               BulkEditActions.openActions();
@@ -169,7 +186,7 @@ describe('Bulk-edit', () => {
 
               identifiers.forEach((identifier) => {
                 ExportFile.verifyFileIncludes(errorsFileName, [
-                  `ERROR,${identifier},${ERROR_MESSAGES.NO_MATCH_FOUND}`,
+                  `ERROR,${identifier.value},${identifier.error}`,
                 ]);
               });
 

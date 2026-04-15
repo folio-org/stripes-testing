@@ -235,7 +235,12 @@ export default {
     cy.do(targetRow.find(saveButton).click());
   },
 
-  updateIdentifierTypesAPI(classificationBrowseId, shelvingAlgorithmId, identifierTypeIds) {
+  updateIdentifierTypesAPI(
+    classificationBrowseId,
+    shelvingAlgorithmId,
+    identifierTypeIds,
+    { ignoreErrors = false } = {},
+  ) {
     return cy.okapiRequest({
       method: 'PUT',
       path: `browse/config/instance-classification/${classificationBrowseId}`,
@@ -245,14 +250,19 @@ export default {
         typeIds: identifierTypeIds,
       },
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+
+  getClassigicationBrowseConfig() {
+    return cy.okapiRequest({
+      path: 'browse/config/instance-classification',
+      isDefaultSearchParamsRequired: false,
     });
   },
 
   getIdentifierTypesForCertainBrowseAPI(classificationBrowseId) {
-    cy.okapiRequest({
-      path: 'browse/config/instance-classification',
-      isDefaultSearchParamsRequired: false,
-    }).then(({ body }) => {
+    this.getClassigicationBrowseConfig().then(({ body }) => {
       cy.wrap(body.configs.filter((config) => config.id === classificationBrowseId)[0].typeIds).as(
         'types',
       );

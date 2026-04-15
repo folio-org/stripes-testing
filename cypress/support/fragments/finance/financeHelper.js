@@ -26,6 +26,10 @@ const groupButton = Button('Group');
 const fundButton = Button('Fund');
 const resetButton = Button('Reset all');
 
+const clickRecordLinkInResultsList = (resultsList, name) => {
+  cy.do(resultsList.find(Link(name)).click());
+};
+
 export default {
   statusActive: 'Active',
   statusFrozen: 'Frozen',
@@ -76,11 +80,14 @@ export default {
   selectCheckboxFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).find(Checkbox()).click());
   },
+  clickLedgerRecordLink: (name) => {
+    clickRecordLinkInResultsList(ledgerResultList, name);
+  },
   selectFirstFinance: (name) => {
     cy.do(fiscalResultsList.find(Link(name)).click());
   },
   selectFirstLedger: (name) => {
-    cy.do(ledgerResultList.find(Link(name)).click());
+    clickRecordLinkInResultsList(ledgerResultList, name);
     LedgerDetails.checkLedgerDetails({ information: [{ key: 'Name', value: name }] });
 
     return LedgerDetails;

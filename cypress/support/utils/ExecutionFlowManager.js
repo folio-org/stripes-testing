@@ -68,6 +68,7 @@ export class ExecutionFlowManager {
 
   /**
    * Executes registered cleanup callbacks in reverse registration order.
+   * Clears context and cleanup steps after execution.
    *
    * @returns {void}
    */
@@ -78,6 +79,9 @@ export class ExecutionFlowManager {
       keys.forEach((key) => {
         this.cleanupSteps.get(key)(this.context);
       });
+
+      this.cleanupSteps.clear();
+      this.context.clear();
     });
   }
 }

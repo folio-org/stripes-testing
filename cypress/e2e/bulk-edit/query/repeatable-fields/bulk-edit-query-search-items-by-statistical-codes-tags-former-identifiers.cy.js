@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
                   const codeNames = itemData.statisticalCodeIds.map(
                     (id) => statCodes.find((c) => c.id === id).fullName,
                   );
-                  itemData.statisticalCodeName = codeNames.join(' | ');
+                  itemData.statisticalCodeName = codeNames;
                   itemData.statisticalCodeNameInBulkEditForm = codeNames.join('|');
                 }
               };
@@ -198,11 +198,17 @@ describe('Bulk-edit', () => {
           // Expected to find: Items 1, 2
           const expectedItemsToFind = [expectedItems[0], expectedItems[1]];
 
-          expectedItemsToFind.forEach((item) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              item.barcode,
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedItems[0].barcode,
+            itemFieldValues.itemStatisticalCodeNames,
+            expectedItems[0].statisticalCodeName,
+          );
+
+          expectedItems[1].statisticalCodeName.forEach((codeName) => {
+            QueryModal.verifyMatchedRecordsIncludesByIdentifier(
+              expectedItems[1].barcode,
               itemFieldValues.itemStatisticalCodeNames,
-              item.statisticalCodeName,
+              codeName,
             );
           });
 

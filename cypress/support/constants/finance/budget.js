@@ -1,0 +1,30 @@
+export const BUDGET_STATUSES = {
+  ACTIVE: 'Active',
+  CLOSED: 'Closed',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+  PLANNED: 'Planned',
+};
+
+export const EXPORT_BUDGET_FIELDS = {
+  BUDGET_NAME: 'Name (Budget)',
+  BUDGET_STATUS: 'Status (Budget)',
+  ALLOWABLE_ENCUMBRANCE: 'Allowable encumbrance',
+  ALLOWABLE_EXPENDITURE: 'Allowable expenditure',
+  CREATED_DATE: 'Date created (Budget)',
+  INITIAL_ALLOCATION: 'Initial allocation',
+  ALLOCATED_INCREASE: 'Increase',
+  ALLOCATED_DECREASE: 'Decrease',
+  TOTAL_ALLOCATED: 'Total allocation',
+  TRANSFERS: 'Transfers',
+  TOTAL_FUNDING: 'Total Funding',
+  BUDGET_ENCUMBERED: 'Encumbered (Budget)',
+  AWAITING_PAYMENT: 'Awaiting payment (Budget)',
+  EXPENDED: 'Expended (Budget)',
+  CREDITED: 'Credited (Budget)',
+  UNAVAILABLE: 'Unavailable',
+  OVER_ENCUMBERED: 'Over encumbered',
+  OVER_EXPENDED: 'Over expended',
+  CASH_BALANCE: 'Cash balance',
+  AVAILABLE: 'Available',
+};

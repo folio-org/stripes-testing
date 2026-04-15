@@ -23,6 +23,7 @@ import {
   Select,
   Link,
   Label,
+  Popover,
   not,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
@@ -161,6 +162,13 @@ const invalidTagInlineErrorText = 'Fail: Invalid MARC tag. Please try again.';
 const tag1XXNonRepeatableRequiredCalloutText = 'Field 1XX is non-repeatable and required.';
 const getSubfieldNonRepeatableInlineErrorText = (subfield) => `Fail: Subfield '${subfield}' is non-repeatable.`;
 const paneheaderDateFormat = 'M/D/YYYY h:mm A';
+const linkHeadingsInfoButton = paneHeader.find(Button({ ariaLabel: 'info' }));
+const linkHeadingsPopoverContent =
+  'The Link headings button links all access point bibliographic fields that contain a $0 to authority heading. If a field does not have a $0, you can manually link the field to an authority heading by selecting the Link button on the field itself.';
+const linkHeadingsPopover = Popover({ content: including('Link headings') });
+const linkHeadingsPopoverButton = linkHeadingsPopover.find(Button());
+const linkHeadingsPopoverButtonHref =
+  'https://docs.folio.org/docs/metadata/inventory/quickmarc/#linking-to-authority-records';
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -863,6 +871,31 @@ export default {
 
   checkAbsenceOfLinkHeadingsButton() {
     cy.expect(paneHeader.find(linkHeadingsButton).absent());
+  },
+
+  verifyLinkHeadingsInfoButtonExists() {
+    cy.expect(linkHeadingsInfoButton.exists());
+  },
+
+  clickLinkHeadingsInfoButton() {
+    cy.do(linkHeadingsInfoButton.click());
+  },
+
+  verifyLinkHeadingsPopoverContent() {
+    cy.expect([
+      linkHeadingsPopover.exists(),
+      linkHeadingsPopover.has({ content: including(linkHeadingsPopoverContent) }),
+      linkHeadingsPopoverButton.exists(),
+    ]);
+  },
+
+  verifyLinkHeadingsPopoverLearnMoreHref() {
+    cy.expect(
+      linkHeadingsPopoverButton.has({
+        href: linkHeadingsPopoverButtonHref,
+        target: '_blank',
+      }),
+    );
   },
 
   clickUnlinkIconInTagField(rowIndex) {

@@ -68,7 +68,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C376976 ListIdentifiers: Verify Instance FOLIO suppressed from discovery settings in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C376976', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C376976', 'nonParallel'] },
       () => {
         // Step 1-2: Search for FOLIO instance
         InventorySearchAndFilter.selectSearchOption(

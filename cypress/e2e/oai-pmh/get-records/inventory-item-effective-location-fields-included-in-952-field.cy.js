@@ -96,7 +96,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C386503 GetRecord: Inventory - Verify that Item "Effective location" fields are properly included in "952" field of response (subfields "a", "b", "c", "d", "s") (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C386503', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C386503', 'nonParallel'] },
       () => {
         // Step 1: Search for FOLIO instance with no associated holdings
         InventoryInstances.searchByTitle(folioInstance.title);
