@@ -22,7 +22,12 @@ import {
   INVOICE_STATUSES,
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
+  ORDER_TYPES,
+  ORDER_TYPES_FOR_ROLLOVER,
   POL_CREATE_INVENTORY_SETTINGS,
+  ROLLOVER_ENCUMBRANCE_BASED_ON,
+  ROLLOVER_BUDGET_VALUE,
+  ROLLOVER_BUDGET_VALUE_AS,
 } from '../../support/constants';
 
 describe('Invoices', () => {
@@ -117,7 +122,7 @@ describe('Invoices', () => {
   const createOrderWithLine = (acquisitionMethodId) => {
     const order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-      orderType: 'One-Time',
+      orderType: ORDER_TYPES.ONE_TIME_API,
       reEncumber: true,
     };
 
@@ -177,14 +182,14 @@ describe('Invoices', () => {
       budgetsRollover: [
         {
           rolloverAllocation: true,
-          rolloverBudgetValue: 'None',
-          addAvailableTo: 'Allocation',
+          rolloverBudgetValue: ROLLOVER_BUDGET_VALUE.NONE,
+          addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.ALLOCATION,
         },
       ],
       encumbrancesRollover: [
         {
-          orderType: 'One-time',
-          basedOn: 'InitialAmount',
+          orderType: ORDER_TYPES_FOR_ROLLOVER.ONE_TIME,
+          basedOn: ROLLOVER_ENCUMBRANCE_BASED_ON.INITIAL_AMOUNT,
         },
       ],
     });

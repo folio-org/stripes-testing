@@ -24,6 +24,7 @@ import {
   INVOICE_STATUSES,
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
+  ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 
@@ -110,7 +111,7 @@ describe('Invoices', () => {
   const createOrderWithLine = (acquisitionMethodId) => {
     const order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-      orderType: 'One-Time',
+      orderType: ORDER_TYPES.ONE_TIME_API,
       reEncumber: true,
     };
 
