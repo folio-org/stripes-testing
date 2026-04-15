@@ -34,7 +34,7 @@ describe('Fiscal Year', () => {
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
       FiscalYears.closeThirdPane();
       FiscalYears.searchByName(defaultFiscalYear.name);
-      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.selectFiscalYear(defaultFiscalYear.name);
       FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
       FiscalYears.closeThirdPane();
       FiscalYears.resetFilters();
