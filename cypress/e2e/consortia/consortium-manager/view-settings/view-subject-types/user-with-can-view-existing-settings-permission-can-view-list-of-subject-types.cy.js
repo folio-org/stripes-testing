@@ -23,7 +23,6 @@ describe('Consortia', () => {
           name: `C594397 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No value set-',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
@@ -147,7 +146,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
+              'System, System user - mod-consortia-keycloak ',
               sharedSubjectType.memberLibraries,
             );
             ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
@@ -176,7 +175,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              sharedSubjectType.user,
+              'No value set-',
               sharedSubjectType.memberLibraries,
             );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCentral.name);
