@@ -1,7 +1,9 @@
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
+import CancelInvoiceModal from '../../support/fragments/invoices/modal/cancelInvoiceModal';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
+import InteractorsTools from '../../support/utils/interactorsTools';
 import Invoices from '../../support/fragments/invoices/invoices';
 import InvoiceStates from '../../support/fragments/invoices/invoiceStates';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
@@ -22,7 +24,12 @@ import {
   INVOICE_STATUSES,
   INVOICE_VIEW_FIELDS,
   ORDER_STATUSES,
+  ORDER_TYPES,
+  LEDGER_ROLLOVER_ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
+  ROLLOVER_ENCUMBRANCE_BASED_ON,
+  LEDGER_ROLLOVER_BUDGET_VALUE,
+  ROLLOVER_BUDGET_VALUE_AS,
 } from '../../support/constants';
 
 describe('Invoices', () => {
@@ -117,7 +124,7 @@ describe('Invoices', () => {
   const createOrderWithLine = (acquisitionMethodId) => {
     const order = {
       ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-      orderType: 'One-Time',
+      orderType: ORDER_TYPES.ONE_TIME_API,
       reEncumber: true,
     };
 
@@ -177,14 +184,14 @@ describe('Invoices', () => {
       budgetsRollover: [
         {
           rolloverAllocation: true,
-          rolloverBudgetValue: 'None',
-          addAvailableTo: 'Allocation',
+          rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.NONE,
+          addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.ALLOCATION,
         },
       ],
       encumbrancesRollover: [
         {
-          orderType: 'One-time',
-          basedOn: 'InitialAmount',
+          orderType: LEDGER_ROLLOVER_ORDER_TYPES.ONE_TIME,
+          basedOn: ROLLOVER_ENCUMBRANCE_BASED_ON.INITIAL_AMOUNT,
         },
       ],
     });
@@ -285,10 +292,12 @@ describe('Invoices', () => {
           { key: INVOICE_VIEW_FIELDS.VENDOR_NAME, value: testData.organization.name },
         ],
       });
-      cy.intercept('PUT', `/invoice/invoices/${testData.invoice.id}?*`).as('cancelInvoice');
-      InvoiceView.cancelInvoiceWithUpdatePOLPaymentStatus({
-        errorMessage: InvoiceStates.budgetNotFoundByFund(testData.fund.code),
-      });
+      InvoiceView.clickCancelInActionsMenu();
+      cy.intercept('PUT', `/invoice/invoices/${testData.invoice.id}`).as('cancelInvoice');
+      CancelInvoiceModal.clickSubmitButton(false);
+      InteractorsTools.checkCalloutErrorMessage(
+        InvoiceStates.budgetNotFoundByFund(testData.fund.code),
+      );
       cy.wait('@cancelInvoice', { timeout: 60000 }).then((interception) => {
         InvoiceView.checkErrorInvoiceApiResponse(interception, {
           expectedStatus: 404,
