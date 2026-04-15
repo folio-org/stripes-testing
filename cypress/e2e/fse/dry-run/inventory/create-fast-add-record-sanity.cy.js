@@ -1,6 +1,5 @@
 import {
   APPLICATION_NAMES,
-  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
@@ -25,8 +24,8 @@ describe('Inventory', () => {
       instanceStatusCodeValue: 'uncat',
       resourceTitle: `Monograph${getRandomPostfix()}`,
       resourceType: 'text',
-      permanentLocationOption: `${LOCATION_NAMES.CD_V} `,
-      permanentLocationValue: LOCATION_NAMES.CD_V_UI,
+      permanentLocationOption: '',
+      permanentLocationValue: '',
       itemBarcode: `${getRandomPostfix()}Barcode`,
       materialType: MATERIAL_TYPE_NAMES.CD,
       permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
@@ -38,6 +37,10 @@ describe('Inventory', () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps(true);
+      cy.getLocations({ limit: 1 }).then((location) => {
+        fastAddNewRecordFormDetails.permanentLocationOption = `${location.name} `;
+        fastAddNewRecordFormDetails.permanentLocationValue = location.name;
+      });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
       cy.allure().logCommandSteps(false);
@@ -57,7 +60,7 @@ describe('Inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['dryRun', 'folijet'] },
+      { tags: ['dryRun', 'folijet', 'C15850'] },
       () => {
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
