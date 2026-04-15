@@ -77,7 +77,7 @@ describe('Acquisition Units', () => {
     { tags: ['criticalPath', 'thunderjet', 'C375078'] },
     () => {
       FinanceHelp.searchByAll(fiscalYear.name);
-      FiscalYears.selectFisacalYear(fiscalYear.name);
+      FiscalYears.selectFiscalYear(fiscalYear.name);
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.checkEditButtonIsDisabled();
       FiscalYears.checkDeleteButtonIsDisabled();
