@@ -1,5 +1,6 @@
 export const ORDER_TYPES = {
   ONE_TIME: 'One-time',
+  ONE_TIME_API: 'One-Time',
   ONGOING: 'Ongoing',
 };
 

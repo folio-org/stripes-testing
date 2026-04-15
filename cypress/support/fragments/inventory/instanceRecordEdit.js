@@ -253,6 +253,7 @@ export default {
       parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.clearDefaultHeldbyFilter();
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -262,6 +263,7 @@ export default {
       childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.clearDefaultHeldbyFilter();
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },

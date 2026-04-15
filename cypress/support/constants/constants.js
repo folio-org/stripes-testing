@@ -1721,3 +1721,12 @@ export const USER_TYPES = {
   SYSTEM: 'System',
   SHADOW: 'Shadow',
 };
+
+export const EDIT_RESOURCE_HEADINGS = {
+  EDIT_INSTANCE: 'Edit instance',
+  EDIT_WORK: 'Edit work',
+  NEW_WORK: 'New work',
+  NEW_INSTANCE: 'New instance',
+  DUPLICATE_WORK: 'Duplicate work',
+  DUPLICATE_INSTANCE: 'Duplicate instance',
+};

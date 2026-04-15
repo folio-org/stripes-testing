@@ -3,12 +3,16 @@ import Marigold from '../../support/fragments/linked-data/marigold';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Work from '../../support/fragments/linked-data/work';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import { APPLICATION_NAMES, LDE_ROLES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LDE_ROLES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EDIT_RESOURCE_HEADINGS,
+} from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
 import Users from '../../support/fragments/users/users';
@@ -25,6 +29,8 @@ describe('Citation: check navigation', () => {
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
     roleIds: [],
+    workId: null,
+    instanceId: null,
   };
 
   const resourceData = {
@@ -77,16 +83,9 @@ describe('Citation: check navigation', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    // delete LDE instance first, then work
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -96,8 +95,11 @@ describe('Citation: check navigation', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    // create test data based on uploaded marc file and capture IDs for cleanup
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
+      testData.workId = workId;
+      testData.instanceId = instanceId;
+    });
   });
 
   it(
@@ -111,7 +113,7 @@ describe('Citation: check navigation', () => {
       // check that modal is displayed
       WorkProfileModal.waitLoading();
       WorkProfileModal.selectDefaultOption();
-      EditResource.waitLoading();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       // navigate back to the main module
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARIGOLD);
       Marigold.waitLoading();

@@ -129,12 +129,20 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
 
+        cy.recurse(
+          () => InventoryItems.getItemsInHoldingsViaApi(holdingsId),
+          (items) => items.length === 0,
+          { limit: 10, timeout: 12000, delay: 1000 },
+        );
+
         // Step 4: Delete Holdings record associated with Instance
         InventoryInstance.openHoldingView();
         HoldingsRecordView.delete();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyHoldingsAbsent(location.name);
         InventoryInstance.waitInstanceRecordViewOpened();
+        InventoryInstance.verifyHoldingsAbsent(location.name);
+        // wait for all the data to be loaded, otherwise detail view may reload
+        cy.wait(3000);
 
         // Step 5: Verify Instance _version did not change after Holdings and Item deletion
         cy.intercept('GET', `/inventory/instances/${instanceId}`).as('getInstanceAfter');
