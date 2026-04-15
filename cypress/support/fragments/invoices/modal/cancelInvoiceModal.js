@@ -29,9 +29,11 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(cancelInvoiceConfirmationModal.absent());
   },
-  clickSubmitButton() {
+  clickSubmitButton(isCheckSuccessCallout = true) {
     cy.do(submitButton.click());
     cy.expect(cancelInvoiceConfirmationModal.absent());
-    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
+    if (isCheckSuccessCallout) {
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
+    }
   },
 };
