@@ -20,3 +20,20 @@ export const LEDGER_ROLLOVER_STATUS_LABELS = {
   NOT_STARTED: 'Not started',
   SUCCESS: 'Successful',
 };
+
+export const ROLLOVER_BUDGET_VALUE_AS = {
+  ALLOCATION: 'Allocation',
+  TRANSFER: 'Transfer',
+};
+
+export const LEDGER_ROLLOVER_ORDER_TYPES = {
+  ONE_TIME: 'One-time',
+  ONGOING: 'Ongoing',
+  ONGOING_SUBSCRIPTION: 'Ongoing-Subscription',
+};
+
+export const ROLLOVER_ENCUMBRANCE_BASED_ON = {
+  EXPENDED: 'Expended',
+  INITIAL_AMOUNT: 'InitialAmount',
+  REMAINING: 'Remaining',
+};

@@ -279,7 +279,7 @@ describe('Finance: Transactions', () => {
       Funds.closeBudgetDetails();
       FinanceHelp.clickFiscalYearButton();
       FinanceHelp.searchByName(defaultFiscalYear.name);
-      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.selectFiscalYear(defaultFiscalYear.name);
       FiscalYearDetails.checkFinancialSummary({
         summary: [
           { key: 'Initial allocation', value: '$200.00' },
