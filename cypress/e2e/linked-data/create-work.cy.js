@@ -4,7 +4,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, LDE_ROLES } from '../../support/constants';
+import { APPLICATION_NAMES, LDE_ROLES, EDIT_RESOURCE_HEADINGS } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -20,6 +20,7 @@ describe('Citation: create work', () => {
     partName: `Part test name ${getRandomPostfix()}`,
     summaryNote: 'test summary note',
     roleIds: [],
+    workId: null,
   };
 
   before('Create test data', () => {
@@ -46,7 +47,7 @@ describe('Citation: create work', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    if (testData.workId) Work.deleteById(testData.workId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -69,7 +70,7 @@ describe('Citation: create work', () => {
       // check that default option 'Books' is there
       WorkProfileModal.checkOptionSelected('Books');
       WorkProfileModal.selectDefaultOption();
-      EditResource.waitLoading();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       // change data, but do not enter title
       EditResource.setValueForTheField(testData.partName, 'Part name');
       EditResource.saveAndKeepEditing();
@@ -78,7 +79,10 @@ describe('Citation: create work', () => {
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.setNoteValue(testData.summaryNote, 'Summary note');
-      EditResource.saveAndClose();
+      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
+        testData.workId = workId;
+      });
+      EditResource.clickCloseResourceButton();
       // wait for LDE page to be displayed
       Marigold.waitLoading();
       // search created work by title
