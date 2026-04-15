@@ -44,7 +44,7 @@ const fillFastAddNewRecordForm = ({
     Select('Resource type*').choose(resourceType),
     Selection('Permanent location*').open(),
     SelectionList().filter(permanentLocationOption),
-    SelectionList().select(permanentLocationOption),
+    SelectionList().select(including(permanentLocationOption)),
     TextField('Barcode').fillIn(itemBarcode),
     Select('Material type*').choose(materialType),
     Select('Permanent loan type*').choose(permanentLoanType),

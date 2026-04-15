@@ -38,7 +38,7 @@ describe('Inventory', () => {
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps(true);
       cy.getLocations({ limit: 1 }).then((location) => {
-        fastAddNewRecordFormDetails.permanentLocationOption = `${location.name} `;
+        fastAddNewRecordFormDetails.permanentLocationOption = location.name;
         fastAddNewRecordFormDetails.permanentLocationValue = location.name;
       });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
