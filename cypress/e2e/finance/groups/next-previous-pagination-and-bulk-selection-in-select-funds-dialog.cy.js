@@ -1,3 +1,4 @@
+import { FUND_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
@@ -107,7 +108,7 @@ describe('Finance', () => {
       });
 
       cy.createTempUser([
-        permissions.uiFinanceViewEditDeleteFundBudget.gui,
+        permissions.uiFinanceViewEditFundAndBudget.gui,
         permissions.uiFinanceViewEditGroup.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -153,7 +154,7 @@ describe('Finance', () => {
 
         Groups.filterByLedgerInModal(defaultLedger.name);
 
-        Groups.filterByStatusInModal('Inactive');
+        Groups.filterByStatusInModal(FUND_STATUSES.INACTIVE);
         Groups.verifyRecordsFoundTextInModal();
         Groups.verifySelectAllCheckboxInModal(false);
         Groups.verifyPreviousButtonInModal(false);

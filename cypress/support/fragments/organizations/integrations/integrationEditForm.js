@@ -100,15 +100,6 @@ export default {
     );
   },
 
-  verifySchedulePeriodContains(expectedOptions) {
-    cy.get(`select[name="${prefix}.scheduleParameters.schedulePeriod"] option`).then(($options) => {
-      const optionTexts = [...$options].map((o) => o.text);
-      expectedOptions.forEach((option) => {
-        expect(optionTexts).to.include(option);
-      });
-    });
-  },
-
   verifySchedulePeriodValue(expectedValue) {
     cy.expect(schedulingFields.schedulePeriod.has({ value: expectedValue }));
   },

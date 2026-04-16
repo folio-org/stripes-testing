@@ -104,6 +104,12 @@ export const BUDGET_STATUSES = {
   PLANNED: 'Planned',
 };
 
+export const FUND_STATUSES = {
+  ACTIVE: 'Active',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
