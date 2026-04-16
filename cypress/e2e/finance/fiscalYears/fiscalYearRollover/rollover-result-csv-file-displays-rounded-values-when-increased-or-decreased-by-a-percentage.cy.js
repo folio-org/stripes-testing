@@ -41,6 +41,7 @@ import FileManager from '../../../../support/utils/fileManager';
 import getRandomStringCode from '../../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
+/* Resource keys */
 const R = {
   BUDGETS: 'budgets',
   FUND_TYPES: 'fundTypes',
