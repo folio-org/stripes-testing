@@ -34,7 +34,9 @@ describe('Citation: duplicate resource', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
     duplicateInstanceId: null,
+    duplicateInventoryId: null,
   };
 
   const resourceData = {
@@ -90,6 +92,9 @@ describe('Citation: duplicate resource', () => {
     if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    // duplicate instance may have holdings, so use full deletion
+    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
     Users.deleteViaApi(user.userId);
   });
 
@@ -100,10 +105,13 @@ describe('Citation: duplicate resource', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file and capture IDs for cleanup
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -121,8 +129,9 @@ describe('Citation: duplicate resource', () => {
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
-        testData.duplicateInstanceId = duplicateInstanceId;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
       });
       // wait for LDE page to be displayed
       Marigold.waitLoading();

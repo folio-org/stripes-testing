@@ -66,9 +66,12 @@ export default {
     UncontrolledAuthModal.closeIfDisplayed();
     return cy.wait('@saveResourceRequest').then((interception) => {
       const body = interception.response.body?.resource;
-      const workId = body?.['http://bibfra.me/vocab/lite/Work']?.id ?? null;
-      const instanceId = body?.['http://bibfra.me/vocab/lite/Instance']?.id ?? null;
-      return cy.wrap({ workId, instanceId });
+      const instance = body?.['http://bibfra.me/vocab/lite/Instance'];
+      const workId =
+        body?.['http://bibfra.me/vocab/lite/Work']?.id ?? instance?._workReference?.[0]?.id ?? null;
+      const instanceId = instance?.id ?? null;
+      const inventoryId = instance?.folioMetadata?.inventoryId ?? null;
+      return cy.wrap({ workId, instanceId, inventoryId });
     });
   },
 
@@ -78,8 +81,10 @@ export default {
     cy.wait(1000);
     return cy.wait('@saveNewInstanceRequest').then((interception) => {
       const body = interception.response.body?.resource;
-      const instanceId = body?.['http://bibfra.me/vocab/lite/Instance']?.id ?? null;
-      return cy.wrap(instanceId);
+      const instance = body?.['http://bibfra.me/vocab/lite/Instance'];
+      const instanceId = instance?.id ?? null;
+      const inventoryId = instance?.folioMetadata?.inventoryId ?? null;
+      return cy.wrap({ instanceId, inventoryId });
     });
   },
 

@@ -59,6 +59,7 @@ describe('Citation: MARC Authority integration', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
   };
 
   const newFields = [
@@ -82,6 +83,7 @@ describe('Citation: MARC Authority integration', () => {
     ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(user.userId);
   });
 
@@ -181,9 +183,10 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.selectSearchParameterMarcAuthModal(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME);
       EditResource.searchMarcAuthority(testData.authorityHeading);
       EditResource.selectAssignMarcAuthorityButton(1);
-      EditResource.saveAndCloseWithIds().then(({ workId, instanceId }) => {
+      EditResource.saveAndCloseWithIds().then(({ workId, instanceId, inventoryId }) => {
         testData.workId = workId;
         testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
       });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();

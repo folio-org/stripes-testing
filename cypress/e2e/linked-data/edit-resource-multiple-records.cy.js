@@ -30,8 +30,11 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
     duplicateInstanceId: null,
+    duplicateInventoryId: null,
     duplicateInstanceId2: null,
+    duplicateInventoryId2: null,
   };
 
   const resourceData = {
@@ -88,6 +91,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     if (testData.duplicateInstanceId2) Work.deleteInstanceViaApi(testData.duplicateInstanceId2);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
+    if (testData.duplicateInventoryId2) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId2);
     Users.deleteViaApi(user.userId);
   });
 
@@ -98,10 +104,13 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       authRefresh: true,
     });
     // create test data based on uploaded marc file and capture IDs for cleanup
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -117,8 +126,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
-        testData.duplicateInstanceId = duplicateInstanceId;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
       });
       // wait for LDE page to be displayed
       Marigold.waitLoading();
@@ -130,8 +140,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId2) => {
-        testData.duplicateInstanceId2 = duplicateInstanceId2;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId2 = instanceId;
+        testData.duplicateInventoryId2 = inventoryId;
       });
       // wait for LDE page to be displayed
       Marigold.waitLoading();

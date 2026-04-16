@@ -224,12 +224,11 @@ describe('Inventory', () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
       });
 
+      // May fail due to https://folio-org.atlassian.net/browse/UIIN-3520
       it(
         'C411750 Search for Shared/Local records by "Barcode" search options from "Central" and "Member 1" tenant (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire', 'C411750'] },
         () => {
-          // Will fail due to UIIN-3574
-
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
           InventorySearchAndFilter.selectSearchOption(searchOptions.barcode);
@@ -262,6 +261,9 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.fillInSearchQuery(`${barcodePrefix}_2-0`);
           InventorySearchAndFilter.clickSearch();
+          ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemBarcode(`${barcodePrefix}_2-0`);
+          ItemRecordView.closeDetailView();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[2]);
 
@@ -283,6 +285,9 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.fillInSearchQuery(`${barcodePrefix}_5-1`);
           InventorySearchAndFilter.clickSearch();
+          ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemBarcode(`${barcodePrefix}_5-1`);
+          ItemRecordView.closeDetailView();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[5]);
 
@@ -301,6 +306,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.clickSearch();
           ItemRecordView.waitLoading();
           ItemRecordView.verifyItemBarcode(`${barcodePrefix}_5-1`);
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventorySearchAndFilter.verifySearchResult(instanceTitles[5]);
         },
       );
     });
