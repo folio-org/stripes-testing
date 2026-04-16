@@ -77,6 +77,31 @@ export default {
     this.waitForItemSpinnerToDisappear();
   },
 
+  checkOutItemAndMeasureTime(itemBarcode, maxTimeMs = 2000) {
+    let checkoutStartTime;
+
+    cy.intercept('POST', '**/circulation/check-out-by-barcode', (req) => {
+      checkoutStartTime = Date.now();
+      req.continue();
+    }).as('checkoutByBarcode');
+
+    cy.do(TextField('Item ID').fillIn(itemBarcode));
+    cy.do(Pane('Scan items').find(Button('Enter')).click());
+
+    cy.wait('@checkoutByBarcode').then((interception) => {
+      const elapsedTime = Date.now() - checkoutStartTime;
+
+      cy.log(`Checkout API responded in ${elapsedTime}ms`);
+      expect(interception.response.statusCode).to.eq(201);
+      expect(elapsedTime).to.be.lessThan(
+        maxTimeMs,
+        `Checkout must complete in under ${maxTimeMs}ms`,
+      );
+    });
+
+    this.waitForItemSpinnerToDisappear();
+  },
+
   closeItemsAwaitingPickupModal() {
     cy.wait(1000);
     cy.do(Modal('Items awaiting pickup').find(Button('Close')).click());
@@ -294,6 +319,22 @@ export default {
   chooseActingPatron: (patron) => {
     cy.expect(Modal('Who are you acting as?').exists());
     cy.do([RadioButton(including(patron)).click(), Button('Continue').click()]);
+  },
+  verifyActingAsModalExists: () => {
+    cy.expect(Modal('Who are you acting as?').exists());
+  },
+  verifyActingAsModalMessage: (message) => {
+    cy.expect(
+      Modal('Who are you acting as?')
+        .find(HTML(including(message)))
+        .exists(),
+    );
+  },
+  cancelActingAsModal: () => {
+    cy.do(Modal('Who are you acting as?').find(Button('Cancel')).click());
+  },
+  selectSelfAndContinue: () => {
+    cy.do([RadioButton('Self').click(), Button('Continue').click()]);
   },
   checkItemIsNotCheckedOut(itemBarcode) {
     cy.expect([

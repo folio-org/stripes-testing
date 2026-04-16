@@ -826,6 +826,14 @@ export default {
     ]);
   },
 
+  verifyProxyNameDisplayed(lastName) {
+    cy.expect(HTML(including(lastName)).exists());
+  },
+
+  verifyTextDisplayed(text) {
+    cy.expect(HTML(including(text)).exists());
+  },
+
   checkKeyValue(label, value) {
     if (label === 'Expiration date') {
       const formatDateForUI = (dateString) => {

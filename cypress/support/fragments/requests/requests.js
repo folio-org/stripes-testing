@@ -709,6 +709,21 @@ export default {
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
   },
 
+  exportExpiredHoldsToCSV: () => {
+    cy.wait(5000);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+    cy.get('#exportExpiredHoldsToCsvPaneHeaderBtn').should('not.be.disabled').click();
+  },
+
+  verifyExpiredHoldsToCSVButtonDisabled: () => {
+    cy.wait(5000);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+    cy.get('#exportExpiredHoldsToCsvPaneHeaderBtn').should('be.disabled');
+    cy.do(actionsButtonInResultsPane.click());
+  },
+
   selectPickupServicePointColumn(select = true) {
     cy.wait(500);
     cy.do(actionsButtonInResultsPane.click());
