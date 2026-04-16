@@ -1,9 +1,14 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  LDE_ROLES,
+  EDIT_RESOURCE_HEADINGS,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -117,19 +122,19 @@ describe('Citation: create instance in central tenant + holdings in member', () 
     });
     // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C736677 [User journey] LDE - Create new instance in central tenant (citation)',
-    { tags: ['criticalPathECS', 'citation', 'linked-data-editor', 'C736677'] },
+    'C736677 [User journey] Marigold - Create new instance in central tenant (citation)',
+    { tags: ['criticalPathECS', 'citation', 'marigold', 'C736677'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
-      EditResource.waitLoading();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       // add new instance
       EditResource.openNewInstanceFormViaActions();
       InstanceProfileModal.waitLoading();
@@ -138,7 +143,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // switch to member tenant
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

@@ -106,7 +106,7 @@ describe('Finance', () => {
     { tags: ['criticalPathBroken', 'thunderjet', 'C377030'] },
     () => {
       FinanceHelp.searchByName(defaultFiscalYear.name);
-      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.selectFiscalYear(defaultFiscalYear.name);
       FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
       FiscalYears.clickOnLedgerTab();
       FinanceHelp.searchByName(defaultLedger.name);

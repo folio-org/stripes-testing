@@ -1,9 +1,10 @@
-import { Button, PaneHeader, Section, including, Pane } from '../../../../../interactors';
+import { Button, Checkbox, PaneHeader, Section, including, Pane } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import FinanceDetails from '../financeDetails';
 import FundDetails from '../funds/fundDetails';
 import GroupDetails from '../groups/groupDetails';
 import ExportBudgetModal from '../modals/exportBudgetModal';
+import LedgerEditForm from './ledgerEditForm';
 import LedgerRolloverDetails from './ledgerRolloverDetails';
 import LedgerRollovers from './ledgerRollovers';
 
@@ -13,6 +14,9 @@ const ledgerDetailsPane = Section({ id: 'pane-ledger-details' });
 const ledgerDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-ledger-details' });
 const ledgerDetailsPaneAfterRollover = Pane({ id: 'pane-ledger-rollover-in-progress' });
 const actionsButton = Button('Actions');
+const editButton = Button('Edit');
+const encumbranceLimitsCheckbox = Checkbox({ labelText: 'Enforce all budget encumbrance limits' });
+const expenditureLimitsCheckbox = Checkbox({ labelText: 'Enforce all budget expenditure limits' });
 
 export default {
   ...FinanceDetails,
@@ -47,7 +51,13 @@ export default {
 
     return LedgerRollovers;
   },
-  checkLedgerDetails({ information, financialSummary, funds } = {}) {
+  checkLedgerDetails({
+    information,
+    financialSummary,
+    funds,
+    encumbranceLimitChecked,
+    expenditureLimitChecked,
+  } = {}) {
     if (information) {
       FinanceDetails.checkInformation(information);
     }
@@ -56,6 +66,20 @@ export default {
     }
     if (funds) {
       FinanceDetails.checkFundsDetails(funds);
+    }
+    if (encumbranceLimitChecked !== undefined) {
+      cy.expect(
+        ledgerDetailsPane
+          .find(encumbranceLimitsCheckbox)
+          .has({ visible: true, checked: encumbranceLimitChecked, disabled: true }),
+      );
+    }
+    if (expenditureLimitChecked !== undefined) {
+      cy.expect(
+        ledgerDetailsPane
+          .find(expenditureLimitsCheckbox)
+          .has({ visible: true, checked: expenditureLimitChecked, disabled: true }),
+      );
     }
   },
   openGroupDetails(name) {
@@ -73,5 +97,11 @@ export default {
 
   verifyLedgerName: (title) => {
     cy.expect(ledgerDetailsPane.find(ledgerDetailsPaneHeader).has({ text: including(title) }));
+  },
+
+  selectEditOption() {
+    this.expandActionsDropdown();
+    cy.do(editButton.click());
+    LedgerEditForm.waitLoading();
   },
 };

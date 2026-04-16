@@ -301,7 +301,7 @@ describe('Inventory', () => {
         'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C491283'] },
         () => {
-          const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

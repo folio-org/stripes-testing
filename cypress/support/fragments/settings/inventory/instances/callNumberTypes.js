@@ -193,10 +193,11 @@ const API = {
         return res.body.id;
       });
   },
-  deleteLocalCallNumberTypeViaApi(id) {
+  deleteLocalCallNumberTypeViaApi(id, { ignoreErrors = true } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `call-number-types/${id}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
 

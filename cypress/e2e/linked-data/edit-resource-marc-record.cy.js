@@ -7,10 +7,11 @@ import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   LDE_ROLES,
+  EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Work from '../../support/fragments/linked-data/work';
@@ -36,6 +37,11 @@ describe('Citation: MARC Authority integration', () => {
     callNumber: '331.2',
     edition: 'test edition',
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
+    duplicateInstanceId: null,
+    duplicateInventoryId: null,
   };
 
   const resourceData = {
@@ -88,19 +94,13 @@ describe('Citation: MARC Authority integration', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    // delete work created in pre-condition
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate instance data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -110,43 +110,53 @@ describe('Citation: MARC Authority integration', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
-    'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
-    { tags: ['criticalPath', 'citation', 'C627245', 'linked-data-editor', 'shiftLeft'] },
+    'C627245 [User journey] Marigold - Edit existing resource | create MARC derived record (citation)',
+    { tags: ['criticalPath', 'citation', 'C627245', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       // generate random valid lccn in order to prevent unique validation error later
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
-      LinkedDataEditor.waitLoading();
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
+      });
+      Marigold.waitLoading();
       // navigate to the inventory module
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       // search by LDE source and unique title
       InventoryInstances.searchBySource(source);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      InventoryInstance.editInstanceInLde();
+      InventoryInstance.editInstanceInMG();
       // edit edition
-      EditResource.waitLoading();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       cy.wait(6000);
       EditResource.setEdition(testData.edition);
-      EditResource.saveAndKeepEditing();
+      EditResource.saveAndKeepEditingWithId().then(({ instanceId }) => {
+        testData.duplicateInstanceId = instanceId;
+      });
       EditResource.viewMarc();
       // check changes in MARC
       ViewMarc.waitLoading();
       ViewMarc.checkMarcContainsData(testData.edition);
       ViewMarc.closeMarcView();
-      EditResource.saveAndClose();
+      EditResource.clickCloseResourceButton();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitle);

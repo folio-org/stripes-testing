@@ -122,7 +122,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C380604 GetRecord: SRS - Verify the response contains 856 field with one subfield "t" for the holdings and item records with electronic access populated (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C380604', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C380604', 'nonParallel'] },
       () => {
         // Step 1: Instance UUID is already available in marcInstance.id
         // Steps 2-3: Send GetRecord request and verify 856 fields for 5 holdings

@@ -11,10 +11,18 @@ describe('fse-reading-room-access - UI (no data manipulation)', () => {
         cy.getAdminUserId().then((adminUserId) => {
           cy.getUserServicePoints(adminUserId).then((servicePointsUsers) => {
             const existing = servicePointsUsers[0];
-            if (existing && existing.servicePointsIds.includes(servicePointId)) {
-              return;
+            if (existing) {
+              if (existing.servicePointsIds.includes(servicePointId)) {
+                return;
+              }
+              UserEdit.changeServicePointPreferenceViaApi(
+                adminUserId,
+                [servicePointId],
+                existing.defaultServicePointId || servicePointId,
+              );
+            } else {
+              UserEdit.addServicePointViaApi(servicePointId, adminUserId, servicePointId);
             }
-            UserEdit.addServicePointViaApi(servicePointId, adminUserId, servicePointId);
           });
         });
       });

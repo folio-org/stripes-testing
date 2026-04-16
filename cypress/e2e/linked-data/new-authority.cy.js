@@ -10,6 +10,7 @@ import {
   DEFAULT_JOB_PROFILE_NAMES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
   LDE_ROLES,
+  EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
@@ -22,7 +23,7 @@ import PreviewResource from '../../support/fragments/linked-data/previewResource
 import FileManager from '../../support/utils/fileManager';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 import Users from '../../support/fragments/users/users';
 import Permissions from '../../support/dictionary/permissions';
@@ -56,18 +57,9 @@ describe('Citation: MARC Authority integration', () => {
     headerText: /New .*MARC authority record/,
     AUTHORIZED: 'Authorized',
     roleIds: [],
-  };
-
-  const resourceData = {
-    creator: testData.uniqueCreator,
-    language: 'spa',
-    classificationNumber: 'PC4112',
-    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1`,
-    isbnIdentifier: testData.uniqueIsbn,
-    lccnIdentifier: 'aa1994901234',
-    publisher: 'Scott, Foresman, test',
-    publicationDate: '2024',
-    edition: '3rd ed. test',
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
   };
 
   const newFields = [
@@ -87,21 +79,11 @@ describe('Citation: MARC Authority integration', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete new authority related data
     MarcAuthority.deleteViaAPI(testData.authorityId, true);
     ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
-    // delete LDE related data
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    // delete work
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(user.userId);
   });
 
@@ -156,8 +138,8 @@ describe('Citation: MARC Authority integration', () => {
   });
 
   it(
-    'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C633470', 'linked-data-editor'] },
+    'C633470 [User journey] Marigold - Create new MARC authority (citation)',
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C633470', 'marigold'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -188,10 +170,10 @@ describe('Citation: MARC Authority integration', () => {
       // search for inventory item (created in precondition via data import) and edit it in LDE
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
-      InventoryInstance.editInstanceInLde();
+      InventoryInstance.editInstanceInMG();
       PreviewResource.waitLoading();
       PreviewResource.clickContinue();
-      EditResource.waitLoading();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       // change authority to newly created one
       EditResource.clickEditWork();
       // change first creator of work section
@@ -201,7 +183,11 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.selectSearchParameterMarcAuthModal(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME);
       EditResource.searchMarcAuthority(testData.authorityHeading);
       EditResource.selectAssignMarcAuthorityButton(1);
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseWithIds().then(({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
       // LDE filters are displayed indicating that edit form was closed
@@ -210,9 +196,9 @@ describe('Citation: MARC Authority integration', () => {
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // open work
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
-      EditResource.waitLoading();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       // check that marc value is displayed on the 'creator of work' section
       EditResource.checkLabelTextValue('Creator of Work', testData.authorityHeading);
     },

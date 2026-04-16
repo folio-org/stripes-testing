@@ -33,4 +33,12 @@ export default {
       path: `linked-data/resource/${id}`,
     });
   },
+
+  deleteInstanceViaApi(instanceId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `linked-data/resource/${instanceId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };
