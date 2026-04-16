@@ -16,6 +16,7 @@ let instanceTypeId;
 let holdingsTypeId;
 let locationId;
 let loanTypeId;
+let loanTypeName;
 let materialTypeId;
 const items = [];
 
@@ -44,8 +45,9 @@ describe('Bulk-edit', () => {
           cy.getLocations({ limit: 1 }).then((locationData) => {
             locationId = locationData.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+          cy.getLoanTypes({ limit: 2 }).then((loanTypes) => {
             loanTypeId = loanTypes[0].id;
+            loanTypeName = loanTypes[1].name;
           });
           cy.getDefaultMaterialType().then((materialType) => {
             materialTypeId = materialType.id;
@@ -117,7 +119,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.fillTemporaryLoanType('Selected');
+        BulkEditActions.fillTemporaryLoanType(loanTypeName);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -131,7 +133,7 @@ describe('Bulk-edit', () => {
           ItemRecordView.waitLoading();
           ItemRecordView.closeDetailView();
           InventoryInstance.openHoldings(['']);
-          InventoryInstance.verifyLoan('Selected');
+          InventoryInstance.verifyLoan(loanTypeName);
           InventorySearchAndFilter.resetAll();
         });
       },
