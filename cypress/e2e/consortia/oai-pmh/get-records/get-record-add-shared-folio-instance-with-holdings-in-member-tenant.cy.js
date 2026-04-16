@@ -5,6 +5,7 @@ import {
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../../support/fragments/inventory/inventoryNewHoldings';
@@ -35,6 +36,7 @@ const testData = {
     materialsSpecified: 'Materials specified',
     publicNote: 'Public note',
   },
+  holdingsId: null,
 };
 const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
 const userPermissions = [Permissions.inventoryAll.gui];
@@ -81,12 +83,17 @@ describe('OAI-PMH', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
+        // Delete holdings from College tenant where they were created
+        cy.setTenant(Affiliations.College);
+        if (testData.holdingsId) {
+          cy.deleteHoldingRecordViaApi(testData.holdingsId);
+        }
+        Behavior.updateBehaviorConfigViaApi();
+        // Delete instance from Central tenant where it was created
+        cy.resetTenant();
         if (testData.folioInstance?.id) {
           InventoryInstance.deleteInstanceViaApi(testData.folioInstance.id);
         }
-        cy.setTenant(Affiliations.College);
-        Behavior.updateBehaviorConfigViaApi();
-        cy.resetTenant();
         Users.deleteViaApi(testData.user.userId);
       });
 
@@ -140,6 +147,13 @@ describe('OAI-PMH', () => {
             });
             HoldingsRecordEdit.saveAndClose();
             InventoryInstance.checkIsHoldingsCreated([testData.locationName]);
+
+            // Capture holdings ID for cleanup
+            InventoryInstance.openHoldingView();
+            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+              testData.holdingsId = holdingsID;
+            });
+            HoldingsRecordView.close();
 
             // Step 8: Verify GetRecord response with marc21 metadata format
             cy.resetTenant();
