@@ -1,6 +1,7 @@
 export default {
   fundSavedSuccessfully: 'Fund has been saved',
   budgetCreatedSuccessfully: 'Budget (?:\\S+) successfully created for fund (?:\\S+)',
+  budgetHasNotBeenCreated: 'Budget has not been created',
   budgetExportStartedSuccessfully: 'Export of (?:\\S+) data has started',
   budgetExportCompletedSuccessfully: '(?:\\S+) data was successfully exported',
   transferCreatedSuccessfully: '(?:\\S+) was successfully transferred to the budget (?:\\S+)',
