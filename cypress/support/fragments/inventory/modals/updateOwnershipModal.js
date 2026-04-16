@@ -21,6 +21,7 @@ export default {
 
   updateHoldings(tenant, location) {
     selectAffiliation(tenant);
+    cy.wait(1000);
     selectHoldings(location);
     cy.do(updateButton.click());
     cy.expect(updateOwnershipModal.absent());
