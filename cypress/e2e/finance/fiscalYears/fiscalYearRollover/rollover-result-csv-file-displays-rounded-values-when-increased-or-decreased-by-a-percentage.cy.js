@@ -351,7 +351,7 @@ function getPreconditionSteps() {
       })
       .then((orderLine) => flow.set(R.ORDER_LINE, orderLine))
       .then(() => { // Open order
-        const updatedOrder = { ...flow.get(R.ORDER), workflowStatus: ORDER_STATUSES.OPEN }
+        const updatedOrder = { ...flow.get(R.ORDER), workflowStatus: ORDER_STATUSES.OPEN };
 
         Orders
           .updateOrderViaApi(updatedOrder)
