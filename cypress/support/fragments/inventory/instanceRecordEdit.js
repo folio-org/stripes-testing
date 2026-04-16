@@ -217,6 +217,14 @@ export default {
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
+  clickAddPrecedingTitleLookUpButton: () => {
+    cy.do([
+      Accordion('Title data')
+        .find(Button({ id: 'clickable-add-precedingTitle-add-button' }))
+        .click(),
+      findInstanceButton.click(),
+    ]);
+  },
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
   },
@@ -245,6 +253,7 @@ export default {
       parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.clearDefaultHeldbyFilter();
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -254,6 +263,7 @@ export default {
       childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
+    InventoryInstanceModal.clearDefaultHeldbyFilter();
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },

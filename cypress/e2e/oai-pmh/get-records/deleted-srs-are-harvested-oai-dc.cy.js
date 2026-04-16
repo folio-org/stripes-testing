@@ -57,7 +57,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C376996 GetRecords: SRS & Inventory - Verify that deleted SRS are harvested (oai_dc) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C376996', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C376996', 'nonParallel'] },
       () => {
         // Step 1: Search for SRS instance by selecting "MARC" option from "Source" filter
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

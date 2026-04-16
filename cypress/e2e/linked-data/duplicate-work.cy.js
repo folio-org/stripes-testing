@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
@@ -34,6 +34,9 @@ describe('Citation: duplicate resource', () => {
       { type: 'ISBN', value: '9781587657092' },
     ],
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
   };
 
   const resourceData = {
@@ -86,19 +89,12 @@ describe('Citation: duplicate resource', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate work data
-    Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.duplicateWorkId) Work.deleteById(testData.duplicateWorkId);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -108,23 +104,31 @@ describe('Citation: duplicate resource', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
-    'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['smoke', 'citation', 'C624234', 'linked-data-editor', 'shiftLeft'] },
+    'C624234 [User journey] Marigold - Duplicate existing work (citation)',
+    { tags: ['smoke', 'citation', 'C624234', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
+      Marigold.selectFromSearchTable(1);
+      Marigold.editWork();
       // duplicate work
       EditResource.duplicateWork();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditing();
+      EditResource.saveAndKeepEditingWithId().then(({ workId, instanceId }) => {
+        testData.duplicateWorkId = workId;
+        testData.duplicateInstanceId = instanceId;
+      });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
       // check that duplicated work has 'Books' profile - same as original work has
@@ -138,9 +142,12 @@ describe('Citation: duplicate resource', () => {
       EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
+      });
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueDuplicateTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueDuplicateTitle);

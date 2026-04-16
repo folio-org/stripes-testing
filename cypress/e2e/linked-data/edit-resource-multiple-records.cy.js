@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
@@ -28,6 +28,13 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
+    duplicateInstanceId: null,
+    duplicateInventoryId: null,
+    duplicateInstanceId2: null,
+    duplicateInventoryId2: null,
   };
 
   const resourceData = {
@@ -80,20 +87,13 @@ describe('Citation: create new instance by duplicating - for a multiple instance
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    // delete work created in pre-condition
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete both duplicated instances data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitleUpdated);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.duplicateInstanceId2) Work.deleteInstanceViaApi(testData.duplicateInstanceId2);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
+    if (testData.duplicateInventoryId2) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId2);
     Users.deleteViaApi(user.userId);
   });
 
@@ -103,37 +103,49 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    // create test data based on uploaded marc file and capture IDs for cleanup
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
-    'C721761 [User journey] LDE - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'linked-data-editor'] },
+    'C721761 [User journey] Marigold - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'marigold'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open instance for editing
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // duplicate instance
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
+      });
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search by work title again
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // duplicate first instane once again
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId2 = instanceId;
+        testData.duplicateInventoryId2 = inventoryId;
+      });
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search work by instance title
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitleUpdated);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitleUpdated);

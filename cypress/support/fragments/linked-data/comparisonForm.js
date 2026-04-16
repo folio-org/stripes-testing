@@ -1,4 +1,4 @@
-import EditResource from './editResource';
+import EditResource, { EDIT_RESOURCE_HEADINGS } from './editResource';
 
 const comparisonSection = "//section[@class='comparison']";
 
@@ -16,7 +16,7 @@ export default {
     cy.xpath(
       `${comparisonSection}//h3//span[text()='${instanceTitle}']/../..//button[contains(@data-testid, 'edit')]`,
     ).click();
-    EditResource.waitLoading();
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
   },
 
   verifyComparisonSectionDisplayed() {

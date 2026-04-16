@@ -1,4 +1,8 @@
-import { Button } from '../../../../interactors';
+import { Button, HTML, Heading } from '../../../../interactors';
+import closeResourceModal from './closeResourceModal';
+import UncontrolledAuthModal from './uncontrolledAuthModal';
+
+export { EDIT_RESOURCE_HEADINGS } from '../../constants';
 
 const actionsButton = Button('Actions');
 const workActionsButton = Button({ dataTestID: 'block-actions-toggle' });
@@ -9,26 +13,23 @@ const instanceEditActionButton =
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
-const editWorkButton = "//button[text()='Edit work']";
+const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
-const editResourceSection = "//div[@id='edit-section']";
-const duplicateWorkSection = "//div[@id='app-root']//h2[text()='Duplicate work']";
-const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
+const searchMarcAuthInputField = '#id-search-textarea';
 const newInstanceButton = "//button[@data-testid='new-instance']";
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
-const editWorkBut = Button('Edit work');
 
 export default {
-  waitLoading() {
-    cy.xpath(editResourceSection).should('be.visible');
+  waitLoading(headingText) {
+    cy.expect(Heading(headingText).exists());
   },
 
   editWorkEditInstance() {
-    cy.do(editWorkBut.click());
+    cy.do(editWorkButton.click());
     cy.wait(1000);
     cy.xpath(instanceActionsButton).click();
     cy.xpath(instanceEditActionButton).click();
@@ -37,12 +38,54 @@ export default {
 
   saveAndKeepEditing() {
     cy.do(saveKeepEditingButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
+  },
+
+  saveAndKeepEditingWithId() {
+    cy.do(saveKeepEditingButton.click());
+    cy.wait(2000);
+    UncontrolledAuthModal.closeIfDisplayed();
+    return cy.url().then((url) => {
+      const match = url.match(/resources\/([^/]+)\/edit/);
+      const id = match ? match[1] : null;
+      return cy.wrap({ workId: id, instanceId: null });
+    });
   },
 
   saveAndClose() {
     cy.do(saveAndCloseButton.click());
     cy.wait(1000);
+  },
+
+  saveAndCloseWithIds() {
+    cy.intercept({ method: /^(PUT|POST)$/, url: '**/linked-data/resource/**' }).as(
+      'saveResourceRequest',
+    );
+    cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
+    UncontrolledAuthModal.closeIfDisplayed();
+    return cy.wait('@saveResourceRequest').then((interception) => {
+      const body = interception.response.body?.resource;
+      const instance = body?.['http://bibfra.me/vocab/lite/Instance'];
+      const workId =
+        body?.['http://bibfra.me/vocab/lite/Work']?.id ?? instance?._workReference?.[0]?.id ?? null;
+      const instanceId = instance?.id ?? null;
+      const inventoryId = instance?.folioMetadata?.inventoryId ?? null;
+      return cy.wrap({ workId, instanceId, inventoryId });
+    });
+  },
+
+  saveAndCloseNewInstanceWithId() {
+    cy.intercept('POST', '**/linked-data/resource**').as('saveNewInstanceRequest');
+    cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
+    return cy.wait('@saveNewInstanceRequest').then((interception) => {
+      const body = interception.response.body?.resource;
+      const instance = body?.['http://bibfra.me/vocab/lite/Instance'];
+      const instanceId = instance?.id ?? null;
+      const inventoryId = instance?.folioMetadata?.inventoryId ?? null;
+      return cy.wrap({ instanceId, inventoryId });
+    });
   },
 
   checkAlarmDisplayed(isDisplayed) {
@@ -85,7 +128,7 @@ export default {
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.expect(Heading('Duplicate instance').exists());
   },
 
   duplicateWork() {
@@ -94,7 +137,7 @@ export default {
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
-    cy.xpath(duplicateWorkSection).should('be.visible');
+    cy.expect(Heading('Duplicate work').exists());
   },
 
   openNewInstanceFormViaActions() {
@@ -116,52 +159,57 @@ export default {
   viewMarc() {
     cy.do(actionsButton.click());
     cy.xpath(viewMarcButton).click();
-    cy.xpath("//div[@class='view-marc-modal']").should('be.visible');
+    cy.wait(1000);
   },
 
   clickEditWork() {
-    cy.xpath(editWorkButton).click();
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.do(editWorkButton.click());
+    cy.wait(1000);
+    cy.expect(HTML({ id: 'edit-section' }).exists());
+    cy.wait(1000);
   },
 
   selectChangeCreatorOfWork(buttonNumber) {
     cy.xpath(
-      `(//button[contains(@data-testid, 'changeComplexFieldValue')])[${buttonNumber}]`,
+      `(//button[contains(@class, 'complex-lookup-select-button')])[${buttonNumber}]`,
     ).should('be.visible');
     cy.xpath(
-      `(//button[contains(@data-testid, 'changeComplexFieldValue')])[${buttonNumber}]`,
+      `(//button[contains(@class, 'complex-lookup-select-button')])[${buttonNumber}]`,
     ).click();
     // check that modal is displayed
     cy.xpath(selectMarcAuthModal).should('be.visible');
   },
 
   switchToSearchTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-authorities:search']").click();
+    cy.do(Button({ dataTestID: 'id-search-segment-button-authorities:search' }).click());
   },
 
   switchToBrowseTabMarcAuthModal() {
-    cy.xpath("//button[@data-testid='id-search-segment-button-browse']").click();
+    cy.do(Button({ dataTestID: 'id-search-segment-button-browse' }).click());
   },
 
   selectSearchParameterMarcAuthModal(option) {
     cy.wait(1000);
     cy.xpath("//select[@id='id-search-select']").select(option);
+    cy.wait(1000);
   },
 
   searchMarcAuthority(keyword) {
     cy.wait(1000);
-    cy.xpath(searchMarcAuthInputField).focus().should('not.be.disabled').clear();
-    // break the chain since test fails here from time to time otherwise
-    cy.xpath(searchMarcAuthInputField).type(keyword);
+    cy.get(searchMarcAuthInputField).should('not.be.disabled').focus();
+    cy.get(searchMarcAuthInputField).type(keyword);
     // click on search button
-    cy.xpath("//button[@data-testid='id-search-button']").click();
+    cy.do(Button({ dataTestID: 'id-search-button' }).click());
   },
 
   selectAssignMarcAuthorityButton(rowNumber) {
-    cy.xpath(`(//button[contains(@data-testid, 'assign-button')])[${rowNumber}]`).click();
+    cy.get('[data-testid="table-row"]')
+      .eq(rowNumber - 1)
+      .find('[data-testid*="assign-button"]')
+      .click();
     // modal should be closed
     cy.xpath(selectMarcAuthModal).should('not.be.visible');
-    cy.xpath(editResourceSection).should('be.visible');
+    cy.expect(HTML({ id: 'edit-section' }).exists());
   },
 
   checkLabelTextValue(sectionName, textValue) {
@@ -171,14 +219,17 @@ export default {
   },
 
   clickCancelWithOption(option) {
-    cy.xpath('//button[@data-testid="close-record-button"]').click();
+    cy.do(Button('Cancel').click());
+    cy.wait(1000);
     // modal is displayed
-    cy.xpath("//div[@class='modal-header']//h3[text()='Close resource']").should('be.visible');
+    closeResourceModal.verifyModalDisplayed();
     if (option.toLowerCase() === 'yes') {
-      cy.xpath("//button[@data-testid='modal-button-cancel']").click();
+      closeResourceModal.clickYesButton();
+      cy.wait(1000);
     } else {
-      cy.xpath("//button[@data-testid='modal-button-submit']").click();
-      this.waitLoading();
+      closeResourceModal.clickNoButton();
+      cy.wait(1000);
+      closeResourceModal.verifyModalClosed();
     }
   },
 
@@ -195,6 +246,7 @@ export default {
   },
 
   clickCloseResourceButton() {
-    cy.xpath('//button[@data-testid="close-record-button"]').click();
+    cy.do(Button({ dataTestID: 'nav-close-button' }).click());
+    cy.wait(500);
   },
 };

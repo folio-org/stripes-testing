@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import ComparisonForm from '../../support/fragments/linked-data/comparisonForm';
@@ -17,7 +17,7 @@ import Users from '../../support/fragments/users/users';
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
-describe('Citation: edit existing instance', () => {
+describe('Citation: comparison mode', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C624280 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -29,6 +29,11 @@ describe('Citation: edit existing instance', () => {
     uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
+    duplicateInstanceId: null,
+    duplicateInventoryId: null,
   };
 
   const resourceData = {
@@ -81,19 +86,11 @@ describe('Citation: edit existing instance', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    // delete work created in pre-condition
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate instance data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitleUpdated);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -103,40 +100,50 @@ describe('Citation: edit existing instance', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
-    'C692195 [User journey] LDE - Edit existing instance using comparison mode (citation)',
-    { tags: ['criticalPath', 'citation', 'C692195', 'linked-data-editor', 'shiftLeft'] },
+    'C692195 [User journey] Marigold - Edit existing instance using comparison mode (citation)',
+    { tags: ['criticalPath', 'citation', 'C692195', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open instance for editing
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // duplicate instance
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
-      EditResource.saveAndClose();
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
+      });
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search by work title again
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // select both inventory instances
-      LinkedDataEditor.selectInstanceForComparisonByTitle(resourceData.title);
-      LinkedDataEditor.selectInstanceForComparisonByTitle(testData.uniqueInstanceTitle);
+      Marigold.selectInstanceForComparisonByTitle(resourceData.title);
+      Marigold.selectInstanceForComparisonByTitle(testData.uniqueInstanceTitle);
       // comparison mode
-      LinkedDataEditor.openComparisonForm();
+      Marigold.openComparisonForm();
       ComparisonForm.verifyComparisonSectionDisplayed();
       // edit first instance
       ComparisonForm.editInstance(testData.uniqueInstanceTitle);
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseWithIds().then(({ instanceId }) => {
+        testData.duplicateInstanceId = instanceId;
+      });
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // check that changes are reflected on inventory
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitleUpdated);

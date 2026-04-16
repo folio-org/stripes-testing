@@ -1,6 +1,8 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
 import JSZip from 'jszip';
+import { Marc } from 'marcjs';
+import { Readable } from 'stream';
 import uuid from 'uuid';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -463,6 +465,49 @@ export default {
           expectedMrcFileCount,
           `Expected ${expectedMrcFileCount} .mrc files in zip folder, but found ${actualFiles.length}. Files: ${JSON.stringify(actualFiles)}`,
         );
+      });
+    });
+  },
+
+  verifyMrcFileDoesNotIncludeRecords(fileName, recordIds) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+      recordIds.forEach((recordId) => {
+        expect(fileContent).to.not.include(recordId);
+      });
+    });
+  },
+
+  verifyMrcFileRecordsCount(fileName, expectedCount) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+      if (!fileContent) {
+        throw new Error(`File ${fileName} content is undefined`);
+      }
+
+      const readable = new Readable();
+      readable.push(Buffer.from(fileContent, 'binary'));
+      readable.push(null);
+
+      const reader = Marc.stream(readable, 'Iso2709');
+      let recordsCount = 0;
+
+      return new Promise((resolve, reject) => {
+        reader.on('data', () => {
+          recordsCount++;
+        });
+
+        reader.on('error', (error) => reject(error));
+
+        reader.on('end', () => {
+          try {
+            expect(recordsCount).to.equal(
+              expectedCount,
+              `Expected ${expectedCount} records in MRC file, but found ${recordsCount}`,
+            );
+            resolve(recordsCount);
+          } catch (error) {
+            reject(error);
+          }
+        });
       });
     });
   },

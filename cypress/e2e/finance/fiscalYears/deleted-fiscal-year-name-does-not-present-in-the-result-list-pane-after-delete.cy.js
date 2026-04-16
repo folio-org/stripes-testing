@@ -36,7 +36,7 @@ describe('Finance', () => {
     { tags: ['extendedPath', 'thunderjet', 'C357525'] },
     () => {
       FiscalYears.searchByName(fiscalYear.name);
-      FiscalYears.selectFisacalYear(fiscalYear.name);
+      FiscalYears.selectFiscalYear(fiscalYear.name);
       FiscalYears.deleteFiscalYearViaActions();
       InteractorsTools.checkCalloutMessage('Fiscal year has been deleted');
       FiscalYears.waitLoading();

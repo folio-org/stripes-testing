@@ -15,7 +15,7 @@ import Users from '../../support/fragments/users/users';
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
-describe('Citation: LDE permissions', () => {
+describe('Citation: Non-monograph format', () => {
   const testData = {
     // MARC file with 'integrating resource' mode of issuance
     marcFilePath: 'marcBibFileIntegrationResource.mrc',
@@ -69,8 +69,6 @@ describe('Citation: LDE permissions', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(user.userId);
   });
@@ -84,14 +82,14 @@ describe('Citation: LDE permissions', () => {
   });
 
   it(
-    'C651426 [User journey] LDE - non-monograph format (citation)',
-    { tags: ['criticalPath', 'citation', 'C651426', 'linked-data-editor', 'shiftLeft'] },
+    'C651426 [User journey] Marigold - non-monograph format (citation)',
+    { tags: ['criticalPath', 'citation', 'C651426', 'marigold', 'shiftLeft'] },
     () => {
       // search inventory instance and limit search to MARC type
       InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
-      // 'Edit in LDE' not displayed since format is non-monograph
-      InventoryInstance.checkEditInstanceInLdeButtonNotDisplayed();
+      // 'Edit in MG' not displayed since format is non-monograph
+      InventoryInstance.checkEditInstanceInMGButtonNotDisplayed();
     },
   );
 });
