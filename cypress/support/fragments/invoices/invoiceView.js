@@ -12,7 +12,12 @@ import {
   PaneHeader,
   Section,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, INVOICE_POL_PAYMENT_STATUSES } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  INVOICE_LEVEL_ADJUSTMENTS_COLUMNS,
+  INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS,
+  INVOICE_POL_PAYMENT_STATUSES,
+} from '../../constants';
 import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
@@ -24,6 +29,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 import UpdatePOLinePaymentStatusModal from './modal/updatePOLinePaymentStatusModal';
+import FundDetails from '../finance/funds/fundDetails';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -42,6 +48,12 @@ const linksAndDocumentsSection = Section({ id: 'documents' });
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
 const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
+const invoiceFundDistributionSection = invoiceDetailsPane.find(
+  Section({ id: 'invoiceFundDistribution' }),
+);
+const invoiceLevelAdjustmentsSection = invoiceDetailsPane.find(
+  Section({ id: 'invoiceAdjustments' }),
+);
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -129,6 +141,8 @@ export default {
     title,
     invoiceInformation = [],
     invoiceLines,
+    invoiceFundDistributions,
+    invoiceLevelAdjustments,
     vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
@@ -175,6 +189,110 @@ export default {
       );
       this.checkInvoiceLinesTableContent(invoiceLines);
     }
+
+    if (invoiceFundDistributions) {
+      this.checkInvoiceFundDisributionTableContent(invoiceFundDistributions);
+    }
+
+    if (invoiceLevelAdjustments) {
+      this.checkInvoiceLevelAdjustmentsTableContent(invoiceLevelAdjustments);
+    }
+  },
+
+  checkInvoiceFundDistributionColumnItem(rowIndex, columnName, value) {
+    cy.expect(
+      invoiceFundDistributionSection
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: including(value) }),
+    );
+  },
+
+  checkInvoiceFundDisributionTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.adjustment) {
+        this.checkInvoiceFundDistributionColumnItem(
+          index,
+          INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.ADJUSTMENT,
+          record.adjustment,
+        );
+      }
+
+      if (record.fund) {
+        this.checkInvoiceFundDistributionColumnItem(
+          index,
+          INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.FUND,
+          record.fund,
+        );
+      }
+
+      if (record.expenseClass) {
+        this.checkInvoiceFundDistributionColumnItem(
+          index,
+          INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.EXPENSE_CLASS,
+          record.expenseClass,
+        );
+      }
+
+      if (record.value) {
+        this.checkInvoiceFundDistributionColumnItem(
+          index,
+          INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.VALUE,
+          record.value,
+        );
+      }
+
+      if (record.amount) {
+        this.checkInvoiceFundDistributionColumnItem(
+          index,
+          INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.AMOUNT,
+          record.amount,
+        );
+      }
+    });
+  },
+
+  checkInvoiceLevelAdjustmentColumnItem(rowIndex, columnName, value) {
+    cy.expect(
+      invoiceLevelAdjustmentsSection
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: including(value) }),
+    );
+  },
+
+  checkInvoiceLevelAdjustmentsTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.description) {
+        this.checkInvoiceLevelAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.DESCRIPTION,
+          record.description,
+        );
+      }
+
+      if (record.value) {
+        this.checkInvoiceLevelAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.VALUE,
+          record.value,
+        );
+      }
+
+      if (record.prorate) {
+        this.checkInvoiceLevelAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.PRORATE,
+          record.prorate,
+        );
+      }
+
+      if (record.relationToTotal) {
+        this.checkInvoiceLevelAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.RELATION_TO_TOTAL,
+          record.relationToTotal,
+        );
+      }
+    });
   },
 
   checkFieldsHasCopyIcon(fields = []) {
@@ -408,5 +526,15 @@ export default {
       );
       expect(fiscalYearIdParam.value).to.equal(expectedFiscalYearId);
     }
+  },
+
+  selectFundInInvoiceLevelFundDistributionSection(fundNameCode, index = 0) {
+    const link = invoiceFundDistributionSection
+      .find(
+        MultiColumnListCell({ row: index, column: INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS.FUND }),
+      )
+      .find(Link(fundNameCode));
+    cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
+    FundDetails.waitLoading();
   },
 };

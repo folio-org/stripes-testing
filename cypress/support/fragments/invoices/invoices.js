@@ -158,6 +158,7 @@ export default {
     batchGroupId,
     invoiceStatus,
     exportToAccounting,
+    adjustments,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -176,6 +177,10 @@ export default {
       invoiceStatus,
       exportToAccounting,
     });
+
+    if (adjustments && adjustments.length > 0) {
+      invoice.adjustments = adjustments;
+    }
 
     if (batchGroupId) {
       create(invoice);
