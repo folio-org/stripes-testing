@@ -32,12 +32,10 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.lastName = user.personal.lastName;
-              testData.firstName = user.personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
           cy.loginAsAdmin();
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
@@ -51,14 +49,9 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
-
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
