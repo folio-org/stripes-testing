@@ -35,7 +35,7 @@ export const LEDGER_ROLLOVER_STATUS_LABELS = {
 
 export const ROLLOVER_BUDGET_VALUE_AS = {
   ALLOCATION: 'Allocation',
-  TRANSFER: 'Transfer',
+  TRANSFER: 'Available',
 };
 
 export const LEDGER_ROLLOVER_ORDER_TYPES = {

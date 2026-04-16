@@ -1,13 +1,15 @@
 import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
   EXPORT_BUDGET_FIELDS,
   EXPORT_FUND_FIELDS,
-  LEDGER_ROLLOVER_BUDGET_VALUE_LABELS,
+  FUND_DISTRIBUTION_TYPES,
+  LEDGER_ROLLOVER_BUDGET_VALUE,
+  LEDGER_ROLLOVER_ORDER_TYPES,
   LEDGER_ROLLOVER_SOURCE_LABELS,
   LEDGER_ROLLOVER_STATUS_LABELS,
   LEDGER_ROLLOVER_TYPES,
   ORDER_STATUSES,
-  TRANSACTION_TYPES,
+  ROLLOVER_BUDGET_VALUE_AS,
+  ROLLOVER_ENCUMBRANCE_BASED_ON,
 } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import {
@@ -26,6 +28,7 @@ import {
   OrderLines,
   Orders,
 } from '../../../../support/fragments/orders';
+import { NewOrganization } from '../../../../support/fragments/organizations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FundTypes from '../../../../support/fragments/settings/finance/fundTypes';
@@ -39,16 +42,19 @@ import getRandomStringCode from '../../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 const R = {
-  INITIAL_FISCAL_YEAR: 'initialFiscalYear',
-  NEXT_FISCAL_YEAR: 'nextFiscalYear',
-  LEDGER: 'ledger',
+  BUDGETS: 'budgets',
   FUND_TYPES: 'fundTypes',
   FUNDS: 'funds',
-  BUDGETS: 'budgets',
+  INITIAL_FISCAL_YEAR: 'initialFiscalYear',
+  LEDGER: 'ledger',
+  LOCALE: 'locale',
+  LOCATION: 'location',
+  MATERIAL_TYPE: 'materialType',
+  NEXT_FISCAL_YEAR: 'nextFiscalYear',
   ORDER: 'order',
   ORDER_LINE: 'orderLine',
   USER_PROPERTIES: 'userProperties',
-  LOCALE: 'locale',
+  VENDOR: 'vendor',
 };
 
 const FUND_SCENARIOS = [
@@ -56,8 +62,8 @@ const FUND_SCENARIOS = [
     type: getTestEntityValue('Fund type 1'),
     initialAllocation: 111.11,
     adjustAllocation: -1.5,
-    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE_LABELS.NONE,
-    addAvailableTo: TRANSACTION_TYPES.ALLOCATION,
+    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.NONE,
+    addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.ALLOCATION,
     expected: {
       totalAllocation: 109.44,
       transfers: 0,
@@ -72,8 +78,8 @@ const FUND_SCENARIOS = [
     type: getTestEntityValue('Fund type 2'),
     initialAllocation: 222.22,
     adjustAllocation: 5,
-    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE_LABELS.AVAILABLE,
-    addAvailableTo: TRANSACTION_TYPES.TRANSFER,
+    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.AVAILABLE,
+    addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.TRANSFER,
     expected: {
       totalAllocation: 233.33,
       transfers: 218.89,
@@ -88,8 +94,8 @@ const FUND_SCENARIOS = [
     type: getTestEntityValue('Fund type 3'),
     initialAllocation: 333.33,
     adjustAllocation: 1.7,
-    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE_LABELS.CASH_BALANCE,
-    addAvailableTo: TRANSACTION_TYPES.TRANSFER,
+    rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.CASH_BALANCE,
+    addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.TRANSFER,
     expected: {
       totalAllocation: 339,
       transfers: 333.33,
@@ -103,7 +109,7 @@ const FUND_SCENARIOS = [
 ];
 
 const deleteDownloadedFile = (fileName) => {
-  FileManager.deleteFile(`cypress/downloads/${fileName}`);
+  FileManager.deleteFile(`${Cypress.config('downloadsFolder')}/${fileName}`);
 };
 
 const toNormalizedMoney = (value, locale) => {
@@ -117,43 +123,46 @@ const getColumnValue = (row, key) => {
 };
 
 const checkDownloadedRoundedCsv = ({ fileName, locale }) => {
-  FileManager.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
-    const lines = fileContent
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
+  FileManager
+    .readFile(`${Cypress.config('downloadsFolder')}/${fileName}`)
+    .then((fileContent) => {
+      const lines = fileContent
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
 
-    expect(lines.length).to.be.greaterThan(1);
+      expect(lines.length).to.be.greaterThan(1);
 
-    const header = Ledgers.parseCsvLine(lines[0]).map((column) => Ledgers.clean(column));
-    const rows = lines.slice(1).map((line) => {
-      const cells = Ledgers.parseCsvLine(line).map((cell) => Ledgers.clean(cell));
-      return header.reduce((acc, column, index) => ({ ...acc, [column]: cells[index] }), {});
-    });
+      const header = Ledgers.parseCsvLine(lines[0]).map((column) => Ledgers.clean(column));
+      const rows = lines.slice(1).map((line) => {
+        const cells = Ledgers.parseCsvLine(line).map((cell) => Ledgers.clean(cell));
+        return header.reduce((acc, column, index) => ({ ...acc, [column]: cells[index] }), {});
+      });
 
-    FUND_SCENARIOS.forEach((scenario) => {
-      const row = rows.find((item) => getColumnValue(item, EXPORT_FUND_FIELDS.FUND_TYPE) === scenario.type);
-      expect(Boolean(row), `CSV row for fund type "${scenario.type}"`).to.equal(true);
+      FUND_SCENARIOS.forEach((scenario) => {
+        const row = rows.find((item) => getColumnValue(item, EXPORT_FUND_FIELDS.FUND_TYPE) === scenario.type);
+        expect(Boolean(row), `CSV row for fund type "${scenario.type}"`).to.equal(true);
 
-      const checks = [
-        [EXPORT_BUDGET_FIELDS.INITIAL_ALLOCATION, scenario.expected.totalAllocation],
-        [EXPORT_BUDGET_FIELDS.TOTAL_ALLOCATED, scenario.expected.totalAllocation],
-        [EXPORT_BUDGET_FIELDS.TRANSFERS, scenario.expected.transfers],
-        [EXPORT_BUDGET_FIELDS.TOTAL_FUNDING, scenario.expected.totalFunding],
-        [EXPORT_BUDGET_FIELDS.BUDGET_ENCUMBERED, scenario.expected.encumbered],
-        [EXPORT_BUDGET_FIELDS.UNAVAILABLE, scenario.expected.unavailable],
-        [EXPORT_BUDGET_FIELDS.CASH_BALANCE, scenario.expected.cashBalance],
-        [EXPORT_BUDGET_FIELDS.AVAILABLE, scenario.expected.available],
-      ];
+        const checks = [
+          [EXPORT_FUND_FIELDS.FUND_TYPE, scenario.type],
+          [EXPORT_BUDGET_FIELDS.INITIAL_ALLOCATION, scenario.expected.totalAllocation],
+          [EXPORT_BUDGET_FIELDS.TOTAL_ALLOCATED, scenario.expected.totalAllocation],
+          [EXPORT_BUDGET_FIELDS.TRANSFERS, scenario.expected.transfers],
+          [EXPORT_BUDGET_FIELDS.TOTAL_FUNDING, scenario.expected.totalFunding],
+          [EXPORT_BUDGET_FIELDS.BUDGET_ENCUMBERED, scenario.expected.encumbered],
+          [EXPORT_BUDGET_FIELDS.UNAVAILABLE, scenario.expected.unavailable],
+          [EXPORT_BUDGET_FIELDS.CASH_BALANCE, scenario.expected.cashBalance],
+          [EXPORT_BUDGET_FIELDS.AVAILABLE, scenario.expected.available],
+        ];
 
-      checks.forEach(([column, expectedValue]) => {
-        const actualValue = getColumnValue(row, column).replaceAll(',', '');
-        expect(toNormalizedMoney(actualValue, locale), `${scenario.type}: ${column}`).to.equal(
-          toNormalizedMoney(expectedValue, locale),
-        );
+        checks.forEach(([column, expectedValue]) => {
+          const actualValue = getColumnValue(row, column).replaceAll(',', '');
+          expect(toNormalizedMoney(actualValue, locale), `${scenario.type}: ${column}`).to.equal(
+            toNormalizedMoney(expectedValue, locale),
+          );
+        });
       });
     });
-  });
 };
 
 describe('Finance | Fiscal Year Rollover', () => {
@@ -161,7 +170,6 @@ describe('Finance | Fiscal Year Rollover', () => {
 
   before('Create data for rounded rollover result CSV', () => {
     cy.getAdminToken();
-
     cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
     const steps = getPreconditionSteps(); // eslint-disable-line no-use-before-define
@@ -170,7 +178,9 @@ describe('Finance | Fiscal Year Rollover', () => {
       .step(steps.createActiveConsecutiveFiscalYears)
       .step(steps.createActiveLedgerForInitialFiscalYear)
       .step(steps.createFundTypes)
-      .step(steps.createFundsWithBudgetsByType)
+      .step(steps.createFundsByType)
+      .step(steps.createBudgetsForFunds)
+      .step(steps.createVendorForOrder)
       .step(steps.createOpenOrderWithThreeFundDistributions)
       .step(steps.performTestAndCommonRollovers)
       .step(steps.createTestUser)
@@ -253,160 +263,151 @@ function getPreconditionSteps() {
   };
 
   const createFundTypes = (flow) => {
-    const types = [];
-
     FUND_SCENARIOS.forEach(({ type }) => {
       FundTypes
         .createFundTypesViaApi({ name: type })
-        .then(types.push);
+        .then((fundType) => {
+          const types = flow.get(R.FUND_TYPES) || [];
+          flow.set(R.FUND_TYPES, [...types, fundType]);
+        });
     });
-
-    return flow.set(R.FUND_TYPES, types);
   };
 
-  const createFundsWithBudgetsByType = (flow) => {
-    const funds = [];
-    const budgets = [];
-
-    return cy.wrap(FUND_SCENARIOS).each((scenario, index) => {
+  const createFundsByType = (flow) => {
+    FUND_SCENARIOS.forEach(({ type }) => {
       const { name, ...baseFund } = Funds.getDefaultFund();
 
-      return Funds
+      Funds
         .createViaApi({
           ...baseFund,
-          name: `[${scenario.type}]_${name}`,
+          name: `[${type}]_${name}`,
+          fundTypeId: flow.get(R.FUND_TYPES).find((item) => item.name === type).id,
           ledgerId: flow.get(R.LEDGER).id,
-          fundTypeId: flow.get(R.FUND_TYPES).find((type) => type.name === scenario.type).id,
         })
-        .then(funds.push)
-        .then(() => Budgets.createViaApi({
+        .then((fundData) => {
+          const funds = flow.get(R.FUNDS) || [];
+          flow.set(R.FUNDS, [...funds, fundData]);
+        });
+    });
+  };
+
+  const createBudgetsForFunds = (flow) => {
+    const funds = flow.get(R.FUNDS);
+
+    funds.forEach(({ fund }) => {
+      const type = flow.get(R.FUND_TYPES).find((item) => item.id === fund.fundTypeId).name;
+      const scenario = FUND_SCENARIOS.find(({ type: scenarioType }) => scenarioType === type);
+
+      Budgets
+        .createViaApi({
           ...Budgets.getDefaultBudget(),
-          fundId: funds[index].id,
           fiscalYearId: flow.get(R.INITIAL_FISCAL_YEAR).id,
+          fundId: fund.id,
           allocated: scenario.initialAllocation,
-        }))
-        .then(budgets.push);
-    })
-      .then(() => {
-        flow.set(R.FUNDS, funds);
-        flow.set(R.BUDGETS, budgets);
-      });
+        })
+        .then((budgetData) => {
+          const budgets = flow.get(R.BUDGETS) || [];
+          flow.set(R.BUDGETS, [...budgets, budgetData]);
+        });
+    });
+  };
+
+  const createVendorForOrder = (flow) => {
+    NewOrganization
+      .createViaApi(NewOrganization.getDefaultOrganization())
+      .then((organization) => flow.set(R.VENDOR, organization));
   };
 
   const createOpenOrderWithThreeFundDistributions = (flow) => {
     return Orders
-      .createOrderViaApi({ ...NewOrder.getDefaultOrder(), reEncumber: true })
+      .createOrderViaApi({
+        ...NewOrder.defaultOneTimeOrder,
+        reEncumber: true,
+        vendor: flow.get(R.VENDOR).id,
+      }) // Create order
       .then((order) => flow.set(R.ORDER, order))
-      .then(() => {
-        const orderLineContext = {};
+      .then(() => cy.getLocations({ limit: 1 }).then((location) => flow.set(R.LOCATION, location))) // Get location
+      .then(() => cy.getDefaultMaterialType().then((materialType) => flow.set(R.MATERIAL_TYPE, materialType))) // Get material type
+      .then(() => cy.getAcquisitionMethodsApi({ limit: 1 })) // Get acquisition method
+      .then(({ body: { acquisitionMethods } }) => { // Create order line with 3 fund distributions
+        const funds = flow.get(R.FUNDS);
 
-        return cy.getLocations({ limit: 1 })
-          .then((location) => {
-            orderLineContext.location = location;
-            return cy.getDefaultMaterialType();
-          })
-          .then((materialType) => {
-            orderLineContext.materialType = materialType;
-            return cy.getAcquisitionMethodsApi({
-              query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-            });
-          })
-          .then((methodsResponse) => {
-            const funds = flow.get(R.FUNDS);
-            const fundDistribution = FUND_SCENARIOS.map((scenario) => ({
-              fundId: funds[scenario.type].id,
-              code: funds[scenario.type].code,
-              distributionType: 'amount',
-              value: 3.33,
-            }));
+        return OrderLines.createOrderLineViaApi(BasicOrderLine.getDefaultOrderLine({
+          purchaseOrderId: flow.get(R.ORDER).id,
+          acquisitionMethod: acquisitionMethods[0].id,
+          listUnitPrice: 9.99,
+          poLineEstimatedPrice: 9.99,
+          quantity: 1,
+          fundDistribution: FUND_SCENARIOS.map((_scenario, index) => ({
+            fundId: funds[index].fund.id,
+            code: funds[index].fund.code,
+            distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+            value: 3.33,
+          })),
+          specialLocationId: flow.get(R.LOCATION).id,
+          specialMaterialTypeId: flow.get(R.MATERIAL_TYPE).id,
+        }));
+      })
+      .then((orderLine) => flow.set(R.ORDER_LINE, orderLine))
+      .then(() => { // Open order
+        const updatedOrder = { ...flow.get(R.ORDER), workflowStatus: ORDER_STATUSES.OPEN }
 
-            return OrderLines.createOrderLineViaApi(
-              BasicOrderLine.getDefaultOrderLine({
-                purchaseOrderId: order.id,
-                acquisitionMethod: methodsResponse.body.acquisitionMethods[0].id,
-                listUnitPrice: 9.99,
-                poLineEstimatedPrice: 9.99,
-                quantity: 1,
-                fundDistribution,
-                specialLocationId: orderLineContext.location.id,
-                specialMaterialTypeId: orderLineContext.materialType.id,
-              }),
-            );
-          })
-          .then((orderLine) => {
-            register(
-              flow,
-              R.ORDER_LINE,
-              orderLine,
-              (entity) => OrderLines.deleteOrderLineViaApi(entity.id),
-            );
-
-            return Orders.updateOrderViaApi({
-              ...order,
-              workflowStatus: ORDER_STATUSES.OPEN,
-            });
-          });
+        Orders
+          .updateOrderViaApi(updatedOrder)
+          .then(() => flow.set(R.ORDER, updatedOrder));
       });
   };
 
   const performTestAndCommonRollovers = (flow) => {
-    const typeMap = flow.get(R.FUND_TYPES);
+    const types = flow.get(R.FUND_TYPES);
+    const typesMap = types.reduce((acc, type) => ({ ...acc, [type.name]: type }), {});
 
-    const buildRollover = () => {
-      return LedgerRollovers.generateLedgerRollover({
-        ledger: flow.get(R.LEDGER),
-        fromFiscalYear: flow.get(R.INITIAL_FISCAL_YEAR),
-        toFiscalYear: flow.get(R.NEXT_FISCAL_YEAR),
-        needCloseBudgets: true,
-        budgetsRollover: FUND_SCENARIOS.map((scenario) => ({
-          fundTypeId: typeMap[scenario.type].id,
-          rolloverAllocation: true,
-          adjustAllocation: scenario.adjustAllocation,
-          rolloverBudgetValue: scenario.rolloverBudgetValue,
-          addAvailableTo: scenario.addAvailableTo,
-        })),
-        encumbrancesRollover: [
-          {
-            orderType: 'One-time',
-            basedOn: 'InitialAmount',
-            increaseBy: -1.5,
-          },
-        ],
-      });
-    };
-
-    const createAndRegisterRollover = (rolloverType) => {
-      return LedgerRollovers.createLedgerRolloverViaApi({
-        ...buildRollover(),
-        rolloverType,
-      }).then((rollover) => {
-        register(
-          flow,
-          `${String(rolloverType)}-${rollover.id}`,
-          rollover,
-          (entity) => LedgerRollovers.deleteLedgerRolloverViaApi(entity.id),
-        );
-      });
-    };
-
-    return createAndRegisterRollover(LEDGER_ROLLOVER_TYPES.PREVIEW)
-      .then(() => createAndRegisterRollover(LEDGER_ROLLOVER_TYPES.COMMIT));
+    [
+      LEDGER_ROLLOVER_TYPES.PREVIEW,
+      LEDGER_ROLLOVER_TYPES.COMMIT,
+    ].forEach((type) => {
+      return LedgerRollovers
+        .createLedgerRolloverViaApi({
+          ...LedgerRollovers.generateLedgerRollover({
+            ledger: flow.get(R.LEDGER),
+            fromFiscalYear: flow.get(R.INITIAL_FISCAL_YEAR),
+            toFiscalYear: flow.get(R.NEXT_FISCAL_YEAR),
+            needCloseBudgets: true,
+            budgetsRollover: FUND_SCENARIOS.map((scenario) => ({
+              fundTypeId: typesMap[scenario.type].id,
+              rolloverAllocation: true,
+              adjustAllocation: scenario.adjustAllocation,
+              rolloverBudgetValue: scenario.rolloverBudgetValue,
+              addAvailableTo: scenario.addAvailableTo,
+              setAllowances: false,
+            })),
+            encumbrancesRollover: [
+              {
+                orderType: LEDGER_ROLLOVER_ORDER_TYPES.ONE_TIME,
+                basedOn: ROLLOVER_ENCUMBRANCE_BASED_ON.INITIAL_AMOUNT,
+                increaseBy: -1.5,
+              },
+            ],
+          }),
+          rolloverType: type,
+        })
+        .then((rollover) => flow.set(type, rollover));
+    });
   };
 
   const createTestUser = (flow) => {
-    return cy.createTempUser([
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-    ]).then((userProperties) => {
-      return register(
-        flow,
+    return cy
+      .createTempUser([
+        permissions.uiFinanceViewFiscalYear.gui,
+        permissions.uiFinanceViewLedger.gui,
+        permissions.uiFinanceViewFundAndBudget.gui,
+        permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      ])
+      .then((userProperties) => flow.set(
         R.USER_PROPERTIES,
         userProperties,
-        (entity) => Users.deleteViaApi(entity.userId),
-      );
-    });
+        () => Users.deleteViaApi(userProperties.userId),
+      ));
   };
 
   const loginToLedgerPane = (flow) => {
@@ -421,9 +422,11 @@ function getPreconditionSteps() {
   return {
     createActiveConsecutiveFiscalYears,
     createActiveLedgerForInitialFiscalYear,
+    createBudgetsForFunds,
     createFundTypes,
-    createFundsWithBudgetsByType,
+    createFundsByType,
     createOpenOrderWithThreeFundDistributions,
+    createVendorForOrder,
     performTestAndCommonRollovers,
     createTestUser,
     loginToLedgerPane,
