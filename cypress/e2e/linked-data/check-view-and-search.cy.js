@@ -31,6 +31,7 @@ describe('Citation: check navigation', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
   };
 
   const resourceData = {
@@ -86,6 +87,7 @@ describe('Citation: check navigation', () => {
     // delete LDE instance first, then work
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -96,10 +98,13 @@ describe('Citation: check navigation', () => {
       authRefresh: true,
     });
     // create test data based on uploaded marc file and capture IDs for cleanup
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(

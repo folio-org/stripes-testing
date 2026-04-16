@@ -38,6 +38,7 @@ describe('Citation: cancel without saving', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
   };
 
   const resourceData = {
@@ -94,6 +95,7 @@ describe('Citation: cancel without saving', () => {
     cy.getAdminToken();
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -103,10 +105,13 @@ describe('Citation: cancel without saving', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -171,9 +176,10 @@ describe('Citation: cancel without saving', () => {
       EditResource.clickCancelWithOption('no');
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       // save changes
-      EditResource.saveAndCloseWithIds().then(({ instanceId, workId }) => {
+      EditResource.saveAndCloseWithIds().then(({ instanceId, workId, inventoryId }) => {
         testData.instanceId = instanceId;
         testData.workId = workId;
+        testData.inventoryId = inventoryId;
       });
       Marigold.waitLoading();
 

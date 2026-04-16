@@ -31,7 +31,9 @@ describe('Citation: comparison mode', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
     duplicateInstanceId: null,
+    duplicateInventoryId: null,
   };
 
   const resourceData = {
@@ -87,6 +89,8 @@ describe('Citation: comparison mode', () => {
     if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) Work.deleteInventoryInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -96,10 +100,13 @@ describe('Citation: comparison mode', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -115,8 +122,9 @@ describe('Citation: comparison mode', () => {
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
-        testData.duplicateInstanceId = duplicateInstanceId;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
       });
       // wait for LDE page to be displayed
       Marigold.waitLoading();

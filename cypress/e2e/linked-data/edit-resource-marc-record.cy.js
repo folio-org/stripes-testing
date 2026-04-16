@@ -39,7 +39,9 @@ describe('Citation: MARC Authority integration', () => {
     roleIds: [],
     workId: null,
     instanceId: null,
+    inventoryId: null,
     duplicateInstanceId: null,
+    duplicateInventoryId: null,
   };
 
   const resourceData = {
@@ -97,6 +99,8 @@ describe('Citation: MARC Authority integration', () => {
     if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) Work.deleteInventoryInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -106,10 +110,13 @@ describe('Citation: MARC Authority integration', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -124,8 +131,9 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.clearField('Other Title Information');
       // generate random valid lccn in order to prevent unique validation error later
       EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
-        testData.duplicateInstanceId = duplicateInstanceId;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
       });
       Marigold.waitLoading();
       // navigate to the inventory module
