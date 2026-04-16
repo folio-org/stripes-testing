@@ -147,8 +147,9 @@ describe('Data Import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['dryRun', 'folijet'] },
+      { tags: ['dryRun', 'folijet', 'C388505'] },
       () => {
+        cy.getUserToken(user.username, user.password);
         const arrayOfHoldingsStatuses = ['Created (CDP)', 'Created (CDR)', 'Created (CDV)'];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;

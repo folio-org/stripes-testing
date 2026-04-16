@@ -293,6 +293,7 @@ describe('Data Import', () => {
       'C356791 Check import summary table with "create + update" actions (folijet)',
       { tags: ['dryRun', 'folijet', 'C356791'] },
       () => {
+        cy.getUserToken(user.username, user.password);
         // create mapping profiles for creating
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
