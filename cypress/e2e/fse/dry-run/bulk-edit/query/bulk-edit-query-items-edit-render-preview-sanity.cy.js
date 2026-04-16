@@ -15,6 +15,7 @@ let locationId1;
 let locationId2;
 let loanTypeId;
 let materialTypeId;
+let noteType;
 const item = {
   instanceName: `AT_C440063_FolioInstance_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -36,6 +37,11 @@ describe('Bulk-edit', () => {
           InventoryInstances.getLocations({ limit: 2 }).then((locations) => {
             locationId1 = locations[0].id;
             locationId2 = locations[1].id;
+          });
+          InventoryInstances.getItemNoteTypes({
+            limit: 1,
+          }).then((noteTypes) => {
+            noteType = noteTypes[0].name;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             loanTypeId = res[0].id;
@@ -116,7 +122,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
         BulkEditSearchPane.verifyActionsDropdownScrollable();
         BulkEditSearchPane.searchColumnName('note');
-        const columnNameNote = 'Action note';
+        const columnNameNote = noteType;
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
         BulkEditSearchPane.verifyResultColumnTitles(columnNameNote);
         BulkEditSearchPane.searchColumnName('fewoh', false);
