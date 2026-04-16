@@ -92,7 +92,7 @@ describe('Citation: duplicate resource', () => {
     if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
-    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
     // duplicate instance may have holdings, so use full deletion
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
     Users.deleteViaApi(user.userId);

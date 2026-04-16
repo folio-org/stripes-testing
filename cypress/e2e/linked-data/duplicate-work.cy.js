@@ -93,8 +93,8 @@ describe('Citation: duplicate resource', () => {
     if (testData.duplicateWorkId) Work.deleteById(testData.duplicateWorkId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
-    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
-    if (testData.duplicateInventoryId) Work.deleteInventoryInstanceViaApi(testData.duplicateInventoryId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 

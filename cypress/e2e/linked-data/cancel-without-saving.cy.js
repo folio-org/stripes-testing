@@ -12,6 +12,7 @@ import {
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -95,7 +96,7 @@ describe('Citation: cancel without saving', () => {
     cy.getAdminToken();
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
-    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
     Users.deleteViaApi(user.userId);
   });
 

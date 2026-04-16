@@ -3,6 +3,7 @@ import Marigold from '../../support/fragments/linked-data/marigold';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Work from '../../support/fragments/linked-data/work';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
@@ -87,7 +88,7 @@ describe('Citation: check navigation', () => {
     // delete LDE instance first, then work
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
-    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
     Users.deleteViaApi(user.userId);
   });
 

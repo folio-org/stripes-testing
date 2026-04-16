@@ -91,9 +91,9 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     if (testData.duplicateInstanceId2) Work.deleteInstanceViaApi(testData.duplicateInstanceId2);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
-    if (testData.inventoryId) Work.deleteInventoryInstanceViaApi(testData.inventoryId);
-    if (testData.duplicateInventoryId) Work.deleteInventoryInstanceViaApi(testData.duplicateInventoryId);
-    if (testData.duplicateInventoryId2) Work.deleteInventoryInstanceViaApi(testData.duplicateInventoryId2);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
+    if (testData.duplicateInventoryId2) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId2);
     Users.deleteViaApi(user.userId);
   });
 

@@ -41,13 +41,4 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-
-  deleteInventoryInstanceViaApi(inventoryId) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `instance-storage/instances/${inventoryId}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    });
-  },
 };
