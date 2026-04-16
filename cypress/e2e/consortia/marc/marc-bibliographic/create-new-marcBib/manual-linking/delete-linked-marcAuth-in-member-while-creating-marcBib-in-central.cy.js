@@ -10,7 +10,10 @@ import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
-import getRandomPostfix, { getRandomLetters } from '../../../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomFourDigitNumber,
+} from '../../../../../../support/utils/stringTools';
 import MarcAuthoritiesSearch from '../../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import { MARC_AUTHORITY_SEARCH_OPTIONS } from '../../../../../../support/constants';
 
@@ -31,7 +34,7 @@ describe('MARC', () => {
 
         const authData = {
           prefix: getRandomLetters(15),
-          startWithNumber: '422125',
+          startWithNumber: `422125${randomFourDigitNumber()}`,
         };
 
         const authorityFields = [
@@ -42,8 +45,17 @@ describe('MARC', () => {
           },
         ];
 
+        const additionalAuthorityFields = [
+          {
+            tag: testData.tag100,
+            content: `$a C422125 Additional MARC Authority ${randomPostfix}`,
+            indicators: ['1', '\\'],
+          },
+        ];
+
         let createdInstanceId;
         let authorityId;
+        let additionalAuthorityId;
         let user;
 
         before('Create users and data', () => {
@@ -67,6 +79,14 @@ describe('MARC', () => {
                 authorityFields,
               ).then((createdRecordId) => {
                 authorityId = createdRecordId;
+              });
+              // extra authority record to make sure detail view won't auto-open (it does when 1 record found)
+              MarcAuthorities.createMarcAuthorityViaAPI(
+                authData.prefix,
+                +authData.startWithNumber + 1,
+                additionalAuthorityFields,
+              ).then((createdRecordId) => {
+                additionalAuthorityId = createdRecordId;
               });
             })
             .then(() => {
@@ -94,6 +114,7 @@ describe('MARC', () => {
           Users.deleteViaApi(user.userId);
           InventoryInstance.deleteInstanceViaApi(createdInstanceId);
           MarcAuthority.deleteViaAPI(authorityId, true);
+          MarcAuthority.deleteViaAPI(additionalAuthorityId, true);
         });
 
         it(
@@ -127,15 +148,13 @@ describe('MARC', () => {
             MarcAuthorities.selectIncludingTitle(testData.authorityTitle);
             MarcAuthority.waitLoading();
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.closeAllCallouts();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
 
-            // Steps 10-12 (Member 1 - via API): Delete the shared authority record
-            cy.setTenant(Affiliations.College);
+            // Steps 10-12 (Via API): Delete the shared authority record
             MarcAuthority.deleteViaAPI(authorityId);
-            cy.resetTenant();
             cy.recurse(
               () => MarcAuthorities.getMarcAuthoritiesViaApi({
-                query: `title="${testData.authorityTitle}"`,
+                query: `keyword="${testData.authorityTitle}" and authRefType=="Authorized"`,
               }),
               (foundAuthorities) => foundAuthorities.length === 0,
               { limit: 10, timeout: 12000, delay: 1000 },
