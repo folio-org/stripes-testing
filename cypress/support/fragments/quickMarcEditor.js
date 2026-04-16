@@ -2502,17 +2502,11 @@ export default {
   },
 
   closeAllCallouts() {
-    cy.get('body').then(($body) => {
-      $body.find('[class^=calloutBase-]').each((_, callout) => {
-        const calloutId = Cypress.$(callout).attr('id');
-        if (calloutId) {
-          cy.get(`#${calloutId}`, { timeout: 0 }).then(($el) => {
-            if ($el.length) {
-              cy.do(Callout({ id: calloutId }).dismiss());
-            }
-          });
-        }
-      });
+    cy.get('[class^=calloutBase-]').each((callout) => {
+      const calloutId = callout.attr('id');
+      if (calloutId) {
+        cy.do(Callout({ id: calloutId }).dismiss());
+      }
     });
     cy.expect(Callout().absent());
   },
