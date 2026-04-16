@@ -111,9 +111,9 @@ export default {
     EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
     EditResource.setEdition(title);
     EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
-    return EditResource.saveAndCloseWithIds().then(({ workId, instanceId }) => {
+    return EditResource.saveAndCloseWithIds().then(({ workId, instanceId, inventoryId }) => {
       SearchAndFilter.waitLoading();
-      return cy.wrap({ workId, instanceId });
+      return cy.wrap({ workId, instanceId, inventoryId });
     });
   },
 
