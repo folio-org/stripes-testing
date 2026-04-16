@@ -34,6 +34,9 @@ describe('Citation: duplicate resource', () => {
       { type: 'ISBN', value: '9781587657092' },
     ],
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
   };
 
   const resourceData = {
@@ -90,6 +93,8 @@ describe('Citation: duplicate resource', () => {
     if (testData.duplicateWorkId) Work.deleteById(testData.duplicateWorkId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -99,10 +104,13 @@ describe('Citation: duplicate resource', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    Marigold.createTestWorkDataWithIds(resourceData.title).then(({ workId, instanceId }) => {
-      testData.workId = workId;
-      testData.instanceId = instanceId;
-    });
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -134,8 +142,9 @@ describe('Citation: duplicate resource', () => {
       EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
-      EditResource.saveAndCloseNewInstanceWithId().then((duplicateInstanceId) => {
-        testData.duplicateInstanceId = duplicateInstanceId;
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
       });
       // wait for LDE page to be displayed
       Marigold.waitLoading();
