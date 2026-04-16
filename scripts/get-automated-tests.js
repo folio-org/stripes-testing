@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-console */
 const fs = require('fs');
-const { team, getAllTestCases, getTestRunResults } = require('./helpers/test.rail.helper');
+const { team, testTypes, getAllTestCases, getTestRunResults } = require('./helpers/test.rail.helper');
 const { createTestRailClient } = require('./helpers/api.client');
 require('dotenv').config();
 
@@ -66,11 +66,21 @@ function printAutomatedTestsByTeams() {
     let totalManual = 0;
     console.log('Team\t        Automated       Manual  Coverage %');
     for (const key in team) {
-      const automatedCount = automatedTests.filter(
+      const automatedTestsPerTeam = automatedTests.filter(
         (test) => test.custom_dev_team === team[key],
-      ).length;
+      );
+      const filteredAutomatedTestTypes = {};
+      for (const k in testTypes) {
+        filteredAutomatedTestTypes[k] = automatedTestsPerTeam.filter((test) => test.custom_test_group === testTypes[k]).length;
+      }
+      const automatedCount = automatedTestsPerTeam.length;
       totalAutomated += automatedCount;
-      const manualCount = manualTests.filter((test) => test.custom_dev_team === team[key]).length;
+      const manualTestsPerTeam = manualTests.filter((test) => test.custom_dev_team === team[key]);
+      const filteredManualTestTypes = {};
+      for (const k in testTypes) {
+        filteredManualTestTypes[k] = manualTestsPerTeam.filter((test) => test.custom_test_group === testTypes[k]).length;
+      }
+      const manualCount = manualTestsPerTeam.length;
       totalManual += manualCount;
       const coverage = ((automatedCount / (automatedCount + manualCount)) * 100).toFixed(2);
       console.log(
@@ -81,6 +91,10 @@ function printAutomatedTestsByTeams() {
         automated: automatedCount,
         manual: manualCount,
         coverage: `${coverage}%`,
+        testTypes: {
+          automated: filteredAutomatedTestTypes,
+          manual: filteredManualTestTypes,
+        },
       });
     }
     console.log(
