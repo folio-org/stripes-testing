@@ -1173,6 +1173,11 @@ export default {
         // add to the fields array default 008 field values
         parsedFromMrkFileFields.fields.unshift(tag008);
 
+        // remove 001 field (it should be created automatically by the system)
+        parsedFromMrkFileFields.fields = parsedFromMrkFileFields.fields.filter(
+          (field) => field.tag !== '001',
+        );
+
         // add additional fields to the fields array which wasn't parsed in the parseMrkFile() method, e.g. '006', '007'
         parsedFromMrkFileFields.fields.push(...additionalFields);
 

@@ -155,7 +155,7 @@ const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
-const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
+const editInMGButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
@@ -1541,20 +1541,16 @@ export default {
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
   overlayWithOclc: (oclc, externalTarget = 'OCLC WorldCat') => {
-    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
-      if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
-        cy.wait(3000);
-        cy.do(singleRecordImportModal.find(importTypeSelect).choose(externalTarget));
-        cy.wait(1500);
-      }
-      cy.do(
-        singleRecordImportModal
-          .find(Select({ name: 'selectedJobProfileId' }))
-          .choose('Inventory Single Record - Default Update Instance (Default)'),
-      );
-      cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-      cy.do(singleRecordImportModal.find(Button('Import')).click());
-    });
+    cy.wait(1500);
+    cy.do(singleRecordImportModal.find(importTypeSelect).choose(externalTarget));
+    cy.wait(1500);
+    cy.do(
+      singleRecordImportModal
+        .find(Select({ name: 'selectedJobProfileId' }))
+        .choose('Inventory Single Record - Default Update Instance (Default)'),
+    );
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1922,17 +1918,18 @@ export default {
     );
   },
 
-  editInstanceInLde: () => {
-    cy.wait(2000);
+  editInstanceInMG: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
-    cy.do(editInLdeButton.click());
+    cy.wait(500);
+    cy.do(editInMGButton.click());
     cy.wait(2000);
   },
 
-  checkEditInstanceInLdeButtonNotDisplayed: () => {
+  checkEditInstanceInMGButtonNotDisplayed: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
-    cy.expect(editInLdeButton.absent());
+    cy.expect(editInMGButton.absent());
     cy.wait(1000);
   },
 

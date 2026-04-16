@@ -12,7 +12,7 @@ import {
   PaneHeader,
   Section,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, INVOICE_POL_PAYMENT_STATUSES } from '../../constants';
 import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
@@ -22,6 +22,8 @@ import ApproveInvoiceModal from './modal/approveInvoiceModal';
 import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
+import InvoiceStates from './invoiceStates';
+import UpdatePOLinePaymentStatusModal from './modal/updatePOLinePaymentStatusModal';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -29,7 +31,7 @@ const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const actionsButton = Button('Actions');
 const newBlankLineButton = Button('New blank line');
-
+const cancelButton = Button('Cancel');
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
@@ -246,8 +248,7 @@ export default {
     PayInvoiceModal.clickSubmitButton();
   },
   cancelInvoice() {
-    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Cancel').click()]);
-
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
     CancelInvoiceModal.verifyModalView();
     CancelInvoiceModal.clickSubmitButton();
   },
@@ -352,5 +353,61 @@ export default {
   verifyCurrency(currency) {
     cy.do(Accordion({ id: 'extendedInformation' }).clickHeader());
     cy.expect(KeyValue('Currency').has({ value: currency }));
+  },
+
+  clickCancelInActionsMenu() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
+  },
+
+  cancelInvoiceWithUpdatePOLPaymentStatus({
+    errorMessage,
+    status = INVOICE_POL_PAYMENT_STATUSES.CANCELLED,
+  } = {}) {
+    this.clickCancelInActionsMenu();
+    CancelInvoiceModal.clickSubmitButton(false);
+    UpdatePOLinePaymentStatusModal.verifyModalView();
+    UpdatePOLinePaymentStatusModal.selectPaymentStatus(status);
+    UpdatePOLinePaymentStatusModal.clickSubmitButton();
+
+    if (errorMessage) {
+      interactorsTools.checkCalloutErrorMessage(errorMessage);
+    } else {
+      interactorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
+    }
+  },
+
+  checkErrorInvoiceApiResponse(
+    interception,
+    {
+      expectedStatus,
+      expectedMessage,
+      expectedErrorCode,
+      expectedFundId,
+      expectedFiscalYearId,
+    } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedErrorCode) {
+      expect(interception.response.body.errors[0].code).to.equal(expectedErrorCode);
+    }
+
+    if (expectedMessage) {
+      expect(interception.response.body.errors[0].message).to.include(expectedMessage);
+    }
+
+    if (expectedFundId) {
+      const fundIdParam = interception.response.body.errors[0].parameters.find(
+        (param) => param.key === 'fundId',
+      );
+      expect(fundIdParam.value).to.equal(expectedFundId);
+    }
+
+    if (expectedFiscalYearId) {
+      const fiscalYearIdParam = interception.response.body.errors[0].parameters.find(
+        (param) => param.key === 'fiscalYearId',
+      );
+      expect(fiscalYearIdParam.value).to.equal(expectedFiscalYearId);
+    }
   },
 };

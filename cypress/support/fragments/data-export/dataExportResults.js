@@ -28,6 +28,14 @@ export default {
     cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
   },
 
+  verifyColumnValueByFileName(fileName, columnName, expectedValue) {
+    const row = ListRow({ content: including(fileName) });
+
+    cy.expect(
+      row.find(MultiColumnListCell({ column: columnName })).has({ content: expectedValue }),
+    );
+  },
+
   verifySuccessExportResultCells(
     resultFileName,
     recordsCount,

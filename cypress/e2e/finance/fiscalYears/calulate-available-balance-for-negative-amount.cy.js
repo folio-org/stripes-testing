@@ -126,7 +126,7 @@ describe('Finance', () => {
       () => {
         // Click on "Fiscal year #1" link on "Fiscal year" pane
         FinanceHelper.searchByName(fiscalYear.name);
-        const FiscalYearDetails = FiscalYears.selectFisacalYear(fiscalYear.name);
+        const FiscalYearDetails = FiscalYears.selectFiscalYear(fiscalYear.name);
 
         // #2 Check "Financial summary" accordion
         FiscalYearDetails.checkFinancialSummary({

@@ -436,7 +436,12 @@ describe('Inventory', () => {
               false,
             );
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
-            cy.intercept('/search/instances?*').as('getInstances');
+            cy.intercept({
+              url: '/search/instances?*',
+              headers: {
+                'x-okapi-tenant': Affiliations.College,
+              },
+            }).as('getInstances');
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.university,

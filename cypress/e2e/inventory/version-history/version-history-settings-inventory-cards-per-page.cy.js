@@ -10,7 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { Pane } from '../../../../interactors';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Inventory', () => {
   describe('Settings', () => {
@@ -37,10 +37,11 @@ describe('Inventory', () => {
 
       function openVersionHistory(initial = false) {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        if (initial) InventoryInstances.waitContentLoading();
-        else InventoryInstances.waitLoading();
-        InventoryInstances.searchByTitle(testData.createdRecordId);
-        InventoryInstances.selectInstanceById(testData.createdRecordId);
+        if (initial) {
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.createdRecordId);
+          InventoryInstances.selectInstanceById(testData.createdRecordId);
+        } else InventoryInstances.waitLoading();
         InventoryInstance.waitLoading();
         InventoryInstance.viewSource();
         InventoryViewSource.verifyVersionHistoryButtonShown();
@@ -53,6 +54,7 @@ describe('Inventory', () => {
         cy.getMarcRecordDataViaAPI(instanceId).then((marcData) => {
           const field245 = marcData.fields.find((f) => f.tag === '245');
           field245.content = `$a ${testData.instanceTitle} v${iteration}`;
+          marcData.relatedRecordVersion = iteration;
           cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData).then(({ status }) => {
             expect(status).to.be.greaterThan(200);
             updateRecordNTimes(instanceId, iteration + 1);
@@ -63,12 +65,13 @@ describe('Inventory', () => {
       function closeVersionHistory() {
         VersionHistorySection.clickCloseButton();
         InventoryViewSource.close();
+        InventoryInstance.waitLoading();
       }
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstances.deleteInstanceByTitleViaApi('C655274_');
+        cy.setVersionHistoryRecordsPerPage(10);
 
         cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
           testData.createdRecordId = instanceId;
@@ -92,14 +95,13 @@ describe('Inventory', () => {
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
-      // Will FAIL due to https://folio-org.atlassian.net/browse/UIQM-815
       it(
         'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C655274'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.settingsPath,
-            waiter: () => cy.expect(Pane('Settings').exists()),
+            waiter: SettingsPane.waitLoading,
           });
 
           // Step 1-2: Go to Settings > Inventory > Version history

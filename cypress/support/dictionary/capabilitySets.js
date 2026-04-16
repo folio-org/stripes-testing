@@ -179,6 +179,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiOrdersOrdersCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Orders Orders',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance Staff-Suppressed-Records',
@@ -239,6 +244,21 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiQuickMarcQuickMarcHoldingsEditorView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
@@ -284,6 +304,11 @@ export default {
   uiQuickMarcEditorDuplicate: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Quick-Marc Quick-Marc-Editor Derive',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInventorySingleRecordImport: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Single-Record-Import',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

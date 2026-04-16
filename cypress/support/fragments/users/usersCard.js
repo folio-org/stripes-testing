@@ -88,6 +88,9 @@ const preferredEmailCommunicationsField = KeyValue('Preferred email communicatio
 const rolesAffiliationSelectionList = SelectionList({
   id: including('user-assigned-affiliations-select'),
 });
+const popupNoteModal = Modal({ id: 'popup-note-modal' });
+const popupNoteDeleteButton = popupNoteModal.find(Button('Delete note'));
+const popupNoteCloseButton = popupNoteModal.find(Button('Close'));
 
 export default {
   errors,
@@ -937,7 +940,7 @@ export default {
   verifyNotesCounter(expectedCount) {
     cy.expect([
       notesAccordion.find(Spinner()).absent(),
-      notesAccordion.has({ counter: expectedCount }),
+      notesAccordion.has({ counter: `${expectedCount}` }),
     ]);
   },
 
@@ -972,5 +975,28 @@ export default {
       );
     });
     cy.expect(rolesAffiliationSelectionList.has({ optionCount: affiliationsArray.length }));
+  },
+
+  checkPopupNoteDisplayed: (isShown = true) => {
+    if (isShown) cy.expect(popupNoteModal.exists());
+    else cy.expect(popupNoteModal.absent());
+  },
+
+  deleteNoteInPopupModal: () => {
+    cy.do(popupNoteDeleteButton.click());
+    cy.expect(popupNoteModal.absent());
+  },
+  closeNoteInPopupModal: () => {
+    cy.do(popupNoteCloseButton.click());
+    cy.expect(popupNoteModal.absent());
+  },
+
+  verifyPopupNote: ({ title, details }) => {
+    cy.expect([
+      popupNoteModal.find(HTML(including(`Title: ${title}`))).exists(),
+      popupNoteModal.find(HTML(including(details))).exists(),
+      popupNoteDeleteButton.exists(),
+      popupNoteCloseButton.exists(),
+    ]);
   },
 };
