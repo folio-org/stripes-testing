@@ -68,16 +68,17 @@ export default {
 
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     open();
-    const defaultImportProfileName = 'OCLC WorldCat';
+    const defaultImportProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4'; // OCLC WorldCat
+    let defaultImportProfileName = '';
     cy.do(importButtonInActions.click());
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
-      if (
-        importProfiles.filter((profile) => profile.enabled === true).length > 1 &&
-        importProfiles.some((profile) => profile.name === defaultImportProfileName)
-      ) {
+      defaultImportProfileName = importProfiles.find(
+        (profile) => profile.id === defaultImportProfileId,
+      )?.name;
+      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
         cy.do(importTypeSelect.choose(defaultImportProfileName));
+        cy.wait(1000);
       }
-      cy.wait(1000);
       cy.expect(OCLWorldCatIdentifierTextField.exists());
       this.fillImportFields(specialOCLCWorldCatidentifier);
       cy.wait(1000);
