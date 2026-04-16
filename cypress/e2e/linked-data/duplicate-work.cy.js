@@ -34,6 +34,9 @@ describe('Citation: duplicate resource', () => {
       { type: 'ISBN', value: '9781587657092' },
     ],
     roleIds: [],
+    workId: null,
+    instanceId: null,
+    inventoryId: null,
   };
 
   const resourceData = {
@@ -86,19 +89,12 @@ describe('Citation: duplicate resource', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate work data
-    Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
-    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
+    if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
+    if (testData.duplicateWorkId) Work.deleteById(testData.duplicateWorkId);
+    if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
+    if (testData.workId) Work.deleteById(testData.workId);
+    if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
+    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 
@@ -108,8 +104,13 @@ describe('Citation: duplicate resource', () => {
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // create test data based on uploaded marc file
-    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataWithIds(resourceData.title).then(
+      ({ workId, instanceId, inventoryId }) => {
+        testData.workId = workId;
+        testData.instanceId = instanceId;
+        testData.inventoryId = inventoryId;
+      },
+    );
   });
 
   it(
@@ -124,7 +125,10 @@ describe('Citation: duplicate resource', () => {
       // duplicate work
       EditResource.duplicateWork();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditing();
+      EditResource.saveAndKeepEditingWithId().then(({ workId, instanceId }) => {
+        testData.duplicateWorkId = workId;
+        testData.duplicateInstanceId = instanceId;
+      });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
       // check that duplicated work has 'Books' profile - same as original work has
@@ -138,7 +142,10 @@ describe('Citation: duplicate resource', () => {
       EditResource.checkHeadingProfile('Monographs');
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
-      EditResource.saveAndClose();
+      EditResource.saveAndCloseNewInstanceWithId().then(({ instanceId, inventoryId }) => {
+        testData.duplicateInstanceId = instanceId;
+        testData.duplicateInventoryId = inventoryId;
+      });
       // wait for LDE page to be displayed
       Marigold.waitLoading();
       // search created work by title

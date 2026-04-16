@@ -42,8 +42,6 @@ describe('Citation: No LDE permissions', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(testData.user.userId);
   });

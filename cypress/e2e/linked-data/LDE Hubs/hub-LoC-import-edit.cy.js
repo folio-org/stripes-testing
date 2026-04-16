@@ -74,7 +74,6 @@ describe('MG Hubs: Import and edit LoC hub', () => {
       SearchAndFilter.verifyLoCSourceOptionIsSelected();
 
       // Search for LoC hub to edit
-      cy.getAdminToken();
       SearchAndFilter.searchResourceByTitle(testData.searchQuery);
       HubSearchResults.verifyNumberOfFoundRecords(1);
       HubSearchResults.verifyLoCSearchResultsByTitle({
@@ -127,9 +126,9 @@ describe('MG Hubs: Import and edit LoC hub', () => {
 
       // Verify imported hub title sections
       EditHubPage.verifyAllTitleSections([
+        { type: 'http://bibfra.me/vocab/library/Title', title: testData.searchQuery },
         { type: 'http://bibfra.me/vocab/library/VariantTitle', title: testData.variantTitles[0] },
         { type: 'http://bibfra.me/vocab/library/VariantTitle', title: testData.variantTitles[1] },
-        { type: 'http://bibfra.me/vocab/library/Title', title: testData.searchQuery },
       ]);
       EditHubPage.clickCancel();
 

@@ -118,6 +118,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.settingsDataImportEnabled.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            Permissions.consortiaCentralAll.gui,
           ]);
           cy.resetTenant();
 

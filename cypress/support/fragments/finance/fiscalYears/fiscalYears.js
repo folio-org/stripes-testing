@@ -70,7 +70,7 @@ export default {
       series: 'FY',
     };
   },
-  selectFisacalYear: (fiscalYear) => {
+  selectFiscalYear: (fiscalYear) => {
     cy.do(fiscalYearResultsSection.find(Link(fiscalYear)).click());
     FiscalYearDetails.waitLoading();
 
