@@ -12,6 +12,7 @@ import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../support/co
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -79,9 +80,13 @@ describe('Inventory', () => {
         { length: instancesData.length },
         (_, i) => `${instancePrefix}_${i}`,
       );
-      const expectedInstanceIndexesMember = instancesData
+      const expectedInstanceIndexesMemberNoView = instancesData
         .map((item, index) => ({ item, index }))
-        .filter(({ item }) => item.affiliation !== Affiliations.University)
+        .filter(({ item }) => item.affiliation === Affiliations.Consortia)
+        .map(({ index }) => index);
+      const expectedInstanceIndexesMemberViewOpens = instancesData
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.affiliation === Affiliations.College)
         .map(({ index }) => index);
       const notExpectedInstanceIndexesMember = instancesData
         .map((item, index) => ({ item, index }))
@@ -226,7 +231,19 @@ describe('Inventory', () => {
         'C411785 Search for Shared/Local records by "Item HRID" search options from "Member" tenant (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire', 'C411785'] },
         () => {
-          expectedInstanceIndexesMember.forEach((instanceIndex) => {
+          expectedInstanceIndexesMemberViewOpens.forEach((instanceIndex) => {
+            instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {
+              InventorySearchAndFilter.fillInSearchQuery(itemHrid);
+              InventorySearchAndFilter.clickSearch();
+              ItemRecordView.waitLoading();
+              ItemRecordView.verifyHrid(itemHrid);
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
+              InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+            });
+          });
+
+          expectedInstanceIndexesMemberNoView.forEach((instanceIndex) => {
             instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {
               InventorySearchAndFilter.fillInSearchQuery(itemHrid);
               InventorySearchAndFilter.clickSearch();

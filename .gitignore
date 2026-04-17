@@ -23,6 +23,8 @@ scripts/update_permission_names/permissions_backups/*
 .github/instructions/*
 .github/copilot-instructions.md
 .github/agents/*
+.github/instructions/*
+.github/skills/*
 
 *_automated_tests.json
 

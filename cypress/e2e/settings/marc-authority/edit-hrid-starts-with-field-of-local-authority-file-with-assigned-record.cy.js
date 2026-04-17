@@ -50,6 +50,7 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+              cy.wait(61000); // waiter is needed to cache new Authority source file in mod-srm module
             });
           })
           .then(() => {

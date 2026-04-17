@@ -26,13 +26,13 @@ describe('MG Hubs: Create and edit local hub', () => {
     roleIds: [],
   };
   const hubData = {
-    preferredType: '"http://bibfra.me/vocab/library/Title"',
+    preferredType: 'http://bibfra.me/vocab/library/Title',
     preferredTitle: `Test Preferred Title ${getRandomLetters(5)}`,
     preferredTitleUpdated: '_Updated',
     partNumber: '1',
     partName: 'Part Name',
     otherTitle: 'Other Title',
-    variantType: '"http://bibfra.me/vocab/library/VariantTitle"',
+    variantType: 'http://bibfra.me/vocab/library/VariantTitle',
     variantTitle: `Variant Title ${getRandomLetters(5)}`,
     variantPartNumber: '2',
     variantPartName: 'Variant Part Name',
@@ -169,24 +169,24 @@ describe('MG Hubs: Create and edit local hub', () => {
         hubData.hubId = id;
       });
       EditHubPage.verifyCreatorOfHub(testData.authorityHeading);
-      EditHubPage.verifyTitleInformation(
-        hubData.variantType,
-        hubData.variantTitle,
-        hubData.variantPartNumber,
-        hubData.variantPartName,
-        hubData.variantOtherTitle,
-        hubData.variantDate,
-        hubData.variantTitleType,
-        hubData.variantNote,
-        hubData.preferredType,
-        hubData.preferredTitle,
-        hubData.partNumber,
-        hubData.partName,
-        hubData.otherTitle,
-      );
+      EditHubPage.verifyTitleInformation({
+        type1: hubData.variantType,
+        varTitle: hubData.variantTitle,
+        varPartNumber: hubData.variantPartNumber,
+        varPartName: hubData.variantPartName,
+        varOtherTitle: hubData.variantOtherTitle,
+        varDate: hubData.variantDate,
+        varType: hubData.variantTitleType,
+        varNote: hubData.variantNote,
+        type2: hubData.preferredType,
+        prefTitle: hubData.preferredTitle,
+        partNumber: hubData.partNumber,
+        partName: hubData.partName,
+        otherTitle: hubData.otherTitle,
+      });
       EditHubPage.verifyLanguageCode(hubData.languageCode);
 
-      EditHubPage.updateTitle(hubData.preferredTitleUpdated);
+      EditHubPage.updatePreferredTitle(hubData.preferredTitleUpdated);
 
       EditHubPage.saveAndClose().then((id) => {
         hubData.hubId = id;

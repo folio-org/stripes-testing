@@ -1,7 +1,7 @@
 import { CheckBox, including } from '@interactors/html';
 import { Button, Option } from '../../../../interactors';
 
-import EditResource from './editResource';
+import EditResource, { EDIT_RESOURCE_HEADINGS } from './editResource';
 import InventoryInstances from '../inventory/inventoryInstances';
 import InventoryInstance from '../inventory/inventoryInstance';
 import PreviewResource from './previewResource';
@@ -51,7 +51,8 @@ export default {
     cy.xpath(
       `(//div[@class='search-result-entry-container'][${rowNumber}]//table[contains(@class, 'table instance-list')]//button[contains(text(), 'Edit')])[${instanceNumber}]`,
     ).click();
-    EditResource.waitLoading();
+    cy.wait(1000);
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
   },
 
   openNewResourceForm: () => {
@@ -66,7 +67,7 @@ export default {
 
   editWork: () => {
     cy.xpath("//div[@class='full-display-control-panel']//button[text()='Edit work']").click();
-    EditResource.waitLoading();
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
   },
 
   generateValidLccn: () => {
@@ -93,12 +94,27 @@ export default {
     // temporal workaround
     EditResource.editWorkEditInstance();
     // edit edition
-    EditResource.waitLoading();
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
     EditResource.setEdition(title);
     EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
     EditResource.saveAndClose();
     // search for LDE is displayed
     SearchAndFilter.waitLoading();
+  },
+
+  createTestWorkDataWithIds(title) {
+    InventoryInstances.searchByTitle(title);
+    InventoryInstance.editInstanceInMG();
+    PreviewResource.waitLoading();
+    PreviewResource.clickContinue();
+    EditResource.editWorkEditInstance();
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
+    EditResource.setEdition(title);
+    EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
+    return EditResource.saveAndCloseWithIds().then(({ workId, instanceId, inventoryId }) => {
+      SearchAndFilter.waitLoading();
+      return cy.wrap({ workId, instanceId, inventoryId });
+    });
   },
 
   selectInstanceForComparisonByTitle(title) {

@@ -39,11 +39,11 @@ const CSV_HEADERS_SET = new Set(
 );
 
 const deleteDownloadedFile = (fileName) => {
-  FileManager.deleteFile(`cypress/downloads/${fileName}`);
+  FileManager.deleteFile(`${Cypress.config('downloadsFolder')}/${fileName}`);
 };
 
 const checkDownloadedHeaderOnlyCsv = (fileName) => {
-  FileManager.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+  FileManager.readFile(`${Cypress.config('downloadsFolder')}/${fileName}`).then((fileContent) => {
     const rows = fileContent
       .split(/\r?\n/)
       .map((row) => row.trim())

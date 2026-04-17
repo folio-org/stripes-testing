@@ -50,7 +50,7 @@ describe('Finance', () => {
       { tags: ['criticalPath', 'thunderjet', 'C648520'] },
       () => {
         FiscalYears.searchByName(fiscalYear.name);
-        FiscalYears.selectFisacalYear(fiscalYear.name);
+        FiscalYears.selectFiscalYear(fiscalYear.name);
         FiscalYears.clickActionsButtonInFY();
         FiscalYears.assertAllocationToolsSubmenuAbsent();
         FinanceHelper.selectFundsNavigation();

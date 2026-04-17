@@ -16,6 +16,8 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -68,6 +70,10 @@ describe('Inventory', () => {
       const loanTypeIds = {};
       const materialTypeIds = {};
       let user;
+      let collegeServicePoint;
+      let universityServicePoint;
+      const collegeLocationsData = [];
+      const universityLocationsData = [];
 
       before('Create user, data', () => {
         cy.resetTenant();
@@ -85,11 +91,17 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College);
 
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423636');
-            cy.getLocations({
-              limit: 3,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-            }).then(() => {
-              locations[Affiliations.College].push(...Cypress.env('locations'));
+            collegeServicePoint = ServicePoints.getDefaultServicePoint();
+            ServicePoints.createViaApi(collegeServicePoint);
+            [0, 1, 2].forEach((i) => {
+              const locData = Locations.getDefaultLocation({
+                locationName: `AT_C423636_College_Loc${i}_${randomPostfix}`,
+                servicePointId: collegeServicePoint.id,
+              }).location;
+              collegeLocationsData.push(locData);
+              Locations.createViaApi(locData).then((loc) => {
+                locations[Affiliations.College].push(loc);
+              });
             });
             cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
               loanTypeIds[Affiliations.College] = loanTypes[0].id;
@@ -103,11 +115,17 @@ describe('Inventory', () => {
             cy.assignPermissionsToExistingUser(user.userId, [
               Permissions.uiInventoryViewInstances.gui,
             ]);
-            cy.getLocations({
-              limit: 3,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-            }).then(() => {
-              locations[Affiliations.University].push(...Cypress.env('locations'));
+            universityServicePoint = ServicePoints.getDefaultServicePoint();
+            ServicePoints.createViaApi(universityServicePoint);
+            [0, 1, 2].forEach((i) => {
+              const locData = Locations.getDefaultLocation({
+                locationName: `AT_C423636_University_Loc${i}_${randomPostfix}`,
+                servicePointId: universityServicePoint.id,
+              }).location;
+              universityLocationsData.push(locData);
+              Locations.createViaApi(locData).then((loc) => {
+                locations[Affiliations.University].push(loc);
+              });
             });
             cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
               loanTypeIds[Affiliations.University] = loanTypes[0].id;
@@ -210,9 +228,13 @@ describe('Inventory', () => {
         cy.setTenant(Affiliations.College);
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        collegeLocationsData.forEach((locData) => Locations.deleteLocationViaApi(locData.id));
+        ServicePoints.deleteViaApi(collegeServicePoint.id);
 
         cy.setTenant(Affiliations.University);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
+        universityLocationsData.forEach((locData) => Locations.deleteLocationViaApi(locData.id));
+        ServicePoints.deleteViaApi(universityServicePoint.id);
 
         cy.resetTenant();
         InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);

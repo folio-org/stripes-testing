@@ -26,22 +26,22 @@ describe('MARC', () => {
         const preLinkedFields = [
           {
             tag: '650',
-            value: 'Lesbian authors',
+            value: 'C388537 Lesbian authors',
             rowIndex: 30,
-            newContent: '$a Lesbian authors $0 id.loc.gov/authorities/subjects/sh96007532',
+            newContent: '$a C388537 Lesbian authors $0 id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
-            value: 'Lesbian activists',
+            value: 'C388537 Lesbian activists',
             rowIndex: 31,
             newContent:
-              '$a Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
+              '$a C388537 Lesbian activists $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
         ];
         const authority = {
           searchOption: 'Keyword',
-          titleWithLinkIcon: 'Lesbian activists',
-          titleWithoutLinkIcon: 'Lesbian activists',
+          titleWithLinkIcon: 'C388537 Lesbian activists',
+          titleWithoutLinkIcon: 'C388537 Lesbian activists',
         };
         const marcFiles = [
           {
@@ -197,7 +197,7 @@ describe('MARC', () => {
               preLinkedFields[0].tag,
               '\\',
               '0',
-              '$a Lesbian activists',
+              '$a C388537 Lesbian activists',
               '',
               '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
@@ -209,6 +209,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
             BrowseSubjects.waitForSubjectToAppear(authority.titleWithLinkIcon, true, true);
+            BrowseSubjects.waitForSubjectToAppear(authority.titleWithoutLinkIcon, true, false);
             BrowseSubjects.browse(authority.titleWithoutLinkIcon);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.titleWithLinkIcon);
             BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(
@@ -219,8 +220,8 @@ describe('MARC', () => {
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();
-            MarcAuthorities.searchBy(authority.searchOption, 'Lesbian activists');
-            MarcAuthorities.selectTitle('Lesbian activists');
+            MarcAuthorities.searchBy(authority.searchOption, 'C388537 Lesbian activists');
+            MarcAuthorities.selectTitle('C388537 Lesbian activists');
             MarcAuthority.waitLoading();
           },
         );
