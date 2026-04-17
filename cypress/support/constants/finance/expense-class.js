@@ -8,3 +8,8 @@ export const EXPORT_EXPENSE_CLASS_FIELDS = {
   EXPENSE_CLASS_CREDITED: 'Credited (Exp Class)',
   PERCENTAGE_OF_TOTAL_EXPENDED: 'Percentage of total expended',
 };
+
+export const EXPENSE_CLASS_STATUSES = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+};

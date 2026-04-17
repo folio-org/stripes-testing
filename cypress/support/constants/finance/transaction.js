@@ -29,3 +29,17 @@ export const TRANSACTION_TYPES = {
   ROLLOVER_TRANSFER: 'Rollover transfer',
   TRANSFER: 'Transfer',
 };
+
+export const TRANSACTION_LIST_COLUMNS = {
+  TRANSACTION_DATE: 'Transaction date',
+  TYPE: 'Type',
+  AMOUNT: 'Amount',
+  FROM: 'From',
+  TO: 'To',
+  SOURCE: 'Source',
+  TAGS: 'Tags',
+};
+
+export const TRANSACTION_TOOLTIPS = {
+  VOIDED_TRANSACTION: 'Voided transaction',
+};
