@@ -1,9 +1,4 @@
-import {
-  APPLICATION_NAMES,
-  LOCATION_NAMES,
-  MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import FastAddNewRecord from '../../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../../support/fragments/inventory/inventoryActions';
@@ -25,11 +20,11 @@ describe('Inventory', () => {
       instanceStatusCodeValue: 'uncat',
       resourceTitle: `Monograph${getRandomPostfix()}`,
       resourceType: 'text',
-      permanentLocationOption: `${LOCATION_NAMES.CD_V} `,
-      permanentLocationValue: LOCATION_NAMES.CD_V_UI,
+      permanentLocationOption: '',
+      permanentLocationValue: '',
       itemBarcode: `${getRandomPostfix()}Barcode`,
-      materialType: MATERIAL_TYPE_NAMES.CD,
-      permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+      materialType: '',
+      permanentLoanType: '',
       note: 'note for monograph',
     };
 
@@ -38,6 +33,16 @@ describe('Inventory', () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps(true);
+      cy.getLocations({ limit: 1 }).then((res) => {
+        fastAddNewRecordFormDetails.permanentLocationOption = `${res.name} (${res.code}) `;
+        fastAddNewRecordFormDetails.permanentLocationValue = res.name;
+      });
+      cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        fastAddNewRecordFormDetails.materialType = res.name;
+      });
+      cy.getLoanTypes({ limit: 1 }).then((res) => {
+        fastAddNewRecordFormDetails.permanentLoanType = res[0].name;
+      });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
       cy.allure().logCommandSteps(false);

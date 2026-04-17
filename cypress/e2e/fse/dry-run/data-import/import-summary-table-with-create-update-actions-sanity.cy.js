@@ -9,9 +9,6 @@ import {
   HOLDINGS_TYPE_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
-  LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
-  MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
@@ -50,18 +47,28 @@ const { user, memberTenant } = parseSanityParameters();
 
 describe('Data Import', () => {
   describe('Log details', () => {
-    const instanceHrids = [];
-    const quantityOfUpdatedItems = '2';
-    const quantityOfCreatedItems = '1';
-    const filePathForCreateInstance = 'marcFileForC356791.mrc';
-    const filePathWithUpdatedContent = 'marcFileForC356791_for_update.mrc';
-    const fileNameForCreateInstance = `C356791 autotestFileForCreate${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C356791autotestCsvFile.${getRandomPostfix()}.csv`;
-    const exportedFileName = `C356791 autotestExportedFile${getRandomPostfix()}.mrc`;
-    const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
-    const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
-    const addedInstanceTitle = 'Minakata Kumagusu kinrui saishoku zufu hyakusen.';
+    const testData = {
+      instanceHrids: [],
+      quantityOfUpdatedItems: '2',
+      quantityOfCreatedItems: '1',
+      filePathForCreateInstance: 'marcFileForC356791.mrc',
+      filePathWithUpdatedContent: 'marcFileForC356791_for_update.mrc',
+      fileNameForCreateInstance: `C356791 autotestFileForCreate${getRandomPostfix()}.mrc`,
+      nameForCSVFile: `C356791autotestCsvFile.${getRandomPostfix()}.csv`,
+      exportedFileName: `C356791 autotestExportedFile${getRandomPostfix()}.mrc`,
+      fileNameWithUpdatedContent: `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`,
+      fileNameForUpdateInstance: `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`,
+      jobProfileNameForExport: `C356791 autotest job profile.${getRandomPostfix()}`,
+      addedInstanceTitle: 'Minakata Kumagusu kinrui saishoku zufu hyakusen.',
+      createLocationName: '',
+      createLocationUiName: '',
+      updateLocationName: '',
+      updateLocationUiName: '',
+      createMaterialTypeName: '',
+      updateMaterialTypeName: '',
+      createLoanTypeName: '',
+      updateLoanTypeName: '',
+    };
 
     const collectionOfProfilesForCreate = [
       {
@@ -97,8 +104,8 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.CD_R}"`,
-          permanentLocationUI: LOCATION_NAMES.CD_R_UI,
+          permanentLocation: '',
+          permanentLocationUI: '',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -109,9 +116,9 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
+          materialType: '',
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+          permanentLoanType: '',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -154,8 +161,8 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanetLocation: `"${LOCATION_NAMES.CD_P}"`,
-          permanetLocationUI: LOCATION_NAMES.CD_P_UI,
+          permanetLocation: '',
+          permanetLocationUI: '',
           callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           callNumber: '050$a " " 050$b',
         },
@@ -169,12 +176,12 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
-          materialType: MATERIAL_TYPE_NAMES.CD,
+          materialType: '',
           noteType: '"Nota"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
-          permanentLoanType: LOAN_TYPE_NAMES.EEB,
+          permanentLoanType: '',
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
@@ -243,6 +250,35 @@ describe('Data Import', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false });
 
+      cy.getAllMaterialTypes({ limit: 2 }).then((types) => {
+        testData.createMaterialTypeName = types[0].name;
+        testData.updateMaterialTypeName = types[1].name;
+        collectionOfProfilesForCreate[3].mappingProfile.materialType = `"${testData.createMaterialTypeName}"`;
+        collectionOfProfilesForUpdate[2].mappingProfile.materialType =
+          testData.updateMaterialTypeName;
+      });
+      cy.getLocations({ limit: 2 }).then(() => {
+        const locations = Cypress.env('locations');
+        testData.createLocationName = `${locations[0].name} (${locations[0].code})`;
+        testData.createLocationUiName = locations[0].name;
+        testData.updateLocationName = `${locations[1].name} (${locations[1].code})`;
+        testData.updateLocationUiName = locations[1].name;
+        collectionOfProfilesForCreate[2].mappingProfile.permanentLocation = `"${testData.createLocationName}"`;
+        collectionOfProfilesForCreate[2].mappingProfile.permanentLocationUI =
+          testData.createLocationUiName;
+        collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation = `"${testData.updateLocationName}"`;
+        collectionOfProfilesForUpdate[1].mappingProfile.permanetLocationUI =
+          testData.updateLocationUiName;
+      });
+      cy.getLoanTypes({ limit: 2 }).then((res) => {
+        testData.createLoanTypeName = res[0].name;
+        testData.updateLoanTypeName = res[1].name;
+        collectionOfProfilesForCreate[3].mappingProfile.permanentLoanType =
+          testData.createLoanTypeName;
+        collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType =
+          testData.updateLoanTypeName;
+      });
+
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: SettingsMenu.mappingProfilePath,
@@ -253,11 +289,11 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${exportedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${nameForCSVFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.fileNameWithUpdatedContent}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${testData.exportedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${testData.nameForCSVFile}`);
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
@@ -277,7 +313,7 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        cy.wrap(instanceHrids).each((hrid) => {
+        cy.wrap(testData.instanceHrids).each((hrid) => {
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
             (instance) => {
               cy.deleteItemViaApi(instance.items[0].id);
@@ -363,12 +399,15 @@ describe('Data Import', () => {
         // upload the marc file for creating
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
+        DataImport.uploadFile(
+          testData.filePathForCreateInstance,
+          testData.fileNameForCreateInstance,
+        );
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileNameForCreateInstance);
-        Logs.openFileDetails(fileNameForCreateInstance);
+        Logs.waitFileIsImported(testData.fileNameForCreateInstance);
+        Logs.openFileDetails(testData.fileNameForCreateInstance);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -389,7 +428,10 @@ describe('Data Import', () => {
 
         // create job profile for export
         ExportJobProfiles.goToJobProfilesTab();
-        ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+        ExportJobProfiles.createJobProfile(
+          testData.jobProfileNameForExport,
+          exportMappingProfile.name,
+        );
 
         // create mapping profiles for updating
         TopMenuNavigation.openAppFromDropdown(
@@ -514,40 +556,46 @@ describe('Data Import', () => {
         );
         cy.wait(1500);
         InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(testData.nameForCSVFile, 'SearchInstanceUUIDs*');
 
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        ExportFile.downloadExportedMarcFile(exportedFileName);
+        ExportFile.uploadFile(testData.nameForCSVFile);
+        ExportFile.exportWithCreatedJobProfile(
+          testData.nameForCSVFile,
+          testData.jobProfileNameForExport,
+        );
+        ExportFile.downloadExportedMarcFile(testData.exportedFileName);
 
         // edit marc file to add one record
         DataImport.editMarcFileAddNewRecords(
-          exportedFileName,
-          fileNameWithUpdatedContent,
-          filePathWithUpdatedContent,
+          testData.exportedFileName,
+          testData.fileNameWithUpdatedContent,
+          testData.filePathWithUpdatedContent,
         );
 
         // upload the edited marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
-        DataImport.uploadFile(fileNameWithUpdatedContent, fileNameForUpdateInstance);
+        DataImport.uploadFile(
+          testData.fileNameWithUpdatedContent,
+          testData.fileNameForUpdateInstance,
+        );
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(fileNameForUpdateInstance);
-        Logs.openFileDetails(fileNameForUpdateInstance);
+        Logs.waitFileIsImported(testData.fileNameForUpdateInstance);
+        Logs.openFileDetails(testData.fileNameForUpdateInstance);
         // check Created counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfCreatedItems);
-        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfCreatedItems);
-        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfCreatedItems);
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfCreatedItems);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(testData.quantityOfCreatedItems);
+        FileDetails.checkInstanceQuantityInSummaryTable(testData.quantityOfCreatedItems);
+        FileDetails.checkHoldingsQuantityInSummaryTable(testData.quantityOfCreatedItems);
+        FileDetails.checkItemQuantityInSummaryTable(testData.quantityOfCreatedItems);
         // check Updated counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfUpdatedItems, 1);
-        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfUpdatedItems, 1);
-        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfUpdatedItems, 1);
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(testData.quantityOfUpdatedItems, 1);
+        FileDetails.checkInstanceQuantityInSummaryTable(testData.quantityOfUpdatedItems, 1);
+        FileDetails.checkHoldingsQuantityInSummaryTable(testData.quantityOfUpdatedItems, 1);
+        FileDetails.checkItemQuantityInSummaryTable(testData.quantityOfUpdatedItems, 1);
 
         // check items is updated in Inventory
         cy.wrap([0, 1]).each((rowNumber) => {
@@ -559,7 +607,7 @@ describe('Data Import', () => {
           ]);
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, rowNumber);
           InventoryInstance.getAssignedHRID().then((hrid) => {
-            instanceHrids.push(hrid);
+            testData.instanceHrids.push(hrid);
           });
           InstanceRecordView.verifyInstanceStatusTerm(
             collectionOfProfilesForUpdate[0].mappingProfile.statusTerm,
@@ -575,7 +623,7 @@ describe('Data Import', () => {
             collectionOfProfilesForUpdate[1].mappingProfile.callNumberType,
           );
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.CD_P_UI} >`);
+          InventoryInstance.openHoldingsAccordion(`${testData.updateLocationUiName} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.verifyMaterialType(
             collectionOfProfilesForUpdate[2].mappingProfile.materialType,
@@ -586,7 +634,7 @@ describe('Data Import', () => {
           ItemRecordView.verifyItemStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();
-          Logs.openFileDetails(fileNameForUpdateInstance);
+          Logs.openFileDetails(testData.fileNameForUpdateInstance);
         });
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -598,11 +646,11 @@ describe('Data Import', () => {
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 2);
         InventoryInstance.getAssignedHRID().then((hrid) => {
-          instanceHrids.push(hrid);
+          testData.instanceHrids.push(hrid);
         });
         InventoryInstance.checkIsInstancePresented(
-          addedInstanceTitle,
-          collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI,
+          testData.addedInstanceTitle,
+          collectionOfProfilesForCreate[2].mappingProfile.permanentLocationUI,
           collectionOfProfilesForCreate[3].mappingProfile.status,
         );
       },
