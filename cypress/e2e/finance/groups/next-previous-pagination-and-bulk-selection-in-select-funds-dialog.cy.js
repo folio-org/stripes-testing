@@ -162,8 +162,8 @@ describe('Finance', () => {
         Groups.verifyPaginationIndicatorInModal();
         Groups.verifyTotalSelectedInModal(0);
 
-        Groups.filterByStatusInModal('Inactive');
-        Groups.filterByStatusInModal('Active');
+        Groups.filterByStatusInModal(FUND_STATUSES.INACTIVE);
+        Groups.filterByStatusInModal(FUND_STATUSES.ACTIVE);
         Groups.verifyRecordsFoundTextInModal();
         Groups.verifySelectAllCheckboxInModal(false);
         Groups.verifyPreviousButtonInModal(false);
