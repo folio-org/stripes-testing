@@ -131,6 +131,7 @@ export default {
     if (isPresent) {
       cy.expect(targetRow.find(linkedToMarcAuthorityIcon).exists());
     } else {
+      cy.wait(1000); // icon may appear after a short delay
       cy.expect(targetRow.find(linkedToMarcAuthorityIcon).absent());
     }
   },
