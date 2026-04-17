@@ -201,6 +201,12 @@ export default {
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
+  getPreviousDayDateForUI: () => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+  },
+
   getTwoPreviousDaysDateForFiscalYear: () => {
     const d = new Date();
     d.setDate(d.getDate() - 2);
