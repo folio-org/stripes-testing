@@ -4,6 +4,7 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  TRANSACTION_TOOLTIPS,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import { TransactionDetails, Transactions } from '../../../support/fragments/finance';
@@ -235,7 +236,7 @@ describe('Finance', () => {
             { key: 'From', value: testData.fund.name },
           ],
         });
-        TransactionDetails.checkTransactionAmountInfo('Voided transaction');
+        TransactionDetails.checkTransactionAmountInfo(TRANSACTION_TOOLTIPS.VOIDED_TRANSACTION);
       },
     );
   });
