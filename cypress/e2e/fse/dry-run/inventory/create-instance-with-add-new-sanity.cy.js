@@ -29,14 +29,18 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceByTitleViaApi(instanceTitle);
     });
 
-    it('C598 Create new instance with add "New" (folijet)', { tags: ['dryRun', 'folijet'] }, () => {
-      const InventoryNewInstance = InventoryInstances.addNewInventory();
-      InventoryNewInstance.fillRequiredValues(instanceTitle);
-      InventoryNewInstance.clickSaveAndCloseButton();
-      cy.wait(5000);
-      InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+    it(
+      'C598 Create new instance with add "New" (folijet)',
+      { tags: ['dryRun', 'folijet', 'C598'] },
+      () => {
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues(instanceTitle);
+        InventoryNewInstance.clickSaveAndCloseButton();
+        cy.wait(5000);
+        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
-      cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
-    });
+        cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
+      },
+    );
   });
 });

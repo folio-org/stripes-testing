@@ -56,7 +56,7 @@ describe('Inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['dryRun', 'folijet'] },
+      { tags: ['dryRun', 'folijet', 'C343349'] },
       () => {
         cy.getUserToken(user.username, user.password, { log: false });
         InventorySearchAndFilter.searchByParameter(
