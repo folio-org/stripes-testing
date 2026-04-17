@@ -1334,11 +1334,11 @@ export default {
     gui: 'Settings (eholdings): View Usage Consolidation API credentials',
   },
   uiSettingsDeveloperSessionLocale: {
-    internal: 'ui-developer.settings.locale',
+    internal: 'ui-developer.settings.locale.execute',
     gui: 'Settings (Developer): set session locale',
   },
   uiSettingsDeveloperUserLocale: {
-    internal: 'ui-developer.settings.userLocale',
+    internal: 'ui-developer.settings.userLocale.execute',
     gui: 'Settings (developer): Can edit user configuration values',
   },
   uiSettingsTenantReadingRoomAll: {

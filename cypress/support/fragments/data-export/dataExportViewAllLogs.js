@@ -646,6 +646,25 @@ export default {
             const numB = parseInt(b, 10) || 0;
             return sortDirection === 'ascending' ? numA - numB : numB - numA;
           }
+          // Handle "Run by" column - UI sorts by firstName (not displayed text)
+          // Format: "LASTNAME, FIRSTNAME" or just "LASTNAME" (when no firstName)
+          if (columnName === columnNames.RUN_BY) {
+            const getFirstName = (value) => {
+              // If format is "LASTNAME, FIRSTNAME", extract firstName (part after comma)
+              if (value.includes(',')) {
+                return value.split(',')[1].trim();
+              }
+              // If no comma, it's just lastName - use it as the sort key
+              return value;
+            };
+
+            const firstNameA = getFirstName(a).toLowerCase();
+            const firstNameB = getFirstName(b).toLowerCase();
+
+            return sortDirection === 'ascending'
+              ? firstNameA.localeCompare(firstNameB, undefined, { sensitivity: 'base' })
+              : firstNameB.localeCompare(firstNameA, undefined, { sensitivity: 'base' });
+          }
           // Handle text columns
           if (sortDirection === 'ascending') {
             return a.localeCompare(b, undefined, { sensitivity: 'base' });
