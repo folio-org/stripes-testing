@@ -106,7 +106,7 @@ describe('OAI-PMH', () => {
 
   it(
     'C398012 Verify list of recently run harvests OAI-PMH (firebird)',
-    { tags: ['extendedPathFlaky', 'firebird', 'C398012', 'nonParallel'] },
+    { tags: ['extendedPath', 'firebird', 'C398012', 'nonParallel'] },
     () => {
       // Step 1: Navigate to Settings > OAI-PMH > Logs
       cy.login(testData.user.username, testData.user.password, {

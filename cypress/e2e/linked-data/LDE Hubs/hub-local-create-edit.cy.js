@@ -1,6 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import NewHub from '../../../support/fragments/linked-data/newHubPage';
-import LinkedDataEditor from '../../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../../support/fragments/linked-data/marigold';
 import { DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../../support/constants';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
@@ -16,7 +16,7 @@ import LocalHubPreview from '../../../support/fragments/linked-data/localHubPrev
 let user;
 const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
 
-describe('LDE Hubs: Create and edit local hub', () => {
+describe('MG Hubs: Create and edit local hub', () => {
   const testData = {
     // MARC Authority file configuration
     marcAuthFilePath: 'marcAuthC375263.mrc',
@@ -102,7 +102,7 @@ describe('LDE Hubs: Create and edit local hub', () => {
   beforeEach(() => {
     cy.login(user.username, user.password, {
       path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
+      waiter: Marigold.waitLoading,
       authRefresh: true,
     });
   });
@@ -121,7 +121,7 @@ describe('LDE Hubs: Create and edit local hub', () => {
       HubSearchResults.verifyEnterSearchCriteriaMessage();
 
       // Create new local hub
-      LinkedDataEditor.openNewHubForm();
+      Marigold.openNewHubForm();
       NewHub.waitLoading();
       NewHub.assignAuthority(testData.authorityHeading);
       NewHub.verifyActiveSaveButtons(true);

@@ -87,7 +87,7 @@ export default {
   createTestWorkDataManuallyBasedOnMarcUpload(title) {
     // create work based on uploaded marc file
     InventoryInstances.searchByTitle(title);
-    InventoryInstance.editInstanceInLde();
+    InventoryInstance.editInstanceInMG();
     PreviewResource.waitLoading();
     PreviewResource.clickContinue();
     // temporal workaround

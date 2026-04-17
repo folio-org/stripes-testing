@@ -55,7 +55,7 @@ const populateHoldingStringProperties = (holdingData, statCodes) => {
     const codeNames = holdingData.statisticalCodeIds.map(
       (id) => statCodes.find((c) => c.id === id).fullName,
     );
-    holdingData.statisticalCodeName = codeNames.join(' | ');
+    holdingData.statisticalCodeName = codeNames;
     holdingData.statisticalCodeNameInBulkEditForm = codeNames.join('|');
   }
 };
@@ -186,11 +186,17 @@ describe('Bulk-edit', () => {
           // Expected to find: Holdings 1, 2
           const expectedHoldingsToFind = [expectedHoldings[0], expectedHoldings[1]];
 
-          expectedHoldingsToFind.forEach((holding) => {
-            QueryModal.verifyMatchedRecordsByIdentifier(
-              holding.hrid,
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            expectedHoldings[0].hrid,
+            holdingsFieldValues.holdingsStatisticalCodeNames,
+            expectedHoldings[0].statisticalCodeName,
+          );
+
+          expectedHoldings[1].statisticalCodeName.forEach((codeName) => {
+            QueryModal.verifyMatchedRecordsIncludesByIdentifier(
+              expectedHoldings[1].hrid,
               holdingsFieldValues.holdingsStatisticalCodeNames,
-              holding.statisticalCodeName,
+              codeName,
             );
           });
 

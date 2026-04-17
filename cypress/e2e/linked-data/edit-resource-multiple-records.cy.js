@@ -1,6 +1,6 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
@@ -104,36 +104,36 @@ describe('Citation: create new instance by duplicating - for a multiple instance
       authRefresh: true,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
-    'C721761 [User journey] LDE - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'linked-data-editor'] },
+    'C721761 [User journey] Marigold - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
+    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'marigold'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open instance for editing
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       // duplicate instance
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search by work title again
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // duplicate first instane once again
-      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateInstance();
       EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
       EditResource.clearField('Other Title Information');
-      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
+      EditResource.setValueForTheField(Marigold.generateValidLccn(), 'LCCN');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
-      LinkedDataEditor.waitLoading();
+      Marigold.waitLoading();
       // search work by instance title
       SearchAndFilter.searchResourceByTitle(testData.uniqueInstanceTitleUpdated);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueInstanceTitleUpdated);

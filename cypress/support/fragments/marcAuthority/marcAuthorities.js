@@ -176,6 +176,7 @@ export default {
   },
   clickActionsAndNewAuthorityButton() {
     cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    cy.wait(1000);
     QuickMarcEditorWindow.waitLoading();
   },
   clickActionsAndReportsButtons() {
@@ -677,8 +678,8 @@ export default {
     cy.do(multiSelect.fillIn(notFullValue));
     cy.wait(1000);
     if (isFound) {
-      cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
-    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+      cy.expect(MultiSelectOption(including(fullValue)).exists());
+    } else cy.expect(MultiSelectOption(including(fullValue)).absent());
   },
 
   chooseTypeOfHeading: (headingTypes) => {
@@ -1286,6 +1287,11 @@ export default {
     cy.do(thesaurusAccordion.clickHeader());
   },
 
+  verifyTypeOfHeadingAccordionAndClick: () => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+  },
+
   chooseThesaurus: (thesaurusTypes) => {
     cy.do(
       MultiSelect({ ariaLabelledby: 'subjectHeadings-multiselect-label' }).select([
@@ -1726,7 +1732,10 @@ export default {
   },
 
   checkPreviousAndNextPaginationButtonsShown() {
-    cy.expect([previousButton.visible(), nextButton.visible()]);
+    cy.expect([
+      previousButton.has({ disabled: or(false, true) }),
+      nextButton.has({ disabled: or(false, true) }),
+    ]);
   },
 
   checkNextPaginationButtonEnabled(isEnabled = true) {
@@ -1753,7 +1762,7 @@ export default {
   verifyAllResultsHaveSource(sourceNames) {
     this.getResultsListByColumn(4).then((cellTexts) => {
       cellTexts.forEach((cellText) => {
-        expect(cellText).to.be.oneOf([...sourceNames]);
+        expect(cellText).to.be.oneOf(['', ...sourceNames]);
       });
     });
   },

@@ -140,7 +140,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375983 ListRecords: SRS & Inventory - Verify that deleted SRS and FOLIO Items are harvested (marc21_withholdings) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C375983', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C375983', 'nonParallel'] },
       () => {
         // Step 1-2: Search for SRS instance with associated MARC Holdings and Item by Source filter
         InventorySearchAndFilter.selectSearchOptions(
