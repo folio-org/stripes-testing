@@ -8,7 +8,7 @@ const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
 
 const selectedStatus = [
-  status.Passed,
+  // status.Passed,
   status.Blocked,
   status.Untested,
   status.Retest,
@@ -37,7 +37,8 @@ const getTests = getTestRunResults.bind(null, testRailClient, runId);
 const ids = [];
 const numberOfChunks = 1;
 const envVars = '';
-const printSpecs = true;
+const printSpecs = false;
+const removeNonParallel = true;
 
 function grepTests() {
   getTests()
@@ -55,7 +56,7 @@ function grepTests() {
     })
     .then(() => {
       console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
-      splitTestsOnChunks(numberOfChunks, ids.join(' '), envVars, printSpecs);
+      splitTestsOnChunks(numberOfChunks, removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '), envVars, printSpecs);
     });
 }
 grepTests();

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Voucher Lines with Invoice, Fund, Organization",
+  "title": "Holdings",
   "type": "object",
   "properties": {
     "content": {
@@ -8,436 +8,427 @@
       "items": {
         "type": "object",
         "properties": {
-          "voucher_line.amount": {
-            "type": ["number", "null"]
-          },
-          "voucher_line.created_by_user_id": {
+          "holdings.acquisition_method": {
             "type": ["string", "null"]
           },
-          "voucher_line.created_date": {
+          "holdings.acquisition_format": {
             "type": ["string", "null"]
           },
-          "voucher_line.external_account_number": {
+          "holdings.receipt_status": {
             "type": ["string", "null"]
           },
-          "voucher_line.fund_distribution": {
+          "holdings.administrative_notes": {
             "type": ["string", "null"]
           },
-          "voucher_line.source_ids": {
+          "holdings.call_number": {
+            "type": ["string", "null"]
+          },
+          "holdings.call_number_prefix": {
+            "type": ["string", "null"]
+          },
+          "holdings.call_number_suffix": {
+            "type": ["string", "null"]
+          },
+          "holdings.call_number_type": {
+            "type": ["string", "null"]
+          },
+          "holdings.call_number_type_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.copy_number": {
+            "type": ["string", "null"]
+          },
+          "holdings.created_by": {
+            "type": ["string", "null"]
+          },
+          "holdings.created_at": {
+            "type": ["string", "null"]
+          },
+          "holdings.digitization_policy": {
+            "type": ["string", "null"]
+          },
+          "holdings.effective_location_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.electronic_access": {
+            "type": ["string", "null"]
+          },
+          "holdings.former_ids": {
+            "type": ["string", "null", "array"]
+          },
+          "holdings.holdings_type_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.additional_call_numbers": {
+            "type": ["string", "null"]
+          },
+          "holdings.hrid": {
+            "type": ["string", "null"]
+          },
+          "holdings.instance_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.jsonb": {
+            "type": ["string", "null"]
+          },
+          "holdings.notes": {
+            "type": ["string", "null"]
+          },
+          "holdings.number_of_items": {
+            "type": ["string", "null"]
+          },
+          "holdings.permanent_location_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.receiving_history": {
+            "type": ["string", "null"]
+          },
+          "holdings.version": {
+            "type": ["string", "null"]
+          },
+          "holdings.retention_policy": {
+            "type": ["string", "null"]
+          },
+          "holdings.shelving_title": {
+            "type": ["string", "null"]
+          },
+          "holdings.source_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.holdings_statements": {
+            "type": ["string", "null"]
+          },
+          "holdings.holdings_statements_for_indexes": {
+            "type": ["string", "null"]
+          },
+          "holdings.holdings_statements_for_supplements": {
+            "type": ["string", "null"]
+          },
+          "holdings.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "holdings.statistical_code_names": {
+            "type": ["string", "null", "array"]
+          },
+          "holdings.discovery_suppress": {
+            "type": ["string", "null"]
+          },
+          "holdings.tags": {},
+          "holdings.temporary_location_id": {
+            "type": ["string", "null"]
+          },
+          "holdings.updated_by": {
+            "type": ["string", "null"]
+          },
+          "holdings.updated_at": {
+            "type": ["string", "null"]
+          },
+          "holdings.id": {
+            "type": ["string", "null"]
+          },
+          "holdings_type.name": {
+            "type": ["string", "null"]
+          },
+          "holdings_type.id": {
+            "type": ["string", "null"]
+          },
+          "effective_library.campus_id": {
+            "type": ["string", "null"]
+          },
+          "effective_library.code": {
+            "type": ["string", "null"]
+          },
+          "effective_library.jsonb": {
+            "type": ["string", "null"]
+          },
+          "effective_library.name": {
+            "type": ["string", "null"]
+          },
+          "effective_library.id": {
+            "type": ["string", "null"]
+          },
+          "effective_location.campus_id": {
+            "type": ["string", "null"]
+          },
+          "effective_location.code": {
+            "type": ["string", "null"]
+          },
+          "effective_location.description": {
+            "type": ["string", "null"]
+          },
+          "effective_location.details": {
+            "type": ["string", "null"]
+          },
+          "effective_location.discovery_display_name": {
+            "type": ["string", "null"]
+          },
+          "effective_location.institution_id": {
+            "type": ["string", "null"]
+          },
+          "effective_location.is_active": {
+            "type": ["string", "null"]
+          },
+          "effective_location.jsonb": {
+            "type": ["string", "null"]
+          },
+          "effective_location.library_id": {
+            "type": ["string", "null"]
+          },
+          "effective_location.name": {
+            "type": ["string", "null"]
+          },
+          "effective_location.primary_service_point": {
+            "type": ["string", "null"]
+          },
+          "effective_location.service_point_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "effective_location.id": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.campus_id": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.code": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.description": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.details": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.discovery_display_name": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.institution_id": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.is_active": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.jsonb": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.library_id": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.name": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.primary_service_point": {
+            "type": ["string", "null"]
+          },
+          "permanent_location.service_point_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "permanent_location.id": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.campus_id": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.code": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.description": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.details": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.discovery_display_name": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.institution_id": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.is_active": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.jsonb": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.library_id": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.name": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.primary_service_point": {
+            "type": ["string", "null"]
+          },
+          "temporary_location.service_point_ids": {
             "type": ["array", "null"],
             "items": {
               "type": ["string", "null"]
             }
           },
-          "voucher_line.updated_by_user_id": {
+          "temporary_location.id": {
             "type": ["string", "null"]
           },
-          "voucher_line.updated_date": {
+          "instance.administrative_notes": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.alternative_titles": {
             "type": ["string", "null"]
           },
-          "voucher_line.id": {
+          "instance.cataloged_date": {
             "type": ["string", "null"]
           },
-          "voucher_line.voucher_id": {
+          "instance.classifications": {
             "type": ["string", "null"]
           },
-          "voucher.account_no": {
+          "instance.contributors": {
             "type": ["string", "null"]
           },
-          "voucher.accounting_code": {
+          "instance.created_by": {
             "type": ["string", "null"]
           },
-          "voucher.acquisition_units": {
+          "instance.created_at": {
             "type": ["string", "null"]
           },
-          "voucher.acq_unit_ids": {
+          "instance.instance_date_1": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_2": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_type_id": {
+            "type": ["string", "null"]
+          },
+          "instance.editions": {
             "type": ["array", "null"],
             "items": {
               "type": ["string", "null"]
             }
           },
-          "voucher.batch_group": {
+          "instance.electronic_access": {
             "type": ["string", "null"]
           },
-          "voucher.batch_group_id": {
+          "instance.flag_for_deletion": {
             "type": ["string", "null"]
           },
-          "voucher.created_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "voucher.created_date": {
-            "type": ["string", "null"]
-          },
-          "voucher.disbursement_amount": {
-            "type": ["number", "null"]
-          },
-          "voucher.disbursement_date": {
-            "type": ["string", "null"]
-          },
-          "voucher.disbursement_number": {
-            "type": ["string", "null"]
-          },
-          "voucher.enclosure_needed": {
-            "type": ["string", "null"]
-          },
-          "voucher.exchange_rate": {
-            "type": ["number", "null"]
-          },
-          "voucher.export_to_accounting": {
-            "type": ["string", "null"]
-          },
-          "voucher.invoice_currency": {
-            "type": ["string", "null"]
-          },
-          "voucher.invoice_id": {
-            "type": ["string", "null"]
-          },
-          "voucher.status": {
-            "type": ["string", "null"]
-          },
-          "voucher.system_currency": {
-            "type": ["string", "null"]
-          },
-          "voucher.amount": {
-            "type": ["number", "null"]
-          },
-          "voucher.type": {
-            "type": ["string", "null"]
-          },
-          "voucher.updated_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "voucher.updated_date": {
-            "type": ["string", "null"]
-          },
-          "voucher.id": {
-            "type": ["string", "null"]
-          },
-          "voucher.vendor_id": {
-            "type": ["string", "null"]
-          },
-          "voucher.voucher_date": {
-            "type": ["string", "null"]
-          },
-          "voucher.voucher_number": {
-            "type": ["string", "null"]
-          },
-          "invoice.account_no": {
-            "type": ["string", "null"]
-          },
-          "invoice.accounting_code": {
-            "type": ["string", "null"]
-          },
-          "invoice.acquisition_unit": {
-            "type": ["string", "null"]
-          },
-          "invoice.acq_unit_ids": {
+          "instance.format_names": {
             "type": ["array", "null"],
             "items": {
               "type": ["string", "null"]
             }
           },
-          "invoice.approved_by": {
+          "instance.identifiers": {
             "type": ["string", "null"]
           },
-          "invoice.approved_by_id": {
+          "instance.index_title": {
             "type": ["string", "null"]
           },
-          "invoice.approval_date": {
+          "instance.instance_format_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.hrid": {
             "type": ["string", "null"]
           },
-          "invoice.batch_group": {
+          "instance.source_uri": {
             "type": ["string", "null"]
           },
-          "invoice.batch_group_id": {
+          "instance.id": {
             "type": ["string", "null"]
           },
-          "invoice.bill_to": {
+          "instance.jsonb": {
             "type": ["string", "null"]
           },
-          "invoice.bill_to_id": {
+          "instance.languages": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.childInstances": {
             "type": ["string", "null"]
           },
-          "invoice.chk_subscription_overlap": {
+          "instance.parentInstances": {
             "type": ["string", "null"]
           },
-          "invoice.created_by_user_id": {
+          "instance.mode_of_issuance_name": {
             "type": ["string", "null"]
           },
-          "invoice.created_date": {
+          "instance.nature_of_content_term": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.nature_of_content_term_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.notes": {
             "type": ["string", "null"]
           },
-          "invoice.currency": {
-            "type": ["string", "null"]
-          },
-          "invoice.enclosure_needed": {
-            "type": ["string", "null"]
-          },
-          "invoice.exchange_rate": {
-            "type": ["number", "null"]
-          },
-          "invoice.export_to_accounting": {
-            "type": ["string", "null"]
-          },
-          "invoice.fiscal_year": {
-            "type": ["string", "null"]
-          },
-          "invoice.fiscal_year_id": {
-            "type": ["string", "null"]
-          },
-          "invoice.folio_invoice_no": {
-            "type": ["string", "null"]
-          },
-          "invoice.invoice_date": {
-            "type": ["string", "null"]
-          },
-          "invoice.jsonb": {
-            "type": ["string", "null"]
-          },
-          "invoice.next_invoice_line_number": {
-            "type": ["number", "null"]
-          },
-          "invoice.note": {
-            "type": ["string", "null"]
-          },
-          "invoice.payment_date": {
-            "type": ["string", "null"]
-          },
-          "invoice.payment_due": {
-            "type": ["string", "null"]
-          },
-          "invoice.payment_method": {
-            "type": ["string", "null"]
-          },
-          "invoice.po_numbers": {
+          "instance.physical_descriptions": {
             "type": ["array", "null"],
             "items": {
               "type": ["string", "null"]
             }
           },
-          "invoice.source": {
+          "instance.previously_held": {
             "type": ["string", "null"]
           },
-          "invoice.status": {
+          "instance.publication_frequency": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication_range": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication": {
             "type": ["string", "null"]
           },
-          "invoice.sub_total": {
+          "instance.version": {
             "type": ["number", "null"]
           },
-          "invoice.tag_list": {
+          "instance.title": {
             "type": ["string", "null"]
           },
-          "invoice.payment_terms": {
+          "instance.instance_type_name": {
             "type": ["string", "null"]
           },
-          "invoice.adjustments_total": {
-            "type": ["number", "null"]
+          "instance.series": {
+            "type": ["string", "null", "array"]
           },
-          "invoice.total": {
-            "type": ["number", "null"]
-          },
-          "invoice.updated_by_user_id": {
+          "instance.source": {
             "type": ["string", "null"]
           },
-          "invoice.updated_date": {
+          "instance.staff_suppress": {
             "type": ["string", "null"]
           },
-          "invoice.id": {
+          "instance.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.statistical_code_names": {
             "type": ["string", "null"]
           },
-          "invoice.vendor_invoice_no": {
+          "instance.status_id": {
             "type": ["string", "null"]
           },
-          "invoice.vendor_name": {
+          "instance.subjects": {
             "type": ["string", "null"]
           },
-          "invoice.vendor_id": {
+          "instance.discovery_suppress": {
             "type": ["string", "null"]
           },
-          "invoice.voucher_number": {
+          "instance.tags": {},
+          "instance.updated_by": {
             "type": ["string", "null"]
           },
-          "fund.acquisition_unit": {
-            "type": ["string", "null"]
-          },
-          "fund.acq_unit_ids": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.code": {
-            "type": ["string", "null"]
-          },
-          "fund.created_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "fund.created_date": {
-            "type": ["string", "null"]
-          },
-          "fund.description": {
-            "type": ["string", "null"]
-          },
-          "fund.donor_organization_ids": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.donor_organizations": {
-            "type": ["string", "null"]
-          },
-          "fund.external_account_no": {
-            "type": ["string", "null"]
-          },
-          "fund.fund_type_id": {
-            "type": ["string", "null"]
-          },
-          "fund.ledger_id": {
-            "type": ["string", "null"]
-          },
-          "fund.locations": {
-            "type": ["string", "null"]
-          },
-          "fund.name": {
-            "type": ["string", "null"]
-          },
-          "fund.restrict_by_locations": {
-            "type": ["string", "null"]
-          },
-          "fund.fund_status": {
-            "type": ["string", "null"]
-          },
-          "fund.tag_list": {
-            "type": ["string", "null"]
-          },
-          "fund.allocated_from": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.allocated_from_ids": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.allocated_to": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.allocated_to_ids": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "fund.updated_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "fund.updated_date": {
-            "type": ["string", "null"]
-          },
-          "fund.id": {
-            "type": ["string", "null"]
-          },
-          "fund.version": {
-            "type": ["number", "null"]
-          },
-          "fund_type.name": {
-            "type": ["string", "null"]
-          },
-          "fund_type.id": {
-            "type": ["string", "null"]
-          },
-          "fund_type.version": {
-            "type": ["number", "null"]
-          },
-          "ledger.acquisition_unit": {
-            "type": ["string", "null"]
-          },
-          "ledger.acq_unit_ids": {
-            "type": ["array", "null"],
-            "items": {
-              "type": ["string", "null"]
-            }
-          },
-          "ledger.code": {
-            "type": ["string", "null"]
-          },
-          "ledger.created_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "ledger.created_date": {
-            "type": ["string", "null"]
-          },
-          "ledger.currency": {
-            "type": ["string", "null"]
-          },
-          "ledger.description": {
-            "type": ["string", "null"]
-          },
-          "ledger.fiscal_year_one": {
-            "type": ["string", "null"]
-          },
-          "ledger.fiscal_year_one_id": {
-            "type": ["string", "null"]
-          },
-          "ledger.name": {
-            "type": ["string", "null"]
-          },
-          "ledger.restrict_encumbrance": {
-            "type": ["string", "null"]
-          },
-          "ledger.restrict_expenditures": {
-            "type": ["string", "null"]
-          },
-          "ledger.ledger_status": {
-            "type": ["string", "null"]
-          },
-          "ledger.updated_by_user_id": {
-            "type": ["string", "null"]
-          },
-          "ledger.updated_date": {
-            "type": ["string", "null"]
-          },
-          "ledger.id": {
-            "type": ["string", "null"]
-          },
-          "ledger.version": {
-            "type": ["number", "null"]
-          },
-          "organization.code": {
-            "type": ["string", "null"]
-          },
-          "organization.edi_vendor_edi_code": {
-            "type": ["string", "null"]
-          },
-          "organization.edi_vendor_edi_type": {
-            "type": ["string", "null"]
-          },
-          "organization.is_donor": {
-            "type": ["string", "null"]
-          },
-          "organization.is_vendor": {
-            "type": ["string", "null"]
-          },
-          "organization.jsonb": {
-            "type": ["string", "null"]
-          },
-          "organization.name": {
-            "type": ["string", "null"]
-          },
-          "organization.status": {
-            "type": ["string", "null"]
-          },
-          "organization.id": {
-            "type": ["string", "null"]
-          },
-          "organization._id": {
+          "instance.updated_at": {
             "type": ["string", "null"]
           },
           "created_by.active": {
@@ -452,9 +443,7 @@
           "created_by.last_name_first_name": {
             "type": ["string", "null"]
           },
-          "created_by.created_by_user_id": {
-            "type": ["string", "null"]
-          },
+          "created_by.created_by_user_id": {},
           "created_by.updated_by_user_id": {
             "type": ["string", "null"]
           },
@@ -479,9 +468,7 @@
           "updated_by.last_name_first_name": {
             "type": ["string", "null"]
           },
-          "updated_by.created_by_user_id": {
-            "type": ["string", "null"]
-          },
+          "updated_by.created_by_user_id": {},
           "updated_by.updated_by_user_id": {
             "type": ["string", "null"]
           },
@@ -495,8 +482,7 @@
             "type": ["string", "null"]
           }
         },
-        "required": [
-        ]
+        "required": []
       }
     },
     "totalRecords": {
