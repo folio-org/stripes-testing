@@ -200,7 +200,7 @@ describe('Invoices', () => {
 
   it(
     'C710366 Cancelling a paid invoice with two invoice-level adjustments (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'C710366'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
