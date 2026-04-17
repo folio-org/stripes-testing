@@ -22,6 +22,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   INVOICE_STATUSES,
+  TRANSACTION_TOOLTIPS,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -296,7 +297,7 @@ describe('Invoices', () => {
           { key: 'From', value: testData.fund.name },
         ],
       });
-      TransactionDetails.checkTransactionAmountInfo('Voided transaction');
+      TransactionDetails.checkTransactionAmountInfo(TRANSACTION_TOOLTIPS.VOIDED_TRANSACTION);
       Transactions.clickNextPagination();
       Funds.selectTransactionInListByIndex('Encumbrance', 3);
       TransactionDetails.checkTransactionDetails({

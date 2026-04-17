@@ -85,7 +85,10 @@ describe('MARC', () => {
         before('Create users, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C410754_MarcAuthority');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410754');
+          cy.setTenant(Affiliations.College);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410754');
+          cy.resetTenant();
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -104,8 +107,6 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.assignAffiliationToUser(Affiliations.College, user.userId);
-              cy.setTenant(Affiliations.College);
-              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C410754_MarcAuthority');
 
               MarcAuthorities.createMarcAuthorityViaAPI(
                 authData.prefix,
@@ -139,12 +140,10 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C410754'] },
           () => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, 20_000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.instanceTitle}`);
@@ -173,7 +172,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...Object.values(linkedFieldsData[1]));
             QuickMarcEditor.closeAllCallouts();
 
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceId = id;

@@ -24,3 +24,13 @@ Cypress.Commands.add('getProxyApi', (searchParams) => {
     return body.proxiesFor;
   });
 });
+
+Cypress.Commands.add('updateProxyApi', (proxyId, proxyData) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `proxiesfor/${proxyId}`,
+    body: proxyData,
+  }).then(({ body }) => {
+    return body;
+  });
+});

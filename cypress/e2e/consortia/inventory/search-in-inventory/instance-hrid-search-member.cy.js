@@ -230,7 +230,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.clickSearch();
 
             InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
-            InventorySearchAndFilter.checkRowsCount(1);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           });
 
           notExpectedInstanceIndexes.forEach((instanceIndex) => {
