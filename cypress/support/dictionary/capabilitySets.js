@@ -311,4 +311,9 @@ export default {
     resource: 'UI-Inventory Single-Record-Import',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Quick-Marc Quick-Marc-Authority-Records Link-Unlink',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
 };
