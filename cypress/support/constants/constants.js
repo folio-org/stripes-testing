@@ -96,6 +96,12 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
+export const FUND_STATUSES = {
+  ACTIVE: 'Active',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
