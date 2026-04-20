@@ -76,12 +76,14 @@ describe('Circulation log', () => {
     Locations.deleteViaApi(testData.defaultLocation);
   });
 
-  const goToCircLogApp = () => {
+  const goToCircLogApp = (isFilterAlreadySet) => {
     // Click the "Circulation log" app
     TopMenuNavigation.navigateToApp('Circulation log');
     // User on the "Circulation log" app main page, circulation logs are filtered by "Closed loan"
     SearchPane.waitLoading();
-    SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
+    if (!isFilterAlreadySet) {
+      SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
+    }
     return SearchPane.findResultRowIndexByContent(testData.servicePoint.name);
   };
 
@@ -94,12 +96,12 @@ describe('Circulation log', () => {
         // "Loan details" form is displayed
         LoansPage.waitLoading();
       });
-      goToCircLogApp().then((rowIndex) => {
+      goToCircLogApp(true).then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'User details');
         // User detailed view is displayed
         UsersCard.waitLoading();
       });
-      goToCircLogApp().then((rowIndex) => {
+      goToCircLogApp(true).then((rowIndex) => {
         SearchResults.clickOnCell(ITEM_BARCODE, Number(rowIndex));
         // Item detailed view is displayed
         ItemRecordView.waitLoading();
