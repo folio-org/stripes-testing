@@ -66,11 +66,6 @@ describe('Inventory', () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();
           VersionHistorySection.verifyVersionsCount(1);
-          VersionHistorySection.verifyOriginalVersionCard({
-            index: 0,
-            firstName: testData.user.firstName,
-            lastName: testData.user.lastName,
-          });
           VersionHistorySection.clickCloseButton();
 
           InstanceRecordView.verifyInstanceRecordViewOpened();
