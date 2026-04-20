@@ -105,7 +105,7 @@ describe('Lists', () => {
 
       it(
         'C411736 Edit list: Make the list Shared (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411736', 'eurekaPhase1'] },
+        { tags: ['smoke', 'corsair', 'C411736', 'eurekaPhase1'] },
         () => {
           cy.login(firstUser.username, firstUser.password, {
             path: TopMenu.listsPath,
