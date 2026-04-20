@@ -317,9 +317,7 @@ export default {
         }
 
         if (retriesLeft <= 0) {
-          throw new Error(
-            `Loan ${loanId} did not reach item status "${itemStatus}" in loan history`,
-          );
+          throw new Error('The request has reached the maximum number of attempts.');
         }
 
         cy.wait(pollIntervalMs);
