@@ -1290,13 +1290,6 @@ const API = {
   },
 
   getSimpleUsersEntityTypeSourceTargetId() {
-    // return this.getTypeIdByNameViaApi('Users')
-    //   .then((typeId) => {
-    //     return this.getEntityTypeByIdViaApi(typeId).then((typeResponse) => {
-    //       return typeResponse.body.sources.filter((source) => source.alias === 'updated_by_user')[0].targetId;
-    //     });
-    //   });
-
     return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
   },
 

@@ -25,7 +25,7 @@ describe('Lists', () => {
     });
 
     it(
-      'C446046 Verify that list name and list source display on a single line in the \'Lists landing\' page (corsair)',
+      'C446046 Verify that list name and list source display on a single line in the "Lists landing" page (corsair)',
       { tags: ['extendedPath', 'corsair', 'C446046'] },
       () => {
         cy.loginAsAdmin({ path: TopMenu.listsPath, waiter: Lists.waitLoading });
