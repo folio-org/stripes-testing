@@ -217,6 +217,7 @@ describe('Bulk-edit', () => {
           // Step 7: Download matched records (CSV)
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
+          cy.wait(5000); // Wait for the file to be downloaded and appear in the downloads list
 
           const originalElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${testUri};${textWithSpecialCharacters};${materialsWithLineBreak};${publicNoteWith31999Symbols}`;
 

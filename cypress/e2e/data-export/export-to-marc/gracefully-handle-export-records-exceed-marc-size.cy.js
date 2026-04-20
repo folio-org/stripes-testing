@@ -312,8 +312,21 @@ describe('Data Export', () => {
             `"Instance UUID": "${testData.marcInstance.uuid}"`,
             `"Instance HRID": "${testData.marcInstance.hrid}"`,
             `"Instance Title": "${testData.marcInstance.title}"`,
-            `"Inventory record link": ${Cypress.config().baseUrl}/inventory/view/${testData.marcInstance.uuid}`,
           ];
+
+          // Conditionally verify inventory record link based on OKAPI_TENANT
+          const okapiTenant = Cypress.env('OKAPI_TENANT');
+          if (okapiTenant === 'diku') {
+            // For diku tenant, on snapshot envs in data base folio host set as 'http://localhost:3000'
+            errorMessages.push(
+              `"Inventory record link": http://localhost:3000/inventory/view/${testData.marcInstance.uuid}`,
+            );
+          } else {
+            // For other environments, verify with full baseUrl
+            errorMessages.push(
+              `"Inventory record link": ${Cypress.config().baseUrl}/inventory/view/${testData.marcInstance.uuid}`,
+            );
+          }
 
           errorMessages.forEach((error) => {
             DataExportLogs.verifyErrorTextInErrorLogsPane(error);
