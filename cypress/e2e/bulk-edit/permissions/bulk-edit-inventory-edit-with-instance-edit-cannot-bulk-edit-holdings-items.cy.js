@@ -25,31 +25,33 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        folioInstance.instanceId = InventoryInstances.createInstanceViaApi(
-          folioInstance.title,
-          folioInstance.itemBarcode,
-        );
-
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"items.barcode"=="${folioInstance.itemBarcode}"`,
-        }).then((instance) => {
-          folioInstance.holdingId = instance.holdings[0].id;
-          folioInstance.holdingHrid = instance.holdings[0].hrid;
-          folioInstance.itemId = instance.items[0].id;
-
-          FileManager.createFile(
-            `cypress/fixtures/${holdingUUIDsFileName}`,
-            folioInstance.holdingId,
+        cy.then(() => {
+          folioInstance.instanceId = InventoryInstances.createInstanceViaApi(
+            folioInstance.title,
+            folioInstance.itemBarcode,
           );
+        }).then(() => {
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"items.barcode"=="${folioInstance.itemBarcode}"`,
+          }).then((instance) => {
+            folioInstance.holdingId = instance.holdings[0].id;
+            folioInstance.holdingHrid = instance.holdings[0].hrid;
+            folioInstance.itemId = instance.items[0].id;
 
-          FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, folioInstance.itemId);
-        });
+            FileManager.createFile(
+              `cypress/fixtures/${holdingUUIDsFileName}`,
+              folioInstance.holdingId,
+            );
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, folioInstance.itemId);
+          });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
