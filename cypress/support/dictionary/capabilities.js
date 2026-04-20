@@ -59,6 +59,31 @@ export default {
     resource: 'Capabilities',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  fqmEntityTypesCustomCollectionCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Fqm EntityTypes Custom Collection',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  fqmEntityTypesCustomCollectionExecute: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Fqm EntityTypes Custom Collection',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  fqmEntityTypesCustomItemView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Fqm EntityTypes Custom Item',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  fqmEntityTypesCustomItemEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Fqm EntityTypes Custom Item',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  fqmEntityTypesCustomItemDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Fqm EntityTypes Custom Item',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {
