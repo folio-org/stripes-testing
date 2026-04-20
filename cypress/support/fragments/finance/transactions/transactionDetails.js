@@ -6,6 +6,7 @@ import {
   Popover,
   including,
   Link,
+  HTML,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 
@@ -20,10 +21,21 @@ export default {
     cy.expect(transactionDetailSection.exists());
   },
   checkTransactionDetails({ information = [] } = {}) {
-    information.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    information.forEach(({ key, value, isVoided = false }) => {
+      if (isVoided) {
+        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+        cy.expect(
+          informationSection
+            .find(KeyValue(key))
+            .find(HTML({ className: including('voided') }))
+            .exists(),
+        );
+      } else {
+        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      }
     });
   },
+
   checkTransactionAmountInfo(content) {
     cy.do(
       transactionDetailSection
