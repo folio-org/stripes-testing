@@ -86,7 +86,12 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(addTransferModal.absent());
   },
-  clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
+  clickConfirmButton({
+    transferCreated = true,
+    ammountAllocated = false,
+    confirmNegative,
+    expectError = false,
+  } = {}) {
     cy.wait(2000);
     cy.do(confirmButton.click());
 
@@ -104,13 +109,13 @@ export default {
       }
     }
 
-    if (transferCreated) {
+    if (!expectError && transferCreated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.transferCreatedSuccessfully)),
       );
     }
 
-    if (ammountAllocated) {
+    if (!expectError && ammountAllocated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
