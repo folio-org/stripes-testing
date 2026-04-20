@@ -1,3 +1,13 @@
+export const INVOICE_ACTION_MENU_BUTTONS = {
+  APPROVE: 'Approve',
+  APPROVE_AND_PAY: 'Approve & pay',
+  CANCEL: 'Cancel',
+  DELETE: 'Delete',
+  DUPLICATE: 'Duplicate',
+  EDIT: 'Edit',
+  PAY: 'Pay',
+};
+
 export const INVOICE_STATUSES = {
   OPEN: 'Open',
   REVIEWED: 'Reviewed',

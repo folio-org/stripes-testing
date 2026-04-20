@@ -179,6 +179,18 @@ export default {
       })
       .then(({ body }) => body);
   },
+
+  updateInvoiceLineViaApi(invoiceLine) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `invoice/invoice-lines/${invoiceLine.id}`,
+        body: invoiceLine,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+
   deleteInvoiceLineViaApi(invoiceLineId) {
     return cy.okapiRequest({
       method: 'DELETE',
