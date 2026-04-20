@@ -67,6 +67,16 @@ export default {
     resource: 'UI-Data-Import Settings',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  moduleListsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  moduleListsRefreshView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists Refresh',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
