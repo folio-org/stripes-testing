@@ -7,9 +7,10 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 describe('Lists', () => {
   describe('Lists details page', () => {
     let userData = {};
-    const inactiveListData = {
-      name: `AT_C411840_Inactive_${getTestEntityValue('list')}`,
-      description: `AT_C411840_Inactive_${getTestEntityValue('desc')}`,
+    let listUiQuery;
+    const listData = {
+      name: `AT_C411840_InactiveList_${getTestEntityValue('list')}`,
+      description: `AT_C411840_InactiveList_${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: false,
@@ -27,53 +28,78 @@ describe('Lists', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-      });
+      })
+        .then(() => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields, uiQuery }) => {
+            listUiQuery = uiQuery;
+            Lists.createQueryViaApi(query).then((createdQuery) => {
+              listData.queryId = createdQuery.queryId;
+              listData.fqlQuery = createdQuery.fqlQuery;
+              listData.fields = fields;
 
-      Lists.createViaApi(inactiveListData).then((body) => {
-        inactiveListData.id = body.id;
-      });
+              Lists.createViaApi(listData)
+                .then((body) => {
+                  listData.version = body.version;
+                  listData.id = body.id;
+                });
+            });
+          });
+        });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      Lists.deleteViaApi(inactiveListData.id);
+      Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);
     });
 
-    it(
-      'C411840 Inactive lists (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411840'] },
-      () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
+    it('C411840 Inactive lists (corsair)', { tags: ['extendedPath', 'corsair', 'C411840'] }, () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
 
-        Lists.selectInactiveLists();
-        Lists.openList(inactiveListData.name);
-        Lists.verifyRecordsNumber('No');
+      // Step 1: Click on any of the inactive lists
+      Lists.selectInactiveLists();
+      Lists.verifyListIsPresent(listData.name);
+      Lists.openList(listData.name);
 
-        Lists.openActions();
-        Lists.verifyRefreshListButtonIsDisabled();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsDisabled();
-        Lists.verifyExportListButtonIsDisabled();
+      // Step 2: Check the structure of the lists details page
+      Lists.verifyRecordsNumber('No');
+      Lists.closeListDetailsPane();
+      Lists.openList(listData.name);
 
-        Lists.clickOnListInformationAccordion();
-        Lists.clickOnListInformationAccordion();
-        Lists.verifyListNameLabel(inactiveListData.name);
-        Lists.verifyListDescriptionLabel(inactiveListData.description);
-        Lists.verifyStatusLabel('Inactive');
+      // Step 3: Click on "Actions" dropdown
+      Lists.openActions();
 
-        Lists.clickOnQueryAccordion();
-        Lists.clickOnQueryAccordion();
-        Lists.verifyRecordsNumber('No');
-        Lists.verifyListsPaneIsEmpty();
+      // Step 4: Check the buttons status
+      Lists.verifyRefreshListButtonIsDisabled();
+      Lists.verifyExportListVisibleColumnsButtonIsDisabled();
+      Lists.verifyExportListButtonIsDisabled();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
+      Lists.verifyDeleteListButtonIsActive();
 
-        Lists.closeListDetailsPane();
-      },
-    );
+      // Step 5: Click on "List information" dropdown
+      Lists.clickOnListInformationAccordion();
+
+      // Step 6: Click on "List information" dropdown again
+      Lists.expandListInformationAccordion();
+      Lists.verifyStatusLabel('Inactive');
+      Lists.verifyRecordType(listData.recordType);
+
+      // Step 7: Click on "Query: " dropdown - collapse it
+      Lists.clickOnQueryAccordion();
+
+      // Step 8: Click on "Query: x" dropdown again - expand it
+      Lists.clickOnQueryAccordion();
+      Lists.verifyRecordsNumber('No');
+      Lists.verifyQuery(listUiQuery);
+      Lists.verifyListsPaneIsEmpty();
+
+      // Step 9: Click on "X" button
+      Lists.closeListDetailsPane();
+      Lists.verifyListIsPresent(listData.name);
+    });
   });
 });

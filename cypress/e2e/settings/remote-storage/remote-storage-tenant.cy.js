@@ -40,6 +40,7 @@ describe('remote-storage-configuration', () => {
         })
         .then(() => {
           cy.intercept('/location-units/institutions*', { locinsts: [institutions] });
+          cy.intercept('GET', '/locations*', { locations: [institutions] });
           cy.login(user.username, user.password);
           cy.wait(1000);
           TopMenuNavigation.navigateToApp('Settings');

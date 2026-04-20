@@ -1,4 +1,5 @@
 import { recurse } from 'cypress-recurse';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -23,6 +24,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 
 const listInformationAccording = Accordion('List information');
@@ -547,7 +549,7 @@ const UI = {
 
   findResultRowIndexByContent(content) {
     return cy
-      .get('*[class^="mclCell"]')
+      .get('*[class^="mclCell"]', { timeout: 120000 })
       .contains(content)
       .parent()
       .invoke('attr', 'data-row-inner');
@@ -820,6 +822,22 @@ const UI = {
       });
   },
 
+  verifySourceColumnCellDisplaysOnSingleLine() {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .first()
+      .find('[class*="mclCell-"]:nth-child(3)')
+      .then(($cell) => {
+        expect($cell[0].scrollHeight).to.be.at.most($cell[0].clientHeight + 1);
+      });
+  },
+
+  verifyListNameCellDisplaysOnSingleLine(listName) {
+    cy.contains('[class*="mclCell-"]:nth-child(1)', listName).then(($cell) => {
+      expect($cell[0].scrollHeight).to.be.at.most($cell[0].clientHeight + 1);
+    });
+  },
+
   checkDownloadedFile(fileName, header = '"Fee/fine owner","Fee/fine type"') {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000); // wait for the file to load
@@ -1014,7 +1032,7 @@ const QueryBuilder = {
 
 const API = {
   buildQueryOnActiveUsers() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
@@ -1024,12 +1042,29 @@ const API = {
           fqlQuery: '{"users.active":{"$eq":"true"}}',
         },
         fields: ['users.active', 'user.id'],
+        uiQuery: 'users.active == True',
+      };
+    });
+  },
+
+  buildQueryOnActiveUsersWithZeroRecords() {
+    return this.getAllEntityTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"users.id":{"$eq":"1234567890"}}',
+        },
+        fields: ['users.active', 'user.id'],
+        uiQuery: 'users.id == 1234567890',
       };
     });
   },
 
   buildQueryOnActiveUsersWithUsernames() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
@@ -1046,7 +1081,7 @@ const API = {
 
   // supposed to contain big amount of data (on cypress env it approximately contains 6000+ records)
   buildQueryOnAllInstances() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Instances',
       ).id;
@@ -1091,21 +1126,29 @@ const API = {
   },
 
   createViaApi(list) {
-    const newList = JSON.parse(JSON.stringify(list));
-    return this.getTypesViaApi().then((response) => {
-      newList.entityTypeId = response.body.entityTypes.find(
-        (entityType) => entityType.label === newList.recordType,
-      ).id;
-      delete newList.recordType;
-      cy.okapiRequest({
+    function createList(listToCreate) {
+      return cy.okapiRequest({
         method: 'POST',
         path: 'lists',
-        body: newList,
+        body: listToCreate,
         isDefaultSearchParamsRequired: false,
       }).then((newListResponse) => {
         return newListResponse.body;
       });
-    });
+    }
+
+    const newList = JSON.parse(JSON.stringify(list));
+    if (newList.entityTypeId) {
+      return createList(newList);
+    } else {
+      return this.getAllEntityTypesViaApi().then((response) => {
+        newList.entityTypeId = response.body.entityTypes.find(
+          (entityType) => entityType.label === newList.recordType,
+        ).id;
+        delete newList.recordType;
+        return createList(newList);
+      });
+    }
   },
 
   getViaApi() {
@@ -1165,36 +1208,126 @@ const API = {
     }
   },
 
-  getTypesViaApi() {
+  getAllEntityTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
       path: 'entity-types',
     });
   },
 
-  getTypeIdByNameViaApi(type) {
-    return this.getTypesViaApi().then((response) => {
+  getEntityTypeIdByNameViaApi(type) {
+    return this.getAllEntityTypesViaApi().then((response) => {
       return response.body.entityTypes.find((entityType) => entityType.label === type).id;
     });
   },
 
-  getTypeByIdViaApi(id) {
+  getEntityTypeByIdViaApi(id) {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
     });
   },
 
-  getEntityTypeColumnsViaApi(id, labelName) {
+  getEntityTypeDetailsViaApi(id) {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: `entity-types/${id}/columns/${labelName}/values`,
+        path: `entity-types/${id}`,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
       });
+  },
+
+  getEntityTypeFieldValuesViaApi(id, fieldName) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `entity-types/${id}/field-values`,
+        isDefaultSearchParamsRequired: false,
+        searchParams: {
+          field: `${fieldName}`,
+          search: '',
+        }
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  generateCustomEntityTypeBodyWithoutSources(entityTypeName = '', privateEntityType = true) {
+    return {
+      id: uuid(),
+      name: entityTypeName || `Custom entity type ${getRandomPostfix()}`,
+      private: privateEntityType,
+    };
+  },
+
+  generateCustomEntityTypeBodyWithSources(entityTypeName = '', entityTypeSources, privateEntityType = true) {
+    return {
+      ...this.generateCustomEntityTypeBodyWithoutSources(entityTypeName, privateEntityType),
+      sources: [...entityTypeSources],
+    };
+  },
+
+  getSimpleUsersEntityTypeSourceTargetId() {
+    return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
+  },
+
+  generateSimpleUsersEntityTypeSource() {
+    return this.getSimpleUsersEntityTypeSourceTargetId().then((targetSourceId) => {
+      return {
+        alias: 'simple_users',
+        name: 'users',
+        type: 'entity-type',
+        targetId: targetSourceId,
+        essentialOnly: false,
+        useIdColumns: true
+      };
+    });
+  },
+
+  getCustomEntityTypes() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types/custom',
+      failOnStatusCode: false,
+    });
+  },
+
+  getCustomEntityTypeById(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/custom/${id}`,
+      failOnStatusCode: false,
+    });
+  },
+
+  createCustomEntityType(customEntityTypeBody) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'entity-types/custom',
+      body: customEntityTypeBody,
+      failOnStatusCode: false,
+    });
+  },
+
+  updateCustomEntityTypeById(id, customEntityTypeBody) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `entity-types/custom/${id}`,
+      body: customEntityTypeBody,
+      failOnStatusCode: false,
+    });
+  },
+
+  deleteCustomEntityTypeById(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `entity-types/custom/${id}`,
+      failOnStatusCode: false,
+    });
   },
 
   deleteRecursivelyViaApi(id) {
