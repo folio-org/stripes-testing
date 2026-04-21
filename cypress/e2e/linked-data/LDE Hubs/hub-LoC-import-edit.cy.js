@@ -1,6 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Marigold from '../../../support/fragments/linked-data/marigold';
-import { LDE_ROLES } from '../../../support/constants';
+import { MARIGOLD_ROLES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
@@ -9,7 +9,7 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 import PreviewHubPage from '../../../support/fragments/linked-data/previewHubPage';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('MG Hubs: Import and edit LoC hub', () => {
   const testData = {

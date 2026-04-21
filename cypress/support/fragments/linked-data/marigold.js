@@ -21,11 +21,17 @@ const searchButton = Button({ dataTestID: 'id-search-button' });
 const workPreviewPanel = "//div[@class='preview-panel']";
 const actionsHubButton = Button({ dataTestID: 'hubs-actions-dropdown' });
 const newHubButton = Button({ dataTestID: 'hubs-actions-dropdown__option-ld.newHub' });
+const editWorkButton = Button('Edit Work');
 
 export default {
   waitLoading: () => {
     cy.xpath(searchSelect).should('be.visible');
     cy.xpath(searchSection).should('be.visible');
+  },
+
+  clickEditWorkFromSearch() {
+    cy.do(editWorkButton.click());
+    cy.wait(1000);
   },
 
   checkSearchOptionIsDisplayed: (option) => {
@@ -44,6 +50,7 @@ export default {
     cy.xpath(
       `//div[@class='search-result-entry-container'][${rowNumber}]//button[contains(@class, 'title')]`,
     ).click();
+    cy.wait(500);
     cy.xpath(workPreviewPanel).should('be.visible');
   },
 
@@ -67,6 +74,7 @@ export default {
 
   editWork: () => {
     cy.xpath("//div[@class='full-display-control-panel']//button[text()='Edit work']").click();
+    cy.wait(1000);
     EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
   },
 

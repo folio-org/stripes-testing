@@ -7,7 +7,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
 } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -19,7 +19,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: duplicate resource', () => {
   const testData = {

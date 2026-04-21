@@ -1483,9 +1483,9 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   OR: 'OR',
 };
 
-export const LDE_ROLES = {
+export const MARIGOLD_ROLES = {
   CATALOGER: 'Cataloger',
-  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
+  CATALOGER_MARIGOLD: 'Cataloger - Marigold',
 };
 
 export const AUTHORIZATION_ROLE_TYPES = {

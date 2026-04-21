@@ -20,6 +20,8 @@ const searchMarcAuthInputField = '#id-search-textarea';
 const newInstanceButton = "//button[@data-testid='new-instance']";
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
+const closeResourceButton = Button({ dataTestID: 'nav-close-button' });
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
 
@@ -103,6 +105,7 @@ export default {
       .should('not.be.disabled')
       .clear()
       .type(value);
+    cy.wait(1000);
   },
 
   setNoteValue(value, field) {
@@ -218,6 +221,11 @@ export default {
     ).should('be.visible');
   },
 
+  clickCancel() {
+    cy.do(Button('Cancel').click());
+    cy.wait(500);
+  },
+
   clickCancelWithOption(option) {
     cy.do(Button('Cancel').click());
     cy.wait(1000);
@@ -248,5 +256,20 @@ export default {
   clickCloseResourceButton() {
     cy.do(Button({ dataTestID: 'nav-close-button' }).click());
     cy.wait(500);
+  },
+
+  checkSaveButtonsDisabled() {
+    cy.expect(saveAndCloseButton.has({ disabled: true }));
+    cy.expect(saveKeepEditingButton.has({ disabled: true }));
+  },
+
+  checkSaveButtonsEnabled() {
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+    cy.expect(saveKeepEditingButton.has({ disabled: false }));
+  },
+
+  checkCloseAndCancelEnabled() {
+    cy.expect(closeResourceButton.has({ disabled: false }));
+    cy.expect(cancelButton.has({ disabled: false }));
   },
 };
