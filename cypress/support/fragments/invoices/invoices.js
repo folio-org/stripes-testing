@@ -34,36 +34,31 @@ import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
 import VoucherExportForm from './voucherExportForm';
 
+const actionsButton = Button('Actions');
+const submitButton = Button('Submit');
+const searchButton = Button('Search');
+const approvePay = Button('Approve & pay');
+const buttonNew = Button('New');
+const saveAndClose = Button('Save & close');
+const saveAndContinueButton = Button('Save & continue');
+const deleteButton = Button('Delete');
+const newBlankLineButton = Button('New blank line');
+const polLookUpButton = Button('POL look-up');
+
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
-const buttonNew = Button('New');
-const saveAndClose = Button('Save & close');
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
-const actionsButton = Button('Actions');
-const submitButton = Button('Submit');
-const searchButton = Button('Search');
-const approvePay = Button('Approve & pay');
 const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const searchForm = SearchField({ id: 'input-record-search' });
-const resetButton = Button({ id: 'reset-invoice-filters' });
 const invoiceLineDetailsPane = PaneHeader({
   id: 'paneHeaderpane-invoiceLineDetails',
 });
-const deleteButton = Button('Delete');
-const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
-const batchGroupFilterSection = Section({ id: 'batchGroupId' });
-const fundCodeFilterSection = Section({ id: 'fundCode' });
-const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
-const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
-const approvalDateFilterSection = Section({ id: 'approvalDate' });
-const newBlankLineButton = Button('New blank line');
-const polLookUpButton = Button('POL look-up');
 const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 const searhInputId = 'input-record-search';
@@ -73,10 +68,21 @@ const batchGroupSelection = Selection('Batch group*');
 const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
 const linesSequencePane = Pane({ id: 'pane-lines-sequence' });
 const invoiceLinesSequenceList = MultiColumnList({ id: 'invoice-lines-sequence' });
-const saveAndContinueButton = Button('Save & continue');
 const invoiceLinesSequenceSelector = '#invoice-lines-sequence';
 const invoiceLinesSequenceRowsSelector = '#invoice-lines-sequence [class*="mclRow--"]';
 const columnHeaderRoleSelector = '[role="columnheader"]';
+
+// filters
+// TODO: Move search&filters to separate file
+const resetButton = Button({ id: 'reset-invoice-filters' });
+const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
+const batchGroupFilterSection = Section({ id: 'batchGroupId' });
+const fundCodeFilterSection = Section({ id: 'fundCode' });
+const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
+const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
+const approvalDateFilterSection = Section({ id: 'approvalDate' });
+const tagsFilterSection = Section({ id: 'tags.tagList' });
+const tagsMultiSelect = tagsFilterSection.find(MultiSelect({ id: 'acq-tags-filter' }));
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -261,6 +267,7 @@ export default {
     subTotal,
     releaseEncumbrance,
     exportToAccounting,
+    adjustments,
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -269,6 +276,7 @@ export default {
       batchGroupId,
       invoiceStatus,
       exportToAccounting,
+      adjustments,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -1311,11 +1319,19 @@ export default {
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
+    cy.wait(2000);
+    const accordionButton = invoiceFiltersSection
+      .find(fiscalYearFilterSection)
+      .find(Button({ ariaLabel: 'Fiscal year filter list' }));
+
+    cy.then(() => accordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded !== 'true') {
+        cy.do(accordionButton.click());
+      }
+    });
+
+    cy.wait(1000);
     cy.do([
-      invoiceFiltersSection
-        .find(fiscalYearFilterSection)
-        .find(Button({ ariaLabel: 'Fiscal year filter list' }))
-        .click(),
       fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
       SelectionList().select(fiscalYear),
     ]);
@@ -1344,6 +1360,21 @@ export default {
     cy.wait(2000);
     cy.do(Button({ id: 'metadata.createdByUserId-button' }).click());
     SelectUser.selectUser(userName);
+  },
+
+  selectTagsFilter: (tagsArray) => {
+    cy.wait(2000);
+    const accordionButton = tagsFilterSection.find(
+      Button({ id: 'accordion-toggle-button-tags.tagList' }),
+    );
+    cy.then(() => accordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded !== 'true') {
+        cy.do(accordionButton.click());
+      }
+    });
+    cy.expect(tagsMultiSelect.exists());
+    cy.do(tagsMultiSelect.choose(tagsArray));
+    cy.expect(tagsMultiSelect.has({ selected: tagsArray }));
   },
 
   openPageCurrentEncumbrance: (title) => {

@@ -476,10 +476,21 @@ export default {
   clickCancelInActionsMenu() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
   },
+  approveAndPayInvoiceWithUpdatePOLPaymentStatus({ status, errorMessage } = {}) {
+    this.clickApproveAndPayInvoice({ isApprovePayEnabled: true });
+    UpdatePOLinePaymentStatusModal.verifyModalView();
+    UpdatePOLinePaymentStatusModal.selectPaymentStatus(status);
+    UpdatePOLinePaymentStatusModal.clickSubmitButton();
+    if (errorMessage) {
+      interactorsTools.checkCalloutErrorMessage(errorMessage);
+    } else {
+      interactorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
+    }
+  },
 
   cancelInvoiceWithUpdatePOLPaymentStatus({
     errorMessage,
-    status = INVOICE_POL_PAYMENT_STATUSES.CANCELLED,
+    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT,
   } = {}) {
     this.clickCancelInActionsMenu();
     CancelInvoiceModal.clickSubmitButton(false);
