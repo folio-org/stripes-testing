@@ -136,4 +136,7 @@ export default {
   openEHoldingsApp: () => {
     cy.do(Link({ href: including('/eholdings') }).click());
   },
+  openExportManagerApp: () => {
+    cy.do(Link({ href: including(exportManagerPath) }).click());
+  },
 };

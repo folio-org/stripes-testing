@@ -855,6 +855,17 @@ export default {
         schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
         schedulingSection.find(TextField('Time*')).fillIn(DateTools.getUTCDateForScheduling()),
       ]);
+      if (information.schedulingDate) {
+        cy.do(
+          schedulingSection
+            .find(
+              TextField({
+                name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate',
+              }),
+            )
+            .fillIn(information.schedulingDate),
+        );
+      }
     }
   },
 

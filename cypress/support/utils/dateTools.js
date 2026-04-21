@@ -474,8 +474,9 @@ export default {
 
   getUTCDateForScheduling() {
     const today = new Date();
+    today.setUTCMinutes(today.getUTCMinutes() + 2);
     let hours = today.getUTCHours();
-    let minutes = today.getUTCMinutes() + 2;
+    let minutes = today.getUTCMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
     hours = hours || 12;
@@ -485,8 +486,9 @@ export default {
   },
   getUTCDateFor2Scheduling() {
     const today = new Date();
+    today.setUTCMinutes(today.getUTCMinutes() + 3);
     let hours = today.getUTCHours();
-    let minutes = today.getUTCMinutes() + 3;
+    let minutes = today.getUTCMinutes();
     const ampm = hours >= 12 ? 'P' : 'A';
     hours %= 12;
     hours = hours || 12;

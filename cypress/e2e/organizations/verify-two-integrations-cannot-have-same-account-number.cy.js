@@ -6,6 +6,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import IntegrationStates from '../../support/fragments/organizations/integrations/integrationStates';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Organizations', () => {
   let userId;
@@ -73,6 +74,7 @@ describe('Organizations', () => {
         ediFTP: 'FTP',
         ftpWithoutCredentials: true,
         enableScheduling: true,
+        schedulingDate: DateTools.getDayTomorrowDateForFiscalYearOnUIEdit(),
       });
       Organizations.saveOrganization();
       InteractorsTools.checkCalloutMessage(IntegrationStates.integrationSaved);
