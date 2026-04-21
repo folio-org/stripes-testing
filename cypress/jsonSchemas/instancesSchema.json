@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Vouchers",
+  "title": "Instances",
   "type": "object",
   "properties": {
     "content": {
@@ -8,115 +8,182 @@
       "items": {
         "type": "object",
         "properties": {
-          "voucher.account_no": {
+          "instance.administrative_notes": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.alternative_titles": {
             "type": ["string", "null"]
           },
-          "voucher.accounting_code": {
+          "instance.cataloged_date": {
             "type": ["string", "null"]
           },
-          "voucher.acquisition_units": {
+          "instance.classifications": {
             "type": ["string", "null"]
           },
-          "voucher.acq_unit_ids": {
+          "instance.contributors": {
+            "type": ["string", "null"]
+          },
+          "instance.created_by": {
+            "type": ["string", "null"]
+          },
+          "instance.created_at": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_1": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_2": {
+            "type": ["string", "null"]
+          },
+          "instance.instance_date_type_id": {
+            "type": ["string", "null"]
+          },
+          "instance.editions": {
             "type": ["array", "null"],
             "items": {
               "type": ["string", "null"]
             }
           },
-          "voucher.batch_group": {
+          "instance.electronic_access": {
             "type": ["string", "null"]
           },
-          "voucher.batch_group_id": {
+          "instance.flag_for_deletion": {
             "type": ["string", "null"]
           },
-          "voucher.created_by_user_id": {
+          "instance.format_names": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.identifiers": {
             "type": ["string", "null"]
           },
-          "voucher.created_date": {
+          "instance.index_title": {
             "type": ["string", "null"]
           },
-          "voucher.disbursement_amount": {
+          "instance.instance_format_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.hrid": {
+            "type": ["string", "null"]
+          },
+          "instance.source_uri": {
+            "type": ["string", "null"]
+          },
+          "instance.id": {
+            "type": ["string", "null"]
+          },
+          "instance.jsonb": {
+            "type": ["string", "null"]
+          },
+          "instance.languages": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.childInstances": {
+            "type": ["string", "null"]
+          },
+          "instance.parentInstances": {
+            "type": ["string", "null"]
+          },
+          "instance.mode_of_issuance_name": {
+            "type": ["string", "null"]
+          },
+          "instance.nature_of_content_term": {
+            "type": ["string", "null"]
+          },
+          "instance.nature_of_content_term_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.notes": {
+            "type": ["string", "null"]
+          },
+          "instance.physical_descriptions": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.previously_held": {
+            "type": ["string", "null"]
+          },
+          "instance.publication_frequency": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication_range": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication": {
+            "type": ["string", "null"]
+          },
+          "instance.version": {
             "type": ["number", "null"]
           },
-          "voucher.disbursement_date": {
+          "instance.title": {
             "type": ["string", "null"]
           },
-          "voucher.disbursement_number": {
+          "instance.instance_type_name": {
             "type": ["string", "null"]
           },
-          "voucher.enclosure_needed": {
+          "instance.series": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.source": {
             "type": ["string", "null"]
           },
-          "voucher.exchange_rate": {
-            "type": ["number", "null"]
-          },
-          "voucher.export_to_accounting": {
+          "instance.staff_suppress": {
             "type": ["string", "null"]
           },
-          "voucher.invoice_currency": {
+          "instance.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.statistical_code_names": {
             "type": ["string", "null"]
           },
-          "voucher.invoice_id": {
+          "instance.status_id": {
             "type": ["string", "null"]
           },
-          "voucher.status": {
+          "instance.subjects": {
             "type": ["string", "null"]
           },
-          "voucher.system_currency": {
+          "instance.discovery_suppress": {
             "type": ["string", "null"]
           },
-          "voucher.amount": {
-            "type": ["number", "null"]
-          },
-          "voucher.type": {
+          "instance.tags": {},
+          "instance.updated_by": {
             "type": ["string", "null"]
           },
-          "voucher.updated_by_user_id": {
+          "instance.updated_at": {
             "type": ["string", "null"]
           },
-          "voucher.updated_date": {
+          "inst_stat.code": {
             "type": ["string", "null"]
           },
-          "voucher.id": {
+          "inst_stat.jsonb": {
             "type": ["string", "null"]
           },
-          "voucher.vendor_id": {
+          "inst_stat.name": {
             "type": ["string", "null"]
           },
-          "voucher.voucher_date": {
+          "inst_stat.id": {
             "type": ["string", "null"]
           },
-          "voucher.voucher_number": {
+          "instance_type.jsonb": {
             "type": ["string", "null"]
           },
-          "vendor.code": {
+          "date_type.id": {
             "type": ["string", "null"]
           },
-          "vendor.edi_vendor_edi_code": {
-            "type": ["string", "null"]
-          },
-          "vendor.edi_vendor_edi_type": {
-            "type": ["string", "null"]
-          },
-          "vendor.is_donor": {
-            "type": ["string", "null"]
-          },
-          "vendor.is_vendor": {
-            "type": ["string", "null"]
-          },
-          "vendor.jsonb": {
-            "type": ["string", "null"]
-          },
-          "vendor.name": {
-            "type": ["string", "null"]
-          },
-          "vendor.status": {
-            "type": ["string", "null"]
-          },
-          "vendor.id": {
-            "type": ["string", "null"]
-          },
-          "vendor._id": {
+          "date_type.name": {
             "type": ["string", "null"]
           },
           "created_by.active": {
@@ -131,9 +198,7 @@
           "created_by.last_name_first_name": {
             "type": ["string", "null"]
           },
-          "created_by.created_by_user_id": {
-            "type": ["string", "null"]
-          },
+          "created_by.created_by_user_id": {},
           "created_by.updated_by_user_id": {
             "type": ["string", "null"]
           },
@@ -158,9 +223,7 @@
           "updated_by.last_name_first_name": {
             "type": ["string", "null"]
           },
-          "updated_by.created_by_user_id": {
-            "type": ["string", "null"]
-          },
+          "updated_by.created_by_user_id": {},
           "updated_by.updated_by_user_id": {
             "type": ["string", "null"]
           },
@@ -174,8 +237,7 @@
             "type": ["string", "null"]
           }
         },
-        "required": [
-        ]
+        "required": []
       }
     },
     "totalRecords": {
