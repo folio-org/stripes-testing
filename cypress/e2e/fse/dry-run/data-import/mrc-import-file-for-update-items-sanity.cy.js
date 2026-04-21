@@ -366,6 +366,7 @@ describe('Data Import', () => {
       'C343335 MARC file upload with the update of instance, holding, and items (folijet)',
       { tags: ['dryRun', 'folijet', 'C343335'] },
       () => {
+        cy.getUserToken(user.username, user.password);
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);

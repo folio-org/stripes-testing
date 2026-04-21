@@ -33,15 +33,15 @@ describe('Inventory', () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps(true);
-      cy.getLocations({ limit: 1 }).then((res) => {
-        fastAddNewRecordFormDetails.permanentLocationOption = `${res.name} (${res.code}) `;
-        fastAddNewRecordFormDetails.permanentLocationValue = res.name;
+      cy.getLocations({ limit: 1 }).then((location) => {
+        fastAddNewRecordFormDetails.permanentLocationOption = location.name;
+        fastAddNewRecordFormDetails.permanentLocationValue = location.name;
       });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => {
-        fastAddNewRecordFormDetails.materialType = res.name;
+      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
+        fastAddNewRecordFormDetails.materialType = materialType.name;
       });
-      cy.getLoanTypes({ limit: 1 }).then((res) => {
-        fastAddNewRecordFormDetails.permanentLoanType = res[0].name;
+      cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+        fastAddNewRecordFormDetails.permanentLoanType = loanTypes[0].name;
       });
       FastAdd.changeDefaultInstanceStatusViaApi('uncat');
 
