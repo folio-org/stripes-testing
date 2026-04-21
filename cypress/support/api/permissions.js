@@ -310,12 +310,13 @@ Cypress.Commands.add('getCapabilitySetIdViaApi', ({ type, resource, action }) =>
 });
 
 Cypress.Commands.add('updateRolesForUserApi', (userId, roleIds, ignoreErrors = false) => {
+  const rollesArray = Array.isArray(roleIds) ? roleIds : [roleIds];
   cy.okapiRequest({
     method: 'PUT',
     path: `roles/users/${userId}`,
     body: {
       userId,
-      roleIds: [...roleIds],
+      roleIds: rollesArray,
     },
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: !ignoreErrors,
