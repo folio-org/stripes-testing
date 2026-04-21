@@ -131,7 +131,7 @@ describe('MARC', () => {
             }).then((fieldResp) => {
               localFieldId = fieldResp.body.id;
 
-              // Create indicator 1 with code '\'
+              // Create indicator 1 code
               cy.createSpecificationFieldIndicator(localFieldId, {
                 order: 1,
                 label: `AT_${testCaseId}_Local_Indicator_1_${randomPostfix}`,
@@ -142,7 +142,7 @@ describe('MARC', () => {
                 });
               });
 
-              // Create indicator 2 with code '\'
+              // Create indicator 2 code
               cy.createSpecificationFieldIndicator(localFieldId, {
                 order: 2,
                 label: `AT_${testCaseId}_Local_Indicator_2_${randomPostfix}`,
