@@ -102,7 +102,7 @@ describe('Export Manager', () => {
         IntegrationViewForm.openIntegrationEditForm();
         IntegrationEditForm.verifySchedulingTime(testData.scheduledTimeFormatted);
 
-        Organizations.verifySchedulePeriodOptions();
+        IntegrationEditForm.verifySchedulePeriodOptions();
 
         now.set('minutes', now.minutes() + 2);
         IntegrationEditForm.updateScheduleOptions({

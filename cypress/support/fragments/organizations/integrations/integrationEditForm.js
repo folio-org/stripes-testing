@@ -18,6 +18,7 @@ const schedulingSection = Section({ id: 'scheduling' });
 
 const saveButton = Button('Save & close');
 const cancelButton = Button('Cancel');
+const schedulePeriodSelect = 'select[name$="schedulePeriod"]';
 
 const prefix = 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule';
 const schedulingFields = {
@@ -102,5 +103,18 @@ export default {
 
   verifySchedulePeriodValue(expectedValue) {
     cy.expect(schedulingFields.schedulePeriod.has({ value: expectedValue }));
+  },
+
+  verifySchedulePeriodOptions() {
+    const expectedOptions = ['Daily', 'Weekly', 'Hourly', 'Monthly'];
+    cy.get(schedulePeriodSelect).then(($select) => {
+      const actualOptions = [...$select[0].options].map((o) => o.text);
+      expectedOptions.forEach((option) => {
+        expect(actualOptions).to.include(option);
+      });
+      expect(
+        actualOptions.filter((o) => o !== '' && o !== 'Please select schedule period'),
+      ).to.have.lengthOf(expectedOptions.length);
+    });
   },
 };

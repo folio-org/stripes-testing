@@ -159,8 +159,9 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
-      SelectionList().select(fund.ledgerName),
     ]);
+    cy.wait(2000);
+    cy.do([SelectionList().filter(fund.ledgerName), SelectionList().select(fund.ledgerName)]);
     cy.wait(4000);
     cy.do([saveAndCloseButton.click()]);
     this.waitForFundDetailsLoading();
@@ -176,8 +177,9 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.open(),
-      SelectionList().select(fund.ledgerName),
     ]);
+    cy.wait(2000);
+    cy.do([SelectionList().filter(fund.ledgerName), SelectionList().select(fund.ledgerName)]);
   },
 
   newFund() {
@@ -207,6 +209,7 @@ export default {
   openAddLocationModal() {
     cy.do(locationSection.find(Button({ id: 'fund-locations' })).click());
     cy.expect(selectLocationsModal.exists());
+    cy.wait(1000);
   },
 
   clickActionsButtonInLocationsModal() {
@@ -1681,7 +1684,9 @@ export default {
       'Location status',
       'Location assignment status',
     ];
-    cy.expect(columns.map((col) => selectLocationsModal.find(MultiColumnListHeader(col)).exists()));
+    columns.forEach((col) => {
+      cy.get('[class*="modal-"]').find(`[role="columnheader"]:contains("${col}")`).should('exist');
+    });
   },
 
   verifySelectLocationsModalButtons: () => {

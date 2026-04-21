@@ -51,7 +51,9 @@ describe('Funds', () => {
   after(() => {
     cy.getAdminToken();
     Funds.getFundsViaApi({ query: `code="${defaultfund.code}"` }).then((body) => {
-      Funds.deleteFundViaApi(body.funds[0].id);
+      if (body.funds && body.funds[0]) {
+        Funds.deleteFundViaApi(body.funds[0].id);
+      }
     });
     NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       locationData.institutionId,
