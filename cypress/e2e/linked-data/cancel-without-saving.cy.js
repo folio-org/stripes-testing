@@ -8,7 +8,7 @@ import {
   LDE_ADVANCED_SEARCH_OPTIONS,
   LDE_SEARCH_OPTIONS,
   LDE_ADVANCED_SEARCH_CONDITIONS,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -20,7 +20,7 @@ import EditResource from '../../support/fragments/linked-data/editResource';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: cancel without saving', () => {
   const testData = {
