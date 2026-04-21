@@ -159,8 +159,9 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
-      SelectionList().select(fund.ledgerName),
     ]);
+    cy.wait(2000);
+    cy.do([SelectionList().filter(fund.ledgerName), SelectionList().select(fund.ledgerName)]);
     cy.wait(4000);
     cy.do([saveAndCloseButton.click()]);
     this.waitForFundDetailsLoading();
@@ -176,8 +177,9 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.open(),
-      SelectionList().select(fund.ledgerName),
     ]);
+    cy.wait(2000);
+    cy.do([SelectionList().filter(fund.ledgerName), SelectionList().select(fund.ledgerName)]);
   },
 
   newFund() {
@@ -207,6 +209,7 @@ export default {
   openAddLocationModal() {
     cy.do(locationSection.find(Button({ id: 'fund-locations' })).click());
     cy.expect(selectLocationsModal.exists());
+    cy.wait(1000);
   },
 
   clickActionsButtonInLocationsModal() {
@@ -1664,5 +1667,33 @@ export default {
     );
     cy.wait(500);
     cy.expect(tagsPane.absent());
+  },
+
+  verifySelectLocationsModalFilterAccordions: () => {
+    const filterAccordions = ['Institution', 'Campus', 'Library', 'Location assignment status'];
+    cy.expect(filterAccordions.map((name) => selectLocationsModal.find(Accordion(name)).exists()));
+  },
+
+  verifySelectLocationsModalColumns: () => {
+    const columns = [
+      'Name',
+      'Code',
+      'Institution',
+      'Campus',
+      'Library',
+      'Location status',
+      'Location assignment status',
+    ];
+    columns.forEach((col) => {
+      cy.get('[class*="modal-"]').find(`[role="columnheader"]:contains("${col}")`).should('exist');
+    });
+  },
+
+  verifySelectLocationsModalButtons: () => {
+    cy.expect([
+      selectLocationsModal.find(Button('Actions')).exists(),
+      selectLocationsModal.find(Button({ icon: 'times' })).exists(),
+      selectLocationsModal.find(selectLocationsModalSaveButton).exists(),
+    ]);
   },
 };
