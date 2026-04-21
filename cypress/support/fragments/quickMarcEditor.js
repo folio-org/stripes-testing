@@ -24,7 +24,9 @@ import {
   Link,
   Label,
   Popover,
+  Warning,
   not,
+  Icon,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -169,6 +171,14 @@ const linkHeadingsPopover = Popover({ content: including('Link headings') });
 const linkHeadingsPopoverButton = linkHeadingsPopover.find(Button());
 const linkHeadingsPopoverButtonHref =
   'https://docs.folio.org/docs/metadata/inventory/quickmarc/#linking-to-authority-records';
+const optimisticLockingBanner = Warning({
+  message:
+    'This record cannot be saved because it is not the most recent version.View latest version',
+});
+const optimisticLockingLink = optimisticLockingBanner.find(Button('View latest version'));
+const optimisticLockingLinkIcon = optimisticLockingBanner.find(
+  Icon({ className: including('externalLink') }),
+);
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -3689,6 +3699,27 @@ export default {
           expect(targetValue).to.equal('_blank');
           expect(targetHref).to.equal(linkText);
         }),
+    );
+  },
+
+  verifyOptimisticLockingBanner({ isShown = true } = {}) {
+    if (isShown) {
+      cy.expect([
+        optimisticLockingBanner.exists(),
+        optimisticLockingLink.has({ target: '_blank' }),
+        optimisticLockingLinkIcon.exists(),
+      ]);
+    } else cy.expect(optimisticLockingBanner.absent());
+  },
+
+  clickViewLatestVersionLink() {
+    cy.do(
+      optimisticLockingLink.perform((element) => {
+        if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+          element.removeAttribute('target');
+        }
+        element.click();
+      }),
     );
   },
 };
