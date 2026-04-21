@@ -36,6 +36,7 @@ import {
   INVOICE_POL_PAYMENT_STATUSES,
   BUDGET_STATUSES,
   ENCUMBRANCE_STATUSES,
+  BUDGET_DETAIL_FIELDS,
 } from '../../support/constants';
 import { BudgetDetails, TransactionDetails, Transactions } from '../../support/fragments/finance';
 
@@ -411,9 +412,10 @@ describe('Invoices', () => {
       Funds.selectPreviousBudgetDetails();
       BudgetDetails.waitLoading();
       BudgetDetails.checkBudgetDetails({
-        name: `${testData.fund.name}-${testData.fiscalYears.first.code}`,
-        fiscalYear: testData.fiscalYears.first.code,
-        status: BUDGET_STATUSES.CLOSED,
+        information: [
+          { key: BUDGET_DETAIL_FIELDS.BUDGET_NAME, value: testData.budget.name },
+          { key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.CLOSED },
+        ],
         summary: [{ key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' }],
       });
       Funds.viewTransactions();
