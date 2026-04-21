@@ -457,6 +457,54 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
+  getFormattedDateInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'numeric',
+      timeZone: timezone,
+      year: 'numeric',
+    }).format(new Date(date));
+  },
+
+  getFormattedTimeInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: timezone,
+    }).format(new Date(date));
+  },
+
+  getFormattedEndDateWithTimeInTimezone(date, timezone, locale = 'en-US') {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      month: 'numeric',
+      timeZone: timezone,
+      year: 'numeric',
+    }).format(new Date(date));
+  },
+
+  // Formats date and time for metadata display with tenant timezone and locale
+  getFormattedDateTimeInTimezoneForMetadata(date, timezone, locale = 'en-US') {
+    // For en-US use numeric (no leading zeros), for other locales use 2-digit
+    const isEnglishUS = locale === 'en-US';
+    const dayFormat = isEnglishUS ? 'numeric' : '2-digit';
+    const hourFormat = isEnglishUS ? 'numeric' : '2-digit';
+    const monthFormat = isEnglishUS ? 'numeric' : '2-digit';
+
+    return new Intl.DateTimeFormat(locale, {
+      day: dayFormat,
+      hour: hourFormat,
+      minute: '2-digit',
+      month: monthFormat,
+      timeZone: timezone,
+      year: 'numeric',
+    })
+      .format(new Date(date))
+      .replace(',', '');
+  },
+
   getFormattedEndDateWithTimUTC(date, noComma = false) {
     if (noComma) return moment.utc(date).format('M/D/YYYY h:mm A');
     return moment.utc(date).format('M/D/YYYY, h:mm A');
