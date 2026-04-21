@@ -38,9 +38,6 @@ import NewFieldMappingProfile from '../../../../support/fragments/settings/dataI
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import { SETTINGS_TABS } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
-import { Locations } from '../../../../support/fragments/settings/tenant/location-setup';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -54,6 +51,8 @@ describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
     const location = {};
+    const materialType = {};
+    const loanType = {};
     const mappingProfileIds = [];
     const actionProfileIds = [];
     // file names
@@ -144,9 +143,8 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C343335 autotestMappingItem${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          permanentLoanType: LOAN_TYPE_NAMES.EEB,
+          // permanentLoanType: LOAN_TYPE_NAMES.EEB,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -214,12 +212,14 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
-      ServicePoints.getOnlineServicePointViaApi().then((servicePoint) => {
-        Location.createViaApi(Location.getDefaultLocation(servicePoint.id)).then(
-          (locationResponse) => {
-            Object.assign(location, locationResponse);
-          },
-        );
+      cy.getLocations({ limit: 1 }).then((locationResponse) => {
+        Object.assign(location, locationResponse);
+      });
+      cy.getMaterialTypes({ limit: 1 }).then((materialTypeResponse) => {
+        Object.assign(materialType, materialTypeResponse);
+      });
+      cy.getLoanTypes({ limit: 1 }).then((loanTypeResponse) => {
+        Object.assign(loanType, loanTypeResponse);
       });
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
         marcBibMappingProfileForCreate,
@@ -324,7 +324,6 @@ describe('Data Import', () => {
           },
         );
       });
-      Locations.deleteViaApi(location);
     });
 
     const createInstanceMappingProfile = (profile) => {
@@ -351,13 +350,13 @@ describe('Data Import', () => {
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-      NewFieldMappingProfile.fillMaterialType(profile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${materialType.name}"`);
       NewFieldMappingProfile.addItemNotes(
         '"Nota"',
         '"Smith Family Foundation"',
         'Mark for all affected records',
       );
-      NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
+      NewFieldMappingProfile.fillPermanentLoanType(loanType.name);
       NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);

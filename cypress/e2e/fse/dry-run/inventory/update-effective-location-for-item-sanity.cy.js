@@ -37,8 +37,8 @@ describe('Inventory', () => {
           });
           cy.getLocations({ limit: 2 }).then((res) => {
             itemData.locationId = res.id;
-            const [, secondLocation] = Cypress.env('locations');
-            anotherPermanentLocation = secondLocation.name;
+            const locations = Cypress.env('locations');
+            anotherPermanentLocation = locations[1].name;
           });
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             itemData.holdingTypeId = res[0].id;

@@ -1,7 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   APPLICATION_NAMES,
-  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   INVOICE_STATUSES,
   PAYMENT_METHOD,
@@ -24,6 +23,7 @@ import NewFieldMappingProfile from '../../../../support/fragments/settings/dataI
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import BatchGroups from '../../../../support/fragments/settings/invoices/batchGroups';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -42,7 +42,6 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.MOSAIC,
       paymentMethod: PAYMENT_METHOD.CASH,
     };
@@ -60,6 +59,10 @@ describe('Data Import', () => {
     before('Create test user and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false });
+
+      BatchGroups.getBatchGroupsViaApi({ limit: 1 }).then((groups) => {
+        if (groups?.[0]) mappingProfile.batchGroup = `"${groups[0].name}"`;
+      });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {

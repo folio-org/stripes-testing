@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
           cy.getLocations({ limit: 1 }).then((locationData) => {
             locationId = locationData.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+          cy.getLoanTypes({ limit: 2 }).then((loanTypes) => {
             loanTypeId = loanTypes[0].id;
             loanTypeName = loanTypes[0].name;
           });

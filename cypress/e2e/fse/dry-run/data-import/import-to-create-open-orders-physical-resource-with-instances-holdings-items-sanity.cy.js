@@ -5,9 +5,6 @@ import {
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
-  LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
-  MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   RECORD_STATUSES,
@@ -46,6 +43,10 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let orderNumber;
     let instanceHrid;
+    let materialTypeName;
+    let locationName;
+    let locationUiName;
+    let loanTypeName;
     const instanceTitle = 'Quiet time.';
     const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
     const marcFileName = `C380474 autotestFileName${getRandomPostfix()}.mrc`;
@@ -64,8 +65,6 @@ describe('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
-          materialType: MATERIAL_TYPE_NAMES.CD,
-          locationName: `"${LOCATION_NAMES.CD_P}"`,
           locationQuantityPhysical: '"1"',
         },
         actionProfile: {
@@ -77,7 +76,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C380474 Create simple holdings for open order ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.CD_P}"`,
+          permanentLocation: '',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -88,8 +87,8 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C380474 Create simple item for open order ${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.CD}"`,
-          permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+          permanentLoanType: '',
+          materialType: '',
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
@@ -106,6 +105,22 @@ describe('Data Import', () => {
     before('Create user and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false });
+
+      cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        materialTypeName = res.name;
+        collectionOfMappingAndActionProfiles[0].mappingProfile.materialType = materialTypeName;
+        collectionOfMappingAndActionProfiles[2].mappingProfile.materialType = `"${materialTypeName}"`;
+      });
+      cy.getLocations({ limit: 1 }).then((res) => {
+        locationName = `${res.name} (${res.code})`;
+        locationUiName = res.name;
+        collectionOfMappingAndActionProfiles[0].mappingProfile.locationName = `"${locationName}"`;
+        collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation = `"${locationName}"`;
+      });
+      cy.getLoanTypes({ limit: 1 }).then((res) => {
+        loanTypeName = res[0].name;
+        collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType = loanTypeName;
+      });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
@@ -235,11 +250,11 @@ describe('Data Import', () => {
             instanceHrid = initialInstanceHrId;
           });
           InstanceRecordView.verifyHotlinkToPOL(polNumber);
-          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.CD_P_UI} >`]);
+          InstanceRecordView.verifyIsHoldingsCreated([`${locationUiName} >`]);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.CD_P_UI} >`);
+          InventoryInstance.openHoldingsAccordion(`${locationUiName} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.waitLoading();
           ItemRecordView.checkHotlinksToCreatedPOL(polNumber);
