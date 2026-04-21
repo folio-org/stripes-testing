@@ -22,6 +22,7 @@ export const ORDER_LINE_PAYMENT_STATUS = {
   ONGOING: 'Ongoing',
   PARTIALLY_PAID: 'Partially paid',
   PAYMENT_NOT_REQUIRED: 'Payment not required',
+  PENDING: 'Pending',
 };
 
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {

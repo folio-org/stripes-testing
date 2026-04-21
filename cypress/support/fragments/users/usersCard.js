@@ -660,7 +660,7 @@ export default {
   verifyUserRolesCounter(expectedCount) {
     cy.expect([
       userRolesAccordion.find(Spinner()).absent(),
-      userRolesAccordion.has({ counter: expectedCount }),
+      userRolesAccordion.has({ counter: `${expectedCount}` }),
     ]);
   },
 
@@ -824,6 +824,14 @@ export default {
       proxyUser.find(KeyValue('Notifications sent to')).has({ value: 'Proxy' }),
       proxyUser.find(KeyValue('Expiration date')).has({ value: 'No value set-' }),
     ]);
+  },
+
+  verifyProxyNameDisplayed(lastName) {
+    cy.expect(HTML(including(lastName)).exists());
+  },
+
+  verifyTextDisplayed(text) {
+    cy.expect(HTML(including(text)).exists());
   },
 
   checkKeyValue(label, value) {

@@ -142,7 +142,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
-              'No value set-',
+              'System, System user - mod-consortia-keycloak ',
               sharedSubjectType.memberLibraries,
               { actions: [] },
             );

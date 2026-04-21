@@ -155,7 +155,7 @@ describe('Finance', () => {
       { tags: ['extendedPath', 'thunderjet', 'C375980'] },
       () => {
         FinanceHelper.searchByName(fiscalYears.next.name);
-        const FiscalYearDetails = FiscalYears.selectFisacalYear(fiscalYears.next.name);
+        const FiscalYearDetails = FiscalYears.selectFiscalYear(fiscalYears.next.name);
         FiscalYearDetails.checkFiscalYearDetails({
           financialSummary: {
             information: [

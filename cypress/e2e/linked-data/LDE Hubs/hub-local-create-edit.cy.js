@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import NewHub from '../../../support/fragments/linked-data/newHubPage';
 import Marigold from '../../../support/fragments/linked-data/marigold';
-import { DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, MARIGOLD_ROLES } from '../../../support/constants';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +14,7 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 import LocalHubPreview from '../../../support/fragments/linked-data/localHubPreview';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('MG Hubs: Create and edit local hub', () => {
   const testData = {
@@ -26,13 +26,13 @@ describe('MG Hubs: Create and edit local hub', () => {
     roleIds: [],
   };
   const hubData = {
-    preferredType: '"http://bibfra.me/vocab/library/Title"',
+    preferredType: 'http://bibfra.me/vocab/library/Title',
     preferredTitle: `Test Preferred Title ${getRandomLetters(5)}`,
     preferredTitleUpdated: '_Updated',
     partNumber: '1',
     partName: 'Part Name',
     otherTitle: 'Other Title',
-    variantType: '"http://bibfra.me/vocab/library/VariantTitle"',
+    variantType: 'http://bibfra.me/vocab/library/VariantTitle',
     variantTitle: `Variant Title ${getRandomLetters(5)}`,
     variantPartNumber: '2',
     variantPartName: 'Variant Part Name',
@@ -169,24 +169,24 @@ describe('MG Hubs: Create and edit local hub', () => {
         hubData.hubId = id;
       });
       EditHubPage.verifyCreatorOfHub(testData.authorityHeading);
-      EditHubPage.verifyTitleInformation(
-        hubData.variantType,
-        hubData.variantTitle,
-        hubData.variantPartNumber,
-        hubData.variantPartName,
-        hubData.variantOtherTitle,
-        hubData.variantDate,
-        hubData.variantTitleType,
-        hubData.variantNote,
-        hubData.preferredType,
-        hubData.preferredTitle,
-        hubData.partNumber,
-        hubData.partName,
-        hubData.otherTitle,
-      );
+      EditHubPage.verifyTitleInformation({
+        type1: hubData.variantType,
+        varTitle: hubData.variantTitle,
+        varPartNumber: hubData.variantPartNumber,
+        varPartName: hubData.variantPartName,
+        varOtherTitle: hubData.variantOtherTitle,
+        varDate: hubData.variantDate,
+        varType: hubData.variantTitleType,
+        varNote: hubData.variantNote,
+        type2: hubData.preferredType,
+        prefTitle: hubData.preferredTitle,
+        partNumber: hubData.partNumber,
+        partName: hubData.partName,
+        otherTitle: hubData.otherTitle,
+      });
       EditHubPage.verifyLanguageCode(hubData.languageCode);
 
-      EditHubPage.updateTitle(hubData.preferredTitleUpdated);
+      EditHubPage.updatePreferredTitle(hubData.preferredTitleUpdated);
 
       EditHubPage.saveAndClose().then((id) => {
         hubData.hubId = id;

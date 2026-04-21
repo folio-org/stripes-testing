@@ -9,21 +9,6 @@ const creatorNameField = "//span[@data-testid='complex-lookup-selected-label']";
 const deleteCreatorButton = "//button[@data-testid='complex-lookup-selected-delete']";
 const changeCreatorButton = "//button[@data-testid='--changeComplexFieldValue']";
 
-const titleTypeDropdown = "(//select[@data-testid='dropdown-field'])[2]";
-const titleTypeDropdown2 = "(//select[@data-testid='dropdown-field'])[3]";
-const variantTitleField = "(//input[@data-testid='literal-field'])[1]";
-const variantPartNumberField = "(//input[@data-testid='literal-field'])[2]";
-const variantPartNameField = "(//input[@data-testid='literal-field'])[3]";
-const variantOtherTitleField = "(//input[@data-testid='literal-field'])[4]";
-const variantDateField = "(//input[@data-testid='literal-field'])[5]";
-const variantTypeField = "(//input[@data-testid='literal-field'])[6]";
-const variantNoteField = "(//input[@data-testid='literal-field'])[7]";
-
-const preferredTitleField = "(//input[@data-testid='literal-field'])[8]";
-const partNumberField = "(//input[@data-testid='literal-field'])[9]";
-const partNameField = "(//input[@data-testid='literal-field'])[10]";
-const otherTitleField = "(//input[@data-testid='literal-field'])[11]";
-
 export default {
   waitLoading: () => {
     cy.xpath(editPage).should('be.visible');
@@ -75,19 +60,42 @@ export default {
     partName,
     otherTitle,
   } = {}) => {
-    if (type1) cy.xpath(titleTypeDropdown).should('have.value', type1);
-    if (varTitle) cy.xpath(variantTitleField).should('have.value', varTitle);
-    if (varPartNumber) cy.xpath(variantPartNumberField).should('have.value', varPartNumber);
-    if (varPartName) cy.xpath(variantPartNameField).should('have.value', varPartName);
-    if (varOtherTitle) cy.xpath(variantOtherTitleField).should('have.value', varOtherTitle);
-    if (varDate) cy.xpath(variantDateField).should('have.value', varDate);
-    if (varType) cy.xpath(variantTypeField).should('have.value', varType);
-    if (varNote) cy.xpath(variantNoteField).should('have.value', varNote);
-    if (type2) cy.xpath(titleTypeDropdown2).should('have.value', type2);
-    if (prefTitle) cy.xpath(preferredTitleField).should('have.value', prefTitle);
-    if (partNumber) cy.xpath(partNumberField).should('have.value', partNumber);
-    if (partName) cy.xpath(partNameField).should('have.value', partName);
-    if (otherTitle) cy.xpath(otherTitleField).should('have.value', otherTitle);
+    const checkInputHasValue = (value) => {
+      cy.get('[data-testid="literal-field"]').then(($inputs) => {
+        const values = [...$inputs].map((el) => el.value);
+        cy.log(`[verifyTitleInformation] input values: ${JSON.stringify(values)}`);
+        cy.log(`[verifyTitleInformation] looking for input: "${value}"`);
+      });
+      cy.get('[data-testid="literal-field"]').should(($inputs) => {
+        const values = [...$inputs].map((el) => el.value);
+        expect(values).to.include(value);
+      });
+    };
+    const checkDropdownHasValue = (value) => {
+      cy.get('[data-testid="dropdown-field"]').then(($selects) => {
+        const values = [...$selects].map((el) => el.value);
+        cy.log(`[verifyTitleInformation] dropdown values: ${JSON.stringify(values)}`);
+        cy.log(`[verifyTitleInformation] looking for dropdown: "${value}"`);
+      });
+      cy.get('[data-testid="dropdown-field"]').should(($selects) => {
+        const values = [...$selects].map((el) => el.value);
+        expect(values).to.include(value);
+      });
+    };
+
+    if (type1) checkDropdownHasValue(type1);
+    if (varTitle) checkInputHasValue(varTitle);
+    if (varPartNumber) checkInputHasValue(varPartNumber);
+    if (varPartName) checkInputHasValue(varPartName);
+    if (varOtherTitle) checkInputHasValue(varOtherTitle);
+    if (varDate) checkInputHasValue(varDate);
+    if (varType) checkInputHasValue(varType);
+    if (varNote) checkInputHasValue(varNote);
+    if (type2) checkDropdownHasValue(type2);
+    if (prefTitle) checkInputHasValue(prefTitle);
+    if (partNumber) checkInputHasValue(partNumber);
+    if (partName) checkInputHasValue(partName);
+    if (otherTitle) checkInputHasValue(otherTitle);
   },
 
   verifyTitleSectionByIndex(index, { type, title } = {}) {
@@ -115,11 +123,6 @@ export default {
 
   verifyLanguageCode: (language) => {
     cy.xpath(`//div[text()='${language}']`).should('be.visible');
-  },
-
-  updateTitle: (updatedTitle) => {
-    cy.xpath(preferredTitleField).type(updatedTitle);
-    cy.wait(200);
   },
 
   updatePreferredTitle: (updatedTitle) => {

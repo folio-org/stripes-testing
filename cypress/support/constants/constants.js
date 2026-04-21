@@ -96,6 +96,12 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
+export const FUND_STATUSES = {
+  ACTIVE: 'Active',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -1477,9 +1483,9 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   OR: 'OR',
 };
 
-export const LDE_ROLES = {
+export const MARIGOLD_ROLES = {
   CATALOGER: 'Cataloger',
-  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
+  CATALOGER_MARIGOLD: 'Cataloger - Marigold',
 };
 
 export const AUTHORIZATION_ROLE_TYPES = {
@@ -1720,4 +1726,13 @@ export const USER_TYPES = {
   PATRON: 'Patron',
   SYSTEM: 'System',
   SHADOW: 'Shadow',
+};
+
+export const EDIT_RESOURCE_HEADINGS = {
+  EDIT_INSTANCE: 'Edit instance',
+  EDIT_WORK: 'Edit work',
+  NEW_WORK: 'New work',
+  NEW_INSTANCE: 'New instance',
+  DUPLICATE_WORK: 'Duplicate work',
+  DUPLICATE_INSTANCE: 'Duplicate instance',
 };

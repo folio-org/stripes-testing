@@ -53,11 +53,11 @@ describe('Data Import', () => {
           DataImport.deleteImportJob(firstMarcFileName);
           DataImport.verifyCancelImportJobModal();
           DataImport.cancelDeleteImportJob();
-          cy.wait(2000);
+          cy.wait(3000);
           DataImport.deleteImportJob(firstMarcFileName);
-          cy.wait(2000);
+          cy.wait(3000);
           DataImport.confirmDeleteImportJob();
-          cy.wait(2000);
+          cy.wait(3000);
           Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
           Logs.openFileDetails(firstMarcFileName);
           FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);

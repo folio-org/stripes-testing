@@ -2,11 +2,13 @@
 import { validate } from 'jsonschema';
 import budgetsSchema from '../../../jsonSchemas/budgetsSchema';
 import fundsSchema from '../../../jsonSchemas/fundsSchema';
+import holdingsSchema from '../../../jsonSchemas/holdingsSchema';
+import instancesSchema from '../../../jsonSchemas/instancesSchema';
 import invoiceLinesSchema from '../../../jsonSchemas/invoiceLinesSchema';
+import organizationsSchema from '../../../jsonSchemas/organizationsSchema';
 import purchaseOrderLinesSchema from '../../../jsonSchemas/purchaseOrderLinesSchema';
 import purchaseOrderLinesWithTitlesSchema from '../../../jsonSchemas/purchaseOrderLinesWithTitlesSchema';
 import transactionsSchema from '../../../jsonSchemas/transactionsSchema';
-import organizationsSchema from '../../../jsonSchemas/organizationsSchema';
 import voucherLinesWithFundSchema from '../../../jsonSchemas/voucherLinesWithFundSchema';
 import voucherLinesWithInvoiceFundOrganizationSchema from '../../../jsonSchemas/voucherLinesWithInvoiceFundOrganizationSchema';
 import vouchersSchema from '../../../jsonSchemas/vouchersSchema';
@@ -17,7 +19,6 @@ import Users from '../../../support/fragments/users/users';
 describe('Lists', () => {
   describe('Query Builder API', () => {
     let version;
-    let typeData;
     let userData = {};
     let recordTypeId;
     before('Get version', () => {
@@ -27,32 +28,31 @@ describe('Lists', () => {
       });
     });
 
-    const getValues = (fieldName, labelName) => {
-      const entityTypeId = typeData.columns.find((column) => column.name === fieldName).source
-        .entityTypeId;
-      return Lists.getEntityTypeColumnsViaApi(entityTypeId, labelName).then((body) => {
+    const getValues = (labelName) => {
+      return Lists.getEntityTypeFieldValuesViaApi(recordTypeId, labelName).then((body) => {
         return body.content;
       });
     };
 
-    const getAllValues = (fieldName, labelName) => {
-      return getValues(fieldName, labelName).then((items) => {
+    const getAllValues = (labelName) => {
+      return getValues(labelName).then((items) => {
         const values = items.map((item) => item.value);
         const labels = items.map((item) => item.label);
         return cy.wrap({ values, labels });
       });
     };
 
-    // const getFirstValue = (fieldName, labelName) => {
-    //   return getValues(fieldName, labelName).then((items) => {
-    //     const values = items.map((item) => item.value);
-    //     const labels = items.map((item) => item.label);
-    //     return cy.wrap({ values: values[0], labels: labels[0] });
-    //   });
-    // };
+    const getFirstValue = (labelName) => {
+      return getValues(labelName).then((content) => {
+        const value = content[0].value;
+        const label = content[0].label;
+        return cy.wrap({ value, label });
+      });
+    };
 
-    const getFilteredValues = (fieldName, labelName, [labels]) => {
-      return getValues(fieldName, labelName).then((content) => {
+
+    const getFilteredValues = (labelName, [labels]) => {
+      return getValues(labelName).then((content) => {
         const filteredValues = content
           .filter((item) => labels.includes(item.label))
           .map((item) => item.value);
@@ -71,7 +71,7 @@ describe('Lists', () => {
           Lists.getQueryViaApi(createdQuery.queryId, {
             includeResults: true,
             offset: 0,
-            limit: 10,
+            limit: 20,
           }).then((queryResponse) => {
             expect(queryResponse.status).to.eq(200);
             const result = validate(queryResponse.body, schema, { base: 'http://example.com/' });
@@ -85,6 +85,217 @@ describe('Lists', () => {
       });
     };
 
+    describe('Holdings', () => {
+      before('Create test user', () => {
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.listsEdit.gui,
+          Permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          userData = userProperties;
+          cy.getUserToken(userData.username, userData.password);
+        });
+        Lists.getEntityTypeIdByNameViaApi('Holdings')
+          .then((typeId) => {
+            recordTypeId = typeId;
+          });
+      });
+
+      after('Delete test user', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(userData.userId);
+      });
+
+      it('C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446063'] },
+        () => {
+          const fqlQuery = { 'holdings.discovery_suppress': { $eq: 'true' } };
+
+          cy.wrap(true).then(() => {
+            validateResponse(fqlQuery, holdingsSchema).then((body) => {
+              body.content.forEach((item) => {
+                expect(item['holdings.discovery_suppress']).to.be.equal('true');
+              });
+            });
+          });
+        });
+
+      it('C446064 Search holdings in the Query Builder using "Holdings permanent location name" field (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446064'] },
+        () => {
+          let fqlQuery = {};
+
+          getFilteredValues('permanent_location.name', ['Main Library'])
+            .then(({ values }) => {
+              fqlQuery = {
+                'permanent_location.name': {
+                  $eq: values[0],
+                },
+              };
+            })
+            .then(() => {
+              validateResponse(fqlQuery, holdingsSchema).then((body) => {
+                body.content.forEach((item) => {
+                  if (item['permanent_location.name']) {
+                    expect(['Main Library'].includes(item['permanent_location.name'])).to.be.equal(true);
+                  }
+                });
+              });
+            });
+        });
+
+      it('C446065 Search holdings in the Query Builder using "Holdings effective library — Code" field with "IN" operator (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446065'] },
+        () => {
+          let fqlQuery = {};
+          let testLabel;
+          getFirstValue('effective_library.code')
+            .then(({ value, label }) => {
+              testLabel = label;
+              fqlQuery = {
+                'effective_library.code': {
+                  $in: [value],
+                },
+              };
+            })
+            .then(() => {
+              validateResponse(fqlQuery, holdingsSchema).then((body) => {
+                body.content.forEach((item) => {
+                  if (item['effective_library.code']) {
+                    expect([testLabel].includes(item['effective_library.code'])).to.be.equal(true);
+                  }
+                });
+              });
+            });
+        });
+    });
+
+    describe('Instances', () => {
+      before('Create test user', () => {
+        cy.getAdminToken();
+        cy.createTempUser([
+          Permissions.listsEdit.gui,
+          Permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          userData = userProperties;
+          cy.getUserToken(userData.username, userData.password);
+        });
+        Lists.getEntityTypeIdByNameViaApi('Instances')
+          .then((typeId) => {
+            recordTypeId = typeId;
+          });
+      });
+
+      after('Delete test user', () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(userData.userId);
+      });
+
+      it(
+        'C446018 Search instances in the Query Builder using "Instance — Created date" field (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446018'] },
+        () => {
+          const fqlQuery = { 'instance.created_at': { $gt: '2020-01-01T00:00:00.000' } };
+
+          cy.wrap(true).then(() => {
+            validateResponse(fqlQuery, instancesSchema).then((body) => {
+              body.content.forEach((item) => {
+                expect(new Date(item['instance.created_at'])).to.be.greaterThan(
+                  new Date('2020-01-01T00:00:00.000'),
+                );
+              });
+            });
+          });
+        },
+      );
+
+      it(
+        'C446020 Search instances in the Query Builder using "Instance — Suppress from discovery" field (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446020'] },
+        () => {
+          const fqlQuery = { 'instance.discovery_suppress': { $eq: 'true' } };
+
+          cy.wrap(true).then(() => {
+            validateResponse(fqlQuery, instancesSchema).then((body) => {
+              body.content.forEach((item) => {
+                expect(item['instance.discovery_suppress']).to.be.equal('true');
+              });
+            });
+          });
+        },
+      );
+
+      it(
+        'C451491 Search instances in the Query Builder using "Instance — Source" field (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C451491'] },
+        () => {
+          const fqlQuery = { 'instance.source': { $in: ['FOLIO', 'MARC'] } };
+
+          cy.wrap(true).then(() => {
+            validateResponse(fqlQuery, instancesSchema).then((body) => {
+              body.content.forEach((item) => {
+                expect(
+                  ['FOLIO', 'MARC'].includes(item['instance.source']),
+                ).to.be.equal(true);
+              });
+            });
+          });
+        },
+      );
+
+      it(
+        'C451526 Search instances in the Query Builder using "Instance status — Term" field (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C451526'] },
+        () => {
+          let fqlQuery = {};
+
+          getFilteredValues('inst_stat.name', ['Other'])
+            .then(({ values }) => {
+              fqlQuery = {
+                'inst_stat.name': {
+                  $ne: values[0],
+                },
+              };
+            })
+            .then(() => {
+              validateResponse(fqlQuery, instancesSchema).then((body) => {
+                body.content.forEach((item) => {
+                  if (item['inst_stat.name']) {
+                    expect(['Other'].includes(item['inst_stat.name'])).to.be.equal(false);
+                  }
+                });
+              });
+            });
+        },
+      );
+
+      it(
+        'C451527 Search instances in the Query Builder using "Instance — Mode of issuance" field (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C451527'] },
+        () => {
+          let fqlQuery = {};
+
+          getFilteredValues('instance.mode_of_issuance_name', ['unspecified'])
+            .then(({ values }) => {
+              fqlQuery = {
+                'instance.mode_of_issuance_name': {
+                  $ne: values[0],
+                },
+              };
+            })
+            .then(() => {
+              validateResponse(fqlQuery, instancesSchema).then((body) => {
+                body.content.forEach((item) => {
+                  if (item['instance.mode_of_issuance_name']) {
+                    expect(['unspecified'].includes(item['instance.mode_of_issuance_name'])).to.be.equal(false);
+                  }
+                });
+              });
+            });
+        },
+      );
+    });
+
     describe('Organizations', () => {
       before('Create test user', () => {
         cy.getAdminToken();
@@ -95,14 +306,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Organizations')
+        Lists.getEntityTypeIdByNameViaApi('Organizations')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -223,14 +429,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Purchase order lines with titles')
+        Lists.getEntityTypeIdByNameViaApi('Purchase order lines')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -243,12 +444,12 @@ describe('Lists', () => {
         'C436901 Search purchase order lines in the Query Builder using "PO — Order type" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C436901'] },
         () => {
-          const fqlQuery = { 'purchase_order.order_type': { $eq: 'One-Time' } };
+          const fqlQuery = { 'po.order_type': { $eq: 'One-Time' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['purchase_order.order_type']).to.be.equal('One-Time');
+                expect(item['po.order_type']).to.be.equal('One-Time');
               });
             });
           });
@@ -259,12 +460,12 @@ describe('Lists', () => {
         'C440056 Search purchase order lines in the Query Builder using "PO — Approved" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C440056'] },
         () => {
-          const fqlQuery = { 'purchase_order.approved': { $eq: 'true' } };
+          const fqlQuery = { 'po.approved': { $eq: 'true' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['purchase_order.approved']).to.be.equal('true');
+                expect(item['po.approved']).to.be.equal('true');
               });
             });
           });
@@ -336,12 +537,12 @@ describe('Lists', () => {
         'C442846 Search purchase order lines in the Query Builder using "PO — PO number" (corsair)',
         { tags: ['criticalPath', 'corsair', 'C442846'] },
         () => {
-          const fqlQuery = { 'purchase_order.po_number': { $contains: '1' } };
+          const fqlQuery = { 'po.po_number': { $contains: '1' } };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(item['purchase_order.po_number'].includes('1')).to.be.equal(true);
+                expect(item['po.po_number'].includes('1')).to.be.equal(true);
               });
             });
           });
@@ -370,18 +571,18 @@ describe('Lists', () => {
         () => {
           const fqlQuery = {
             $and: [
-              { 'purchase_order.updated_at': { $gt: '2020-01-01T00:00:00.000' } },
-              { 'purchase_order.updated_at': { $lt: '2040-01-01T00:00:00.000' } },
+              { 'po.updated_at': { $gt: '2020-01-01T00:00:00.000' } },
+              { 'po.updated_at': { $lt: '2040-01-01T00:00:00.000' } },
             ],
           };
 
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, purchaseOrderLinesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(new Date(item['purchase_order.updated_at'])).to.be.greaterThan(
+                expect(new Date(item['po.updated_at'])).to.be.greaterThan(
                   new Date('2020-01-01T00:00:00.000'),
                 );
-                expect(new Date(item['purchase_order.updated_at'])).to.be.lessThan(
+                expect(new Date(item['po.updated_at'])).to.be.lessThan(
                   new Date('2040-01-01T00:00:00.000'),
                 );
               });
@@ -394,14 +595,9 @@ describe('Lists', () => {
     describe('Purchase order lines with titles', () => {
       before('Create test user', () => {
         cy.getAdminToken();
-        Lists.getTypeIdByNameViaApi('Purchase order lines with titles')
+        Lists.getEntityTypeIdByNameViaApi('Purchase order lines with titles')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -495,14 +691,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Vouchers')
+        Lists.getEntityTypeIdByNameViaApi('Vouchers')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -549,7 +740,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('voucher.acquisition_units', 'name', ['main'])
+          getFilteredValues('voucher.acquisition_units', ['main'])
             .then(({ values }) => {
               const obj = {
                 'voucher.acquisition_units': {
@@ -587,14 +778,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Invoice lines')
+        Lists.getEntityTypeIdByNameViaApi('Invoice lines')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -685,7 +871,7 @@ describe('Lists', () => {
           const fqlQuery = {
             $and: [{ 'invoice.source': { $in: ['API', 'EDI'] } }],
           };
-          getAllValues('invoice.vendor_name', 'name')
+          getAllValues('invoice.vendor_name')
             .then(({ values }) => {
               const obj = {
                 'invoice.vendor_name': {
@@ -695,7 +881,7 @@ describe('Lists', () => {
               fqlQuery.$and.push(obj);
             })
             .then(() => {
-              getFilteredValues('invoice.batch_group', 'batch_group', ['Amherst (AC)', 'FOLIO'])
+              getFilteredValues('invoice.batch_group', ['Amherst (AC)', 'FOLIO'])
                 .then(({ values }) => {
                   const obj = {
                     'invoice.batch_group': {
@@ -729,7 +915,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('invoice.acquisition_unit', 'name', ['main'])
+          getFilteredValues('invoice.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'invoice.acquisition_unit': {
@@ -766,14 +952,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Voucher lines with fund')
+        Lists.getEntityTypeIdByNameViaApi('Voucher lines with fund')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -869,7 +1050,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('fund.acquisition_unit', 'name', ['main'])
+          getFilteredValues('fund.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'fund.acquisition_unit': {
@@ -879,7 +1060,7 @@ describe('Lists', () => {
               fqlQuery.$and.push(obj);
             })
             .then(() => {
-              getFilteredValues('voucher.batch_group', 'batch_group', ['Amherst (AC)', 'FOLIO'])
+              getFilteredValues('voucher.batch_group', ['Amherst (AC)', 'FOLIO'])
                 .then(({ values }) => {
                   const obj = {
                     'voucher.batch_group': {
@@ -947,14 +1128,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Voucher lines with invoice, fund, organization')
+        Lists.getEntityTypeIdByNameViaApi('Voucher lines with invoice, fund, organization')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -1086,7 +1262,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('fund.acquisition_unit', 'name', ['main'])
+          getFilteredValues('fund.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'fund.acquisition_unit': {
@@ -1124,14 +1300,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Transactions')
+        Lists.getEntityTypeIdByNameViaApi('Transactions')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -1148,7 +1319,7 @@ describe('Lists', () => {
             $and: [{ 'from_fund.updated_date': { $gt: '2020-01-01T00:00:00.000' } }],
           };
 
-          getFilteredValues('fiscal_year.acquisition_unit', 'name', ['main'])
+          getFilteredValues('fiscal_year.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'fiscal_year.acquisition_unit': {
@@ -1231,7 +1402,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('to_fund.acquisition_unit', 'name', ['main'])
+          getFilteredValues('to_fund.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'to_fund.acquisition_unit': {
@@ -1289,7 +1460,7 @@ describe('Lists', () => {
             ],
           };
 
-          getFilteredValues('from_fund.acquisition_unit', 'name', ['main'])
+          getFilteredValues('from_fund.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'from_fund.acquisition_unit': {
@@ -1325,14 +1496,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Fund with ledger')
+        Lists.getEntityTypeIdByNameViaApi('Fund with ledger')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -1431,7 +1597,7 @@ describe('Lists', () => {
             $and: [{ 'fund.fund_status': { $eq: 'Active' } }],
           };
 
-          getAllValues('ledger.fiscal_year_one', 'name')
+          getAllValues('ledger.fiscal_year_one')
             .then(({ values }) => {
               const obj = {
                 'ledger.fiscal_year_one': {
@@ -1441,7 +1607,7 @@ describe('Lists', () => {
               fqlQuery.$and.push(obj);
             })
             .then(() => {
-              getFilteredValues('fund_type.name', 'name', ['Books', 'Audio'])
+              getFilteredValues('fund_type.name', ['Books', 'Audio'])
                 .then(({ values }) => {
                   const obj = {
                     'fund_type.name': {
@@ -1474,7 +1640,7 @@ describe('Lists', () => {
             $and: [{ 'fund.donor_organizations': { $empty: true } }],
           };
 
-          getFilteredValues('fund.acquisition_unit', 'name', ['main'])
+          getFilteredValues('fund.acquisition_unit', ['main'])
             .then(({ values }) => {
               const obj = {
                 'fund.acquisition_unit': {
@@ -1484,7 +1650,7 @@ describe('Lists', () => {
               fqlQuery.$and.push(obj);
             })
             .then(() => {
-              getAllValues('fund.allocated_from', 'allocated_from')
+              getAllValues('fund.allocated_from')
                 .then(({ values }) => {
                   const obj = {
                     'fund.allocated_from': {
@@ -1516,14 +1682,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getTypeIdByNameViaApi('Budgets')
+        Lists.getEntityTypeIdByNameViaApi('Budgets')
           .then((typeId) => {
             recordTypeId = typeId;
-          })
-          .then(() => {
-            Lists.getTypeByIdViaApi(recordTypeId).then((typeResponse) => {
-              typeData = typeResponse.body;
-            });
           });
       });
 
@@ -1544,7 +1705,7 @@ describe('Lists', () => {
             ],
           };
 
-          getAllValues('fund.fund.acquisition_unit', 'name')
+          getAllValues('fund.fund.acquisition_unit')
             .then(({ values }) => {
               const obj = {
                 'fund.fund.acquisition_unit': {
@@ -1609,7 +1770,7 @@ describe('Lists', () => {
             ],
           };
 
-          getAllValues('fund.ledger.fiscal_year_one', 'name')
+          getAllValues('fund.ledger.fiscal_year_one')
             .then(({ values }) => {
               const obj = {
                 'fund.ledger.fiscal_year_one': {
@@ -1668,7 +1829,7 @@ describe('Lists', () => {
             ],
           };
 
-          getAllValues('fund.fund.allocated_to', 'allocated_to')
+          getAllValues('fund.fund.allocated_to')
             .then(({ values }) => {
               const obj = {
                 'fund.fund.allocated_to': {
@@ -1701,7 +1862,7 @@ describe('Lists', () => {
             ],
           };
 
-          getAllValues('fiscal_year.name', 'name')
+          getAllValues('fiscal_year.name')
             .then(({ values }) => {
               const obj = {
                 'fiscal_year.name': {
