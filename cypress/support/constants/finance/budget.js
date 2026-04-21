@@ -28,3 +28,10 @@ export const EXPORT_BUDGET_FIELDS = {
   CASH_BALANCE: 'Cash balance',
   AVAILABLE: 'Available',
 };
+
+export const BUDGET_DETAIL_FIELDS = {
+  ALLOWABLE_ENCUMBRANCE: 'Allowable encumbrance',
+  ALLOWABLE_EXPENDITURE: 'Allowable expenditure',
+  BUDGET_NAME: 'Name',
+  BUDGET_STATUS: 'Status',
+};
