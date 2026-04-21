@@ -31,6 +31,7 @@ import {
   TextArea,
   TextField,
   ValueChipRoot,
+  matching,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -88,6 +89,7 @@ const selectRolesModal = Modal('Select user roles');
 const roleAssignmentFilter = selectRolesModal.find(
   Accordion({ id: including('Role assigment status') }),
 );
+const selectAllCheckbox = Checkbox({ name: 'selected-selectAll' });
 const rolesPane = selectRolesModal.find(Pane('User roles'));
 const unassignAllRolesModal = Modal('Unassign all user roles');
 const yesButton = Button('Yes');
@@ -163,6 +165,10 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 });
 
 export default {
+  roleAssignmentFilterOptions: {
+    ASSIGNED: 'Assigned',
+    UNASSIGNED: 'Unassigned',
+  },
   addServicePointsViaApi,
 
   openEdit() {
@@ -433,11 +439,7 @@ export default {
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
     cy.do(searchButton.click());
-    cy.do(
-      Modal({ id: 'permissions-modal' })
-        .find(Checkbox({ name: 'selected-selectAll' }))
-        .click(),
-    );
+    cy.do(Modal({ id: 'permissions-modal' }).find(selectAllCheckbox).click());
     cy.wait(2000);
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
@@ -1162,25 +1164,90 @@ export default {
 
   verifySelectRolesModal() {
     cy.expect([
-      selectRolesModal.find(userSearch).exists(),
+      selectRolesModal.find(userSearch).has({ value: '' }),
       selectRolesModal.find(searchButton).has({ disabled: true }),
       selectRolesModal.find(saveAndCloseBtn).exists(),
       selectRolesModal.find(cancelButton).exists(),
+      selectRolesModal.find(resetAllButton).exists(),
       rolesPane.exists(),
       roleAssignmentFilter.exists(),
+      selectRolesModal.has({ footer: including('Total selected:') }),
     ]);
   },
 
-  selectRoleInModal(roleName, isSelected = true) {
-    const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
-      Checkbox(),
+  checkRolesSelectedCounterInModal(selectedCount) {
+    cy.expect(
+      selectRolesModal.has({
+        footer: matching(new RegExp(`Total selected: ${selectedCount}Save`)),
+      }),
     );
+  },
+
+  checkRolesCountInModal(expectedCOunt) {
+    cy.expect(selectRolesModal.has({ numberOfRows: expectedCOunt }));
+  },
+
+  searchRoleInModal(roleName) {
     cy.do([
       selectRolesModal.find(userSearch).fillIn(roleName),
       selectRolesModal.find(searchButton).click(),
-      targetCheckbox.click(),
     ]);
+  },
+
+  verifyRoleInModal(roleName, { isShown = true, isChecked } = {}) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    if (isShown) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+    if ([true, false].includes(isChecked)) {
+      const expectedStatusText = isChecked
+        ? this.roleAssignmentFilterOptions.ASSIGNED
+        : this.roleAssignmentFilterOptions.UNASSIGNED;
+      cy.expect([
+        targetRow.find(Checkbox()).has({ checked: isChecked }),
+        targetRow.find(MultiColumnListCell(expectedStatusText)).exists(),
+      ]);
+    }
+  },
+
+  verifyRoleAssignmentFilterOptionInModal(option, { isChecked = false } = {}) {
+    const targetOption = roleAssignmentFilter.find(Checkbox(option));
+    cy.expect(targetOption.has({ checked: isChecked }));
+  },
+
+  selectRoleAssignmentFilterOptionInModal(option, { isChecked = true } = {}) {
+    const targetOption = roleAssignmentFilter.find(Checkbox(option));
+    cy.do(targetOption.click());
+    this.verifyRoleAssignmentFilterOptionInModal(option, { isChecked });
+  },
+
+  selectRoleInModal(roleName, isSelected = true, { searchRole = true } = {}) {
+    const targetCheckbox = selectRolesModal
+      .find(
+        MultiColumnListRow({
+          innerText: matching(new RegExp(`^${roleName}\\n`)),
+          isContainer: false,
+        }),
+      )
+      .find(Checkbox());
+    if (searchRole) this.searchRoleInModal(roleName);
+    cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifySelectAllCheckboxInRolesModal({ isChecked = false } = {}) {
+    const selectAllCheckboxInModal = selectRolesModal.find(selectAllCheckbox);
+    cy.expect(selectAllCheckboxInModal.has({ checked: isChecked }));
+  },
+
+  selectAllRolesInRolesModal({ isChecked = true } = {}) {
+    const selectAllCheckboxInModal = selectRolesModal.find(selectAllCheckbox);
+    cy.do(selectAllCheckboxInModal.click());
+    if (typeof isChecked === 'boolean') this.verifySelectAllCheckboxInRolesModal({ isChecked });
   },
 
   saveAndCloseRolesModal() {
