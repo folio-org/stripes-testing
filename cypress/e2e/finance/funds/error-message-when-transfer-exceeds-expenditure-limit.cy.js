@@ -1,3 +1,4 @@
+import { FUNDING_INFORMATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   Budgets,
@@ -9,6 +10,7 @@ import {
 import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import States from '../../../support/fragments/finance/states';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Finance', () => {
@@ -75,7 +77,7 @@ describe('Finance', () => {
         Funds.selectFund(fundA.name);
         const BudgetDetails = FundDetails.openCurrentBudgetDetails();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: 'Net transfers', value: '$0.00' }],
+          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
         });
 
         const AddTransferModal = BudgetDetails.openAddTransferModal();
@@ -93,14 +95,14 @@ describe('Finance', () => {
           expectError: true,
         });
         AddTransferModal.verifyModalView();
-        InteractorsTools.checkCalloutContainsMessage(
-          `could not be transferred to the budget ${budgetA.name} because it exceeds the allowable expenditure limit for ${budgetB.name} and ledger fund restrictions are active`,
+        InteractorsTools.checkCalloutMessage(
+          States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
           'error',
         );
 
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: 'Net transfers', value: '$0.00' }],
+          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
         });
       },
     );

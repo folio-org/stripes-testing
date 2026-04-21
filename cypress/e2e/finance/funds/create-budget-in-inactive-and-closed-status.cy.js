@@ -1,4 +1,8 @@
-import { BUDGET_STATUSES } from '../../../support/constants';
+import {
+  BUDGET_DETAIL_FIELDS,
+  BUDGET_STATUSES,
+  FUNDING_INFORMATION_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   BudgetDetails,
@@ -136,10 +140,12 @@ describe('Finance', () => {
         AddBudgetModal.clearEncumbranceField();
         AddBudgetModal.clickSaveButton();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: 'Total allocated', value: `$${allocatedAmount}.00` }],
+          summary: [
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: `$${allocatedAmount}.00` },
+          ],
           information: [
-            { key: 'Status', value: BUDGET_STATUSES.CLOSED },
-            { key: 'Allowable encumbrance', value: '-' },
+            { key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.CLOSED },
+            { key: BUDGET_DETAIL_FIELDS.ALLOWABLE_ENCUMBRANCE, value: '-' },
           ],
         });
 
@@ -152,10 +158,10 @@ describe('Finance', () => {
         });
         AddBudgetModal.clickSaveButton();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: 'Total allocated', value: '$0.00' }],
+          summary: [{ key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: '$0.00' }],
           information: [
-            { key: 'Status', value: BUDGET_STATUSES.INACTIVE },
-            { key: 'Allowable encumbrance', value: '0' },
+            { key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.INACTIVE },
+            { key: BUDGET_DETAIL_FIELDS.ALLOWABLE_ENCUMBRANCE, value: '0' },
           ],
         });
 

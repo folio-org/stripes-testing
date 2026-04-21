@@ -138,6 +138,10 @@ export default {
     cy.expect(addTransferModal.find(Button(buttonSelector)).exists());
   },
 
+  verifySwapButtonExists() {
+    this.verifyButtonExists({ icon: 'replace' });
+  },
+
   verifySelectionFieldValue(name, expectedValue) {
     const selection = addTransferModal.find(Selection({ name }));
     if (expectedValue) {
@@ -181,5 +185,9 @@ export default {
 
   clearSelectionField(fieldName) {
     cy.do([Selection({ name: fieldName }).open(), SelectionList().select('')]);
+  },
+
+  selectBlankOptionInToField() {
+    this.clearSelectionField('toFundId');
   },
 };

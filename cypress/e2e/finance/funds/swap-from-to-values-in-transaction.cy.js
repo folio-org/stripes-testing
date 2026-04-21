@@ -1,3 +1,10 @@
+import {
+  BUDGET_DETAIL_FIELDS,
+  BUDGET_STATUSES,
+  FUNDING_INFORMATION_NAMES,
+  TRANSACTION_DETAIL_FIELDS,
+  TRANSACTION_TYPES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   BudgetDetails,
@@ -97,19 +104,19 @@ describe('Finance', () => {
         FundDetails.openCurrentBudgetDetails();
         BudgetDetails.waitLoading();
         BudgetDetails.checkBudgetDetails({
-          information: [{ key: 'Status', value: 'Active' }],
+          information: [{ key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.ACTIVE }],
         });
 
         BudgetDetails.openAddTransferModal();
         AddTransferModal.verifyModalView({ header: TRANSFER_ACTIONS.TRANSFER });
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundA.name);
-        AddTransferModal.verifyButtonExists({ icon: 'replace' });
+        AddTransferModal.verifySwapButtonExists();
 
         AddTransferModal.clickSwapButton();
         AddTransferModal.verifyFromFieldValue(fundA.name);
         AddTransferModal.verifyToFieldValue('');
-        AddTransferModal.verifyButtonExists({ icon: 'replace' });
+        AddTransferModal.verifySwapButtonExists();
 
         AddTransferModal.fillNegativeAmount(negativeAmount);
         AddTransferModal.expectError('Amount must be a positive number');
@@ -146,28 +153,28 @@ describe('Finance', () => {
         AddTransferModal.clickConfirmButton({ transferCreated: true });
         BudgetDetails.checkBudgetDetails({
           summary: [
-            { key: 'Net transfers', value: `$${transferAmount}.00` },
+            { key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: `$${transferAmount}.00` },
             {
-              key: 'Total funding',
+              key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING,
               value: `$${Number(budgetA.allocated) + Number(transferAmount)}.00`,
             },
           ],
         });
 
         BudgetDetails.clickViewTransactionsLink();
-        Transactions.selectTransaction('Transfer');
+        Transactions.selectTransaction(TRANSACTION_TYPES.TRANSFER);
         TransactionDetails.waitLoading();
         TransactionDetails.checkTransactionDetails({
           information: [
-            { key: 'Fiscal year', value: fiscalYear.code },
-            { key: 'Amount', value: `$${transferAmount}.00` },
-            { key: 'Source', value: 'User' },
-            { key: 'Type', value: 'Transfer' },
-            { key: 'From', value: fundB.name },
-            { key: 'To', value: fundA.name },
-            { key: 'Expense class', value: '-' },
-            { key: 'Tags', value: existingTag },
-            { key: 'Description', value: transactionDescription },
+            { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: fiscalYear.code },
+            { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `$${transferAmount}.00` },
+            { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: 'User' },
+            { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.TRANSFER },
+            { key: TRANSACTION_DETAIL_FIELDS.FROM, value: fundB.name },
+            { key: TRANSACTION_DETAIL_FIELDS.TO, value: fundA.name },
+            { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: '-' },
+            { key: TRANSACTION_DETAIL_FIELDS.TAGS, value: existingTag },
+            { key: TRANSACTION_DETAIL_FIELDS.DESCRIPTION, value: transactionDescription },
           ],
         });
         TransactionDetails.closeTransactionDetails();
@@ -181,8 +188,11 @@ describe('Finance', () => {
         BudgetDetails.waitLoading();
         BudgetDetails.checkBudgetDetails({
           summary: [
-            { key: 'Net transfers', value: `($${transferAmount}.00)` },
-            { key: 'Total funding', value: `$${budgetB.allocated - transferAmount}.00` },
+            { key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: `($${transferAmount}.00)` },
+            {
+              key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING,
+              value: `$${budgetB.allocated - transferAmount}.00`,
+            },
           ],
         });
 
@@ -190,9 +200,9 @@ describe('Finance', () => {
         AddTransferModal.verifyModalView({ header: TRANSFER_ACTIONS.MOVE_ALLOCATION });
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundB.name);
-        AddTransferModal.verifyButtonExists({ icon: 'replace' });
+        AddTransferModal.verifySwapButtonExists();
 
-        AddTransferModal.clearSelectionField('toFundId');
+        AddTransferModal.selectBlankOptionInToField();
         AddTransferModal.fillTransferDetails({
           fromFund: '',
           toFund: '',
@@ -229,19 +239,19 @@ describe('Finance', () => {
         AddTransferModal.clickConfirmButton({ transferCreated: false, ammountAllocated: true });
 
         BudgetDetails.clickViewTransactionsLink();
-        Transactions.selectTransaction('Allocation', `$${allocationAmount}.00`);
+        Transactions.selectTransaction(TRANSACTION_TYPES.ALLOCATION, `$${allocationAmount}.00`);
         TransactionDetails.waitLoading();
         TransactionDetails.checkTransactionDetails({
           information: [
-            { key: 'Fiscal year', value: fiscalYear.code },
-            { key: 'Amount', value: `$${allocationAmount}.00` },
-            { key: 'Source', value: 'User' },
-            { key: 'Type', value: 'Allocation' },
-            { key: 'From', value: fundA.name },
-            { key: 'To', value: fundB.name },
-            { key: 'Expense class', value: '-' },
-            { key: 'Tags', value: existingTag },
-            { key: 'Description', value: transactionDescription },
+            { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: fiscalYear.code },
+            { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: `$${allocationAmount}.00` },
+            { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: 'User' },
+            { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ALLOCATION },
+            { key: TRANSACTION_DETAIL_FIELDS.FROM, value: fundA.name },
+            { key: TRANSACTION_DETAIL_FIELDS.TO, value: fundB.name },
+            { key: TRANSACTION_DETAIL_FIELDS.EXPENSE_CLASS, value: '-' },
+            { key: TRANSACTION_DETAIL_FIELDS.TAGS, value: existingTag },
+            { key: TRANSACTION_DETAIL_FIELDS.DESCRIPTION, value: transactionDescription },
           ],
         });
         TransactionDetails.closeTransactionDetails();

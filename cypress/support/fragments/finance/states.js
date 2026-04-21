@@ -10,4 +10,7 @@ export default {
   amountAllocatedSuccessfully: '(?:\\S+) was successfully allocated to the budget (?:\\S+)',
   rolloverTestStartedSuccessfully: '(?:\\S+) rollover test has started successfully',
   rolloverExportStartedSuccessfully: 'Export of budget results has been started',
+  exceedExpenditureLimitError: (amount, firstBudgetName, secondBudgetName) => {
+    return `$${Number(amount).toFixed(2)} could not be transferred to the budget ${firstBudgetName} because it exceeds the allowable expenditure limit for ${secondBudgetName} and ledger fund restrictions are active.`;
+  },
 };
