@@ -53,6 +53,7 @@ describe('Eureka', () => {
           cy.login(testData.tempUser.username, testData.tempUser.password, {
             path: TopMenu.usersPath,
             waiter: Users.waitLoading,
+            authRefresh: true,
           });
           UsersSearchPane.searchByUsername(testData.userA.username);
         });
