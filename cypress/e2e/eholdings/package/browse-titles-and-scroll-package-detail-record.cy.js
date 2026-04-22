@@ -29,8 +29,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1540 Package detail record: Browse titles AND scroll detail record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1540'] },
+      'C1259794 Package detail record: Browse titles AND scroll detail record (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C1259794'] },
       () => {
         EHoldingsPackageView.verifyTitlesTableColumns([
           'Status',
