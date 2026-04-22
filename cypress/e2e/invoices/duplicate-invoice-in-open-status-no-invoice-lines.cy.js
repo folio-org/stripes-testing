@@ -51,10 +51,7 @@ describe('Invoices', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-    cy.getTenantLocaleApi().then((locale) => {
-      testData.locale = locale.locale || 'en-US';
-      testData.timezone = locale.timezone || 'UTC';
-    });
+    cy.setDefaultLocaleApi();
 
     return FiscalYears.createViaApi(testData.fiscalYear)
       .then((fiscalYear) => {

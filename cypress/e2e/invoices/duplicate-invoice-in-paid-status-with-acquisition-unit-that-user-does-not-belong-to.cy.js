@@ -223,6 +223,7 @@ describe('Invoices', () => {
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
@@ -235,6 +236,7 @@ describe('Invoices', () => {
       InteractorsTools.checkCalloutErrorMessage(
         InvoiceStates.invoiceOperationNotPermittedBecauseOfAcqUnitMessage,
       );
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
