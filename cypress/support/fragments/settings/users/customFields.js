@@ -74,6 +74,7 @@ export default {
         .find(TextField())
         .fillIn(optionText),
     );
+    cy.wait(500);
   },
 
   clickSaveAndClose() {

@@ -5,6 +5,7 @@ const status = {
   Untested: 3,
   Retest: 4,
   Failed: 5,
+  Unassigned: 6,
 };
 
 const team = {
@@ -17,6 +18,14 @@ const team = {
   Citation: 18,
   Corsair: 19,
   Eureka: 21,
+};
+
+const testTypes = {
+  smoke: 1,
+  criticalPath: 2,
+  extendedPath: 3,
+  backend: 6,
+  edgeCases: 7,
 };
 
 async function getTestHistory(api, caseId, runId) {
@@ -90,6 +99,7 @@ async function getTestRunResults(api, runId) {
     let resp;
     do {
       resp = await getTest(offset);
+      console.log(`${new Date().toISOString()} Fetched ${offset} test results...`);
       tests.push(...resp.tests);
       offset += resp.size;
     } while (resp._links.next != null);
@@ -112,6 +122,15 @@ async function updateTestResult(api, testId, statusId, comment, defects) {
   }
 }
 
+async function updateMultipleTestResults(api, testId, results) {
+  try {
+    await api.post(`add_results/${testId}`, { results });
+    console.log(`Test run ${testId} updated successfully.`);
+  } catch (error) {
+    console.error('Error updating test run results:', error);
+  }
+}
+
 async function getTestCase(api, caseId) {
   try {
     const response = await api.get(`get_case/${caseId}`);
@@ -122,4 +141,15 @@ async function getTestCase(api, caseId) {
   }
 }
 
-module.exports = { getAllTestCases, getTestHistory, getCaseHistory, getTestRunResults, updateTestResult, getTestCase, team, status };
+module.exports = {
+  getAllTestCases,
+  getTestHistory,
+  getCaseHistory,
+  getTestRunResults,
+  updateTestResult,
+  updateMultipleTestResults,
+  getTestCase,
+  team,
+  status,
+  testTypes,
+};

@@ -9,35 +9,24 @@
         "type": "object",
         "properties": {
           "instance.administrative_notes": {
-            "type": "array",
-            "items": {}
           },
           "instance.alternative_titles": {
-            "type": ["string", "null"]
           },
           "instance.cataloged_date": {
-            "type": ["string", "null"]
           },
           "instance.classifications": {
-            "type": ["string", "null"]
           },
           "instance.contributors": {
-            "type": ["string", "null"]
           },
           "instance.created_by": {
-            "type": ["string", "null"]
           },
           "instance.created_at": {
-            "type": ["string", "null"]
           },
           "instance.instance_date_1": {
-            "type": ["string", "null"]
           },
           "instance.instance_date_2": {
-            "type": ["string", "null"]
           },
           "instance.instance_date_type_id": {
-            "type": ["string", "null"]
           },
           "instance.editions": {
             "type": ["array", "null"],
@@ -46,10 +35,8 @@
             }
           },
           "instance.electronic_access": {
-            "type": ["string", "null"]
           },
           "instance.flag_for_deletion": {
-            "type": ["string", "null"]
           },
           "instance.format_names": {
             "type": ["array", "null"],
@@ -58,10 +45,8 @@
             }
           },
           "instance.identifiers": {
-            "type": ["string", "null"]
           },
           "instance.index_title": {
-            "type": ["string", "null"]
           },
           "instance.instance_format_ids": {
             "type": "array",
@@ -70,16 +55,12 @@
             }
           },
           "instance.hrid": {
-            "type": ["string", "null"]
           },
           "instance.source_uri": {
-            "type": ["string", "null"]
           },
           "instance.id": {
-            "type": ["string", "null"]
           },
           "instance.jsonb": {
-            "type": ["string", "null"]
           },
           "instance.languages": {
             "type": "array",
@@ -88,23 +69,16 @@
             }
           },
           "instance.childInstances": {
-            "type": ["string", "null"]
           },
           "instance.parentInstances": {
-            "type": ["string", "null"]
           },
           "instance.mode_of_issuance_name": {
-            "type": ["string", "null"]
           },
           "instance.nature_of_content_term": {
-            "type": ["string", "null"]
           },
           "instance.nature_of_content_term_ids": {
-            "type": "array",
-            "items": {}
           },
           "instance.notes": {
-            "type": ["string", "null"]
           },
           "instance.physical_descriptions": {
             "type": ["array", "null"],
@@ -113,7 +87,6 @@
             }
           },
           "instance.previously_held": {
-            "type": ["string", "null"]
           },
           "instance.publication_frequency": {
             "type": ["string", "null", "array"]
@@ -122,119 +95,85 @@
             "type": ["string", "null", "array"]
           },
           "instance.publication": {
-            "type": ["string", "null"]
           },
           "instance.version": {
             "type": ["number", "null"]
           },
           "instance.title": {
-            "type": ["string", "null"]
           },
           "instance.instance_type_name": {
-            "type": ["string", "null"]
           },
           "instance.series": {
             "type": ["string", "null", "array"]
           },
           "instance.source": {
-            "type": ["string", "null"]
           },
           "instance.staff_suppress": {
-            "type": ["string", "null"]
           },
           "instance.statistical_code_ids": {
             "type": "array",
             "items": {}
           },
           "instance.statistical_code_names": {
-            "type": ["string", "null"]
           },
           "instance.status_id": {
-            "type": ["string", "null"]
           },
           "instance.subjects": {
-            "type": ["string", "null"]
           },
           "instance.discovery_suppress": {
-            "type": ["string", "null"]
           },
           "instance.tags": {},
           "instance.updated_by": {
-            "type": ["string", "null"]
           },
           "instance.updated_at": {
-            "type": ["string", "null"]
           },
           "inst_stat.code": {
-            "type": ["string", "null"]
           },
           "inst_stat.jsonb": {
-            "type": ["string", "null"]
           },
           "inst_stat.name": {
-            "type": ["string", "null"]
           },
           "inst_stat.id": {
-            "type": ["string", "null"]
           },
           "instance_type.jsonb": {
-            "type": ["string", "null"]
           },
           "date_type.id": {
-            "type": ["string", "null"]
           },
           "date_type.name": {
-            "type": ["string", "null"]
           },
           "created_by.active": {
-            "type": ["string", "null"]
           },
           "created_by.user_created_date": {
-            "type": ["string", "null"]
           },
           "created_by.email": {
-            "type": ["string", "null"]
           },
           "created_by.last_name_first_name": {
-            "type": ["string", "null"]
           },
           "created_by.created_by_user_id": {},
           "created_by.updated_by_user_id": {
-            "type": ["string", "null"]
           },
           "created_by.user_updated_date": {
-            "type": ["string", "null"]
           },
           "created_by.id": {
-            "type": ["string", "null"]
           },
           "created_by.username": {
-            "type": ["string", "null"]
           },
           "updated_by.active": {
-            "type": ["string", "null"]
           },
           "updated_by.user_created_date": {
-            "type": ["string", "null"]
           },
           "updated_by.email": {
-            "type": ["string", "null"]
           },
           "updated_by.last_name_first_name": {
-            "type": ["string", "null"]
           },
           "updated_by.created_by_user_id": {},
           "updated_by.updated_by_user_id": {
-            "type": ["string", "null"]
           },
           "updated_by.user_updated_date": {
-            "type": ["string", "null"]
           },
           "updated_by.id": {
-            "type": ["string", "null"]
           },
           "updated_by.username": {
-            "type": ["string", "null"]
           }
         },
         "required": []

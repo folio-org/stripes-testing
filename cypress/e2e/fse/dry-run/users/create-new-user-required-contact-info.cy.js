@@ -8,7 +8,6 @@ import { parseSanityParameters } from '../../../../support/utils/users';
 
 describe('Users', () => {
   const { user, memberTenant } = parseSanityParameters();
-  cy.setTenant(memberTenant.id);
   const createUserData = () => ({
     username: 'u' + getRandomPostfix(),
     barcode: getRandomPostfix(),
@@ -30,6 +29,7 @@ describe('Users', () => {
   userWithSameUsername.username = user1.username;
 
   before(() => {
+    cy.setTenant(memberTenant.id);
     cy.login(user.username, user.password, {
       path: TopMenu.usersPath,
       waiter: UsersSearchPane.waitLoading,
@@ -44,7 +44,7 @@ describe('Users', () => {
 
   it(
     'C421 Create: new user; required: contact info, email, phone, external system ID, address (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C421', 'eurekaPhase1'] },
+    { tags: ['dryRun', 'volaris', 'C421', 'eurekaPhase1'] },
     () => {
       Users.createViaUi(user1).then((id) => {
         user1.id = id;
