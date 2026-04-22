@@ -56,6 +56,7 @@ describe('Inventory', () => {
       'C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet)',
       { tags: ['dryRun', 'folijet', 'C193953'] },
       () => {
+        cy.getUserToken(user.username, user.password);
         InventorySearchAndFilter.byKeywords(testData.instanceId);
         InstanceRecordView.waitLoading();
         InventoryActions.import(testData.oclc);

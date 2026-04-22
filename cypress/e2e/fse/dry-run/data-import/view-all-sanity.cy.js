@@ -58,8 +58,8 @@ describe('Data Import', () => {
       'C11112 Search the "View all" log screen (folijet)',
       { tags: ['dryRun', 'folijet', 'C11112'] },
       () => {
+        cy.getUserToken(user.username, user.password);
         Logs.openViewAllLogs();
-
         LogsViewAll.options.forEach((option) => {
           LogsViewAll.selectOption(option);
           // when option is "ID", search with hrId otherwise, with file name

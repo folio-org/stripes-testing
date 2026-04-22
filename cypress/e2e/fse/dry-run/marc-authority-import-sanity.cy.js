@@ -47,6 +47,7 @@ describe('Data Import', () => {
         'C350666 Create a MARC authority record via data import (spitfire)',
         { tags: ['dryRun', 'spitfire', 'C360522'] },
         () => {
+          cy.getUserToken(user.username, user.password);
           DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(
             (response) => {
               response.forEach((record) => {
