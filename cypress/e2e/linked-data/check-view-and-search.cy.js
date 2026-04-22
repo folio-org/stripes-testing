@@ -10,7 +10,7 @@ import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTo
 import DataImport from '../../support/fragments/data_import/dataImport';
 import {
   APPLICATION_NAMES,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
   DEFAULT_JOB_PROFILE_NAMES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
@@ -19,7 +19,7 @@ import WorkProfileModal from '../../support/fragments/linked-data/workProfileMod
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: check navigation', () => {
   const testData = {

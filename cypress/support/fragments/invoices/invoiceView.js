@@ -5,6 +5,7 @@ import {
   including,
   KeyValue,
   Link,
+  MetaSection,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -476,10 +477,21 @@ export default {
   clickCancelInActionsMenu() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
   },
+  approveAndPayInvoiceWithUpdatePOLPaymentStatus({ status, errorMessage } = {}) {
+    this.clickApproveAndPayInvoice({ isApprovePayEnabled: true });
+    UpdatePOLinePaymentStatusModal.verifyModalView();
+    UpdatePOLinePaymentStatusModal.selectPaymentStatus(status);
+    UpdatePOLinePaymentStatusModal.clickSubmitButton();
+    if (errorMessage) {
+      interactorsTools.checkCalloutErrorMessage(errorMessage);
+    } else {
+      interactorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
+    }
+  },
 
   cancelInvoiceWithUpdatePOLPaymentStatus({
     errorMessage,
-    status = INVOICE_POL_PAYMENT_STATUSES.CANCELLED,
+    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT,
   } = {}) {
     this.clickCancelInActionsMenu();
     CancelInvoiceModal.clickSubmitButton(false);
@@ -537,5 +549,17 @@ export default {
       .find(Link(fundNameCode));
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
     FundDetails.waitLoading();
+  },
+
+  toggleMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy }) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
   },
 };
