@@ -11,5 +11,6 @@ export default {
 
   closeMarcView() {
     cy.xpath(closeButton).click();
+    cy.wait(500);
   },
 };

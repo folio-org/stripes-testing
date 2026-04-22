@@ -9,6 +9,7 @@ import {
   Checkbox,
   Modal,
   SelectionOption,
+  SelectionList,
   MultiColumnList,
   PaneHeader,
   KeyValue,
@@ -32,6 +33,7 @@ const organizationAccordion = Accordion('Organization');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
+const exportMethodDropdownButton = Button({ id: 'exportConfigId-selection' });
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
 
 const jobDetailsPane = Pane('Export job ');
@@ -370,7 +372,7 @@ export default {
   selectExportMethod(integarationName) {
     cy.do([
       Button({ id: 'accordion-toggle-button-exportConfigId' }).click(),
-      Button({ id: 'exportConfigId-selection' }).click(),
+      exportMethodDropdownButton.click(),
       SelectionOption(integarationName).click(),
     ]);
   },
@@ -555,12 +557,25 @@ export default {
     ]);
   },
 
-  verifyExportMethodAccordion() {
+  verifyExportMethodAccordion({ verifyEmpty = false } = {}) {
     cy.do(exportMethodAccordion.clickHeader());
     cy.expect([
       exportMethodAccordion.has({ open: true }),
-      exportMethodAccordion.find(Button({ id: 'exportConfigId-selection' })).exists(),
+      exportMethodAccordion
+        .find(exportMethodDropdownButton)
+        .has(verifyEmpty ? { text: 'Select control' } : {}),
     ]);
+  },
+
+  openExportMethodDropdown() {
+    cy.do(exportMethodAccordion.find(exportMethodDropdownButton).click());
+    cy.expect(SelectionList().exists());
+  },
+
+  verifyExportMethodDropdownContainsIntegrations(integrationNames) {
+    integrationNames.forEach((name) => {
+      cy.expect(SelectionList().find(SelectionOption(name)).exists());
+    });
   },
 
   verifyOrganizationAccordion() {

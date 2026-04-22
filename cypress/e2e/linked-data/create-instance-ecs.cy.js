@@ -3,7 +3,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARIGOLD_ROLES,
+  EDIT_RESOURCE_HEADINGS,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -18,7 +23,7 @@ import InstanceProfileModal from '../../support/fragments/linked-data/instancePr
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: create instance in central tenant + holdings in member', () => {
   const testData = {
@@ -129,7 +134,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       // open work for editing
       Marigold.selectFromSearchTable(1);
       Marigold.editWork();
-      EditResource.waitLoading();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       // add new instance
       EditResource.openNewInstanceFormViaActions();
       InstanceProfileModal.waitLoading();

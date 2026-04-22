@@ -112,7 +112,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C385658 GetRecord: Inventory - Verify that Item fields are properly included in "952" field of response (subfields "i", "j", "k", "l", "m", "n", "p") (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C385658', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C385658', 'nonParallel'] },
       () => {
         // Step 1: Instance UUID is already available in folioInstance.id
         InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);

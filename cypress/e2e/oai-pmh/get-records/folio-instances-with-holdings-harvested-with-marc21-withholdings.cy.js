@@ -112,7 +112,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C375973 GetRecords: FOLIO instances with Holdings are harvested (marc21_withholdings) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C375973', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C375973', 'nonParallel'] },
       () => {
         // Send OAI-PMH GetRecord request with marc21_withholdings and verify response
         OaiPmh.getRecordRequest(folioInstanceId, 'marc21_withholdings').then((response) => {

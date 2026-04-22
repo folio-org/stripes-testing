@@ -41,7 +41,7 @@ const embeddedTableHeadersMap = {
     'URL relationship',
     'URI',
     'Link text',
-    'Materials specified',
+    'Material specified',
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],

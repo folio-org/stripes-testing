@@ -53,11 +53,9 @@ describe('Data Import', () => {
           DataImport.deleteImportJob(firstMarcFileName);
           DataImport.verifyCancelImportJobModal();
           DataImport.cancelDeleteImportJob();
-          cy.wait(2000);
           DataImport.deleteImportJob(firstMarcFileName);
-          cy.wait(2000);
           DataImport.confirmDeleteImportJob();
-          cy.wait(2000);
+          cy.wait(3000);
           Logs.checkJobStatus(firstMarcFileName, 'Stopped by user');
           Logs.openFileDetails(firstMarcFileName);
           FileDetails.verifyLogDetailsPageIsOpened(firstMarcFileName);
@@ -68,7 +66,6 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.checkFileIsRunning(secondMarcFileName);
-          cy.wait(2000);
           DataImport.deleteImportJob(secondMarcFileName);
           JobProfiles.waitFileIsImported(secondMarcFileName);
           Logs.checkJobStatus(secondMarcFileName, JOB_STATUS_NAMES.COMPLETED);

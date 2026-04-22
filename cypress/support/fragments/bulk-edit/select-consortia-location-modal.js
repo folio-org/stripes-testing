@@ -21,6 +21,7 @@ const selectAffiliationButton = Button({
   id: 'undefined-affiliations-select',
 });
 const searchButton = Button('Search');
+const searchField = TextField({ id: 'input-record-search' });
 const resetAllButton = Button('Reset all');
 const institutionAccordion = Accordion('Institution');
 const campusAccordion = Accordion('Campus');
@@ -129,5 +130,10 @@ export default {
     } else {
       cy.expect(selectLocationsModal.absent());
     }
+  },
+
+  searchLocation(locationName) {
+    cy.do([selectLocationsModal.find(searchField).fillIn(locationName), searchButton.click()]);
+    cy.wait(1000);
   },
 };

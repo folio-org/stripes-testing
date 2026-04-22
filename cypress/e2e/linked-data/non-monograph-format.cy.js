@@ -1,7 +1,7 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
 } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -13,7 +13,7 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: Non-monograph format', () => {
   const testData = {
@@ -69,8 +69,6 @@ describe('Citation: Non-monograph format', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
-    // delete inventory instance both from inventory and LDE modules
-    // this might change later once corresponding instance will automatically get deleted in linked-data
     InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(user.userId);
   });

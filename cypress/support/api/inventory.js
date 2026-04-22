@@ -18,10 +18,11 @@ const defaultDisplaySettings = {
   },
 };
 
-Cypress.Commands.add('getInstanceById', (instanceId) => {
+Cypress.Commands.add('getInstanceById', (instanceId, additionalHeaders = {}) => {
   return cy
     .okapiRequest({
       path: `inventory/instances/${instanceId}`,
+      additionalHeaders,
     })
     .then(({ body }) => {
       return body;

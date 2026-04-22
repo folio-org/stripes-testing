@@ -43,6 +43,7 @@ describe('Inventory', () => {
               Permissions.uiInventorySingleRecordImport.gui,
               Permissions.uiInventoryViewCreateEditInstances.gui,
               Permissions.settingsDataImportView.gui,
+              Permissions.consortiaCentralAll.gui,
             ]);
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
             cy.resetTenant();
