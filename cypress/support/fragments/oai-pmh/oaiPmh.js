@@ -98,12 +98,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {boolean} shouldBeDeleted - Whether the instance should have deleted status (default: false).
    * @param {boolean} verifyIdentifier - Whether to verify the identifier format (default: true).
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyOaiPmhRecordHeader(
     xmlString,
     instanceUuid,
     shouldBeDeleted = false,
     verifyIdentifier = true,
+    tenantId = null,
   ) {
     const expectedStatus = shouldBeDeleted ? 'deleted' : null;
 
@@ -130,7 +132,8 @@ export default {
       const identifier = identifierElement.textContent;
 
       this.getBaseUrl().then((baseUrl) => {
-        const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+        const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+        const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
         expect(
           identifier,
           `Identifier should match expected OAI format for record with UUID ${instanceUuid}`,
