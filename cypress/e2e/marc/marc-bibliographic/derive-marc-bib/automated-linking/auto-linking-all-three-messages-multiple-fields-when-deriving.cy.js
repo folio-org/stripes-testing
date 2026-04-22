@@ -31,6 +31,7 @@ describe('MARC', () => {
             tag830: '830',
           },
           bibTitle: `C389479 Sleeping in the ground ${randomPostfix}`,
+          derivedBibTitle: `C389479 Sleeping in the ground derived ${randomPostfix}`,
           contributor100: `C389479 Jackson, Peter ${randomPostfix}`,
           title240: `C389479 Hosanna ${randomPostfix}`,
           subject650: `C389479 Murder Investigation ${randomPostfix}`,
@@ -312,6 +313,12 @@ describe('MARC', () => {
             // Verify "Link headings" button is still enabled
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
+            // Update field 245 to make title unique for derived record
+            QuickMarcEditor.updateExistingField(
+              testData.tags.tag245,
+              `$a ${testData.derivedBibTitle}`,
+            );
+
             // Step 4: Click "Save & close" button
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Creating record may take several seconds.');
@@ -333,8 +340,7 @@ describe('MARC', () => {
 
             // Step 6: Click on highlighted contributor name → verify redirect to derived Instance
             BrowseSubjects.selectInstanceWithAuthorityIcon(testData.contributor100);
-            InventoryInstances.waitLoading();
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceByTitle(testData.derivedBibTitle);
 
             // Step 7: Click on "Actions" → Select "View source" option
             InventoryInstance.waitLoading();
