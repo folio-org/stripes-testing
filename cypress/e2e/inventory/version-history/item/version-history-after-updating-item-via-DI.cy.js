@@ -222,21 +222,25 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);
         FileManager.deleteFile(`cypress/downloads/${testData.exportedFileName}`);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        ExportJobProfiles.deleteJobProfileViaApi(testData.exportJobProfileId);
-        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(testData.exportMappingProfileId);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(createJobProfile.profileName);
-        collectionOfCreateProfiles.forEach((profile) => {
-          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
-            profile.mappingProfile.name,
+        cy.getAdminToken().then(() => {
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+          ExportJobProfiles.deleteJobProfileViaApi(testData.exportJobProfileId);
+          DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(
+            testData.exportMappingProfileId,
           );
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(createJobProfile.profileName);
+          collectionOfCreateProfiles.forEach((profile) => {
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
+          });
+          InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
+          Users.deleteViaApi(testData.user.userId);
         });
-        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
-        Users.deleteViaApi(testData.user.userId);
       });
 
       it(
