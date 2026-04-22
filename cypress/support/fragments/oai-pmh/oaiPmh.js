@@ -732,12 +732,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
    * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyIdentifierInListResponse(
     xmlString,
     instanceUuid,
     shouldExist = true,
     shouldBeDeleted = false,
+    tenantId = null,
   ) {
     const xmlDoc = this._parseXmlString(xmlString);
     const headers = xmlDoc.getElementsByTagName('header');
@@ -783,7 +785,8 @@ export default {
 
     // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {
-      const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+      const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+      const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
       expect(
         foundIdentifier,
         `Identifier should match expected OAI format for UUID ${instanceUuid}`,
