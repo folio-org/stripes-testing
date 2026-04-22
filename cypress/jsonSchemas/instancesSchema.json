@@ -1,0 +1,229 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Instances",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "instance.administrative_notes": {
+          },
+          "instance.alternative_titles": {
+          },
+          "instance.cataloged_date": {
+          },
+          "instance.classifications": {
+          },
+          "instance.contributors": {
+          },
+          "instance.created_by": {
+          },
+          "instance.created_at": {
+          },
+          "instance.instance_date_1": {
+          },
+          "instance.instance_date_2": {
+          },
+          "instance.instance_date_type_id": {
+          },
+          "instance.editions": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.electronic_access": {
+          },
+          "instance.flag_for_deletion": {
+          },
+          "instance.format_names": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.identifiers": {
+          },
+          "instance.index_title": {
+          },
+          "instance.instance_format_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.hrid": {
+          },
+          "instance.source_uri": {
+          },
+          "instance.id": {
+          },
+          "instance.jsonb": {
+          },
+          "instance.languages": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.childInstances": {
+          },
+          "instance.parentInstances": {
+          },
+          "instance.mode_of_issuance_name": {
+          },
+          "instance.nature_of_content_term": {
+          },
+          "instance.nature_of_content_term_ids": {
+          },
+          "instance.notes": {
+          },
+          "instance.physical_descriptions": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.previously_held": {
+          },
+          "instance.publication_frequency": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication_range": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication": {
+          },
+          "instance.version": {
+            "type": ["number", "null"]
+          },
+          "instance.title": {
+          },
+          "instance.instance_type_name": {
+          },
+          "instance.series": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.source": {
+          },
+          "instance.staff_suppress": {
+          },
+          "instance.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.statistical_code_names": {
+          },
+          "instance.status_id": {
+          },
+          "instance.subjects": {
+          },
+          "instance.discovery_suppress": {
+          },
+          "instance.tags": {},
+          "instance.updated_by": {
+          },
+          "instance.updated_at": {
+          },
+          "inst_stat.code": {
+          },
+          "inst_stat.jsonb": {
+          },
+          "inst_stat.name": {
+          },
+          "inst_stat.id": {
+          },
+          "instance_type.jsonb": {
+          },
+          "date_type.id": {
+          },
+          "date_type.name": {
+          },
+          "created_by.active": {
+          },
+          "created_by.user_created_date": {
+          },
+          "created_by.email": {
+          },
+          "created_by.last_name_first_name": {
+          },
+          "created_by.created_by_user_id": {},
+          "created_by.updated_by_user_id": {
+          },
+          "created_by.user_updated_date": {
+          },
+          "created_by.id": {
+          },
+          "created_by.username": {
+          },
+          "updated_by.active": {
+          },
+          "updated_by.user_created_date": {
+          },
+          "updated_by.email": {
+          },
+          "updated_by.last_name_first_name": {
+          },
+          "updated_by.created_by_user_id": {},
+          "updated_by.updated_by_user_id": {
+          },
+          "updated_by.user_updated_date": {
+          },
+          "updated_by.id": {
+          },
+          "updated_by.username": {
+          }
+        },
+        "required": []
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}
