@@ -29,6 +29,7 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
 };
 
 export const INVOICE_VIEW_FIELDS = {
+  ACQUISITION_UNITS: 'Acquisition units',
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_STATUS: 'Status',
   SUB_TOTAL: 'Sub-total',

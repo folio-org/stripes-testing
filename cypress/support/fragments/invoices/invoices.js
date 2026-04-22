@@ -33,6 +33,7 @@ import InvoiceEditForm from './invoiceEditForm';
 import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
 import VoucherExportForm from './voucherExportForm';
+import DuplicateInvoiceModal from './modal/duplicateInvoiceModal';
 
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
@@ -44,6 +45,7 @@ const saveAndContinueButton = Button('Save & continue');
 const deleteButton = Button('Delete');
 const newBlankLineButton = Button('New blank line');
 const polLookUpButton = Button('POL look-up');
+const duplicateButton = Button('Duplicate');
 
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
@@ -165,6 +167,7 @@ export default {
     invoiceStatus,
     exportToAccounting,
     adjustments,
+    acqUnitIds,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -186,6 +189,10 @@ export default {
 
     if (adjustments && adjustments.length > 0) {
       invoice.adjustments = adjustments;
+    }
+
+    if (acqUnitIds && acqUnitIds.length > 0) {
+      invoice.acqUnitIds = acqUnitIds;
     }
 
     if (batchGroupId) {
@@ -262,6 +269,7 @@ export default {
     releaseEncumbrance,
     exportToAccounting,
     adjustments,
+    acqUnitIds,
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -271,6 +279,7 @@ export default {
       invoiceStatus,
       exportToAccounting,
       adjustments,
+      acqUnitIds,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -1624,5 +1633,10 @@ export default {
   saveAndCloseEditSequencePage() {
     cy.do(linesSequencePane.find(Button('Save & close')).click());
     cy.wait(4000);
+  },
+
+  selectDuplicateInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), duplicateButton.click()]);
+    DuplicateInvoiceModal.verifyModalView();
   },
 };
