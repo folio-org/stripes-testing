@@ -38,9 +38,13 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_HOLDINGS_AND_SRS,
       },
     ];
+    let adminUserId;
 
     before('create test data and login', () => {
       cy.getAdminToken().then(() => {
+        cy.getAdminUserId().then((id) => {
+          adminUserId = id;
+        });
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           testData.loanTypeId = res[0].id;
         });
@@ -98,6 +102,7 @@ describe('MARC', () => {
             });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
+            cy.wait(60000); // to make sure that created Item and Updated Holdings will have different minutes in Metadata
           });
         });
       });
@@ -126,17 +131,19 @@ describe('MARC', () => {
           HoldingsRecordView.close();
           InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
           InventoryInstance.openItemByBarcode(testData.itemBarcode);
-          cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
-            testData.updatedItemData = item;
+          ItemRecordView.waitLoading();
+          ItemRecordView.getRecordLastUpdatedDate().then((itemDate) => {
+            const itemUpdateDate = itemDate;
 
-            ItemRecordView.waitLoading();
-            ItemRecordView.verifyItemMetadata(
-              holdingsUpdateDate,
-              testData.updatedItemData.metadata,
-              testData.user.userId,
-            );
+            cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
+              ItemRecordView.verifyItemMetadataNotChanged(
+                holdingsUpdateDate,
+                itemUpdateDate,
+                item.metadata,
+                adminUserId,
+              );
+            });
           });
-          ItemRecordView.verifyLastUpdatedDate(holdingsUpdateDate, testData.user.username);
         });
       },
     );
