@@ -190,8 +190,6 @@ describe('Citation: MARC Authority integration', () => {
       });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
-      // LDE filters are displayed indicating that edit form was closed
-      SearchAndFilter.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
