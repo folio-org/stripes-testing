@@ -102,9 +102,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -141,6 +138,10 @@ describe('Bulk-edit', () => {
               ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
                 .then((noteId) => {
                   collegeItemNoteType.id = noteId;
+
+                  cy.getLocations({ limit: 1 }).then((res) => {
+                    locationId = res.id;
+                  });
                 })
                 .then(() => {
                   // create holdings in College tenant
@@ -191,6 +192,9 @@ describe('Bulk-edit', () => {
               cy.setTenant(Affiliations.University);
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
+              });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
               });
               // create local item note type in University tenant
               ItemNoteTypes.createItemNoteTypeViaApi(universityItemNoteType.name)
