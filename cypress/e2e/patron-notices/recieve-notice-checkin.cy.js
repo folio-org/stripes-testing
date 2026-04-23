@@ -270,6 +270,7 @@ describe('Patron notices', () => {
         CheckInActions.endCheckInSession();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        cy.getAdminToken();
 
         poll(
           () => cy.getCirculationLogs({
@@ -287,6 +288,11 @@ describe('Patron notices', () => {
           }),
           (response) => response.body.logRecords.length > 0,
         );
+
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.circulationLogPath,
+          waiter: SearchPane.waitLoading,
+        });
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);

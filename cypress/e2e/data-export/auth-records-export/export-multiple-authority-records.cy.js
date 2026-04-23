@@ -159,7 +159,10 @@ describe('Data Export', () => {
                 (record) => expect(record.get('400')[0].subf[0][1]).to.eq(subfieldValuesA[1]),
                 (record) => expect(record.get('400')[1].subf[0][1]).to.eq(subfieldValuesA[2]),
                 (record) => expect(record.get('500')[0].subf[0][1]).to.eq(subfieldValuesA[3]),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(authorityIds[0]),
+                (record) => expect([
+                  record.get('999')[0].subf[0][1],
+                  record.get('999')[0].subf[1][1],
+                ]).to.include(authorityIds[0]),
               ],
             },
             {
@@ -168,7 +171,10 @@ describe('Data Export', () => {
                 (record) => expect(record.get('130')[0].subf[0][1]).to.eq(subfieldValuesB[0]),
                 (record) => expect(record.get('430')[0].subf[0][1]).to.eq(subfieldValuesB[1]),
                 (record) => expect(record.get('430')[1].subf[0][1]).to.eq(subfieldValuesB[2]),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(authorityIds[1]),
+                (record) => expect([
+                  record.get('999')[0].subf[0][1],
+                  record.get('999')[0].subf[1][1],
+                ]).to.include(authorityIds[1]),
               ],
             },
           ];

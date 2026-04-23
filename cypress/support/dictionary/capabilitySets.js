@@ -67,6 +67,16 @@ export default {
     resource: 'UI-Data-Import Settings',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  moduleListsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  moduleListsRefreshView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists Refresh',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
@@ -309,6 +319,11 @@ export default {
   uiInventorySingleRecordImport: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Inventory Single-Record-Import',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Quick-Marc Quick-Marc-Authority-Records Link-Unlink',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

@@ -21,6 +21,7 @@ describe('Lists', () => {
       status: 'Active',
       visibility: 'Private',
     };
+    const listUiQuery = 'users.active == False';
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -80,7 +81,7 @@ describe('Lists', () => {
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
 
-        Lists.verifyQuery('users.active == False');
+        Lists.verifyQuery(listUiQuery);
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(listData.name);

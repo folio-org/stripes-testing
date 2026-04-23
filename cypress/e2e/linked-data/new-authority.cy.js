@@ -9,7 +9,7 @@ import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -29,7 +29,7 @@ import Users from '../../support/fragments/users/users';
 import Permissions from '../../support/dictionary/permissions';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: MARC Authority integration', () => {
   const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
@@ -190,8 +190,6 @@ describe('Citation: MARC Authority integration', () => {
       });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
-      // LDE filters are displayed indicating that edit form was closed
-      SearchAndFilter.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);

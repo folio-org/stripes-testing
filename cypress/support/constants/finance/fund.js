@@ -15,3 +15,9 @@ export const EXPORT_FUND_FIELDS = {
   EXTERNAL_ACCOUNT_NO: 'External account number',
   FUND_DESCRIPTION: 'Description',
 };
+
+export const FUND_STATUSES = {
+  ACTIVE: 'Active',
+  FROZEN: 'Frozen',
+  INACTIVE: 'Inactive',
+};

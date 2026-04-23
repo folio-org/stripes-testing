@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import NewHub from '../../../support/fragments/linked-data/newHubPage';
 import Marigold from '../../../support/fragments/linked-data/marigold';
-import { DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, MARIGOLD_ROLES } from '../../../support/constants';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +14,7 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 import LocalHubPreview from '../../../support/fragments/linked-data/localHubPreview';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('MG Hubs: Create and edit local hub', () => {
   const testData = {

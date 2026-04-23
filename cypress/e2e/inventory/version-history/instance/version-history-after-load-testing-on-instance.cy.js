@@ -90,7 +90,7 @@ describe('Inventory', () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();
           VersionHistorySection.verifyListOfChanges(['Statistical codes (Added)']);
-          InventoryInstance.waitLoading();
+          VersionHistorySection.clickCloseButton();
           InstanceRecordView.edit();
           InstanceRecordEdit.waitLoading();
           for (let index = 0; index < 10; index++) {

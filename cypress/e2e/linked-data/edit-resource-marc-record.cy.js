@@ -6,7 +6,7 @@ import {
   INSTANCE_SOURCE_NAMES,
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  LDE_ROLES,
+  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
@@ -21,7 +21,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: MARC Authority integration', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;

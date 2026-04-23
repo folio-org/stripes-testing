@@ -9,7 +9,7 @@ import {
 import { BasicOrderLine, NewOrder, Orders, OrderLines } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
+import { ORDER_STATUSES, INVOICE_STATUSES, TRANSACTION_TOOLTIPS } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -248,7 +248,7 @@ describe('Orders', () => {
       });
 
       // Click on "Info" icon next to "Amount" value
-      TransactionDetails.checkTransactionAmountInfo('Voided transaction');
+      TransactionDetails.checkTransactionAmountInfo(TRANSACTION_TOOLTIPS.VOIDED_TRANSACTION);
     },
   );
 });
