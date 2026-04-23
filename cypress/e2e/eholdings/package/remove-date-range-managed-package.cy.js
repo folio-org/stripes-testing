@@ -22,8 +22,6 @@ describe('eHoldings', () => {
     before('Setup managed package as admin and create user', () => {
       cy.getAdminToken()
         .then(() => {
-          EHoldingsPackages.setCustomCoverageForPackageViaAPI(testData.managedPackageName, '', '');
-          cy.wait(1000);
           EHoldingsPackages.setCustomCoverageForPackageViaAPI(
             testData.managedPackageName,
             testData.startDate,
