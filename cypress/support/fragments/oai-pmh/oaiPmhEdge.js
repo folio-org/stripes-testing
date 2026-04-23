@@ -7,6 +7,7 @@
  * This avoids browser cookie pollution and simulates true external Edge API client behavior
  */
 
+import Affiliations from '../../dictionary/affiliations';
 import DateTools from '../../utils/dateTools';
 
 export default {
@@ -36,6 +37,38 @@ export default {
   isEdgeConfigured() {
     const edgeHost = Cypress.env('EDGE_HOST');
     return !!edgeHost;
+  },
+
+  /**
+   * Get Edge API key for a specific tenant affiliation
+   * @param {string} affiliation - Tenant affiliation from Affiliations object (e.g., Affiliations.College, Affiliations.University, Affiliations.Consortia)
+   * @returns {string} API key for the tenant
+   * @throws {Error} If API key is not configured for the tenant or affiliation is unknown
+   */
+  getApiKey(affiliation) {
+    let apiKeyVar;
+
+    // Compare against actual Affiliations constants - works in any environment
+    if (affiliation === Affiliations.Consortia) {
+      apiKeyVar = 'EDGE_CENTRAL_API_KEY';
+    } else if (affiliation === Affiliations.College) {
+      apiKeyVar = 'EDGE_COLLEGE_API_KEY';
+    } else if (affiliation === Affiliations.University) {
+      apiKeyVar = 'EDGE_UNIVERSITY_API_KEY';
+    } else {
+      throw new Error(`Unknown affiliation '${affiliation}'. Valid affiliations: `);
+    }
+
+    const apiKey = Cypress.env(apiKeyVar);
+
+    if (!apiKey) {
+      throw new Error(
+        `${apiKeyVar} is not configured. ` +
+          'Please set it in environments.js or Jenkins environment variables',
+      );
+    }
+
+    return apiKey;
   },
 
   /**

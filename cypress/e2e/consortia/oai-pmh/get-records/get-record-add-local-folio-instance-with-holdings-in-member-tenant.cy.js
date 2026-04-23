@@ -31,7 +31,6 @@ const testData = {
     publicNote: 'Public note',
   },
 };
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
 
 describe('OAI-PMH', () => {
   describe('Consortia', () => {
@@ -121,7 +120,7 @@ describe('OAI-PMH', () => {
               testData.folioInstance.id,
               Affiliations.College,
               'marc21',
-              collegeApiKey,
+              OaiPmhEdge.getApiKey(Affiliations.College),
             ).then((response) => {
               // Verify FOLIO record in marc21 format
               OaiPmh.verifyMarcField(
@@ -170,7 +169,7 @@ describe('OAI-PMH', () => {
               testData.folioInstance.id,
               Affiliations.College,
               'marc21_withholdings',
-              collegeApiKey,
+              OaiPmhEdge.getApiKey(Affiliations.College),
             ).then((response) => {
               // Verify instance data in 999 field
               OaiPmh.verifyMarcField(
@@ -222,7 +221,7 @@ describe('OAI-PMH', () => {
               testData.folioInstance.id,
               Affiliations.College,
               'oai_dc',
-              collegeApiKey,
+              OaiPmhEdge.getApiKey(Affiliations.College),
             ).then((response) => {
               // Verify Dublin Core record
               OaiPmh.verifyDublinCoreField(response, testData.folioInstance.id, {

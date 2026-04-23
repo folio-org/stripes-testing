@@ -47,8 +47,6 @@ const marcInstanceFields = [
     indicators: ['\\', '\\'],
   },
 ];
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
-const universityApiKey = Cypress.env('EDGE_UNIVERSITY_API_KEY');
 const userPermissions = [Permissions.inventoryAll.gui];
 
 describe('OAI-PMH', () => {
@@ -230,7 +228,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'marc21',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyMarcField(
               response,
@@ -245,7 +243,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'marc21_withholdings',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyMarcField(
               response,
@@ -267,7 +265,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'oai_dc',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyDublinCoreField(response, testData.marcInstance.uuid, {
               rights: 'discovery suppressed',
@@ -281,7 +279,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.University,
             'marc21',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -290,7 +288,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.University,
             'marc21_withholdings',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -299,7 +297,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.University,
             'oai_dc',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -311,7 +309,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.College,
             'marc21',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyMarcField(
               response,
@@ -326,7 +324,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.College,
             'marc21_withholdings',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyMarcField(
               response,
@@ -348,7 +346,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.College,
             'oai_dc',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyDublinCoreField(response, testData.folioInstance.uuid, {
               rights: 'discovery suppressed',
@@ -362,7 +360,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.University,
             'marc21',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -371,7 +369,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.University,
             'marc21_withholdings',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -380,7 +378,7 @@ describe('OAI-PMH', () => {
             testData.folioInstance.uuid,
             Affiliations.University,
             'oai_dc',
-            universityApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.University),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });

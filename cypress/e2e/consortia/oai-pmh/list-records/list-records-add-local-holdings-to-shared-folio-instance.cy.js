@@ -37,8 +37,6 @@ const testData = {
   currentDate: null,
 };
 
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
-const centralApiKey = Cypress.env('EDGE_CENTRAL_API_KEY');
 const userPermissions = [Permissions.inventoryAll.gui];
 
 describe('OAI-PMH', () => {
@@ -152,10 +150,12 @@ describe('OAI-PMH', () => {
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
-          OaiPmhEdge.listRecordsRequest('marc21', collegeApiKey).then((response) => {
-            // Step 4: Verify the response doesn't include the FOLIO instance
-            OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.id, false);
-          });
+          OaiPmhEdge.listRecordsRequest('marc21', OaiPmhEdge.getApiKey(Affiliations.College)).then(
+            (response) => {
+              // Step 4: Verify the response doesn't include the FOLIO instance
+              OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.id, false);
+            },
+          );
 
           // Step 5: Add holdings by clicking on the "Add holdings" button
           cy.resetTenant();
@@ -190,25 +190,30 @@ describe('OAI-PMH', () => {
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
 
-          OaiPmhEdge.listRecordsRequest('marc21', collegeApiKey).then((response) => {
-            OaiPmh.verifyOaiPmhRecordHeader(
-              response,
-              testData.folioInstance.id,
-              false,
-              true,
-              Affiliations.College,
-            );
-            OaiPmh.verifyMarcField(
-              response,
-              testData.folioInstance.id,
-              '999',
-              { ind1: 'f', ind2: 'f' },
-              { t: '0' },
-            );
-          });
+          OaiPmhEdge.listRecordsRequest('marc21', OaiPmhEdge.getApiKey(Affiliations.College)).then(
+            (response) => {
+              OaiPmh.verifyOaiPmhRecordHeader(
+                response,
+                testData.folioInstance.id,
+                false,
+                true,
+                Affiliations.College,
+              );
+              OaiPmh.verifyMarcField(
+                response,
+                testData.folioInstance.id,
+                '999',
+                { ind1: 'f', ind2: 'f' },
+                { t: '0' },
+              );
+            },
+          );
 
           // Step 9: ListIdentifiers marc21 for College tenant
-          OaiPmhEdge.listIdentifiersRequest('marc21', collegeApiKey).then((response) => {
+          OaiPmhEdge.listIdentifiersRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+          ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(
               response,
               testData.folioInstance.id,
@@ -219,7 +224,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 10: ListRecords marc21_withholdings for College tenant
-          OaiPmhEdge.listRecordsRequest('marc21_withholdings', collegeApiKey).then((response) => {
+          OaiPmhEdge.listRecordsRequest(
+            'marc21_withholdings',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+          ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
               testData.folioInstance.id,
@@ -244,31 +252,37 @@ describe('OAI-PMH', () => {
           });
 
           // Step 11: ListIdentifiers marc21_withholdings for College tenant
-          OaiPmhEdge.listIdentifiersRequest('marc21_withholdings', collegeApiKey).then(
+          OaiPmhEdge.listIdentifiersRequest(
+            'marc21_withholdings',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+          ).then((response) => {
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.folioInstance.id,
+              true,
+              false,
+              Affiliations.College,
+            );
+          });
+
+          // Step 12: ListRecords oai_dc for College tenant
+          OaiPmhEdge.listRecordsRequest('oai_dc', OaiPmhEdge.getApiKey(Affiliations.College)).then(
             (response) => {
-              OaiPmh.verifyIdentifierInListResponse(
+              OaiPmh.verifyOaiPmhRecordHeader(
                 response,
                 testData.folioInstance.id,
-                true,
                 false,
+                true,
                 Affiliations.College,
               );
             },
           );
 
-          // Step 12: ListRecords oai_dc for College tenant
-          OaiPmhEdge.listRecordsRequest('oai_dc', collegeApiKey).then((response) => {
-            OaiPmh.verifyOaiPmhRecordHeader(
-              response,
-              testData.folioInstance.id,
-              false,
-              true,
-              Affiliations.College,
-            );
-          });
-
           // Step 13: ListIdentifiers oai_dc for College tenant
-          OaiPmhEdge.listIdentifiersRequest('oai_dc', collegeApiKey).then((response) => {
+          OaiPmhEdge.listIdentifiersRequest(
+            'oai_dc',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+          ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(
               response,
               testData.folioInstance.id,
@@ -279,7 +293,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 14: ListRecords marc21 for Central tenant (all members)
-          OaiPmhEdge.listRecordsRequest('marc21', centralApiKey).then((response) => {
+          OaiPmhEdge.listRecordsRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
               testData.folioInstance.id,
@@ -297,7 +314,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 15: ListIdentifiers marc21 for Central tenant
-          OaiPmhEdge.listIdentifiersRequest('marc21', centralApiKey).then((response) => {
+          OaiPmhEdge.listIdentifiersRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(
               response,
               testData.folioInstance.id,
@@ -308,7 +328,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 16: ListRecords marc21_withholdings for Central tenant
-          OaiPmhEdge.listRecordsRequest('marc21_withholdings', centralApiKey).then((response) => {
+          OaiPmhEdge.listRecordsRequest(
+            'marc21_withholdings',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
               testData.folioInstance.id,
@@ -333,20 +356,24 @@ describe('OAI-PMH', () => {
           });
 
           // Step 17: ListIdentifiers marc21_withholdings for Central tenant
-          OaiPmhEdge.listIdentifiersRequest('marc21_withholdings', centralApiKey).then(
-            (response) => {
-              OaiPmh.verifyIdentifierInListResponse(
-                response,
-                testData.folioInstance.id,
-                true,
-                false,
-                Affiliations.College,
-              );
-            },
-          );
+          OaiPmhEdge.listIdentifiersRequest(
+            'marc21_withholdings',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.folioInstance.id,
+              true,
+              false,
+              Affiliations.College,
+            );
+          });
 
           // Step 18: ListRecords oai_dc for Central tenant
-          OaiPmhEdge.listRecordsRequest('oai_dc', centralApiKey).then((response) => {
+          OaiPmhEdge.listRecordsRequest(
+            'oai_dc',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
               testData.folioInstance.id,
@@ -357,7 +384,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 19: ListIdentifiers oai_dc for Central tenant
-          OaiPmhEdge.listIdentifiersRequest('oai_dc', centralApiKey).then((response) => {
+          OaiPmhEdge.listIdentifiersRequest(
+            'oai_dc',
+            OaiPmhEdge.getApiKey(Affiliations.Consortia),
+          ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(
               response,
               testData.folioInstance.id,

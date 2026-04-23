@@ -13,8 +13,6 @@ const testData = {
   },
 };
 
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
-
 describe('OAI-PMH', () => {
   describe('GetRecord', () => {
     describe('Consortia', () => {
@@ -60,7 +58,7 @@ describe('OAI-PMH', () => {
             testData.dcbInstance.uuid,
             Affiliations.College,
             'marc21',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -70,7 +68,7 @@ describe('OAI-PMH', () => {
             testData.dcbInstance.uuid,
             Affiliations.College,
             'marc21_withholdings',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });
@@ -80,7 +78,7 @@ describe('OAI-PMH', () => {
             testData.dcbInstance.uuid,
             Affiliations.College,
             'oai_dc',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyIdDoesNotExistError(response);
           });

@@ -38,7 +38,6 @@ const testData = {
   materialTypeName: null,
   loanTypeName: null,
 };
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
 const userPermissions = [Permissions.inventoryAll.gui];
 
 describe('OAI-PMH', () => {
@@ -158,7 +157,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'marc21',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -189,7 +188,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'marc21_withholdings',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -231,7 +230,7 @@ describe('OAI-PMH', () => {
             testData.marcInstance.uuid,
             Affiliations.College,
             'oai_dc',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,

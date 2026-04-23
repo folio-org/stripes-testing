@@ -59,7 +59,6 @@ const localMarcInstanceFields = [
     indicators: ['\\', '\\'],
   },
 ];
-const collegeApiKey = Cypress.env('EDGE_COLLEGE_API_KEY');
 const userPermissions = [
   Permissions.inventoryAll.gui,
   Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -227,7 +226,7 @@ describe('OAI-PMH', () => {
             testData.sharedMarcInstance.uuid,
             Affiliations.College,
             'marc21',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -243,7 +242,7 @@ describe('OAI-PMH', () => {
             testData.sharedMarcInstance.uuid,
             Affiliations.College,
             'marc21_withholdings',
-            collegeApiKey,
+            OaiPmhEdge.getApiKey(Affiliations.College),
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
