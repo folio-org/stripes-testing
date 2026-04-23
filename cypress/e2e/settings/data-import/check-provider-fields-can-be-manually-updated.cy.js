@@ -1,4 +1,4 @@
-import { ORDER_STATUSES } from '../../../support/constants';
+import { ORDER_STATUSES, VENDOR_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
   FieldMappingProfileView,
@@ -9,9 +9,17 @@ import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/se
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Organizations from '../../../support/fragments/organizations/organizations';
 
 describe('Data Import', () => {
   describe('Settings', () => {
+    const organization = {
+      name: VENDOR_NAMES.EBSCO,
+      status: 'Active',
+      code: 'SREBSCO',
+      isVendor: true,
+      erpCode: 'G64758-74837',
+    };
     const mappingProfileName = `autotest_mapping_profile_name_${getRandomPostfix()}`;
     const testData = {
       mappingProfile: {
@@ -47,6 +55,18 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` }).then(
+        (orgResp) => {
+          if (orgResp.id) {
+            organization.id = orgResp.id;
+          } else {
+            Organizations.createOrganizationViaApi(organization).then((id) => {
+              organization.id = id;
+            });
+          }
+        },
+      );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
 
