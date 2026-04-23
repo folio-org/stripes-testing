@@ -85,7 +85,7 @@ module.exports = defineConfig({
   viewportHeight: 1080,
   video: false,
   defaultCommandTimeout: 51000,
-  pageLoadTimeout: 300000,
+  pageLoadTimeout: 60000,
   requestTimeout: 60000,
   responseTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
