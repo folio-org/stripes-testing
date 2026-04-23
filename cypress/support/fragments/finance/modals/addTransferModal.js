@@ -17,6 +17,8 @@ import { TRANSFER_ACTIONS } from '../transfer/constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import States from '../states';
 
+const swapButton = Modal({ id: 'add-transfer-modal' }).find(Button({ icon: 'replace' }));
+
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const fundSelection = addTransferModal.find(Selection('Fund'));
 const fromSelection = addTransferModal.find(Selection({ name: 'fromFundId' }));
@@ -69,6 +71,10 @@ export default {
       cy.do(descriptionTextArea.fillIn(description));
     }
   },
+  fillNegativeAmount(value) {
+    cy.get('[name="amount"]').type('{selectall}{backspace}', { delay: 50 });
+    cy.get('[name="amount"]').type(value, { delay: 100 }).blur();
+  },
   selectDropDownValue(label, option) {
     cy.do([
       Selection(including(label)).open(),
@@ -80,7 +86,12 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(addTransferModal.absent());
   },
-  clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
+  clickConfirmButton({
+    transferCreated = true,
+    ammountAllocated = false,
+    confirmNegative,
+    expectError = false,
+  } = {}) {
     cy.wait(2000);
     cy.do(confirmButton.click());
 
@@ -98,13 +109,13 @@ export default {
       }
     }
 
-    if (transferCreated) {
+    if (!expectError && transferCreated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.transferCreatedSuccessfully)),
       );
     }
 
-    if (ammountAllocated) {
+    if (!expectError && ammountAllocated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
@@ -113,5 +124,70 @@ export default {
 
   expectError: (message) => {
     cy.expect(HTML({ className: including('feedbackError') }).has({ text: including(message) }));
+  },
+
+  expectErrorPresent(message) {
+    cy.get('[class*="feedbackError"]').should('contain', message);
+  },
+
+  clickSwapButton() {
+    cy.do(swapButton.click());
+  },
+
+  verifyButtonExists(buttonSelector) {
+    cy.expect(addTransferModal.find(Button(buttonSelector)).exists());
+  },
+
+  verifySwapButtonExists() {
+    this.verifyButtonExists({ icon: 'replace' });
+  },
+
+  verifySelectionFieldValue(name, expectedValue) {
+    const selection = addTransferModal.find(Selection({ name }));
+    if (expectedValue) {
+      cy.expect(selection.has({ singleValue: including(expectedValue) }));
+    } else {
+      cy.expect(selection.has({ singleValue: '' }));
+    }
+  },
+
+  verifyFromFieldValue(expectedValue) {
+    this.verifySelectionFieldValue('fromFundId', expectedValue);
+  },
+
+  verifyToFieldValue(expectedValue) {
+    this.verifySelectionFieldValue('toFundId', expectedValue);
+  },
+
+  verifyAmountFieldValue(expectedValue) {
+    cy.expect(amountTextField.has({ value: expectedValue }));
+  },
+
+  verifyConfirmButtonDisabled(isDisabled = true) {
+    cy.expect(confirmButton.has({ disabled: isDisabled }));
+  },
+
+  addNewTag(tagName) {
+    cy.do([tagsMultiSelect.toggle(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+  },
+
+  verifyTagsDisplayed(...tagNames) {
+    tagNames.forEach((tagName) => {
+      cy.expect(tagsMultiSelect.find(HTML(including(tagName))).exists());
+    });
+  },
+
+  clearSelectionField(fieldName) {
+    cy.do([Selection({ name: fieldName }).open(), SelectionList().select('')]);
+  },
+
+  selectBlankOptionInToField() {
+    this.clearSelectionField('toFundId');
   },
 };

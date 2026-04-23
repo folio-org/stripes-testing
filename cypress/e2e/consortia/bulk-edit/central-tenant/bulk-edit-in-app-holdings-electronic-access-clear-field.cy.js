@@ -85,7 +85,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+          cy.getLocations({ limit: 1 }).then((res) => {
             locationId = res.id;
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -120,34 +120,37 @@ describe('Bulk-edit', () => {
                 source: 'local',
               }).then((response) => {
                 localUrlRelationship.id = response.id;
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  locationId = res.id;
 
-                // create holdings in College tenant
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: locationId,
-                    electronicAccess: [
-                      {
-                        linkText: 'College shared link text',
-                        materialsSpecification: 'College shared material specified',
-                        publicNote: 'College shared url public note',
-                        uri: 'https://college-shared-uri.com',
-                        relationshipId: sharedUrlRelationship.settingId,
-                      },
-                      {
-                        linkText: 'College link text',
-                        materialsSpecification: 'College material specified',
-                        publicNote: 'College url public note',
-                        uri: 'https://college-uri.com',
-                        relationshipId: localUrlRelationship.id,
-                      },
-                    ],
-                    sourceId,
-                  }).then((holding) => {
-                    collegeHoldingIds.push(holding.id);
-                    collegeHoldingHrids.push(holding.hrid);
+                  // create holdings in College tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: locationId,
+                      electronicAccess: [
+                        {
+                          linkText: 'College shared link text',
+                          materialsSpecification: 'College shared material specified',
+                          publicNote: 'College shared url public note',
+                          uri: 'https://college-shared-uri.com',
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                        {
+                          linkText: 'College link text',
+                          materialsSpecification: 'College material specified',
+                          publicNote: 'College url public note',
+                          uri: 'https://college-uri.com',
+                          relationshipId: localUrlRelationship.id,
+                        },
+                      ],
+                      sourceId,
+                    }).then((holding) => {
+                      collegeHoldingIds.push(holding.id);
+                      collegeHoldingHrids.push(holding.hrid);
+                    });
+                    cy.wait(1000);
                   });
-                  cy.wait(1000);
                 });
               });
             })
@@ -156,24 +159,28 @@ describe('Bulk-edit', () => {
               cy.setTenant(Affiliations.University);
 
               instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.id,
-                  permanentLocationId: locationId,
-                  electronicAccess: [
-                    {
-                      linkText: 'University shared link text',
-                      materialsSpecification: 'University shared material specified',
-                      publicNote: 'University shared url public note',
-                      uri: 'https://university-shared-uri.com',
-                      relationshipId: sharedUrlRelationship.settingId,
-                    },
-                  ],
-                  sourceId,
-                }).then((holding) => {
-                  universityHoldingIds.push(holding.id);
-                  universityHoldingHrids.push(holding.hrid);
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  locationId = res.id;
+
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.id,
+                    permanentLocationId: locationId,
+                    electronicAccess: [
+                      {
+                        linkText: 'University shared link text',
+                        materialsSpecification: 'University shared material specified',
+                        publicNote: 'University shared url public note',
+                        uri: 'https://university-shared-uri.com',
+                        relationshipId: sharedUrlRelationship.settingId,
+                      },
+                    ],
+                    sourceId,
+                  }).then((holding) => {
+                    universityHoldingIds.push(holding.id);
+                    universityHoldingHrids.push(holding.hrid);
+                  });
+                  cy.wait(1000);
                 });
-                cy.wait(1000);
               });
             })
             .then(() => {

@@ -1,5 +1,6 @@
 import {
   Button,
+  HTML,
   MultiColumnListCell,
   PaneHeader,
   Section,
@@ -24,6 +25,7 @@ const currentBudgetSection = fundDetailsPane.find(Section({ id: 'currentBudget' 
 const currentExpenseClassesSection = fundDetailsPane.find(Section({ id: 'currentExpenseClasses' }));
 const plannedBudgetSection = fundDetailsPane.find(Section({ id: 'plannedBudget' }));
 const previousBudgetsSection = fundDetailsPane.find(Section({ id: 'previousBudgets' }));
+const donorInformationSection = fundDetailsPane.find(Section({ id: 'donorInformation' }));
 
 export default {
   ...FinanceDetails,
@@ -121,6 +123,31 @@ export default {
   },
   closeFundDetails() {
     cy.do(fundDetailsPaneHeader.find(Button({ icon: 'times' })).click());
+  },
+  checkDonorInformationSection({ donors = [], visible = true } = {}) {
+    if (!visible) {
+      cy.expect(donorInformationSection.absent());
+      return;
+    }
+
+    cy.expect(donorInformationSection.exists());
+
+    donors.forEach((donor, index) => {
+      cy.expect([
+        donorInformationSection
+          .find(MultiColumnListCell({ row: index, column: 'Name' }))
+          .has({ content: including(donor.name) }),
+        donorInformationSection
+          .find(MultiColumnListCell({ row: index, column: 'Code' }))
+          .has({ content: including(donor.code) }),
+      ]);
+    });
+
+    if (!donors.length) {
+      cy.expect(
+        donorInformationSection.find(HTML(including('The list contains no items'))).exists(),
+      );
+    }
   },
 
   verifyFundName: (title) => {
