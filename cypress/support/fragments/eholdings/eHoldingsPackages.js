@@ -378,4 +378,63 @@ export default {
   fillDateCoverage(startDate, endDate) {
     cy.do([startDateInput.fillIn(startDate), endDateInput.fillIn(endDate)]);
   },
+
+  setCustomCoverageForPackageViaAPI(packageName, beginDate, endDate) {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'eholdings/root-proxy',
+      isDefaultSearchParamsRequired: false,
+    }).then((rootResponse) => {
+      cy.okapiRequest({
+        method: 'GET',
+        path: 'eholdings/proxy-types?limit=15',
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body }) => {
+        const proxyId = body.data
+          .filter(
+            (proxy) => proxy.attributes.id !== rootResponse.body.data.attributes.proxyTypeId,
+          )[0]
+          .attributes.id.toLowerCase();
+
+        this.getPackageViaApi(packageName).then(({ body: { data } }) => {
+          const packageData = data[0];
+          packageData.attributes.customCoverage = {
+            beginCoverage: beginDate,
+            endCoverage: endDate,
+          };
+          cy.okapiRequest({
+            method: 'PUT',
+            path: `eholdings/packages/${packageData.id}`,
+            contentTypeHeader: 'application/vnd.api+json',
+            body: {
+              data: {
+                id: packageData.id,
+                type: packageData.type,
+                attributes: {
+                  name: packageData.attributes.name,
+                  isSelected: packageData.attributes.isSelected,
+                  allowKbToAddTitles: true,
+                  contentType: packageData.attributes.contentType,
+                  customCoverage: packageData.attributes.customCoverage,
+                  visibilityData: {
+                    isHidden: packageData.attributes.isHidden,
+                    reason: packageData.attributes.visibilityData.reason,
+                  },
+                  isCustom: packageData.attributes.isCustom,
+                  proxy: {
+                    id: proxyId,
+                    inherited: false,
+                  },
+                  packageToken: {},
+                  isFullPackage: false,
+                  accessTypeId: null,
+                },
+              },
+            },
+            isDefaultSearchParamsRequired: false,
+          });
+        });
+      });
+    });
+  },
 };

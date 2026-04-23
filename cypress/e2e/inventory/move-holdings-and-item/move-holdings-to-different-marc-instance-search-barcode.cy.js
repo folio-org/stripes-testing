@@ -104,7 +104,9 @@ describe('Inventory', () => {
           `${instanceTitlePrefix} B`,
         );
         InventoryInstancesMovement.checkHoldingsMoveSuccessCallout(1);
-        InventoryInstancesMovement.verifyHoldingsMoved(location.name, '1');
+        InventoryInstancesMovement.verifyHoldingsMoved(location.name, '1', {
+          instancePaneIndex: 1,
+        });
 
         InventoryInstance.openHoldings(location.name);
         cy.stubBrowserPrompt();
@@ -114,6 +116,8 @@ describe('Inventory', () => {
         InventoryInstancesMovement.closeInLeftForm();
         InventoryInstance.waitLoading();
 
+        // wait for moving to be processed
+        cy.wait(2000);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(barcodeOption, itemBarcode);
         ItemRecordView.checkBarcode(itemBarcode);

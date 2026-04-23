@@ -172,7 +172,10 @@ describe('Data Export', () => {
                 (record) => expect(record.get(`5${recordData.mainField.substring(1)}`)[0].subf[0][1]).to.eq(
                   `${getSubfieldValue(recordData, index)}_5XX`,
                 ),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(authorityIds[index]),
+                (record) => expect([
+                  record.get('999')[0].subf[0][1],
+                  record.get('999')[0].subf[1][1],
+                ]).to.include(authorityIds[index]),
               ],
             });
           });

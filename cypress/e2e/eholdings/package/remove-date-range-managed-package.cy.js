@@ -12,8 +12,8 @@ describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
       managedPackageName: 'Books 24x7 Leadership Development Channel - Spanish',
-      startDate: '01/01/2023',
-      endDate: '12/31/2023',
+      startDate: '2023-01-01',
+      endDate: '2023-12-31',
       displayStartDate: '1/1/2023',
       displayEndDate: '12/31/2023',
     };
@@ -22,27 +22,13 @@ describe('eHoldings', () => {
     before('Setup managed package as admin and create user', () => {
       cy.getAdminToken()
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          cy.wait(3000);
-          EHoldingsPackagesSearch.byName(testData.managedPackageName);
-          EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
-          EHoldingsPackages.openPackage();
-
-          EHoldingsPackageView.verifyPackageName(testData.managedPackageName);
-          cy.wait(3000);
-          EHoldingsPackageView.edit();
-
-          EHoldingsNewCustomPackage.fillDateRange(testData.startDate, testData.endDate);
-          EHoldingsNewCustomPackage.verifyDateRangeValues(testData.startDate, testData.endDate);
-          EHoldingsNewCustomPackage.verifySaveButtonEnabled();
-          EHoldingsNewCustomPackage.saveAndClose();
-          EHoldingsNewCustomPackage.checkPackageUpdatedCallout();
-          cy.wait(3000);
-          cy.logout();
+          EHoldingsPackages.setCustomCoverageForPackageViaAPI(testData.managedPackageName, '', '');
+          cy.wait(1000);
+          EHoldingsPackages.setCustomCoverageForPackageViaAPI(
+            testData.managedPackageName,
+            testData.startDate,
+            testData.endDate,
+          );
         })
         .then(() => {
           cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
