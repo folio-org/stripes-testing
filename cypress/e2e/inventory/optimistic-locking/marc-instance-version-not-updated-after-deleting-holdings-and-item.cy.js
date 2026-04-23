@@ -144,8 +144,8 @@ describe('Inventory', () => {
         // wait for all the data to be loaded, otherwise detail view may reload
         cy.wait(3000);
         InventorySearchAndFilter.closeInstanceDetailPane();
-        InventoryInstance.verifyHoldingsAbsent(location.name);
         InventoryInstances.selectInstanceById(instanceId);
+        InventoryInstance.verifyHoldingsAbsent(location.name);
 
         // Step 5: Verify Instance _version did not change after Holdings and Item deletion
         cy.intercept('GET', `/inventory/instances/${instanceId}`).as('getInstanceAfter');
