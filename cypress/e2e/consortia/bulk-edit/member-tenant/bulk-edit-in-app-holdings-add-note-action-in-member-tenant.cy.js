@@ -79,9 +79,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            locationId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -112,22 +109,29 @@ describe('Bulk-edit', () => {
               HoldingsNoteTypes.createViaApi({
                 name: localHoldingNoteType.name,
                 source: 'local',
-              }).then((responce) => {
-                localHoldingNoteType.id = responce.body.id;
-              });
-              // create holdings in College tenant
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  callNumber: instance.holdingCallNumberInCollege,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingId = holding.id;
-                  instance.holdingHrid = holding.hrid;
+              })
+                .then((responce) => {
+                  localHoldingNoteType.id = responce.body.id;
+
+                  cy.getLocations({ limit: 1 }).then((res) => {
+                    locationId = res.id;
+                  });
+                })
+                .then(() => {
+                  // create holdings in College tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      callNumber: instance.holdingCallNumberInCollege,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingId = holding.id;
+                      instance.holdingHrid = holding.hrid;
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             });
           cy.resetTenant();
           cy.login(user.username, user.password, {

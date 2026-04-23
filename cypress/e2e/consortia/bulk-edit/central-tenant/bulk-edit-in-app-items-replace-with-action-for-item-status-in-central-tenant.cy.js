@@ -93,9 +93,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            locationId = res.id;
-          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -126,17 +123,22 @@ describe('Bulk-edit', () => {
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
               });
-
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingId = holding.id;
+              cy.getLocations({ limit: 1 })
+                .then((res) => {
+                  locationId = res.id;
+                })
+                .then(() => {
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingId = holding.id;
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               // create items in member tenant

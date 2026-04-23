@@ -98,9 +98,13 @@ const errorFileItemBarcode = BulkEditFiles.getErrorsFromMatchingFileName(
 );
 
 // Error message templates
-const errorNoAffiliationTemplate = (key) => (holdingId) => `User ${user.username} does not have required affiliation to view the holdings record - ${key}=${holdingId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoAffiliationTemplate = (key) => (holdingId) => {
+  return `User ${user.username} does not have required affiliation to view the holdings record - ${key}=${holdingId} on the tenant ${Affiliations.College.toLowerCase()}`;
+};
 
-const errorNoPermissionTemplate = (key) => (holdingId) => `User ${user.username} does not have required permission to view the holdings record - ${key}=${holdingId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoPermissionTemplate = (key) => (holdingId) => {
+  return `User ${user.username} does not have required permission to view the holdings record - ${key}=${holdingId} on the tenant ${Affiliations.College.toLowerCase()}`;
+};
 
 const createRoleWithCapabilitiesForAffiliation = (affiliation, testData) => {
   cy.setTenant(affiliation);
@@ -288,9 +292,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            locationId = res.id;
-          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -319,6 +320,9 @@ describe('Bulk-edit', () => {
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
               });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+              });
             })
             .then(() => createHoldingsAndItemsForTenant({
               barcodePrefix: 'col_',
@@ -332,6 +336,9 @@ describe('Bulk-edit', () => {
               cy.setTenant(Affiliations.University);
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
+              });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
               });
             })
             .then(() => createHoldingsAndItemsForTenant({

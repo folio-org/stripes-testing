@@ -76,11 +76,11 @@ describe('Bulk-edit', () => {
                 cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
                   instanceTypeId = instanceTypeData[0].id;
                 });
-                cy.getLocations({ limit: 1 }).then((res) => {
-                  locationId = res.id;
-                });
                 InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                   sourceId = folioSource.id;
+                });
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  locationId = res.id;
                 });
 
                 // create local url relationship in College

@@ -78,9 +78,13 @@ const errorFileHRID = BulkEditFiles.getErrorsFromMatchingFileName(itemHRIDsFileN
 const errorFileUUID = BulkEditFiles.getErrorsFromMatchingFileName(itemUUIDsFileName, true);
 
 // Error message templates
-const errorNoAffiliationTemplate = (key) => (itemId) => `User ${user.username} does not have required affiliation to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoAffiliationTemplate = (key) => (itemId) => {
+  return `User ${user.username} does not have required affiliation to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+};
 
-const errorNoPermissionTemplate = (key) => (itemId) => `User ${user.username} does not have required permission to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+const errorNoPermissionTemplate = (key) => (itemId) => {
+  return `User ${user.username} does not have required permission to view the item record - ${key}=${itemId} on the tenant ${Affiliations.College.toLowerCase()}`;
+};
 
 const createRoleWithCapabilitiesForAffiliation = (affiliation, testData) => {
   cy.setTenant(affiliation);
@@ -262,9 +266,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            locationId = res.id;
-          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -289,6 +290,9 @@ describe('Bulk-edit', () => {
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
               });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+              });
             })
             .then(() => InventoryHoldings.createHoldingRecordViaApi({
               instanceId: folioInstance.uuid,
@@ -311,6 +315,9 @@ describe('Bulk-edit', () => {
               cy.setTenant(Affiliations.University);
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
+              });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
               });
             })
             .then(() => InventoryHoldings.createHoldingRecordViaApi({
