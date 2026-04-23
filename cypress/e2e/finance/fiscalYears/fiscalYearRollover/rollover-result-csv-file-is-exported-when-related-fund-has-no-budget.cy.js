@@ -18,10 +18,7 @@ import {
 } from '../../../../support/fragments/finance';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import {
-  DateTools,
-  ExecutionFlowManager,
-} from '../../../../support/utils';
+import { DateTools, ExecutionFlowManager } from '../../../../support/utils';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomStringCode from '../../../../support/utils/generateTextCode';
 
@@ -34,13 +31,11 @@ const R = {
 };
 
 const CSV_HEADERS_SET = new Set(
-  Object
-    .values({
-      ...EXPORT_FUND_FIELDS,
-      ...EXPORT_BUDGET_FIELDS,
-      ...EXPORT_EXPENSE_CLASS_FIELDS,
-    })
-    .map((header) => `"${header}"`),
+  Object.values({
+    ...EXPORT_FUND_FIELDS,
+    ...EXPORT_BUDGET_FIELDS,
+    ...EXPORT_EXPENSE_CLASS_FIELDS,
+  }).map((header) => `"${header}"`),
 );
 
 const deleteDownloadedFile = (fileName) => {
@@ -134,76 +129,47 @@ describe('Finance | Fiscal Year Rollover', () => {
 });
 
 function getPreconditionSteps() {
-  const registerFiscalYear = (flow, key, fiscalYear) => flow.set(
-    key,
-    fiscalYear,
-    (entity) => FiscalYears.deleteFiscalYearViaApi(entity.id, false),
-  );
+  const registerFiscalYear = (flow, key, fiscalYear) => flow.set(key, fiscalYear, (entity) => FiscalYears.deleteFiscalYearViaApi(entity.id, false));
 
-  const registerLedger = (flow, ledger) => flow.set(
-    R.LEDGER,
-    ledger,
-    (entity) => Ledgers.deleteLedgerViaApi(entity.id, false),
-  );
+  const registerLedger = (flow, ledger) => flow.set(R.LEDGER, ledger, (entity) => Ledgers.deleteLedgerViaApi(entity.id, false));
 
-  const registerFund = (flow, fundData) => flow.set(
-    R.FUND,
-    fundData,
-    (entity) => Funds.deleteFundViaApi(entity.fund.id, false),
-  );
+  const registerFund = (flow, fundData) => flow.set(R.FUND, fundData, (entity) => Funds.deleteFundViaApi(entity.fund.id, false));
 
-  const registerRollover = (flow, prefix, ledgerRollover) => flow.set(
-    `${prefix}-${ledgerRollover.id}`,
-    ledgerRollover,
-    (entity) => LedgerRollovers.deleteLedgerRolloverViaApi(entity.id),
-  );
+  const registerRollover = (flow, prefix, ledgerRollover) => flow.set(`${prefix}-${ledgerRollover.id}`, ledgerRollover, (entity) => LedgerRollovers.deleteLedgerRolloverViaApi(entity.id));
 
-  const registerUser = (flow, userProperties) => flow.set(
-    R.USER_PROPERTIES,
-    userProperties,
-    (entity) => Users.deleteViaApi(entity.userId),
-  );
+  const registerUser = (flow, userProperties) => flow.set(R.USER_PROPERTIES, userProperties, (entity) => Users.deleteViaApi(entity.userId));
 
   const createActiveConsecutiveFiscalYears = (flow) => {
     const defaultRolloverFiscalYear = FiscalYears.defaultRolloverFiscalYear;
     const series = getRandomStringCode(4);
 
-    [
-      R.INITIAL_FISCAL_YEAR,
-      R.NEXT_FISCAL_YEAR,
-    ].forEach((key, index) => {
+    [R.INITIAL_FISCAL_YEAR, R.NEXT_FISCAL_YEAR].forEach((key, index) => {
       const periods = DateTools.getFullFiscalYearStartAndEnd(index);
 
-      FiscalYears
-        .createViaApi({
-          ...defaultRolloverFiscalYear,
-          ...periods,
-          series,
-          code: `${series}${new Date(periods.periodStart).getFullYear()}`,
-        })
-        .then((fiscalYear) => registerFiscalYear(flow, key, fiscalYear));
+      FiscalYears.createViaApi({
+        ...defaultRolloverFiscalYear,
+        ...periods,
+        series,
+        code: `${series}${new Date(periods.periodStart).getFullYear()}`,
+      }).then((fiscalYear) => registerFiscalYear(flow, key, fiscalYear));
     });
   };
 
   const createActiveLedgerForInitialFiscalYear = (flow) => {
-    return Ledgers
-      .createViaApi({
-        ...Ledgers.getDefaultLedger(),
-        fiscalYearOneId: flow.get(R.INITIAL_FISCAL_YEAR).id,
-      })
-      .then((ledger) => registerLedger(flow, ledger));
+    return Ledgers.createViaApi({
+      ...Ledgers.getDefaultLedger(),
+      fiscalYearOneId: flow.get(R.INITIAL_FISCAL_YEAR).id,
+    }).then((ledger) => registerLedger(flow, ledger));
   };
 
   const createActiveFundWithoutBudget = (flow) => {
     const { name, ...baseFund } = Funds.getDefaultFund();
 
-    return Funds
-      .createViaApi({
-        ...baseFund,
-        name: `[no-budget]_${name}`,
-        ledgerId: flow.get(R.LEDGER).id,
-      })
-      .then((fundData) => registerFund(flow, fundData));
+    return Funds.createViaApi({
+      ...baseFund,
+      name: `[no-budget]_${name}`,
+      ledgerId: flow.get(R.LEDGER).id,
+    }).then((fundData) => registerFund(flow, fundData));
   };
 
   const performTestAndCommonRollovers = (flow) => {
@@ -214,26 +180,23 @@ function getPreconditionSteps() {
       encumbrancesRollover: [],
     });
 
-    [
-      LEDGER_ROLLOVER_TYPES.PREVIEW,
-      LEDGER_ROLLOVER_TYPES.COMMIT,
-    ].forEach((type) => {
-      LedgerRollovers
-        .createLedgerRolloverViaApi({
-          ...buildRollover(),
-          rolloverType: type,
-        })
-        .then((rollover) => registerRollover(flow, type, rollover));
+    [LEDGER_ROLLOVER_TYPES.PREVIEW, LEDGER_ROLLOVER_TYPES.COMMIT].forEach((type) => {
+      LedgerRollovers.createLedgerRolloverViaApi({
+        ...buildRollover(),
+        rolloverType: type,
+      }).then((rollover) => registerRollover(flow, type, rollover));
     });
   };
 
   const createTestUser = (flow) => {
-    return cy.createTempUser([
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-    ]).then((userProperties) => registerUser(flow, userProperties));
+    return cy
+      .createTempUser([
+        permissions.uiFinanceViewFiscalYear.gui,
+        permissions.uiFinanceViewLedger.gui,
+        permissions.uiFinanceViewFundAndBudget.gui,
+        permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      ])
+      .then((userProperties) => registerUser(flow, userProperties));
   };
 
   const loginToLedgerPane = (flow) => {

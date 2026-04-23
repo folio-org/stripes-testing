@@ -34,9 +34,11 @@ export default {
 
   clickNoButton() {
     cy.xpath(noButton).click();
+    cy.wait(500);
   },
 
   clickYesButton() {
     cy.xpath(yesButton).click();
+    cy.wait(500);
   },
 };

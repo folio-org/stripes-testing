@@ -26,7 +26,7 @@ describe('Data Import', () => {
       invoiceLineDescription: 'abc',
       quantity: '1',
       subtotal: '10.00',
-      vendorName: VENDOR_NAMES.EBSCO,
+      vendorName: VENDOR_NAMES.GOBI,
       invoiceDate: '###TODAY###',
     };
     const requiredFields = {
