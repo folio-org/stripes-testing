@@ -23,7 +23,6 @@ describe('Requests', () => {
       cy.getAdminToken()
         .then(() => {
           cy.createTempUser([]).then((userProperties) => {
-            console.log('userProperties', userProperties);
             testData.requester = userProperties;
           });
         })
