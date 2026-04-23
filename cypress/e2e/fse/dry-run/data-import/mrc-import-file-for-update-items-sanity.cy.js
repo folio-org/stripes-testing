@@ -9,9 +9,6 @@ import {
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
-  LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
-  MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../../support/constants';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
@@ -51,8 +48,11 @@ describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
     const location = {};
+    const locationForUpdate = {};
     const materialType = {};
+    const materialTypeForUpdate = {};
     const loanType = {};
+    const loanTypeForUpdate = {};
     const mappingProfileIds = [];
     const actionProfileIds = [];
     // file names
@@ -73,12 +73,12 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C343335 create holdings mapping profile ${getRandomPostfix()}`,
-      permanentLocation: LOCATION_NAMES.CD_R,
+      permanentLocation: '',
     };
     const itemMappingProfileForCreate = {
       name: `C343335 create item mapping profile ${getRandomPostfix()}`,
-      materialType: MATERIAL_TYPE_NAMES.CD,
-      permanentLoanType: LOAN_TYPE_NAMES.SELECTED,
+      materialType: '',
+      permanentLoanType: '',
       status: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const actionProfilesForCreate = [
@@ -144,7 +144,6 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C343335 autotestMappingItem${getRandomPostfix()}`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          // permanentLoanType: LOAN_TYPE_NAMES.EEB,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -212,15 +211,6 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
-      cy.getLocations({ limit: 1 }).then((locationResponse) => {
-        Object.assign(location, locationResponse);
-      });
-      cy.getMaterialTypes({ limit: 1 }).then((materialTypeResponse) => {
-        Object.assign(materialType, materialTypeResponse);
-      });
-      cy.getLoanTypes({ limit: 1 }).then((loanTypeResponse) => {
-        Object.assign(loanType, loanTypeResponse);
-      });
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
         marcBibMappingProfileForCreate,
       ).then((mappingProfileResponse) => {
@@ -245,41 +235,56 @@ describe('Data Import', () => {
           actionProfileIds.push(actionProfileResponse.body.id);
         });
       });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
-        holdingsMappingProfileForCreate,
-      ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+      cy.getLocations({ limit: 2 }).then((locationResp) => {
+        Object.assign(location, locationResp);
+        Object.assign(locationForUpdate, Cypress.env('locations')[1]);
+        holdingsMappingProfileForCreate.permanentLocation = `${locationResp.name} (${locationResp.code})`;
 
-        NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[2].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
-        });
-      });
-      NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
-        .then((mappingProfileResponse) => {
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
+          holdingsMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[3].actionProfile,
+            actionProfilesForCreate[2].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
           });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
-            jobProfileForCreate,
-            actionProfileIds[0],
-            actionProfileIds[1],
-            actionProfileIds[2],
-            actionProfileIds[3],
-          );
         });
+      });
+      cy.getMaterialTypes({ limit: 2 }).then((materialTypeResponse) => {
+        Object.assign(materialType, materialTypeResponse);
+        Object.assign(materialTypeForUpdate, Cypress.env('materialTypes')[1]);
+        itemMappingProfileForCreate.materialType = materialTypeResponse.name;
 
-      cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password, { log: false });
+        cy.getLoanTypes({ limit: 2 }).then((loanTypeResponse) => {
+          Object.assign(loanType, loanTypeResponse[0]);
+          Object.assign(loanTypeForUpdate, loanTypeResponse[1]);
+          itemMappingProfileForCreate.permanentLoanType = loanTypeResponse[0].name;
+
+          NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
+            .then((mappingProfileResponse) => {
+              mappingProfileIds.push(mappingProfileResponse.body.id);
+
+              NewActionProfile.createActionProfileViaApi(
+                actionProfilesForCreate[3].actionProfile,
+                mappingProfileResponse.body.id,
+              ).then((actionProfileResponse) => {
+                actionProfileIds.push(actionProfileResponse.body.id);
+              });
+            })
+            .then(() => {
+              NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
+                jobProfileForCreate,
+                actionProfileIds[0],
+                actionProfileIds[1],
+                actionProfileIds[2],
+                actionProfileIds[3],
+              );
+            });
+        });
+      });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
@@ -339,7 +344,9 @@ describe('Data Import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.ELECTRONIC);
-      NewFieldMappingProfile.fillPermanentLocation(`"${location.name} (${location.code})"`);
+      NewFieldMappingProfile.fillPermanentLocation(
+        `"${locationForUpdate.name} (${locationForUpdate.code})"`,
+      );
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
       NewFieldMappingProfile.addElectronicAccess(profile.typeValue, '"Resource"', '856$u');
@@ -350,13 +357,13 @@ describe('Data Import', () => {
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-      NewFieldMappingProfile.fillMaterialType(`"${materialType.name}"`);
+      NewFieldMappingProfile.fillMaterialType(`"${materialTypeForUpdate.name}"`);
       NewFieldMappingProfile.addItemNotes(
         '"Nota"',
         '"Smith Family Foundation"',
         'Mark for all affected records',
       );
-      NewFieldMappingProfile.fillPermanentLoanType(loanType.name);
+      NewFieldMappingProfile.fillPermanentLoanType(loanTypeForUpdate.name);
       NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
