@@ -116,8 +116,6 @@ describe('Inventory', () => {
         InventoryInstancesMovement.closeInLeftForm();
         InventoryInstance.waitLoading();
 
-        // wait for moving to be processed
-        cy.wait(2000);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(barcodeOption, itemBarcode);
         ItemRecordView.checkBarcode(itemBarcode);
