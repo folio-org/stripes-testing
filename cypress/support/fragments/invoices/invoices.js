@@ -34,6 +34,7 @@ import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
 import VoucherExportForm from './voucherExportForm';
 import DuplicateInvoiceModal from './modal/duplicateInvoiceModal';
+import DifferentCurrencyConfirmationModal from './modal/differentCurrencyConfirmationModal';
 
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
@@ -1446,13 +1447,13 @@ export default {
     });
   },
 
-  differentCurrencyConfirmation: () => {
-    cy.do(
-      Modal({ id: 'invoice-line-currency-confirmation' })
-        .find(Button({ id: 'clickable-invoice-line-currency-confirmation-confirm' }))
-        .click(),
-    );
-    cy.wait(4000);
+  handleDifferentCurrencyModal(confirm = true) {
+    DifferentCurrencyConfirmationModal.verifyModalView();
+    if (confirm) {
+      DifferentCurrencyConfirmationModal.clickConfirmButton();
+    } else {
+      DifferentCurrencyConfirmationModal.closeModal();
+    }
   },
 
   verifySearchResult(invoiceNumber) {

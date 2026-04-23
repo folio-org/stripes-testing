@@ -136,6 +136,38 @@ export default {
             .has({ content: including(record.paymentStatus) }),
         );
       }
+
+      if (record.quantity) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Quantity' }))
+            .has({ content: including(record.quantity) }),
+        );
+      }
+
+      if (record.subTotal) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Sub-total' }))
+            .has({ content: including(record.subTotal) }),
+        );
+      }
+
+      if (record.total) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Total' }))
+            .has({ content: including(record.total) }),
+        );
+      }
+
+      if (record.totalExchanged) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Total (Exchanged)' }))
+            .has({ content: including(record.totalExchanged) }),
+        );
+      }
     });
   },
   checkInvoiceDetails({
