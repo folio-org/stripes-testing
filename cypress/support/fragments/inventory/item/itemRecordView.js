@@ -481,6 +481,25 @@ export default {
     expect(timeDifference).to.be.lessThan(60000);
     expect(userId).to.eq(updatedItemData.updatedByUserId);
   },
+  verifyItemMetadataNotChanged: (updatedHoldingsDate, updatedItemDate, itemMetdata, userId) => {
+    const convertedHoldingsDate = new Date(updatedHoldingsDate).getTime();
+    const convertedItemsDate = new Date(updatedItemDate).getTime();
+
+    // check that Holdings update time is greater than Item's
+    expect(convertedHoldingsDate).to.be.greaterThan(convertedItemsDate);
+    expect(userId).to.eq(itemMetdata.updatedByUserId);
+  },
+  getRecordLastUpdatedDate: () => cy.then(() => {
+    return cy
+      .get('div[class^="metaHeaderLabel-"]')
+      .invoke('text')
+      .then((text) => {
+        // extract only date and time
+        const colonIndex = text.indexOf(':');
+        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+        return lastUpdatedDate;
+      });
+  }),
   verifyItemCallNumberChangedAfterChangedInHoldings: (
     createdItemData,
     updatedItemData,
