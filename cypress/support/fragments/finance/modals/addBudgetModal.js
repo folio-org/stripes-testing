@@ -59,7 +59,7 @@ export default {
     if (encumbrance) {
       cy.do(allowableEncumbranceTextField.fillIn(encumbrance));
     }
-    if (allocated) {
+    if (allocated !== undefined) {
       cy.do(allocatedTextField.fillIn(allocated));
     }
   },
@@ -74,5 +74,33 @@ export default {
     if (budgetCreated) {
       InteractorsTools.checkCalloutMessage(matching(new RegExp(States.budgetCreatedSuccessfully)));
     }
+  },
+  clickSaveButtonWithoutClosing() {
+    cy.do(saveButton.click());
+    cy.expect(addBudgetModal.exists());
+  },
+  checkAllocatedFieldError(errorMessage) {
+    cy.expect(allocatedTextField.has({ error: errorMessage }));
+  },
+  fillInAllocated(value) {
+    cy.get('[name="allocated"]').type('{selectall}{backspace}', { delay: 50 });
+    cy.get('[name="allocated"]').type(value, { delay: 100 });
+  },
+  fillInExpenditure(value) {
+    cy.get('[name="allowableExpenditure"]').type('{selectall}{backspace}', { delay: 50 });
+    cy.get('[name="allowableExpenditure"]').type(value, { delay: 100 });
+  },
+  fillInEncumbrance(value) {
+    cy.get('[name="allowableEncumbrance"]').type('{selectall}{backspace}', { delay: 50 });
+    cy.get('[name="allowableEncumbrance"]').type(value, { delay: 100 });
+  },
+  clearEncumbranceField() {
+    cy.get('[name="allowableEncumbrance"]').type('{selectall}{backspace}', { delay: 50 });
+  },
+  checkExpenditureFieldError(errorMessage) {
+    cy.expect(allowableExpenditureTextField.has({ error: errorMessage }));
+  },
+  checkEncumbranceFieldError(errorMessage) {
+    cy.expect(allowableEncumbranceTextField.has({ error: errorMessage }));
   },
 };
