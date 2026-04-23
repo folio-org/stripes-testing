@@ -640,11 +640,15 @@ export default {
     return instanceId;
   },
 
-  deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
+  deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode, { searchParams = {} } = {}) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` }).then(
       (instance) => {
-        cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
-        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        if (Object.keys(searchParams).length) {
+          cy.bulkDeleteItemsViaApi(searchParams);
+        } else {
+          cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
+        }
+        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
