@@ -22,7 +22,7 @@ describe('Inventory', () => {
         const instanceTitlePrefix = `AT_C813588_FolioInstance_${getRandomPostfix()}`;
         const folioInstances = InventoryInstances.generateFolioInstances({
           instanceTitlePrefix,
-          count: 1,
+          count: 2,
           holdingsCount: 0,
         });
         const allDefaultColumns = Object.values(INVENTORY_COLUMN_HEADERS).slice(1);
@@ -70,6 +70,7 @@ describe('Inventory', () => {
           cy.getAdminToken();
           cy.resetInventoryDisplaySettingsViaAPI();
           InventoryInstance.deleteInstanceViaApi(folioInstances[0].instanceId);
+          InventoryInstance.deleteInstanceViaApi(folioInstances[1].instanceId);
           Users.deleteViaApi(user.userId);
 
           cy.setTenant(Affiliations.College);
