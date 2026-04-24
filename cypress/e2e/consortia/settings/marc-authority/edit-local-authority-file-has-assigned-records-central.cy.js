@@ -102,14 +102,10 @@ describe('MARC', () => {
           () => {
             // Step 1: Go to Manage authority files in Central
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
-              SettingsPane.waitLoading();
-              cy.reload();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            }, 20_000);
+            cy.login(user.username, user.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
+            SettingsPane.waitLoading();
             SettingsPane.waitLoading();
             SettingsPane.selectSettingsTab(manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
