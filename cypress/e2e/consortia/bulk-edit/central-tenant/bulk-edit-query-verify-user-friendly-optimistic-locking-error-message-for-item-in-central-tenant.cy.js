@@ -286,7 +286,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
 
           // Step 13: Verify error details for the first item (no link to latest version in ECS)
-          BulkEditSearchPane.verifyNonMatchedResults(items[0], optimisticLockingErrorMessage);
+          BulkEditSearchPane.verifyErrorByIdentifier(items[0], optimisticLockingErrorMessage);
 
           // Step 14: Download changed records (CSV)
           BulkEditActions.openActions();
