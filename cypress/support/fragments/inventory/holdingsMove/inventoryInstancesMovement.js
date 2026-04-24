@@ -14,6 +14,8 @@ import {
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
+const instancePaneFrom = Section({ id: 'movement-from-instance-details' });
+const instancePaneTo = Section({ id: 'movement-to-instance-details' });
 
 export default {
   waitLoading(currentinstanceHrId, instanceHrIdNew) {
@@ -39,25 +41,18 @@ export default {
     ]);
   },
   closeInLeftForm() {
-    cy.do(
-      Section({ id: 'movement-from-instance-details' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(instancePaneFrom.find(Button({ icon: 'times' })).click());
   },
   closeInRightForm() {
-    cy.do(
-      Section({ id: 'movement-to-instance-details' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(instancePaneTo.find(Button({ icon: 'times' })).click());
   },
-  verifyHoldingsMoved(holdingName, itemCount) {
-    cy.expect(
-      Accordion({ label: including(`Holdings: ${holdingName}`) })
-        .find(Badge())
-        .has({ text: itemCount }),
-    );
+  verifyHoldingsMoved(holdingName, itemCount, { instancePaneIndex = null } = {}) {
+    const holdingsAccordion = Accordion({ label: including(`Holdings: ${holdingName}`) });
+    const targetAccordion =
+      typeof instancePaneIndex === 'number'
+        ? [instancePaneFrom, instancePaneTo][instancePaneIndex].find(holdingsAccordion)
+        : holdingsAccordion;
+    cy.expect(targetAccordion.find(Badge()).has({ text: itemCount }));
   },
 
   verifyItemBarcodeInHoldings(barcode, holdingsLocation, isExist = true) {
