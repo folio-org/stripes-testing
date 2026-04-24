@@ -3,6 +3,7 @@ import { including } from '@interactors/html';
 import {
   Button,
   KeyValue,
+  Modal,
   Section,
   Select,
   TextField,
@@ -294,5 +295,21 @@ export default {
 
   setPickupServicePoint(value) {
     cy.do(Select({ name: 'pickupServicePointId' }).choose(value));
+  },
+
+  openItemByBarcode(barcode) {
+    cy.do(itemInformation.find(Link(including(barcode))).click());
+  },
+
+  verifyItemBarcodeLink(barcode) {
+    cy.expect(itemInformation.find(Link(including(barcode))).exists());
+  },
+
+  confirmCloseWithoutSaving() {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
   },
 };

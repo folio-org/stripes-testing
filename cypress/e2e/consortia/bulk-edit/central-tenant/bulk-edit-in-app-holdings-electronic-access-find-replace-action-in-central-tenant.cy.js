@@ -101,9 +101,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -137,54 +134,65 @@ describe('Bulk-edit', () => {
               }).then((response) => {
                 localUrlRelationship.id = response.id;
               });
-              // create holdings in College tenant
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.id,
-                  permanentLocationId: locationId,
-                  electronicAccess: [
-                    {
-                      ...electronicAccessFieldsFromUpperCase,
-                      relationshipId: sharedUrlRelationship.settingId,
-                    },
-                    {
-                      ...electronicAccessFieldsFromLowerCase,
-                      relationshipId: sharedUrlRelationship.settingId,
-                    },
-                  ],
-                  sourceId,
-                }).then((holding) => {
-                  collegeHoldingIds.push(holding.id);
-                  collegeHoldingHrids.push(holding.hrid);
+              cy.getLocations({ limit: 1 })
+                .then((res) => {
+                  locationId = res.id;
+                })
+                .then(() => {
+                  // create holdings in College tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: locationId,
+                      electronicAccess: [
+                        {
+                          ...electronicAccessFieldsFromUpperCase,
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                        {
+                          ...electronicAccessFieldsFromLowerCase,
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                      ],
+                      sourceId,
+                    }).then((holding) => {
+                      collegeHoldingIds.push(holding.id);
+                      collegeHoldingHrids.push(holding.hrid);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
-
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.id,
-                  permanentLocationId: locationId,
-                  electronicAccess: [
-                    {
-                      ...electronicAccessFieldsFromUpperCase,
-                      relationshipId: sharedUrlRelationship.settingId,
-                    },
-                    {
-                      ...electronicAccessFieldsFromLowerCase,
-                      relationshipId: sharedUrlRelationship.settingId,
-                    },
-                  ],
-                  sourceId,
-                }).then((holding) => {
-                  universityHoldingIds.push(holding.id);
-                  universityHoldingHrids.push(holding.hrid);
+              cy.getLocations({ limit: 1 })
+                .then((res) => {
+                  locationId = res.id;
+                })
+                .then(() => {
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: locationId,
+                      electronicAccess: [
+                        {
+                          ...electronicAccessFieldsFromUpperCase,
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                        {
+                          ...electronicAccessFieldsFromLowerCase,
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                      ],
+                      sourceId,
+                    }).then((holding) => {
+                      universityHoldingIds.push(holding.id);
+                      universityHoldingHrids.push(holding.hrid);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               FileManager.createFile(

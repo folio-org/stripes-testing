@@ -174,6 +174,9 @@ export default {
       SelectionList().select('Select location'),
     ]);
   },
+  clearHoldingsType: () => {
+    cy.do(holdingsTypeSelect.choose('Select holdings type'));
+  },
   openTags() {
     cy.wait(500);
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());

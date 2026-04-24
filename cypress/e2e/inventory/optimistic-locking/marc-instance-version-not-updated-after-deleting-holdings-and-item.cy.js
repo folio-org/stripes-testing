@@ -11,6 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Optimistic locking', () => {
@@ -140,9 +141,11 @@ describe('Inventory', () => {
         HoldingsRecordView.delete();
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
-        InventoryInstance.verifyHoldingsAbsent(location.name);
         // wait for all the data to be loaded, otherwise detail view may reload
         cy.wait(3000);
+        InventorySearchAndFilter.closeInstanceDetailPane();
+        InventoryInstances.selectInstanceById(instanceId);
+        InventoryInstance.verifyHoldingsAbsent(location.name);
 
         // Step 5: Verify Instance _version did not change after Holdings and Item deletion
         cy.intercept('GET', `/inventory/instances/${instanceId}`).as('getInstanceAfter');

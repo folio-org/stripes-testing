@@ -76,14 +76,21 @@ describe('Data Export', () => {
       if (jobProfileId) {
         ExportJobProfiles.deleteJobProfileViaApi(jobProfileId);
       }
-      if (lockedNotReferencedMappingProfileId) {
-        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(
-          lockedNotReferencedMappingProfileId,
-        );
-      }
-      if (lockedReferencedMappingProfileId) {
-        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(lockedReferencedMappingProfileId);
-      }
+
+      [lockedReferencedMappingProfileId, lockedNotReferencedMappingProfileId].forEach((id) => {
+        ExportFieldMappingProfiles.getFieldMappingProfile({
+          query: `"id"=="${id}"`,
+        }).then((response) => {
+          if (response) {
+            cy.editFieldMappingProfile(response.id, {
+              ...response,
+              locked: false,
+            }).then(() => {
+              DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+            });
+          }
+        });
+      });
 
       // Delete duplicated profiles
       [
@@ -94,7 +101,12 @@ describe('Data Export', () => {
         ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${name}"` }).then(
           (response) => {
             if (response) {
-              DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+              cy.editFieldMappingProfile(response.id, {
+                ...response,
+                locked: false,
+              }).then(() => {
+                DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+              });
             }
           },
         );
@@ -314,7 +326,7 @@ describe('Data Export', () => {
         ExportFieldMappingProfiles.clearSearchField();
         [
           'Default authority mapping profile',
-          'Default Linked Data instances mapping profile',
+          'Default Linked Data instance mapping profile',
         ].forEach((profileName) => {
           SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileName);
           SingleFieldMappingProfilePane.waitLoading(profileName);

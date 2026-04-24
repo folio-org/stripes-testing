@@ -11,17 +11,20 @@ describe('Inventory', () => {
   describe('Advanced search', () => {
     const randomPostfix = getRandomPostfix();
     const randomDigits = `${randomNDigitNumber(6)}`;
+    const randomDigits2 = `${randomNDigitNumber(4)}`;
+    const randomDigits3 = `${randomNDigitNumber(3)}`;
     const testData = {
       isbnSearchOption: 'ISBN',
       identifierTypeName: 'ISBN',
       titlePrefix: `AT_C1030059_FolioInstance_${randomPostfix}`,
     };
+    // Generate unique ISBNs for each test run with the same format as original test data
     const isbnNumbers = [
-      `01030059${randomDigits}`,
-      `0${randomDigits}1030059X`,
-      `0-9500301-${randomDigits.split('').reverse().join('')}-X`,
-      `650-03-01-${randomDigits}-0`,
-      `0-${randomDigits}-103005-9`,
+      `0${randomDigits}${randomDigits2}`,
+      `0${randomDigits}${randomDigits3}X`,
+      `0-${randomDigits2}-${randomDigits2}-X`,
+      `978-3-${randomDigits.slice(0, 2)}-${randomDigits}-${randomDigits3.slice(0, 1)}`,
+      `0-${randomDigits}-${randomDigits3.slice(0, 2)}-${randomDigits3.slice(2, 3)}`,
     ];
     const instanceTitles = Array.from(
       { length: isbnNumbers.length },
@@ -53,7 +56,7 @@ describe('Inventory', () => {
           isbnNumbers[0].slice(0, -1),
           isbnNumbers[1].slice(0, -1),
           isbnNumbers[2].slice(0, -2),
-          isbnNumbers[3].slice(0, -1),
+          isbnNumbers[3].slice(0, -2),
           isbnNumbers[4].slice(0, -2),
         ],
         modifier: ADVANCED_SEARCH_MODIFIERS.STARTS_WITH,
@@ -62,9 +65,9 @@ describe('Inventory', () => {
       {
         queries: [
           isbnNumbers[0].slice(0, -1),
-          isbnNumbers[1].slice(0, -1),
-          isbnNumbers[2].slice(0, -2),
-          isbnNumbers[3].slice(0, -1),
+          isbnNumbers[1].slice(0, -2),
+          isbnNumbers[2].slice(0, -3),
+          isbnNumbers[3].slice(0, -2),
           isbnNumbers[4].slice(0, -2),
         ],
         modifier: ADVANCED_SEARCH_MODIFIERS.EXACT_PHRASE,
@@ -79,6 +82,7 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken()
         .then(() => {
+          InventoryInstances.deleteInstanceByTitleViaApi('C1030059');
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
           });
@@ -132,7 +136,6 @@ describe('Inventory', () => {
       'C1030059 Advanced search | Verify ISBN search (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C1030059'] },
       () => {
-        // will fail due to MSEARCH-1174
         searchData.forEach(({ queries, modifier, results }) => {
           InventoryInstances.clickAdvSearchButton();
           queries.forEach((query, queryIndex) => {
