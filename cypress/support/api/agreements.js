@@ -5,3 +5,19 @@ Cypress.Commands.add('getAgreementsByStatus', (status) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getAgreements', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'erm/sas',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getAgreementFileRaw', (id) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: `erm/sas/${id}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});

@@ -37,6 +37,7 @@ describe('MARC', () => {
             fileName: `testMarcAuthFileC375071.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C375069 Marvel comics ComiCon',
+            authorityHeadingFieldContent: '$a C375069 Marvel comics $t ComiCon $w 630',
             propertyName: 'authority',
           },
         ];
@@ -123,15 +124,13 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
+            MarcAuthority.contains(`\t${marcFiles[1].authorityHeadingFieldContent}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag630);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib630LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(
-              2,
-              0,
+            InventoryInstance.verifyInstanceSubjectShown(
               `${testData.authorityIconText}${testData.subjectValue}`,
             );
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
