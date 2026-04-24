@@ -4,7 +4,11 @@ import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import NewInstance from '../../support/fragments/linked-data/newInstance';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, LDE_ROLES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARIGOLD_ROLES,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -17,7 +21,7 @@ import InstanceProfileModal from '../../support/fragments/linked-data/instancePr
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: duplicate resource', () => {
   const testData = {

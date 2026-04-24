@@ -7,6 +7,9 @@ export default {
   invoicePaidMessage: 'Invoice has been paid successfully',
   invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',
+  invoiceDuplicatedMessage: 'The invoice has been duplicated successfully',
+  invoiceOperationNotPermittedBecauseOfAcqUnitMessage:
+    'Operation is not permitted because user is not a member of the specified acquisition unit',
   budgetNotFoundByFund(fundCode) {
     return `This operation could not be completed successfully. There is either no budget for ${fundCode} for the targeted fiscal year or the budget is not Active.`;
   },
