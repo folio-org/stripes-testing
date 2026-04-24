@@ -97,7 +97,11 @@ describe('Settings: Tenant', () => {
 
       // Step 1: Click "New" button
       Locations.createNewLocation();
-      CreateLocations.verifyNewFormIsOpen();
+      CreateLocations.verifyNewFormIsOpen({
+        institution: testData.institution.name,
+        campus: testData.campus.name,
+        library: testData.library.name,
+      });
 
       // Step 2: Fill in "FOLIO name*"
       CreateLocations.fillFolioName(locationData.folioName);

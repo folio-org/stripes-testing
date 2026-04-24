@@ -4,8 +4,21 @@ import getRandomPostfix from '../../../../utils/stringTools';
 const locationDetailsSection = Accordion({ id: 'detailsSection' });
 
 export default {
-  verifyNewFormIsOpen() {
-    cy.expect(Button({ id: 'clickable-save-location' }).has({ disabled: true }));
+  verifyNewFormIsOpen({ institution, campus, library }) {
+    cy.expect([
+      Select('Institution').has({ checkedOptionText: including(institution) }),
+      Select('Campus').has({ checkedOptionText: including(campus) }),
+      Select('Library').has({ checkedOptionText: including(library) }),
+      TextField('FOLIO name*').has({ value: '' }),
+      Select('Remote storage*').has({ checkedOptionText: including('No (default)') }),
+      TextField('Code*').has({ value: '' }),
+      TextField('Discovery display name*').has({ value: '' }),
+      Select('Service point(s)').has({ checkedOptionText: including('Select service point') }),
+      Select('Status').has({ checkedOptionText: including('Active') }),
+      locationDetailsSection.find(Button('New')).exists(),
+      Button('Cancel').exists(),
+      Button({ id: 'clickable-save-location' }).has({ disabled: true }),
+    ]);
   },
   fillFolioName(name) {
     cy.do(TextField('FOLIO name*').fillIn(name));
