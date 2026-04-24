@@ -117,12 +117,8 @@ describe('MARC', () => {
             ManageAuthorityFiles.verifyDeleteAssignedSourceFileError(testData.name);
             ManageAuthorityFiles.checkSourceFileExistsByName(testData.name);
             // Step 4: Switch to Member tenant
-            cy.waitForAuthRefresh(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              SettingsPane.waitLoading();
-              cy.reload();
-              SettingsPane.waitLoading();
-            }, 20_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            SettingsPane.waitLoading();
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
