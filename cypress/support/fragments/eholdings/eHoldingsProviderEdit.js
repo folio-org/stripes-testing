@@ -12,17 +12,6 @@ const unsavedChangesText = Modal().find(
 const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
 
-const API = {
-  getProxyTypesByApi() {
-    return cy
-      .okapiRequest({
-        path: 'eholdings/proxy-types',
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => response.body.data);
-  },
-};
-
 export default {
   waitLoading: (providerName) => {
     cy.intercept('eholdings/providers/*').as('getProviderProperties');
@@ -38,8 +27,8 @@ export default {
     return cy
       .then(() => proxySelect.value())
       .then((selectedProxy) => {
-        API.getProxyTypesByApi().then((proxyTypes) => {
-          const availableProxies = proxyTypes.map((proxyType) => proxyType.attributes.name);
+        cy.getEholdingsProxyNamesViaAPI().then((proxyNames) => {
+          const availableProxies = proxyNames;
           const notSelectedProxy = availableProxies.filter(
             (availableProxy) => ![selectedProxy, `inherited - ${selectedProxy}`].includes(
               availableProxy.toLowerCase(),
@@ -91,5 +80,4 @@ export default {
     cy.expect(saveAndCloseButton.exists());
     cy.do(saveAndCloseButton.click());
   },
-  ...API,
 };

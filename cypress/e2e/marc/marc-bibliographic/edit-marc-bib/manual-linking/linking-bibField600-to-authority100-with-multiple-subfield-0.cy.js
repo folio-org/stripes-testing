@@ -100,12 +100,10 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -140,9 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
-            InventoryInstance.verifyInstanceSubject(
-              0,
-              0,
+            InventoryInstance.verifyInstanceSubjectShown(
               `${testData.linkedIconText}${testData.subjectValue}`,
             );
             InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
@@ -169,7 +165,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkLinkButtonExistByRowIndex(45);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(0, 0, testData.subjectValue);
+            InventoryInstance.verifyInstanceSubjectShown(testData.subjectValue);
             InventoryInstance.checkMarcAppIconAbsent(0);
             InventoryInstance.viewSource();
             InventoryViewSource.notContains(testData.linkedIconText);

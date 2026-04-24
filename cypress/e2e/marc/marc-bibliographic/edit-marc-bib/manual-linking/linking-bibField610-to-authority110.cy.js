@@ -37,6 +37,7 @@ describe('MARC', () => {
             fileName: `testMarcAuthFileC374706.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C374706 Radio Vaticana. Hrvatski program',
+            authorityHeadingFieldContent: '$a C374706 Radio "Vaticana". $b Hrvatski program',
             propertyName: 'authority',
           },
         ];
@@ -123,15 +124,13 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
+            MarcAuthority.contains(`\t${marcFiles[1].authorityHeadingFieldContent}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib610LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(
-              0,
-              0,
+            InventoryInstance.verifyInstanceSubjectShown(
               `${testData.authorityIconText}${testData.subjectValue}`,
             );
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
