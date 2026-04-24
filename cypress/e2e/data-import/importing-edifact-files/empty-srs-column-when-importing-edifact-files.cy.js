@@ -15,6 +15,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -33,6 +34,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
+    const organization = {
+      name: VENDOR_NAMES.EBSCO,
+      status: 'Active',
+      code: 'SREBSCO',
+      isVendor: true,
+      erpCode: 'G64758-74837',
+    };
     const invoiceNumber = '94994';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     const filePathForUpload = 'ediFileForC375103.edi';
@@ -57,6 +65,19 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` }).then(
+        (orgResp) => {
+          if (orgResp.id) {
+            organization.id = orgResp.id;
+          } else {
+            Organizations.createOrganizationViaApi(organization).then((id) => {
+              organization.id = id;
+            });
+          }
+        },
+      );
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
