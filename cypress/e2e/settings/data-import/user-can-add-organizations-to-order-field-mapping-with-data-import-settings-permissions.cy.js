@@ -1,5 +1,6 @@
 import { FOLIO_RECORD_TYPE, VENDOR_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -9,6 +10,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
+    const organization = {
+      name: VENDOR_NAMES.EBSCO,
+      status: 'Active',
+      code: 'SREBSCO',
+      isVendor: true,
+      erpCode: 'G64758-74837',
+    };
     const mappingProfile = {
       name: `C376994 mapping profile_${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -18,6 +26,18 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` }).then(
+        (orgResp) => {
+          if (orgResp.id) {
+            organization.id = orgResp.id;
+          } else {
+            Organizations.createOrganizationViaApi(organization).then((id) => {
+              organization.id = id;
+            });
+          }
+        },
+      );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 

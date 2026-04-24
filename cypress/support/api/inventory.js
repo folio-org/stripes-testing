@@ -890,3 +890,25 @@ Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getInventoryNumberGeneratorOptions', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries?query=(scope==ui-inventory.number-generator-settings.manage and key==number-generator-settings)',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('updateInventoryNumberGeneratorOptions', (config) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `settings/entries/${config.id}`,
+    body: {
+      id: config.id,
+      scope: config.scope,
+      key: config.key,
+      value: config.value,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});

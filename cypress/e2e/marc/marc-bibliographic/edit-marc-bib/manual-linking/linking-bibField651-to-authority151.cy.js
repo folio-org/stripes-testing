@@ -37,6 +37,7 @@ describe('MARC', () => {
             fileName: `testMarcAuthFileC375071.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             authorityHeading: 'C375071 Clear Creek (Tex.) Place in Texas',
+            authorityHeadingFieldContent: '$a C375071 Clear Creek (Tex.) $g Place in Texas',
             propertyName: 'authority',
           },
         ];
@@ -124,15 +125,13 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-            MarcAuthority.contains(`\t$a ${marcFiles[1].authorityHeading}`);
+            MarcAuthority.contains(`\t${marcFiles[1].authorityHeadingFieldContent}`);
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag651);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib651LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(
-              2,
-              0,
+            InventoryInstance.verifyInstanceSubjectShown(
               `${testData.authorityIconText}${testData.subjectValue}`,
             );
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
