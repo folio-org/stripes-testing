@@ -16,6 +16,7 @@ describe('Eureka', () => {
       USER_TYPES.STAFF.toLowerCase(),
       USER_TYPES.SYSTEM.toLowerCase(),
       USER_TYPES.SHADOW.toLowerCase(),
+      'dcb',
     ];
     const capabSetsToAssignCentral = [
       CapabilitySets.uiAuthorizationRolesSettingsAdmin,

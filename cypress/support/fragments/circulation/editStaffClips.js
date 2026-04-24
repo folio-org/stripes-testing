@@ -38,11 +38,29 @@ function clickAddTokenButton() {
   cy.do(addTokenButton.click());
   cy.expect([addTokenModal.absent(), saveButton.has({ disabled: false })]);
 }
+function selectAllTokensInModal() {
+  cy.wait(1000);
+  return cy.get('div[class*=modalContent] label').then(($labels) => {
+    const tokenNames = [];
+    $labels.each((_, el) => {
+      const text = el.textContent.trim();
+      // Filter out empty strings and category headers
+      if (text && !text.match(/^(Item|Staff slip|Requester|Request)$/)) {
+        tokenNames.push(text);
+      }
+    });
+    checkTokenCheckbox(tokenNames);
+  });
+}
 
 export default {
   clickCurlyBracketsButton,
   checkTokenCheckbox,
   clickAddTokenButton,
+  selectAllTokensInModal,
+  verifyTokensAddedToTemplate() {
+    cy.get('.ql-editor').should('contain', '{{');
+  },
   defaultUiEditStaffClips: {
     description: 'Created by autotest team',
   },

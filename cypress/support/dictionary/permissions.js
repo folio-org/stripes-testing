@@ -1521,4 +1521,9 @@ export default {
     internal: 'ebsconet.all',
     gui: 'Ebsconet API module - all permissions',
   },
+  // Numbers generator
+  numbersGeneratorView: {
+    internal: 'ui-service-interaction.numberGenerator.view',
+    gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
+  },
 };
