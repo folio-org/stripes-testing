@@ -111,6 +111,7 @@ describe('Inventory', () => {
             ConsortiumManager.switchActiveAffiliation(centralTenant.name, memberTenant.name);
 
             // Step 4: Open view source pane of Local MARC record
+            InventorySearchAndFilter.clearDefaultFilter('Held by');
             InventoryInstances.searchByTitle(testData.localMarcTitle);
             InventorySearchAndFilter.byShared('No');
             InventoryInstances.selectInstance();
@@ -144,6 +145,7 @@ describe('Inventory', () => {
               // Step 11: Open view source pane of Shared MARC record
               cy.visit(TopMenu.inventoryPath);
               InventoryInstances.waitContentLoading();
+              InventorySearchAndFilter.clearDefaultFilter('Held by');
               InventoryInstances.searchByTitle(testData.sharedMarcTitle);
               InventorySearchAndFilter.byShared('Yes');
               InventoryInstances.selectInstance();
@@ -153,11 +155,12 @@ describe('Inventory', () => {
               // Step 12: Edit Shared MARC record
               InventoryViewSource.editMarcBibRecord();
               QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
 
               // Step 13: Open view source pane of Local MARC record
               InventoryInstances.resetAllFilters();
+              InventorySearchAndFilter.clearDefaultFilter('Held by');
               InventoryInstances.searchByTitle(testData.localMarcTitle);
               InventorySearchAndFilter.byShared('No');
               InventoryInstances.selectInstance();
@@ -167,7 +170,7 @@ describe('Inventory', () => {
               // Step 14: Edit Local MARC record
               InventoryViewSource.editMarcBibRecord();
               QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
 
               // Step 15: Enable "Version history" for Member tenant via API
@@ -177,6 +180,7 @@ describe('Inventory', () => {
 
               // Step 16: Verify updated Shared MARC record in Version History
               InventoryInstances.resetAllFilters();
+              InventorySearchAndFilter.clearDefaultFilter('Held by');
               InventoryInstances.searchByTitle(testData.sharedMarcTitle);
               InventorySearchAndFilter.byShared('Yes');
               InventoryInstances.selectInstance();
@@ -187,6 +191,7 @@ describe('Inventory', () => {
 
               // Step 17: Verify updated Local MARC record in Version History
               InventoryInstances.resetAllFilters();
+              InventorySearchAndFilter.clearDefaultFilter('Held by');
               InventoryInstances.searchByTitle(testData.localMarcTitle);
               InventorySearchAndFilter.byShared('No');
               InventoryInstances.selectInstance();
