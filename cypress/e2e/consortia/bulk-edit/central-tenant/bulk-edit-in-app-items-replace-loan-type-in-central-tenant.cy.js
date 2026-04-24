@@ -138,7 +138,7 @@ describe('Bulk-edit', () => {
                 .then((res) => {
                   locationId = res.id;
                 })
-                .the(() => {
+                .then(() => {
                   instances.forEach((instance) => {
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: instance.uuid,
