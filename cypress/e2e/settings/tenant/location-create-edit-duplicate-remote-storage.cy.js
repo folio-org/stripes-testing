@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import Configurations from '../../../support/fragments/settings/remote-storage/configurations';
 import {
@@ -38,12 +39,26 @@ describe('Settings: Tenant', () => {
         testData.remoteStorage2 = rs2;
       });
       ServicePoints.createViaApi(testData.servicePoint);
-      const { institution, campus, library } = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
+      testData.institution = Institutions.getDefaultInstitution({
+        id: uuid(),
+        name: `1_autotest_institution_${getRandomPostfix()}`,
       });
-      testData.institution = institution;
-      testData.campus = campus;
-      testData.library = library;
+      testData.campus = Campuses.getDefaultCampuse({
+        id: uuid(),
+        name: `1_autotest_campuse_${getRandomPostfix()}`,
+        institutionId: testData.institution.id,
+      });
+      testData.library = Libraries.getDefaultLibrary({
+        id: uuid(),
+        name: `1_autotest_library_${getRandomPostfix()}`,
+        campusId: testData.campus.id,
+      });
+
+      Institutions.createViaApi(testData.institution).then(() => {
+        Campuses.createViaApi(testData.campus).then(() => {
+          Libraries.createViaApi(testData.library);
+        });
+      });
     });
 
     cy.createTempUser([Permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
@@ -54,14 +69,11 @@ describe('Settings: Tenant', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    [locationData.folioName, locationData.duplicatedFolioName].forEach((name) => {
-      cy.okapiRequest({
-        path: 'locations',
-        searchParams: { query: `name=="${name}"` },
-        isDefaultSearchParamsRequired: false,
-      }).then(({ body }) => {
-        (body.locations || []).forEach(({ id }) => Locations.deleteLocationViaApi(id));
-      });
+    cy.getLocations({ query: `name=="${locationData.folioName}"` }).then((res) => {
+      if (res) Locations.deleteLocationViaApi(res.id);
+    });
+    cy.getLocations({ query: `name=="${locationData.duplicatedFolioName}"` }).then((res) => {
+      if (res) Locations.deleteLocationViaApi(res.id);
     });
     Libraries.deleteViaApi(testData.library.id);
     Campuses.deleteViaApi(testData.campus.id);
@@ -73,7 +85,7 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C566501 Verify create, edit, duplicate actions for Location with remote storage (firebird) (TaaS)',
+    'C566501 Verify create, edit, duplicate actions for Location with remote storage (firebird)',
     { tags: ['extendedPath', 'firebird', 'C566501'] },
     () => {
       // Navigate to Settings > Tenant > Locations
@@ -85,6 +97,7 @@ describe('Settings: Tenant', () => {
 
       // Step 1: Click "New" button
       Locations.createNewLocation();
+      CreateLocations.verifyNewFormIsOpen();
 
       // Step 2: Fill in "FOLIO name*"
       CreateLocations.fillFolioName(locationData.folioName);
@@ -126,6 +139,7 @@ describe('Settings: Tenant', () => {
         detailName: locationData.detailName,
         detailValue: locationData.detailValue,
       });
+      LocationDetails.checkMetadata();
       Locations.verifyRemoteStorageValue(testData.remoteStorage1.name);
 
       // Step 12: Click "Actions" > "Edit"

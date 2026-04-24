@@ -1,7 +1,12 @@
 import { Accordion, Button, Select, TextField, including } from '../../../../../../interactors';
 import getRandomPostfix from '../../../../utils/stringTools';
 
+const locationDetailsSection = Accordion({ id: 'detailsSection' });
+
 export default {
+  verifyNewFormIsOpen() {
+    cy.expect(Button({ id: 'clickable-save-location' }).has({ disabled: true }));
+  },
   fillFolioName(name) {
     cy.do(TextField('FOLIO name*').fillIn(name));
   },
@@ -27,18 +32,18 @@ export default {
     cy.do([Select('Service point(s)').choose(value), Button('Add service point').click()]);
   },
   clickAddLocationDetail() {
-    cy.do(Accordion({ id: 'detailsSection' }).find(Button('New')).click());
+    cy.do(locationDetailsSection.find(Button('New')).click());
   },
   fillLocationDetailName(name) {
-    cy.do(Accordion({ id: 'detailsSection' }).find(TextField('Name')).fillIn(name));
+    cy.do(locationDetailsSection.find(TextField('Name')).fillIn(name));
   },
   fillLocationDetailValue(value) {
-    cy.do(Accordion({ id: 'detailsSection' }).find(TextField('Value')).fillIn(value));
+    cy.do(locationDetailsSection.find(TextField('Value')).fillIn(value));
   },
   verifyLocationDetailFields(name, value) {
     cy.expect([
-      Accordion({ id: 'detailsSection' }).find(TextField('Name')).has({ value: name }),
-      Accordion({ id: 'detailsSection' }).find(TextField('Value')).has({ value }),
+      locationDetailsSection.find(TextField('Name')).has({ value: name }),
+      locationDetailsSection.find(TextField('Value')).has({ value }),
     ]);
   },
   saveAndClose() {
