@@ -96,9 +96,9 @@ describe('Inventory', () => {
         })
         .then(() => {
           marcFiles.forEach((marcFile) => {
-            if (marcFile.tenant === 'University') {
+            if (marcFile.tenant === tenantNames.university) {
               cy.setTenant(Affiliations.University);
-            } else if (marcFile.tenant === 'College') {
+            } else if (marcFile.tenant === tenantNames.college) {
               cy.setTenant(Affiliations.College);
             } else {
               cy.resetTenant();

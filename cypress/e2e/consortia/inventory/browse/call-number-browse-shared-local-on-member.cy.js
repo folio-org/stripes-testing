@@ -135,7 +135,7 @@ describe('Inventory', () => {
       servicePoint: ServicePoints.getDefaultServicePoint(),
       defaultLocation: {},
     };
-    const tenants = [tenantNames.college];
+    const tenants = [Affiliations.College];
     const removeInstancesByTitle = (title) => {
       [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -190,19 +190,21 @@ describe('Inventory', () => {
             }).then(() => {
               cy.withinTenant(Affiliations.College, () => {
                 cy.log('Creating holdings and items for shared instances');
-                currentLocation = testData.defaultLocation[Affiliations.College];
-                folioInstancesShared.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    ...instance.holdings[0],
-                    instanceId: instance.instanceId,
-                    permanentLocationId: currentLocation.id,
-                    sourceId: testData.folioSourceId,
-                  }).then((holding) => {
-                    InventoryItems.createItemViaApi({
-                      ...instance.items[0],
-                      holdingsRecordId: holding.id,
-                      materialType: { id: testData.materialTypeId },
-                      permanentLoanType: { id: testData.loanTypeId },
+                cy.getMaterialTypes({ limit: 1 }).then(({ id }) => {
+                  currentLocation = testData.defaultLocation[Affiliations.College];
+                  folioInstancesShared.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      ...instance.holdings[0],
+                      instanceId: instance.instanceId,
+                      permanentLocationId: currentLocation.id,
+                      sourceId: testData.folioSourceId,
+                    }).then((holding) => {
+                      InventoryItems.createItemViaApi({
+                        ...instance.items[0],
+                        holdingsRecordId: holding.id,
+                        materialType: { id },
+                        permanentLoanType: { id: testData.loanTypeId },
+                      });
                     });
                   });
                 });
@@ -237,9 +239,6 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventorySearchAndFilter.switchToBrowseTab();
             });
@@ -248,6 +247,7 @@ describe('Inventory', () => {
     });
 
     after('Delete user, data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       removeInstancesByTitle('AT_C651515*');
       CallNumberTypesConsortiumManager.deleteViaApi(centralSharedItemCallNumberType, false);
