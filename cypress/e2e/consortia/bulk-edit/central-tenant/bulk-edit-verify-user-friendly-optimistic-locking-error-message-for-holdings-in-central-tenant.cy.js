@@ -257,7 +257,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
 
           // Step 15: Verify error details for the first holding (no link to latest version in ECS)
-          BulkEditSearchPane.verifyNonMatchedResults(holdings[0], optimisticLockingErrorMessage);
+          BulkEditSearchPane.verifyErrorByIdentifier(holdings[0], optimisticLockingErrorMessage);
 
           // Step 16: Download changed records (CSV)
           BulkEditActions.openActions();
@@ -283,7 +283,7 @@ describe('Bulk-edit', () => {
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[1]);
-          InventorySearchAndFilter.selectViewHoldings();
+          InventoryInstance.openHoldingViewByID(holdings[1]);
           HoldingsRecordView.waitLoading();
 
           // The second holding was successfully changed - verify admin note added by bulk edit
@@ -293,7 +293,7 @@ describe('Bulk-edit', () => {
           // Step 20: Search for errored first holding and verify bulk edit changes were NOT applied
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.searchHoldingsByHRID(holdingHrids[0]);
-          InventorySearchAndFilter.selectViewHoldings();
+          InventoryInstance.openHoldingViewByID(holdings[0]);
           HoldingsRecordView.waitLoading();
 
           // The first holding still has the manually-added note but NOT the bulk edit note
