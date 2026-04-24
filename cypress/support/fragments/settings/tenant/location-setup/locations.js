@@ -232,4 +232,15 @@ export default {
   duplicate() {
     cy.do([actionsButton.click(), Button('Duplicate').click()]);
   },
+  getLocations(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'locations',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.locations;
+      });
+  },
 };
