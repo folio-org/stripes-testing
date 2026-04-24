@@ -42,6 +42,7 @@ const testData = {
 describe('OAI-PMH', () => {
   describe('ListRecords', () => {
     describe('Consortia', () => {
+      // eslint-disable-next-line func-names
       before('Create test data', function () {
         if (!OaiPmhEdge.isEdgeConfigured()) {
           this.skip();
