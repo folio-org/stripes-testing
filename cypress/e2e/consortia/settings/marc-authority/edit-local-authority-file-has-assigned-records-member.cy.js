@@ -103,14 +103,9 @@ describe('MARC', () => {
           () => {
             // Step 1: Go to Manage authority files in Member tenant
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
-              SettingsPane.waitLoading();
-              cy.reload();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            }, 20_000);
+            cy.login(user.username, user.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
             SettingsPane.waitLoading();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             SettingsPane.waitLoading();

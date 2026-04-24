@@ -2969,7 +2969,7 @@ export default {
     let timeCounter = 0;
     function checkBib() {
       cy.okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: { query: `(title all "${marcBibTitle}")` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {

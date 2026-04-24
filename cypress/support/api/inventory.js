@@ -319,14 +319,14 @@ Cypress.Commands.add('getHoldings', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
+Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId, { skipWait = false } = {}) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }).then(({ response }) => {
-    cy.wait(1000);
+    if (!skipWait) cy.wait(1000);
     return response;
   });
 });
@@ -389,6 +389,15 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
   }).then(({ response }) => {
     cy.wait(1000);
     return response;
+  });
+});
+
+Cypress.Commands.add('bulkDeleteItemsViaApi', (searchParams) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: 'inventory/items',
+    searchParams,
+    failOnStatusCode: false,
   });
 });
 
@@ -869,7 +878,7 @@ Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
       const entryId = entries[0].id;
       cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
     } else {
-      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+      cy.setInventoryDisplaySettingsViaAPI({ ...defaultDisplaySettings, id: uuid() });
     }
   });
 });
