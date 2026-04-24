@@ -91,9 +91,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -126,6 +123,11 @@ describe('Bulk-edit', () => {
               InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
                 .then((noteId) => {
                   collegeHoldingNoteType.id = noteId;
+                })
+                .then(() => {
+                  cy.getLocations({ limit: 1 }).then((res) => {
+                    locationId = res.id;
+                  });
                 })
                 .then(() => {
                   // create holdings in College tenant
@@ -168,30 +170,36 @@ describe('Bulk-edit', () => {
             .then(() => {
               cy.setTenant(Affiliations.University);
               // create holdings in University tenant
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  administrativeNotes: [notes.adminUpperCase, notes.adminLowerCase],
-                  sourceId,
-                  notes: [
-                    {
-                      holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                      note: notes.sharedUpperCase,
-                      staffOnly: true,
-                    },
-                    {
-                      holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                      note: notes.sharedLowerCase,
-                      staffOnly: false,
-                    },
-                  ],
-                }).then((holding) => {
-                  universityHoldingIds.push(holding.id);
-                  universityHoldingHrids.push(holding.hrid);
+              cy.getLocations({ limit: 1 })
+                .then((res) => {
+                  locationId = res.id;
+                })
+                .then(() => {
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      permanentLocationId: locationId,
+                      administrativeNotes: [notes.adminUpperCase, notes.adminLowerCase],
+                      sourceId,
+                      notes: [
+                        {
+                          holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
+                          note: notes.sharedUpperCase,
+                          staffOnly: true,
+                        },
+                        {
+                          holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
+                          note: notes.sharedLowerCase,
+                          staffOnly: false,
+                        },
+                      ],
+                    }).then((holding) => {
+                      universityHoldingIds.push(holding.id);
+                      universityHoldingHrids.push(holding.hrid);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               FileManager.createFile(

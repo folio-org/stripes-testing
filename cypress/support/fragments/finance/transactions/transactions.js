@@ -50,10 +50,12 @@ export default {
       });
     });
   },
-  selectTransaction(type) {
+  selectTransaction(type, amount = null) {
+    const searchContent = amount ? `${type}${amount}` : type;
+
     cy.do(
       transactionResultsList
-        .find(MultiColumnListRow({ content: including(type), isContainer: true }))
+        .find(MultiColumnListRow({ content: including(searchContent), isContainer: true }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .find(Link())
         .click(),
