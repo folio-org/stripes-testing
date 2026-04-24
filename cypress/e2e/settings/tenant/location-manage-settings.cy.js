@@ -67,7 +67,7 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C517 Settings - UI-Tenant-Settings Settings Location - Manage (firebird) (TaaS)',
+    'C517 Settings - UI-Tenant-Settings Settings Location - Manage (firebird)',
     { tags: ['extendedPath', 'firebird', 'C517'] },
     () => {
       // Navigate to Settings > Tenant > Locations
