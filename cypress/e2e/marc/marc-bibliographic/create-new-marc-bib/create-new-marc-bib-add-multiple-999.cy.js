@@ -9,8 +9,17 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        field999: { tag: '999', content: '$a test123' },
-        field245: { tag: '245', content: 'The most important book' },
+        field999First: {
+          tag: '999',
+          content: '$a This field will be removed',
+          indicators: ['f', 'f'],
+        },
+        field999Second: {
+          tag: '999',
+          content: '$a This field will be saved',
+          indicators: ['1', '2'],
+        },
+        field245: { tag: '245', content: 'The most important book', indicators: ['1', '1'] },
       };
       let instanceId;
 
@@ -21,11 +30,10 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -43,18 +51,59 @@ describe('MARC', () => {
           // Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkEmptyContent(testData.field999.tag);
+          QuickMarcEditor.checkEmptyContent(testData.field999First.tag);
 
           // Fill "$a" value in "245" field
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
-          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 0);
-          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 1);
+          QuickMarcEditor.updateIndicatorValue(
+            testData.field245.tag,
+            testData.field245.indicators[0],
+            0,
+          );
+          QuickMarcEditor.updateIndicatorValue(
+            testData.field245.tag,
+            testData.field245.indicators[1],
+            1,
+          );
 
           // Replace blank values in LDR positions 06, 07 with valid values
           QuickMarcEditor.updateLDR06And07Positions();
 
-          // Click on "+" icon next to any field
-          QuickMarcEditor.addNewField(testData.field999.tag, testData.field999.content, 4);
+          // Add new 999 fields
+          QuickMarcEditor.addEmptyFields(4);
+          QuickMarcEditor.checkEmptyFieldAdded(5);
+          QuickMarcEditor.fillInFieldValues(
+            5,
+            testData.field999First.tag,
+            testData.field999First.content,
+            ...testData.field999First.indicators,
+          );
+
+          QuickMarcEditor.addEmptyFields(4);
+          QuickMarcEditor.checkEmptyFieldAdded(5);
+          QuickMarcEditor.fillInFieldValues(
+            5,
+            testData.field999Second.tag,
+            testData.field999Second.content,
+            ...testData.field999Second.indicators,
+          );
+
+          QuickMarcEditor.verifyTagField(
+            5,
+            testData.field999Second.tag,
+            testData.field999Second.indicators[0],
+            testData.field999Second.indicators[1],
+            testData.field999Second.content,
+            '',
+          );
+          QuickMarcEditor.verifyTagField(
+            6,
+            testData.field999First.tag,
+            testData.field999First.indicators[0],
+            testData.field999First.indicators[1],
+            testData.field999First.content,
+            '',
+          );
 
           // Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
@@ -67,10 +116,10 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
 
-          // Check that "999" field added at Step 5 is not shown
-          QuickMarcEditor.verifyNoFieldWithContent(testData.field999.content);
-          QuickMarcEditor.verifyTagField(5, testData.field999.tag, 'f', 'f', '$s', '$i');
-          QuickMarcEditor.verifyNoDuplicatedFieldsWithTag(testData.field999.tag);
+          // Check that only expected "999" fields are shown
+          QuickMarcEditor.verifyTagField(5, testData.field999Second.tag, 'f', 'f', '$s', '$i');
+          QuickMarcEditor.verifyNoFieldWithContent(testData.field999First.content);
+          QuickMarcEditor.verifyNoFieldWithContent(testData.field999Second.content);
         },
       );
     });
