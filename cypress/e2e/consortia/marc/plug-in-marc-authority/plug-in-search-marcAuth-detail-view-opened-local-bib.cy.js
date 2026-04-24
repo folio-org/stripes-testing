@@ -36,7 +36,7 @@ describe('MARC', () => {
         },
         {
           tag: testData.tag100,
-          content: `$0 ${authData.prefix}${authData.startsWithNumber}`,
+          content: `$a C410882_Field100 $0 ${authData.prefix}${authData.startsWithNumber}`,
           indicators: ['1', '\\'],
         },
         {

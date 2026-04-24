@@ -878,7 +878,7 @@ Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
       const entryId = entries[0].id;
       cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
     } else {
-      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+      cy.setInventoryDisplaySettingsViaAPI({ ...defaultDisplaySettings, id: uuid() });
     }
   });
 });
