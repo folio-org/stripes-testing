@@ -139,10 +139,10 @@ describe('MARC', () => {
           for (let i = 0; i < 3; i++) {
             QuickMarcEditor.verifyTagField(
               4 + i,
-              newFieldValues[i].tag,
+              newFieldsFinalValues[i].tag,
               '\\',
               '\\',
-              newFieldValues[i].content,
+              newFieldsFinalValues[i].content,
               '',
             );
           }

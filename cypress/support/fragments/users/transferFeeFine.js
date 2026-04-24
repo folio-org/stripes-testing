@@ -34,6 +34,8 @@ export default {
     cy.expect(TextField({ name: 'scheduleTime', value: time }).exists());
   },
 
+  checkAmount: (amount) => cy.expect(rootModal.find(TextField({ name: 'amount' })).has({ value: amount.toFixed(2) })),
+
   setAmount: (amount) => cy.wait(1000).then(() => {
     cy.get('input[name="amount"]').clear().wait(500).type(amount.toFixed(2));
   }),
