@@ -253,6 +253,18 @@ export default {
       .should('be.visible');
   },
 
+  checkSectionIsNotVisible(section) {
+    cy.xpath(`//div[@id="${section}"]`).should('not.be.visible');
+  },
+
+  // 1-indexed
+  checkSectionInPosition(section, position) {
+    cy.xpath('//div[@id="edit-section"]/div[contains(@class,"edit-section-group")]/div[1]/div[1]')
+      .eq(position - 1)
+      .invoke('attr', 'id')
+      .should('eq', section);
+  },
+
   clickCloseResourceButton() {
     cy.do(Button({ dataTestID: 'nav-close-button' }).click());
     cy.wait(500);

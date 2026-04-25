@@ -18,6 +18,7 @@ import './inventory';
 import './users';
 import 'cypress-file-upload';
 import 'cypress-recurse/commands';
+import 'cypress-real-events/support';
 import './commands';
 
 registerCypressGrep();

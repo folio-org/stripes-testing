@@ -1516,6 +1516,11 @@ export default {
     internal: 'ui-users.settings.departments.all',
     gui: 'Settings (Users): Can create, edit, view, and delete departments',
   },
+  // Linked Data Editor
+  linkedDataDeletePreferredProfile: {
+    internal: 'linked-data.profiles.preferred.delete',
+    gui: 'Linked Data: Delete the preferred profile for a resource type for the current user',
+  },
 
   ebsconetAll: {
     internal: 'ebsconet.all',
