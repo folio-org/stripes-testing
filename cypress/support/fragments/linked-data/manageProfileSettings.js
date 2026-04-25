@@ -20,9 +20,9 @@ const componentMoveAction = "//button[@data-testid='move-action']";
 const componentNudgeUp = "//button[@data-testid='nudge-up']";
 const componentNudgeDown = "//button[@data-testid='nudge-down']";
 
-const modalUnsaved = "//div[@data-testid='modal-close-profile-settings']";
-const modalUnused = "//div[@data-testid='modal-save-unused-profile-components']";
-const modalCloseButton = ".//button[@class='close-button']";
+const modalUnsaved = "//dialog[@data-testid='modal-close-profile-settings']";
+const modalUnused = "//dialog[@data-testid='modal-save-unused-profile-components']";
+const modalCloseButton = ".//button[contains(@class, 'close-button')]";
 const modalCancelButton = ".//button[@data-testid='modal-button-cancel']";
 const modalSubmitButton = ".//button[@data-testid='modal-button-submit']";
 const loaderOverlay = 'div.loader-overlay';
@@ -152,28 +152,28 @@ export default {
 
   clickCloseButton: () => {
     cy.xpath(closeButton).should('be.visible');
-    cy.do(cy.xpath(closeButton).click());
+    cy.xpath(closeButton).click();
   },
 
   clickCloseButtonNoChanges: () => {
     cy.xpath(closeButton).should('be.visible');
-    cy.do(cy.xpath(closeButton).click());
+    cy.xpath(closeButton).click();
     cy.xpath(manageProfileSettingsPage).should('not.exist');
   },
 
   saveAndClose: () => {
     cy.xpath(saveAndCloseButton).should('be.visible').and('be.enabled');
-    cy.do(cy.xpath(saveAndCloseButton).click());
+    cy.xpath(saveAndCloseButton).click();
   },
 
   saveAndKeepEditing: () => {
     cy.xpath(saveAndKeepEditingButton).should('be.visible').and('be.enabled');
-    cy.do(cy.xpath(saveAndKeepEditingButton).click());
+    cy.xpath(saveAndKeepEditingButton).click();
   },
 
   togglePreferredProfile: () => {
     cy.xpath(preferredProfileCheckbox).should('be.visible');
-    cy.do(cy.xpath(preferredProfileCheckbox).click());
+    cy.xpath(preferredProfileCheckbox).click();
   },
 
   verifyPreferredProfile: (enabled) => {
@@ -185,13 +185,14 @@ export default {
   },
 
   selectDefaultSettings: () => {
+    cy.xpath(defaultProfileSettingsRadio).scrollIntoView();
     cy.xpath(defaultProfileSettingsRadio).should('be.visible');
-    cy.do(cy.xpath(defaultProfileSettingsRadio).click());
+    cy.xpath(defaultProfileSettingsRadio).click();
   },
 
   selectCustomSettings: () => {
     cy.xpath(customProfileSettingsRadio).should('be.visible');
-    cy.do(cy.xpath(customProfileSettingsRadio).click());
+    cy.xpath(customProfileSettingsRadio).click();
   },
 
   verifyDefaultSettingsSelected: () => {
@@ -203,27 +204,23 @@ export default {
   },
 
   selectProfile: (name) => {
-    cy.do(
-      cy.contains('button', new RegExp(`^${name}$`))
-        .scrollIntoView()
-        .should('be.visible')
-        .click(),
-    );
+    cy.contains('button', new RegExp(`^${name}$`))
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
   },
 
   moveComponentToOppositeListButton: (id) => {
-    cy.do(
-      cy.xpath(component(id, componentActivateMenu))
-        .should('be.visible')
-        .focus()
-        .wait(100)
-        .realClick(),
-      cy.xpath(component(id, componentMoveAction))
-        .should('be.visible')
-        .focus()
-        .wait(100)
-        .realClick(),
-    );
+    cy.xpath(component(id, componentActivateMenu))
+      .should('be.visible')
+      .focus()
+      .wait(100)
+      .realClick();
+    cy.xpath(component(id, componentMoveAction))
+      .should('be.visible')
+      .focus()
+      .wait(100)
+      .realClick();
   },
 
   moveComponentUnavailable: (id) => {
@@ -237,25 +234,21 @@ export default {
   },
 
   nudgeComponentUpButton: (id) => {
-    cy.do(
-      cy.xpath(component(id, componentNudgeUp))
-        .should('be.visible')
-        .focus()
-        .wait(100)
-        .click()
-        .wait(500),
-    );
+    cy.xpath(component(id, componentNudgeUp))
+      .should('be.visible')
+      .focus()
+      .wait(100)
+      .click()
+      .wait(500);
   },
 
   nudgeComponentDownButton: (id) => {
-    cy.do(
-      cy.xpath(component(id, componentNudgeDown))
-        .should('be.visible')
-        .focus()
-        .wait(100)
-        .click()
-        .wait(500),
-    );
+    cy.xpath(component(id, componentNudgeDown))
+      .should('be.visible')
+      .focus()
+      .wait(100)
+      .click()
+      .wait(500);
   },
 
   verifySelectedComponent: (id) => {
@@ -289,27 +282,25 @@ export default {
   },
 
   dragUnusedComponentAndCancel: (position) => {
-    cy.do(
-      cy.xpath(unusedList)
-        .find(profileComponent)
-        .eq(position - 1)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
-        .wait(200),
-      cy.realPress('Escape'),
-    );
+    cy.xpath(unusedList)
+      .find(profileComponent)
+      .eq(position - 1)
+      .realMouseDown({ button: 'left', position: 'center' })
+      .realMouseMove(0, 10, { position: 'center' })
+      .wait(200);
+    cy.realPress('Escape')
+      .wait(50);
   },
 
   dragSelectedComponentAndCancel: (position) => {
-    cy.do(
-      cy.xpath(selectedList)
-        .find(profileComponent)
-        .eq(position - 1)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
-        .wait(200),
-      cy.realPress('Escape'),
-    );
+    cy.xpath(selectedList)
+      .find(profileComponent)
+      .eq(position - 1)
+      .realMouseDown({ button: 'left', position: 'center' })
+      .realMouseMove(0, 10, { position: 'center' })
+      .wait(200);
+    cy.realPress('Escape')
+      .wait(50);
   },
 
   // Note that dragging downwards will drag past the target by one, because
