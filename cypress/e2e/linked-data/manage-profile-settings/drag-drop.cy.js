@@ -2,13 +2,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import LinkedDataEditor from '../../../support/fragments/linked-data/linkedDataEditor';
 import WorkProfileModal from '../../../support/fragments/linked-data/workProfileModal';
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import { LDE_ROLES } from '../../../support/constants';
+import { MARIGOLD_ROLES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import ManageProfileSettings from '../../../support/fragments/linked-data/manageProfileSettings';
 
 let user;
-const roleNames = [LDE_ROLES.CATALOGER, LDE_ROLES.CATALOGER_LDE];
+const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 const profileUris = [
   'http://bibfra.me/vocab/lite/Hub',
   'http://bibfra.me/vocab/lite/Instance',
