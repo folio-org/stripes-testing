@@ -1611,7 +1611,7 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
 
 export const LDE_ROLES = {
   CATALOGER: 'Cataloger',
-  CATALOGER_LDE: 'Cataloger - Linked Data Editor',
+  CATALOGER_LDE: 'Cataloger - Marigold',
 };
 
 export const AUTHORIZATION_ROLE_TYPES = {
