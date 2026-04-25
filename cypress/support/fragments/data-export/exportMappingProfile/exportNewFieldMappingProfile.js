@@ -79,7 +79,7 @@ export default {
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 
-  createNewFieldMappingProfileViaApi: (nameProfile) => {
+  createNewFieldMappingProfileViaApi: (nameProfile, isLocked = false) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -89,6 +89,7 @@ export default {
           recordTypes: ['SRS'],
           outputFormat: 'MARC',
           name: nameProfile,
+          locked: isLocked,
         },
         isDefaultSearchParamsRequired: false,
       })
@@ -121,6 +122,38 @@ export default {
             },
           ],
           recordTypes: ['HOLDINGS', 'ITEM', 'SRS'],
+          outputFormat: 'MARC',
+          fieldsSuppression: '',
+          suppress999ff: false,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createNewFieldMappingProfileForItemHridViaApi: (
+    nameProfile,
+    itemMarcField = '900',
+    subfield = 'a',
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-export/mapping-profiles',
+        body: {
+          name: nameProfile,
+          transformations: [
+            {
+              fieldId: 'item.hrid',
+              path: '$.holdings[*].items[*].hrid',
+              recordType: 'ITEM',
+              transformation: `${itemMarcField}  $${subfield}`,
+              enabled: true,
+            },
+          ],
+          recordTypes: ['ITEM', 'SRS'],
           outputFormat: 'MARC',
           fieldsSuppression: '',
           suppress999ff: false,

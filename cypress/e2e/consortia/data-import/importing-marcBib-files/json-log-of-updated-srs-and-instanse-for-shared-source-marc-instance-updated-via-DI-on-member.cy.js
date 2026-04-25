@@ -118,6 +118,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.settingsDataImportEnabled.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            Permissions.consortiaCentralAll.gui,
           ]);
           cy.resetTenant();
 
@@ -151,6 +152,7 @@ describe('Data Import', () => {
         () => {
           const updatedInstanceTitle = `${testData.instanceTitle} modified`;
 
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);

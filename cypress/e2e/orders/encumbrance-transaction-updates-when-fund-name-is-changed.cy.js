@@ -184,7 +184,7 @@ describe('Orders', () => {
       OrderLines.deleteFundsInPOL();
       OrderLines.add2NewFundsToPol(thirdFund, '70', forthFund, '30');
       OrderLines.openPageCurrentEncumbrance('$14.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($14.00)',
         `${orderNumber}-1`,
@@ -198,7 +198,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.openPageCurrentEncumbrance('$6.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($14.00)',
         `${orderNumber}-1`,

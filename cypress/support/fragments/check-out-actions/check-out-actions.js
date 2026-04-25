@@ -77,6 +77,31 @@ export default {
     this.waitForItemSpinnerToDisappear();
   },
 
+  checkOutItemAndMeasureTime(itemBarcode, maxTimeMs = 2000) {
+    let checkoutStartTime;
+
+    cy.intercept('POST', '**/circulation/check-out-by-barcode', (req) => {
+      checkoutStartTime = Date.now();
+      req.continue();
+    }).as('checkoutByBarcode');
+
+    cy.do(TextField('Item ID').fillIn(itemBarcode));
+    cy.do(Pane('Scan items').find(Button('Enter')).click());
+
+    cy.wait('@checkoutByBarcode').then((interception) => {
+      const elapsedTime = Date.now() - checkoutStartTime;
+
+      cy.log(`Checkout API responded in ${elapsedTime}ms`);
+      expect(interception.response.statusCode).to.eq(201);
+      expect(elapsedTime).to.be.lessThan(
+        maxTimeMs,
+        `Checkout must complete in under ${maxTimeMs}ms`,
+      );
+    });
+
+    this.waitForItemSpinnerToDisappear();
+  },
+
   closeItemsAwaitingPickupModal() {
     cy.wait(1000);
     cy.do(Modal('Items awaiting pickup').find(Button('Close')).click());
@@ -185,6 +210,13 @@ export default {
     cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
 
+  checkLoanDetailsDueDate(datePart, timePart) {
+    cy.expect([
+      KeyValue('Due date').has({ value: including(datePart) }),
+      KeyValue('Due date').has({ value: including(timePart) }),
+    ]);
+  },
+
   openCheckOutNotes() {
     cy.wait(500);
     cy.do(actionsButton.click());
@@ -288,6 +320,22 @@ export default {
     cy.expect(Modal('Who are you acting as?').exists());
     cy.do([RadioButton(including(patron)).click(), Button('Continue').click()]);
   },
+  verifyActingAsModalExists: () => {
+    cy.expect(Modal('Who are you acting as?').exists());
+  },
+  verifyActingAsModalMessage: (message) => {
+    cy.expect(
+      Modal('Who are you acting as?')
+        .find(HTML(including(message)))
+        .exists(),
+    );
+  },
+  cancelActingAsModal: () => {
+    cy.do(Modal('Who are you acting as?').find(Button('Cancel')).click());
+  },
+  selectSelfAndContinue: () => {
+    cy.do([RadioButton('Self').click(), Button('Continue').click()]);
+  },
   checkItemIsNotCheckedOut(itemBarcode) {
     cy.expect([
       MultiColumnListRow(including(itemBarcode)).absent(),
@@ -298,14 +346,14 @@ export default {
     cy.do(Link(barcode).click());
   },
 
-  checkLoanPolicyInLoanDetails(loanPolicyId) {
-    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyId)).exists());
+  checkLoanPolicyInLoanDetails(loanPolicyName) {
+    cy.expect(KeyValue('Loan policy').find(Link(loanPolicyName)).exists());
   },
-  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyId) {
-    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyId)).exists());
+  checkOverdueFinePolicyInLoanDetails(overdueFinePolicyName) {
+    cy.expect(KeyValue('Overdue fine policy').find(Link(overdueFinePolicyName)).exists());
   },
-  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyId) {
-    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyId)).exists());
+  checkLostItemFeePolicyInLoanDetails(lostItemFeePolicyName) {
+    cy.expect(KeyValue('Lost item fee policy').find(Link(lostItemFeePolicyName)).exists());
   },
 
   verifyFeeFinesOwed(amount) {

@@ -35,6 +35,9 @@ describe('Organizations', () => {
 
   before(() => {
     cy.getAdminToken();
+    cy.getAdminUserDetails().then((userDetails) => {
+      adminUser = userDetails.personal;
+    });
     Organizations.createInterfaceViaApi(organizationInterface).then((interfaceId) => {
       organizationInterface.id = interfaceId;
     });

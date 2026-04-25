@@ -173,14 +173,10 @@ describe('MARC', () => {
                 );
               });
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
         });
 
@@ -224,8 +220,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();

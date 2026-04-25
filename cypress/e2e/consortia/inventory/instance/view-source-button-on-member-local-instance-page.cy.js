@@ -5,11 +5,12 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -69,6 +70,7 @@ describe('Inventory', () => {
         { tags: ['extendedPathECS', 'folijet', 'C409518'] },
         () => {
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

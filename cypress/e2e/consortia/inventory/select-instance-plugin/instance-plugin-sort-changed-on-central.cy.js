@@ -124,7 +124,7 @@ describe('Inventory', () => {
 
       it(
         'C543879 Select Instance plugin | Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C543879'] },
+        { tags: ['criticalPathECSFlaky', 'spitfire', 'nonParallel', 'C543879'] },
         () => {
           cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -148,16 +148,13 @@ describe('Inventory', () => {
             InventoryInstances.checkResultListSortedByColumn(2);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
 
-            cy.waitForAuthRefresh(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              Orders.waitLoading();
-              cy.reload();
-              Orders.waitLoading();
-            }, 20_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            Orders.waitLoading();
             Orders.selectOrderByPONumber(testData.orderMember.poNumber);
             OrderDetails.selectAddPOLine();
             OrderLineEditForm.clickTitleLookUpButton();
 
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             SelectInstanceModal.searchByName(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(1);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
@@ -166,6 +163,7 @@ describe('Inventory', () => {
             InventoryInstances.checkResultListSortedByColumn(2);
             InventorySearchAndFilter.resetAll();
             SelectInstanceModal.checkResultsListEmpty();
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             SelectInstanceModal.searchByName(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(1);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);

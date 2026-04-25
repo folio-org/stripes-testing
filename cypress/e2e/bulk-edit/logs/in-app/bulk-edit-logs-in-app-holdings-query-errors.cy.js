@@ -150,11 +150,9 @@ describe('Bulk-edit', () => {
           QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == )');
           QueryModal.verifySelectedValue('Select value');
 
-          // Step 6: Click "Select value" dropdown
-          QueryModal.verifyOptionsInValueSelect(['True', 'False']);
-
-          // Step 7: Select "True" option
+          // Step 6-7: Select "True" option
           QueryModal.chooseValueSelect('True');
+          QueryModal.verifyOptionsInValueSelect(['True', 'False']);
           QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == true)');
 
           QueryModal.addNewRow();

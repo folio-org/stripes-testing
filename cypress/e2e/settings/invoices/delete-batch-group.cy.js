@@ -26,7 +26,7 @@ describe('Invoices', () => {
     before(() => {
       cy.getAdminToken();
       BatchGroups.createBatchGroupViaApi(firstBatchGroup).then((firstResponse) => {
-        invoice.batchGroup = firstResponse.name;
+        invoice.batchGroupId = firstResponse.id;
         firstBatchGroup.id = firstResponse.id;
 
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {

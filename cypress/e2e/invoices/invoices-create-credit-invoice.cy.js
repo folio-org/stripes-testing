@@ -61,7 +61,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,
@@ -77,7 +77,7 @@ describe('Invoices', () => {
       // check transactions after payment
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
       Funds.selectTransactionInList('Credit');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         actualFiscalYearCode,
         '$100.00',
         invoice.invoiceNumber,

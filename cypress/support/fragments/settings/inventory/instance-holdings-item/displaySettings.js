@@ -57,4 +57,18 @@ export default {
   verifyColumnCheckboxChecked(columnName, isChecked = true) {
     cy.expect(displaySettingsPane.find(Checkbox(columnName)).is({ checked: isChecked }));
   },
+
+  toggleColumnCheckbox(columnName) {
+    cy.do(displaySettingsPane.find(Checkbox(columnName)).click());
+  },
+
+  uncheckAllColumnCheckboxes() {
+    columnHeaderNames.forEach((header) => {
+      this.toggleColumnCheckbox(header);
+    });
+  },
+
+  clickSaveButton() {
+    cy.do(saveButton.click());
+  },
 };

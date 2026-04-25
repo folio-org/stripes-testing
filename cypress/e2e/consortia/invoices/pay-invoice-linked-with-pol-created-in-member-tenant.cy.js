@@ -194,7 +194,7 @@ describe('Invoices', () => {
         Invoices.openPOLFromInvoiceLineInCurrentPage(`${orderNumber}-1`);
         OrderLines.openPageCurrentEncumbrance('$0.00');
         Funds.selectTransactionInList('Payment');
-        Funds.varifyDetailsInTransaction(
+        Funds.verifyDetailsInTransaction(
           firstFiscalYear.code,
           '($40.00)',
           firstInvoice.vendorInvoiceNo,

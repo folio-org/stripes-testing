@@ -33,37 +33,34 @@ import InvoiceEditForm from './invoiceEditForm';
 import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
 import VoucherExportForm from './voucherExportForm';
+import DuplicateInvoiceModal from './modal/duplicateInvoiceModal';
+
+const actionsButton = Button('Actions');
+const submitButton = Button('Submit');
+const searchButton = Button('Search');
+const approvePay = Button('Approve & pay');
+const buttonNew = Button('New');
+const saveAndClose = Button('Save & close');
+const saveAndContinueButton = Button('Save & continue');
+const deleteButton = Button('Delete');
+const newBlankLineButton = Button('New blank line');
+const polLookUpButton = Button('POL look-up');
+const duplicateButton = Button('Duplicate');
 
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
-const buttonNew = Button('New');
-const saveAndClose = Button('Save & close');
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
-const actionsButton = Button('Actions');
-const submitButton = Button('Submit');
-const searchButton = Button('Search');
-const approvePay = Button('Approve & pay');
 const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const searchForm = SearchField({ id: 'input-record-search' });
-const resetButton = Button({ id: 'reset-invoice-filters' });
 const invoiceLineDetailsPane = PaneHeader({
   id: 'paneHeaderpane-invoiceLineDetails',
 });
-const deleteButton = Button('Delete');
-const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
-const batchGroupFilterSection = Section({ id: 'batchGroupId' });
-const fundCodeFilterSection = Section({ id: 'fundCode' });
-const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
-const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
-const approvalDateFilterSection = Section({ id: 'approvalDate' });
-const newBlankLineButton = Button('New blank line');
-const polLookUpButton = Button('POL look-up');
 const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 const searhInputId = 'input-record-search';
@@ -73,10 +70,21 @@ const batchGroupSelection = Selection('Batch group*');
 const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
 const linesSequencePane = Pane({ id: 'pane-lines-sequence' });
 const invoiceLinesSequenceList = MultiColumnList({ id: 'invoice-lines-sequence' });
-const saveAndContinueButton = Button('Save & continue');
 const invoiceLinesSequenceSelector = '#invoice-lines-sequence';
 const invoiceLinesSequenceRowsSelector = '#invoice-lines-sequence [class*="mclRow--"]';
 const columnHeaderRoleSelector = '[role="columnheader"]';
+
+// filters
+// TODO: Move search&filters to separate file
+const resetButton = Button({ id: 'reset-invoice-filters' });
+const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
+const batchGroupFilterSection = Section({ id: 'batchGroupId' });
+const fundCodeFilterSection = Section({ id: 'fundCode' });
+const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
+const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
+const approvalDateFilterSection = Section({ id: 'approvalDate' });
+const tagsFilterSection = Section({ id: 'tags.tagList' });
+const tagsMultiSelect = tagsFilterSection.find(MultiSelect({ id: 'acq-tags-filter' }));
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -157,6 +165,8 @@ export default {
     batchGroupId,
     invoiceStatus,
     exportToAccounting,
+    adjustments,
+    acqUnitIds,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -175,6 +185,14 @@ export default {
       invoiceStatus,
       exportToAccounting,
     });
+
+    if (adjustments && adjustments.length > 0) {
+      invoice.adjustments = adjustments;
+    }
+
+    if (acqUnitIds && acqUnitIds.length > 0) {
+      invoice.acqUnitIds = acqUnitIds;
+    }
 
     if (batchGroupId) {
       create(invoice);
@@ -198,6 +216,13 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoices/${invoiceId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  deleteInvoiceLineViaApi(invoiceLineId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `invoice/invoice-lines/${invoiceLineId}`,
       isDefaultSearchParamsRequired: false,
     });
   },
@@ -249,6 +274,8 @@ export default {
     subTotal,
     releaseEncumbrance,
     exportToAccounting,
+    adjustments,
+    acqUnitIds,
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -257,6 +284,8 @@ export default {
       batchGroupId,
       invoiceStatus,
       exportToAccounting,
+      adjustments,
+      acqUnitIds,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -870,13 +899,15 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedMessage);
   },
 
-  canNotApproveInvoice: (errorMessage) => {
+  canNotApproveInvoice: (fund) => {
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+    InteractorsTools.checkCalloutErrorMessage(
+      `Fund distribution amount exceeds the allowable expenditure amount in the ${fund.code} fund.`,
+    );
   },
 
   canNotApproveAndPayInvoice: (fund) => {
@@ -886,7 +917,7 @@ export default {
       submitButton.click(),
     ]);
     InteractorsTools.checkCalloutErrorMessage(
-      `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${fund.code}].`,
+      `Fund distribution amount exceeds the allowable expenditure amount in the ${fund.code} fund.`,
     );
   },
 
@@ -1297,11 +1328,19 @@ export default {
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
+    cy.wait(2000);
+    const accordionButton = invoiceFiltersSection
+      .find(fiscalYearFilterSection)
+      .find(Button({ ariaLabel: 'Fiscal year filter list' }));
+
+    cy.then(() => accordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded !== 'true') {
+        cy.do(accordionButton.click());
+      }
+    });
+
+    cy.wait(1000);
     cy.do([
-      invoiceFiltersSection
-        .find(fiscalYearFilterSection)
-        .find(Button({ ariaLabel: 'Fiscal year filter list' }))
-        .click(),
       fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
       SelectionList().select(fiscalYear),
     ]);
@@ -1330,6 +1369,21 @@ export default {
     cy.wait(2000);
     cy.do(Button({ id: 'metadata.createdByUserId-button' }).click());
     SelectUser.selectUser(userName);
+  },
+
+  selectTagsFilter: (tagsArray) => {
+    cy.wait(2000);
+    const accordionButton = tagsFilterSection.find(
+      Button({ id: 'accordion-toggle-button-tags.tagList' }),
+    );
+    cy.then(() => accordionButton.ariaExpanded()).then((isExpanded) => {
+      if (isExpanded !== 'true') {
+        cy.do(accordionButton.click());
+      }
+    });
+    cy.expect(tagsMultiSelect.exists());
+    cy.do(tagsMultiSelect.choose(tagsArray));
+    cy.expect(tagsMultiSelect.has({ selected: tagsArray }));
   },
 
   openPageCurrentEncumbrance: (title) => {
@@ -1595,5 +1649,10 @@ export default {
   saveAndCloseEditSequencePage() {
     cy.do(linesSequencePane.find(Button('Save & close')).click());
     cy.wait(4000);
+  },
+
+  selectDuplicateInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), duplicateButton.click()]);
+    DuplicateInvoiceModal.verifyModalView();
   },
 };

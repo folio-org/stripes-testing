@@ -101,6 +101,8 @@ describe('Lists', () => {
             'User - Preferred first name',
             'User - Pronouns',
             'User - Tags',
+            // 'User - Proxy for',
+            // 'User - Tags tag list',
             'User - Type',
             'User - Updated by user UUID',
             'User - User created date',

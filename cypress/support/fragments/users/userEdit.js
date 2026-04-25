@@ -31,6 +31,7 @@ import {
   TextArea,
   TextField,
   ValueChipRoot,
+  matching,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -88,6 +89,7 @@ const selectRolesModal = Modal('Select user roles');
 const roleAssignmentFilter = selectRolesModal.find(
   Accordion({ id: including('Role assigment status') }),
 );
+const selectAllCheckbox = Checkbox({ name: 'selected-selectAll' });
 const rolesPane = selectRolesModal.find(Pane('User roles'));
 const unassignAllRolesModal = Modal('Unassign all user roles');
 const yesButton = Button('Yes');
@@ -116,7 +118,7 @@ const closeWithoutSavingButton = Button('Close without saving');
 const saveExternalLinkBtn = updateProfilePictureModal.find(
   Button({ id: 'save-external-link-btn' }),
 );
-const selectRequestType = Select({ id: 'type' });
+const selectUserType = Select({ id: 'type' });
 const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
 const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
@@ -134,6 +136,9 @@ const preferredEmailCommunicationsSelect = MultiSelect({
 });
 const resetExpirationDateButton = Button('Reset');
 const resetExpirationDateModal = Modal('Set expiration date?');
+const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
+const userTypeChangeModalText =
+  "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
 
@@ -163,6 +168,10 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 });
 
 export default {
+  roleAssignmentFilterOptions: {
+    ASSIGNED: 'Assigned',
+    UNASSIGNED: 'Unassigned',
+  },
   addServicePointsViaApi,
 
   openEdit() {
@@ -310,7 +319,7 @@ export default {
   },
 
   changeUserType(type = 'Patron') {
-    cy.do(selectRequestType.choose(type));
+    cy.do(selectUserType.choose(type));
   },
 
   changePreferredContact(contact = 'Email') {
@@ -433,11 +442,7 @@ export default {
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
     cy.do(searchButton.click());
-    cy.do(
-      Modal({ id: 'permissions-modal' })
-        .find(Checkbox({ name: 'selected-selectAll' }))
-        .click(),
-    );
+    cy.do(Modal({ id: 'permissions-modal' }).find(selectAllCheckbox).click());
     cy.wait(2000);
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
@@ -646,12 +651,6 @@ export default {
     cy.expect(rootPane.absent());
   },
 
-  confirmChangingUserType() {
-    cy.wait(1000);
-    cy.do(Modal().find(Button('Confirm')).click());
-    cy.wait(500);
-  },
-
   saveEditedUser() {
     cy.intercept('PUT', /\/users\/.+|\/users-keycloak\/users\/.+/).as('updateUser');
     cy.wait(1000);
@@ -770,8 +769,8 @@ export default {
     cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
   },
 
-  chooseRequestType(requestType) {
-    cy.do(selectRequestType.choose(requestType));
+  chooseUserType(userType) {
+    cy.do(selectUserType.choose(userType));
   },
 
   resetAll() {
@@ -995,8 +994,8 @@ export default {
 
   verifyUserTypeItems() {
     cy.expect([
-      selectRequestType.has({ content: including('Patron') }),
-      selectRequestType.has({ content: including('Staff') }),
+      selectUserType.has({ content: including('Patron') }),
+      selectUserType.has({ content: including('Staff') }),
     ]);
   },
 
@@ -1088,8 +1087,8 @@ export default {
     ]);
   },
 
-  fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
-    if (userType) cy.do(Select({ id: 'type' }).choose(userType));
+  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
+    if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
     cy.do([
       lastNameField.fillIn(userLastName),
@@ -1099,7 +1098,7 @@ export default {
     cy.wait(2000);
   },
 
-  checkUserEditPaneOpened: (isOpened = true) => {
+  checkUserEditPaneOpened(isOpened = true) {
     cy.expect(Spinner().absent());
     if (isOpened) {
       cy.expect(userEditPane.exists(), userInformationAccordion.exists());
@@ -1127,7 +1126,7 @@ export default {
   },
 
   verifyUserRolesCounter(expectedCount) {
-    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+    cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
   },
 
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {
@@ -1162,25 +1161,90 @@ export default {
 
   verifySelectRolesModal() {
     cy.expect([
-      selectRolesModal.find(userSearch).exists(),
+      selectRolesModal.find(userSearch).has({ value: '' }),
       selectRolesModal.find(searchButton).has({ disabled: true }),
       selectRolesModal.find(saveAndCloseBtn).exists(),
       selectRolesModal.find(cancelButton).exists(),
+      selectRolesModal.find(resetAllButton).exists(),
       rolesPane.exists(),
       roleAssignmentFilter.exists(),
+      selectRolesModal.has({ footer: including('Total selected:') }),
     ]);
   },
 
-  selectRoleInModal(roleName, isSelected = true) {
-    const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
-      Checkbox(),
+  checkRolesSelectedCounterInModal(selectedCount) {
+    cy.expect(
+      selectRolesModal.has({
+        footer: matching(new RegExp(`Total selected: ${selectedCount}Save`)),
+      }),
     );
+  },
+
+  checkRolesCountInModal(expectedCOunt) {
+    cy.expect(selectRolesModal.has({ numberOfRows: expectedCOunt }));
+  },
+
+  searchRoleInModal(roleName) {
     cy.do([
       selectRolesModal.find(userSearch).fillIn(roleName),
       selectRolesModal.find(searchButton).click(),
-      targetCheckbox.click(),
     ]);
+  },
+
+  verifyRoleInModal(roleName, { isShown = true, isChecked } = {}) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    if (isShown) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+    if ([true, false].includes(isChecked)) {
+      const expectedStatusText = isChecked
+        ? this.roleAssignmentFilterOptions.ASSIGNED
+        : this.roleAssignmentFilterOptions.UNASSIGNED;
+      cy.expect([
+        targetRow.find(Checkbox()).has({ checked: isChecked }),
+        targetRow.find(MultiColumnListCell(expectedStatusText)).exists(),
+      ]);
+    }
+  },
+
+  verifyRoleAssignmentFilterOptionInModal(option, { isChecked = false } = {}) {
+    const targetOption = roleAssignmentFilter.find(Checkbox(option));
+    cy.expect(targetOption.has({ checked: isChecked }));
+  },
+
+  selectRoleAssignmentFilterOptionInModal(option, { isChecked = true } = {}) {
+    const targetOption = roleAssignmentFilter.find(Checkbox(option));
+    cy.do(targetOption.click());
+    this.verifyRoleAssignmentFilterOptionInModal(option, { isChecked });
+  },
+
+  selectRoleInModal(roleName, isSelected = true, { searchRole = true } = {}) {
+    const targetCheckbox = selectRolesModal
+      .find(
+        MultiColumnListRow({
+          innerText: matching(new RegExp(`^${roleName}\\n`)),
+          isContainer: false,
+        }),
+      )
+      .find(Checkbox());
+    if (searchRole) this.searchRoleInModal(roleName);
+    cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifySelectAllCheckboxInRolesModal({ isChecked = false } = {}) {
+    const selectAllCheckboxInModal = selectRolesModal.find(selectAllCheckbox);
+    cy.expect(selectAllCheckboxInModal.has({ checked: isChecked }));
+  },
+
+  selectAllRolesInRolesModal({ isChecked = true } = {}) {
+    const selectAllCheckboxInModal = selectRolesModal.find(selectAllCheckbox);
+    cy.do(selectAllCheckboxInModal.click());
+    if (typeof isChecked === 'boolean') this.verifySelectAllCheckboxInRolesModal({ isChecked });
   },
 
   saveAndCloseRolesModal() {
@@ -1393,7 +1457,7 @@ export default {
   },
 
   verifyUserTypeFieldValue(value) {
-    cy.expect(selectRequestType.has({ value }));
+    cy.expect(selectUserType.has({ value }));
   },
 
   clearExpirationDateField() {
@@ -1463,5 +1527,32 @@ export default {
 
   scrollToTheLastCustomField() {
     cy.get('[data-test-record-edit-custom-field]').last().scrollIntoView();
+  },
+
+  verifyUserTypeChangeModal() {
+    cy.expect([
+      userTypeChangeModal.find(cancelButton).exists(),
+      userTypeChangeModal.find(confirmButton).exists(),
+      userTypeChangeModal.has({ message: userTypeChangeModalText }),
+    ]);
+  },
+
+  confirmUserTypeChange() {
+    cy.do(userTypeChangeModal.find(confirmButton).click());
+    cy.expect(userTypeChangeModal.absent());
+  },
+
+  cancelUserTypeChange() {
+    cy.do(userTypeChangeModal.find(cancelButton).click());
+    cy.expect(userTypeChangeModal.absent());
+  },
+
+  verifyUsernameRequired(isRequired = true) {
+    cy.expect(usernameField.has({ required: isRequired }));
+  },
+
+  checkRolesAffiliationDropdownShown(isShown = true) {
+    if (isShown) cy.expect(rolesAffiliationSelect.exists());
+    else cy.expect(rolesAffiliationSelect.absent());
   },
 };

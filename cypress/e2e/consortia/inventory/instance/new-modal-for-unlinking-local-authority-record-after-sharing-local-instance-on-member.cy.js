@@ -23,7 +23,6 @@ describe('Inventory', () => {
         authorityHeading: 'C411716 Lentz Local M1',
         sectionId: 'list-contributors',
         instanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-        heldByAccordionName: 'Held by',
       };
       const marcFiles = [
         {
@@ -64,7 +63,7 @@ describe('Inventory', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.waitContentLoading();
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventorySearchAndFilter.searchByParameter(
               testData.instanceSearchOption,
               testData.createdRecordIDs[0],
@@ -77,8 +76,6 @@ describe('Inventory', () => {
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResults(testData.authorityHeading);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
           });
         cy.resetTenant();
@@ -127,7 +124,7 @@ describe('Inventory', () => {
         'C411716 (CONSORTIA) Verify the new modal for unlinking local authority record after sharing the local instance on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411716'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchByParameter(
             testData.instanceSearchOption,
             testData.createdRecordIDs[0],

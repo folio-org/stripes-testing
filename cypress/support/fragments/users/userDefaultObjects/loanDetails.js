@@ -36,8 +36,13 @@ const checkDeclareLostButtonActivity = (status) => {
 };
 
 export default {
+  // This waits for one of the routes /loans/closed or /loans/open to load.
   waitLoading: () => {
     cy.expect(Pane({ id: 'pane-loanshistory' }).exists());
+  },
+  // This waits for the /loans/view/:id route
+  waitLoanDetailsLoading: () => {
+    cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
   checkDeclareLostButtonIsDisabled() {
     checkDeclareLostButtonActivity(true);
@@ -178,10 +183,12 @@ export default {
   checkActionDeclaredLost(row) {
     this.checkAction(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
-  checkDueDate(row, dueDate) {
+  checkDueDate(row, dueDate, options = {}) {
     this.checkDateValid(dueDate);
 
-    const expectedDueDate = DateTools.getFormattedEndDateWithTimUTC(dueDate);
+    const expectedDueDate = options.timezone
+      ? DateTools.getFormattedEndDateWithTimeInTimezone(dueDate, options.timezone, options.locale)
+      : DateTools.getFormattedEndDateWithTimUTC(dueDate);
 
     cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
       (columnIndex) => {

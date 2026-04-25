@@ -74,11 +74,14 @@ describe(
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       });
 
+      // The test case will fail until the issue UIBULKED-757 is resolved
+
       it(
         'C446055 Verify switching between "Identifier" and "Query" tabs (firebird)',
         { tags: ['criticalPath', 'firebird', 'C446055'] },
         () => {
           BulkEditSearchPane.openQuerySearch();
+          BulkEditSearchPane.verifyResetAllButtonDisabled();
           BulkEditSearchPane.isHoldingsRadioChecked(false);
           BulkEditSearchPane.isInstancesRadioChecked(false);
           BulkEditSearchPane.isItemsRadioChecked(false);
@@ -90,13 +93,20 @@ describe(
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.isUsersRadioChecked();
           BulkEditSearchPane.verifyInputLabel('Click the Build query button to build the query.');
+          BulkEditSearchPane.verifyResetAllButtonDisabled(false);
           BulkEditSearchPane.openIdentifierSearch();
+          BulkEditSearchPane.verifyResetAllButtonDisabled();
+
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.openQuerySearch();
+
           BulkEditSearchPane.verifyInputLabel(
             'Select a record type and then click the Build query button.',
           );
           BulkEditSearchPane.isUsersRadioChecked(false);
+          BulkEditSearchPane.isBuildQueryButtonDisabled(true);
+          BulkEditSearchPane.verifyResetAllButtonDisabled(true);
+
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.selectField(itemFieldValues.itemStatus);
@@ -123,16 +133,21 @@ describe(
           BulkEditSearchPane.isInstancesRadioChecked(false);
           BulkEditSearchPane.isItemsRadioChecked();
           BulkEditSearchPane.isUsersRadioChecked(false);
+          BulkEditSearchPane.verifyResetAllButtonDisabled(false);
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.isUsersRadioChecked();
           BulkEditSearchPane.matchedAccordionIsAbsent();
           QueryModal.buildQueryButtonDisabled(false);
           BulkEditSearchPane.verifyInputLabel('Click the Build query button to build the query.');
+          BulkEditSearchPane.verifyResetAllButtonDisabled(false);
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkLogsCheckbox('New');
           BulkEditLogs.resetAll();
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.isUsersRadioChecked();
+          BulkEditSearchPane.isBuildQueryButtonDisabled(false);
+          BulkEditSearchPane.verifyInputLabel('Click the Build query button to build the query.');
+          BulkEditSearchPane.verifyResetAllButtonDisabled(false);
         },
       );
     });

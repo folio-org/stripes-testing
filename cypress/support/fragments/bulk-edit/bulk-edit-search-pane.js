@@ -17,6 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
   Spinner,
+  Tooltip,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS, BULK_EDIT_FORMS } from '../../constants';
 import FileManager from '../../utils/fileManager';
@@ -48,6 +49,7 @@ const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' 
 const areYouSureForm = Modal('Are you sure?');
 const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
+const resetAllButton = Button('Reset all');
 const getScrollableElementInForm = (formName) => {
   return cy
     .get('[class^=previewAccordion-]')
@@ -161,6 +163,10 @@ export const ERROR_MESSAGES = {
   NO_CHANGE_REQUIRED: 'No change in value required',
   NO_CHANGE_IN_ADMINISTRATIVE_DATA_REQUIRED: 'No change in administrative data required',
   NO_CHANGE_IN_MARC_FIELDS_REQUIRED: 'No change in MARC fields required',
+  NO_CHANGE_INSTANCE_SUPPRESSED_RECORDS_UPDATED:
+    'No change in value for instance required, suppressed associated records have been updated.',
+  NO_CHANGE_HOLDINGS_SUPPRESSED_ITEMS_UPDATED:
+    'No change in value for holdings record required, associated suppressed item(s) have been updated.',
   NO_MATCH_FOUND: 'No match found',
   INCORRECT_TOKEN_NUMBER:
     'Incorrect number of tokens found in record: expected 1 actual 3 (IncorrectTokenCountException)',
@@ -183,6 +189,12 @@ export const ERROR_MESSAGES = {
     'Bulk edit of instances with source set to LINKED_DATA is not supported.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
   noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
+  getUserAffiliationError: (username, recordType, recordIdentifier, tenantId) => {
+    return `User ${username} does not have required affiliation to edit the ${recordType} record - ${recordIdentifier} on the tenant ${tenantId}`;
+  },
+  getUserPermissionError: (username, recordType, recordIdentifier, tenantId) => {
+    return `User ${username} does not have required permission to edit the ${recordType} record - id=${recordIdentifier} on the tenant ${tenantId}`;
+  },
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
@@ -378,12 +390,33 @@ export default {
     ]);
   },
 
+  clickResetAllButton() {
+    cy.do(resetAllButton.click());
+  },
+
+  verifyResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
+  },
+
   verifyRecordIdentifierEmpty() {
     cy.expect(recordIdentifierDropdown.find(HTML('')).exists());
   },
 
   verifyRecordTypesEmpty() {
     cy.expect(recordTypesAccordion.find(HTML('')).exists());
+  },
+
+  verifySelectRecordIdentifierRequired(isRequired = true) {
+    if (isRequired) {
+      cy.expect(Select('Record identifier*').has({ required: true }));
+    } else {
+      cy.expect(Select('Record identifier').has({ required: false }));
+    }
+  },
+
+  verifyToolTip() {
+    cy.do(Select('Record identifier').hoverMouse());
+    cy.expect(Tooltip({ text: 'To enable this field, select a Record type.' }).exists());
   },
 
   verifyRecordIdentifiers(identifiers) {
@@ -1742,6 +1775,48 @@ export default {
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  clickNextPaginationButton() {
+    cy.do(nextPaginationButton.click());
+    cy.wait(1000);
+  },
+
+  clickPreviousPaginationButton() {
+    cy.do(previousPaginationButton.click());
+    cy.wait(1000);
+  },
+
+  clickNextInChangedAccordion() {
+    cy.do(changesAccordion.find(nextPaginationButton).click());
+    cy.wait(1000);
+  },
+
+  clickPreviousInChangedAccordion() {
+    cy.do(changesAccordion.find(previousPaginationButton).click());
+    cy.wait(1000);
+  },
+
+  verifyPaginationButtonStatesInMatchedAccordion(previousDisabled, nextDisabled) {
+    cy.expect([
+      matchedAccordion.find(previousPaginationButton).has({ disabled: previousDisabled }),
+      matchedAccordion.find(nextPaginationButton).has({ disabled: nextDisabled }),
+    ]);
+  },
+
+  verifyPaginationButtonStatesInChangedAccordion(previousDisabled, nextDisabled) {
+    cy.expect([
+      changesAccordion.find(previousPaginationButton).has({ disabled: previousDisabled }),
+      changesAccordion.find(nextPaginationButton).has({ disabled: nextDisabled }),
+    ]);
+  },
+
+  verifyPaginationDisplay(startNumber, endNumber) {
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .first()
+      .find('div')
+      .invoke('text')
+      .should('eq', `${startNumber} - ${endNumber}`);
   },
 
   verifyInstanceNoteColumns(instanceNoteColumnNames) {

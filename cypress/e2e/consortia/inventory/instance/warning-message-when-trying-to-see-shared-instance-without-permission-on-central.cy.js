@@ -5,6 +5,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -60,6 +61,7 @@ describe('Inventory', () => {
         { tags: ['extendedPathECS', 'folijet', 'C422045'] },
         () => {
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
           InstanceRecordView.verifyWarningMessage();

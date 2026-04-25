@@ -1426,7 +1426,7 @@ export default {
     cy.wait(3000);
   },
 
-  varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
+  verifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
     cy.wait(6000);
     cy.expect(
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
@@ -1437,7 +1437,7 @@ export default {
     );
   },
 
-  varifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
+  verifyDetailsInTransactionFundTo: (fiscalYear, amount, source, type, fund) => {
     cy.expect(
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
@@ -1670,5 +1670,31 @@ export default {
     );
     cy.wait(500);
     cy.expect(tagsPane.absent());
+  },
+
+  verifySelectLocationsModalFilterAccordions: () => {
+    const filterAccordions = ['Institution', 'Campus', 'Library', 'Location assignment status'];
+    cy.expect(filterAccordions.map((name) => selectLocationsModal.find(Accordion(name)).exists()));
+  },
+
+  verifySelectLocationsModalColumns: () => {
+    const columns = [
+      'Name',
+      'Code',
+      'Institution',
+      'Campus',
+      'Library',
+      'Location status',
+      'Location assignment status',
+    ];
+    cy.expect(columns.map((col) => selectLocationsModal.find(MultiColumnListHeader(col)).exists()));
+  },
+
+  verifySelectLocationsModalButtons: () => {
+    cy.expect([
+      selectLocationsModal.find(Button('Actions')).exists(),
+      selectLocationsModal.find(Button({ icon: 'times' })).exists(),
+      selectLocationsModal.find(selectLocationsModalSaveButton).exists(),
+    ]);
   },
 };

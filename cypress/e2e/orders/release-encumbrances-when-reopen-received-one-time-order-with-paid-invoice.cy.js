@@ -19,6 +19,8 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   INVOICE_STATUSES,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import { TransactionDetails } from '../../support/fragments/finance';
@@ -261,8 +263,8 @@ describe('Orders', () => {
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.reOpenOrder({ orderNumber: testData.order.poNumber });
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
-      OrderLines.checkPaymentStatusInPOL('Fully Paid');
-      OrderLines.checkPOLReceiptStatus('Partially Received');
+      OrderLines.checkPaymentStatusInPOL(ORDER_LINE_PAYMENT_STATUS.FULLY_PAID);
+      OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.PARTIALLY_RECEIVED);
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,

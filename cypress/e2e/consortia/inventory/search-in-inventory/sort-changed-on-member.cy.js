@@ -133,6 +133,7 @@ describe('Inventory', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
 
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(2);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
@@ -143,6 +144,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.resetAll();
             InventorySearchAndFilter.verifyResultPaneEmpty();
             InventorySearchAndFilter.verifySearchFieldIsEmpty();
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(2);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);

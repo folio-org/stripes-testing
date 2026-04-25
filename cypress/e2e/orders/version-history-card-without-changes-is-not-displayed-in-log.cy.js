@@ -8,7 +8,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import DateTools from '../../support/utils/dateTools';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+} from '../../support/constants';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Orders', () => {
@@ -99,7 +104,12 @@ describe('Orders', () => {
         [...Array(orderLinesCount).keys()].forEach((index) => {
           const OrderLineDetails = OrderDetails.openPolDetails(`${poNumber}-${index + 1}`);
           OrderLineDetails.checkOrderLineDetails({
-            purchaseOrderLineInformation: [{ key: 'Payment status', value: 'Awaiting Payment' }],
+            purchaseOrderLineInformation: [
+              {
+                key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+                value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,
+              },
+            ],
           });
           OrderLineDetails.verifyLinesDetailTitle(`PO Line details - ${poNumber}-${index + 1}`);
 

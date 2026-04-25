@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../constants';
 import { randomFourDigitNumber } from '../../utils/stringTools';
+import { MetaSection, including } from '../../../../interactors';
 
 const defaultNote = ({ typeId, agreementId }, noteType = 'agreements') => {
   const linkType = {
@@ -112,5 +113,17 @@ export default {
       searchParams,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  toggeMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy }) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
   },
 };

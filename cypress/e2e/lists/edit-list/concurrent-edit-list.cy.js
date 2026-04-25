@@ -143,7 +143,7 @@ describe('Lists', () => {
 
     it(
       'C411766 (Multiple users) Edit list when refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'С411766'] },
+      { tags: ['criticalPath', 'corsair', 'C411766'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

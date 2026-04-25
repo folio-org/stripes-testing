@@ -108,7 +108,9 @@ export default {
   },
 
   selectJobProfile(profileName) {
-    cy.do(searchResults.find(MultiColumnListCell(profileName)).click());
+    cy.do(
+      searchResults.find(MultiColumnListCell({ content: profileName, columnIndex: 0 })).click(),
+    );
   },
 
   selectRecordType(selectType) {

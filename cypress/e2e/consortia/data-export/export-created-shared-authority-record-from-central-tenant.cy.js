@@ -49,7 +49,7 @@ describe('Data Export', () => {
 
     before('Create users, data', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityIdentifier);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436898*');
       MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE);
       cy.createTempUser(userPermissionSet).then((userProperties) => {
         users = userProperties;
@@ -100,8 +100,6 @@ describe('Data Export', () => {
           );
         });
         QuickMarcEditor.checkContentByTag('001', authorityIdentifier);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
 

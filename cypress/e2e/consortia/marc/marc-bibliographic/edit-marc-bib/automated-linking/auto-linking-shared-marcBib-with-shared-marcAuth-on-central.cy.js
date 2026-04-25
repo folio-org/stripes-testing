@@ -72,14 +72,14 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC400663.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC400663.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             propertyName: 'instance',
             numOfRecords: 1,
           },
           {
             marc: 'marcAuthFileForC400663.mrc',
-            fileNameImported: `testMarcFileC410814.${getRandomPostfix()}.mrc`,
+            fileNameImported: `testMarcFileC400663.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             propertyName: 'authority',
             numOfRecords: 4,
@@ -162,9 +162,6 @@ describe('MARC', () => {
           'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C400663'] },
           () => {
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-            }, 30_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();
@@ -180,11 +177,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.deleteField(4);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2500);
-            QuickMarcEditor.confirmDelete();
+            QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
 

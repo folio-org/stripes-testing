@@ -164,7 +164,7 @@ describe('Invoices', () => {
       Invoices.selectInvoice(defaultInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$0.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($0.00)',
         `${orderNumber}-1`,
@@ -172,7 +172,7 @@ describe('Invoices', () => {
         `${defaultFund.name} (${defaultFund.code})`,
       );
       Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$100.00',
         defaultInvoice.invoiceNumber,

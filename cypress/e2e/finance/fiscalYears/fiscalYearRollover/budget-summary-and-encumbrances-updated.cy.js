@@ -245,7 +245,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${secondOrderNumber}-1`,

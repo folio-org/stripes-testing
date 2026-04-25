@@ -1,6 +1,7 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
+  DropdownMenu,
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
@@ -10,6 +11,7 @@ import {
   RepeatableFieldItem,
   Select,
   Selection,
+  SelectionList,
   Spinner,
   TextField,
   Checkbox,
@@ -29,6 +31,7 @@ const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = Button('Show columns');
+const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 
 const booleanValues = ['AND'];
 
@@ -38,7 +41,7 @@ const embeddedTableHeadersMap = {
     'URL relationship',
     'URI',
     'Link text',
-    'Materials specified',
+    'Material specified',
     'URL public note',
   ],
   notes: ['Note type', 'Note', 'Staff only'],
@@ -368,7 +371,11 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+    cy.do(
+      RepeatableFieldItem({ index: row })
+        .find(Selection({ id: `field-option-${row}` }))
+        .choose(selection),
+    );
     cy.wait(1000);
   },
 
@@ -387,7 +394,7 @@ export default {
 
   verifySelectedField(selection, row = 0) {
     cy.get(
-      `[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectionControl"] [class^="singleValue"]`,
+      `[data-testid="row-${row}"] [class^="col-sm-4"] [id="selected-field-option-${row}-item"]`,
     ).should('have.text', selection);
   },
 
@@ -439,11 +446,8 @@ export default {
   },
 
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
-    cy.expect([
-      RepeatableFieldItem({ index: row })
-        .find(Select('input-value-0'))
-        .has({ optionsText: expectedOptions }),
-    ]);
+    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).open());
+    cy.expect(SelectionList().has({ optionList: expectedOptions }));
   },
 
   pickDate(date, row = 0) {
@@ -516,24 +520,56 @@ export default {
   },
 
   chooseValueSelect(choice, row = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: row })
-        .find(Select({ content: including('Select value') }))
-        .choose(choice),
-    );
+    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).choose(choice));
     cy.wait(1000);
   },
 
   verifySelectedValue(expectedValue, row = 0) {
     cy.expect(
-      RepeatableFieldItem({ index: row })
-        .find(Select({ content: including('Select value') }))
-        .has({ checkedOptionText: expectedValue }),
+      RepeatableFieldItem({ index: row }).find(valueSelection).has({ singleValue: expectedValue }),
     );
   },
 
-  chooseValueSelectByValue(value, row = 0) {
-    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectControl"]`).select(value);
+  selectDuplicateOptionByText(value, row = 0, optionIndex = 0) {
+    // Open the dropdown if not already open - target the Value column button
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"]`)
+      .eq(1)
+      .find('[class^="selectionControl"] button')
+      .first()
+      .then(($button) => {
+        const isOpen = $button.attr('aria-expanded') === 'true';
+        if (!isOpen) {
+          cy.wrap($button).click();
+          cy.wait(500);
+        }
+      });
+
+    // Find all options matching the value text and click the one at the specified index
+    cy.get('[class^="selectionListRoot"][id*="container-selection"]').within(() => {
+      cy.get('li[role="option"]').then(($options) => {
+        const matchingOptions = [];
+        $options.each((index, option) => {
+          const optionText = Cypress.$(option).find('[data-test-selection-option-segment]').text();
+          if (optionText === value) {
+            matchingOptions.push(index);
+          }
+        });
+
+        if (matchingOptions.length === 0) {
+          throw new Error(`No option found with value: "${value}"`);
+        }
+
+        if (optionIndex >= matchingOptions.length) {
+          throw new Error(
+            `Option index ${optionIndex} is out of bounds. Found ${matchingOptions.length} option(s) with value "${value}"`,
+          );
+        }
+
+        const targetIndex = matchingOptions[optionIndex];
+        cy.get('li[role="option"]').eq(targetIndex).click();
+      });
+    });
+
     cy.wait(1000);
   },
 
@@ -594,7 +630,7 @@ export default {
   selectValueFromSelect(selection, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
-        .find(Select({ dataTestID: 'data-input-select-boolType' }))
+        .find(Selection({ dataTestId: 'data-input-select-boolType' }))
         .choose(selection),
     );
   },
@@ -678,6 +714,10 @@ export default {
     });
   },
 
+  verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
+    cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
   clickRunQueryAndSave() {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
@@ -724,9 +764,11 @@ export default {
         .then((text) => {
           if (numberOfMatchedRecords) {
             const recordText = pluralize(numberOfMatchedRecords, 'record');
+            const previewCount = numberOfMatchedRecords > 100 ? 100 : numberOfMatchedRecords;
+            const previewText = pluralize(previewCount, 'record');
 
             expect(text).to.equal(
-              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${numberOfMatchedRecords} ${recordText}:`,
+              `Query returns ${numberOfMatchedRecords} ${recordText}. Previewing the first ${previewCount} ${previewText}:`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');
@@ -958,13 +1000,25 @@ export default {
     cy.do(showColumnsButton.click());
   },
 
+  verifyShowColumnsMenuDisplayed(isDisplayed = true) {
+    if (isDisplayed) {
+      cy.expect(DropdownMenu().exists());
+    } else {
+      cy.expect(DropdownMenu().absent());
+    }
+  },
+
   clickCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).click());
     cy.wait(2000);
   },
 
-  verifyColumnDisplayed(columnName) {
-    cy.expect(MultiColumnListHeader(columnName).exists());
+  verifyColumnDisplayed(columnName, isDisplayed = true) {
+    if (isDisplayed) {
+      cy.expect(MultiColumnListHeader(columnName).exists());
+    } else {
+      cy.expect(MultiColumnListHeader(columnName).absent());
+    }
   },
 
   scrollResultTable(direction) {
@@ -978,5 +1032,14 @@ export default {
   verifyHeadlineQueryWouldReturnAbsent() {
     cy.get('[class^="col-xs-10"]').should('not.exist');
     cy.expect(HTML(including('Query would return')).absent());
+  },
+
+  verifyCheckedCheckboxesPresentInTheTable() {
+    cy.wait(2000);
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
+      });
+    });
   },
 };

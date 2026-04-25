@@ -67,6 +67,8 @@ describe('Users', () => {
       UserEdit.setExpirationDate();
       UserEdit.changePreferredContact(testData.newUser.preferredContact);
 
+      UserEdit.chooseUserType('Patron');
+
       // Step 3: Add empty address and verify error
       UserEdit.addAddressWithoutType();
       UserEdit.saveAndClose();

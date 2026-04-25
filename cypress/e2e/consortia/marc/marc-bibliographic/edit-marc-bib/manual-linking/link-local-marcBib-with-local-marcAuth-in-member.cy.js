@@ -99,13 +99,10 @@ describe('MARC', () => {
                 });
               });
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               InventoryInstances.waitContentLoading();
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
@@ -130,6 +127,7 @@ describe('MARC', () => {
           'C405560 Link Local MARC bib with Local MARC Authority in Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C405560'] },
           () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventorySearchAndFilter.searchByParameter(
               testData.instanceSearchOption,
               createdRecordIDs[0],
@@ -156,9 +154,8 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.checkAfterSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
               linkingTagAndValues.tag,

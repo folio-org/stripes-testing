@@ -145,7 +145,7 @@ describe('Finance', () => {
         Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
         Ledgers.checkColumnContentInDownloadedLedgerExport(
           `${fileName}.csv`,
-          1,
+          expenseClass1.name,
           fundA,
           budget.name,
           '100',
@@ -167,7 +167,7 @@ describe('Finance', () => {
         );
         Ledgers.checkColumnContentInDownloadedLedgerExport(
           `${fileName}.csv`,
-          2,
+          expenseClass2.name,
           fundA,
           budget.name,
           '100',

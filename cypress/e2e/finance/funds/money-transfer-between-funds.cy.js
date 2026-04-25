@@ -117,7 +117,7 @@ describe('Finance', () => {
         Funds.checkBudgetQuantity1('($10.00)', '($10.00)');
         Funds.viewTransactions();
         Funds.selectTransactionInList('Transfer');
-        Funds.varifyDetailsInTransaction(
+        Funds.verifyDetailsInTransaction(
           fiscalYear.code,
           '($10.00)',
           'User',

@@ -220,7 +220,7 @@ describe('Orders', () => {
       Funds.viewTransactions();
       Funds.checkNoTransactionOfType('Encumbrance');
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($50.00)',
         firstInvoice.vendorInvoiceNo,

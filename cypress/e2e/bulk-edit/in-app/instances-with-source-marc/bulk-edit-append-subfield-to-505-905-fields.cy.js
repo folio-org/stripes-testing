@@ -368,7 +368,7 @@ describe(
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             marcInstance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) -- | "Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II',
+            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49). | "Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.',
           );
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             marcInstanceWithoutFields.hrid,
@@ -415,9 +415,10 @@ describe(
                   );
                 },
                 (record) => expect(record.get('505')[0].subf[1][0]).to.eq('g'),
-                (record) => expect(record.get('505')[0].subf[1][1]).to.eq('(10:49).'),
+                (record) => expect(record.get('505')[0].subf[1][1]).to.eq('(1:57) --'),
                 (record) => expect(record.get('505')[0].subf[2][0]).to.eq('g'),
-                (record) => expect(record.get('505')[0].subf[2][1]).to.eq('(1:57) --'),
+                (record) => expect(record.get('505')[0].subf[2][1]).to.eq('(10:49).'),
+
                 // 505 00
                 (record) => expect(record.get('505')[1].ind1).to.eq('0'),
                 (record) => expect(record.get('505')[1].ind2).to.eq('0'),
@@ -427,10 +428,11 @@ describe(
                     '"Table of statutes and regulations": p. xvii-xxv.',
                   );
                 },
-                (record) => expect(record.get('505')[1].subf[1][0]).to.eq('g'),
-                (record) => expect(record.get('505')[1].subf[1][1]).to.eq('Nr. 3.'),
-                (record) => expect(record.get('505')[1].subf[2][0]).to.eq('t'),
-                (record) => expect(record.get('505')[1].subf[2][1]).to.eq('Quatrain II'),
+                (record) => expect(record.get('505')[1].subf[1][0]).to.eq('t'),
+                (record) => expect(record.get('505')[1].subf[1][1]).to.eq('Quatrain II'),
+                (record) => expect(record.get('505')[1].subf[2][0]).to.eq('g'),
+                (record) => expect(record.get('505')[1].subf[2][1]).to.eq('Nr. 3.'),
+
                 // 905 0\
                 (record) => expect(record.get('905')[0].ind1).to.eq('0'),
                 (record) => expect(record.get('905')[0].ind2).to.eq(' '),
@@ -447,10 +449,11 @@ describe(
                 (record) => expect(record.get('905')[1].ind2).to.eq('0'),
                 (record) => expect(record.get('905')[1].subf[0][0]).to.eq('a'),
                 (record) => expect(record.get('905')[1].subf[0][1]).to.eq('Computer programs.'),
-                (record) => expect(record.get('905')[1].subf[1][0]).to.eq('6'),
-                (record) => expect(record.get('905')[1].subf[1][1]).to.eq('100-01/(N'),
-                (record) => expect(record.get('905')[1].subf[2][0]).to.eq('8'),
-                (record) => expect(record.get('905')[1].subf[2][1]).to.eq('4\\c'),
+                (record) => expect(record.get('905')[1].subf[1][0]).to.eq('8'),
+                (record) => expect(record.get('905')[1].subf[1][1]).to.eq('4\\c'),
+                (record) => expect(record.get('905')[1].subf[2][0]).to.eq('6'),
+                (record) => expect(record.get('905')[1].subf[2][1]).to.eq('100-01/(N'),
+
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
               ],
@@ -466,7 +469,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) --;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49).;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.;false`,
           );
 
           // Step 12: Commit changes
@@ -475,7 +478,7 @@ describe(
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
             marcInstance.hrid,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) -- | "Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II',
+            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49). | "Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.',
           );
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
 
@@ -506,7 +509,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) --;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49).;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.;false`,
           );
 
           // Step 17: Download errors (CSV)
@@ -570,7 +573,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) --;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49).;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.;false`,
           );
 
           // Step 25: Download and verify file with updated records (MARC)
@@ -588,7 +591,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) --;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49).;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE};"Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3.;false`,
           );
 
           // Step 27: Download and verify file with errors (CSV)
@@ -606,13 +609,13 @@ describe(
             0,
             'No',
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (10:49). (1:57) --',
+            'pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. (1:57) -- (10:49)',
           );
           InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             0,
             'No',
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATTED_CONTENTS_NOTE,
-            '"Table of statutes and regulations": p. xvii-xxv. Nr. 3. Quatrain II',
+            '"Table of statutes and regulations": p. xvii-xxv. Quatrain II Nr. 3',
             1,
           );
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
@@ -621,11 +624,11 @@ describe(
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             '505',
-            '\t505\t0  \t$a pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. $g (10:49). $g (1:57) --',
+            '\t505\t0  \t$a pt. 1. Carbon -- pt. 2. Nitrogen -- pt. 3. Sulphur -- pt. 4. Metals. $g (1:57) -- $g (10:49).',
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '505',
-            '\t505\t0 0\t$a "Table of statutes and regulations": p. xvii-xxv. $g Nr. 3. $t Quatrain II',
+            '\t505\t0 0\t$a "Table of statutes and regulations": p. xvii-xxv. $t Quatrain II $g Nr. 3.',
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '905',
@@ -633,7 +636,7 @@ describe(
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '905',
-            '\t905\t0 0\t$a Computer programs. $6 100-01/(N $8 4\\c',
+            '\t905\t0 0\t$a Computer programs. $8 4\\c $6 100-01/(N',
           );
           InventoryViewSource.verifyFieldContent(
             3,

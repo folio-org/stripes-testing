@@ -34,6 +34,22 @@ Cypress.Commands.add('getApplicationsForTenantApi', (tenantName, idOnly = true) 
   });
 });
 
+Cypress.Commands.add('getModUsersVersion', () => {
+  if (!Cypress.env('MOD_USERS_VERSION')) {
+    return cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT'), false).then(({ body }) => {
+      const moduleIds = [];
+      body.applicationDescriptors.forEach((app) => {
+        moduleIds.push(...app.modules);
+      });
+      const modUsersId = moduleIds.find((m) => String(m.name).startsWith('mod-users')).id;
+      Cypress.env('MOD_USERS_VERSION', modUsersId);
+      return cy.wrap(modUsersId);
+    });
+  } else {
+    return Cypress.env('MOD_USERS_VERSION');
+  }
+});
+
 Cypress.Commands.add(
   'getInterfacesForTenantProxyApi',
   (tenantName, { full, type } = { full: true }) => {
@@ -65,6 +81,25 @@ Cypress.Commands.add('getTenantsApi', () => {
   return cy.okapiRequest({
     path: 'tenants?limit=200',
     isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getTenantLocaleApi', () => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'locale',
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body);
+});
+
+Cypress.Commands.add('setTenantLocaleApi', (localeBody) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'locale',
+    isDefaultSearchParamsRequired: false,
+    body: localeBody,
   });
 });
 

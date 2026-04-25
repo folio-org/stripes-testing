@@ -7,6 +7,7 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../../support/fragments/inventory/inventoryNewHoldings';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordNew from '../../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView, {
@@ -43,7 +44,7 @@ describe('Inventory', () => {
         },
       };
       const capabilitySets = [
-        CapabilitySets.inventoryAll,
+        CapabilitySets.uiInventory,
         CapabilitySets.uiConsortiaInventoryUpdateOwnershipItem,
       ];
 
@@ -173,6 +174,7 @@ describe('Inventory', () => {
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.collegeTenant.instance.instanceId);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();

@@ -26,7 +26,7 @@ const userPermissions = [
   permissions.bulkEditLogsView.gui,
 ];
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const errorReason = 'No match found';
+const errorReason = 'Shadow records cannot be bulk edited.';
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(userUUIDsFileName, true);
 const newExpirationDate = new Date();
 const newExpirationDateWithSlashes = DateTools.getFormattedDateWithSlashes({
@@ -90,7 +90,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
           BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
           BulkEditSearchPane.verifyErrorLabel(1);
-          BulkEditSearchPane.verifyNonMatchedResults(user.userId);
+          BulkEditSearchPane.verifyErrorByIdentifier(user.userId, errorReason);
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, false);
           BulkEditActions.startBulkEditLocalAbsent();
           BulkEditActions.openActions();

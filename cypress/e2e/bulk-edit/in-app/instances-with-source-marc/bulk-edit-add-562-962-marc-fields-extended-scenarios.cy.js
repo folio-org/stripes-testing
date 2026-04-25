@@ -350,9 +350,9 @@ describe(
                   expect(firstField962.ind1).to.eq(' ');
                   expect(firstField962.ind2).to.eq(' ');
                   expect(firstField962.subf[0][0]).to.eq('a');
-                  expect(firstField962.subf[0][1]).to.eq(fieldsToAdd.field962_1_a_second);
+                  expect(firstField962.subf[0][1]).to.eq(fieldsToAdd.field962_1_a_first);
                   expect(firstField962.subf[1][0]).to.eq('a');
-                  expect(firstField962.subf[1][1]).to.eq(fieldsToAdd.field962_1_a_first);
+                  expect(firstField962.subf[1][1]).to.eq(fieldsToAdd.field962_1_a_second);
                 },
                 // Second 962 field (added by bulk edit)
                 (record) => {
@@ -405,9 +405,9 @@ describe(
                   expect(firstField962.ind1).to.eq(' ');
                   expect(firstField962.ind2).to.eq(' ');
                   expect(firstField962.subf[0][0]).to.eq('a');
-                  expect(firstField962.subf[0][1]).to.eq(fieldsToAdd.field962_1_a_second);
+                  expect(firstField962.subf[0][1]).to.eq(fieldsToAdd.field962_1_a_first);
                   expect(firstField962.subf[1][0]).to.eq('a');
-                  expect(firstField962.subf[1][1]).to.eq(fieldsToAdd.field962_1_a_first);
+                  expect(firstField962.subf[1][1]).to.eq(fieldsToAdd.field962_1_a_second);
                 },
                 // Second 962 field (added by bulk edit)
                 (record) => {
@@ -537,7 +537,7 @@ describe(
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '962',
-            `\t962\t   \t$a ${fieldsToAdd.field962_1_a_second} $a ${fieldsToAdd.field962_1_a_first}`,
+            `\t962\t   \t$a ${fieldsToAdd.field962_1_a_first} $a ${fieldsToAdd.field962_1_a_second}`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '962',
@@ -588,7 +588,7 @@ describe(
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '962',
-            `\t962\t   \t$a ${fieldsToAdd.field962_1_a_second} $a ${fieldsToAdd.field962_1_a_first}`,
+            `\t962\t   \t$a ${fieldsToAdd.field962_1_a_first} $a ${fieldsToAdd.field962_1_a_second}`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '962',

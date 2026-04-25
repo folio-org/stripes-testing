@@ -2,12 +2,11 @@ import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -121,16 +120,14 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.loginAsAdmin();
-                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-                InventoryInstances.waitContentLoading();
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.pressAddHoldingsButton();
@@ -141,14 +138,11 @@ describe('MARC', () => {
                 createdRecordIDs.push(holdingsID);
               });
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
         });
 
@@ -205,8 +199,6 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);

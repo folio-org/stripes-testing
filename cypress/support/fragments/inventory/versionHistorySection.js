@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
+  Spinner,
 } from '../../../../interactors';
 import UsersCard from '../users/usersCard';
 
@@ -86,16 +87,29 @@ export default {
     expect(timestamp).to.match(changesModalHeaderDefaultRegexp);
   },
 
-  verifyVersionHistoryPane(versionsCount = 1, loadMore = false) {
+  verifyVersionHistoryPane(versionsCount = 1, loadMore = false, totalVersionsCount) {
+    const totalVersions = totalVersionsCount || versionsCount;
     this.waitLoading();
     cy.expect(rootSection.find(closeButton).exists());
-    this.verifyVersionsCount(versionsCount);
+    this.verifyVersionsCount(totalVersions);
     cy.expect([
       rootSection.find(Card({ index: versionsCount - 1 })).exists(),
       rootSection.find(Card({ index: versionsCount })).absent(),
     ]);
     if (loadMore) cy.expect(rootSection.find(loadMoreButton).exists());
     else cy.expect(rootSection.find(loadMoreButton).absent());
+  },
+
+  verifyLoadMoreButton(isShown = true) {
+    if (isShown) cy.expect(rootSection.find(loadMoreButton).exists());
+    else cy.expect(rootSection.find(loadMoreButton).absent());
+  },
+
+  clickLoadMore() {
+    cy.do(rootSection.find(loadMoreButton).click());
+    cy.expect(rootSection.find(Spinner()).exists());
+    cy.expect(rootSection.find(Spinner()).absent());
+    cy.wait(1000);
   },
 
   verifyVersionHistoryCard(
@@ -265,5 +279,34 @@ export default {
     const targetCard = rootSection.find(Card({ index }));
     cy.do(targetCard.find(Link({ href: including('/users/preview/') })).click());
     UsersCard.waitLoading();
+  },
+
+  verifyOriginalVersionCard({ index = 1, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Original version') }));
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
+  },
+
+  verifyCurrentVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Current version') }));
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
+  },
+
+  verifySharedVersionCard({ index = 0, firstName, lastName, changes = [] } = {}) {
+    const targetCard = rootSection.find(Card({ index }));
+    cy.expect(targetCard.has({ text: including(`Source: ${lastName}, ${firstName}`) }));
+    cy.expect(targetCard.has({ text: including('Shared') }));
+    cy.expect(targetCard.find(HTML({ text: including('Current version') })).absent());
+    cy.expect(targetCard.find(HTML({ text: including('Original version') })).absent());
+    changes.forEach((change) => {
+      cy.expect(targetCard.find(ListItem({ text: change })).exists());
+    });
   },
 };

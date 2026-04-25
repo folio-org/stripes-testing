@@ -53,6 +53,7 @@ export default HTML.extend('selection')
     id: (el) => el.querySelector('[class^=selectionControl-]').id,
     value: (el) => el.querySelector('button').textContent,
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
+    dataTestId: (el) => el.closest('[data-testid]')?.getAttribute('data-testid'),
     inputValue: (el) => el.parentNode.querySelector('input')?.value,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,

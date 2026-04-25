@@ -1,5 +1,4 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import moment from 'moment';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
@@ -56,7 +55,7 @@ export const createNoticeTemplate = ({
     description: 'Created by autotest team',
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
+    previewText: 'Test email body The Wines of Italy',
     // notice option
     notice: {
       templateName,
@@ -81,6 +80,7 @@ export default {
   },
 
   waitLoading() {
+    cy.expect(Link(titles.templates).exists());
     cy.do(Link(titles.templates).click());
     cy.expect(Heading(titles.templates).exists());
   },
@@ -116,6 +116,7 @@ export default {
     cy.wait(1000);
     cy.do(nameField.fillIn(noticePolicyTemplate.name));
     cy.expect(nameField.has({ value: noticePolicyTemplate.name }));
+    cy.wait(2000);
 
     cy.do(descriptionField.fillIn(noticePolicyTemplate.description));
     cy.expect(descriptionField.has({ value: noticePolicyTemplate.description }));
@@ -176,16 +177,17 @@ export default {
   },
 
   addToken(noticePolicyTemplateToken) {
+    tokenButton.exists();
     cy.do(tokenButton.click());
-    cy.expect([Modal({ header: 'Add token' }).exists(), Heading(titles.addToken).exists()]);
+    cy.expect(Modal({ header: 'Add token' }).exists());
+    cy.expect(Heading(titles.addToken).exists());
+    cy.expect(Checkbox(`${noticePolicyTemplateToken}`).exists());
     cy.do(Checkbox(`${noticePolicyTemplateToken}`).click());
-    // waiting for the html body input to be available for adding symbols
-    cy.wait(3000);
+    cy.expect(Checkbox(`${noticePolicyTemplateToken}`).has({ checked: true }));
+    cy.expect(addTokenButton.has({ disabled: false }));
     cy.do(addTokenButton.click());
-    cy.expect([
-      Modal({ header: 'Add token' }).absent(),
-      bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }),
-    ]);
+    cy.expect(Modal({ header: 'Add token' }).absent());
+    cy.expect(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
   },
 
@@ -327,14 +329,6 @@ export default {
   },
 
   createPatronNoticeTemplate(template, duplicate = false) {
-    cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
-      statusCode: 201,
-      body: {
-        templates: [],
-        totalRecords: 0,
-      },
-    });
-
     if (duplicate) {
       this.duplicateTemplate();
       this.typeTemplateName(template.name);

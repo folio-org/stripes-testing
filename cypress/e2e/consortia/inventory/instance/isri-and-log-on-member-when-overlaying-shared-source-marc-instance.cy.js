@@ -11,6 +11,7 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -95,6 +96,7 @@ describe('Inventory', () => {
         'C418582 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = MARC Instance (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C418582'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(marcFile.newInstanceTitle);
           InventoryInstances.selectInstance();

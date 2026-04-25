@@ -44,6 +44,7 @@ describe('Data Export', () => {
           subfieldForItem: 'a',
         };
         ExportFieldMappingProfiles.createMappingProfile(testProfile);
+        ExportFieldMappingProfiles.searchFieldMappingProfile(testProfile.name);
         ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);
       },
     );

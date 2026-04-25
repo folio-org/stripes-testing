@@ -1,11 +1,11 @@
-import { getTestEntityValue } from '../../support/utils/stringTools';
 import Permissions from '../../support/dictionary/permissions';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const testData = {
@@ -65,6 +65,7 @@ describe('Users', () => {
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
       );
       UserEdit.changeStatus(testData.newUser.status);
+      UserEdit.chooseUserType('Patron');
       UserEdit.setExpirationDate();
       UserEdit.changePreferredContact(testData.newUser.preferredContact);
       UserEdit.addAddressWithCountry(

@@ -114,6 +114,7 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              InventoryInstances.waitContentLoading();
             });
         });
 

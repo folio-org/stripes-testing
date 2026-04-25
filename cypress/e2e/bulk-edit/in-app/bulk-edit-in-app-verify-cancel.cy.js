@@ -76,7 +76,7 @@ describe('Bulk-edit', () => {
         // Click "Select Option" dropdown => Select "Patron group" option
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
 
-        // Сlick "Confirm changes" option
+        // Click "Confirm changes" option
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, user.username);
         BulkEditActions.clickX();

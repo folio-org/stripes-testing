@@ -179,7 +179,7 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.languages, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.chooseValueSelectByValue('und', 1);
+          QueryModal.selectDuplicateOptionByText('Undetermined', 1, 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyQueryAreaContent(
@@ -240,7 +240,7 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.languages, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.chooseValueSelectByValue('ase', 1);
+          QueryModal.selectDuplicateOptionByText('Undetermined', 1, 0);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(1);

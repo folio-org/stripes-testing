@@ -1,4 +1,5 @@
 import { recurse } from 'cypress-recurse';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -15,12 +16,15 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectOption,
   not,
   Pane,
   RadioButton,
+  SelectionList,
   TextArea,
   TextField,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 
 const listInformationAccording = Accordion('List information');
@@ -69,12 +73,14 @@ const constants = {
 };
 
 const UI = {
-  waitLoading: () => {
+  waitLoading() {
     cy.expect(HTML(including('Lists')).exists());
     cy.wait(3000);
+    // have to duplicate code because cannot use this.waitForSpinnerToDisappear() for some reason...
+    cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
   },
 
-  filtersWaitLoading: () => {
+  filtersWaitLoading() {
     cy.expect(activeCheckbox.exists());
     cy.expect(inactiveCheckbox.exists());
     cy.expect(sharedCheckbox.exists());
@@ -163,7 +169,8 @@ const UI = {
   verifyEditorContainsQuery(query) {
     cy.get('[id^=selected-field-option]').contains(query.field);
     cy.get('[data-testid="operator-option-0"]').contains(query.operator);
-    cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
+    // Check the selected value in the Selection component by looking at the button text
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').should('contain', query.value);
   },
 
   closeQueryEditor() {
@@ -330,6 +337,9 @@ const UI = {
 
   openNewListPane() {
     cy.do(newLink.click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.expect(listNameTextField.exists());
   },
 
   verifyNewButtonIsEnabled() {
@@ -379,8 +389,8 @@ const UI = {
     cy.expect(listDescriptionTextArea.has({ value }));
   },
 
-  selectRecordTypeOld(option) {
-    cy.get('select[name=recordType]').select(option);
+  selectRecordTypeOld(type) {
+    cy.get('select[name=recordType]').select(type);
     cy.wait(500);
   },
 
@@ -402,15 +412,59 @@ const UI = {
     cy.wait(500);
   },
 
-  selectRecordType(option) {
+  selectRecordType(type) {
     cy.get('button[name=recordType]')
       .click()
       .then(() => {
         cy.wait(500);
-        cy.get('li[role=option]').contains(option).click();
+        cy.get('li[role=option]').contains(type).click();
         cy.wait(500);
       });
     cy.wait(500);
+  },
+
+  verifySelectedOptionsInRecordTypeDropdown(type) {
+    cy.get('[data-test-selection-option-segment=true]').contains(type).should('be.visible');
+  },
+
+  openRecordTypeDropdown() {
+    cy.get('button[name=recordType]').click();
+    cy.wait(1000);
+  },
+
+  searchOptionInRecordTypeDropdown(type) {
+    cy.do(new SelectionList().filter(type));
+    cy.wait(1000);
+  },
+
+  selectOptionInRecordTypeDropdown(type) {
+    cy.get('li[role=option]').contains(type).click();
+    cy.wait(1000);
+  },
+
+  openRecordTypeDropdownAndSearchOption(type) {
+    this.openRecordTypeDropdown();
+    this.searchOptionInRecordTypeDropdown(type);
+  },
+
+  searchOptionInRecordTypeDropdownAndSelectIt(type) {
+    this.searchOptionInRecordTypeDropdown(type);
+    this.selectOptionInRecordTypeDropdown(type);
+  },
+
+  openRecordTypeDropdownSearchOptionAndSelectIt(type) {
+    this.openRecordTypeDropdown();
+    this.searchOptionInRecordTypeDropdownAndSelectIt(type);
+  },
+
+  verifyRecordTypeDropdownOptions(type) {
+    cy.then(() => new SelectionList().optionList()).then((options) => {
+      cy.expect(options).to.include(type);
+    });
+  },
+
+  verifyRecordTypeAbsentInDropdownOptions() {
+    this.verifyRecordTypeDropdownOptions('-List is empty-');
   },
 
   checkKeyValue(label, value) {
@@ -509,7 +563,7 @@ const UI = {
 
   findResultRowIndexByContent(content) {
     return cy
-      .get('*[class^="mclCell"]')
+      .get('*[class^="mclCell"]', { timeout: 120000 })
       .contains(content)
       .parent()
       .invoke('attr', 'data-row-inner');
@@ -616,9 +670,29 @@ const UI = {
     cy.wait(1000);
   },
 
-  selectRecordTypeFilter(type) {
-    cy.do(MultiSelect().choose(type));
+  openRecordTypeFilter() {
+    cy.do(filterPane.find(MultiSelect()).open());
     cy.wait(1000);
+  },
+
+  searchRecordTypeFilterInDropdown(type) {
+    cy.do(filterPane.find(MultiSelect()).filter(type));
+    cy.wait(1000);
+  },
+
+  selectRecordTypeFilter(type) {
+    cy.do(filterPane.find(MultiSelect()).choose(type));
+    cy.wait(1000);
+  },
+
+  verifyRecordTypeFilterDropdownContainsOptions(options) {
+    options.forEach((option) => {
+      cy.expect(MultiSelectOption(including(option)).exists());
+    });
+  },
+
+  verifyRecordTypeFilterDropdownNoMatchingItem() {
+    cy.get('[class^=multiSelectEmptyMessage-]').contains('No matching items found!').should('be.visible');
   },
 
   verifyCheckboxChecked(name) {
@@ -703,6 +777,18 @@ const UI = {
     );
   },
 
+  verifyNoPermissionWarning() {
+    cy.expect(HTML("You don't have permission to view this app/record").exists());
+  },
+
+  verifyNoEntityTypePermissionsWarning() {
+    cy.expect(
+      HTML(
+        including('You do not have the required permissions to use the Lists app'),
+      ).exists(),
+    );
+  },
+
   verifyListsFilteredByStatus: (filters) => {
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
@@ -750,6 +836,22 @@ const UI = {
       });
   },
 
+  verifySourceColumnCellDisplaysOnSingleLine() {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .first()
+      .find('[class*="mclCell-"]:nth-child(3)')
+      .then(($cell) => {
+        expect($cell[0].scrollHeight).to.be.at.most($cell[0].clientHeight + 1);
+      });
+  },
+
+  verifyListNameCellDisplaysOnSingleLine(listName) {
+    cy.contains('[class*="mclCell-"]:nth-child(1)', listName).then(($cell) => {
+      expect($cell[0].scrollHeight).to.be.at.most($cell[0].clientHeight + 1);
+    });
+  },
+
   checkDownloadedFile(fileName, header = '"Fee/fine owner","Fee/fine type"') {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000); // wait for the file to load
@@ -790,7 +892,8 @@ const QueryBuilder = {
     cy.get('#field-option-0').click();
     cy.contains(parameter).click();
     cy.get('[data-testid="operator-option-0"]').select(operator);
-    cy.get('[data-testid="data-input-select-boolType"]').select(value);
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').click();
+    cy.do(SelectionList().select(value));
     cy.do(testQuery.click());
     cy.wait(2000);
     cy.do(runQueryAndSave.click());
@@ -813,7 +916,10 @@ const QueryBuilder = {
       valueToSet = 'True';
     }
     cy.wait(1000);
-    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
+    // Click the button to open the selection dropdown
+    cy.get('[data-testid="data-input-select-boolType"]').find('button').click();
+    // Select the value from the now-open SelectionList
+    cy.do(SelectionList().select(valueToSet));
     cy.wait(500);
   },
 
@@ -944,7 +1050,7 @@ const QueryBuilder = {
 
 const API = {
   buildQueryOnActiveUsers() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
@@ -960,7 +1066,7 @@ const API = {
   },
 
   buildQueryOnActiveUsersWithZeroRecords() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
@@ -976,7 +1082,7 @@ const API = {
   },
 
   buildQueryOnActiveUsersWithUsernames() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
@@ -993,7 +1099,7 @@ const API = {
 
   // supposed to contain big amount of data (on cypress env it approximately contains 6000+ records)
   buildQueryOnAllInstances() {
-    return this.getTypesViaApi().then((response) => {
+    return this.getAllEntityTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Instances',
       ).id;
@@ -1038,21 +1144,29 @@ const API = {
   },
 
   createViaApi(list) {
-    const newList = JSON.parse(JSON.stringify(list));
-    return this.getTypesViaApi().then((response) => {
-      newList.entityTypeId = response.body.entityTypes.find(
-        (entityType) => entityType.label === newList.recordType,
-      ).id;
-      delete newList.recordType;
-      cy.okapiRequest({
+    function createList(listToCreate) {
+      return cy.okapiRequest({
         method: 'POST',
         path: 'lists',
-        body: newList,
+        body: listToCreate,
         isDefaultSearchParamsRequired: false,
       }).then((newListResponse) => {
         return newListResponse.body;
       });
-    });
+    }
+
+    const newList = JSON.parse(JSON.stringify(list));
+    if (newList.entityTypeId) {
+      return createList(newList);
+    } else {
+      return this.getAllEntityTypesViaApi().then((response) => {
+        newList.entityTypeId = response.body.entityTypes.find(
+          (entityType) => entityType.label === newList.recordType,
+        ).id;
+        delete newList.recordType;
+        return createList(newList);
+      });
+    }
   },
 
   getViaApi() {
@@ -1112,36 +1226,126 @@ const API = {
     }
   },
 
-  getTypesViaApi() {
+  getAllEntityTypesViaApi() {
     return cy.okapiRequest({
       method: 'GET',
       path: 'entity-types',
     });
   },
 
-  getTypeIdByNameViaApi(type) {
-    return this.getTypesViaApi().then((response) => {
+  getEntityTypeIdByNameViaApi(type) {
+    return this.getAllEntityTypesViaApi().then((response) => {
       return response.body.entityTypes.find((entityType) => entityType.label === type).id;
     });
   },
 
-  getTypeByIdViaApi(id) {
+  getEntityTypeByIdViaApi(id) {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
     });
   },
 
-  getEntityTypeColumnsViaApi(id, labelName) {
+  getEntityTypeDetailsViaApi(id) {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: `entity-types/${id}/columns/${labelName}/values`,
+        path: `entity-types/${id}`,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
       });
+  },
+
+  getEntityTypeFieldValuesViaApi(id, fieldName) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `entity-types/${id}/field-values`,
+        isDefaultSearchParamsRequired: false,
+        searchParams: {
+          field: `${fieldName}`,
+          search: '',
+        }
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  generateCustomEntityTypeBodyWithoutSources(entityTypeName = '', privateEntityType = true) {
+    return {
+      id: uuid(),
+      name: entityTypeName || `Custom entity type ${getRandomPostfix()}`,
+      private: privateEntityType,
+    };
+  },
+
+  generateCustomEntityTypeBodyWithSources(entityTypeName = '', entityTypeSources, privateEntityType = true) {
+    return {
+      ...this.generateCustomEntityTypeBodyWithoutSources(entityTypeName, privateEntityType),
+      sources: [...entityTypeSources],
+    };
+  },
+
+  getSimpleUsersEntityTypeSourceTargetId() {
+    return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
+  },
+
+  generateSimpleUsersEntityTypeSource() {
+    return this.getSimpleUsersEntityTypeSourceTargetId().then((targetSourceId) => {
+      return {
+        alias: 'simple_users',
+        name: 'users',
+        type: 'entity-type',
+        targetId: targetSourceId,
+        essentialOnly: false,
+        useIdColumns: true
+      };
+    });
+  },
+
+  getCustomEntityTypes() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types/custom',
+      failOnStatusCode: false,
+    });
+  },
+
+  getCustomEntityTypeById(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/custom/${id}`,
+      failOnStatusCode: false,
+    });
+  },
+
+  createCustomEntityType(customEntityTypeBody) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'entity-types/custom',
+      body: customEntityTypeBody,
+      failOnStatusCode: false,
+    });
+  },
+
+  updateCustomEntityTypeById(id, customEntityTypeBody) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `entity-types/custom/${id}`,
+      body: customEntityTypeBody,
+      failOnStatusCode: false,
+    });
+  },
+
+  deleteCustomEntityTypeById(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `entity-types/custom/${id}`,
+      failOnStatusCode: false,
+    });
   },
 
   deleteRecursivelyViaApi(id) {

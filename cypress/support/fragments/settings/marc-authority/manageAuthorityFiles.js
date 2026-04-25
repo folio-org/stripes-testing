@@ -292,7 +292,16 @@ export default {
     if (isActive) switchActiveCheckbox(isActive);
   },
 
-  checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
+  checkSourceFileExists(
+    name,
+    prefix,
+    startsWith,
+    baseUrl,
+    isActive,
+    lastUpdatedBy,
+    isDeletable,
+    source,
+  ) {
     const targetRow = getTargetRowWithFile(name);
 
     cy.expect([
@@ -308,6 +317,7 @@ export default {
       );
     });
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
+    if (source) cy.expect(targetRow.find(sourceCell).has({ content: source }));
   },
 
   checkSourceFileExistsByName(fileName, isExist = true) {

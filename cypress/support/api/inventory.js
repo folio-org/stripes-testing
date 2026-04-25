@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { recurse } from 'cypress-recurse';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
 import QuickMarcEditor from '../fragments/quickMarcEditor';
 
@@ -19,10 +18,11 @@ const defaultDisplaySettings = {
   },
 };
 
-Cypress.Commands.add('getInstanceById', (instanceId) => {
+Cypress.Commands.add('getInstanceById', (instanceId, additionalHeaders = {}) => {
   return cy
     .okapiRequest({
       path: `inventory/instances/${instanceId}`,
+      additionalHeaders,
     })
     .then(({ body }) => {
       return body;
@@ -319,14 +319,14 @@ Cypress.Commands.add('getHoldings', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
+Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId, { skipWait = false } = {}) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }).then(({ response }) => {
-    cy.wait(1000);
+    if (!skipWait) cy.wait(1000);
     return response;
   });
 });
@@ -389,6 +389,15 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
   }).then(({ response }) => {
     cy.wait(1000);
     return response;
+  });
+});
+
+Cypress.Commands.add('bulkDeleteItemsViaApi', (searchParams) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: 'inventory/items',
+    searchParams,
+    failOnStatusCode: false,
   });
 });
 
@@ -468,26 +477,9 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 14,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
-
-      return cy.get('@createdMarcBibliographicId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 
@@ -531,28 +523,9 @@ Cypress.Commands.add(
         marcFormat: 'HOLDINGS',
         suppressDiscovery: false,
       },
-    }).then(({ body }) => {
-      cy.expect(body.status === 'IN_PROGRESS');
-
-      recurse(
-        () => {
-          return cy.okapiRequest({
-            method: 'GET',
-            path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-            isDefaultSearchParamsRequired: false,
-          });
-        },
-        (response) => response.body.status === 'CREATED',
-        {
-          limit: 10,
-          timeout: 80000,
-          delay: 5000,
-        },
-      ).then((response) => {
-        cy.wrap(response.body.externalId).as('createdMarcHoldingId');
-
-        return cy.get('@createdMarcHoldingId');
-      });
+    }).then(({ status, body }) => {
+      expect(status).to.eq(201);
+      return body.externalId;
     });
   },
 );
@@ -579,26 +552,9 @@ Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 14,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
-
-      return cy.get('@createdMarcBibliographicId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 
@@ -891,26 +847,9 @@ Cypress.Commands.add('createMarcHoldingsViaAPI', (instanceId, fields) => {
       marcFormat: 'HOLDINGS',
       suppressDiscovery: false,
     },
-  }).then(({ body }) => {
-    recurse(
-      () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
-          isDefaultSearchParamsRequired: false,
-        });
-      },
-      (response) => response.body.status === 'CREATED',
-      {
-        limit: 10,
-        timeout: 80000,
-        delay: 5000,
-      },
-    ).then((response) => {
-      cy.wrap(response.body.externalId).as('createdMarcHoldingId');
-
-      return cy.get('@createdMarcHoldingId');
-    });
+  }).then(({ status, body }) => {
+    expect(status).to.eq(201);
+    return body.externalId;
   });
 });
 
@@ -939,7 +878,7 @@ Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
       const entryId = entries[0].id;
       cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
     } else {
-      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+      cy.setInventoryDisplaySettingsViaAPI({ ...defaultDisplaySettings, id: uuid() });
     }
   });
 });
@@ -948,6 +887,28 @@ Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
   return cy.okapiRequest({
     method: 'GET',
     path: `inventory/instances/${instanceId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getInventoryNumberGeneratorOptions', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries?query=(scope==ui-inventory.number-generator-settings.manage and key==number-generator-settings)',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('updateInventoryNumberGeneratorOptions', (config) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `settings/entries/${config.id}`,
+    body: {
+      id: config.id,
+      scope: config.scope,
+      key: config.key,
+      value: config.value,
+    },
     isDefaultSearchParamsRequired: false,
   });
 });

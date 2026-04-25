@@ -67,8 +67,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkSubfieldsPresenceInTag008();
           QuickMarcEditor.updateExistingField(testData.tag245, testData.newTitle);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkInstanceTitle(testData.newTitle);
           InventoryInstance.editMarcBibliographicRecord();

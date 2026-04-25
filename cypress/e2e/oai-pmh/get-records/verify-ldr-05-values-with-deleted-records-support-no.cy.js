@@ -65,7 +65,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C388546 GetRecord: SRS + Inventory : Verify that value LDR 05 are properly handled in the response when Deleted records support is set to NO (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C388546', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C388546', 'nonParallel'] },
       () => {
         // Step 1-2: Instance UUID is already available in marcInstance.id
         // Step 3-4: Send initial OAI-PMH GetRecord request with marc21 prefix and verify LDR position 05

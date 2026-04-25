@@ -7,8 +7,9 @@ import {
   Section,
   including,
   Checkbox,
+  HTML,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import { DEFAULT_WAIT_TIME, TRANSACTION_LIST_COLUMNS } from '../../../constants';
 import TransactionDetails from './transactionDetails';
 
 const transactionResultsPane = Section({ id: 'transaction-results-pane' });
@@ -49,10 +50,12 @@ export default {
       });
     });
   },
-  selectTransaction(type) {
+  selectTransaction(type, amount = null) {
+    const searchContent = amount ? `${type}${amount}` : type;
+
     cy.do(
       transactionResultsList
-        .find(MultiColumnListRow({ content: including(type), isContainer: true }))
+        .find(MultiColumnListRow({ content: including(searchContent), isContainer: true }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .find(Link())
         .click(),
@@ -84,5 +87,22 @@ export default {
   selectTransactionTypeFilter(transactionType) {
     this.expandTransactionTypeAccordion();
     cy.do(Checkbox(transactionType).click());
+  },
+
+  checkVoidedTransactionInList({ amount, tooltipText }) {
+    const transactionRow = transactionResultsList.find(
+      MultiColumnListRow({ content: including(amount), isContainer: true }),
+    );
+    const amountCell = transactionRow.find(
+      MultiColumnListCell({ column: TRANSACTION_LIST_COLUMNS.AMOUNT }),
+    );
+
+    cy.expect([
+      amountCell.find(HTML({ className: including('voided') })).exists(),
+      amountCell.find(Button({ ariaLabel: 'info' })).exists(),
+    ]);
+
+    cy.do(amountCell.find(Button({ ariaLabel: 'info' })).click());
+    cy.contains(tooltipText).should('be.visible');
   },
 };

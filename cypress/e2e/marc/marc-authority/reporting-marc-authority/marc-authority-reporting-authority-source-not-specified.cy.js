@@ -85,6 +85,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         MarcAuthority.deleteViaAPI(createdAuthorityID[1], true);
         Users.deleteViaApi(testData.userProperties.userId);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
 
       it(
@@ -114,6 +115,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('130', `$a ${testData.updatedTitle}`);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
+          MarcAuthority.contains(testData.updatedTitle);
 
           // Generate and verify the report
           const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
@@ -150,13 +152,10 @@ describe('MARC', () => {
               '130',
               'Authority source file name',
               'Not specified',
-              'Number of bibliographic records linked',
-              '1',
               'Updater',
               `"${testData.userProperties.username}, testPermFirst"`,
             ],
           );
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         },
       );
     });

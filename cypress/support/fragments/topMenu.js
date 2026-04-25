@@ -59,6 +59,7 @@ const settingsOrdersPath = '/settings/orders';
 const settingsOrdersPrefixesPath = '/settings/orders/prefixes';
 const settingsOrdersSuffixesPath = '/settings/orders/suffixes';
 const oaPath = '/oa/publicationRequests';
+const settingsCalendarPath = '/settings/calendar';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -122,6 +123,7 @@ export default {
   settingsOrdersSuffixesPath,
   oaPath,
   settingsFinanceFundTypePath,
+  settingsCalendarPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

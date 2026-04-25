@@ -167,7 +167,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($10.00)',
         secondInvoice.invoiceNumber,

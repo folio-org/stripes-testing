@@ -184,7 +184,7 @@ describe('Finance', () => {
       OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.CANCELLED);
       OrderLines.checkPaymentStatusInPOL(ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT);
       OrderLines.openPageCurrentEncumbrance('$0.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${firstOrderNumber}-1`,

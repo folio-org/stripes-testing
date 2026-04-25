@@ -49,14 +49,10 @@ describe('MARC', () => {
           cy.resetTenant();
           // Activate all default FOLIO authority files
           ManageAuthorityFiles.setAuthorityFileToActiveViaApi(selectedFolioFile);
-          cy.waitForAuthRefresh(() => {
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-            cy.reload();
-          }, 20_000);
-          MarcAuthorities.waitLoading();
+          cy.login(users.userProperties.username, users.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -86,7 +82,7 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField('100', `$a ${testData.marcValue}`, 3);
 
           // Step 4: Try to save, expect error for missing 010
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Record cannot be saved without 010 field.');
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
 
@@ -95,7 +91,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag('010', `$a ${created010}`);
 
           // Step 6: Save successfully
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
           MarcAuthority.contains(`001\t.*${created010}`, { regexp: true });

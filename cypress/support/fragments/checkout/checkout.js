@@ -18,6 +18,7 @@ export default {
   waitLoading: () => {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());
+    cy.wait(10000);
   },
   fillUserBarcode(barcode) {
     cy.do([

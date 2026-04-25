@@ -1,9 +1,8 @@
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
+import Permissions from '../../support/dictionary/permissions';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
   const organization1 = {
@@ -31,34 +30,28 @@ describe('Organizations', () => {
   };
   let user;
 
-  before(() => {
+  before('Setup test data', () => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization2).then((response) => {
       organization2.id = response;
     });
 
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
-      cy.waitForAuthRefresh(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.organizationsPath,
-          waiter: Organizations.waitLoading,
-        });
-      });
-    });
-  });
 
-  after(() => {
-    cy.waitForAuthRefresh(() => {
-      cy.loginAsAdmin({
+      cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
     });
+  });
+
+  after('Clean up test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization2.id);
-    OrganizationsSearchAndFilter.searchByParameters('Name', organization1.name);
-    Organizations.selectOrganization(organization1.name);
-    Organizations.deleteOrganization(organization1.name);
+    Organizations.getOrganizationViaApi({ name: organization1.name }).then((response) => {
+      Organizations.deleteOrganizationViaApi(response.id);
+    });
   });
 
   it(
@@ -71,12 +64,14 @@ describe('Organizations', () => {
       Organizations.clickAddAdressButton();
       Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
+      OrganizationsSearchAndFilter.resetFiltersIfActive();
       OrganizationsSearchAndFilter.searchByParameters('Name', organization2.name);
       Organizations.selectOrganization(organization2.name);
       Organizations.editOrganization();
       Organizations.addAdressToOrganization(adress, 0);
       Organizations.saveOrganization();
-      OrganizationsSearchAndFilter.resetFilters();
+      cy.wait(5000);
+      OrganizationsSearchAndFilter.resetFiltersIfActive();
       OrganizationsSearchAndFilter.filterByCountry('Kosovo');
       Organizations.checkSearchResults(organization1);
       Organizations.checkSearchResults(organization2);

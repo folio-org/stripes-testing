@@ -42,30 +42,36 @@ describe('Fees&Fines', () => {
       });
     });
 
-    it.skip(
-      'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-      { tags: ['smokeObsolete', 'volaris', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
-      () => {
-        const name = `Automation owner $${getRandomPostfix()}`;
-        ownerNames.push(name);
-        UsersOwners.startNewLineAdding();
-        UsersOwners.fillOwner({ name });
-        UsersOwners.saveOwner(name);
+    // it.skip(
+    //   'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
+    //   { tags: ['smokeObsolete', 'volaris', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
+    //   () => {
+    //     const name = `Automation owner $${getRandomPostfix()}`;
+    //     ownerNames.push(name);
+    //     UsersOwners.startNewLineAdding();
+    //     UsersOwners.fillOwner({ name });
+    //     UsersOwners.saveOwner(name);
 
-        UsersOwners.startNewLineAdding();
-        UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
-      },
-    );
+    //     UsersOwners.startNewLineAdding();
+    //     UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
+    //   },
+    // );
 
     it(
       'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
       () => {
         const name = 'Shared';
-        UsersOwners.startNewLineAdding();
-        UsersOwners.fillOwner({ name });
-        UsersOwners.saveOwner();
-        ownerNames.push(name);
+
+        // If "Shared" owner already exists, do not create a new one.
+        UsersOwners.getOwnerViaApi({ query: `owner==${name}` }).then((owner) => {
+          if (!owner?.id) {
+            UsersOwners.startNewLineAdding();
+            UsersOwners.fillOwner({ name });
+            UsersOwners.saveOwner(name);
+            ownerNames.push(name);
+          }
+        });
 
         UsersOwners.startNewLineAdding();
         UsersOwners.fillOwner({ name, servicePoint: servicePoints.at(-1).name });

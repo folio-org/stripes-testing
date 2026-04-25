@@ -247,6 +247,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.checkContributor(testData.contributorName);

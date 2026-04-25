@@ -170,7 +170,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 8;
+    const hrIdColumnIndex = 9;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -333,12 +333,11 @@ export default {
   deleteImportJob: (fileName) => {
     cy.get('div[class^="listContainer-"]')
       .contains('li[class^="job-"]', fileName)
-      .then((elem) => {
-        const trashButton = elem.parent()[0].querySelector('button[icon="trash"]');
-        cy.wrap(trashButton).click();
-        cy.wait(1000);
-        cy.wrap(trashButton).should('not.be.visible');
+      .should('be.visible')
+      .within(() => {
+        cy.get('button[icon="trash"]').should('be.visible').click();
       });
+    cy.wait(1000);
   },
 
   verifyTrashIconInvisibleForUser: () => {

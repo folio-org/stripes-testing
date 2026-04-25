@@ -16,7 +16,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        instanceTitle: `AT_C514909_MarcBibInstance_${getRandomPostfix()}`,
+        instanceTitle: `AT_C514911_MarcBibInstance_${getRandomPostfix()}`,
         tag245: '245',
         tag983: '983',
         // 245 field values with undefined indicator and subfield
@@ -50,7 +50,7 @@ describe('MARC', () => {
           specId = bibSpec.id;
 
           // Create local field 983 in MARC bib spec (no indicator or subfield codes defined)
-          const field983Data = generateTestFieldData('C514909', {
+          const field983Data = generateTestFieldData('C514911', {
             tag: '983',
             label: 'Local_Field_983',
             scope: 'local',
@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514909 Edit MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields using "Save & keep editing" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514909', 'nonParallel'] },
+        'C514911 Edit MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C514911', 'nonParallel'] },
         () => {
           // Step 1: Open the instance and start editing
           InventoryInstances.searchByTitle(createdRecordIDs[0]);

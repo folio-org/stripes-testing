@@ -5,6 +5,7 @@ import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -56,6 +57,7 @@ describe('Inventory', () => {
         'C422081 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance details pane on Member tenant (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C422081'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);
           InstanceRecordView.exportInstanceMarc();
 

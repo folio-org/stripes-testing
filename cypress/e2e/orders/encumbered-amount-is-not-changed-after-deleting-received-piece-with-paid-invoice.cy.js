@@ -141,7 +141,7 @@ describe('Orders', () => {
       Receiving.deleteItemPiece();
       Receiving.selectPOLineInReceive(`${orderNumber}-1`);
       OrderLines.openPageCurrentEncumbrance('$0.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,

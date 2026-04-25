@@ -38,10 +38,10 @@ const lockedReferencedJobProfile = {
 };
 
 const defaultJobProfile = {
-  jobProfileName: DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.INSTANCES,
+  jobProfileName: DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.HOLDINGS,
   duplicatedJobProfileName: getTestEntityValue('C1003543_DuplicatedDefaultProfile'),
   description: getTestEntityValue('C1003543_Description3'),
-  mappingProfileName: 'Default instance mapping profile',
+  mappingProfileName: 'Default holdings mapping profile',
 };
 
 const folioInstanceTitle = `AT_C1003543_FolioInstance_${getRandomPostfix()}`;
@@ -153,6 +153,7 @@ describe('Data Export', () => {
         SettingsDataExport.goToSettingsDataExport();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(lockedNotReferencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedNotReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedNotReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -182,12 +183,14 @@ describe('Data Export', () => {
         );
 
         // Step 5: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(lockedNotReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(
           lockedNotReferencedJobProfile.duplicatedJobProfileName,
           user,
         );
 
         // Step 6: Click on the row with duplicated job profile
+        ExportJobProfiles.searchJobProfile(lockedNotReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(
           lockedNotReferencedJobProfile.duplicatedJobProfileName,
         );
@@ -199,6 +202,7 @@ describe('Data Export', () => {
         );
 
         // Step 7: Select existing locked job profile from Preconditions: job profile referenced in an existing export job
+        ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -218,12 +222,14 @@ describe('Data Export', () => {
         );
 
         // Step 10: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(
           lockedReferencedJobProfile.duplicatedJobProfileName,
           user,
         );
 
         // Step 11: Click on the row with duplicated job profile
+        ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(
           lockedReferencedJobProfile.duplicatedJobProfileName,
         );
@@ -235,6 +241,7 @@ describe('Data Export', () => {
         );
 
         // Step 12: Select existing job profile from Preconditions: default job profile
+        ExportJobProfiles.searchJobProfile(defaultJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(defaultJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(defaultJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -254,9 +261,11 @@ describe('Data Export', () => {
         );
 
         // Step 15: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(defaultJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(defaultJobProfile.duplicatedJobProfileName, user);
 
         // Step 16: Click on the row with duplicated job profile
+        ExportJobProfiles.searchJobProfile(defaultJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(defaultJobProfile.duplicatedJobProfileName);
         SingleJobProfile.waitLoading(defaultJobProfile.duplicatedJobProfileName);
         SingleJobProfile.verifyViewProfileDetails(

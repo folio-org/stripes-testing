@@ -6,6 +6,7 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -42,6 +43,7 @@ describe('Inventory', () => {
               Permissions.uiInventorySingleRecordImport.gui,
               Permissions.uiInventoryViewCreateEditInstances.gui,
               Permissions.settingsDataImportView.gui,
+              Permissions.consortiaCentralAll.gui,
             ]);
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
             cy.resetTenant();
@@ -64,6 +66,7 @@ describe('Inventory', () => {
         'C418583 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = FOLIO instance (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C418583'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

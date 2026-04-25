@@ -5,7 +5,13 @@ import { NewOrganization, Organizations } from '../../support/fragments/organiza
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
+import {
+  ORDER_STATUSES,
+  INVOICE_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelper from '../../support/fragments/finance/financeHelper';
@@ -103,8 +109,14 @@ describe('Orders', () => {
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
         poLineInformation: [
-          { key: 'Payment status', value: 'Awaiting Payment' },
-          { key: 'Receipt status', value: 'Awaiting Receipt' },
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,
+          },
+          {
+            key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
+            value: RECEIPT_STATUS_VIEW.AWAITING_RECEIPT,
+          },
         ],
       });
 

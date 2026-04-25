@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 
-describe('Orders: Inventory interaction', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };

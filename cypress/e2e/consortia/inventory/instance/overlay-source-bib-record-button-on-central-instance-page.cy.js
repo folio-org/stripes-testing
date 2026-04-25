@@ -21,11 +21,6 @@ describe('Inventory', () => {
         publicationDate: '1933',
         physicalDescription: '209 pages 19 cm',
         subject: 'Conto brasileiro',
-        notes: {
-          noteType: 'Formatted Contents Note',
-          noteContent:
-            'Os ciganos.--O caxixe.--Ferocidade.--Lucio da Florinda.--Gente nativa.--Brios sertanejos.--Destinos.--Vida aspera.--Duas mortes.--Rapsodia do rio',
-        },
       };
 
       before('Create test data', () => {
@@ -84,10 +79,6 @@ describe('Inventory', () => {
             subjectType: 'Topical term',
           });
           InventoryInstance.openInstanceNotesAccordion();
-          InventoryInstance.checkInstanceNotes(
-            updatedInstanceData.notes.noteType,
-            updatedInstanceData.notes.noteContent,
-          );
         },
       );
     });

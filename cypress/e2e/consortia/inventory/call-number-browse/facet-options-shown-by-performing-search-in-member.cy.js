@@ -56,7 +56,7 @@ describe('Inventory', () => {
           ]);
         })
         .then(() => {
-          cy.setTenant(Affiliations.University);
+          cy.setTenant(Affiliations.College);
           cy.then(() => {
             const locationData = Locations.getDefaultLocation({
               servicePointId: ServicePoints.getDefaultServicePoint().id,
@@ -86,7 +86,7 @@ describe('Inventory', () => {
             cy.resetTenant();
             InventoryInstance.createInstanceViaApi().then((instanceData) => {
               instanceId = instanceData.instanceData.instanceId;
-              cy.setTenant(Affiliations.University);
+              cy.setTenant(Affiliations.College);
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId,
                 permanentLocationId: location.id,
@@ -102,14 +102,10 @@ describe('Inventory', () => {
                   barcode: testData.barcode,
                 }).then(() => {
                   cy.resetTenant();
-                  cy.waitForAuthRefresh(() => {
-                    cy.login(users.userProperties.username, users.userProperties.password, {
-                      path: TopMenu.inventoryPath,
-                      waiter: InventoryInstances.waitContentLoading,
-                    });
-                    cy.reload();
-                    InventoryInstances.waitContentLoading();
-                  }, 20_000);
+                  cy.login(users.userProperties.username, users.userProperties.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
                   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                   ConsortiumManager.switchActiveAffiliation(
                     tenantNames.central,
@@ -128,7 +124,7 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userProperties.userId);
-      cy.setTenant(Affiliations.University);
+      cy.setTenant(Affiliations.College);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
       Locations.deleteViaApi(location);
       cy.deleteLoanType(loanTypeId);
@@ -175,7 +171,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
@@ -188,7 +184,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
@@ -199,7 +195,6 @@ describe('Inventory', () => {
         cy.wait(3000);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
-        InventorySearchAndFilter.verifyHeldByOption(tenantNames.university);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
@@ -210,7 +205,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
@@ -223,7 +218,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);
+        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
@@ -233,7 +228,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
         InventorySearchAndFilter.checkHeldByOptionSelected(tenantNames.college, true);
-        InventorySearchAndFilter.verifyHeldByOption(tenantNames.university);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);

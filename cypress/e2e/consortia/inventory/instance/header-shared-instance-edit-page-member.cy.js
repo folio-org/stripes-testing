@@ -8,6 +8,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -65,6 +66,7 @@ describe('Inventory', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

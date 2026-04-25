@@ -7,6 +7,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../../interactors';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const saveAndCloseButton = Button('Save & close');
 const searchButton = Button('Search');
@@ -17,6 +18,24 @@ const firstSearchResult = MultiColumnListCell({ row: 0, columnIndex: 0 });
 const checkboxAll = Checkbox();
 
 export default {
+  getDefaultRoutingList() {
+    return {
+      name: `RoutingList_${getRandomPostfix()}`,
+      notes: 'Routing list notes',
+      userIds: [],
+    };
+  },
+
+  createFullRoutingListViaApi(routingList) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/routing-lists',
+        body: routingList,
+      })
+      .then(({ body }) => body);
+  },
+
   fillInRoutingListInfoAndSave: (name) => {
     cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
   },

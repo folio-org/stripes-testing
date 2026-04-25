@@ -46,6 +46,8 @@ describe('Circulation log', () => {
     ])
       .then((userProperties) => {
         userData = userProperties;
+        const { lastName, firstName } = userProperties.personal;
+        testData.source = `${lastName}${firstName ? `, ${firstName}` : ''}`;
       })
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
@@ -56,9 +58,6 @@ describe('Circulation log', () => {
           userBarcode: userData.barcode,
         });
 
-        cy.getAdminSourceRecord().then((record) => {
-          testData.adminSourceRecord = record;
-        });
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
@@ -94,7 +93,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Renewed',
         servicePoint: servicePoint.name,
-        source: testData.adminSourceRecord,
+        source: testData.source,
       };
       // Expand the Loans section
       UsersCard.viewCurrentLoans();

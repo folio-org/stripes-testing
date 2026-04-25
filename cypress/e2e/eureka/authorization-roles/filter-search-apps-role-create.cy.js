@@ -75,7 +75,6 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.openForEdit();
-          cy.wait(1000);
           AuthorizationRoles.clickSelectApplication();
 
           AuthorizationRoles.verifySelectApplicationModal();

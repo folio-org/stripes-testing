@@ -114,36 +114,42 @@ export default {
   openCreatedByAccordion() {
     cy.wait(2000);
     cy.then(() => {
-      toggleButtonCreatedBy.has({ ariaExpanded: 'false' }).then((isClosed) => {
-        if (isClosed) {
-          cy.do(toggleButtonCreatedBy.click());
-          cy.wait(1000);
-        }
-      });
+      cy.get('[id="accordion-toggle-button-metadata.createdByUserId"]')
+        .invoke('attr', 'aria-expanded')
+        .then((ariaExpanded) => {
+          if (ariaExpanded === 'false') {
+            cy.do(toggleButtonCreatedBy.click());
+            cy.wait(1000);
+          }
+        });
     });
   },
 
   openUpdatedByAccordion() {
     cy.wait(2000);
     cy.then(() => {
-      toggleButtonUpdatedBy.has({ ariaExpanded: 'false' }).then((isClosed) => {
-        if (isClosed) {
-          cy.do(toggleButtonUpdatedBy.click());
-          cy.wait(1000);
-        }
-      });
+      cy.get('[id="accordion-toggle-button-metadata.updatedByUserId"]')
+        .invoke('attr', 'aria-expanded')
+        .then((ariaExpanded) => {
+          if (ariaExpanded === 'false') {
+            cy.do(toggleButtonUpdatedBy.click());
+            cy.wait(1000);
+          }
+        });
     });
   },
 
   openDateUpdatedAccordion() {
     cy.wait(2000);
     cy.then(() => {
-      toggleButtonDateUpdated.has({ ariaExpanded: 'false' }).then((isClosed) => {
-        if (isClosed) {
-          cy.do(toggleButtonDateUpdated.click());
-          cy.wait(1000);
-        }
-      });
+      cy.get('[id="accordion-toggle-button-metadata.updatedDate"]')
+        .invoke('attr', 'aria-expanded')
+        .then((ariaExpanded) => {
+          if (ariaExpanded === 'false') {
+            cy.do(toggleButtonDateUpdated.click());
+            cy.wait(1000);
+          }
+        });
     });
   },
 

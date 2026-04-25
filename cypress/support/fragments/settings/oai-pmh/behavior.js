@@ -2,10 +2,10 @@ import uuid from 'uuid';
 import { Pane, Button, Select, Option } from '../../../../../interactors';
 
 const behaviorPane = Pane('Behavior');
-const deletedRecordsSupportDropdown = Select('Deleted records support');
-const suppressedRecordsProcessingDropdown = Select('Suppressed records processing');
-const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing');
-const recordSourceDropdown = Select('Record source');
+const deletedRecordsSupportDropdown = Select('Deleted records support*');
+const suppressedRecordsProcessingDropdown = Select('Suppressed records processing*');
+const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing*');
+const recordSourceDropdown = Select('Record source*');
 const saveButton = Button('Save');
 
 export const BEHAVIOR_SETTINGS_OPTIONS_UI = {

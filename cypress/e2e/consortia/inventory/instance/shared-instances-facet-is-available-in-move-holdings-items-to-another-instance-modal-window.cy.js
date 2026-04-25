@@ -3,6 +3,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstanceSelectInstanceModal from '../../../../support/fragments/inventory/modals/inventoryInstanceSelectInstanceModal';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -120,12 +121,14 @@ describe('Inventory', () => {
         'C594479 (CONSORTIA) Shared instances facet is available in "Move holdings/items to another instance" modal window (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C594479'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.localInstance.id);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
           InstanceRecordView.moveHoldingsItemsToAnotherInstance();
           InventoryInstanceSelectInstanceModal.waitLoading();
           InventoryInstanceSelectInstanceModal.verifySharedFacetExistsInFilter();
+          InventoryInstanceSelectInstanceModal.clearDefaultHeldbyFilter();
           InventoryInstanceSelectInstanceModal.searchByHrId(testData.sharedInstance.hrid);
           InventoryInstanceSelectInstanceModal.verifyInstanceExistsInList(
             testData.sharedInstance.instanceTitle,

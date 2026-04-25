@@ -229,7 +229,7 @@ describe('Invoices', () => {
       Funds.viewTransactions();
       Funds.checkNoTransactionOfType('Encumbrance');
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '($10.00)',
         `${orderNumber}-1`,
@@ -243,7 +243,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,
@@ -257,7 +257,7 @@ describe('Invoices', () => {
       Funds.viewTransactions();
       Funds.checkNoTransactionOfType('Pending payment');
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,

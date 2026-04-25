@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import { Keyboard } from '@interactors/keyboard';
 import uuid from 'uuid';
 import {
@@ -9,6 +9,7 @@ import {
   IconButton,
   KeyValue,
   Link,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -28,7 +29,9 @@ import {
   REQUEST_TYPES,
 } from '../../constants';
 import Helper from '../finance/financeHelper';
+import InventoryInstances from '../inventory/inventoryInstances';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
+import Locations from '../settings/tenant/location-setup/locations';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import users from '../users/users';
 
@@ -45,7 +48,8 @@ const tagsPane = Pane({ title: 'Tags' });
 const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
-const pickupServicePointCheckbox = Checkbox('Pickup service point');
+const nextPageButton = Button({ id: 'list-requests-next-paging-button' });
+const prevPageButton = Button({ id: 'list-requests-prev-paging-button' });
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 const resetAllButton = Button('Reset all');
@@ -214,6 +218,125 @@ function createRequestApi(
     });
 }
 
+/**
+ * Creates `count` PAGE requests spread across available pickup service points.
+ * Returns an object with: { requests: string[], instanceIds, loanTypeId, itemBarcodePrefix }
+ * so the caller can clean up in after().
+ */
+function createRequestsForPagination(count, barcodePrefix, requesterId) {
+  const result = {
+    requests: [],
+    instanceIds: null,
+    loanTypeId: null,
+    servicePointIds: [],
+    itemBarcodePrefix: barcodePrefix,
+  };
+  return cy
+    .wrap(null)
+    .then(() => {
+      ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
+        ({ body }) => {
+          result.servicePoints = [body];
+          result.servicePointIds.push(body.id);
+          const locData = Locations.getDefaultLocation({ servicePointId: body.id });
+          result.locationA = locData;
+          Locations.createViaApi(locData.location);
+        },
+      );
+      ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
+        ({ body }) => {
+          result.servicePoints = [...(result.servicePoints || []), body];
+          result.servicePointIds.push(body.id);
+          const locData = Locations.getDefaultLocation({ servicePointId: body.id });
+          result.locationB = locData;
+          Locations.createViaApi(locData.location);
+        },
+      );
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+        result.instanceTypeId = instanceTypes[0].id;
+      });
+      cy.getHoldingTypes({ limit: 1 }).then((res) => {
+        result.holdingTypeId = res[0].id;
+      });
+      cy.createLoanType({ name: `AT_loanType_${barcodePrefix}` }).then((loanType) => {
+        result.loanTypeId = loanType.id;
+      });
+      cy.getDefaultMaterialType().then((res) => {
+        result.materialTypeId = res.id;
+      });
+    })
+    .then(() => {
+      cy.getAdminToken();
+      const holdingAId = uuid();
+      const holdingBId = uuid();
+      const items = [];
+      for (let i = 0; i < count; i++) {
+        items.push({
+          barcode: `${barcodePrefix}_${i}`,
+          status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+          permanentLoanType: { id: result.loanTypeId },
+          materialType: { id: result.materialTypeId },
+          holdingsRecordId: i % 2 === 0 ? holdingAId : holdingBId,
+        });
+      }
+      InventoryInstances.createFolioInstanceViaApi({
+        instance: {
+          instanceTypeId: result.instanceTypeId,
+          title: `AT_Requests_Instance_${barcodePrefix}`,
+        },
+        holdings: [
+          {
+            id: holdingAId,
+            holdingsTypeId: result.holdingTypeId,
+            permanentLocationId: result.locationA.location.id,
+          },
+          {
+            id: holdingBId,
+            holdingsTypeId: result.holdingTypeId,
+            permanentLocationId: result.locationB.location.id,
+          },
+        ],
+        items,
+      }).then((ids) => {
+        result.instanceIds = ids;
+        const instanceId = ids.instanceId;
+        ids.holdingIds.forEach(({ id: holdingId, itemIds }) => {
+          itemIds.forEach((itemId, index) => {
+            const requestId = uuid();
+            result.requests.push(requestId);
+            cy.createItemRequestApi({
+              id: requestId,
+              requestType: REQUEST_TYPES.PAGE,
+              requestLevel: REQUEST_LEVELS.ITEM,
+              requesterId,
+              holdingsRecordId: holdingId,
+              instanceId,
+              itemId,
+              requestDate: new Date().toISOString(),
+              fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+              pickupServicePointId: result.servicePoints[index % result.servicePoints.length].id,
+            });
+          });
+        });
+      });
+    })
+    .then(() => result);
+}
+
+function getMCLColumnValues(columnName) {
+  let values;
+  cy.do(
+    MultiColumnList().perform((el) => {
+      const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
+      const colIndex = headers.findIndex((h) => h.textContent.trim() === columnName) + 1;
+      values = [
+        ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
+      ].map((cell) => cell.textContent);
+    }),
+  );
+  return cy.then(() => values);
+}
+
 function deleteRequestViaApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
@@ -258,13 +381,28 @@ function selectSpecifiedRequestLevel(parameter) {
 
 export default {
   createRequestApi,
+  createRequestsForPagination,
   deleteRequestViaApi,
   deleteRequestPolicyApi,
   getRequestApi,
   waitContentLoading,
   waitLoadingTags,
 
-  waitLoading: () => cy.expect(Pane({ title: 'Requests' }).exists()),
+  verifyMovedRequestAtEndOfQueue(itemId, requesterId) {
+    getRequestApi({ query: `(itemId=="${itemId}") sortby position` }).then((queueRequests) => {
+      const totalRequests = queueRequests.length;
+      const movedRequest = queueRequests.find((r) => r.requesterId === requesterId);
+      // eslint-disable-next-line no-unused-expressions
+      expect(movedRequest, 'Moved request should be in destination queue').to.exist;
+      expect(movedRequest.position, 'Moved request should be at end of queue').to.equal(
+        totalRequests,
+      );
+    });
+  },
+
+  waitLoading() {
+    return cy.expect(Pane({ title: 'Requests' }).exists());
+  },
   resetAllFilters() {
     cy.do(Button('Reset all').click());
     cy.wait(1000);
@@ -272,7 +410,10 @@ export default {
   selectAwaitingDeliveryRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
   selectAwaitingPickupRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
   selectInTransitRequest: () => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
-  selectNotYetFilledRequest: () => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
+  selectNotYetFilledRequest() {
+    cy.do(Checkbox({ name: 'Open - Not yet filled' }).click());
+    this.waitForMCLLoading();
+  },
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
@@ -545,6 +686,7 @@ export default {
     expect(prev).to.deep.equal(itemsClone);
   },
 
+  // This method is slow in the UI, use the getMCLColumnValues instead.
   // TODO: redesign to interactors
   getMultiColumnListCellsValues(cell) {
     const cells = [];
@@ -695,18 +837,35 @@ export default {
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
   },
 
-  selectPickupServicePointColumn(select = true) {
-    cy.wait(500);
+  exportExpiredHoldsToCSV: () => {
+    cy.wait(5000);
     cy.do(actionsButtonInResultsPane.click());
     cy.wait(500);
+    cy.get('#exportExpiredHoldsToCsvPaneHeaderBtn').should('not.be.disabled').click();
+  },
+
+  verifyExpiredHoldsToCSVButtonDisabled: () => {
+    cy.wait(5000);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+    cy.get('#exportExpiredHoldsToCsvPaneHeaderBtn').should('be.disabled');
+    cy.do(actionsButtonInResultsPane.click());
+  },
+
+  selectColumnInActions(columnName, select = true) {
+    cy.expect(actionsButtonInResultsPane.exists());
+    cy.do(actionsButtonInResultsPane.click());
+    cy.expect(Checkbox(columnName).exists());
     if (select) {
-      cy.do(pickupServicePointCheckbox.checkIfNotSelected());
+      cy.do(Checkbox(columnName).checkIfNotSelected());
     } else {
-      cy.do(pickupServicePointCheckbox.uncheckIfSelected());
+      cy.do(Checkbox(columnName).uncheckIfSelected());
     }
-    cy.wait(500);
     cy.do(actionsButtonInResultsPane.click());
-    cy.wait(500);
+  },
+
+  selectPickupServicePointColumn(select = true) {
+    this.selectColumnInActions('Pickup service point', select);
   },
 
   verifyPickupServicePointColumnIsPresent(present = true) {
@@ -747,5 +906,87 @@ export default {
 
   clickInstanceDescription() {
     cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
+  },
+
+  waitForMCLLoading() {
+    cy.expect(MultiColumnList().has({ loading: true }));
+    cy.expect(MultiColumnList().has({ loading: false }));
+  },
+
+  selectRetrievalServicePointColumnInActions(select = true) {
+    this.selectColumnInActions('Retrieval service point', select);
+  },
+
+  verifyResultCount(minCount) {
+    cy.expect(requestsResultsSection.find(HTML(matching(/\d+ records found/))).exists());
+    cy.do(
+      requestsResultsSection.perform((el) => {
+        const subtitle = el.querySelector('[data-test-pane-header-sub]')?.textContent || '';
+        const count = parseInt(subtitle.match(/(\d+) records found/)?.[1] ?? '0', 10);
+        expect(count).to.be.at.least(minCount);
+      }),
+    );
+  },
+
+  clickColumnHeader(columnName) {
+    cy.do(MultiColumnList().scrollHeaderIntoView(columnName));
+    cy.do(MultiColumnListHeader(columnName).click());
+    this.waitForMCLLoading();
+  },
+
+  verifyColumnSortOrder(columnName, expectedOrder) {
+    getMCLColumnValues(columnName).then((columnValues) => {
+      if (expectedOrder === 'ascending') {
+        this.validateStringsAscendingOrder(columnValues);
+      } else {
+        this.validateStringsDescendingOrder(columnValues);
+      }
+    });
+  },
+
+  clickRetrievalServicePointColumnHeader() {
+    this.clickColumnHeader('Retrieval service point');
+  },
+
+  verifyRetrievalServicePointColumnSortOrder(expectedOrder) {
+    this.verifyColumnSortOrder('Retrieval service point', expectedOrder);
+  },
+
+  clickNextPageButton() {
+    cy.do(nextPageButton.click());
+    this.waitForMCLLoading();
+  },
+
+  clickPreviousPageButton() {
+    cy.do(prevPageButton.click());
+    this.waitForMCLLoading();
+  },
+
+  verifyNextPageButtonState(isActive) {
+    cy.expect(nextPageButton.has({ disabled: !isActive }));
+  },
+
+  verifyPreviousPageButtonState(isActive) {
+    cy.expect(prevPageButton.has({ disabled: !isActive }));
+  },
+
+  navigateToLastPage() {
+    cy.get('#list-requests-next-paging-button').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+        this.waitForMCLLoading();
+        this.navigateToLastPage();
+      }
+    });
+  },
+
+  navigateToFirstPage() {
+    cy.get('#list-requests-prev-paging-button').then(($btn) => {
+      if (!$btn.is(':disabled')) {
+        cy.wrap($btn).click();
+        this.waitForMCLLoading();
+        this.navigateToFirstPage();
+      }
+    });
   },
 };

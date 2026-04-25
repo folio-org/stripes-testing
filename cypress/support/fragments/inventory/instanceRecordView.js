@@ -59,6 +59,7 @@ const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const formatsList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-formats' }));
+
 const clipboardCopyCalloutText = (value) => `Successfully copied "${value}" to clipboard.`;
 
 const verifyResourceTitle = (value) => {
@@ -980,8 +981,29 @@ export default {
     ]);
   },
 
+  checkVersionHistoryButtonToolTipText() {
+    cy.do(rootSection.find(Button({ id: 'version-history-btn' })).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
+  },
+
+  checkButtonsStateWhenVersionHistoryPaneIsOpen() {
+    cy.expect([
+      rootSection.find(actionsButton).absent(),
+      rootSection.find(versionHistoryButton).has({ disabled: true }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: true }),
+    ]);
+  },
+
+  checkButtonsStateWhenVersionHistoryPaneClosed() {
+    cy.expect([
+      rootSection.find(actionsButton).has({ disabled: false }),
+      rootSection.find(versionHistoryButton).has({ disabled: false }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: false }),
+    ]);
   },
 
   moveItemsWithinAnInstance() {
@@ -989,8 +1011,8 @@ export default {
     cy.do(Button({ id: 'move-instance-items' }).click());
   },
 
-  verifyMoveToButtonState(holdingToBeOpened, isEnubled = true) {
-    if (isEnubled) {
+  verifyMoveToButtonState(holdingToBeOpened, isEnabled = true) {
+    if (isEnabled) {
       cy.expect(
         Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
           .find(Button({ id: including('clickable-move-holdings-') }))

@@ -127,11 +127,7 @@ describe('MARC', () => {
                   linkingTagAndValues.rowIndex,
                 );
                 QuickMarcEditor.deleteField(4);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(4000);
-                QuickMarcEditor.confirmDelete();
+                QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
 
@@ -149,13 +145,10 @@ describe('MARC', () => {
               });
 
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               InventoryInstances.waitContentLoading();
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
@@ -181,6 +174,7 @@ describe('MARC', () => {
           'C405559 Link Local MARC bib with Shared MARC Authority in Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C405559'] },
           () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[2]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -204,8 +198,6 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(

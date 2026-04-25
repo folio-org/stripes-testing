@@ -79,7 +79,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C380618 verb=ListIdentifiers: Verify that Instance FOLIO is retrieved in case added Item to it (marc21_withholdings) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C380618', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C380618', 'nonParallel'] },
       () => {
         afterHoldingCreationTimestamp = DateTools.getCurrentDateForOaiPmh();
 

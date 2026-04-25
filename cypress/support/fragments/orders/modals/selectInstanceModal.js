@@ -99,6 +99,29 @@ export default {
     cy.wait(ms);
     cy.expect(selectInstanceModal.exists());
   },
+  verifyResponseContainsDefaultFields(response) {
+    const expectedFields = [
+      'id',
+      'title',
+      'hrid',
+      'contributors',
+      'discoverySuppress',
+      'identifiers',
+      'publication',
+    ];
+    const instances = response.body?.instances ?? [];
+    if (instances.length > 0) {
+      const instance = instances[0];
+      expectedFields.forEach((field) => {
+        expect(instance, `Response should contain field: ${field}`).to.have.property(field);
+      });
+      if (instance.identifiers?.length > 0) {
+        const identifier = instance.identifiers[0];
+        expect(identifier).to.have.property('value');
+        expect(identifier).to.have.property('identifierTypeId');
+      }
+    }
+  },
   verifyModalView() {
     cy.expect([
       searchButton.has({ disabled: true, visible: true }),

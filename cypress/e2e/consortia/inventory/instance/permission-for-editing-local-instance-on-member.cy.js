@@ -56,18 +56,16 @@ describe('Inventory', () => {
         'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (folijet)',
         { tags: ['smokeECS', 'folijet', 'C407749'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
-          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-            InstanceRecordView.edit();
-            InstanceRecordEdit.waitLoading();
-            InstanceRecordEdit.fillResourceTitle(testData.newInstanceTitle);
-            InstanceRecordEdit.saveAndClose();
-            InteractorsTools.checkCalloutMessage(
-              `The instance - HRID ${initialInstanceHrId} has been successfully saved.`,
-            );
-          });
+          InstanceRecordView.edit();
+          InstanceRecordEdit.waitLoading();
+          InstanceRecordEdit.fillResourceTitle(testData.newInstanceTitle);
+          InstanceRecordEdit.saveAndClose();
+          InteractorsTools.checkCalloutMessage(
+            'This shared instance has been saved centrally, and updates to associated member library records are in process. Changes in this copy of the instance may not appear immediately.',
+          );
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InstanceRecordView.verifyResourceTitle(testData.newInstanceTitle);
         },

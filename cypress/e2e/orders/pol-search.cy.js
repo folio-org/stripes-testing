@@ -113,7 +113,7 @@ describe('Orders', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke'] }, () => {
+    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke', 'C6719'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

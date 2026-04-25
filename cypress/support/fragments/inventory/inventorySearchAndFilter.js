@@ -848,8 +848,9 @@ export default {
     cy.expect(tagsButton.find(HTML(`${count}`)).exists());
   },
 
-  verifyInstanceDetailsView() {
-    cy.expect(instanceDetailsSection.exists());
+  verifyInstanceDetailsView(isShown = true) {
+    if (isShown) cy.expect(instanceDetailsSection.exists());
+    else cy.expect(instanceDetailsSection.absent());
   },
 
   selectFoundInstance(instanceTitle) {
@@ -1490,6 +1491,7 @@ export default {
 
   typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
+    const valueEscaped = value.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.fillIn(value));
     cy.wait(1000);
     if (isFound) {
@@ -1497,7 +1499,11 @@ export default {
         multiSelect.find(MultiSelectOption(including(value))).exists(),
         multiSelect.has({ optionsCount: foundCount }),
       ]);
-    } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
+    } else {
+      cy.expect(
+        multiSelect.find(MultiSelectOption(matching(new RegExp(`^${valueEscaped}\\(`)))).absent(),
+      );
+    }
   },
 
   typeNotFullValueInMultiSelectFilterFieldAndCheck(
@@ -1507,11 +1513,18 @@ export default {
     isFound = true,
   ) {
     const multiSelect = Accordion(accordionName).find(MultiSelect());
+    const fullValueEscaped = fullValue.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.fillIn(notFullValue));
     cy.wait(1000);
     if (isFound) {
       cy.expect([multiSelect.find(MultiSelectOption(including(fullValue))).exists()]);
-    } else cy.expect(multiSelect.find(MultiSelectOption(including(fullValue))).absent());
+    } else {
+      cy.expect(
+        multiSelect
+          .find(MultiSelectOption(matching(new RegExp(`^${fullValueEscaped}\\(`))))
+          .absent(),
+      );
+    }
   },
 
   verifyCheckboxesWithCountersExistInAccordion(accordionName) {

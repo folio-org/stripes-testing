@@ -183,7 +183,7 @@ describe('Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',
         invoice.invoiceNumber,
@@ -205,7 +205,7 @@ describe('Orders', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',
         `${orderNumber}-1`,

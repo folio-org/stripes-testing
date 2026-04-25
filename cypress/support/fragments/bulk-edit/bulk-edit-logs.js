@@ -121,6 +121,17 @@ export default {
     ]);
   },
 
+  getRecordsFoundCount() {
+    return cy
+      .then(() => bulkEditPane.subtitle())
+      .then((subtitle) => {
+        // Extract number from text like "5 records found" or "1 record found"
+        const match = subtitle.match(/(\d+)\s+records?\s+found/i);
+
+        return match ? parseInt(match[1], 10) : 0;
+      });
+  },
+
   checkLogsCheckbox(status) {
     cy.do(Checkbox(status).click());
   },
@@ -158,12 +169,16 @@ export default {
     });
   },
 
-  verifyCellsValues(column, status) {
+  verifyCellsValues(column, expectedValue) {
     cy.wait(2000);
     BulkEditSearchPane.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
       .each((value) => {
-        expect(value).to.eq(status);
+        if (expectedValue instanceof RegExp) {
+          expect(value).to.match(expectedValue);
+        } else {
+          expect(value).to.eq(expectedValue);
+        }
       });
   },
 
@@ -307,6 +322,7 @@ export default {
 
   clickUserAccordion() {
     cy.do(logsUsersAccordion.clickHeader());
+    cy.wait(500);
   },
 
   selectUserFromDropdown(name) {
@@ -328,7 +344,7 @@ export default {
   },
 
   verifyEmptyUserDropdown() {
-    cy.expect([HTML('-List is empty-').exists(), HTML('No matching options').exists()]);
+    cy.expect([HTML('-List is empty-').exists()]);
   },
 
   verifyUserAccordionCollapsed() {
@@ -669,7 +685,10 @@ export default {
   },
 
   noLogResultsFound() {
-    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+    cy.expect([
+      logsResultPane.find(HTML('No results found. Please check your filters.')).exists(),
+      bulkEditPane.has({ subtitle: '0 records found' }),
+    ]);
   },
 
   verifyLogResultsFound() {

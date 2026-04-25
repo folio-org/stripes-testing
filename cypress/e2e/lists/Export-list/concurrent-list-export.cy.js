@@ -55,7 +55,7 @@ describe('Lists', () => {
 
     it(
       'C411767 (Multiple users) Edit list when export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'С411767'] },
+      { tags: ['criticalPath', 'corsair', 'C411767'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

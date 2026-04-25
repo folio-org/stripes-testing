@@ -212,14 +212,10 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, false);
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -276,7 +272,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdInstanceID = id;
               // 10 Click on the "Browse" toggle at the "Search & filter" pane

@@ -155,7 +155,11 @@ describe('Invoices', () => {
         {
           vendorInvoiceNo: testData.invoice.invoiceNumber,
           invoiceLineNumber: '1',
+          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
           vendorCode: testData.organization.code,
+          status: testData.invoice.status,
+          quantity: testData.orderLines[0].quantity,
+          amount: testData.invoice.total,
         },
       ]);
     },

@@ -8,6 +8,7 @@ import {
   Section,
   Accordion,
   Checkbox,
+  matching,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
@@ -70,6 +71,18 @@ export default {
       MultiColumnListCell(`${searchQuery}`)
         .find(Button(`${searchQuery}`))
         .click(),
+    );
+  },
+
+  clickOnNthResultWithSameValue(searchQuery, index = 0) {
+    cy.wait(1000);
+    cy.do(
+      resultList.perform((el) => {
+        const buttons = [...el.querySelectorAll('a[href^="/inventory"]')].filter(
+          (btn) => btn.textContent === searchQuery,
+        );
+        buttons[index].click();
+      }),
     );
   },
 
@@ -205,7 +218,13 @@ export default {
       .then((response) => response.body.items);
   },
 
-  waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all', numberOfTitles) {
+  waitForCallNumberToAppear(
+    callNumber,
+    isPresent = true,
+    typeCode = 'all',
+    numberOfTitles,
+    quantity,
+  ) {
     return cy.recurse(
       () => {
         return this.getCallNumbersViaApi(typeCode, callNumber);
@@ -217,7 +236,11 @@ export default {
         if (isPresent && numberOfTitles) {
           return foundCallNumbers[0].totalRecords === numberOfTitles && foundCallNumbers.length > 0;
         }
-        return isPresent ? foundCallNumbers.length > 0 : foundCallNumbers.length === 0;
+        return isPresent
+          ? quantity
+            ? foundCallNumbers.length === quantity
+            : foundCallNumbers.length > 0
+          : foundCallNumbers.length === 0;
       },
       {
         limit: 15,
@@ -228,11 +251,14 @@ export default {
   },
 
   checkValuePresentForRow(callNumber, columnIndex, value) {
-    cy.do(
-      MultiColumnListCell(callNumber).perform((element) => {
-        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
-        cy.expect(MultiColumnListCell(value, { row: rowNumber, columnIndex }).exists());
-      }),
+    const callNumberEscaped = callNumber.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    cy.expect(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${callNumberEscaped}\\n`)),
+        isContainer: true,
+      })
+        .find(MultiColumnListCell(value, { columnIndex }))
+        .exists(),
     );
   },
 
@@ -242,6 +268,43 @@ export default {
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Button())
         .click(),
+    );
+  },
+
+  checkCallNumbersShown(isShown = true) {
+    const cellWithCallNumber = resultList.find(
+      MultiColumnListCell({ innerHTML: including('href="/inventory') }),
+    );
+    if (isShown) cy.expect(cellWithCallNumber.exists());
+    else cy.expect(cellWithCallNumber.absent());
+  },
+
+  checkResultsWithSameCallNumber(
+    callNumber,
+    expectedCount,
+    { isHighlighted, numberOfTitlesValues = [] } = {},
+  ) {
+    cy.wait(1000);
+    cy.do(
+      resultList.perform((el) => {
+        const rows = [...el.querySelectorAll('[data-row-inner]')];
+        const matchingRows = rows.filter((row) => {
+          const cells = row.querySelectorAll('[class*="mclCell"]');
+          return cells[0]?.textContent === callNumber;
+        });
+        expect(matchingRows.length).to.equal(expectedCount);
+        matchingRows.forEach((row, index) => {
+          if (isHighlighted) {
+            const strong = row.querySelector('strong');
+            expect(strong === null).to.equal(false);
+            expect(strong.textContent).to.equal(callNumber);
+          }
+          if (numberOfTitlesValues[index]) {
+            const cells = row.querySelectorAll('[class*="mclCell"]');
+            expect(cells[2]?.textContent).to.equal(String(numberOfTitlesValues[index]));
+          }
+        });
+      }),
     );
   },
 };

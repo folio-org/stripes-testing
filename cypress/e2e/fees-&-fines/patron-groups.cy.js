@@ -51,11 +51,15 @@ describe('Fees&Fines', () => {
                     defaultAmount: testData.chargeAmount,
                   }).then((manualCharge) => {
                     testData.manualChargeId = manualCharge.id;
-                    cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+                    cy.loginAsAdmin({
+                      path: TopMenu.usersPath,
+                      waiter: UsersSearchPane.waitLoading,
+                    });
                     UsersSearchPane.searchByLastName(testData.username);
                     UsersCard.startFeeFine();
                     UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);
                     UserCharge.chargeOnly();
+                    UsersCard.waitLoading();
                     Users.waitForAutomatedPatronBlocksForUser(testData.userId, 4 * 60);
                     // TODO: clarify the issue when error message is not presented in cypress env time to time
                     UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);

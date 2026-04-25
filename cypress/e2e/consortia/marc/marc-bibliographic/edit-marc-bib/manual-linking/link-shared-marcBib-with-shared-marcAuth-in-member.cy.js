@@ -131,16 +131,13 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.loginAsAdmin();
-                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-                InventoryInstances.waitContentLoading();
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 30_000);
+              cy.loginAsAdmin();
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+              InventoryInstances.waitContentLoading();
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.pressAddHoldingsButton();
@@ -152,14 +149,10 @@ describe('MARC', () => {
               });
 
               cy.resetTenant();
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -187,6 +180,7 @@ describe('MARC', () => {
           'C410819 Link Shared MARC bib (shadow MARC Instance) with Shared MARC authority from Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C410819'] },
           () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();
@@ -219,8 +213,6 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);

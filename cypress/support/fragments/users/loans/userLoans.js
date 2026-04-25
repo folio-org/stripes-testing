@@ -109,6 +109,10 @@ export default {
     cy.do(Button('Charge only').click());
     cy.wait(1000);
   },
+  clickNewFeeFine(barcode) {
+    openActionsMenuOfLoanByBarcode(barcode);
+    cy.do(newFeeFineButton.click());
+  },
   declareLoanLostViaApi: (
     {
       comment = 'Reason why the item is declared lost',
@@ -285,6 +289,46 @@ export default {
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body),
+
+  waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft = 360, pollIntervalMs = 10000) {
+    return cy
+      .getLoanHistory(loanId, {
+        searchParams: {
+          query: `(loan.id==${loanId} and loan.itemStatus=="${itemStatus}")`,
+        },
+        includeResponse: true,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        if (response.status === 401) {
+          return cy
+            .getAdminToken()
+            .then(() => this.waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft, pollIntervalMs));
+        }
+
+        if (response.status >= 400) {
+          throw new Error(`Failed to get loan history for loan ${loanId}: ${response.status}`);
+        }
+
+        const loansHistory = response.loansHistory;
+
+        if (loansHistory.length > 0) {
+          return loansHistory[0];
+        }
+
+        if (retriesLeft <= 0) {
+          throw new Error('The request has reached the maximum number of attempts.');
+        }
+
+        cy.wait(pollIntervalMs);
+        return this.waitForLoanItemStatusInHistory(
+          loanId,
+          itemStatus,
+          retriesLeft - 1,
+          pollIntervalMs,
+        );
+      });
+  },
 
   closeLoanViaApi: (userId, servicePointId) => {
     return cy

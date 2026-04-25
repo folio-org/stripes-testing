@@ -42,7 +42,7 @@ describe('Inventory', () => {
         MaterialTypes.edit(materialTypeName, newMaterialTypeName);
         MaterialTypes.delete(newMaterialTypeName);
         MaterialTypes.checkIsDeleted(newMaterialTypeName);
-        MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
+        MaterialTypes.verifyMessageOfDeleted(newMaterialTypeName);
       },
     );
   });

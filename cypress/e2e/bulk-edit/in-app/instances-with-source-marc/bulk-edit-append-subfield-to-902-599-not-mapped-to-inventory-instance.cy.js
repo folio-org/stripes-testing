@@ -199,10 +199,10 @@ describe(
 
                 (record) => expect(record.get('599')[0].ind1).to.eq(' '),
                 (record) => expect(record.get('599')[0].ind2).to.eq(' '),
-                (record) => expect(record.get('599')[0].subf[0][0]).to.eq('a'),
-                (record) => expect(record.get('599')[0].subf[0][1]).to.eq(note599a),
-                (record) => expect(record.get('599')[0].subf[1][0]).to.eq('b'),
-                (record) => expect(record.get('599')[0].subf[1][1]).to.eq(note599b),
+                (record) => expect(record.get('599')[0].subf[0][0]).to.eq('b'),
+                (record) => expect(record.get('599')[0].subf[0][1]).to.eq(note599b),
+                (record) => expect(record.get('599')[0].subf[1][0]).to.eq('a'),
+                (record) => expect(record.get('599')[0].subf[1][1]).to.eq(note599a),
 
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -277,7 +277,7 @@ describe(
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
             '599',
-            `\t599\t   \t$a ${note599a} $b ${note599b}`,
+            `\t599\t   \t$b ${note599b} $a ${note599a}`,
           );
           InventoryViewSource.verifyFieldContent(
             3,

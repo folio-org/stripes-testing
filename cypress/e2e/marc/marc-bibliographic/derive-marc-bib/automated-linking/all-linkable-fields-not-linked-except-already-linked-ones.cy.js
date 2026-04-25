@@ -179,10 +179,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              });
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -199,17 +195,14 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 

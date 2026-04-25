@@ -153,7 +153,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Pending payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($15.00)',
         invoice.invoiceNumber,
@@ -166,7 +166,7 @@ describe('Invoices', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$0.00',
         `${orderNumber}-1`,

@@ -123,7 +123,7 @@ describe('Invoices', () => {
       Funds.checkFinancialActivityAndOverages('$10.00', '$10.00', '$0.00', '$0.00', '$20.00');
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         testData.fiscalYear.code,
         '($10.00)',
         `${testData.orderNumber}-1`,
@@ -141,7 +141,7 @@ describe('Invoices', () => {
       Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$20.00', '$10.00', '$20.00');
       Funds.viewTransactions();
       Funds.selectTransactionInList('Credit');
-      Funds.varifyDetailsInTransactionFundTo(
+      Funds.verifyDetailsInTransactionFundTo(
         testData.fiscalYear.code,
         '$10.00',
         invoice.invoiceNumber,

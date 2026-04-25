@@ -1,5 +1,4 @@
 node_modules
-yarn.lock
 .yarnclean
 yarn-error.log
 .idea
@@ -24,9 +23,14 @@ scripts/update_permission_names/permissions_backups/*
 .github/instructions/*
 .github/copilot-instructions.md
 .github/agents/*
+.github/instructions/*
+.github/skills/*
 
 *_automated_tests.json
 
 mcp.json
 parallelWorkers.json
-failed.cy.js
+cypress/e2e/failed.cy.js
+environments.js
+CLAUDE.md
+.claude

@@ -146,7 +146,7 @@ describe('Finance', () => {
         Funds.selectPreviousBudgetDetails();
         Funds.viewTransactions();
         Funds.selectTransactionInList('Transfer');
-        Funds.varifyDetailsInTransaction(
+        Funds.verifyDetailsInTransaction(
           fiscalYear1.code,
           '$10.00',
           'User',

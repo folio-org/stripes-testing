@@ -1,5 +1,8 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
+import JSZip from 'jszip';
+import { Marc } from 'marcjs';
+import { Readable } from 'stream';
 import uuid from 'uuid';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -323,8 +326,9 @@ export default {
     return FileManager.findDownloadedFilesByMask(downloadedFileMask).then((downloadedFilenames) => {
       const downloadedFile = downloadedFilenames[0];
       const originalFileName = FileManager.getFileNameFromFilePath(downloadedFile);
+      const fixturePath = `cypress/fixtures/${originalFileName}`;
       return FileManager.readFile(downloadedFile).then((actualContent) => {
-        return FileManager.createFile(`cypress/fixtures/${originalFileName}`, actualContent);
+        return FileManager.createFile(fixturePath, actualContent).then(() => cy.wrap(fixturePath));
       });
     });
   },
@@ -432,5 +436,79 @@ export default {
               });
           });
       });
+  },
+
+  /**
+   * Verify zip file contains expected number of .mrc files based on slice size
+   * @param {string} fileName - Name of the zip file in downloads folder
+   * @param {number} totalRecords - Total number of records exported
+   * @param {number} sliceSize - Configured slice size limit
+   */
+  verifyZipFileContents(fileName, totalRecords, sliceSize) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((zipContent) => {
+      return JSZip.loadAsync(zipContent).then((zip) => {
+        const allFiles = Object.keys(zip.files);
+
+        // Get all non-directory files
+        const actualFiles = allFiles.filter((name) => !zip.files[name].dir);
+
+        // Verify all files have .mrc extension
+        const nonMrcFiles = actualFiles.filter((name) => !name.endsWith('.mrc'));
+        expect(nonMrcFiles.length).to.equal(
+          0,
+          `Expected all files to have .mrc extension, but found files with other extensions: ${JSON.stringify(nonMrcFiles)}`,
+        );
+
+        // Verify the correct number of .mrc files
+        const expectedMrcFileCount = Math.ceil(totalRecords / sliceSize);
+        expect(actualFiles.length).to.equal(
+          expectedMrcFileCount,
+          `Expected ${expectedMrcFileCount} .mrc files in zip folder, but found ${actualFiles.length}. Files: ${JSON.stringify(actualFiles)}`,
+        );
+      });
+    });
+  },
+
+  verifyMrcFileDoesNotIncludeRecords(fileName, recordIds) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+      recordIds.forEach((recordId) => {
+        expect(fileContent).to.not.include(recordId);
+      });
+    });
+  },
+
+  verifyMrcFileRecordsCount(fileName, expectedCount) {
+    return cy.readFile(`cypress/downloads/${fileName}`, 'binary').then((fileContent) => {
+      if (!fileContent) {
+        throw new Error(`File ${fileName} content is undefined`);
+      }
+
+      const readable = new Readable();
+      readable.push(Buffer.from(fileContent, 'binary'));
+      readable.push(null);
+
+      const reader = Marc.stream(readable, 'Iso2709');
+      let recordsCount = 0;
+
+      return new Promise((resolve, reject) => {
+        reader.on('data', () => {
+          recordsCount++;
+        });
+
+        reader.on('error', (error) => reject(error));
+
+        reader.on('end', () => {
+          try {
+            expect(recordsCount).to.equal(
+              expectedCount,
+              `Expected ${expectedCount} records in MRC file, but found ${recordsCount}`,
+            );
+            resolve(recordsCount);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+    });
   },
 };

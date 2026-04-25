@@ -1,4 +1,8 @@
-import { ORDER_STATUSES } from '../../../support/constants';
+import {
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { InventoryHoldings, InventoryInstances } from '../../../support/fragments/inventory';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
@@ -94,7 +98,12 @@ describe('Orders', () => {
         const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
         OrderLineDetails.checkOrderLineDetails({
           itemDetails: [{ key: 'Title', value: testData.orderLine.titleOrPackage }],
-          physicalResourceDetails: [{ key: 'Create inventory', value: 'Instance, Holding' }],
+          physicalResourceDetails: [
+            {
+              key: POLINE_DETAILS_FIELDS.CREATE_INVENTORY,
+              value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING,
+            },
+          ],
           linkedInstances: [{ title: testData.orderLine.titleOrPackage }],
         });
 

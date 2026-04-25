@@ -67,6 +67,16 @@ export default {
     resource: 'UI-Data-Import Settings',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  moduleListsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  moduleListsRefreshView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists Refresh',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {
@@ -134,6 +144,11 @@ export default {
     resource: 'UI-Consortia-Settings Consortium-Manager',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiConsortiaSettingsConsortiaAffiliationsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Consortia-Settings Consortia Affiliations',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiCheckout: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Checkout',
@@ -173,6 +188,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiOrdersOrdersCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Orders Orders',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
@@ -234,6 +254,21 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiQuickMarcQuickMarcHoldingsEditorView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiQuickMarcQuickMarcHoldingsEditorManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',
@@ -279,6 +314,16 @@ export default {
   uiQuickMarcEditorDuplicate: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Quick-Marc Quick-Marc-Editor Derive',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInventorySingleRecordImport: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Single-Record-Import',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Quick-Marc Quick-Marc-Authority-Records Link-Unlink',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

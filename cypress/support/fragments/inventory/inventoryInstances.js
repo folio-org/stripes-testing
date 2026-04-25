@@ -352,9 +352,25 @@ export default {
     );
   },
 
+  scrollToRow(rowNumber) {
+    cy.do(
+      inventoriesList
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}`, isContainer: true }))
+        .perform((el) => el.scrollIntoView()),
+    );
+  },
+
   selectInstance: (rowNumber = 0) => {
     cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);
     InventoryInstance.waitInventoryLoading();
+  },
+
+  verifyRowIsHighlighted(rowNumber) {
+    cy.expect(
+      inventoriesList
+        .find(MultiColumnListRow({ index: rowNumber, selected: true, isContainer: false }))
+        .exists(),
+    );
   },
 
   selectInstanceById(specialInternalId) {
@@ -624,11 +640,15 @@ export default {
     return instanceId;
   },
 
-  deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
+  deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode, { searchParams = {} } = {}) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` }).then(
       (instance) => {
-        cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
-        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        if (Object.keys(searchParams).length) {
+          cy.bulkDeleteItemsViaApi(searchParams);
+        } else {
+          cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
+        }
+        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
@@ -1157,6 +1177,11 @@ export default {
         // add to the fields array default 008 field values
         parsedFromMrkFileFields.fields.unshift(tag008);
 
+        // remove 001 field (it should be created automatically by the system)
+        parsedFromMrkFileFields.fields = parsedFromMrkFileFields.fields.filter(
+          (field) => field.tag !== '001',
+        );
+
         // add additional fields to the fields array which wasn't parsed in the parseMrkFile() method, e.g. '006', '007'
         parsedFromMrkFileFields.fields.push(...additionalFields);
 
@@ -1473,8 +1498,12 @@ export default {
     });
   },
 
-  verifyInventorySearchPaneheader() {
-    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  verifyInventorySearchPaneheader(checkRecordsFound = true) {
+    if (checkRecordsFound) {
+      cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+    } else {
+      cy.expect(paneHeaderSearch.exists());
+    }
   },
 
   checkActionsButtonInSecondPane() {
@@ -1541,6 +1570,13 @@ export default {
   checkColumnHeaderSort(headerName, isAscending = true) {
     const sort = isAscending ? 'ascending' : 'descending';
     cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+  },
+
+  getResultsCount() {
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .then(($rows) => $rows.length);
   },
 
   getResultsListByColumn(columnIndex) {

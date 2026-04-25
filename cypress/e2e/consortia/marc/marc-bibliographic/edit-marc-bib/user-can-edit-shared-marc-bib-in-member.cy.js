@@ -10,6 +10,7 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -102,20 +103,18 @@ describe('MARC', () => {
           cy.login(users.userAProperties.username, users.userAProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
           QuickMarcEditor.moveFieldUp(17);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
@@ -124,25 +123,28 @@ describe('MARC', () => {
             users.userAProperties.lastName,
           );
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(users.userBProperties.username, users.userBProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.checkInstanceTitle(testData.tag245Content);
-            InventoryInstance.verifyLastUpdatedSource(
-              users.userAProperties.firstName,
-              users.userAProperties.lastName,
-            );
-            InventoryInstance.viewSource();
-            InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
-            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
-            InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
-            InventoryViewSource.close();
-          }, 20_000);
+          cy.login(users.userBProperties.username, users.userBProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.checkInstanceTitle(testData.tag245Content);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+          InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
+          InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
+          InventoryViewSource.close();
+
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          InventoryInstances.waitContentLoading();
+
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);

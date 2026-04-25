@@ -139,6 +139,7 @@ describe('Data Import', () => {
         () => {
           const updatedInstanceTitle = `${testData.instanceTitle} modified`;
 
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);

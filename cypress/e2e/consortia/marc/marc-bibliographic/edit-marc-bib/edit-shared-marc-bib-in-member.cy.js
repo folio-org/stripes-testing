@@ -9,6 +9,7 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -56,15 +57,10 @@ describe('MARC', () => {
               DataImport.uploadFilesViaApi(marcFiles).then((ids) => {
                 createdRecordIDs.push(...ids.createdInstanceIDs);
               });
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                }).then(() => {
-                  cy.reload();
-                  InventoryInstances.waitContentLoading();
-                });
-              }, 20_000);
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
         });
@@ -86,20 +82,21 @@ describe('MARC', () => {
             InventoryInstance.checkInstanceTitle(testData.title);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentCentral);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkInstanceTitle(testData.title);
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentCentral);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245ContentMember);
-            QuickMarcEditor.saveAndCloseWithValidationWarnings();
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245ContentMember);

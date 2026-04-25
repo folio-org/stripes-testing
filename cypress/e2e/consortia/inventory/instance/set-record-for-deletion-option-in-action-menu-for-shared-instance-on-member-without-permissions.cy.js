@@ -5,6 +5,7 @@ import InstanceRecordView, {
 } from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -50,6 +51,7 @@ describe('Inventory', () => {
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
         });
@@ -64,8 +66,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C436843 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Local instance on Member tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C436843'] },
+        'C436845 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Shared instance on Member tenant without permissions (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C436845'] },
         () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.validateOptionInActionsMenu(

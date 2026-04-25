@@ -235,7 +235,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectPlannedBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '($100.00)',
         `${firstOrderNumber}-1`,
@@ -248,7 +248,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '($0.00)',
         `${firstOrderNumber}-1`,
@@ -263,7 +263,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectPlannedBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         secondFiscalYear.code,
         '($200.00)',
         `${secondOrderNumber}-1`,
@@ -276,7 +276,7 @@ describe('Fiscal Year Rollover', () => {
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         firstFiscalYear.code,
         '($200.00)',
         `${secondOrderNumber}-1`,

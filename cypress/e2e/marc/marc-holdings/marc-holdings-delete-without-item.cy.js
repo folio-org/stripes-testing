@@ -62,6 +62,7 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);
         InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.openHoldingView();
 
         HoldingsRecordView.delete();

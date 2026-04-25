@@ -4,8 +4,8 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
-import Permissions from '../../support/dictionary/permissions';
 import {
   BasicOrderLine,
   NewOrder,
@@ -15,6 +15,9 @@ import {
 } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Receiving from '../../support/fragments/receiving/receiving';
+import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
+import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
@@ -50,6 +53,7 @@ describe('Orders', () => {
 
             const firstOrderLine = {
               ...BasicOrderLine.defaultOrderLine,
+              titleOrPackage: `autotest_title_${uuid()}`,
               cost: {
                 listUnitPrice: 5.0,
                 currency: 'USD',
@@ -60,7 +64,7 @@ describe('Orders', () => {
               locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
               acquisitionMethod: params.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
                 materialSupplier: responseOrganizations,
                 volumes: [],
@@ -79,11 +83,11 @@ describe('Orders', () => {
               },
               orderFormat: 'P/E Mix',
               eresource: {
-                createInventory: 'Instance, Holding',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                 accessProvider: organization.id,
               },
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
               },
               locations: [
@@ -100,7 +104,9 @@ describe('Orders', () => {
               testData.firstOrderNumber = orderResponse.poNumber;
               firstOrderLine.purchaseOrderId = orderResponse.id;
 
-              OrderLines.createOrderLineViaApi(firstOrderLine);
+              OrderLines.createOrderLineViaApi(firstOrderLine).then((orderLineResponse) => {
+                testData.firstOrderLine = orderLineResponse;
+              });
               Orders.updateOrderViaApi({
                 ...orderResponse,
                 workflowStatus: ORDER_STATUSES.OPEN,
@@ -126,6 +132,7 @@ describe('Orders', () => {
       Permissions.uiOrdersView.gui,
       Permissions.uiNotesItemView.gui,
       Permissions.uiSettingsOrdersCanViewAllSettings.gui,
+      Permissions.uiReceivingView.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
@@ -150,27 +157,29 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', testData.firstOrderNumber);
       Orders.selectFromResultsList(testData.firstOrderNumber);
-      cy.wait(4000);
       OrderLines.selectPOLInOrder();
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkRoutingListSectionPresence();
       OrderLineDetails.checkRoutingListSectionCollapsed();
       OrderLineDetails.checkRoutingListSectionCounter('0');
-
       OrderLineDetails.expandRoutingListSection();
       OrderLineDetails.checkRoutingListSectionExpanded();
       OrderLineDetails.checkNoRoutingListsText();
-
+      OrderLines.receiveOrderLinesViaActions();
+      Receiving.selectFromResultsList(testData.firstOrderLine.titleOrPackage);
+      ReceivingDetails.checkRoutingListSectionExpanded(false);
+      ReceivingDetails.checkRoutingListSectionCounter('0');
+      ReceivingDetails.expandRoutingListAccordion();
+      Receiving.checkNoRoutingListsText();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.resetFilters();
       Orders.searchByParameter('PO number', testData.secondOrderNumber);
       Orders.selectFromResultsList(testData.secondOrderNumber);
-      cy.wait(2000);
       OrderLines.selectPOLInOrder();
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkRoutingListSectionPresence();
       OrderLineDetails.checkRoutingListSectionCollapsed();
       OrderLineDetails.checkRoutingListSectionCounter('0');
-
       OrderLineDetails.expandRoutingListSection();
       OrderLineDetails.checkRoutingListSectionExpanded();
       OrderLineDetails.checkNoRoutingListsText();

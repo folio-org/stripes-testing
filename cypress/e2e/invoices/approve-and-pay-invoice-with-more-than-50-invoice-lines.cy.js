@@ -203,7 +203,7 @@ describe('Invoices', () => {
 
       Funds.chooseTransactionType('Encumbrance');
       Funds.selectTransactionInList('Encumbrance');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '$0.00',
         'PO line number',
@@ -216,7 +216,7 @@ describe('Invoices', () => {
 
       Funds.chooseTransactionType('Payment');
       Funds.selectTransactionInList('Payment');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($1.00)',
         invoice.invoiceNumber,

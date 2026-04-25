@@ -424,6 +424,45 @@ export default {
     cy.expect(routingListSection.find(MultiColumnListCell(name)).exists());
   },
 
+  checkAccordionPosition({ previousAccordionLabel, targetAccordionLabel, nextAccordionLabel }) {
+    cy.get('#order-lines-details [id^="accordion-toggle-button-"]').then((accordions) => {
+      const labels = [...accordions].map((accordionButton) => accordionButton.textContent.trim());
+      const prevIndex = labels.findIndex((label) => label.includes(previousAccordionLabel));
+      const targetIndex = labels.findIndex((label) => label.includes(targetAccordionLabel));
+      const nextIndex = labels.findIndex((label) => label.includes(nextAccordionLabel));
+
+      expect(targetIndex).to.equal(prevIndex + 1);
+      expect(targetIndex).to.equal(nextIndex - 1);
+    });
+  },
+
+  checkRoutingListTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.name) {
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Name' }))
+            .has({ content: including(record.name) }),
+        );
+      }
+      if (record.notes) {
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Notes' }))
+            .has({ content: including(record.notes) }),
+        );
+      }
+      if (record.users) {
+        const users = Array.isArray(record.users) ? record.users.join(', ') : record.users;
+        cy.expect(
+          routingListSection
+            .find(MultiColumnListCell({ row: index, column: 'Users' }))
+            .has({ content: including(users) }),
+        );
+      }
+    });
+  },
+
   openRoutingList: (name) => {
     cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
   },
@@ -514,42 +553,56 @@ export default {
         return response.body.id;
       });
   },
+
+  checkRelatedInvoiceLineColumnItem(rowIndex, columnName, value) {
+    cy.expect(
+      relatedInvoiceLinesSection
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: including(value) }),
+    );
+  },
+
   checkRelatedInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.vendorInvoiceNo) {
-        cy.expect(
-          relatedInvoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Vendor invoice #' }))
-            .exists(),
-        );
+        this.checkRelatedInvoiceLineColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNo);
       }
       if (record.invoiceLineNumber) {
-        cy.expect(
-          relatedInvoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Invoice line #' }))
-            .exists(),
-        );
+        this.checkRelatedInvoiceLineColumnItem(index, 'Invoice line #', record.invoiceLineNumber);
       }
       if (record.fiscalYear) {
-        cy.expect(
-          relatedInvoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Fiscal year' }))
-            .exists(),
-        );
+        this.checkRelatedInvoiceLineColumnItem(index, 'Fiscal year', record.fiscalYear);
       }
       if (record.invoiceDate) {
-        cy.expect(
-          relatedInvoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Invoice date' }))
-            .exists(),
-        );
+        this.checkRelatedInvoiceLineColumnItem(index, 'Invoice date', record.invoiceDate);
       }
       if (record.vendorCode) {
-        cy.expect(
-          relatedInvoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Vendor code' }))
-            .exists(),
+        this.checkRelatedInvoiceLineColumnItem(index, 'Vendor code', record.vendorCode);
+      }
+      if (record.subscriptionStart) {
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          'Subscription start',
+          record.subscriptionStart,
         );
+      }
+      if (record.subscriptionEnd) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Subscription end', record.subscriptionEnd);
+      }
+      if (record.subscriptionInfo) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Subscription info', record.subscriptionInfo);
+      }
+      if (record.status) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Status', record.status);
+      }
+      if (record.quantity) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Quantity', record.quantity);
+      }
+      if (record.amount) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Amount', record.amount);
+      }
+      if (record.comment) {
+        this.checkRelatedInvoiceLineColumnItem(index, 'Comment', record.comment);
       }
     });
   },

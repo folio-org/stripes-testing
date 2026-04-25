@@ -52,15 +52,11 @@ describe('Inventory', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            });
           });
 
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
         });
       });
 
@@ -77,6 +73,7 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C692169'] },
         () => {
           // Step 1: Search and select the instance
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(marcFile.instanceTitle);
           InventorySearchAndFilter.byShared('No');
           cy.wait(1000);
@@ -84,7 +81,8 @@ describe('Inventory', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-          QuickMarcEditor.saveAndCloseWithValidationWarnings();
+          QuickMarcEditor.pressSaveAndClose();
+          InventoryInstance.waitInstanceRecordViewOpened();
 
           // Step 2: Share the local instance
           InventoryInstance.shareInstance();

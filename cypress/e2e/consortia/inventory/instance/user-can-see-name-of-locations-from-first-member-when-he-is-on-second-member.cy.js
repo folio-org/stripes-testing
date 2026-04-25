@@ -6,6 +6,7 @@ import HoldingsRecordView from '../../../../support/fragments/inventory/holdings
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -109,6 +110,7 @@ describe('Inventory', () => {
         'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C423392'] },
         () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
           InventoryInstance.waitLoading();
           InventoryInstance.verifyConsortiaHoldingsAccordion();

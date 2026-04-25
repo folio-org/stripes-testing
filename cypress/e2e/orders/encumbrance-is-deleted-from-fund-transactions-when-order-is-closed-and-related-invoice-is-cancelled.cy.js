@@ -279,7 +279,7 @@ describe('Orders', () => {
           currentEncumbrance: '-',
         },
       ]);
-      InvoiceLineDetails.clickTheLinkInFundDetailsSection({ fundName: testData.fund.name });
+      InvoiceLineDetails.openFundDetailsPane(testData.fund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Transactions.checkTransactionsList({

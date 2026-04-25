@@ -1,6 +1,13 @@
 import moment from 'moment';
 
-import { Button, Checkbox, Section, Select, TextField } from '../../../../../interactors';
+import {
+  Button,
+  Checkbox,
+  Section,
+  Select,
+  TextField,
+  including,
+} from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import IntegrationStates from './integrationStates';
@@ -69,6 +76,18 @@ export default {
     cy.wait(timeOut);
   },
 
+  verifySchedulingTime(expectedTime) {
+    cy.expect(schedulingFields.schedulingTime.has({ value: including(expectedTime) }));
+  },
+
+  updateScheduleOptions({ frequency = '1', period = 'Weekly', time } = {}) {
+    cy.do([
+      schedulingFields.schedulePeriod.choose(period),
+      schedulingFields.scheduleFrequency.fillIn(frequency),
+      schedulingFields.schedulingTime.fillIn(`${time}`),
+    ]);
+  },
+
   selectSchedulingDay(day) {
     cy.do(
       schedulingSection
@@ -79,5 +98,9 @@ export default {
         )
         .click(),
     );
+  },
+
+  verifySchedulePeriodValue(expectedValue) {
+    cy.expect(schedulingFields.schedulePeriod.has({ value: expectedValue }));
   },
 };

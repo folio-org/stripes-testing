@@ -158,7 +158,7 @@ describe('Orders', () => {
       ReceivingDetails.expandTitleInformationAccordion();
       cy.wait(1000);
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(firstAcquisitionUnit.name, true);
-      ReceivingDetails.editReceivingItem();
+      ReceivingDetails.openReceivingEditForm();
       ReceivingEditForm.waitLoading();
       cy.wait(1000);
       ReceivingEditForm.verifyAcquisitionUnitDisplayed(firstAcquisitionUnit.name, true);

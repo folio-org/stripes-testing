@@ -6,6 +6,7 @@ import {
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import MoveRequest from '../../support/fragments/requests/move-request';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
@@ -26,6 +27,7 @@ describe('Move request', () => {
   const itemData = {
     instanceTitle: `Instance ${getRandomPostfix()}`,
     barcode: getRandomPostfix(),
+    secondBarcode: getRandomPostfix(),
   };
   let userData;
   let requestId;
@@ -68,6 +70,12 @@ describe('Move request', () => {
           items: [
             {
               barcode: itemData.barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+            {
+              barcode: itemData.secondBarcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: itemData.loanTypeId },
               materialType: { id: itemData.materialTypeId },
@@ -143,6 +151,23 @@ describe('Move request', () => {
 
       RequestDetail.openActions();
       RequestDetail.verifyMoveRequestButtonExists();
+    },
+  );
+
+  it(
+    'C2363 When move request is selected, select item is displayed (vega)',
+    { tags: ['extendedPath', 'vega', 'C2363'] },
+    () => {
+      Requests.selectNotYetFilledRequest();
+      Requests.findCreatedRequest(itemData.barcode);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      RequestDetail.waitLoading();
+
+      RequestDetail.openActions();
+      RequestDetail.openMoveRequest();
+
+      MoveRequest.waitLoading();
+      MoveRequest.verifySelectItemModal(itemData.instanceTitle);
     },
   );
 });

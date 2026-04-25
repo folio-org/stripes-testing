@@ -66,12 +66,9 @@ describe('Data Export', () => {
         cy.login(users.username, users.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
-        }).then(() => {
-          cy.waitForAuthRefresh(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          });
         });
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       });
     });
 
@@ -108,8 +105,6 @@ describe('Data Export', () => {
           );
         });
         QuickMarcEditor.checkContentByTag('001', authorityIdentifier);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
 

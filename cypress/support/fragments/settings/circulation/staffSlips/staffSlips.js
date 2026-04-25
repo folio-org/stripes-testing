@@ -15,4 +15,8 @@ export default {
     }
     cy.expect(Pane(name).exists());
   },
+  closeStaffSlipView(name) {
+    cy.get('button[data-test-pane-header-dismiss-button]').click();
+    cy.get('[data-test-pane-header-title]').should('not.contain', name);
+  },
 };

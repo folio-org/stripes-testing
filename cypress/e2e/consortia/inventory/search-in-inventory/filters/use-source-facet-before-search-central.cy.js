@@ -240,7 +240,7 @@ describe('Inventory', () => {
 
             BrowseClassifications.getNextPaginationButtonState().then((isEnabled) => {
               if (isEnabled) {
-                InventorySearchAndFilter.clickNextPaginationButton();
+                InventorySearchAndFilter.clickListInventoryNextPaginationButton();
                 InventorySearchAndFilter.verifyAccordionByNameExpanded(sourceAccordionName, true);
                 InventorySearchAndFilter.verifyCheckboxInAccordion(
                   sourceAccordionName,

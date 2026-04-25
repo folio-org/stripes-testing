@@ -28,6 +28,14 @@ export default {
     cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
   },
 
+  verifyColumnValueByFileName(fileName, columnName, expectedValue) {
+    const row = ListRow({ content: including(fileName) });
+
+    cy.expect(
+      row.find(MultiColumnListCell({ column: columnName })).has({ content: expectedValue }),
+    );
+  },
+
   verifySuccessExportResultCells(
     resultFileName,
     recordsCount,
@@ -50,9 +58,15 @@ export default {
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
-          const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
-            Cypress.env('users')[0].personal.firstName
-          } `;
+          let userNameToVerify;
+
+          if (!Cypress.env('users')[0].personal.firstName) {
+            userNameToVerify = `${Cypress.env('users')[0].personal.lastName}  `;
+          } else {
+            userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${
+              Cypress.env('users')[0].personal.firstName
+            } `;
+          }
           cy.expect([
             resultRow.status.is({ content: 'Completed' }),
             resultRow.total.is({ content: recordsCount.toString() }),
@@ -67,12 +81,15 @@ export default {
     });
 
     // verify file name
+    let actualFileName;
     cy.do(
       resultRow.fileName.perform((element) => {
-        expect(element.innerText).to.equal(resultFileName);
-        expect(element.innerText).to.include(`-${jobId}.mrc`);
+        actualFileName = element.innerText;
       }),
     );
+    cy.then(() => {
+      expect(actualFileName).to.equal(resultFileName);
+    });
     cy.expect(resultRow.fileName.find(HTML({ className: including('button') })).exists());
 
     // verify date (ended running)

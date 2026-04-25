@@ -535,6 +535,10 @@ export default {
     internal: 'ui-circulation.settings.other-settings',
     gui: 'Settings (Circulation): Can create, edit and remove other settings',
   },
+  uiCirculationViewStaffSlips: {
+    internal: 'ui-circulation.settings.view-staff-slips',
+    gui: 'Settings (Circulation): Can view staff slips',
+  },
   uiCirculationCreateEditRemoveStaffSlips: {
     internal: 'ui-circulation.settings.staff-slips',
     gui: 'Settings (Circulation): Can create, edit and remove staff slips',
@@ -1271,6 +1275,10 @@ export default {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
   },
+  uiMarcAuthoritiesSettingsVersionHistory: {
+    internal: 'ui-marc-authorities.settings.version-history',
+    gui: 'Settings (MARC authority): Configure Version history',
+  },
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
@@ -1326,11 +1334,11 @@ export default {
     gui: 'Settings (eholdings): View Usage Consolidation API credentials',
   },
   uiSettingsDeveloperSessionLocale: {
-    internal: 'ui-developer.settings.locale',
+    internal: 'ui-developer.settings.locale.execute',
     gui: 'Settings (Developer): set session locale',
   },
   uiSettingsDeveloperUserLocale: {
-    internal: 'ui-developer.settings.userLocale',
+    internal: 'ui-developer.settings.userLocale.execute',
     gui: 'Settings (developer): Can edit user configuration values',
   },
   uiSettingsTenantReadingRoomAll: {
@@ -1517,5 +1525,10 @@ export default {
   ebsconetAll: {
     internal: 'ebsconet.all',
     gui: 'Ebsconet API module - all permissions',
+  },
+  // Numbers generator
+  numbersGeneratorView: {
+    internal: 'ui-service-interaction.numberGenerator.view',
+    gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
   },
 };

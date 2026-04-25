@@ -9,6 +9,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -191,7 +192,9 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace(/-\d+$/, '');
 
-          OrderLines.checkCreatedInventoryInOtherRecourceDetails('Instance, Holding');
+          OrderLines.checkCreatedInventoryInOtherRecourceDetails(
+            POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING,
+          );
           OrderLines.openLinkedInstance();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {

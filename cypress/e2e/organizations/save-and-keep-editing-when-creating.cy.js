@@ -8,8 +8,9 @@ describe('Organizations', () => {
   let user;
 
   before(() => {
-    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((u) => {
-      user = u;
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+      user = userProperties;
+
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
@@ -19,7 +20,9 @@ describe('Organizations', () => {
 
   after(() => {
     cy.getAdminToken();
-    Organizations.deleteOrganizationViaApi(org.id);
+    Organizations.getOrganizationViaApi({ query: `name="${org.name}"` }).then((organization) => {
+      Organizations.deleteOrganizationViaApi(organization.id);
+    });
     Users.deleteViaApi(user.userId);
   });
 

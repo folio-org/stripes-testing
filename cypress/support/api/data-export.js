@@ -5,16 +5,27 @@ Cypress.Commands.add('dataExportGetJobByStatus', (jobStatus) => {
   });
 });
 
-Cypress.Commands.add('runDataExportAuthorityDeleted', (query) => {
+Cypress.Commands.add('runDataExportAuthorityDeleted', (query, offset = 0, limit = 2000) => {
   return cy
     .okapiRequest({
       method: 'POST',
       path: 'data-export/export-authority-deleted',
       body: {
-        offset: 0,
-        limit: 2000,
+        offset,
+        limit,
         query,
       },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response);
+});
+
+Cypress.Commands.add('runDataExportMarcBibDeleted', (body) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-export/export-deleted',
+      body,
       isDefaultSearchParamsRequired: false,
     })
     .then((response) => response);
@@ -76,6 +87,19 @@ Cypress.Commands.add('deleteDataExportJobExecutionFromLogs', (jobExecutionId) =>
   });
 });
 
+Cypress.Commands.add('editFieldMappingProfile', (profileId, body) => {
+  return cy
+    .okapiRequest({
+      method: 'PUT',
+      path: `data-export/mapping-profiles/${profileId}`,
+      body,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body;
+    });
+});
+
 Cypress.Commands.add('downloadDataExportRecordViaApi', (recordId, idType, suppressOptions = {}) => {
   const searchParams = { idType, ...suppressOptions };
 
@@ -89,4 +113,16 @@ Cypress.Commands.add('downloadDataExportRecordViaApi', (recordId, idType, suppre
     .then((response) => {
       return response.body;
     });
+});
+
+Cypress.Commands.add('configureDataExportFileLimit', (key, value) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'data-export/configuration',
+    body: {
+      key,
+      value: value.toString(),
+    },
+    isDefaultSearchParamsRequired: false,
+  });
 });

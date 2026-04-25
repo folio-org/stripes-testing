@@ -7,6 +7,7 @@ const workInstancesTabButton = Button({ dataTestID: 'id-search-segment-button-re
 const sourceLocalOption = "//input[@id='search-source-option-local']";
 const sourceLoCOption = "//input[@id='search-source-option-libraryOfCongress']";
 const hubsSearchInput = TextInput({ id: 'id-search-input' });
+const advancedSearchButton = Button('Advanced');
 
 export default {
   waitLoading: () => {
@@ -107,7 +108,7 @@ export default {
   },
 
   selectAdvancedSearch() {
-    cy.xpath('//button[@class="button button-link search-button"]').click();
+    cy.do(advancedSearchButton.click());
   },
 
   fillHubsSearchInput(searchQuery) {

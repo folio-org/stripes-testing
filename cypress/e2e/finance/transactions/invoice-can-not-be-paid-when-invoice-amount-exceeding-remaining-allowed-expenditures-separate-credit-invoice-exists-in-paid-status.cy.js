@@ -263,7 +263,7 @@ describe('Finance: Transactions', () => {
       Invoices.canNotApproveAndPayInvoice(secondFund);
       Invoices.selectInvoiceLine();
       Invoices.openPageCurrentEncumbrance('$127.00');
-      Funds.varifyDetailsInTransaction(
+      Funds.verifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($127.00)',
         `${secondOrderNumber}-1`,

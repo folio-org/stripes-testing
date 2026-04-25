@@ -197,13 +197,9 @@ describe('Data Import', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin();
-              cy.visit(TopMenu.inventoryPath);
-              InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -216,8 +212,6 @@ describe('Data Import', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
@@ -348,6 +342,7 @@ describe('Data Import', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventorySearchAndFilter.verifyPanesExist();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.editMarcBibliographicRecord();

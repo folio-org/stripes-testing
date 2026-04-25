@@ -18,7 +18,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Find requester via user barcode', () => {
+describe('Requests', () => {
   const userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {

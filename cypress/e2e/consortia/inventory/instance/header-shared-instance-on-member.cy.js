@@ -2,6 +2,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -51,6 +52,7 @@ describe('Inventory', () => {
         { tags: ['extendedPathECS', 'folijet', 'C404384'] },
         () => {
           InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();

@@ -13,7 +13,13 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -154,8 +160,11 @@ describe('Orders', () => {
       Receiving.clickOnPOLnumber(`${firstOrderNumber}-1`);
       OrderLineDetails.checkOrderLineDetails({
         purchaseOrderLineInformation: [
-          { key: 'Receipt status', value: 'Ongoing' },
-          { key: 'Payment status', value: 'Payment Not Required' },
+          { key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS, value: RECEIPT_STATUS_VIEW.ONGOING },
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.PAYMENT_NOT_REQUIRED,
+          },
         ],
       });
     },

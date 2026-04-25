@@ -1,4 +1,4 @@
-import LinkedDataEditor from './linkedDataEditor';
+import LinkedDataEditor from './marigold';
 
 export default {
   waitLoading() {

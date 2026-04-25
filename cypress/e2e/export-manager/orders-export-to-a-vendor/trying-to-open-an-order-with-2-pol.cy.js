@@ -167,7 +167,7 @@ describe('Export Manager', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
-        Orders.checkModalDifferentAccountNumbers();
+        Orders.checkModalDifferentAccountNumbers(2);
       },
     );
   });

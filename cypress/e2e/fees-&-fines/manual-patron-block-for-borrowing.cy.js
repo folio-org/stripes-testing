@@ -119,7 +119,6 @@ describe('Fees&Fines', () => {
         Checkout.viewBlockDetails();
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description1);
 
-        cy.login(userData.user2.username, userData.user2.password);
         cy.visit(TopMenu.checkOutPath);
         Checkout.waitLoading();
         CheckOutActions.checkOutUser(userData.user2.barcode);
@@ -129,7 +128,6 @@ describe('Fees&Fines', () => {
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description2);
         UsersCard.verifyPatronBlockDescription(2, renewalsBlock.description1);
 
-        cy.login(userData.user3.username, userData.user3.password);
         cy.visit(TopMenu.checkOutPath);
         Checkout.waitLoading();
         CheckOutActions.checkOutUser(userData.user3.barcode);

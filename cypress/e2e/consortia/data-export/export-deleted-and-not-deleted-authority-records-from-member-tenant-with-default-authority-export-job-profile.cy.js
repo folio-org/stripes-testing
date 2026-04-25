@@ -162,9 +162,9 @@ describe('Data Export', () => {
               assertions: [
                 (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
                 (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
-                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(sharedMarcAuthIds[1]),
+                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('s'),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(sharedMarcAuthIds[1]),
               ],
             },
             {
@@ -172,9 +172,9 @@ describe('Data Export', () => {
               assertions: [
                 (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
                 (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
-                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
-                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
-                (record) => expect(record.get('999')[0].subf[1][1]).to.eq(localMarcAuthIds[1]),
+                (record) => expect(record.get('999')[0].subf[1][0]).to.eq('s'),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => expect(record.get('999')[0].subf[0][1]).to.eq(localMarcAuthIds[1]),
               ],
             },
           ];

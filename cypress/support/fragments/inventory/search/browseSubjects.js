@@ -178,6 +178,24 @@ export default {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
 
+  navigateToFirstPage() {
+    cy.get('#browse-results-list-browseSubjects-prev-paging-button').then(($btn) => {
+      if (!$btn.prop('disabled')) {
+        cy.wrap($btn).click();
+        this.navigateToFirstPage();
+      }
+    });
+  },
+
+  navigateToLastPage() {
+    cy.get('#browse-results-list-browseSubjects-next-paging-button').then(($btn) => {
+      if (!$btn.prop('disabled')) {
+        cy.wrap($btn).click();
+        this.navigateToLastPage();
+      }
+    });
+  },
+
   clearSearchTextfield() {
     cy.do(TextArea({ id: 'input-record-search' }).fillIn(''));
   },
@@ -330,6 +348,11 @@ export default {
         return item.authorityId && item.authorityId !== '';
       });
     };
+    const hasNotLinkedItem = (items) => {
+      return items.some((item) => {
+        return !item.authorityId || item.authorityId === '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -350,7 +373,7 @@ export default {
           if (isLinked) {
             return hasLinkedItem(foundSubjects);
           } else {
-            return foundSubjects.length > 0 && !hasLinkedItem(foundSubjects);
+            return foundSubjects.length > 0 && hasNotLinkedItem(foundSubjects);
           }
         } else {
           return foundSubjects.length === 0;

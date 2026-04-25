@@ -17,6 +17,8 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POLINE_DETAILS_FIELDS,
+  ORDER_LINE_PAYMENT_STATUS,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
@@ -190,7 +192,12 @@ describe('Invoices', () => {
       });
       TransactionDetails.openSourceInTransactionDetails(orderLine.poLineNumber);
       OrderLineDetails.checkOrderLineDetails({
-        poLineInformation: [{ key: 'Payment status', value: 'Awaiting Payment' }],
+        poLineInformation: [
+          {
+            key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
+            value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,
+          },
+        ],
       });
     },
   );

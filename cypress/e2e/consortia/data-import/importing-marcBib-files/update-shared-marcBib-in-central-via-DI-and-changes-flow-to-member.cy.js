@@ -229,6 +229,7 @@ describe('Data Import', () => {
           InventorySearchAndFilter.verifyPanesExist();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.sharedInstanceId);
           InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
           // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test

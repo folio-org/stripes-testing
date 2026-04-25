@@ -97,8 +97,9 @@ const Assertions = {
     ]);
   },
 
-  validateAvailableCallNumberTypeOption(optionName) {
-    cy.expect(MultiSelectMenu().find(MultiSelectOption(optionName)).exists());
+  validateAvailableCallNumberTypeOption(optionName, isPresent = true) {
+    const option = MultiSelectMenu().find(MultiSelectOption(optionName));
+    cy.expect(isPresent ? option.exists() : option.absent());
   },
 
   checkTableHeaders() {

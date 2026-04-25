@@ -1,7 +1,9 @@
 import {
   Button,
   Checkbox,
+  HTML,
   KeyValue,
+  Popover,
   RepeatableFieldItem,
   Section,
   Select,
@@ -29,6 +31,8 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
+const automaticExportCheckboxName = 'automaticExport';
+const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndOpenOrderButton = Button('Save & open order');
@@ -311,10 +315,29 @@ export default {
     cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
     cy.wait(1000);
   },
+
+  checkLocationDropdownOptions(expectedLocations) {
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expect(actualOptions.sort()).to.deep.equal(
+        expectedLocations.sort(),
+        `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
+      );
+    });
+  },
+
   selectLocationFromDropdown(locationName) {
     cy.do(SelectionOption(including(locationName)).click());
     cy.wait(1000);
   },
+
+  checkIsLocationRequired(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(locationSection.has({ error: 'At least one location must be entered' }));
+    } else {
+      cy.expect(locationSection.find(HTML({ className: including('feedbackError') })).absent());
+    }
+  },
+
   selectExpenseClass(expenseClass, index) {
     this.selectDropDownValue('Expense class', expenseClass, index);
   },
@@ -390,5 +413,30 @@ export default {
   checkSelectOptions(selectField, expectedOptions) {
     cy.do(selectField.focus());
     cy.expect(selectField.has({ optionsText: expectedOptions }));
+  },
+  verifyAutomaticExportCheckboxDisabled() {
+    cy.expect(
+      orderLineDetailsSection
+        .find(Checkbox({ name: automaticExportCheckboxName }))
+        .has({ disabled: true }),
+    );
+  },
+  clickAutomaticExportInfoIcon() {
+    cy.get(`[name="${automaticExportCheckboxName}"]`).then(($checkbox) => {
+      cy.wrap($checkbox)
+        .closest('[class*="col-"]')
+        .find(automaticExportInfoIconSelector)
+        .first()
+        .click();
+    });
+  },
+  verifyAutomaticExportInfoPopover() {
+    cy.expect(
+      Popover().has({
+        content: including(
+          'This is a Manual PO so all POLs are excluded from automated export workflows',
+        ),
+      }),
+    );
   },
 };

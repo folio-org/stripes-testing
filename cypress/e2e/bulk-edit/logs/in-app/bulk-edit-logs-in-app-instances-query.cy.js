@@ -22,7 +22,8 @@ import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 let fileNames;
-const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+const today = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
+const todayToPick = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const instances = {
   folio: {
     title: `AT_C446085_FolioInstance_${getRandomPostfix()}`,
@@ -125,8 +126,8 @@ describe('Bulk-edit', () => {
           QueryModal.verifyCalendarOpenedDate(today);
 
           // Step 7: Select the date in the pop-up calendar to search instances
-          QueryModal.selectDayFromCalendar(today);
-          QueryModal.verifySelectedDateInCalendar(today);
+          QueryModal.selectDayFromCalendar(todayToPick);
+          QueryModal.verifySelectedDateInCalendar(todayToPick);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle, 1);
@@ -157,7 +158,7 @@ describe('Bulk-edit', () => {
             // Step 12: Verify the "Bulk edit query" main pane
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.updated_at >= ${today}) AND (instance.title starts with AT_C446085_)`,
+              `(instance.updated_at >= ${todayToPick}) AND (instance.title starts with AT_C446085_)`,
             );
             BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);

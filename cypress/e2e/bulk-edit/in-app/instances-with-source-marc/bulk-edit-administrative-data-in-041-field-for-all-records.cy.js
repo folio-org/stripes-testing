@@ -302,7 +302,7 @@ describe('Bulk-edit', () => {
                 ).to.be.true;
               },
               (record) => {
-                expect(record.fields[4]).to.deep.eq(['041', '1 ', 'a', 'eng', 'a', 'ger']);
+                expect(record.fields[4]).to.deep.eq(['041', '1 ', 'a', 'ger', 'a', 'eng']);
               },
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -352,7 +352,7 @@ describe('Bulk-edit', () => {
                 ).to.be.true;
               },
               (record) => {
-                expect(record.fields[3]).to.deep.eq(['041', '1 ', 'a', 'eng', 'a', 'ger']);
+                expect(record.fields[3]).to.deep.eq(['041', '1 ', 'a', 'ger', 'a', 'eng']);
               },
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -391,7 +391,7 @@ describe('Bulk-edit', () => {
         InstanceRecordView.verifyStatisticalCodeTypeAndName('No value set-', 'No value set-');
         InventoryInstance.verifyInstanceLanguage('English, German');
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('041', '\t041\t1  \t$a eng $a ger');
+        InventoryViewSource.verifyFieldInMARCBibSource('041', '\t041\t1  \t$a ger $a eng');
         InventoryViewSource.verifyAbsenceOfValue('\t041\t0');
         InventoryViewSource.close();
         InventorySearchAndFilter.resetAll();

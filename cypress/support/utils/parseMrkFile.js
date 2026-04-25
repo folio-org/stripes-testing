@@ -7,7 +7,7 @@
  * @returns {Object} The parsed content.
  */
 export default function parseMrkFile(file) {
-  const lines = file.split('\n');
+  const lines = file.split('\n').filter((line) => line.trim().length > 0);
   let leader = '';
   let fields = lines
     .map((line) => {

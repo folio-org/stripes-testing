@@ -55,11 +55,16 @@ describe('Bulk-edit', () => {
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneItems();
       BulkEditSearchPane.verifyRecordTypesAccordion();
+      BulkEditSearchPane.verifyResetAllButtonDisabled();
+      BulkEditSearchPane.verifySelectRecordIdentifierRequired(false);
+      BulkEditSearchPane.verifyFirstOptionRecordIdentifierDropdown('Select record identifier');
 
       // verify identifier items
       BulkEditSearchPane.verifyRecordTypeIdentifiers('Users');
       userIdentifiers.forEach((identifier) => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', identifier);
+        BulkEditSearchPane.verifyResetAllButtonDisabled(false);
+        BulkEditSearchPane.verifySelectRecordIdentifierRequired(true);
       });
 
       BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
@@ -68,16 +73,22 @@ describe('Bulk-edit', () => {
       BulkEditSearchPane.clickRecordTypesAccordion();
       itemIdentifiers.forEach((identifier) => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', identifier);
+        BulkEditSearchPane.verifyResetAllButtonDisabled(false);
+        BulkEditSearchPane.verifySelectRecordIdentifierRequired(true);
       });
 
       BulkEditSearchPane.verifyRecordTypeIdentifiers('Instances');
       instanceIdentifiers.forEach((identifier) => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', identifier);
+        BulkEditSearchPane.verifyResetAllButtonDisabled(false);
+        BulkEditSearchPane.verifySelectRecordIdentifierRequired(true);
       });
 
       BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
       holdingsIdentifiers.forEach((identifier) => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', identifier);
+        BulkEditSearchPane.verifyResetAllButtonDisabled(false);
+        BulkEditSearchPane.verifySelectRecordIdentifierRequired(true);
       });
 
       // verify logs items
@@ -86,6 +97,34 @@ describe('Bulk-edit', () => {
       BulkEditSearchPane.verifySpecificTabHighlighted('Logs');
       BulkEditLogs.verifyLogsPane();
       BulkEditLogs.verifyRecordTypesSortedAlphabetically();
+
+      // Click "Identifier" toggle in buttons group
+      BulkEditSearchPane.openIdentifierSearch();
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.isHoldingsRadioChecked(true);
+      BulkEditSearchPane.verifyFirstOptionRecordIdentifierDropdown('Item barcodes');
+      BulkEditSearchPane.isDragAndDropAreaDisabled(false);
+
+      // Click "Reset all" button
+      BulkEditSearchPane.clickResetAllButton();
+      BulkEditSearchPane.verifyDefaultFilterState();
+
+      // Check the "Set criteria" left side pane after reset
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneItems();
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+      BulkEditSearchPane.verifyResetAllButtonDisabled();
+      BulkEditSearchPane.verifySelectRecordIdentifierRequired(false);
+      BulkEditSearchPane.verifyFirstOptionRecordIdentifierDropdown('Select record identifier');
+
+      // Check the "Bulk edit" main pane
+      BulkEditSearchPane.verifyBulkEditImage();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifyDefaultFilterState();
     },
   );
 });
