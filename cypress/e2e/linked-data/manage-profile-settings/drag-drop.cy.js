@@ -110,14 +110,6 @@ describe('Manage profile settings', () => {
       EditResource.checkSectionInPosition('Profile::0__Work::0___creatorReference::0', 4);
       EditResource.clickCloseResourceButton();
 
-      /* Follow up required. For whatever reason, in the Cypress environment,
-         re-opening profile settings clearly shows the correct profile settings
-         on initial load, but somehow the 'default' radio is then selected, and all
-         settings are cleared as a result. This does not happen during actual use.
-         Either this is some sort of timing bug manifesting in Cypress, or it's
-         an issue with Cypress.
-
-      // Make more changes to settings
       LinkedDataEditor.waitLoading();
       LinkedDataEditor.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
@@ -143,7 +135,6 @@ describe('Manage profile settings', () => {
       EditResource.checkSectionInPosition('Profile::0__Work::0___languages::0', 7);
       EditResource.checkSectionIsNotVisible('Profile::0__Work::0__targetAudience::0');
       EditResource.checkSectionIsNotVisible('Profile::0__Work::0__content::0');
-      */
     },
   );
 
@@ -309,6 +300,7 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.waitProfilesLoading();
 
       ManageProfileSettings.selectProfile('Hubs');
+      ManageProfileSettings.waitEditorLoading();
       ManageProfileSettings.dragSelectedComponentAndCancel(1);
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Hub:CreatorOfHub', 1);
       ManageProfileSettings.moveComponentToOppositeListButton('Profile:Hub:CreatorOfHub');
@@ -344,6 +336,7 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.waitProfilesLoading();
 
       ManageProfileSettings.selectProfile('Rare Books');
+      ManageProfileSettings.waitEditorLoading();
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Instance:StatementOfResponsibility', 2);
       ManageProfileSettings.nudgeComponentUpButton('Profile:Instance:StatementOfResponsibility');
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Instance:StatementOfResponsibility', 1);
