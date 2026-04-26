@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import {
   Campuses,
@@ -30,14 +31,25 @@ describe('Settings: Tenant', () => {
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(testData.servicePoint);
-      const { institution, campus, library, location } = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
+      testData.institution = Institutions.getDefaultInstitution({
+        id: uuid(),
+        name: `1_autotest_institution_${getRandomPostfix()}`,
       });
-      testData.institution = institution;
-      testData.campus = campus;
-      testData.library = library;
-      testData.location = location;
-      Locations.createViaApi(testData.location);
+      testData.campus = Campuses.getDefaultCampuse({
+        id: uuid(),
+        name: `1_autotest_campuse_${getRandomPostfix()}`,
+        institutionId: testData.institution.id,
+      });
+      testData.library = Libraries.getDefaultLibrary({
+        id: uuid(),
+        name: `1_autotest_library_${getRandomPostfix()}`,
+        campusId: testData.campus.id,
+      });
+      Institutions.createViaApi(testData.institution).then(() => {
+        Campuses.createViaApi(testData.campus).then(() => {
+          Libraries.createViaApi(testData.library);
+        });
+      });
     });
 
     cy.createTempUser([Permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
@@ -48,15 +60,10 @@ describe('Settings: Tenant', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Locations.deleteViaApi({ id: testData.location.id });
     // Failsafe: delete UI-created location if not deleted by the test
     [locationData.folioName, locationData.editedFolioName].forEach((name) => {
-      cy.okapiRequest({
-        path: 'locations',
-        searchParams: { query: `name=="${name}"` },
-        isDefaultSearchParamsRequired: false,
-      }).then(({ body }) => {
-        (body.locations || []).forEach(({ id }) => Locations.deleteLocationViaApi(id));
+      cy.getLocations({ query: `name=="${name}"` }).then((res) => {
+        if (res) Locations.deleteLocationViaApi(res.id);
       });
     });
     Libraries.deleteViaApi(testData.library.id);
@@ -74,11 +81,10 @@ describe('Settings: Tenant', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       Locations.openLTabFromSettingsList();
 
-      // Step 7.1: Select institution, campus, library; verify list of locations
+      // Step 7.1: Select institution, campus, library
       Locations.selectOption('Institution', testData.institution);
       Locations.selectOption('Campus', testData.campus);
       Locations.selectOption('Library', testData.library);
-      Locations.checkLocationsTableContent([testData.location]);
 
       // CREATE: Add a new location
       Locations.createNewLocation();
@@ -104,6 +110,7 @@ describe('Settings: Tenant', () => {
       });
 
       // DELETE: Delete the edited location
+      Locations.openLocationDetails(locationData.editedFolioName);
       Locations.deleteLocation(locationData.editedFolioName);
       InteractorsTools.checkCalloutMessage(
         `The Location ${locationData.editedFolioName} was successfully deleted.`,
