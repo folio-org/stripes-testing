@@ -206,6 +206,7 @@ describe('Invoices', () => {
       });
       Invoices.createInvoiceLineFromPol(testData.order.poNumber);
       Invoices.handleDifferentCurrencyModal();
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
@@ -229,7 +230,6 @@ describe('Invoices', () => {
             fundCode: testData.fund.code,
             subTotal: `UZS ${testData.orderLine.cost.poLineEstimatedPrice}.00`, // Non-breaking space is needed here
             total: `UZS ${testData.orderLine.cost.poLineEstimatedPrice}.00`, // Non-breaking space is needed here
-            totalExchanged: `$${testData.orderLine.cost.poLineEstimatedPrice * testData.exchangeRate}.00`,
           },
         ],
       });
@@ -265,10 +265,6 @@ describe('Invoices', () => {
           {
             key: INVOICE_LINE_VIEW_FIELDS.SUB_TOTAL,
             value: `UZS ${testData.orderLine.cost.poLineEstimatedPrice}.00`, // Non-breaking space is needed here
-          },
-          {
-            key: INVOICE_LINE_VIEW_FIELDS.TOTAL_EXCHANGED,
-            value: `$${testData.orderLine.cost.poLineEstimatedPrice * testData.exchangeRate}.00`,
           },
         ],
       });

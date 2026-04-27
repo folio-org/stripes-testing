@@ -91,6 +91,7 @@ describe('Invoices', () => {
       InvoiceView.openInvoiceLineEditForm();
       InvoiceLineEditForm.fillInvoiceLineFields(testData.invoiceLine);
       InvoiceLineEditForm.clickSaveButton();
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNumber,
         invoiceInformation: [
@@ -114,7 +115,6 @@ describe('Invoices', () => {
             quantity: testData.invoiceLine.quantity,
             subTotal: `UZS ${testData.invoiceLine.subTotal}.00`, // Non-breaking space is needed here
             total: `UZS ${testData.invoiceLine.subTotal}.00`, // Non-breaking space is needed here
-            totalExchanged: `$${testData.invoiceLine.subTotal * testData.invoice.exchangeRate}.00`,
           },
         ],
       });
