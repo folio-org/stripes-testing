@@ -3,11 +3,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  MARIGOLD_ROLES,
-} from '../../support/constants';
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -18,7 +18,6 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: create new instance by duplicating - for a multiple instance work', () => {
   const testData = {
@@ -31,7 +30,6 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -63,22 +61,13 @@ describe('Citation: create new instance by duplicating - for a multiple instance
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(

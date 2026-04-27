@@ -9,9 +9,12 @@ import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
-  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
@@ -26,10 +29,8 @@ import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter
 import Marigold from '../../support/fragments/linked-data/marigold';
 import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 import Users from '../../support/fragments/users/users';
-import Permissions from '../../support/dictionary/permissions';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: MARC Authority integration', () => {
   const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
@@ -56,7 +57,6 @@ describe('Citation: MARC Authority integration', () => {
     tag001Value: 'n4332123',
     headerText: /New .*MARC authority record/,
     AUTHORIZED: 'Authorized',
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -97,28 +97,13 @@ describe('Citation: MARC Authority integration', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();

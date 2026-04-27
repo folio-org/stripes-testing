@@ -2,7 +2,7 @@ import LinkedDataEditor from './marigold';
 
 export default {
   waitLoading() {
-    cy.xpath('//div[@data-testid="modal"]//h3[text()="Advanced search"]').should('be.visible');
+    cy.xpath('//*[@data-testid="modal"]//h3[text()="Advanced search"]').should('be.visible');
   },
 
   setCondition(rowNumber, condition, value, option, field) {
