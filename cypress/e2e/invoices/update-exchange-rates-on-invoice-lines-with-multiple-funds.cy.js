@@ -128,7 +128,7 @@ describe('Invoices', () => {
             Invoices.createRolloverInvoice(invoice, organization.name);
             Invoices.createInvoiceLineFromPol(firstOrderNumber);
             cy.wait(4000);
-            Invoices.differentCurrencyConfirmation();
+            Invoices.handleDifferentCurrencyModal();
           },
         );
       });
