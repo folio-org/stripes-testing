@@ -1,7 +1,11 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import NewHub from '../../../support/fragments/linked-data/newHubPage';
 import Marigold from '../../../support/fragments/linked-data/marigold';
-import { DEFAULT_JOB_PROFILE_NAMES, MARIGOLD_ROLES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../../support/dictionary/marigoldCapabilities';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +18,6 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 import LocalHubPreview from '../../../support/fragments/linked-data/localHubPreview';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('MG Hubs: Create and edit local hub', () => {
   const testData = {
@@ -23,7 +26,6 @@ describe('MG Hubs: Create and edit local hub', () => {
     marcAuthFileName: `C000000_marcAuthFile${getRandomPostfix()}.mrc`,
     // Authority heading from marcAuthC375263.mrc file
     authorityHeading: 'Mediterranean Conference on Medical and Biological Engineering',
-    roleIds: [],
   };
   const hubData = {
     preferredType: 'http://bibfra.me/vocab/library/Title',
@@ -48,14 +50,6 @@ describe('MG Hubs: Create and edit local hub', () => {
   before('Create test data', () => {
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
@@ -64,12 +58,11 @@ describe('MG Hubs: Create and edit local hub', () => {
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     // Set MARC Authority files as active

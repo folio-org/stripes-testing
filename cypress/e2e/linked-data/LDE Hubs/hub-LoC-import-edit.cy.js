@@ -1,6 +1,9 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Marigold from '../../../support/fragments/linked-data/marigold';
-import { MARIGOLD_ROLES } from '../../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../../support/dictionary/marigoldCapabilities';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
@@ -9,11 +12,9 @@ import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
 import PreviewHubPage from '../../../support/fragments/linked-data/previewHubPage';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('MG Hubs: Import and edit LoC hub', () => {
   const testData = {
-    roleIds: [],
     // Test hub data - will search for existing LoC hub
     searchQuery: 'Netscape Conference',
     primarySource: 'Library of Congress',
@@ -25,25 +26,16 @@ describe('MG Hubs: Import and edit LoC hub', () => {
   before('Create test user', () => {
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
   });
 

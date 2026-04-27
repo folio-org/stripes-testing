@@ -6,9 +6,12 @@ import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter
 import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -23,7 +26,6 @@ import InstanceProfileModal from '../../support/fragments/linked-data/instancePr
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: create instance in central tenant + holdings in member', () => {
   const testData = {
@@ -39,7 +41,6 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
-    roleIds: [],
   };
 
   const resourceData = {
@@ -64,23 +65,16 @@ describe('Citation: create instance in central tenant + holdings in member', () 
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
       user = userProperties;
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
-
       // Assign affiliation to member tenant and set permissions
       cy.assignAffiliationToUser(Affiliations.College, user.userId);
       cy.setTenant(Affiliations.College);
