@@ -303,7 +303,7 @@ describe('Inventory', () => {
         () => {
           const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
@@ -315,7 +315,7 @@ describe('Inventory', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
           InventoryInstances.selectInstance();
           InstanceRecordView.waitLoading();
