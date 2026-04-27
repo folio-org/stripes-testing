@@ -17,7 +17,7 @@ Cypress.Commands.add('getAgreements', () => {
 Cypress.Commands.add('getAgreementFileRaw', (id) => {
   cy.okapiRequest({
     method: 'GET',
-    path: `erm/sas/${id}`,
+    path: `erm/files/${id}/raw`,
     isDefaultSearchParamsRequired: false,
   });
 });

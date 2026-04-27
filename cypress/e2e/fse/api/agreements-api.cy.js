@@ -18,7 +18,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196411 - Verify agreement file docs are accessible for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'agreements', 'sanity'] },
+    { tags: ['fse', 'api', 'agreements', 'sanity', 'TC196411'] },
     () => {
       cy.getAgreements().then((response) => {
         cy.expect(response.status).to.eq(200);

@@ -111,6 +111,16 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.getAdminToken();
 
+              cy.withinTenant(Affiliations.College, () => {
+                // Create source Local MARC bib via API on Member tenant
+                cy.createMarcBibliographicViaAPI(
+                  QuickMarcEditor.defaultValidLdr,
+                  marcBibFields,
+                ).then((instanceIdValue) => {
+                  sourceInstanceId = instanceIdValue;
+                });
+              });
+
               // Setup Central tenant validation rules
               // Field 700 must be NOT required on Central
               cy.getSpecificationFields(centralSpecId).then((response) => {
@@ -189,14 +199,6 @@ describe('MARC', () => {
                       memberField980Id = fieldResp.body.id;
                     });
                   }
-                });
-
-                // Create source Local MARC bib via API on Member tenant
-                cy.createMarcBibliographicViaAPI(
-                  QuickMarcEditor.defaultValidLdr,
-                  marcBibFields,
-                ).then((instanceIdValue) => {
-                  sourceInstanceId = instanceIdValue;
                 });
               });
             })

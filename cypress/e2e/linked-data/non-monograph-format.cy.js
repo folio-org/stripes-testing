@@ -1,8 +1,8 @@
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../support/constants';
 import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  INSTANCE_SOURCE_NAMES,
-  MARIGOLD_ROLES,
-} from '../../support/constants';
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
@@ -13,7 +13,6 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: Non-monograph format', () => {
   const testData = {
@@ -28,7 +27,6 @@ describe('Citation: Non-monograph format', () => {
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
-    roleIds: [],
   };
 
   before('Create test data via API', () => {
@@ -41,22 +39,13 @@ describe('Citation: Non-monograph format', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(
