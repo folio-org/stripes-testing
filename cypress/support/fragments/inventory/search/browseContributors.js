@@ -258,6 +258,23 @@ export default {
     ]);
   },
 
+  checkValueFound(
+    contributorValue,
+    { isFound = true, isBold = false, isLinked = false, rowIndex = null } = {},
+  ) {
+    const textValue = isLinked ? `Linked to MARC authority${contributorValue}` : contributorValue;
+    const contentMatchers = isBold
+      ? [textValue, { innerHTML: including(`<strong>${contributorValue}</strong>`) }]
+      : [textValue];
+    const targetCell =
+      typeof rowIndex === 'number'
+        ? MultiColumnListCell(...contentMatchers, { row: rowIndex })
+        : MultiColumnListCell(...contentMatchers);
+
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
   checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
     for (let i = 0; i < rowCount; i++) {
       cy.expect([
