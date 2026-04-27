@@ -11,6 +11,7 @@ import {
   HTML,
 } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
+import DeleteFieldMappingProfile from './deleteFieldMappingProfile';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveAndCloseButton = Button('Save & close');
@@ -218,5 +219,30 @@ export default {
 
   verifyProfileNotInList(profileName) {
     cy.expect(MultiColumnListCell(profileName).absent());
+  },
+
+  deleteFieldMappingProfilesByNameStartingWith(namePrefix = 'AT_') {
+    cy.getAdminToken();
+    return cy
+      .getDataExportMappingProfiles({
+        query: `name="${namePrefix}*"`,
+        limit: 1000,
+      })
+      .then((mappingProfiles) => {
+        mappingProfiles.forEach((profile) => {
+          if (profile.name.startsWith(namePrefix)) {
+            if (profile.locked) {
+              cy.editFieldMappingProfile(profile.id, {
+                ...profile,
+                locked: false,
+              }).then(() => {
+                DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(profile.id);
+              });
+            } else {
+              DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(profile.id);
+            }
+          }
+        });
+      });
   },
 };
