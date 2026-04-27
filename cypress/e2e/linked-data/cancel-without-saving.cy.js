@@ -8,9 +8,12 @@ import {
   LDE_ADVANCED_SEARCH_OPTIONS,
   LDE_SEARCH_OPTIONS,
   LDE_ADVANCED_SEARCH_CONDITIONS,
-  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
@@ -20,7 +23,6 @@ import EditResource from '../../support/fragments/linked-data/editResource';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: cancel without saving', () => {
   const testData = {
@@ -36,7 +38,6 @@ describe('Citation: cancel without saving', () => {
       { type: 'ISBN', value: '1587657090' },
       { type: 'ISBN', value: '9781587657092' },
     ],
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -66,22 +67,13 @@ describe('Citation: cancel without saving', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(

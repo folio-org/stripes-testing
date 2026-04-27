@@ -114,7 +114,7 @@ describe('Bulk-edit', () => {
           // Create holdings for the shared instance in College (member) tenant
           cy.then(() => {
             cy.setTenant(Affiliations.College);
-            cy.getLocations({ query: 'name="DCB"' }).then((location) => {
+            cy.getLocations({ limit: 1 }).then((location) => {
               testData.locationId = location.id;
             });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {

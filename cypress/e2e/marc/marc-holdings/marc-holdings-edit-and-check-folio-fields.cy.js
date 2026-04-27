@@ -35,6 +35,7 @@ describe('MARC', () => {
       enumeration: 'C983156_enumeration',
       chronology: 'C983156_chronology',
       tag035newValue: '$a Updated field',
+      tagName: `c983156tag${getRandomPostfix()}`,
     };
 
     const instanceFile = {
@@ -52,9 +53,20 @@ describe('MARC', () => {
     };
     const locations = {};
     const recordIDs = [];
+    let initialConfig;
 
     before('Creating user, data', () => {
       cy.getAdminToken();
+
+      cy.getInventoryNumberGeneratorOptions().then((response) => {
+        initialConfig = response.body.items[0];
+        const newConfig = {
+          ...initialConfig,
+          value: { ...initialConfig.value, callNumberHoldings: 'onEditable' },
+        };
+        cy.updateInventoryNumberGeneratorOptions(newConfig);
+      });
+
       const locationQueries = [{ name: LOCATION_NAMES.ANNEX_UI, property: 'holdingsTemporary' }];
       cy.then(() => {
         locationQueries.forEach((location) => {
@@ -91,6 +103,7 @@ describe('MARC', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.numbersGeneratorView.gui,
       ]).then((createdUserProperties) => {
         testData.createdUserProperties = createdUserProperties;
 
@@ -103,6 +116,9 @@ describe('MARC', () => {
 
     after('Deleting created user, data', () => {
       cy.getAdminToken();
+      if (initialConfig) {
+        cy.updateInventoryNumberGeneratorOptions(initialConfig);
+      }
       Users.deleteViaApi(testData.createdUserProperties.userId);
       inventoryHoldings.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
@@ -127,82 +143,88 @@ describe('MARC', () => {
         HoldingsRecordEdit.addAdministrativeNote(testData.administrativeNote);
         HoldingsRecordEdit.selectTemporaryLocation(locations.holdingsTemporary.name);
         HoldingsRecordEdit.addAdditionalCallNumberValues({
-          callNumber: testData.callNumber,
           callNumberType: testData.callNumberType,
           callNumberPrefix: testData.callNumberPrefix,
           callNumberSuffix: testData.callNumberSuffix,
-        });
-        HoldingsRecordEdit.fillInNumberOfItems(testData.numberOfItems);
-        HoldingsRecordEdit.fillPolicyFields({
-          illPolicy: testData.illPolicy,
-          digitizationPolicy: testData.digitizationPolicy,
-          retentionPolicy: testData.retentionPolicy,
-        });
-        HoldingsRecordEdit.fillAcquisitionFields({
-          acquisitionMethod: testData.acquisitionMethod,
-          orderFormat: testData.orderFormat,
-          receiptStatus: testData.receiptStatus,
-        });
-        HoldingsRecordEdit.addReceivingHistoryValues({
-          enumeration: testData.enumeration,
-          chronology: testData.chronology,
-        });
+        }).then((generatedValue) => {
+          testData.callNumber = generatedValue;
+          HoldingsRecordEdit.fillInNumberOfItems(testData.numberOfItems);
+          HoldingsRecordEdit.fillPolicyFields({
+            illPolicy: testData.illPolicy,
+            digitizationPolicy: testData.digitizationPolicy,
+            retentionPolicy: testData.retentionPolicy,
+          });
+          HoldingsRecordEdit.fillAcquisitionFields({
+            acquisitionMethod: testData.acquisitionMethod,
+            orderFormat: testData.orderFormat,
+            receiptStatus: testData.receiptStatus,
+          });
+          HoldingsRecordEdit.addReceivingHistoryValues({
+            enumeration: testData.enumeration,
+            chronology: testData.chronology,
+          });
 
-        // Step 3. Click on the "Save & close" button
-        HoldingsRecordEdit.saveAndClose();
-        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-        HoldingsRecordView.checkStatisticalCode(testData.statisticalCode);
-        HoldingsRecordView.checkAdministrativeNote(testData.administrativeNote);
-        HoldingsRecordView.checkTemporaryLocation(locations.holdingsTemporary.name);
-        HoldingsRecordView.checkAdditionalHoldingsCallNumber({
-          callNumber: testData.callNumber,
-          callNumberType: testData.callNumberType,
-          callNumberPrefix: testData.callNumberPrefix,
-          callNumberSuffix: testData.callNumberSuffix,
-        });
-        HoldingsRecordView.checkNumberOfItems(testData.numberOfItems);
-        HoldingsRecordView.checkIllPolicy(testData.illPolicy);
-        HoldingsRecordView.checkDigitizationPolicy(testData.digitizationPolicy);
-        HoldingsRecordView.checkRetentionPolicy(testData.retentionPolicy);
-        HoldingsRecordView.checkAcquisitionMethod(testData.acquisitionMethod);
-        HoldingsRecordView.checkOrderFormat(testData.orderFormat);
-        HoldingsRecordView.checkReceiptStatus(testData.receiptStatus);
-        HoldingsRecordView.checkPublicDisplayCheckboxState(true);
-        HoldingsRecordView.checkReceivingHistoryValues({
-          enumeration: testData.enumeration,
-          chronology: testData.chronology,
-        });
+          // Step 3. Click on the "Save & close" button
+          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+          HoldingsRecordView.checkStatisticalCode(testData.statisticalCode);
+          HoldingsRecordView.checkAdministrativeNote(testData.administrativeNote);
+          HoldingsRecordView.checkTemporaryLocation(locations.holdingsTemporary.name);
+          HoldingsRecordView.checkAdditionalHoldingsCallNumber({
+            callNumber: testData.callNumber,
+            callNumberType: testData.callNumberType,
+            callNumberPrefix: testData.callNumberPrefix,
+            callNumberSuffix: testData.callNumberSuffix,
+          });
+          HoldingsRecordView.checkNumberOfItems(testData.numberOfItems);
+          HoldingsRecordView.checkIllPolicy(testData.illPolicy);
+          HoldingsRecordView.checkDigitizationPolicy(testData.digitizationPolicy);
+          HoldingsRecordView.checkRetentionPolicy(testData.retentionPolicy);
+          HoldingsRecordView.checkAcquisitionMethod(testData.acquisitionMethod);
+          HoldingsRecordView.checkOrderFormat(testData.orderFormat);
+          HoldingsRecordView.checkReceiptStatus(testData.receiptStatus);
+          HoldingsRecordView.checkPublicDisplayCheckboxState(true);
+          HoldingsRecordView.checkReceivingHistoryValues({
+            enumeration: testData.enumeration,
+            chronology: testData.chronology,
+          });
 
-        // Step 4. Click on "Actions" button in third pane → Select "Edit in quickMARC" option
-        HoldingsRecordView.editInQuickMarc();
+          // Step 4. Add at least 1 tag to opened holdings record
+          HoldingsRecordEdit.openTags();
+          HoldingsRecordEdit.addTag(testData.tagName);
 
-        // Step 5. Update any field
-        QuickMarcEditor.updateExistingField('035', testData.tag035newValue);
+          // Step 5. Click on "Actions" button in third pane → Select "Edit in quickMARC" option
+          HoldingsRecordView.editInQuickMarc();
 
-        // Step 6. Click on the "Save & close" button and check folio fields
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveHoldings();
-        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-        HoldingsRecordView.checkStatisticalCode(testData.statisticalCode);
-        HoldingsRecordView.checkAdministrativeNote(testData.administrativeNote);
-        HoldingsRecordView.checkTemporaryLocation(locations.holdingsTemporary.name);
-        HoldingsRecordView.checkAdditionalHoldingsCallNumber({
-          callNumber: testData.callNumber,
-          callNumberType: testData.callNumberType,
-          callNumberPrefix: testData.callNumberPrefix,
-          callNumberSuffix: testData.callNumberSuffix,
-        });
-        HoldingsRecordView.checkNumberOfItems(testData.numberOfItems);
-        HoldingsRecordView.checkIllPolicy(testData.illPolicy);
-        HoldingsRecordView.checkDigitizationPolicy(testData.digitizationPolicy);
-        HoldingsRecordView.checkRetentionPolicy(testData.retentionPolicy);
-        HoldingsRecordView.checkAcquisitionMethod(testData.acquisitionMethod);
-        HoldingsRecordView.checkOrderFormat(testData.orderFormat);
-        HoldingsRecordView.checkReceiptStatus(testData.receiptStatus);
-        HoldingsRecordView.checkPublicDisplayCheckboxState(true);
-        HoldingsRecordView.checkReceivingHistoryValues({
-          enumeration: testData.enumeration,
-          chronology: testData.chronology,
+          // Step 6. Update any field
+          QuickMarcEditor.updateExistingField('035', testData.tag035newValue);
+
+          // Step 7. Click on the "Save & close" button and check folio fields
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
+          HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+          HoldingsRecordView.checkStatisticalCode(testData.statisticalCode);
+          HoldingsRecordView.checkAdministrativeNote(testData.administrativeNote);
+          HoldingsRecordView.checkTemporaryLocation(locations.holdingsTemporary.name);
+          HoldingsRecordView.checkAdditionalHoldingsCallNumber({
+            callNumber: testData.callNumber,
+            callNumberType: testData.callNumberType,
+            callNumberPrefix: testData.callNumberPrefix,
+            callNumberSuffix: testData.callNumberSuffix,
+          });
+          HoldingsRecordView.checkNumberOfItems(testData.numberOfItems);
+          HoldingsRecordView.checkIllPolicy(testData.illPolicy);
+          HoldingsRecordView.checkDigitizationPolicy(testData.digitizationPolicy);
+          HoldingsRecordView.checkRetentionPolicy(testData.retentionPolicy);
+          HoldingsRecordView.checkAcquisitionMethod(testData.acquisitionMethod);
+          HoldingsRecordView.checkOrderFormat(testData.orderFormat);
+          HoldingsRecordView.checkReceiptStatus(testData.receiptStatus);
+          HoldingsRecordView.checkPublicDisplayCheckboxState(true);
+          HoldingsRecordView.checkReceivingHistoryValues({
+            enumeration: testData.enumeration,
+            chronology: testData.chronology,
+          });
+          HoldingsRecordEdit.checkAddedTag(testData.tagName);
         });
       },
     );

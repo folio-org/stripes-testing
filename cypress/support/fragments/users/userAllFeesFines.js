@@ -130,6 +130,7 @@ export default {
         .choose('Waive'),
     );
   },
+  transferSelectedFeeFines: () => cy.do(Dropdown('Actions').choose('Transfer')),
   refundSelectedFeeFines: () => cy.do(Dropdown('Actions').choose('Refund')),
   cancelSelectedFeeFines: (rowIndex) => {
     cy.do(
@@ -137,6 +138,14 @@ export default {
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .choose('Error'),
+    );
+  },
+  clickTransferEllipsis: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Transfer'),
     );
   },
   clickPayEllipsis: (rowIndex) => {

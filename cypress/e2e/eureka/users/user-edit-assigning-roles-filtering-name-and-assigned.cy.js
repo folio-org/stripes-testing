@@ -134,6 +134,7 @@ describe('Eureka', () => {
         UserEdit.clickCloseWithoutSavingIfModalExists();
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter(0);
+        cy.wait(3000);
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersSearchPane.selectUserFromList(testData.userB.username);
         UsersCard.verifyUserRolesCounter(1);
@@ -200,6 +201,7 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         // Expected: No user roles found
         UsersCard.verifyUserRolesAccordionEmpty();
+        cy.wait(3000);
 
         // Step 12: Search for user C > Edit it > Expand "User roles" accordion > Click "Add user roles" button
         UsersSearchPane.searchByUsername(testData.userC.username);
