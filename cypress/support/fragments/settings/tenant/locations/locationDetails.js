@@ -1,4 +1,4 @@
-import { Button, Section, HTML, including } from '../../../../../../interactors';
+import { Button, MetaSection, Section, HTML, including } from '../../../../../../interactors';
 import LocationEditForm from './locationEditForm';
 
 const detailsRoot = Section({ id: 'location-details' });
@@ -21,6 +21,9 @@ export default {
     Object.values(values).forEach((value) => {
       cy.expect(detailsContent.find(HTML(including(value))));
     });
+  },
+  checkMetadata() {
+    cy.expect(detailsRoot.find(MetaSection()).exists());
   },
   checkActionButtonAbsent() {
     cy.expect(actionsButton.absent);
