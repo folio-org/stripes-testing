@@ -66,7 +66,6 @@ describe('Users', () => {
         Users.expandLoansAccordion();
         Users.clickClosedLoansLink();
         LoanDetails.waitLoading();
-        cy.pause();
         UserLoans.verifyClosedLoansTabSelected();
         UserLoans.verifyNumberOfLoans(1);
 

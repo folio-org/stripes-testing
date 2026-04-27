@@ -3,6 +3,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import {
   Button,
+  ButtonGroup,
   HTML,
   KeyValue,
   MultiColumnListCell,
@@ -445,7 +446,7 @@ export default {
   },
 
   verifyClosedLoansTabSelected() {
-    cy.get('[role="tab"][aria-selected="true"]').should('contain.text', 'Closed loans');
+    cy.expect(ButtonGroup().has({ selectedTab: 'Closed loans' }));
   },
 
   verifyPrintDueDateReceiptButtonAbsent() {
