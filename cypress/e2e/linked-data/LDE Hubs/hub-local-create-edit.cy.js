@@ -11,7 +11,6 @@ import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import ManageAuthorityFiles from '../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import Permissions from '../../../support/dictionary/permissions';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import HubSearchResults from '../../../support/fragments/linked-data/hubSearchResults';
 import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
@@ -50,13 +49,7 @@ describe('MG Hubs: Create and edit local hub', () => {
   before('Create test data', () => {
     cy.getAdminToken();
 
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
       cy.assignCapabilitiesToExistingUser(
         user.userId,

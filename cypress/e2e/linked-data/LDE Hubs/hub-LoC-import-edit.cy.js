@@ -5,7 +5,6 @@ import {
   MARIGOLD_CAPABILITY_SETS,
 } from '../../../support/dictionary/marigoldCapabilities';
 import Users from '../../../support/fragments/users/users';
-import Permissions from '../../../support/dictionary/permissions';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import HubSearchResults from '../../../support/fragments/linked-data/hubSearchResults';
 import EditHubPage from '../../../support/fragments/linked-data/editHubPage';
@@ -26,10 +25,7 @@ describe('MG Hubs: Import and edit LoC hub', () => {
   before('Create test user', () => {
     cy.getAdminToken();
 
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
       cy.assignCapabilitiesToExistingUser(
         user.userId,
