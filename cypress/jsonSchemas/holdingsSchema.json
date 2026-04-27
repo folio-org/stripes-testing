@@ -1,0 +1,407 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Holdings",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "holdings.acquisition_method": {
+          },
+          "holdings.acquisition_format": {
+          },
+          "holdings.receipt_status": {
+          },
+          "holdings.administrative_notes": {
+          },
+          "holdings.call_number": {
+          },
+          "holdings.call_number_prefix": {
+          },
+          "holdings.call_number_suffix": {
+          },
+          "holdings.call_number_type": {
+          },
+          "holdings.call_number_type_id": {
+          },
+          "holdings.copy_number": {
+          },
+          "holdings.created_by": {
+          },
+          "holdings.created_at": {
+          },
+          "holdings.digitization_policy": {
+          },
+          "holdings.effective_location_id": {
+          },
+          "holdings.electronic_access": {
+          },
+          "holdings.former_ids": {
+            "type": ["string", "null", "array"]
+          },
+          "holdings.holdings_type_id": {
+          },
+          "holdings.additional_call_numbers": {
+          },
+          "holdings.hrid": {
+          },
+          "holdings.instance_id": {
+          },
+          "holdings.jsonb": {
+          },
+          "holdings.notes": {
+          },
+          "holdings.number_of_items": {
+          },
+          "holdings.permanent_location_id": {
+          },
+          "holdings.receiving_history": {
+          },
+          "holdings.version": {
+          },
+          "holdings.retention_policy": {
+          },
+          "holdings.shelving_title": {
+          },
+          "holdings.source_id": {
+          },
+          "holdings.holdings_statements": {
+          },
+          "holdings.holdings_statements_for_indexes": {
+          },
+          "holdings.holdings_statements_for_supplements": {
+          },
+          "holdings.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "holdings.statistical_code_names": {
+            "type": ["string", "null", "array"]
+          },
+          "holdings.discovery_suppress": {
+          },
+          "holdings.tags": {},
+          "holdings.temporary_location_id": {
+          },
+          "holdings.updated_by": {
+          },
+          "holdings.updated_at": {
+          },
+          "holdings.id": {
+          },
+          "holdings_type.name": {
+          },
+          "holdings_type.id": {
+          },
+          "effective_library.campus_id": {
+          },
+          "effective_library.code": {
+          },
+          "effective_library.jsonb": {
+          },
+          "effective_library.name": {
+          },
+          "effective_library.id": {
+          },
+          "effective_location.campus_id": {
+          },
+          "effective_location.code": {
+          },
+          "effective_location.description": {
+          },
+          "effective_location.details": {
+          },
+          "effective_location.discovery_display_name": {
+          },
+          "effective_location.institution_id": {
+          },
+          "effective_location.is_active": {
+          },
+          "effective_location.jsonb": {
+          },
+          "effective_location.library_id": {
+          },
+          "effective_location.name": {
+          },
+          "effective_location.primary_service_point": {
+          },
+          "effective_location.service_point_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "effective_location.id": {
+          },
+          "permanent_location.campus_id": {
+          },
+          "permanent_location.code": {
+          },
+          "permanent_location.description": {
+          },
+          "permanent_location.details": {
+          },
+          "permanent_location.discovery_display_name": {
+          },
+          "permanent_location.institution_id": {
+          },
+          "permanent_location.is_active": {
+          },
+          "permanent_location.jsonb": {
+          },
+          "permanent_location.library_id": {
+          },
+          "permanent_location.name": {
+          },
+          "permanent_location.primary_service_point": {
+          },
+          "permanent_location.service_point_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "permanent_location.id": {
+          },
+          "temporary_location.campus_id": {
+          },
+          "temporary_location.code": {
+          },
+          "temporary_location.description": {
+          },
+          "temporary_location.details": {
+          },
+          "temporary_location.discovery_display_name": {
+          },
+          "temporary_location.institution_id": {
+          },
+          "temporary_location.is_active": {
+          },
+          "temporary_location.jsonb": {
+          },
+          "temporary_location.library_id": {
+          },
+          "temporary_location.name": {
+          },
+          "temporary_location.primary_service_point": {
+          },
+          "temporary_location.service_point_ids": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "temporary_location.id": {
+          },
+          "instance.administrative_notes": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.alternative_titles": {
+          },
+          "instance.cataloged_date": {
+          },
+          "instance.classifications": {
+          },
+          "instance.contributors": {
+          },
+          "instance.created_by": {
+          },
+          "instance.created_at": {
+          },
+          "instance.instance_date_1": {
+          },
+          "instance.instance_date_2": {
+          },
+          "instance.instance_date_type_id": {
+          },
+          "instance.editions": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.electronic_access": {
+          },
+          "instance.flag_for_deletion": {
+          },
+          "instance.format_names": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.identifiers": {
+          },
+          "instance.index_title": {
+          },
+          "instance.instance_format_ids": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.hrid": {
+          },
+          "instance.source_uri": {
+          },
+          "instance.id": {
+          },
+          "instance.jsonb": {
+          },
+          "instance.languages": {
+            "type": "array",
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.childInstances": {
+          },
+          "instance.parentInstances": {
+          },
+          "instance.mode_of_issuance_name": {
+          },
+          "instance.nature_of_content_term": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.nature_of_content_term_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.notes": {
+          },
+          "instance.physical_descriptions": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string", "null"]
+            }
+          },
+          "instance.previously_held": {
+          },
+          "instance.publication_frequency": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication_range": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.publication": {
+          },
+          "instance.version": {
+            "type": ["number", "null"]
+          },
+          "instance.title": {
+          },
+          "instance.instance_type_name": {
+          },
+          "instance.series": {
+            "type": ["string", "null", "array"]
+          },
+          "instance.source": {
+          },
+          "instance.staff_suppress": {
+          },
+          "instance.statistical_code_ids": {
+            "type": "array",
+            "items": {}
+          },
+          "instance.statistical_code_names": {
+          },
+          "instance.status_id": {
+          },
+          "instance.subjects": {
+          },
+          "instance.discovery_suppress": {
+          },
+          "instance.tags": {},
+          "instance.updated_by": {
+          },
+          "instance.updated_at": {
+          },
+          "created_by.active": {
+          },
+          "created_by.user_created_date": {
+          },
+          "created_by.email": {
+          },
+          "created_by.last_name_first_name": {
+          },
+          "created_by.created_by_user_id": {},
+          "created_by.updated_by_user_id": {
+          },
+          "created_by.user_updated_date": {
+          },
+          "created_by.id": {
+          },
+          "created_by.username": {
+          },
+          "updated_by.active": {
+          },
+          "updated_by.user_created_date": {
+          },
+          "updated_by.email": {
+          },
+          "updated_by.last_name_first_name": {
+          },
+          "updated_by.created_by_user_id": {},
+          "updated_by.updated_by_user_id": {
+          },
+          "updated_by.user_updated_date": {
+          },
+          "updated_by.id": {
+          },
+          "updated_by.username": {
+          }
+        },
+        "required": []
+      }
+    },
+    "totalRecords": {
+      "type": ["number", "null"]
+    },
+    "queryId": {
+      "type": "string"
+    },
+    "fqlQuery": {
+      "type": "string"
+    },
+    "entityTypeId": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "failureReason": {
+      "type": ["string", "null"]
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": ["string", "null"]
+    },
+    "crossTenant": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content",
+    "totalRecords",
+    "queryId",
+    "fqlQuery",
+    "entityTypeId",
+    "fields",
+    "status",
+    "failureReason",
+    "startDate",
+    "endDate",
+    "crossTenant"
+  ]
+}
