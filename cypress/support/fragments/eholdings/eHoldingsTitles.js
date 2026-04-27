@@ -143,8 +143,8 @@ export default {
       })
       .then(({ body }) => {
         return recurse(
-          () => this.getTitleByIdViaApi(body.data.id),
-          (getTitleResponse) => getTitleResponse.body.data.attributes.name === titleName,
+          () => this.getEHoldingsTitlesByTitleNameViaApi({ titleName }),
+          (getTitlesResponseBody) => getTitlesResponseBody.data.length > 0,
           {
             timeout: 60_000,
             delay: 1_000,
