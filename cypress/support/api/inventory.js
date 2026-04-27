@@ -18,6 +18,17 @@ const defaultDisplaySettings = {
   },
 };
 
+const defaultNumberGeneratorSettings = {
+  scope: 'ui-inventory.number-generator-settings.manage',
+  key: 'number-generator-settings',
+  value: {
+    barcode: 'off',
+    callNumber: 'off',
+    accessionNumber: 'off',
+    callNumberHoldings: 'off',
+  },
+};
+
 Cypress.Commands.add('getInstanceById', (instanceId, additionalHeaders = {}) => {
   return cy
     .okapiRequest({
@@ -911,4 +922,42 @@ Cypress.Commands.add('updateInventoryNumberGeneratorOptions', (config) => {
     },
     isDefaultSearchParamsRequired: false,
   });
+});
+
+Cypress.Commands.add('createInventoryNumberGeneratorOptions', (config) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'settings/entries',
+    body: config,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setInventoryNumberGeneratorOptions', (config) => {
+  cy.getInventoryNumberGeneratorOptions().then(({ body }) => {
+    const list = body.items.filter((item) => item.key === 'number-generator-settings');
+    if (list.length) {
+      const configToUpdate = {
+        id: list[0].id,
+        scope: list[0].scope,
+        key: list[0].key,
+        value: config.value ? { ...list[0].value, ...config.value } : list[0].value,
+      };
+      return cy.updateInventoryNumberGeneratorOptions(configToUpdate);
+    } else {
+      const configToCreate = {
+        id: config.id || uuid(),
+        scope: defaultNumberGeneratorSettings.scope,
+        key: defaultNumberGeneratorSettings.key,
+        value: config.value
+          ? { ...defaultNumberGeneratorSettings.value, ...config.value }
+          : defaultNumberGeneratorSettings.value,
+      };
+      return cy.createInventoryNumberGeneratorOptions(configToCreate);
+    }
+  });
+});
+
+Cypress.Commands.add('setDefaultInventoryNumberGeneratorOptions', () => {
+  cy.setInventoryNumberGeneratorOptions(defaultNumberGeneratorSettings);
 });
