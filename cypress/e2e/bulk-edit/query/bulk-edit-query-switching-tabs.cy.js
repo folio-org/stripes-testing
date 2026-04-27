@@ -74,8 +74,6 @@ describe(
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       });
 
-      // The test case will fail until the issue UIBULKED-757 is resolved
-
       it(
         'C446055 Verify switching between "Identifier" and "Query" tabs (firebird)',
         { tags: ['criticalPath', 'firebird', 'C446055'] },
