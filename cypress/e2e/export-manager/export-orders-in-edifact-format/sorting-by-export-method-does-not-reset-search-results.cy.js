@@ -1,14 +1,9 @@
 import uuid from 'uuid';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OrganizationsSearchAndFilter from '../../../support/fragments/organizations/organizationsSearchAndFilter';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -72,19 +67,14 @@ describe('Export Manager', () => {
       const libraryEDICodeFor2Integration = getRandomPostfix();
       let user;
       let location;
-      let servicePointId;
       const UTCTime = DateTools.getUTCDateForScheduling();
       const UTCTimeForSecond = DateTools.getUTCDateFor2Scheduling();
 
       before(() => {
         cy.getAdminToken();
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
+        cy.getLocations({ limit: 1 }).then((locationResp) => {
+          location = locationResp;
         });
-
         Organizations.createOrganizationViaApi(firstOrganization).then((organizationsResponse) => {
           firstOrganization.id = organizationsResponse;
           orderForFirstOrganization.vendor = firstOrganization.name;
@@ -149,6 +139,7 @@ describe('Export Manager', () => {
 
         cy.createTempUser([Permissions.exportManagerAll.gui]).then((userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.exportManagerOrganizationsPath,
             waiter: ExportManagerSearchPane.waitLoading,
@@ -162,12 +153,6 @@ describe('Export Manager', () => {
         Orders.deleteOrderViaApi(orderForSecondOrganization.id);
         Organizations.deleteOrganizationViaApi(firstOrganization.id);
         Organizations.deleteOrganizationViaApi(secondOrganization.id);
-        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-          location.institutionId,
-          location.campusId,
-          location.libraryId,
-          location.id,
-        );
         Users.deleteViaApi(user.userId);
       });
 
@@ -179,11 +164,15 @@ describe('Export Manager', () => {
           ExportManagerSearchPane.searchBySuccessful();
           ExportManagerSearchPane.searchByFailed();
           ExportManagerSearchPane.sortByJobID();
+          // for big amount of data need click twice to sort by Job ID because of pagination
+          // ExportManagerSearchPane.sortByJobID();
           ExportManagerSearchPane.selectJobByIntegrationInList(integrationNameForFirstOrganization);
           ExportManagerSearchPane.resetAll();
           ExportManagerSearchPane.searchBySuccessful();
           ExportManagerSearchPane.searchByFailed();
           ExportManagerSearchPane.sortByJobID();
+          // for big amount of data need click twice to sort by Job ID because of pagination
+          // ExportManagerSearchPane.sortByJobID();
           ExportManagerSearchPane.selectJobByIntegrationInList(
             integrationNameForSecondOrganization,
           );

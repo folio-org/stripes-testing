@@ -2,7 +2,6 @@ import { HTML, including, or } from '@interactors/html';
 import {
   Accordion,
   Button,
-  Card,
   Checkbox,
   KeyValue,
   Link,
@@ -184,15 +183,6 @@ export default {
         .click(),
     );
     cy.wait(2000);
-  },
-
-  selectVersionHistoryCard(date) {
-    cy.do([
-      Section({ id: 'versions-history-pane-organization' })
-        .find(Card({ headerStart: date }))
-        .find(Button({ icon: 'clock' }))
-        .click(),
-    ]);
   },
 
   checkAllExpandedAccordion: () => {

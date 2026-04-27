@@ -111,7 +111,6 @@ describe('Inventory', () => {
           InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
           InventoryInstance.checkIsItemCreated(testData.itemBarcode);
 
-          cy.resetTenant();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
@@ -119,7 +118,7 @@ describe('Inventory', () => {
           InventoryInstance.verifyConsortiaHoldingsAccordion(false);
           InventoryInstance.expandConsortiaHoldings();
           InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-          InventoryInstance.expandMemberSubHoldings('College');
+          InventoryInstance.expandMemberSubHoldings(tenantNames.college);
           InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
           InventoryInstance.checkIsItemCreated(testData.itemBarcode);
         },

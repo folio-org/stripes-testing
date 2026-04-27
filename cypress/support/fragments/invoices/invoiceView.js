@@ -491,7 +491,7 @@ export default {
 
   cancelInvoiceWithUpdatePOLPaymentStatus({
     errorMessage,
-    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT,
+    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT_UI,
   } = {}) {
     this.clickCancelInActionsMenu();
     CancelInvoiceModal.clickSubmitButton(false);
