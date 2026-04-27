@@ -439,4 +439,22 @@ export default {
       updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
     });
   },
+
+  waitLoading() {
+    cy.expect(loansHistoryPane.exists());
+  },
+
+  verifyClosedLoansTabSelected() {
+    cy.get('[role="tab"][aria-selected="true"]').should('contain.text', 'Closed loans');
+  },
+
+  verifyPrintDueDateReceiptButtonAbsent() {
+    cy.expect(Button('Print due date receipt').absent());
+  },
+
+  verifyPrintDueDateReceiptOptionAbsent(barcode) {
+    openActionsMenuOfLoanByBarcode(barcode);
+    cy.expect(Button('Print due date receipt').absent());
+    openActionsMenuOfLoanByBarcode(barcode);
+  },
 };
