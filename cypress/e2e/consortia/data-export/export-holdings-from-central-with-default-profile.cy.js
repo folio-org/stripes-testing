@@ -181,7 +181,7 @@ describe('Data Export', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instances[0].uuid,
                   sourceId: testData.sourceId,
-                  permanentLocationId: testData.locationId,
+                  permanentLocationId: location.id,
                 }).then((holding) => {
                   instances[0].holdingsCollege.push({
                     id: holding.id,
@@ -286,7 +286,7 @@ describe('Data Export', () => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: instances[0].uuid,
                 sourceId: testData.sourceId,
-                permanentLocationId: testData.locationId,
+                permanentLocationId: location.id,
               }).then((holding) => {
                 instances[0].holdingsUniversity.push({
                   id: holding.id,
@@ -324,7 +324,7 @@ describe('Data Export', () => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: instances[1].uuid,
                 sourceId: testData.sourceId,
-                permanentLocationId: testData.locationId,
+                permanentLocationId: location.id,
               }).then((holding) => {
                 instances[1].holdingsUniversity.push({
                   id: holding.id,

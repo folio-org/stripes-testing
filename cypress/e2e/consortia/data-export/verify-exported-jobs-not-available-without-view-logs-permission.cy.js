@@ -130,7 +130,7 @@ describe('Data Export', () => {
         ConsortiumManagerApp.chooseSettingsItem(settingsItems.dataExport);
         ConsortiumManagerApp.verifySelectedSettingIsDisplayed(settingsItems.dataExport);
         ConsortiumManagerApp.verifyMembersSelected(2);
-        ConsortiumManagerApp.verifySelectedMember(tenantNames.college);
+        ConsortiumManagerApp.selectTenantFromDropdown(tenantNames.college);
         ConsortiumManagerApp.verifyListIsEmpty();
         ConsortiumManagerApp.checkMessage(permissionErrorMessage, calloutTypes.error);
 
