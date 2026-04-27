@@ -14,10 +14,12 @@ export default {
 
   fillUsername(username) {
     cy.do(usernameField.fillIn(username));
+    cy.expect(usernameField.has({ value: username }));
   },
 
   selectTimezone(timezone) {
     cy.do(timezoneSelect.choose(timezone));
+    cy.expect(timezoneSelect.has({ value: timezone }));
   },
 
   selectNumberingSystem(numberingSystem) {
