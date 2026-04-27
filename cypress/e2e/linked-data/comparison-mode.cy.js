@@ -104,7 +104,7 @@ describe('Citation: comparison mode', () => {
 
   it(
     'C692195 [User journey] Marigold - Edit existing instance using comparison mode (citation)',
-    { tags: ['criticalPath', 'citation', 'C692195', 'marigold', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'C692195', 'marigold'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
