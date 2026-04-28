@@ -30,11 +30,13 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
 
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
+  BATCH_GROUP: 'Batch group',
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_STATUS: 'Status',
   SUB_TOTAL: 'Sub-total',
   TOTAL_ADJUSTMENTS: 'Total adjustments',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
+  CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
   VENDOR_NAME: 'Vendor name',
   VOUCHER_STATUS: 'Status',
 };
@@ -54,4 +56,21 @@ export const INVOICE_LEVEL_ADJUSTMENTS_COLUMNS = {
   VALUE: 'Value',
   PRORATE: 'Pro rate',
   RELATION_TO_TOTAL: 'Relation to total',
+};
+
+export const INVOICE_BATCH_GROUPS = {
+  AMHERST: 'Amherst (AC)',
+  FOLIO: 'FOLIO',
+};
+
+export const INVOICE_PAYMENT_METHODS = {
+  CASH: 'Cash',
+  CHECK: 'Check',
+  CREDIT_CARD: 'Credit card',
+  EFT: 'EFT',
+};
+
+export const CURRENCIES = {
+  UZS: 'Uzbekistani Som (UZS)',
+  UAH: 'Ukrainian Hryvnia (UAH)',
 };

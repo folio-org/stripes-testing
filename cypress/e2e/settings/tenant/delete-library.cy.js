@@ -26,14 +26,14 @@ describe('Settings: Tenant', () => {
     ServicePoints.createViaApi(service).then(({ body: servicePoint }) => {
       testData.servicePoint = servicePoint;
       const institution = Institutions.getDefaultInstitution({
-        name: `autotest_institution ${getRandomPostfix()}`,
+        name: `a_autotest_institution ${getRandomPostfix()}`,
       });
 
       Institutions.createViaApi(institution).then((locinst) => {
         testData.institutions.push(locinst);
 
         const campus = Campuses.getDefaultCampuse({
-          name: `autotest_campus ${getRandomPostfix()}`,
+          name: `a_autotest_campus ${getRandomPostfix()}`,
           institutionId: locinst.id,
         });
 
@@ -48,13 +48,13 @@ describe('Settings: Tenant', () => {
               if (testData.libraries.length !== 2) {
                 Locations.createViaApi({
                   id: uuid(),
-                  code: `autotest_location_code-${getRandomPostfix()}`,
-                  name: `autotest_location_name-${getRandomPostfix()}`,
+                  code: `a_autotest_location_code-${getRandomPostfix()}`,
+                  name: `a_autotest_location_name-${getRandomPostfix()}`,
                   isActive: true,
                   institutionId: locinst.id,
                   campusId: loccamp.id,
                   libraryId: loclib.id,
-                  discoveryDisplayName: `autotest_location_discovery-${getRandomPostfix()}`,
+                  discoveryDisplayName: `a_autotest_location_discovery-${getRandomPostfix()}`,
                   servicePointIds: [servicePoint.id],
                   primaryServicePoint: servicePoint.id,
                 }).then((location) => {
