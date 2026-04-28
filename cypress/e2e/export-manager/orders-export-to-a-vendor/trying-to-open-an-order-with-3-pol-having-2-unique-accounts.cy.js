@@ -1,20 +1,19 @@
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import {
+  BasicOrderLine,
+  NewOrder,
+  OrderDetails,
+  OrderLines,
+  Orders,
+} from '../../../support/fragments/orders';
+import OpenConfirmationModal from '../../../support/fragments/orders/modals/openConfirmationModal';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import Integrations from '../../../support/fragments/organizations/integrations/integrations';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import OpenConfirmationModal from '../../../support/fragments/orders/modals/openConfirmationModal';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -58,14 +57,9 @@ describe('Export Manager', () => {
 
     before(() => {
       cy.getAdminToken();
-      ServicePoints.getViaApi()
-        .then((servicePoint) => {
-          return NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoint[0].id));
-        })
-        .then((res) => {
-          location = res;
-        });
-
+      cy.getLocations({ limit: 1 }).then((locationResp) => {
+        location = locationResp;
+      });
       Organizations.createOrganizationViaApi(organization)
         .then((orgId) => {
           organization.id = orgId;
@@ -132,18 +126,9 @@ describe('Export Manager', () => {
 
     after(() => {
       cy.getAdminToken();
-      if (order.id) Orders.deleteOrderViaApi(order.id);
-      OrderLinesLimit.setPOLLimitViaApi(1);
-      if (organization.id) Organizations.deleteOrganizationViaApi(organization.id);
-      if (location) {
-        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-          location.institutionId,
-          location.campusId,
-          location.libraryId,
-          location.id,
-        );
-      }
-      if (user) Users.deleteViaApi(user.userId);
+      Orders.deleteOrderViaApi(order.id);
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -153,7 +138,7 @@ describe('Export Manager', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderDetails.openOrder({ orderNumber, confirm: false });
-        OpenConfirmationModal.confirm();
+        OpenConfirmationModal.confirm(false);
         Orders.checkModalDifferentAccountNumbers(2);
         Orders.checkOrderStatus('Pending');
       },
