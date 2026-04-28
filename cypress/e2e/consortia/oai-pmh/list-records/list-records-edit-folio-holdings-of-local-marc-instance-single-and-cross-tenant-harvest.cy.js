@@ -20,7 +20,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 const testData = {
   user: {},
   marcInstance: {
-    title: `AT_C409411_SharedMarcInstance_${getRandomPostfix()}`,
+    title: `AT_C409412_LocalMarcInstance_${getRandomPostfix()}`,
     uuid: null,
     hrid: null,
   },
@@ -61,6 +61,26 @@ describe('OAI-PMH', () => {
           testData.locationId = locations[0].id;
         });
 
+        // Create local MARC instance in College tenant
+        cy.createSimpleMarcBibViaAPI(testData.marcInstance.title).then((instanceId) => {
+          testData.marcInstance.uuid = instanceId;
+
+          cy.getInstanceById(instanceId).then((instanceData) => {
+            testData.marcInstance.hrid = instanceData.hrid;
+          });
+
+          // Add Holdings to the local MARC instance in College tenant
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.marcInstance.uuid,
+              permanentLocationId: testData.locationId,
+              sourceId: folioSource.id,
+            }).then((holding) => {
+              testData.holdingsId = holding.id;
+            });
+          });
+        });
+
         // Configure OAI-PMH behavior for University tenant
         cy.setTenant(Affiliations.University);
         Behavior.updateBehaviorConfigViaApi(
@@ -75,34 +95,18 @@ describe('OAI-PMH', () => {
           BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
         );
 
-        // Create shared MARC instance in Central tenant
-        cy.createSimpleMarcBibViaAPI(testData.marcInstance.title).then((instanceId) => {
-          testData.marcInstance.uuid = instanceId;
-
-          cy.getInstanceById(instanceId).then((instanceData) => {
-            testData.marcInstance.hrid = instanceData.hrid;
-          });
-
-          // Switch to College tenant to add Holdings to the shared instance
-          cy.setTenant(Affiliations.College);
-          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: testData.marcInstance.uuid,
-              permanentLocationId: testData.locationId,
-              sourceId: folioSource.id,
-            }).then((holding) => {
-              testData.holdingsId = holding.id;
-            });
-          });
-        });
-
         // Create user with permissions in Central and College tenants
-        cy.resetTenant();
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
           cy.affiliateUserToTenant({
             tenantId: Affiliations.College,
+            userId: testData.user.userId,
+            permissions: [Permissions.inventoryAll.gui],
+          });
+
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.University,
             userId: testData.user.userId,
             permissions: [Permissions.inventoryAll.gui],
           });
@@ -121,29 +125,28 @@ describe('OAI-PMH', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        // Delete holdings from College tenant
+        // Delete holdings and instance from College tenant
         cy.setTenant(Affiliations.College);
         if (testData.holdingsId) {
           cy.deleteHoldingRecordViaApi(testData.holdingsId);
         }
-        Behavior.updateBehaviorConfigViaApi();
-        // Delete shared instance from Central tenant
-        cy.resetTenant();
         if (testData.marcInstance.uuid) {
           InventoryInstance.deleteInstanceViaApi(testData.marcInstance.uuid);
         }
         Behavior.updateBehaviorConfigViaApi();
-        // Reset OAI-PMH settings for University tenant
+        // Reset OAI-PMH settings for Central and University tenants
+        cy.resetTenant();
+        Behavior.updateBehaviorConfigViaApi();
         cy.setTenant(Affiliations.University);
         Behavior.updateBehaviorConfigViaApi();
         Users.deleteViaApi(testData.user.userId);
       });
 
       it(
-        'C409411 Consortia | SRS | ListRecords | ListIdentifiers: Edit FOLIO Holdings of the shared MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409411', 'nonParallel'] },
+        'C409412 Consortia | SRS | ListRecords | ListIdentifiers: Edit FOLIO Holdings of the local MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
+        { tags: ['extendedPathECS', 'firebird', 'C409412', 'nonParallel'] },
         () => {
-          // Step 1-3: Search for shared MARC Instance with Holdings
+          // Step 1-3: Search for local MARC Instance with Holdings
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.marcInstance.uuid);
@@ -171,7 +174,6 @@ describe('OAI-PMH', () => {
 
           // Modify call number and add electronic access
           testData.holdingsData.updatedCallNumber = `${testData.holdingsData.callNumber}_Updated`;
-
           HoldingsRecordEdit.fillCallNumber(testData.holdingsData.updatedCallNumber);
           HoldingsRecordEdit.addElectronicAccessFields({
             relationshipName: ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
