@@ -116,6 +116,7 @@ describe('Data Export', () => {
         SettingsDataExport.goToSettingsDataExport();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.verifyElements();
@@ -135,9 +136,11 @@ describe('Data Export', () => {
 
         // Step 3: Click "Cancel" button without making any changes
         SingleJobProfile.clickCancelButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
 
         // Step 4: Repeat Steps 1-2, make changes to the Name, Mapping profile or Description from job profile form, click "Cancel" button
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.openActions();
@@ -145,10 +148,12 @@ describe('Data Export', () => {
         SingleJobProfile.editJobProfile(jobProfileDuplicateName);
         ExportNewJobProfile.fillinDescription(jobProfileDescription);
         SingleJobProfile.clickCancelButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
         ExportJobProfiles.verifyJobProfileAbsentInTheTable(jobProfileDuplicateName);
 
         // Step 5: Repeat Steps 1-2, make changes to the Name, Mapping profile or Description from job profile form, click "Save & close" button
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.openActions();
@@ -159,6 +164,7 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(duplicatedJobProfileCalloutMessage);
 
         // Step 6: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(jobProfileDuplicateName);
         ExportJobProfiles.verifyProfileInTable(jobProfileDuplicateName, user);
 
         // Step 7: Click on the row with duplicated job profile
@@ -173,7 +179,9 @@ describe('Data Export', () => {
 
         // Step 8: Close Job profile view page by clicking "X" button, Select existing unlocked job profile from Preconditions: job profile referenced in an existing export job
         SingleJobProfile.clickXButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(referencedJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(referencedJobProfileName);
         SingleJobProfile.waitLoading(referencedJobProfileName);
         SingleJobProfile.verifyElements();
@@ -190,6 +198,7 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(duplicatedReferencedJobProfileCalloutMessage);
 
         // Step 10: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(referencedJobProfileDuplicateName);
         ExportJobProfiles.verifyProfileInTable(referencedJobProfileDuplicateName, user, true);
 
         // Step 11: Click on the row with duplicated job profile
