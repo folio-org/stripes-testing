@@ -1,4 +1,4 @@
-const profileModalSelector = 'div[class="modal modal-choose-profile"]';
+const profileModalSelector = 'dialog[class="modal modal-choose-profile"]';
 
 export default {
   waitLoading() {

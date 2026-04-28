@@ -1,6 +1,6 @@
 const closeResourceModal =
-  "//div[@data-testid='modal']//h3[@class='title' and text()='Close resource']";
-const closeResourceModalByTestId = "//div[@data-testid='modal']";
+  "//dialog[@data-testid='modal']//h3[@class='title' and text()='Close resource']";
+const closeResourceModalByTestId = "//dialog[@data-testid='modal']";
 const modalContent = "//div[@data-testid='modal-close-record-content']";
 const closeButton = "//button[@class='close-button']";
 const yesButton = "//button[@data-testid='modal-button-cancel']";

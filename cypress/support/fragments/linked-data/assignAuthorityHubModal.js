@@ -1,6 +1,6 @@
 import { Button, TextInput } from '../../../../interactors';
 
-const MARCAuthorityModal = "//div[@data-testid='modal']";
+const MARCAuthorityModal = "//dialog[@data-testid='modal']";
 const searchOption = Button({ dataTestID: 'id-search-segment-button-authorities:search' });
 const searchInput = TextInput({ id: 'id-search-textarea' });
 const searchButton = Button({ dataTestID: 'id-search-button' });
