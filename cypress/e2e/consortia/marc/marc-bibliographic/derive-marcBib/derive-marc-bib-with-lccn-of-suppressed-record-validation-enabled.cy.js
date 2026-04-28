@@ -44,68 +44,67 @@ describe('MARC', () => {
         let user;
 
         before('Create test data', () => {
-          cy.then(() => {
-            cy.resetTenant();
-            cy.getAdminToken();
-            InventoryInstances.deleteInstanceByTitleViaApi('AT_C589509');
+          cy.resetTenant();
+          cy.getAdminToken();
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C589509');
 
-            cy.createTempUser([
-              Permissions.inventoryAll.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-              Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-            ])
-              .then((createdUser) => {
-                user = createdUser;
+          cy.createTempUser([
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
+          ])
+            .then((createdUser) => {
+              user = createdUser;
 
-                cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then(
-                  (instanceTypes) => {
-                    instanceTypeId = instanceTypes[0].id;
-                  },
-                );
-                // Get identifier type IDs for each identifier type
-                InventoryInstances.getIdentifierTypes({ query: 'name==/string "LCCN"' }).then(
-                  (identifier) => {
-                    lccnTypeId = identifier.id;
-                  },
-                );
-              })
-              .then(() => {
-                // Create instance with identifier type
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstanceTitle,
-                    staffSuppress: false,
-                    discoverySuppress: true,
-                    deleted: false,
-                    identifiers: [
-                      {
-                        value: lccnNumber,
-                        identifierTypeId: lccnTypeId,
-                      },
-                    ],
-                  },
-                }).then((createdInstanceData) => {
-                  createdInstanceIds.push(createdInstanceData.instanceId);
-                });
-
-                cy.createMarcBibliographicViaAPI(
-                  QuickMarcEditor.defaultValidLdr,
-                  marcInstanceFields[0],
-                ).then((instanceId) => {
-                  createdInstanceIds.push(instanceId);
-                });
-
-                cy.toggleLccnDuplicateCheck({ enable: true });
+              cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then(
+                (instanceTypes) => {
+                  instanceTypeId = instanceTypes[0].id;
+                },
+              );
+              // Get identifier type IDs for each identifier type
+              InventoryInstances.getIdentifierTypes({ query: 'name==/string "LCCN"' }).then(
+                (identifier) => {
+                  lccnTypeId = identifier.id;
+                },
+              );
+            })
+            .then(() => {
+              // Create instance with identifier type
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: folioInstanceTitle,
+                  staffSuppress: false,
+                  discoverySuppress: true,
+                  deleted: false,
+                  identifiers: [
+                    {
+                      value: lccnNumber,
+                      identifierTypeId: lccnTypeId,
+                    },
+                  ],
+                },
+              }).then((createdInstanceData) => {
+                createdInstanceIds.push(createdInstanceData.instanceId);
               });
-          }).then(() => {
-            cy.resetTenant();
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+
+              cy.createMarcBibliographicViaAPI(
+                QuickMarcEditor.defaultValidLdr,
+                marcInstanceFields[0],
+              ).then((instanceId) => {
+                createdInstanceIds.push(instanceId);
+              });
+
+              cy.toggleLccnDuplicateCheck({ enable: true });
+            })
+            .then(() => {
+              cy.resetTenant();
+              cy.login(user.username, user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
-          });
         });
 
         after('Cleanup', () => {
