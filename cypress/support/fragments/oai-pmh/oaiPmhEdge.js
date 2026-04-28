@@ -10,6 +10,35 @@
 import Affiliations from '../../dictionary/affiliations';
 import DateTools from '../../utils/dateTools';
 
+function validateEdgeHost() {
+  const edgeHost = Cypress.env('EDGE_HOST');
+  if (!edgeHost) {
+    throw new Error('EDGE_HOST is not configured');
+  }
+
+  return edgeHost;
+}
+
+function validateApiKey(apiKey) {
+  if (!apiKey) {
+    throw new Error('API key is required for Edge OAI-PMH requests');
+  }
+}
+
+function makeEdgeRequest(params) {
+  const edgeHost = validateEdgeHost();
+
+  return cy.task('axiosRequest', {
+    url: `${edgeHost}/oai/records`,
+    params,
+  });
+}
+
+function addDateParams(params, fromDate, untilDate) {
+  params.from = fromDate || DateTools.getCurrentDateForOaiPmh(-2);
+  params.until = untilDate || DateTools.getCurrentDateForOaiPmh(2);
+}
+
 export default {
   /**
    * Validates that Edge configuration is available for OAI-PMH tests
@@ -36,6 +65,7 @@ export default {
    */
   isEdgeConfigured() {
     const edgeHost = Cypress.env('EDGE_HOST');
+
     return !!edgeHost;
   },
 
@@ -80,17 +110,8 @@ export default {
    * @returns {Cypress.Chainable<string>} Response body (XML string)
    */
   getRecordRequest(instanceUuid, tenantId, metadataPrefix = 'marc21', apiKey) {
-    const edgeHost = Cypress.env('EDGE_HOST');
-
-    if (!edgeHost) {
-      throw new Error(
-        'EDGE_HOST is not configured. Please set it in environments.js or Jenkins environment variables.',
-      );
-    }
-
-    if (!apiKey) {
-      throw new Error('API key is required for Edge OAI-PMH requests');
-    }
+    validateEdgeHost();
+    validateApiKey(apiKey);
 
     // Get base URL from OAI-PMH configuration
     return cy.getOaiPmhConfigurations('general').then((body) => {
@@ -102,18 +123,13 @@ export default {
 
       const fullBaseUrl = configValue.baseUrl;
       const baseUrl = fullBaseUrl.replace(/^https?:\/\//, '').replace(/\/oai.*$/, '');
-
       const identifier = `oai:${baseUrl}:${tenantId}/${instanceUuid}`;
 
-      // Use cy.task to run axios in Node.js context - no browser cookies
-      return cy.task('axiosRequest', {
-        url: `${edgeHost}/oai/records`,
-        params: {
-          verb: 'GetRecord',
-          metadataPrefix,
-          identifier,
-          apikey: apiKey,
-        },
+      return makeEdgeRequest({
+        verb: 'GetRecord',
+        metadataPrefix,
+        identifier,
+        apikey: apiKey,
       });
     });
   },
@@ -127,15 +143,7 @@ export default {
    * @returns {Cypress.Chainable<string>} Response body (XML string)
    */
   listRecordsRequest(metadataPrefix = 'marc21', apiKey, fromDate = null, untilDate = null) {
-    const edgeHost = Cypress.env('EDGE_HOST');
-
-    if (!edgeHost) {
-      throw new Error('EDGE_HOST is not configured');
-    }
-
-    if (!apiKey) {
-      throw new Error('API key is required for Edge OAI-PMH requests');
-    }
+    validateApiKey(apiKey);
 
     const params = {
       verb: 'ListRecords',
@@ -143,23 +151,9 @@ export default {
       apikey: apiKey,
     };
 
-    if (fromDate) {
-      params.from = fromDate;
-    } else {
-      params.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
-    }
+    addDateParams(params, fromDate, untilDate);
 
-    if (untilDate) {
-      params.until = untilDate;
-    } else {
-      params.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
-    }
-
-    // Use cy.task to run axios in Node.js context - no browser cookies
-    return cy.task('axiosRequest', {
-      url: `${edgeHost}/oai/records`,
-      params,
-    });
+    return makeEdgeRequest(params);
   },
 
   /**
@@ -171,15 +165,7 @@ export default {
    * @returns {Cypress.Chainable<string>} Response body (XML string)
    */
   listIdentifiersRequest(metadataPrefix = 'marc21', apiKey, fromDate = null, untilDate = null) {
-    const edgeHost = Cypress.env('EDGE_HOST');
-
-    if (!edgeHost) {
-      throw new Error('EDGE_HOST is not configured');
-    }
-
-    if (!apiKey) {
-      throw new Error('API key is required for Edge OAI-PMH requests');
-    }
+    validateApiKey(apiKey);
 
     const params = {
       verb: 'ListIdentifiers',
@@ -187,22 +173,50 @@ export default {
       apikey: apiKey,
     };
 
-    if (fromDate) {
-      params.from = fromDate;
-    } else {
-      params.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
+    addDateParams(params, fromDate, untilDate);
+
+    return makeEdgeRequest(params);
+  },
+
+  /**
+   * Send OAI-PMH ListRecords request with resumptionToken via Edge URL
+   * Used for paginated harvesting in consortia environments where records from multiple tenants
+   * are returned in separate responses, each with a resumptionToken to fetch the next page
+   * @param {string} resumptionToken - Resumption token from previous OAI-PMH response
+   * @param {string} apiKey - API key for the specific tenant
+   * @returns {Cypress.Chainable<string>} Response body (XML string)
+   */
+  listRecordsRequestWithResumptionToken(resumptionToken, apiKey) {
+    validateApiKey(apiKey);
+
+    if (!resumptionToken) {
+      throw new Error('resumptionToken is required for paginated OAI-PMH requests');
     }
 
-    if (untilDate) {
-      params.until = untilDate;
-    } else {
-      params.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
+    return makeEdgeRequest({
+      verb: 'ListRecords',
+      resumptionToken,
+      apikey: apiKey,
+    });
+  },
+
+  /**
+   * Send OAI-PMH ListIdentifiers request with resumptionToken via Edge URL
+   * @param {string} resumptionToken - Resumption token from previous OAI-PMH response
+   * @param {string} apiKey - API key for the specific tenant
+   * @returns {Cypress.Chainable<string>} Response body (XML string)
+   */
+  listIdentifiersRequestWithResumptionToken(resumptionToken, apiKey) {
+    validateApiKey(apiKey);
+
+    if (!resumptionToken) {
+      throw new Error('resumptionToken is required for paginated OAI-PMH requests');
     }
 
-    // Use cy.task to run axios in Node.js context - no browser cookies
-    return cy.task('axiosRequest', {
-      url: `${edgeHost}/oai/records`,
-      params,
+    return makeEdgeRequest({
+      verb: 'ListIdentifiers',
+      resumptionToken,
+      apikey: apiKey,
     });
   },
 };
