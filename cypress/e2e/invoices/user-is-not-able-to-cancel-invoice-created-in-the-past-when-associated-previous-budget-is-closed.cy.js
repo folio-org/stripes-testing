@@ -26,7 +26,7 @@ import {
   LEDGER_ROLLOVER_ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
   ROLLOVER_ENCUMBRANCE_BASED_ON,
-  ROLLOVER_BUDGET_VALUE,
+  LEDGER_ROLLOVER_BUDGET_VALUE,
   ROLLOVER_BUDGET_VALUE_AS,
 } from '../../support/constants';
 
@@ -182,7 +182,7 @@ describe('Invoices', () => {
       budgetsRollover: [
         {
           rolloverAllocation: true,
-          rolloverBudgetValue: ROLLOVER_BUDGET_VALUE.NONE,
+          rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.NONE,
           addAvailableTo: ROLLOVER_BUDGET_VALUE_AS.ALLOCATION,
         },
       ],

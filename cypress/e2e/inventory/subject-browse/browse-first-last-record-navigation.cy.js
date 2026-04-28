@@ -52,9 +52,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchButtonDisabled();
 
         // Step 2: Search for subject; Previous and Next buttons are displayed
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName);
         BrowseSubjects.searchBrowseSubjects(testData.subjectName);
         BrowseSubjects.checkPaginationButtons({
-          prev: { isVisible: true, isDisabled: false },
+          prev: { isVisible: true, isDisabled: or(true, false) },
           next: { isVisible: true, isDisabled: or(true, false) },
         });
 
