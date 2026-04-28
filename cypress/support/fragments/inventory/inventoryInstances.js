@@ -39,6 +39,7 @@ import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
 import QuickMarcEditor from '../quickMarcEditor';
 import DateTools from '../../utils/dateTools';
+import JobProfiles from '../settings/dataImport/jobProfiles/jobProfiles';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -1178,15 +1179,28 @@ export default {
   },
 
   importWithOclcViaApi: (oclcNumber) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'copycat/imports',
-      body: {
-        externalIdentifier: oclcNumber,
-        profileId: 'f26df83c-aa25-40b6-876e-96852c3d4fd4',
-        selectedJobProfileId: 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-      },
-      isDefaultSearchParamsRequired: false,
+    const profileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4'; // OCLC WorldCat
+    return cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      const { createJobProfileId } = importProfiles.find((profile) => profile.id === profileId);
+      return JobProfiles.getJobProfilesViaApi({ query: `id=="${createJobProfileId}"` }).then(
+        ({ jobProfiles }) => {
+          const { id: jobProfileId } = jobProfiles[0];
+          return cy
+            .okapiRequest({
+              method: 'POST',
+              path: 'copycat/imports',
+              body: {
+                externalIdentifier: oclcNumber,
+                profileId,
+                selectedJobProfileId: jobProfileId,
+              },
+              isDefaultSearchParamsRequired: false,
+            })
+            .then((response) => {
+              return cy.wrap(response);
+            });
+        },
+      );
     });
   },
 

@@ -114,6 +114,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();

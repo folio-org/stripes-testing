@@ -50,9 +50,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
               const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-              QuickMarcEditor.pressSaveAndCloseButton();
-              QuickMarcEditor.deleteConfirmationPresented();
-              QuickMarcEditor.confirmDelete();
+
+              QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
 
               InventoryInstance.checkUpdatedHRID(instanceHRID);
               InventoryInstance.checkExpectedMARCSource();
