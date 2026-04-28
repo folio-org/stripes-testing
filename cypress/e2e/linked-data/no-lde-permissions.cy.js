@@ -1,9 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import {
-  CAPABILITY_TYPES,
-  CAPABILITY_ACTIONS,
-  DEFAULT_JOB_PROFILE_NAMES,
-} from '../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -11,14 +7,7 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
-
-const INVENTORY_VIEW_CAPABILITY_SETS = [
-  {
-    type: CAPABILITY_TYPES.DATA,
-    resource: 'UI-Inventory Instance',
-    action: CAPABILITY_ACTIONS.VIEW,
-  },
-];
+import CapabilitySets from '../../support/dictionary/capabilitySets';
 
 describe('Citation: No LDE permissions', () => {
   const testData = {
@@ -62,7 +51,11 @@ describe('Citation: No LDE permissions', () => {
     cy.getAdminToken();
     cy.createTempUser([]).then((userProperties) => {
       testData.user = userProperties;
-      cy.assignCapabilitiesToExistingUser(testData.user.userId, [], INVENTORY_VIEW_CAPABILITY_SETS);
+      cy.assignCapabilitiesToExistingUser(
+        testData.user.userId,
+        [],
+        [CapabilitySets.uiInventoryInstanceView],
+      );
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
