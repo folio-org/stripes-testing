@@ -1620,7 +1620,11 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  fillInPOLineInfoForExportWithLocation(AUMethod, institutionId) {
+  fillInPOLineInfoForExportWithLocation(
+    AUMethod,
+    institutionId,
+    materialType = MATERIAL_TYPE_NAMES.BOOK,
+  ) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
@@ -1631,7 +1635,7 @@ export default {
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
-      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
+      Select({ name: 'eresource.materialType' }).choose(materialType),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -1981,11 +1985,11 @@ export default {
   },
 
   saveOrderLine() {
-    cy.wait(4000);
+    cy.wait(2000);
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     this.submitOrderLine();
-    cy.wait(4000);
+    cy.wait(2000);
   },
 
   openInstance: () => {
@@ -2720,6 +2724,18 @@ export default {
     cy.do([
       selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
       selectLocationsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  changeLocation(locationName, quantity) {
+    cy.do([
+      locationSection.find(trashButton).click(),
+      addLocationButton.click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(locationName)).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
     ]);
   },
 
