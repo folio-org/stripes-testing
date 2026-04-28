@@ -212,11 +212,13 @@ export default {
 
   moveComponentToOppositeListButton: (id) => {
     cy.xpath(component(id, componentActivateMenu))
+      .scrollIntoView()
       .should('be.visible')
       .focus()
       .wait(100)
       .realClick();
     cy.xpath(component(id, componentMoveAction))
+      .scrollIntoView()
       .should('be.visible')
       .focus()
       .wait(100)

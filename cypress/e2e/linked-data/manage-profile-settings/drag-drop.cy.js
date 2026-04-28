@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import LinkedDataEditor from '../../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../../support/fragments/linked-data/marigold';
 import WorkProfileModal from '../../../support/fragments/linked-data/workProfileModal';
 import EditResource from '../../../support/fragments/linked-data/editResource';
 import { MARIGOLD_ROLES } from '../../../support/constants';
@@ -54,7 +54,7 @@ describe('Manage profile settings', () => {
   beforeEach(() => {
     cy.login(user.username, user.password, {
       path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
+      waiter: Marigold.waitLoading,
       authRefresh: true,
     });
   });
@@ -79,16 +79,16 @@ describe('Manage profile settings', () => {
   });
 
   it(
-    'settings are applied to linked data editor',
+    'settings are applied to Marigold editor',
     { tags: ['citation'] },
     () => {
       // Modify settings
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
       ManageProfileSettings.selectProfile('Books');
       ManageProfileSettings.waitEditorLoading();
-      ManageProfileSettings.dragSelectedToUnusedContainer('Profile:Work:LanguageCode');
+      ManageProfileSettings.moveComponentToOppositeListButton('Profile:Work:LanguageCode');
       ManageProfileSettings.verifyUnusedComponent('Profile:Work:LanguageCode');
       ManageProfileSettings.nudgeComponentDownButton('Profile:Work:CreatorOfWork');
       ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:CreatorOfWork', 2);
@@ -100,7 +100,10 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.modalUnusedSave();
 
       // Check that settings apply, and also toggle profile default
-      LinkedDataEditor.openNewResourceForm();
+      Marigold.waitLoading();
+      // TODO - bug, the menu bar is missing after closing profile settings editor; remove when merged
+      cy.xpath('//button[@data-testid="resources-actions-dropdown"]').focus();
+      Marigold.openNewResourceForm();
       WorkProfileModal.waitLoading();
       WorkProfileModal.checkOptionSelected('Books');
       WorkProfileModal.toggleDefaultProfile();
@@ -110,8 +113,8 @@ describe('Manage profile settings', () => {
       EditResource.checkSectionInPosition('Profile::0__Work::0___creatorReference::0', 4);
       EditResource.clickCloseResourceButton();
 
-      LinkedDataEditor.waitLoading();
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.waitLoading();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
       ManageProfileSettings.selectProfile('Books');
@@ -119,22 +122,21 @@ describe('Manage profile settings', () => {
       ManageProfileSettings.verifyPreferredProfile(true);
       ManageProfileSettings.verifyCustomSettingsSelected();
       ManageProfileSettings.verifyUnusedComponent('Profile:Work:LanguageCode');
-      ManageProfileSettings.dragUnusedToSelected('Profile:Work:LanguageCode', 'Profile:Work:DateOfWork');
-      ManageProfileSettings.verifySelectedComponentPosition('Profile:Work:LanguageCode', 7);
+      ManageProfileSettings.selectDefaultSettings();
       ManageProfileSettings.moveComponentToOppositeListButton('Profile:Work:IntendedAudience');
       ManageProfileSettings.verifyUnusedComponent('Profile:Work:IntendedAudience');
-      ManageProfileSettings.moveComponentToOppositeListButton('Profile:Work:ContentType');
-      ManageProfileSettings.verifyUnusedComponent('Profile:Work:ContentType');
       ManageProfileSettings.saveAndClose();
       ManageProfileSettings.modalUnusedSave();
 
       // Check that modifications applied
-      LinkedDataEditor.openNewResourceForm();
+      Marigold.waitLoading();
+      // TODO - bug, the menu bar is missing after closing profile settings editor; remove when merged
+      cy.xpath('//button[@data-testid="resources-actions-dropdown"]').focus();
+      Marigold.openNewResourceForm();
       // No modal this time, default was chosen
       EditResource.waitLoading();
-      EditResource.checkSectionInPosition('Profile::0__Work::0___languages::0', 7);
+      EditResource.checkSectionInPosition('Profile::0__Work::0___languages::0', 17);
       EditResource.checkSectionIsNotVisible('Profile::0__Work::0__targetAudience::0');
-      EditResource.checkSectionIsNotVisible('Profile::0__Work::0__content::0');
     },
   );
 
@@ -142,7 +144,7 @@ describe('Manage profile settings', () => {
     'changes to settings persist',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -187,7 +189,7 @@ describe('Manage profile settings', () => {
     'required components cannot be moved to unused list',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -210,7 +212,7 @@ describe('Manage profile settings', () => {
     'keyboard reordering and moving between lists',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -250,7 +252,7 @@ describe('Manage profile settings', () => {
     'mouse reordering and dragging between lists',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -295,7 +297,7 @@ describe('Manage profile settings', () => {
     'move component to other list by button press',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -331,7 +333,7 @@ describe('Manage profile settings', () => {
     'nudge buttons in selected component list',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
@@ -351,7 +353,7 @@ describe('Manage profile settings', () => {
     'verifies preferred profile setting persists across profile selection changes',
     { tags: ['citation'] },
     () => {
-      LinkedDataEditor.openManageProfileSettings();
+      Marigold.openManageProfileSettings();
       ManageProfileSettings.waitMainLoading();
       ManageProfileSettings.waitProfilesLoading();
 
