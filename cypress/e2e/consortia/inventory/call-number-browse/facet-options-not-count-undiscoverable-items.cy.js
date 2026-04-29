@@ -107,18 +107,20 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
             cy.withinTenant(memberTenant.affiliation, () => {
               cy.log('Creating holdings and items for shared instances');
               currentLocation = testData.defaultLocation[memberTenant.affiliation];
-              folioInstancesShared.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  ...instance.holdings[0],
-                  instanceId: instance.instanceId,
-                  permanentLocationId: currentLocation.id,
-                  sourceId: testData.folioSourceId,
-                }).then((holding) => {
-                  InventoryItems.createItemViaApi({
-                    ...instance.items[0],
-                    holdingsRecordId: holding.id,
-                    materialType: { id: testData.materialTypeId },
-                    permanentLoanType: { id: testData.loanTypeId },
+              cy.getMaterialTypes().then(({ id }) => {
+                folioInstancesShared.forEach((instance) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    ...instance.holdings[0],
+                    instanceId: instance.instanceId,
+                    permanentLocationId: currentLocation.id,
+                    sourceId: testData.folioSourceId,
+                  }).then((holding) => {
+                    InventoryItems.createItemViaApi({
+                      ...instance.items[0],
+                      holdingsRecordId: holding.id,
+                      materialType: { id },
+                      permanentLoanType: { id: testData.loanTypeId },
+                    });
                   });
                 });
               });
@@ -160,6 +162,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
   });
 
   after('Cleanup', () => {
+    cy.resetTenant();
     cy.getAdminToken();
     [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
       cy.withinTenant(tenant, () => {

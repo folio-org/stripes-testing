@@ -172,6 +172,11 @@ describe('Inventory', () => {
             false,
           );
           SelectInstanceModal.selectMultiSelectFilterOption(formatAccordionName, formats[1].name);
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+            formatAccordionName,
+            formats[1].name,
+            true,
+          );
           SelectInstanceModal.verifyMultiSelectFilterOptionCount(
             formatAccordionName,
             formats[1].name,

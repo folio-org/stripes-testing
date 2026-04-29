@@ -127,9 +127,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.verifyInstanceSubject(
-              0,
-              0,
+            InventoryInstance.verifyInstanceSubjectShown(
               `${testData.authorityIconText}${testData.subjectValue}`,
             );
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);

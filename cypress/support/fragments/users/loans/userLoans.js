@@ -3,6 +3,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import {
   Button,
+  ButtonGroup,
   HTML,
   KeyValue,
   MultiColumnListCell,
@@ -438,5 +439,23 @@ export default {
       updateTimer(scheduledAgeToLostModuleId, scheduledAgeToLostRoutingEntry);
       updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
     });
+  },
+
+  waitLoading() {
+    cy.expect(loansHistoryPane.exists());
+  },
+
+  verifyClosedLoansTabSelected() {
+    cy.expect(ButtonGroup().has({ selectedTab: 'Closed loans' }));
+  },
+
+  verifyPrintDueDateReceiptButtonAbsent() {
+    cy.expect(Button('Print due date receipt').absent());
+  },
+
+  verifyPrintDueDateReceiptOptionAbsent(barcode) {
+    openActionsMenuOfLoanByBarcode(barcode);
+    cy.expect(Button('Print due date receipt').absent());
+    openActionsMenuOfLoanByBarcode(barcode);
   },
 };

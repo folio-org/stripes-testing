@@ -105,7 +105,7 @@ describe('Data Import', () => {
 
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: ['smoke', 'folijet', 'C358136', 'nonParallel'] },
+      { tags: ['smokeFlaky', 'folijet', 'nonParallel'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

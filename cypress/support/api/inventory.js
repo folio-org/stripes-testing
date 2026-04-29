@@ -18,6 +18,17 @@ const defaultDisplaySettings = {
   },
 };
 
+const defaultNumberGeneratorSettings = {
+  scope: 'ui-inventory.number-generator-settings.manage',
+  key: 'number-generator-settings',
+  value: {
+    barcode: 'off',
+    callNumber: 'off',
+    accessionNumber: 'off',
+    callNumberHoldings: 'off',
+  },
+};
+
 Cypress.Commands.add('getInstanceById', (instanceId, additionalHeaders = {}) => {
   return cy
     .okapiRequest({
@@ -319,14 +330,14 @@ Cypress.Commands.add('getHoldings', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
+Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId, { skipWait = false } = {}) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   }).then(({ response }) => {
-    cy.wait(1000);
+    if (!skipWait) cy.wait(1000);
     return response;
   });
 });
@@ -389,6 +400,15 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
   }).then(({ response }) => {
     cy.wait(1000);
     return response;
+  });
+});
+
+Cypress.Commands.add('bulkDeleteItemsViaApi', (searchParams) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: 'inventory/items',
+    searchParams,
+    failOnStatusCode: false,
   });
 });
 
@@ -869,7 +889,7 @@ Cypress.Commands.add('resetInventoryDisplaySettingsViaAPI', () => {
       const entryId = entries[0].id;
       cy.updateInventoryDisplaySettingsViaAPI(entryId, { ...defaultDisplaySettings, id: entryId });
     } else {
-      cy.setInventoryDisplaySettingsViaAPI(defaultDisplaySettings);
+      cy.setInventoryDisplaySettingsViaAPI({ ...defaultDisplaySettings, id: uuid() });
     }
   });
 });
@@ -880,4 +900,64 @@ Cypress.Commands.add('getInventoryInstanceById', (instanceId) => {
     path: `inventory/instances/${instanceId}`,
     isDefaultSearchParamsRequired: false,
   });
+});
+
+Cypress.Commands.add('getInventoryNumberGeneratorOptions', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries?query=(scope==ui-inventory.number-generator-settings.manage and key==number-generator-settings)',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('updateInventoryNumberGeneratorOptions', (config) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `settings/entries/${config.id}`,
+    body: {
+      id: config.id,
+      scope: config.scope,
+      key: config.key,
+      value: config.value,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('createInventoryNumberGeneratorOptions', (config) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'settings/entries',
+    body: config,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setInventoryNumberGeneratorOptions', (config) => {
+  cy.getInventoryNumberGeneratorOptions().then(({ body }) => {
+    const list = body.items.filter((item) => item.key === 'number-generator-settings');
+    if (list.length) {
+      const configToUpdate = {
+        id: list[0].id,
+        scope: list[0].scope,
+        key: list[0].key,
+        value: config.value ? { ...list[0].value, ...config.value } : list[0].value,
+      };
+      return cy.updateInventoryNumberGeneratorOptions(configToUpdate);
+    } else {
+      const configToCreate = {
+        id: config.id || uuid(),
+        scope: defaultNumberGeneratorSettings.scope,
+        key: defaultNumberGeneratorSettings.key,
+        value: config.value
+          ? { ...defaultNumberGeneratorSettings.value, ...config.value }
+          : defaultNumberGeneratorSettings.value,
+      };
+      return cy.createInventoryNumberGeneratorOptions(configToCreate);
+    }
+  });
+});
+
+Cypress.Commands.add('setDefaultInventoryNumberGeneratorOptions', () => {
+  cy.setInventoryNumberGeneratorOptions(defaultNumberGeneratorSettings);
 });

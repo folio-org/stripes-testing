@@ -49,7 +49,9 @@ let matchedRecordsQueryFileInstanceUUID;
 let errorsFileHoldingsUUID;
 
 // Error message templates
-const errorNoPermissionTemplate = (holdingId) => `User ${user.username} does not have required permission to view the holdings record - id=${holdingId} on the tenant ${Affiliations.University.toLowerCase()}`;
+const errorNoPermissionTemplate = (holdingId) => {
+  return `User ${user.username} does not have required permission to view the holdings record - id=${holdingId} on the tenant ${Affiliations.University.toLowerCase()}`;
+};
 
 const createHoldingsForTenant = ({ holdingIdsArray, holdingHridsArray, numberOfHoldings = 2 }) => {
   const createHoldingRecord = () => {
@@ -97,9 +99,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -122,6 +121,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // Create holdings in College tenant
               cy.setTenant(Affiliations.College);
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+              });
             })
             .then(() => createHoldingsForTenant({
               holdingIdsArray: folioInstance.holdingIdsCollege,
@@ -131,6 +133,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // Create holdings in University tenant (more than 10 holdings for Instance UUID test)
               cy.setTenant(Affiliations.University);
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+              });
             })
             .then(() => createHoldingsForTenant({
               holdingIdsArray: folioInstance.holdingIdsUniversity,

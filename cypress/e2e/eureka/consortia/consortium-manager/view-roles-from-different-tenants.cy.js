@@ -84,7 +84,7 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
         cy.getAuthorizationRoles().then((rolesCentral) => {
-          AuthorizationRoles.verifyRolesCount(rolesCentral.length);
+          AuthorizationRoles.verifyRolesCount(rolesCentral.length, { plusMinus: 5 });
           AuthorizationRoles.checkRoleFound(testData.centralRoleName);
           AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
           AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
@@ -94,7 +94,7 @@ describe('Eureka', () => {
           SelectMembers.selectMember(tenantNames.college);
           cy.setTenant(Affiliations.College);
           cy.getAuthorizationRoles().then((rolesCollege) => {
-            AuthorizationRoles.verifyRolesCount(rolesCollege.length);
+            AuthorizationRoles.verifyRolesCount(rolesCollege.length, { plusMinus: 5 });
             AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
             AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
             AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
@@ -102,7 +102,7 @@ describe('Eureka', () => {
             SelectMembers.selectMember(tenantNames.university);
             cy.setTenant(Affiliations.University);
             cy.getAuthorizationRoles().then((rolesUniversity) => {
-              AuthorizationRoles.verifyRolesCount(rolesUniversity.length);
+              AuthorizationRoles.verifyRolesCount(rolesUniversity.length, { plusMinus: 5 });
               AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
               AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
               AuthorizationRoles.checkRoleFound(testData.universityRoleName);

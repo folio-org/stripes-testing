@@ -98,12 +98,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {boolean} shouldBeDeleted - Whether the instance should have deleted status (default: false).
    * @param {boolean} verifyIdentifier - Whether to verify the identifier format (default: true).
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyOaiPmhRecordHeader(
     xmlString,
     instanceUuid,
     shouldBeDeleted = false,
     verifyIdentifier = true,
+    tenantId = null,
   ) {
     const expectedStatus = shouldBeDeleted ? 'deleted' : null;
 
@@ -130,7 +132,8 @@ export default {
       const identifier = identifierElement.textContent;
 
       this.getBaseUrl().then((baseUrl) => {
-        const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+        const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+        const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
         expect(
           identifier,
           `Identifier should match expected OAI format for record with UUID ${instanceUuid}`,
@@ -388,6 +391,24 @@ export default {
         `MARC field ${tag}${indicatorsDesc} should NOT exist in record with UUID ${instanceUuid}`,
       ).to.equal(0);
     });
+  },
+
+  /**
+   * Extract resumptionToken from OAI-PMH ListRecords or ListIdentifiers response
+   * In consortia environments, OAI-PMH returns records from different tenants in separate pages.
+   * Each response includes a resumptionToken that must be used to fetch the next page.
+   * @param {string} xmlString - The XML response as a string
+   * @returns {string|null} Resumption token if present, null if no more pages
+   */
+  extractResumptionToken(xmlString) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const resumptionTokenElement = xmlDoc.getElementsByTagName('resumptionToken')[0];
+
+    if (resumptionTokenElement && resumptionTokenElement.textContent.trim()) {
+      return resumptionTokenElement.textContent.trim();
+    }
+
+    return null;
   },
 
   /**
@@ -729,12 +750,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
    * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyIdentifierInListResponse(
     xmlString,
     instanceUuid,
     shouldExist = true,
     shouldBeDeleted = false,
+    tenantId = null,
   ) {
     const xmlDoc = this._parseXmlString(xmlString);
     const headers = xmlDoc.getElementsByTagName('header');
@@ -780,7 +803,8 @@ export default {
 
     // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {
-      const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+      const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+      const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
       expect(
         foundIdentifier,
         `Identifier should match expected OAI format for UUID ${instanceUuid}`,

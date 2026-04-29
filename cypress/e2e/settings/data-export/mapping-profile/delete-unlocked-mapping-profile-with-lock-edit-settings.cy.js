@@ -71,6 +71,7 @@ describe('Data Export', () => {
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C1046010'] },
       () => {
         // Step 1: Select existing unlocked mapping profile from Preconditions: mapping profile not referenced in job profile
+        ExportFieldMappingProfiles.searchFieldMappingProfile(notReferencedMappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(notReferencedMappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(notReferencedMappingProfileName);
         SingleFieldMappingProfilePane.verifyElements();
@@ -97,10 +98,12 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(
           `Mapping profile ${notReferencedMappingProfileName} has been successfully deleted`,
         );
+        ExportFieldMappingProfiles.clearSearchField();
         ExportFieldMappingProfiles.verifyProfileNotInList(notReferencedMappingProfileName);
         notReferencedMappingProfileId = null;
 
         // Step 5: Select existing unlocked mapping profile from Preconditions: mapping profile referenced in job profile(s)
+        ExportFieldMappingProfiles.searchFieldMappingProfile(referencedMappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(referencedMappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(referencedMappingProfileName);
         SingleFieldMappingProfilePane.verifyElements();
@@ -121,6 +124,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.clickXButton();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.openActions();
@@ -129,10 +133,12 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(
           `Job profile ${jobProfileName} has been successfully deleted`,
         );
+        ExportJobProfiles.clearSearchField();
         jobProfileId = null;
 
         // Step 9: Go to "Field mapping profiles" => Select mapping profile for which all referenced job profiles were deleted => Click "Delete" button => Click "Delete" button in appeared modal
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(referencedMappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(referencedMappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(referencedMappingProfileName);
         SingleFieldMappingProfilePane.openActions();

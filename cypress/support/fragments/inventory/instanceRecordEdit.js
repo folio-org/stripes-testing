@@ -268,7 +268,8 @@ export default {
     InventoryInstanceModal.selectInstance();
   },
   selectNatureOfContent(value) {
-    cy.do(Select('Nature of content term').choose(value));
+    cy.do(Select('Nature of content term').choose(including(value)));
+    cy.wait(1500);
   },
   choosePermanentLocation(locationName) {
     // wait fixes selection behavior
