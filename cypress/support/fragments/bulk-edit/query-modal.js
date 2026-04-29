@@ -708,7 +708,11 @@ export default {
           const [totalRecordsStr, previewRecordsStr] = numberMatches;
           const previewRecords = Number(previewRecordsStr.replace(/,/g, ''));
           const previewLabel = `Previewing the first ${Math.min(previewRecords, 100)} ${pluralize(previewRecords, 'record')}.`;
-          expect(text.startsWith(`Query returns ${totalRecordsStr} records.`)).to.equal(true);
+          expect(
+            text.startsWith(
+              `Query returns ${totalRecordsStr} ${pluralize(previewRecords, 'record')}.`,
+            ),
+          ).to.equal(true);
           expect(previewLabel).to.equal(
             `Previewing the first ${Math.min(previewRecords, 100)} ${pluralize(previewRecords, 'record')}.`,
           );
