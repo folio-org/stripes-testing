@@ -11,9 +11,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Item', () => {
     const testData = {
-      instanceTitle: `AT_C400644_Instance_${getRandomPostfix()}`,
-      materialType: MATERIAL_TYPE_NAMES.BOOK,
+      instanceTitle: `AT_C400645_Instance_${getRandomPostfix()}`,
+      originalMaterialType: MATERIAL_TYPE_NAMES.BOOK,
+      updatedMaterialType: MATERIAL_TYPE_NAMES.DVD,
       permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+      itemBarcode: `AT_C400645_Item_${getRandomPostfix()}`,
     };
 
     before('Create test data and login', () => {
@@ -30,6 +32,14 @@ describe('Inventory', () => {
               testData.locationId = res.id;
             },
           );
+          cy.getLoanTypes({ limit: 1, query: `name="${testData.permanentLoanType}"` }).then(
+            (res) => {
+              testData.loanTypeId = res[0].id;
+            },
+          );
+          cy.getDefaultMaterialType().then((materialType) => {
+            testData.materialTypeId = materialType.id;
+          });
         })
         .then(() => {
           InventoryInstances.createFolioInstanceViaApi({
@@ -43,7 +53,14 @@ describe('Inventory', () => {
                 permanentLocationId: testData.locationId,
               },
             ],
-            items: [],
+            items: [
+              {
+                barcode: testData.itemBarcode,
+                status: { name: 'Available' },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
           }).then((instanceIds) => {
             testData.instanceId = instanceIds.instanceId;
           });
@@ -67,8 +84,8 @@ describe('Inventory', () => {
 
     // functionality is not implemented yet, so test is skipped for now
     it.skip(
-      'C400644 Saving record using "Save & keep editing" button when adding a new "Item" record (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C400644'] },
+      'C400645 Saving record using "Save & keep editing" button when duplicating an "Item" record (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C400645'] },
       () => {
         // Step 1: Find Instance record and click Search
         InventoryInstances.searchByTitle(testData.instanceId);
@@ -77,42 +94,43 @@ describe('Inventory', () => {
         InventoryInstances.selectInstanceById(testData.instanceId);
         InventoryInstance.waitLoading();
 
-        // Step 3: Click on "Add item" button
-        InventoryInstance.addItem();
-        ItemRecordNew.waitLoading(testData.instanceTitle);
-        ItemRecordNew.checkButtonsEnabled({
-          saveAndClose: false,
-          saveAndKeep: false,
-          cancel: true,
-        });
+        // Step 3: Open the item record
+        InventoryInstance.openHoldings([LOCATION_NAMES.MAIN_LIBRARY_UI]);
+        InventoryInstance.openItemByBarcode(testData.itemBarcode);
+        ItemRecordView.waitLoading();
 
-        // Step 4: Fill in required fields
-        ItemRecordNew.addMaterialType(testData.materialType);
-        ItemRecordNew.addPermanentLoanType(testData.permanentLoanType);
+        // Step 4: Click on "Actions" → Select "Duplicate"
+        ItemRecordView.duplicateItem();
+        ItemRecordNew.waitLoading(testData.instanceTitle);
+        ItemRecordNew.verifyMaterialTypeSelected(testData.originalMaterialType);
         ItemRecordNew.checkButtonsEnabled({
           saveAndClose: true,
           saveAndKeep: true,
           cancel: true,
         });
 
-        // Step 5: Click on the "Save & keep editing" button
+        // Step 5: Update value in any field (change "Material type" value)
+        ItemRecordNew.addMaterialType(testData.updatedMaterialType);
+        ItemRecordNew.verifyMaterialTypeSelected(testData.updatedMaterialType);
+
+        // Step 6: Click on the "Save & keep editing" button
         ItemRecordNew.saveAndKeepEditing({ itemSaved: true });
         ItemRecordNew.waitLoading(testData.instanceTitle);
-        ItemRecordNew.verifyMaterialTypeSelected(testData.materialType);
+        ItemRecordNew.verifyMaterialTypeSelected(testData.updatedMaterialType);
         InventoryInstance.verifyLastUpdatedDate();
 
-        // Step 6: Click on "Record last updated" to verify user info
+        // Step 7: Click on "Record last updated" accordion to verify user info
         InventoryInstance.verifyLastUpdatedUser(
           `${testData.user.lastName}, ${testData.user.firstName}`,
         );
 
-        // Step 7: Close the "Add item" form
+        // Step 8: Close the "Add item" form
         ItemRecordNew.cancel();
         InventoryInstance.waitLoading();
         InventoryInstance.openHoldings([LOCATION_NAMES.MAIN_LIBRARY_UI]);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyMaterialType(testData.materialType);
+        ItemRecordView.verifyMaterialType(testData.updatedMaterialType);
       },
     );
   });

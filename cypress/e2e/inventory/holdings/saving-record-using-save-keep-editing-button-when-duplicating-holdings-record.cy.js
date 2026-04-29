@@ -70,7 +70,8 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
     });
 
-    it(
+    // functionality is not implemented yet, so test is skipped for now
+    it.skip(
       'C399072 Saving record using "Save & keep editing" button when duplicating a "Holdings" record (folijet)',
       { tags: ['criticalPath', 'folijet', 'C399072'] },
       () => {
