@@ -3134,6 +3134,7 @@ export default {
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C:
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D:
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.I:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.J:
         this.selectFieldsDropdownOption('008', 'Comp', 'an - Anthems');
         cy.wait(1000);
         this.selectFieldsDropdownOption('008', 'FMus', 'a - Full score');
