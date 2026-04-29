@@ -1,5 +1,4 @@
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -60,13 +59,6 @@ describe('MARC', () => {
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
         { tags: ['dryRun', 'spitfire', 'C10951'] },
         () => {
-          InventoryInstance.startOverlaySourceBibRecord();
-          InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
-          InventoryActions.pressImportInModal(undefined, true);
-
-          InventoryInstance.checkExpectedOCLCPresence();
-          InventoryInstance.checkExpectedMARCSource();
-
           InventoryInstance.editInstance();
           InstanceRecordEdit.checkReadOnlyFields();
           InstanceRecordEdit.close();

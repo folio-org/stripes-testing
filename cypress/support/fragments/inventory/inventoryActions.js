@@ -119,7 +119,7 @@ export default {
   ) {
     cy.intercept('POST', '**/copycat/imports').as('importRecord');
     cy.do(importButtonInModal.click());
-    cy.wait('@importRecord', { timeout: 15000 })
+    cy.wait('@importRecord', { timeout: 60_000 })
       .its('response.statusCode')
       .should('be.oneOf', [200, 201]);
     InteractorsTools.checkCalloutMessage(

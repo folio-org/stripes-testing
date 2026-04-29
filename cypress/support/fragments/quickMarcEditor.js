@@ -621,7 +621,11 @@ export default {
   },
 
   pressSaveAndCloseButton() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequestOnSaveAndClose');
     cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequestOnSaveAndClose', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('eq', 200);
   },
 
   pressSaveAndClose({ acceptLinkedBibModal = false, acceptDeleteModal = false } = {}) {
@@ -630,14 +634,18 @@ export default {
       'saveRecordRequest',
     );
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest', { timeout: 10_000 }).then(({ response }) => {
-      if (response.body?.issues && response.body?.issues?.length > 0) {
-        cy.wait(1_000);
-        this.closeAllCallouts();
-        cy.wait(1_000);
-        cy.do(saveAndCloseButton.click());
-      }
-    });
+    cy.wait('@validateRequest', { timeout: 10_000 }).then(
+      ({
+        response: {
+          body: { issues },
+        },
+      }) => {
+        if (issues && issues.filter((issue) => issue.severity === 'warn').length > 0) {
+          cy.wait(1_000);
+          cy.do(saveAndCloseButton.click());
+        }
+      },
+    );
 
     if (acceptLinkedBibModal) {
       cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
@@ -702,8 +710,23 @@ export default {
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequestonSaveAndKeepEditing');
+    cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
+      'saveRecordRequestonSaveAndKeepEditing',
+    );
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(including(calloutMsg)).exists());
+    cy.wait('@validateRequestonSaveAndKeepEditing', { timeout: 10_000 }).then(({ response }) => {
+      if (response.body?.issues && response.body?.issues?.length > 0) {
+        cy.wait(1_000);
+        cy.do(saveAndKeepEditingBtn.click());
+      }
+    });
+    cy.wait('@saveRecordRequestonSaveAndKeepEditing', { timeout: 20_000 })
+      .its('response.statusCode')
+      .should('be.oneOf', [201, 202]);
+    if (calloutMsg) {
+      cy.expect(Callout(including(calloutMsg)).exists());
+    }
   },
 
   verifyAreYouSureModal(content) {
