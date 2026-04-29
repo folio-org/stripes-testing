@@ -620,6 +620,10 @@ export default {
     ]);
   },
 
+  clickSaveAndClose() {
+    cy.do(saveAndCloseButton.click());
+  },
+
   pressSaveAndCloseButton() {
     cy.intercept('POST', '/records-editor/validate').as('validateRequestOnSaveAndClose');
     cy.do(saveAndCloseButton.click());

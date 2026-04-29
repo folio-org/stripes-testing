@@ -74,10 +74,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
           InventorySearchAndFilter.verifyCallNumberBrowsePane();
-          BrowseClassifications.waitForClassificationNumberToAppear(
-            testData.searchQuery,
-            testData.classificationBrowseId,
-          );
         });
     });
 
@@ -92,6 +88,11 @@ describe('Inventory', () => {
       'C794531 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
       { tags: ['dryRun', 'spitfire', 'C794531'] },
       () => {
+        cy.getUserToken(user.username, user.password, { log: false });
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchQuery,
+          testData.classificationBrowseId,
+        );
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
         verifySearchResult();

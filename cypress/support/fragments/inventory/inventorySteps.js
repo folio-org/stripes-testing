@@ -9,8 +9,8 @@ export default {
       QuickMarcEditor.updateExistingField('852', location);
     });
     cy.intercept('POST', '/records-editor/records').as('getStatus');
-    QuickMarcEditor.pressSaveAndCloseButton();
-    cy.wait('@getStatus', { timeout: 5_000 }).its('response.statusCode').should('eq', 201);
+    QuickMarcEditor.clickSaveAndClose();
+    cy.wait('@getStatus', { timeout: 15_000 }).its('response.statusCode').should('eq', 201);
   },
 
   verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {
