@@ -79,8 +79,8 @@ describe('Citation: check category resource MARC codes', () => {
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       EditResource.setValueForTheField(testData.uniqueWorkTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.workId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.workId = resourceId;
       });
       // Create instance with fields
       EditResource.openNewInstanceFormViaNewInstanceButton();
@@ -90,10 +90,8 @@ describe('Citation: check category resource MARC codes', () => {
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       EditResource.setValueForSimpleField(testData.mediaTypeFirst, 'Media type');
       EditResource.setValueForSimpleField(testData.carrierTypeFirst, 'Carrier type');
-      // @@@ this is a bit weird, it should just return resourceId since currently the {workId, instanceId} instanceId is always null
-      //     either that or it needs to figure out which one(s) it's returning
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.instanceId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.instanceId = resourceId;
       });
       // Add work fields
       EditResource.clickEditWork();
