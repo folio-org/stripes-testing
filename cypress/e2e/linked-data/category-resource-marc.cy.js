@@ -69,8 +69,8 @@ describe('Citation: check category resource MARC codes', () => {
   });
 
   it(
-    ' [User journey] Marigold - Check Government Publication, Carrier type, Media type, Intended Audience and Content type on "View MARC" page (citation)',
-    { tags: ['citation', 'C468168', 'marigold'] },
+    'C468168 Marigold - Check Government Publication, Carrier type, Media type, Intended Audience and Content type on "View MARC" page',
+    { tags: ['criticalPath', 'citation', 'C468168', 'marigold'] },
     () => {
       // Create work
       Marigold.openNewResourceForm();
@@ -82,12 +82,14 @@ describe('Citation: check category resource MARC codes', () => {
       EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
         testData.workId = resourceId;
       });
-      // Create instance with fields
+      // Create instance
       EditResource.openNewInstanceFormViaNewInstanceButton();
       InstanceProfileModal.waitLoading();
       InstanceProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
+      EditResource.saveAndKeepEditing();
+      // Add instance fields
       EditResource.setValueForSimpleField(testData.mediaTypeFirst, 'Media type');
       EditResource.setValueForSimpleField(testData.carrierTypeFirst, 'Carrier type');
       EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
