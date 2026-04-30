@@ -53,19 +53,11 @@ describe('MARC', () => {
     };
     const locations = {};
     const recordIDs = [];
-    let initialConfig;
 
     before('Creating user, data', () => {
       cy.getAdminToken();
 
-      cy.getInventoryNumberGeneratorOptions().then((response) => {
-        initialConfig = response.body.items[0];
-        const newConfig = {
-          ...initialConfig,
-          value: { ...initialConfig.value, callNumberHoldings: 'onEditable' },
-        };
-        cy.updateInventoryNumberGeneratorOptions(newConfig);
-      });
+      cy.setInventoryNumberGeneratorOptions({ value: { callNumberHoldings: 'onEditable' } });
 
       const locationQueries = [{ name: LOCATION_NAMES.ANNEX_UI, property: 'holdingsTemporary' }];
       cy.then(() => {
@@ -116,9 +108,7 @@ describe('MARC', () => {
 
     after('Deleting created user, data', () => {
       cy.getAdminToken();
-      if (initialConfig) {
-        cy.updateInventoryNumberGeneratorOptions(initialConfig);
-      }
+      cy.setDefaultInventoryNumberGeneratorOptions();
       Users.deleteViaApi(testData.createdUserProperties.userId);
       inventoryHoldings.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);

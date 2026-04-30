@@ -21,10 +21,13 @@ export default {
     cy.do(closeButton.click());
     cy.expect(openConfirmationModal.absent());
   },
-  confirm() {
+  confirm(message = true) {
     cy.do(submitButton.click());
     cy.expect(openConfirmationModal.absent());
-
-    InteractorsTools.checkCalloutMessage(matching(new RegExp(OrderStates.orderOpenedSuccessfully)));
+    if (message) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderOpenedSuccessfully)),
+      );
+    }
   },
 };

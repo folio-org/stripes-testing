@@ -704,12 +704,18 @@ export default {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
-          const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
+          const numberMatches = text.match(/[\d,]+/g);
+          const [totalRecordsStr, previewRecordsStr] = numberMatches;
+          const previewRecords = Number(previewRecordsStr.replace(/,/g, ''));
+          const previewLabel = `Previewing the first ${Math.min(previewRecords, 100)} ${pluralize(previewRecords, 'record')}.`;
           expect(
             text.startsWith(
-              `Query returns ${totalRecords} ${pluralize(totalRecords, 'record')}. Previewing the first ${previewRecords} ${pluralize(previewRecords, 'record')}`,
+              `Query returns ${totalRecordsStr} ${pluralize(previewRecords, 'record')}.`,
             ),
           ).to.equal(true);
+          expect(previewLabel).to.equal(
+            `Previewing the first ${Math.min(previewRecords, 100)} ${pluralize(previewRecords, 'record')}.`,
+          );
         });
     });
   },

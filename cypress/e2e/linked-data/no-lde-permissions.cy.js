@@ -6,8 +6,8 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
+import CapabilitySets from '../../support/dictionary/capabilitySets';
 
 describe('Citation: No LDE permissions', () => {
   const testData = {
@@ -48,8 +48,14 @@ describe('Citation: No LDE permissions', () => {
 
   beforeEach(() => {
     // create user with inventory permission but without LDE permissions
-    cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+    cy.getAdminToken();
+    cy.createTempUser([]).then((userProperties) => {
       testData.user = userProperties;
+      cy.assignCapabilitiesToExistingUser(
+        testData.user.userId,
+        [],
+        [CapabilitySets.uiInventoryInstanceView],
+      );
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

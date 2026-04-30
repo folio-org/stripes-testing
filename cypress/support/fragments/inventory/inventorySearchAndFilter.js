@@ -688,6 +688,10 @@ export default {
     cy.do(listInventoryNextPagingButton.click());
   },
 
+  checkListInventoryNextPaginationButtonEnabled() {
+    cy.expect(listInventoryNextPagingButton.exists());
+  },
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
