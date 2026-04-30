@@ -233,10 +233,6 @@ const api = {
     });
   },
 
-  // assertResultsTransactionsBySource(expectedSources) {
-
-  // },
-
   assertNoResultsMessage() {
     cy.expect(
       transactionResultsPane.find(HTML(including(RESULTS_PANE_NOT_FOUND_MESSAGE))).exists(),
