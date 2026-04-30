@@ -99,6 +99,7 @@ describe('Data Export', () => {
         // Step 1: Select existing job profile from Preconditions: unlocked job profile not referenced in an existing export job
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(unlockedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(unlockedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(unlockedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -133,6 +134,7 @@ describe('Data Export', () => {
         ExportJobProfiles.verifyProfileInTable(unlockedJobProfile.jobProfileName, user, true);
 
         // Step 6: Click on the row with edited job profile
+        ExportJobProfiles.searchJobProfile(unlockedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(unlockedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(unlockedJobProfile.jobProfileName);
         SingleJobProfile.verifyViewProfileDetails(
@@ -144,6 +146,7 @@ describe('Data Export', () => {
 
         // Step 7: Close Job profile view page, Select existing job profile from Preconditions: locked job profile referenced in an existing export job
         SingleJobProfile.clickXButton();
+        ExportJobProfiles.searchJobProfile(lockedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -179,6 +182,7 @@ describe('Data Export', () => {
         ExportJobProfiles.verifyProfileInTable(lockedJobProfile.jobProfileName, user, false);
 
         // Step 12: Click on the row with edited job profile
+        ExportJobProfiles.searchJobProfile(lockedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedJobProfile.jobProfileName);
         SingleJobProfile.verifyViewProfileDetails(

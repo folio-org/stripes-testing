@@ -91,6 +91,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.verifyCannotDeleteModalClosed();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(firstJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(firstJobProfileName);
         SingleJobProfile.waitLoading(firstJobProfileName);
         SingleJobProfile.openActions();
@@ -103,6 +104,7 @@ describe('Data Export', () => {
 
         // Step 3: Go back to mapping profile and verify modal shows edited job profile name
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(mappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(mappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(mappingProfileName);
         SingleFieldMappingProfilePane.openActions();
@@ -118,6 +120,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.verifyCannotDeleteModalClosed();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(firstJobProfileNameEdited);
         ExportJobProfiles.clickProfileNameFromTheList(firstJobProfileNameEdited);
         SingleJobProfile.waitLoading(firstJobProfileNameEdited);
         SingleJobProfile.openActions();
@@ -130,6 +133,7 @@ describe('Data Export', () => {
 
         // Step 5: Verify modal shows only remaining job profile
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(mappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(mappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(mappingProfileName);
         SingleFieldMappingProfilePane.openActions();
@@ -145,6 +149,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.verifyCannotDeleteModalClosed();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(secondJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(secondJobProfileName);
         SingleJobProfile.waitLoading(secondJobProfileName);
         SingleJobProfile.openActions();
@@ -157,6 +162,7 @@ describe('Data Export', () => {
 
         // Step 7: Delete mapping profile successfully
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(mappingProfileName);
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(mappingProfileName);
         SingleFieldMappingProfilePane.waitLoading(mappingProfileName);
         SingleFieldMappingProfilePane.openActions();

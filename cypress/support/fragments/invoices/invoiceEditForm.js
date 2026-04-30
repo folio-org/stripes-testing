@@ -2,6 +2,7 @@ import { HTML } from '@interactors/html';
 
 import {
   Button,
+  Checkbox,
   SearchField,
   Section,
   Select,
@@ -52,6 +53,7 @@ const vendorFields = {
 const extendedInfoFields = {
   paymentMethod: extendedInformationSection.find(Select({ id: 'invoice-payment-method' })),
   exchangeRate: extendedInformationSection.find(TextField({ id: 'exchange-rate' })),
+  useExchangeRate: extendedInformationSection.find(Checkbox({ id: 'use-set-exchange-rate' })),
 };
 
 const buttons = {
@@ -185,5 +187,21 @@ export default {
     }
     // wait for changes to be applied
     cy.wait(2000);
+  },
+
+  verifyIsExchangeRateChecked(isChecked) {
+    if (isChecked) {
+      cy.expect(extendedInfoFields.useExchangeRate.has({ checked: true }));
+    } else {
+      cy.expect(extendedInfoFields.useExchangeRate.has({ checked: false }));
+    }
+  },
+
+  verifyIsSetExchangeRateRequired(isRequired) {
+    if (isRequired) {
+      cy.expect(extendedInfoFields.exchangeRate.has({ required: isRequired }));
+    } else {
+      cy.expect(extendedInfoFields.exchangeRate.has({ required: false }));
+    }
   },
 };

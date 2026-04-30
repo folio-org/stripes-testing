@@ -1783,11 +1783,32 @@ export default {
     LDR = defaultLDR,
     tag008Values = valid008FieldValues,
   ) {
-    return cy.createMarcAuthorityViaAPI(LDR, [
-      { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: tag008Values },
-      ...fields,
-    ]);
+    return cy
+      .createMarcAuthorityViaAPI(LDR, [
+        { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
+        { tag: '008', content: tag008Values },
+        ...fields,
+      ])
+      .then((authorityId) => {
+        return cy
+          .recurse(
+            () => cy.okapiRequest({
+              path: 'search/authorities',
+              searchParams: { query: `id=="${authorityId}"` },
+              isDefaultSearchParamsRequired: false,
+            }),
+            (response) => {
+              const authorities = response.body?.authorities;
+              return (
+                Array.isArray(authorities) &&
+                authorities.length > 0 &&
+                authorities[0].id === authorityId
+              );
+            },
+            { limit: 20, timeout: 30000, delay: 1000 },
+          )
+          .then(() => authorityId);
+      });
   },
 
   deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {

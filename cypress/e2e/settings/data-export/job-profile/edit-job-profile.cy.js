@@ -92,6 +92,7 @@ describe('Data Export', () => {
         // Step 1: Select existing unlocked job profile from Preconditions: job profile not referenced in an existing export job
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.verifyElements();
@@ -114,9 +115,11 @@ describe('Data Export', () => {
 
         // Step 4: Click "Cancel" button without any changes
         SingleJobProfile.clickCancelButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
 
         // Step 5: Repeat Steps 1, 3, make changes on the job profile, click "Cancel" button
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
         SingleJobProfile.waitLoading(jobProfileName);
         SingleJobProfile.openActions();
@@ -124,7 +127,9 @@ describe('Data Export', () => {
         SingleJobProfile.editJobProfile(jobProfileNewName);
         ExportNewJobProfile.fillinDescription(jobProfileDescription);
         SingleJobProfile.clickCancelButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(jobProfileName);
         ExportJobProfiles.verifyJobProfileInTheTable(jobProfileName);
 
         // Step 6: Repeat Steps 1, 3, make changes on the job profile, click "Save & close" button
@@ -138,6 +143,7 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(editedJobProfileCalloutMessage);
 
         // Step 7: Verify row with edited job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(jobProfileNewName);
         ExportJobProfiles.verifyProfileInTable(jobProfileNewName, user);
 
         // Step 8: Click on the row with edited job profile
@@ -150,6 +156,7 @@ describe('Data Export', () => {
         );
 
         // Step 9: Select existing unlocked job profile from Preconditions: job profile referenced in an existing export job
+        ExportJobProfiles.searchJobProfile(referencedJobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(referencedJobProfileName);
         SingleJobProfile.waitLoading(referencedJobProfileName);
         SingleJobProfile.verifyElements();
@@ -167,6 +174,7 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(editedReferencedJobProfileCalloutMessage);
 
         // Step 12: Verify row with edited job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(referencedJobProfileNewName);
         ExportJobProfiles.verifyProfileInTable(referencedJobProfileNewName, user);
 
         // Step 13: Click on the row with edited job profile

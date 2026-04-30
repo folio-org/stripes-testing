@@ -104,7 +104,7 @@ export default {
             cy.do(proxySelect.choose(newProxyValue));
             return cy.wrap(newProxyValue);
           } else {
-            cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
+            cy.getEholdingsProxyNamesViaAPI().then((existingProxies) => {
               const notSelectedProxy = existingProxies.filter(
                 (existingProxy) => existingProxy !== selectedProxy && existingProxy !== 'None',
               )[0];

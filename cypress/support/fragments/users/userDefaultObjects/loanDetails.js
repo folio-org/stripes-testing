@@ -281,4 +281,8 @@ export default {
     // PayFeeFine.checkRestOfPay(amount);
     PayFeeFine.submitAndConfirm();
   },
+
+  verifyPrintDueDateReceiptButtonDisabled() {
+    cy.expect(Button('Print due date receipt').has({ disabled: true }));
+  },
 };

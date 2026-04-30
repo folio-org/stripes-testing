@@ -20,6 +20,7 @@ import {
   TextArea,
   TextField,
   TextInput,
+  ValueChipRoot,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceStates from './instanceStates';
@@ -51,9 +52,13 @@ const holdingsTypeSelect = Select({ id: 'additem_holdingstype' });
 const numberOfItemsField = TextField('Number of items');
 const addAdditionalCallNumberButton = Button('Add additional call number');
 const additionalCallNumberTypeSelect = Select({ name: 'additionalCallNumbers[0].typeId' });
-const additionalCallNumberPrefixField = TextArea({ id: 'additem_prefix_0' });
-const additionalCallNumberField = TextArea({ id: 'additem_callnumber_0' });
-const additionalCallNumberSuffixField = TextArea({ id: 'additem_suffix_0' });
+const additionalCallNumberPrefixField = TextArea({ id: 'prefix_0' });
+const additionalCallNumberField = TextArea({ id: 'callnumber_0' });
+const additionalCallNumberSuffixField = TextArea({ id: 'suffix_0' });
+const generateAdditionalCallNumberButton = Button({
+  id: 'clickable-trigger-modal-number-generator-number_generator_callnumber_0',
+});
+const generatorModal = Modal('Generate call number');
 const illPolicySelect = Select({ name: 'illPolicyId' });
 const digitizationPolicyField = TextArea({ id: 'edit_digitizationpolicy' });
 const retentionPolicyField = TextArea({ id: 'edit_retentionpolicy' });
@@ -169,6 +174,9 @@ export default {
       SelectionList().select('Select location'),
     ]);
   },
+  clearHoldingsType: () => {
+    cy.do(holdingsTypeSelect.choose('Select holdings type'));
+  },
   openTags() {
     cy.wait(500);
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
@@ -185,6 +193,14 @@ export default {
     cy.wait(500);
     InteractorsTools.checkCalloutMessage('New tag created');
     cy.wait(1000);
+  },
+  checkTagSelectedInDropdown(tag, isShown = true) {
+    if (isShown) cy.expect(ValueChipRoot(tag).exists());
+    else cy.expect(ValueChipRoot(tag).absent());
+  },
+  checkAddedTag(tag) {
+    this.openTags();
+    this.checkTagSelectedInDropdown(tag);
   },
   addHoldingsNotes: (text, type = 'Action note') => {
     cy.do([
@@ -220,17 +236,8 @@ export default {
   chooseAdditionalCallNumberType(type) {
     cy.do(additionalCallNumberTypeSelect.choose(type));
   },
-  addAdditionalCallNumberValues({
-    callNumber,
-    callNumberType,
-    callNumberPrefix,
-    callNumberSuffix,
-  }) {
+  addAdditionalCallNumberValues({ callNumberType, callNumberPrefix, callNumberSuffix }) {
     cy.do(addAdditionalCallNumberButton.click());
-    cy.expect(additionalCallNumberField.exists());
-    if (callNumber !== undefined) {
-      this.fillAdditionalCallNumber(callNumber);
-    }
     if (callNumberType !== undefined) {
       this.chooseAdditionalCallNumberType(callNumberType);
     }
@@ -240,6 +247,11 @@ export default {
     if (callNumberSuffix !== undefined) {
       this.fillAdditionalCallNumberSuffix(callNumberSuffix);
     }
+    cy.do(generateAdditionalCallNumberButton.click());
+    cy.expect(generatorModal.exists());
+    cy.do(Modal('Generate call number').find(Button('Generate call number')).click());
+    cy.expect(generatorModal.absent());
+    return cy.get('#callnumber_0').invoke('val');
   },
   fillInNumberOfItems(numberOfItems) {
     cy.do(numberOfItemsField.fillIn(numberOfItems));

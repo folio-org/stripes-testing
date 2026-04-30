@@ -15,4 +15,43 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `TC196411 - Verify agreement file docs are accessible for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['fse', 'api', 'agreements', 'sanity', 'TC196411'] },
+    () => {
+      cy.getAgreements().then((response) => {
+        cy.expect(response.status).to.eq(200);
+
+        const agreements = response.body.results ?? response.body;
+        const fileIds = [];
+
+        agreements.forEach((agreement) => {
+          const docs = agreement.docs ?? [];
+          const supplementaryDocs = agreement.supplementaryDocs ?? [];
+
+          docs.forEach((doc) => {
+            if (doc.id) fileIds.push(doc.id);
+          });
+          supplementaryDocs.forEach((doc) => {
+            if (doc.id) fileIds.push(doc.id);
+          });
+        });
+
+        if (fileIds.length === 0) {
+          cy.log('No docs or supplementaryDocs found — skipping file access checks');
+          return;
+        }
+
+        fileIds.forEach((id) => {
+          cy.getAgreementFileRaw(id).then((fileResponse) => {
+            cy.expect(
+              fileResponse.status,
+              `erm/files/${id}/raw returned ${fileResponse.status}`,
+            ).to.eq(200);
+          });
+        });
+      });
+    },
+  );
 });

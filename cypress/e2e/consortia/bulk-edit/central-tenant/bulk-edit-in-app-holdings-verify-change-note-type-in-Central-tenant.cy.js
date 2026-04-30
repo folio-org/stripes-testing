@@ -91,9 +91,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -126,6 +123,10 @@ describe('Bulk-edit', () => {
               InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
                 .then((noteId) => {
                   collegeHoldingNoteType.id = noteId;
+
+                  cy.getLocations({ limit: 1 }).then((res) => {
+                    locationId = res.id;
+                  });
                 })
                 .then(() => {
                   // create holdings in College tenant
@@ -161,6 +162,10 @@ describe('Bulk-edit', () => {
               InventoryInstances.createHoldingsNoteTypeViaApi(universityHoldingNoteType.name)
                 .then((noteId) => {
                   universityHoldingNoteType.id = noteId;
+
+                  cy.getLocations({ limit: 1 }).then((res) => {
+                    locationId = res.id;
+                  });
                 })
                 .then(() => {
                   // create holdings in University tenant
