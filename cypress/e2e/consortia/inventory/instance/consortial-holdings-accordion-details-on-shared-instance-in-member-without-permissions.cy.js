@@ -90,16 +90,16 @@ describe('Inventory', () => {
         'C411619 (CONSORTIA) Verify the Consortial holdings accordion details on shared Instance in Member Tenant without permissions (consortia) (folijet)',
         { tags: ['extendedPathECS', 'folijet', 'C411619'] },
         () => {
-          InventorySearchAndFilter.clearDefaultFilter('Held by');
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instance.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
-          InstanceRecordView.expandMemberSubHoldings('College');
+          InstanceRecordView.expandMemberSubHoldings(tenantNames.college);
           InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
-            'College',
+            tenantNames.college,
             Affiliations.College,
             testData.collegeHolding.id,
           );

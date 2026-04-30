@@ -339,6 +339,15 @@ const verifyInstanceSubject = (indexRow, indexColumn, value) => {
   );
 };
 
+const verifyInstanceSubjectShown = (subjectValue) => {
+  cy.expect(
+    subjectAccordion
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: subjectValue }))
+      .exists(),
+  );
+};
+
 const verifyResourceIdentifier = (type, value, rowIndex) => {
   const identifierRow = identifiersAccordion.find(
     identifiers.find(MultiColumnListRow({ index: rowIndex })),
@@ -391,6 +400,7 @@ export default {
   verifyLastUpdatedUser,
   verifyInstancePublisher,
   verifyInstanceSubject,
+  verifyInstanceSubjectShown,
   verifyResourceIdentifier,
   checkInstanceNotes,
   waitInstanceRecordViewOpened,

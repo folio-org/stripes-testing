@@ -108,6 +108,7 @@ describe('MARC', () => {
             .then(() => {
               cy.assignAffiliationToUser(Affiliations.College, user.userId);
 
+              cy.setTenant(Affiliations.College);
               MarcAuthorities.createMarcAuthorityViaAPI(
                 authData.prefix,
                 `${+authData.startWithNumber + 1}`,
@@ -115,6 +116,7 @@ describe('MARC', () => {
               ).then((createdRecordId) => {
                 createdAuthorityIdLocal = createdRecordId;
               });
+
               cy.assignPermissionsToExistingUser(user.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,

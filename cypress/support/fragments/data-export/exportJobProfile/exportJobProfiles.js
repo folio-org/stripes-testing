@@ -34,6 +34,7 @@ export default {
     SettingsDataExport.goToSettingsDataExport();
     cy.do(NavListItem('Job profiles').click());
     cy.expect(jobProfilesPane.exists());
+    cy.wait(2000);
   },
 
   verifyJobProfilesElements() {
@@ -149,6 +150,37 @@ export default {
     failOnStatusCode: false,
   }),
 
+  deleteJobProfilesByNameStartingWith(namePrefix = 'AT_') {
+    cy.getAdminToken();
+    return cy
+      .okapiRequest({
+        path: 'data-export/job-profiles',
+        searchParams: {
+          query: `name="${namePrefix}*"`,
+          limit: 1000,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const jobProfiles = response.body.jobProfiles || [];
+
+        jobProfiles.forEach((profile) => {
+          if (profile.name.startsWith(namePrefix)) {
+            if (profile.locked) {
+              cy.getDataExportJobProfile({ query: `"id"=="${profile.id}"` }).then((fullProfile) => {
+                fullProfile.locked = false;
+                cy.updateDataExportJobProfile(profile.id, fullProfile).then(() => {
+                  this.deleteJobProfileViaApi(profile.id);
+                });
+              });
+            } else {
+              this.deleteJobProfileViaApi(profile.id);
+            }
+          }
+        });
+      });
+  },
+
   verifyDefaultProfiles() {
     this.scrollDownIfListOfResultsIsLong();
 
@@ -179,6 +211,10 @@ export default {
 
   searchJobProfile(text) {
     cy.do(searchField.fillIn(text));
+  },
+
+  clearSearchField() {
+    cy.do(searchField.clear());
   },
 
   verifyNewButtonAbsent() {

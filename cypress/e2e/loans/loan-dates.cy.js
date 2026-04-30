@@ -93,6 +93,10 @@ describe('Loans', () => {
               cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties1) => {
                 checkInUser = userProperties1;
               });
+              cy.login(checkOutUser.username, checkOutUser.password, {
+                path: TopMenu.usersPath,
+                waiter: UsersSearchPane.waitLoading,
+              });
             });
         });
       });
@@ -120,7 +124,6 @@ describe('Loans', () => {
         'C566 Loan: Change due date warnings and alerts (volaris)',
         { tags: ['smokeFlaky', 'volaris', 'shiftLeft', 'C566'] },
         () => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           // show open loans
           UsersSearchPane.searchByKeywords(checkOutUser.username);
           UsersSearchPane.openUser(checkOutUser.userId);

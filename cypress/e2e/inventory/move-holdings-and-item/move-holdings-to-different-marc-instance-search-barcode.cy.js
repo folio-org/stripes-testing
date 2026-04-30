@@ -104,7 +104,9 @@ describe('Inventory', () => {
           `${instanceTitlePrefix} B`,
         );
         InventoryInstancesMovement.checkHoldingsMoveSuccessCallout(1);
-        InventoryInstancesMovement.verifyHoldingsMoved(location.name, '1');
+        InventoryInstancesMovement.verifyHoldingsMoved(location.name, '1', {
+          instancePaneIndex: 1,
+        });
 
         InventoryInstance.openHoldings(location.name);
         cy.stubBrowserPrompt();
