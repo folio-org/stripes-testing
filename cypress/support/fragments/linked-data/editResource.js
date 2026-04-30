@@ -221,6 +221,29 @@ export default {
     ).should('be.visible');
   },
 
+  checkPreviewOpen() {
+    cy.xpath('//div[@class="titled-preview"]').should('be.visible');
+    cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
+  },
+
+  checkPreviewContains(section, field, value) {
+    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+      .should('be.visible')
+      .filter((_, sectionBlock) => {
+        const $sectionBlock = Cypress.$(sectionBlock);
+        const $fieldBlock = $sectionBlock
+          .find('.value-heading')
+          .filter((_, el) => Cypress.$(el).text() === field);
+
+          if (!$fieldBlock.length) {
+            return false;
+          }
+
+          return $fieldBlock.next().text() === value;
+      })
+      .should('have.length.at.least', 1);
+  },
+
   clickCancel() {
     cy.do(Button('Cancel').click());
     cy.wait(500);

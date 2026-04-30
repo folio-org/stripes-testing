@@ -35,6 +35,34 @@ describe('Citation: check title parts MARC codes', () => {
     resourceTitle: testData.uniqueMainTitle,
     marc245: `$a ${testData.uniqueMainTitle} $b Principles, Technologies, and Applications $n Vol. 1 $p Foundations and Architecture`,
     marc246: `$a ${testData.uniqueVariantTitle} $b DLKS $f 2024 $i Alternative title used in conference citations $n Volume 1 $p Architecture of Modern Digital Libraries`,
+    mainTitlePreferred: testData.uniqueMainTitle,
+    mainTitleNonSortNum: '2',
+    mainTitlePartNumber: 'Vol. 1',
+    mainTitlePartName: 'Foundations and Architecture',
+    mainTitleOther: 'Principles, Technologies, and Applications',
+    variantTitle: testData.uniqueVariantTitle,
+    variantTitlePartNumber: 'Volume 1',
+    variantTitlePartName: 'Architecture of Modern Digital Libraries',
+    variantTitleOther: 'DLKS',
+    variantTitleDate: '2024',
+    variantTitleType: '-',
+    variantTitleNote: 'Alternative title used in conference citations',
+  };
+
+  const previewFields = {
+    sectionTitle: 'Title Information',
+    mainTitlePreferred: 'Preferred Title for Work',
+    mainTitleNonSortNum: 'Non-sort character count',
+    mainTitlePartNumber: 'Part number',
+    mainTitlePartName: 'Part name',
+    mainTitleOther: 'Other title information',
+    variantTitle: 'Variant Title',
+    variantTitlePartNumber: 'Part number',
+    variantTitlePartName: 'Part name',
+    variantTitleOther: 'Other title information',
+    variantTitleDate: 'Date',
+    variantTitleType: 'Variant title type',
+    variantTitleNote: 'Note',
   };
 
   before('Create test data', () => {
@@ -108,8 +136,21 @@ describe('Citation: check title parts MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
 
       // Review work preview
-      // @@@ write up methods to check contents of work preview page while editing instance
-
+      EditResource.checkPreviewOpen();
+      // Main title
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.mainTitlePreferred, resourceData.mainTitlePreferred);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.mainTitleNonSortNum, resourceData.mainTitleNonSortNum);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.mainTitlePartNumber, resourceData.mainTitlePartNumber);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.mainTitlePartName, resourceData.mainTitlePartName);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.mainTitleOther, resourceData.mainTitleOther);
+      // Variant title
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitle, resourceData.variantTitle);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitlePartNumber, resourceData.variantTitlePartNumber);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitlePartName, resourceData.variantTitlePartName);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitleOther, resourceData.variantTitleOther);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitleDate, resourceData.variantTitleDate);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitleType, resourceData.variantTitleType);
+      EditResource.checkPreviewContains(previewFields.sectionTitle, previewFields.variantTitleNote, resourceData.variantTitleNote);
     }
   );
 });
