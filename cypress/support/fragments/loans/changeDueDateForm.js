@@ -13,6 +13,7 @@ const changeDueDateModal = Modal('Change due date');
 
 export default {
   fillDate(dateString) {
+    cy.expect(TextField('Date').exists());
     // dateString format MM/DD/YYYY
     cy.do(TextField('Date').fillIn(dateString));
     // wait is necessary because TextField fills very quickly

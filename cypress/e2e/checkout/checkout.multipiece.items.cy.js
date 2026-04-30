@@ -11,6 +11,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check out', () => {
   let user = {};
@@ -21,6 +22,8 @@ describe('Check out', () => {
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
   const defaultDescription = `autotest_description_${getRandomPostfix()}`;
+  const ID = 'id';
+  let shouldRemoveBarcodeAfterTest = false;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -88,6 +91,13 @@ describe('Check out', () => {
           userBarcode = users[0].barcode;
         });
       });
+
+    // Fetching the current "Other settings" values.
+    // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
+    // Enabling it if not already enabled.
+    OtherSettings.enablePrefPatronIdentifierIfNeeded(ID, (value) => {
+      shouldRemoveBarcodeAfterTest = value;
+    });
   });
 
   after(() => {
@@ -106,6 +116,12 @@ describe('Check out', () => {
       InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
     });
     Users.deleteViaApi(user.userId);
+    // Fetching the current "Other settings" values.
+    // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
+    // Verifying that it was enabled earlier.
+    // Ensuring that "ID" is not the only enabled value, since at least one value is required.
+    // Disabling "ID" if appropriate.
+    OtherSettings.disablePrefPatronIdentifierIfNeeded(ID, shouldRemoveBarcodeAfterTest);
   });
 
   const fullCheckOut = ({
