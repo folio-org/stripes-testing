@@ -10,6 +10,7 @@ import {
 } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
+const getPrefPatronIdentifier = (otherSettings) => otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
 const userCustomFieldsCheckbox = Checkbox({ id: 'useCustomFieldsAsIdentifiers' });
 
@@ -81,6 +82,49 @@ export default {
         cy.wait(2000);
       } else {
         cy.log('Save button is disabled');
+      }
+    });
+  },
+
+  // Fetching the current "Other settings" values.
+  // Checking if "Patron id(s) for checkout scanning" is enabled by the given identifier.
+  // Enabling it if not already enabled.
+  // Calls setFlag(true) if identifier was added so the caller can track cleanup.
+  enablePrefPatronIdentifierIfNeeded(identifier, setFlag) {
+    return this.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+      if (!prefPatronIdentifier.includes(identifier)) {
+        setFlag(true);
+        const updatedValue = prefPatronIdentifier
+          ? `${prefPatronIdentifier},${identifier}`
+          : identifier;
+
+        this.setOtherSettingsViaApi({ prefPatronIdentifier: updatedValue });
+      }
+    });
+  },
+
+  // Fetching the current "Other settings" values.
+  // Checking if "Patron id(s) for checkout scanning" is enabled by the given identifier.
+  // Verifying that it was enabled earlier.
+  // Ensuring that the identifier is not the only enabled value, since at least one value is required.
+  // Disabling the identifier if appropriate.
+  disablePrefPatronIdentifierIfNeeded(identifier, shouldRemove) {
+    return this.getOtherSettingsViaApi().then((otherSettingsResp) => {
+      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
+
+      if (
+        shouldRemove &&
+        prefPatronIdentifier.includes(identifier) &&
+        prefPatronIdentifier !== identifier
+      ) {
+        const updatedValue = prefPatronIdentifier
+          .split(',')
+          .filter((id) => id !== identifier)
+          .join(',');
+
+        this.setOtherSettingsViaApi({ prefPatronIdentifier: updatedValue });
       }
     });
   },

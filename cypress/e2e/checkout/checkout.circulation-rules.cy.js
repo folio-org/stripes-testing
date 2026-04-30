@@ -1,5 +1,7 @@
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
@@ -10,9 +12,9 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check out: Circulation rules', () => {
   const userData = {
@@ -20,161 +22,212 @@ describe('Check out: Circulation rules', () => {
     personal: {},
   };
   const BARCODE = 'barcode';
-  const getPrefPatronIdentifier = (otherSettings) => otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
   let shouldRemoveBarcodeAfterTest = false;
   let patronGroupId = '';
 
-  const itemData = {
+  // Item A: microform material type — matches only the fallback rule
+  const itemDataA = {
     barcode: generateItemBarcode(),
-    instanceTitle: getTestEntityValue('Instance'),
+    instanceTitle: getTestEntityValue('InstanceMicroform'),
   };
+
+  // Item B: book material type — matches the specific circulation rule we create
+  const itemDataB = {
+    barcode: generateItemBarcode(),
+    instanceTitle: getTestEntityValue('InstanceBook'),
+  };
+
   let defaultLocation;
   let servicePoint;
+
+  // Policies read from the existing fallback circulation rule
+  let fallbackLoanPolicyName;
+  let fallbackOverdueFinePolicyName;
+  let fallbackLostItemFeePolicyName;
+
+  // Policies for the specific rule (m book)
   let loanPolicy;
   let overdueFinePolicy;
   let lostItemFeePolicy;
   let requestPolicy;
   let noticePolicy;
-  let originalCirculationRules;
+
+  let addedRule;
 
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.getCircDesk1ServicePointViaApi();
+        ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
+          servicePoint = sp;
+        });
       })
-      .then((circDesk1) => {
-        servicePoint = circDesk1;
+      .then(() => {
         defaultLocation = Location.getDefaultLocation(servicePoint.id);
         Location.createViaApi(defaultLocation);
 
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          itemData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => {
-          itemData.holdingTypeId = res[0].id;
-        });
-
-        cy.getBookMaterialType().then((materialType) => {
-          itemData.materialTypeId = materialType.id;
-          itemData.materialTypeName = materialType.name;
-        });
-
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          itemData.loanTypeId = res[0].id;
-        });
-
-        PatronGroups.createViaApi(userData.group).then((patronGroupResponse) => {
-          patronGroupId = patronGroupResponse;
-        });
-
-        LoanPolicy.getApi({ query: 'name="One Hour" or name="one-hour"', limit: 1 }).then(
-          (response) => {
-            if (response.body.loanPolicies.length > 0) {
-              loanPolicy = response.body.loanPolicies[0].name;
-            } else {
-              // Create one-hour loan policy if it doesn't exist using LoanPolicy.createViaApi
-              const loanPolicyData = {
-                name: 'One Hour',
-                description: 'Test one hour loan policy',
-                loanable: true,
-                loansPolicy: {
-                  closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-                  period: {
-                    duration: 1,
-                    intervalId: 'Hours',
-                  },
-                  profileId: 'Rolling',
-                },
-                renewable: false,
-              };
-              LoanPolicy.createViaApi(loanPolicyData).then((policy) => {
-                loanPolicy = policy.name;
-              });
-            }
-          },
-        );
+        cy.getInstanceTypes({ limit: 1 });
+        cy.getHoldingTypes({ limit: 1 });
+        cy.getLoanTypes({ limit: 1 });
       })
+      .then(() => {
+        PatronGroups.createViaApi(userData.group).then((id) => {
+          patronGroupId = id;
+        });
+      })
+
+      // Fetch fallback policy IDs from the current circulation rules and look up their names
+      .then(() => {
+        CirculationRules.getViaApi().then(({ rulesAsText }) => {
+          const ruleProps = CirculationRules.getRuleProps(rulesAsText);
+
+          cy.okapiRequest({ path: `loan-policy-storage/loan-policies/${ruleProps.l}` }).then(
+            ({ body }) => {
+              fallbackLoanPolicyName = body.name;
+            },
+          );
+          cy.okapiRequest({ path: `overdue-fines-policies/${ruleProps.o}` }).then(({ body }) => {
+            fallbackOverdueFinePolicyName = body.name;
+          });
+          cy.okapiRequest({ path: `lost-item-fees-policies/${ruleProps.i}` }).then(({ body }) => {
+            fallbackLostItemFeePolicyName = body.name;
+          });
+        });
+      })
+
+      // Fetch policies to be used in the specific circulation rule (m book)
       .then(() => {
         return cy.getOverdueFinePolicy({ limit: 1 }).then((policies) => {
           if (policies && policies.length > 0) {
-            overdueFinePolicy = policies[0].name;
+            overdueFinePolicy = policies[0];
           }
         });
       })
       .then(() => {
         return cy.getLostItemFeesPolicy({ limit: 1 }).then((policies) => {
           if (policies && policies.length > 0) {
-            lostItemFeePolicy = policies[0].name;
+            lostItemFeePolicy = policies[0];
           }
         });
       })
       .then(() => {
         return cy.getRequestPolicy({ limit: 1 }).then((policies) => {
           if (policies && policies.length > 0) {
-            requestPolicy = policies[0].name;
+            requestPolicy = policies[0];
           }
         });
       })
       .then(() => {
         return cy.getNoticePolicy({ limit: 1 }).then((policies) => {
           if (policies && policies.length > 0) {
-            noticePolicy = policies[0].name;
+            noticePolicy = policies[0];
           }
         });
       })
+
+      // Find or create a one-hour loan policy for the specific rule
       .then(() => {
-        // Create item with book material type
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: itemData.instanceTypeId,
-            title: itemData.instanceTitle,
+        LoanPolicy.getApi({ query: 'name="One Hour" or name="one-hour"', limit: 1 }).then(
+          (response) => {
+            if (response.body.loanPolicies.length > 0) {
+              loanPolicy = response.body.loanPolicies[0];
+            } else {
+              LoanPolicy.createViaApi({
+                name: 'One Hour',
+                description: 'Test one hour loan policy',
+                loanable: true,
+                loansPolicy: {
+                  closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+                  period: { duration: 1, intervalId: 'Hours' },
+                  profileId: 'Rolling',
+                },
+                renewable: false,
+              }).then((policy) => {
+                loanPolicy = policy;
+              });
+            }
           },
-          holdings: [
-            {
-              holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: defaultLocation.id,
+        );
+      })
+
+      // Create Item A: microform — matches only the fallback rule
+      .then(() => {
+        return cy.getMicroformMaterialType().then((materialType) => {
+          itemDataA.materialTypeId = materialType.id;
+
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: itemDataA.instanceTitle,
             },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: itemData.loanTypeId },
-              materialType: { id: itemData.materialTypeId },
-            },
-          ],
+            holdings: [
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+                permanentLocationId: defaultLocation.id,
+              },
+            ],
+            items: [
+              {
+                barcode: itemDataA.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: itemDataA.materialTypeId },
+              },
+            ],
+          });
         });
       })
+
+      // Create Item B: book — matches the specific rule m book
       .then(() => {
-        // Create circulation rule for book material type
-        cy.getCirculationRules().then((rules) => {
-          originalCirculationRules = rules.rulesAsText;
-          cy.log('Original circulation rules:', originalCirculationRules);
+        return cy.getBookMaterialType().then((materialType) => {
+          itemDataB.materialTypeId = materialType.id;
 
-          // Add circulation rule: m book: l one-hour r allow-all n send-no-notices o overdue-fine-policy i lost-item-fee-policy
-          const newRule = `m book: l ${loanPolicy} r ${requestPolicy} n ${noticePolicy} o ${overdueFinePolicy} i ${lostItemFeePolicy}`;
-          const updatedRules = `${originalCirculationRules}\n${newRule}`;
-          cy.log('Updated circulation rules:', updatedRules);
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: itemDataB.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+                permanentLocationId: defaultLocation.id,
+              },
+            ],
+            items: [
+              {
+                barcode: itemDataB.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: itemDataB.materialTypeId },
+              },
+            ],
+          });
+        });
+      })
 
-          return cy.updateCirculationRules({ rulesAsText: updatedRules });
+      // Create specific circulation rule for book material type
+      .then(() => {
+        CirculationRules.addRuleViaApi(
+          { m: itemDataB.materialTypeId },
+          {
+            l: loanPolicy.id,
+            r: requestPolicy.id,
+            n: noticePolicy.id,
+            o: overdueFinePolicy.id,
+            i: lostItemFeePolicy.id,
+          },
+        ).then((newRule) => {
+          addedRule = newRule;
         });
       });
 
     cy.createTempUser(
       [
-        permissions.uiCirculationSettingsOtherSettings.gui,
-        permissions.uiCirculationViewCreateEditDelete.gui,
-        permissions.uiCirculationSettingsNoticePolicies.gui,
-        permissions.uiCirculationSettingsNoticeTemplates.gui,
-        permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUsersCreate.gui,
-        permissions.inventoryAll.gui,
-        permissions.checkoutCirculatingItems.gui,
+        permissions.checkoutAll.gui,
+        permissions.checkoutViewLoans.gui,
         permissions.uiUsersViewLoans.gui,
-        permissions.loansView.gui,
+        permissions.uiUsersfeefinesView.gui,
         permissions.loansAll.gui,
-        permissions.circulationLogAll.gui,
       ],
       userData.group,
     )
@@ -197,24 +250,24 @@ describe('Check out: Circulation rules', () => {
     // Fetching the current "Other settings" values.
     // Checking if "Patron id(s) for checkout scanning" is enabled by "Barcode".
     // Enabling it if not already enabled.
-    OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
-      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
-
-      if (!prefPatronIdentifier.includes(BARCODE)) {
-        shouldRemoveBarcodeAfterTest = true;
-        const updatedValue = prefPatronIdentifier ? `${prefPatronIdentifier},${BARCODE}` : BARCODE;
-
-        OtherSettings.setOtherSettingsViaApi({
-          prefPatronIdentifier: updatedValue,
-        });
-      }
+    OtherSettings.enablePrefPatronIdentifierIfNeeded(BARCODE, (value) => {
+      shouldRemoveBarcodeAfterTest = value;
     });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    cy.updateCirculationRules({ rulesAsText: originalCirculationRules });
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    CirculationRules.deleteRuleViaApi(addedRule);
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: itemDataA.barcode,
+      servicePointId: servicePoint.id,
+    });
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: itemDataB.barcode,
+      servicePointId: servicePoint.id,
+    });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemDataA.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemDataB.barcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroupId);
     Location.deleteInstitutionCampusLibraryLocationViaApi(
@@ -228,46 +281,41 @@ describe('Check out: Circulation rules', () => {
     // Verifying that it was enabled earlier.
     // Ensuring that "Barcode" is not the only enabled value, since at least one value is required.
     // Disabling "Barcode" if appropriate.
-    OtherSettings.getOtherSettingsViaApi().then((otherSettingsResp) => {
-      const prefPatronIdentifier = getPrefPatronIdentifier(otherSettingsResp);
-
-      if (
-        shouldRemoveBarcodeAfterTest &&
-        prefPatronIdentifier.includes(BARCODE) &&
-        prefPatronIdentifier !== BARCODE
-      ) {
-        const updatedValue = prefPatronIdentifier
-          .split(',')
-          .filter((id) => id !== BARCODE)
-          .join(',');
-
-        OtherSettings.setOtherSettingsViaApi({
-          prefPatronIdentifier: updatedValue,
-        });
-      }
-    });
+    OtherSettings.disablePrefPatronIdentifierIfNeeded(BARCODE, shouldRemoveBarcodeAfterTest);
   });
 
   it(
-    'C593 Check out: (Testing circulation rules) - perform check-out for rule with nested attributes/policies (critical) (vega)',
+    'C593 Check out: (Testing circulation rules) - perform check-outs for rule with nested attributes/policies and for fallback policy (criticalPath) (vega)',
     { tags: ['criticalPath', 'vega', 'C593'] },
     () => {
-      // Step 1: Enter user barcode and scan patron
-      CheckOutActions.checkOutUser(userData.barcode, userData.personal.lastname);
+      // Step 1: Enter user barcode into "Scan patron card" field and click Enter
+      CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, userData.group);
 
-      // Step 2: Enter item barcode and scan item
-      CheckOutActions.checkOutItem(itemData.barcode);
-      CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
+      // Step 2: Enter Item A barcode (microform) into "Scan items" field and click Enter
+      CheckOutActions.checkOutItem(itemDataA.barcode);
+      CheckOutActions.verifyItemCheckedOut(itemDataA.barcode);
 
-      // Step 3: Click on "..." button and select "Loan details"
+      // Step 3: Click "..." > "Loan details" for Item A
       CheckOutActions.openLoanDetails();
 
-      // Step 4: Verify loan policy, overdue fine policy, and lost item fee policy values
-      // Check that policies match the circulation rule we created
-      CheckOutActions.checkLoanPolicyInLoanDetails(loanPolicy);
-      CheckOutActions.checkOverdueFinePolicyInLoanDetails(overdueFinePolicy);
-      CheckOutActions.checkLostItemFeePolicyInLoanDetails(lostItemFeePolicy);
+      // Step 4: Verify that policies match the fallback circulation rule
+      CheckOutActions.checkLoanPolicyInLoanDetails(fallbackLoanPolicyName);
+      CheckOutActions.checkOverdueFinePolicyInLoanDetails(fallbackOverdueFinePolicyName);
+      CheckOutActions.checkLostItemFeePolicyInLoanDetails(fallbackLostItemFeePolicyName);
+
+      // Step 5: Go back to "Check out" app and enter Item B barcode (book)
+      cy.visit(TopMenu.checkOutPath);
+      CheckOutActions.waitLoading();
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkOutItem(itemDataB.barcode);
+      CheckOutActions.verifyItemCheckedOut(itemDataB.barcode);
+
+      // Step 6: Open Loan details for Item B and verify policies match the specific rule (m book)
+      CheckOutActions.openLoanDetails();
+      CheckOutActions.checkLoanPolicyInLoanDetails(loanPolicy.name);
+      CheckOutActions.checkOverdueFinePolicyInLoanDetails(overdueFinePolicy.name);
+      CheckOutActions.checkLostItemFeePolicyInLoanDetails(lostItemFeePolicy.name);
     },
   );
 });

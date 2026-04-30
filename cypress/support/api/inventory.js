@@ -165,6 +165,18 @@ Cypress.Commands.add('getDvdMaterialType', () => {
   }
 });
 
+// Returns the FIRST material type (object) with the name "microform"
+Cypress.Commands.add('getMicroformMaterialType', () => {
+  if (!Cypress.env('MICROFORM_MATERIAL_TYPE')) {
+    return cy.getMaterialTypes({ limit: 1, query: 'name=="microform"' }).then((materialType) => {
+      Cypress.env('MICROFORM_MATERIAL_TYPE', materialType);
+      return materialType;
+    });
+  } else {
+    return Cypress.env('MICROFORM_MATERIAL_TYPE');
+  }
+});
+
 // Returns default material type, should be used in most cases, if possible
 Cypress.Commands.add('getDefaultMaterialType', () => {
   return cy.getBookMaterialType();
