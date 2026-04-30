@@ -30,6 +30,7 @@ describe('agreements', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       AgreementLines.deleteViaApi({ agreementId, agreementLineId });
       Agreements.deleteViaApi(agreementId);
     });

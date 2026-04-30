@@ -45,6 +45,7 @@ describe('agreements', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Agreements.deleteViaApi(agreementId);
       FileManager.deleteFile(`cypress/fixtures/${fileName}`);
       FileManager.deleteFileFromDownloadsByMask(`*${fileName}.*`);

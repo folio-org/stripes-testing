@@ -6,7 +6,7 @@ const rootSection = Pane({ id: 'pane-view-agreement-line' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const addTagsField = MultiSelect({ label: 'Tag text area' });
-const closeButton = rootSection.find(Button({ icon: 'times' }));
+const closeIcon = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
@@ -22,7 +22,7 @@ export default {
   },
 
   closeTagsPane() {
-    cy.do([tagsPane.dismiss()]);
+    cy.do(tagsPane.find(closeIcon).click());
     cy.expect(tagsPane.absent());
   },
 
@@ -45,7 +45,7 @@ export default {
   },
 
   close() {
-    cy.do(closeButton.click());
+    cy.do(rootSection.find(closeIcon).click());
     cy.expect(rootSection.absent());
     AgreementViewDetails.waitLoading();
   },
