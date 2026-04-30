@@ -233,6 +233,7 @@ describe('Finance', () => {
 
         plannedBudgetDetails.clickViewTransactionsLink();
 
+        Transactions.expandTransactionTypeAccordion();
         Transactions.selectTransactionTypeFilter('Encumbrance');
         Transactions.checkTransactionsByTypeAndAmount({
           records: [{ type: 'Encumbrance', amount: '$0.00' }],

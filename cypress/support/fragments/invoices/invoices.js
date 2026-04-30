@@ -96,9 +96,10 @@ const getDefaultInvoice = ({
   invoiceStatus = 'Open',
   invoiceDate = moment.utc().format(),
   exportToAccounting = true,
+  currency = 'USD',
 }) => ({
   chkSubscriptionOverlap: true,
-  currency: 'USD',
+  currency,
   source: 'User',
   batchGroupId,
   batchGroupName,
@@ -167,6 +168,7 @@ export default {
     exportToAccounting,
     adjustments,
     acqUnitIds,
+    currency,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -180,6 +182,7 @@ export default {
     const invoice = getDefaultInvoice({
       fiscalYearId,
       batchGroupId,
+      currency,
       vendorId,
       accountingCode,
       invoiceStatus,
@@ -276,6 +279,7 @@ export default {
     exportToAccounting,
     adjustments,
     acqUnitIds,
+    currency,
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -286,6 +290,7 @@ export default {
       exportToAccounting,
       adjustments,
       acqUnitIds,
+      currency,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
