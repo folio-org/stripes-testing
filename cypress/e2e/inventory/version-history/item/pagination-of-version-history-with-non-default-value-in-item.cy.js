@@ -12,9 +12,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
-import SettingsInventory from '../../../../support/fragments/settings/inventory/settingsInventory';
-import VersionHistorySettings from '../../../../support/fragments/settings/inventory/versionHistory';
-import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -50,12 +47,6 @@ describe('Inventory', () => {
           .then(() => updateItemNTimes(iteration + 1));
       }
 
-      function navigateToVersionHistorySettings() {
-        SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(testData.versionHistoryTab);
-        VersionHistorySettings.waitLoading();
-      }
-
       function openItemFromInventory() {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
@@ -69,7 +60,7 @@ describe('Inventory', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(10);
+        cy.setVersionHistoryRecordsPerPage(25);
 
         cy.then(() => {
           cy.getDefaultMaterialType().then((materialTypes) => {
@@ -126,8 +117,13 @@ describe('Inventory', () => {
               cy.assignCapabilitiesToExistingUser(
                 testData.user.userId,
                 [],
-                [CapabilitySets.uiInventory, CapabilitySets.uiInventorySettingsDisplaySettingsView],
+                [CapabilitySets.uiInventory],
               );
+
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
       });
@@ -143,14 +139,6 @@ describe('Inventory', () => {
         'C651578 Pagination of "Version history" with Non-default value in Item (folijet)',
         { tags: ['criticalPath', 'folijet', 'C651578'] },
         () => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
-          });
-
-          navigateToVersionHistorySettings();
-          VersionHistorySettings.selectCardsPerPageAndSave(25);
-
           // Step 1: Open Item details from the Holdings accordion.
           openItemFromInventory();
 

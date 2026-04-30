@@ -62,11 +62,6 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
-  uiInventorySettingsDisplaySettingsView: {
-    type: CAPABILITY_TYPES.SETTINGS,
-    resource: 'UI-Inventory Settings DisplaySettings',
-    action: CAPABILITY_ACTIONS.VIEW,
-  },
   uiDataImportSettingsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Data-Import Settings',
