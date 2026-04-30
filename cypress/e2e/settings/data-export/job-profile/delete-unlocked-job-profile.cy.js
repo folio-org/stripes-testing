@@ -114,6 +114,7 @@ describe('Data Export', () => {
         SettingsDataExport.goToSettingsDataExport();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(notReferencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(notReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(notReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -139,11 +140,15 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(
           `Job profile ${notReferencedJobProfile.jobProfileName} has been successfully deleted`,
         );
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
         SingleJobProfile.verifyDeleteModalClosed();
 
         // Step 5: Click "Field mapping profiles" in "Data export" pane => Verify mapping profile associated with deleted job profile is present on the list of mapping profiles
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(
+          notReferencedJobProfile.mappingProfileName,
+        );
         ExportFieldMappingProfiles.verifyProfileNameOnTheList(
           notReferencedJobProfile.mappingProfileName,
         );
@@ -151,6 +156,7 @@ describe('Data Export', () => {
         // Step 6: Click "Job profiles" in "Data export" pane => Select existing unlocked job profile from Preconditions: job profile referenced in an existing export job
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(referencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(referencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(referencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -176,12 +182,16 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(
           `Job profile ${referencedJobProfile.jobProfileName} has been successfully deleted`,
         );
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
         ExportJobProfiles.verifyJobProfileAbsentInTheTable();
         SingleJobProfile.verifyDeleteModalClosed();
 
         // Step 10: Click "Field mapping profiles" in "Data export" pane => Verify mapping profile associated with deleted job profile is present on the list of mapping profiles
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportFieldMappingProfiles.searchFieldMappingProfile(
+          referencedJobProfile.mappingProfileName,
+        );
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(
           referencedJobProfile.mappingProfileName,
         );

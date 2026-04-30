@@ -142,6 +142,7 @@ describe('Orders', () => {
         '90',
         location.name,
       );
+      OrderLines.saveOrderLine();
       OrderLines.backToEditingOrder();
     },
   );
