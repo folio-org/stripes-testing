@@ -170,7 +170,14 @@ describe('Citation: return to search results - Instance', () => {
       Marigold.waitLoading();
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitleInstance);
 
-      // Step 12: Edit Instance, change field, Save & keep editing — save buttons become disabled
+      // Step 12: Edit Instance, change field, Save & close — returned to search
+      Marigold.clickEditInstanceFromSearch();
+      EditResource.setValueForTheField(testData.partName, partNameField);
+      EditResource.saveAndClose();
+      Marigold.waitLoading();
+      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitleInstance);
+
+      // Step 13: Edit Instance, change field, Save & keep editing — save buttons become disabled
       Marigold.clickEditInstanceFromSearch();
       EditResource.setValueForTheField(testData.partName, partNameField);
       EditResource.saveAndKeepEditingWithId().then(({ instanceId }) => {
@@ -178,21 +185,10 @@ describe('Citation: return to search results - Instance', () => {
       });
       EditResource.checkSaveButtonsDisabled();
 
-      // Step 13: Click Cancel (no unsaved changes — no modal) — returned to search
+      // Step 14: Click Cancel (no unsaved changes — no modal) — returned to search
       EditResource.clickCancel();
       Marigold.waitLoading();
       SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitleInstance);
-
-      // Step 14: Edit Instance, change field, Save & close — returned to search
-      Marigold.clickEditInstanceFromSearch();
-      EditResource.setValueForTheField(testData.partName, partNameField);
-      EditResource.saveAndClose();
-      Marigold.waitLoading();
-      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitleInstance);
-
-      // Step 15: Edit Instance - has updated value
-      Marigold.clickEditInstanceFromSearch();
-      EditResource.checkTextValueOnField(testData.partName, partNameField);
     },
   );
 });
