@@ -23,29 +23,28 @@ describe('Funds', () => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+      return Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultfund.ledgerName = ledgerResponse.name;
       });
     });
 
-    ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+    return ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
       servicePointId = servicePoints[0].id;
       locationData = NewLocation.getDefaultLocation(servicePointId);
-      NewLocation.createViaApi(locationData).then((res) => {
-        location = res;
-      });
-    });
-
-    cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.fundPath,
-          waiter: Funds.waitLoading,
+      return NewLocation.createViaApi(locationData)
+        .then((res) => {
+          location = res;
+          return cy.createTempUser([permissions.uiFinanceViewEditCreateFundAndBudget.gui]);
+        })
+        .then((userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.fundPath,
+            waiter: Funds.waitLoading,
+          });
         });
-      },
-    );
+    });
   });
 
   after(() => {
