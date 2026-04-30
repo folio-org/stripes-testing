@@ -140,6 +140,7 @@ export default {
     cy.wait(1500);
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
     cy.wait(500);
+    cy.expect(Button({ id: 'clickable-add-item' }).exists());
     cy.do(Button({ id: 'clickable-add-item' }).click());
     this.waitForItemSpinnerToDisappear();
   },
