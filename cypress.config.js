@@ -186,6 +186,32 @@ module.exports = defineConfig({
 
         // HTTP tasks (axios requests in Node.js context)
         ...httpTasks,
+
+        getRunCount({ filePath }) {
+          const counterFile = path.join(__dirname, 'cypress', 'run-counters.json');
+          if (!fs.existsSync(counterFile)) return 0;
+          const data = JSON.parse(fs.readFileSync(counterFile, 'utf-8'));
+          return data[filePath] || 0;
+        },
+
+        incrementRunCount({ filePath }) {
+          const counterFile = path.join(__dirname, 'cypress', 'run-counters.json');
+          const data = fs.existsSync(counterFile)
+            ? JSON.parse(fs.readFileSync(counterFile, 'utf-8'))
+            : {};
+          data[filePath] = (data[filePath] || 0) + 1;
+          fs.writeFileSync(counterFile, JSON.stringify(data, null, 2));
+          return data[filePath];
+        },
+
+        resetRunCount({ filePath }) {
+          const counterFile = path.join(__dirname, 'cypress', 'run-counters.json');
+          if (!fs.existsSync(counterFile)) return 0;
+          const data = JSON.parse(fs.readFileSync(counterFile, 'utf-8'));
+          data[filePath] = 0;
+          fs.writeFileSync(counterFile, JSON.stringify(data, null, 2));
+          return 0;
+        },
       });
 
       // keep Cypress running until the ReportPortal reporter is finished. this is a
