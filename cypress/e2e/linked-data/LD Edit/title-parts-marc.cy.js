@@ -1,23 +1,23 @@
-import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../support/constants';
-import getRandomPostfix from '../../support/utils/stringTools';
-import FileManager from '../../support/utils/fileManager';
+import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
 
-import DataImport from '../../support/fragments/data_import/dataImport';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
-import Marigold from '../../support/fragments/linked-data/marigold';
-import Work from '../../support/fragments/linked-data/work';
-import EditResource from '../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../support/fragments/linked-data/externalResourcePreview';
-import ViewMarc from '../../support/fragments/linked-data/viewMarc';
+import Marigold from '../../../support/fragments/linked-data/marigold';
+import Work from '../../../support/fragments/linked-data/work';
+import EditResource from '../../../support/fragments/linked-data/editResource';
+import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
+import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
 
 import {
   MARIGOLD_CAPABILITIES,
   MARIGOLD_CAPABILITY_SETS,
-} from '../../support/dictionary/marigoldCapabilities';
+} from '../../../support/dictionary/marigoldCapabilities';
 
 let user;
 
