@@ -13,6 +13,7 @@ import { Behavior } from '../../../../support/fragments/settings/oai-pmh';
 import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../../support/fragments/settings/oai-pmh/behavior';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {
@@ -193,6 +194,8 @@ describe('OAI-PMH', () => {
         'C422181 Consortia | SRS+Inventory | ListRecords | Suppressed with flag | Skip suppressed: Edit shared MARC and shared FOLIO instances (with associated Holdings) from Central tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
         { tags: ['extendedPathECS', 'firebird', 'C422181', 'nonParallel'] },
         () => {
+          const fromDate = DateTools.getCurrentDateForOaiPmh();
+
           // Steps 1-2: Verify member-1 baseline - instances should NOT appear in current date responses
           cy.resetTenant();
           cy.getAdminToken();
@@ -210,6 +213,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.University),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
             OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
@@ -245,46 +249,49 @@ describe('OAI-PMH', () => {
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
 
-          OaiPmhEdge.listRecordsRequest('marc21', OaiPmhEdge.getApiKey(Affiliations.College)).then(
-            (response) => {
-              // Verify MARC instance
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.marcInstance.uuid,
-                false,
-                true,
-                Affiliations.College,
-              );
-              OaiPmh.verifyMarcField(
-                response,
-                testData.marcInstance.uuid,
-                '999',
-                { ind1: 'f', ind2: 'f' },
-                { t: '1' },
-              );
+          OaiPmhEdge.listRecordsRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
+          ).then((response) => {
+            // Verify MARC instance
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.marcInstance.uuid,
+              false,
+              true,
+              Affiliations.College,
+            );
+            OaiPmh.verifyMarcField(
+              response,
+              testData.marcInstance.uuid,
+              '999',
+              { ind1: 'f', ind2: 'f' },
+              { t: '1' },
+            );
 
-              // Verify FOLIO instance
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.folioInstance.uuid,
-                false,
-                true,
-                Affiliations.College,
-              );
-              OaiPmh.verifyMarcField(
-                response,
-                testData.folioInstance.uuid,
-                '999',
-                { ind1: 'f', ind2: 'f' },
-                { t: '1' },
-              );
-            },
-          );
+            // Verify FOLIO instance
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.folioInstance.uuid,
+              false,
+              true,
+              Affiliations.College,
+            );
+            OaiPmh.verifyMarcField(
+              response,
+              testData.folioInstance.uuid,
+              '999',
+              { ind1: 'f', ind2: 'f' },
+              { t: '1' },
+            );
+          });
 
           // Step 12: Member-1 ListRecords marc21_withholdings - verify both with 999 t=1 and 952 t=1
           OaiPmhEdge.listRecordsRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
           ).then((response) => {
             // Verify MARC instance
             OaiPmh.verifyOaiPmhRecordHeader(
@@ -334,38 +341,41 @@ describe('OAI-PMH', () => {
           });
 
           // Step 13: Member-1 ListRecords oai_dc - verify both with dc:rights = "discovery suppressed"
-          OaiPmhEdge.listRecordsRequest('oai_dc', OaiPmhEdge.getApiKey(Affiliations.College)).then(
-            (response) => {
-              // Verify MARC instance
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.marcInstance.uuid,
-                false,
-                false,
-                Affiliations.College,
-              );
-              OaiPmh.verifyDublinCoreField(response, testData.marcInstance.uuid, {
-                rights: 'discovery suppressed',
-              });
+          OaiPmhEdge.listRecordsRequest(
+            'oai_dc',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
+          ).then((response) => {
+            // Verify MARC instance
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.marcInstance.uuid,
+              false,
+              false,
+              Affiliations.College,
+            );
+            OaiPmh.verifyDublinCoreField(response, testData.marcInstance.uuid, {
+              rights: 'discovery suppressed',
+            });
 
-              // Verify FOLIO instance
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.folioInstance.uuid,
-                false,
-                false,
-                Affiliations.College,
-              );
-              OaiPmh.verifyDublinCoreField(response, testData.folioInstance.uuid, {
-                rights: 'discovery suppressed',
-              });
-            },
-          );
+            // Verify FOLIO instance
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.folioInstance.uuid,
+              false,
+              false,
+              Affiliations.College,
+            );
+            OaiPmh.verifyDublinCoreField(response, testData.folioInstance.uuid, {
+              rights: 'discovery suppressed',
+            });
+          });
 
           // Step 14: Member-2 ListRecords marc21 - verify instances NOT present
           OaiPmhEdge.listRecordsRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.University),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
             OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
@@ -375,6 +385,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.University),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
             OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
@@ -384,6 +395,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'oai_dc',
             OaiPmhEdge.getApiKey(Affiliations.University),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
             OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
@@ -399,6 +411,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.Consortia),
+            fromDate,
           ).then((response) => {
             // Extract resumption token for next page (University tenant)
             resumptionTokenMarc21 = OaiPmh.extractResumptionToken(response);
@@ -443,6 +456,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequestWithResumptionToken(
               resumptionTokenMarc21,
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               // Step 19: Check member-2 response - instances should NOT be present
               OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
@@ -461,6 +475,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'marc21_withholdings',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               // Extract resumption token for next page (University tenant)
               resumptionTokenWithholdings = OaiPmh.extractResumptionToken(response);
@@ -517,6 +532,7 @@ describe('OAI-PMH', () => {
               OaiPmhEdge.listRecordsRequestWithResumptionToken(
                 resumptionTokenWithholdings,
                 OaiPmhEdge.getApiKey(Affiliations.Consortia),
+                fromDate,
               ).then((responseUniversity) => {
                 // Step 22: Check member-2 response - instances should NOT be present
                 OaiPmh.verifyIdentifierInListResponse(
@@ -544,6 +560,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'oai_dc',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               // Extract resumption token for next page (University tenant)
               resumptionTokenOaiDc = OaiPmh.extractResumptionToken(response);
@@ -578,6 +595,7 @@ describe('OAI-PMH', () => {
               OaiPmhEdge.listRecordsRequestWithResumptionToken(
                 resumptionTokenOaiDc,
                 OaiPmhEdge.getApiKey(Affiliations.Consortia),
+                fromDate,
               ).then((responseUniversity) => {
                 // Step 25: Check member-2 response - instances should NOT be present
                 OaiPmh.verifyIdentifierInListResponse(

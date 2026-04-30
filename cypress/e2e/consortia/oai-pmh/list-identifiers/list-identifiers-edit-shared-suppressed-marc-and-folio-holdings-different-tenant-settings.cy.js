@@ -1,54 +1,46 @@
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import OaiPmh from '../../../../support/fragments/oai-pmh/oaiPmh';
 import OaiPmhEdge from '../../../../support/fragments/oai-pmh/oaiPmhEdge';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { Behavior } from '../../../../support/fragments/settings/oai-pmh';
 import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../../support/fragments/settings/oai-pmh/behavior';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import DateTools from '../../../../support/utils/dateTools';
 
-const userPermissions = [
-  Permissions.inventoryAll.gui,
-  Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-];
+const userPermissions = [Permissions.inventoryAll.gui];
 
 const testData = {
   user: {},
-  marcInstance: {
-    title: `AT_C422188_SharedMarcInstance_${getRandomPostfix()}`,
-    uuid: null,
-  },
-  folioInstance: {
-    title: `AT_C422188_SharedFolioInstance_${getRandomPostfix()}`,
-    editedTitle: `AT_C422188_EditedFolioInstance_${getRandomPostfix()}`,
-    uuid: null,
-  },
   college: {
+    marcInstance: {
+      title: `AT_C422192_SharedMarcInstance_${getRandomPostfix()}`,
+      uuid: null,
+    },
+    folioInstance: {
+      title: `AT_C422192_SharedFolioInstance_${getRandomPostfix()}`,
+      uuid: null,
+    },
     locationId: null,
-    locationName: null,
-    sourceId: null,
     marcHoldingsId: null,
     folioHoldingsId: null,
+    marcHoldingsCallNumber: `CN_MARC_${getRandomPostfix()}`,
+    folioHoldingsCallNumber: `CN_FOLIO_${getRandomPostfix()}`,
   },
   university: {
     locationId: null,
-    sourceId: null,
     marcHoldingsId: null,
     folioHoldingsId: null,
-  },
-  marc245Field: {
-    tag: '245',
-    content: `$a AT_C422188_EditedMarcTitle_${getRandomPostfix()}`,
+    marcHoldingsCallNumber: `CN_MARC_${getRandomPostfix()}`,
+    folioHoldingsCallNumber: `CN_FOLIO_${getRandomPostfix()}`,
   },
 };
 
@@ -61,6 +53,30 @@ describe('OAI-PMH', () => {
           this.skip();
         }
 
+        const createHoldingsForBothInstances = (tenantData) => {
+          // Create holdings for shared MARC instance
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.college.marcInstance.uuid,
+              permanentLocationId: tenantData.locationId,
+              sourceId: folioSource.id,
+            }).then((holding) => {
+              tenantData.marcHoldingsId = holding.id;
+            });
+          });
+
+          // Create holdings for shared FOLIO instance
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.college.folioInstance.uuid,
+              permanentLocationId: tenantData.locationId,
+              sourceId: folioSource.id,
+            }).then((holding) => {
+              tenantData.folioHoldingsId = holding.id;
+            });
+          });
+        };
+
         cy.getAdminToken()
           .then(() => {
             // Configure OAI-PMH behavior for College tenant (Member-1) - Transfer suppressed with flag
@@ -71,7 +87,6 @@ describe('OAI-PMH', () => {
             );
             InventoryInstances.getLocations({ limit: 1, query: 'name<>"DCB"' }).then((location) => {
               testData.college.locationId = location[0].id;
-              testData.college.locationName = location[0].name;
             });
 
             // Configure OAI-PMH behavior for University tenant (Member-2) - Skip suppressed
@@ -85,95 +100,68 @@ describe('OAI-PMH', () => {
             });
           })
           .then(() => {
-            // Create shared MARC instance in Central tenant
+            // Create shared MARC instance in Central tenant (suppressed from discovery)
             cy.resetTenant();
-            cy.createSimpleMarcBibViaAPI(testData.marcInstance.title).then((instanceId) => {
-              testData.marcInstance.uuid = instanceId;
+            cy.createSimpleMarcBibViaAPI(testData.college.marcInstance.title).then((instanceId) => {
+              testData.college.marcInstance.uuid = instanceId;
 
-              // Add holdings to shared MARC instance in Member-1 (College)
-              cy.setTenant(Affiliations.College);
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                testData.college.sourceId = folioSource.id;
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId,
-                  permanentLocationId: testData.college.locationId,
-                  sourceId: folioSource.id,
-                }).then((holding) => {
-                  testData.college.marcHoldingsId = holding.id;
-                });
-              });
-
-              // Add holdings to shared MARC instance in Member-2 (University)
-              cy.setTenant(Affiliations.University);
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                testData.university.sourceId = folioSource.id;
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId,
-                  permanentLocationId: testData.university.locationId,
-                  sourceId: folioSource.id,
-                }).then((holding) => {
-                  testData.university.marcHoldingsId = holding.id;
+              // Suppress instance from discovery
+              cy.getInstanceById(instanceId).then((instanceData) => {
+                cy.updateInstance({
+                  ...instanceData,
+                  discoverySuppress: true,
                 });
               });
             });
 
-            // Create shared FOLIO instance in Central tenant (not suppressed initially)
-            cy.resetTenant();
-            InventoryInstance.createInstanceViaApi({
-              instanceTitle: testData.folioInstance.title,
-            }).then(({ instanceData }) => {
-              testData.folioInstance.uuid = instanceData.instanceId;
-
-              // Add holdings to shared FOLIO instance in Member-1 (College)
-              cy.setTenant(Affiliations.College);
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instanceData.instanceId,
-                  permanentLocationId: testData.college.locationId,
-                  sourceId: folioSource.id,
-                }).then((holding) => {
-                  testData.college.folioHoldingsId = holding.id;
-                });
-              });
-
-              // Add holdings to shared FOLIO instance in Member-2 (University)
-              cy.setTenant(Affiliations.University);
-              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instanceData.instanceId,
-                  permanentLocationId: testData.university.locationId,
-                  sourceId: folioSource.id,
-                }).then((holding) => {
-                  testData.university.folioHoldingsId = holding.id;
-                });
+            // Create shared FOLIO instance in Central tenant (suppressed from discovery)
+            cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: instanceTypes[0].id,
+                  title: testData.college.folioInstance.title,
+                  discoverySuppress: true,
+                },
+              }).then((createdInstanceData) => {
+                testData.college.folioInstance.uuid = createdInstanceData.instanceId;
               });
             });
+          })
+          .then(() => {
+            // Create holdings in College tenant (Member-1) for both instances
+            cy.setTenant(Affiliations.College);
+            createHoldingsForBothInstances(testData.college);
 
-            // Create user with permissions in all tenants
+            // Create holdings in University tenant (Member-2) for both instances
+            cy.setTenant(Affiliations.University);
+            createHoldingsForBothInstances(testData.university);
+
+            // Create user with permissions
             cy.resetTenant();
             cy.createTempUser(userPermissions).then((userProperties) => {
               testData.user = userProperties;
 
               // Assign affiliations and permissions to College tenant (Member-1)
-              cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-              cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(testData.user.userId, userPermissions);
+              cy.affiliateUserToTenant({
+                tenantId: Affiliations.College,
+                userId: testData.user.userId,
+                permissions: userPermissions,
+              });
 
               // Assign affiliations and permissions to University tenant (Member-2)
-              cy.resetTenant();
-              cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.user.userId, userPermissions);
+              cy.affiliateUserToTenant({
+                tenantId: Affiliations.University,
+                userId: testData.user.userId,
+                permissions: userPermissions,
+              });
 
               cy.resetTenant();
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.central,
-                tenantNames.university,
-              );
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
               cy.wait(120000); // Wait 2 minutes to ensure instances are "in the past" for OAI-PMH
             });
@@ -184,7 +172,7 @@ describe('OAI-PMH', () => {
         cy.resetTenant();
         cy.getAdminToken();
 
-        // Delete holdings and instances from College tenant (Member-1)
+        // Delete holdings from College tenant (Member-1)
         cy.setTenant(Affiliations.College);
         if (testData.college.marcHoldingsId) {
           cy.deleteHoldingRecordViaApi(testData.college.marcHoldingsId);
@@ -204,25 +192,25 @@ describe('OAI-PMH', () => {
         }
         Behavior.updateBehaviorConfigViaApi();
 
-        // Delete shared instances from Central tenant
+        // Delete instances from Central tenant
         cy.resetTenant();
-        if (testData.marcInstance.uuid) {
-          InventoryInstance.deleteInstanceViaApi(testData.marcInstance.uuid);
+        if (testData.college.marcInstance.uuid) {
+          InventoryInstance.deleteInstanceViaApi(testData.college.marcInstance.uuid);
         }
-        if (testData.folioInstance.uuid) {
-          InventoryInstance.deleteInstanceViaApi(testData.folioInstance.uuid);
+        if (testData.college.folioInstance.uuid) {
+          InventoryInstance.deleteInstanceViaApi(testData.college.folioInstance.uuid);
         }
         Behavior.updateBehaviorConfigViaApi();
         Users.deleteViaApi(testData.user.userId);
       });
 
       it(
-        'C422188 Consortia | SRS+Inventory | ListIdentifiers | Suppressed with flag | Skip suppressed: Edit shared MARC and shared FOLIO instances (with associated Holdings) from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422188', 'nonParallel'] },
+        'C422192 Consortia | SRS+Inventory | ListIdentifiers | Suppressed with flag | Skip suppressed: Edit Holdings of shared MARC and shared FOLIO instances from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
+        { tags: ['extendedPathECS', 'firebird', 'C422192', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 
-          // Steps 1-2: Verify member-1 baseline - instances should NOT appear in current date responses
+          // Steps 1-2: Verify member-1 baseline - shared instances should NOT appear in current date responses
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
@@ -232,55 +220,105 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.getApiKey(Affiliations.College),
             fromDate,
           ).then((response) => {
-            OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
-            OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.college.marcInstance.uuid,
+              false,
+            );
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.college.folioInstance.uuid,
+              false,
+            );
           });
 
-          // Steps 3-4: Verify member-2 baseline - instances should NOT appear in current date responses
+          // Steps 3-4: Verify member-2 baseline - shared instances should NOT appear in current date responses
           cy.setTenant(Affiliations.University);
           OaiPmhEdge.listIdentifiersRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.University),
             fromDate,
           ).then((response) => {
-            OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
-            OaiPmh.verifyIdentifierInListResponse(response, testData.folioInstance.uuid, false);
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.college.marcInstance.uuid,
+              false,
+            );
+            OaiPmh.verifyIdentifierInListResponse(
+              response,
+              testData.college.folioInstance.uuid,
+              false,
+            );
           });
 
-          // Steps 5-7: Edit shared MARC instance from Member-2 tenant (University)
+          // Steps 5-7: Edit shared MARC instance holdings in Member-1 tenant (College)
           cy.resetTenant();
           cy.getUserToken(testData.user.username, testData.user.password);
-          cy.setTenant(Affiliations.University);
+          cy.setTenant(Affiliations.College);
 
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          InventoryInstances.searchByTitle(testData.marcInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.marcInstance.title);
-          InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.waitLoading();
-          QuickMarcEditor.updateLDR06And07Positions();
-          QuickMarcEditor.updateExistingField(
-            testData.marc245Field.tag,
-            testData.marc245Field.content,
-          );
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
+          InventoryInstances.searchByTitle(testData.college.marcInstance.uuid);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.college.marcInstance.title);
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.edit();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.fillCallNumber(testData.college.marcHoldingsCallNumber);
+          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
           InventoryInstance.waitLoading();
+          InventorySearchAndFilter.resetAll();
 
-          // Steps 8-10: Switch to member-1 tenant and edit shared FOLIO instance
-          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
+          // Steps 8-10: Edit shared FOLIO instance holdings in Member-1 tenant (College)
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          InventoryInstances.searchByTitle(testData.folioInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.folioInstance.title);
-          InstanceRecordView.edit();
-          InstanceRecordEdit.waitLoading();
-          InstanceRecordEdit.fillResourceTitle(testData.folioInstance.editedTitle);
-          InstanceRecordEdit.saveAndClose();
+          InventoryInstances.searchByTitle(testData.college.folioInstance.uuid);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.college.folioInstance.title);
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.edit();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.fillCallNumber(testData.college.folioHoldingsCallNumber);
+          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
           InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceTitle(testData.folioInstance.editedTitle);
 
-          // Step 11: Member-1 ListIdentifiers marc21 - verify both instances present
+          // Step 11: Switch to member-2 tenant and repeat Steps 5-10
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+
+          // Edit holdings of shared MARC instance in Member-2 tenant (University)
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventoryInstances.searchByTitle(testData.college.marcInstance.uuid);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.college.marcInstance.title);
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.edit();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.fillCallNumber(testData.university.marcHoldingsCallNumber);
+          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          InventorySearchAndFilter.resetAll();
+
+          // Edit holdings of shared FOLIO instance in Member-2 tenant (University)
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventoryInstances.searchByTitle(testData.college.folioInstance.uuid);
+          InventoryInstance.waitInstanceRecordViewOpened(testData.college.folioInstance.title);
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.edit();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.fillCallNumber(testData.university.folioHoldingsCallNumber);
+          HoldingsRecordEdit.saveAndClose();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          cy.wait(10000); // Wait for changes to propagate
+
+          // Step 12: Member-1 ListIdentifiers marc21 - verify both instances present
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
@@ -290,137 +328,140 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.getApiKey(Affiliations.College),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
+              testData.college.marcInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
+
+            // Verify FOLIO instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
+              testData.college.folioInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
           });
 
-          // Step 12: Member-1 ListIdentifiers marc21_withholdings - verify both instances present
+          // Step 13: Member-1 ListIdentifiers marc21_withholdings - verify both instances present
           OaiPmhEdge.listIdentifiersRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.College),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
+              testData.college.marcInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
+
+            // Verify FOLIO instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
+              testData.college.folioInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
           });
 
-          // Step 13: Member-1 ListIdentifiers oai_dc - verify both instances present
+          // Step 14: Member-1 ListIdentifiers oai_dc - verify both instances present
           OaiPmhEdge.listIdentifiersRequest(
             'oai_dc',
             OaiPmhEdge.getApiKey(Affiliations.College),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
+              testData.college.marcInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
+
+            // Verify FOLIO instance
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
+              testData.college.folioInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
           });
 
-          // Step 14: Member-2 ListIdentifiers marc21 - verify both instances present
-          cy.resetTenant();
-          cy.getAdminToken();
+          // Step 15: Member-2 ListIdentifiers marc21 - verify both instances NOT present (skipped)
           cy.setTenant(Affiliations.University);
-
           OaiPmhEdge.listIdentifiersRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.University),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
-              true,
+              testData.college.marcInstance.uuid,
               false,
-              Affiliations.University,
             );
+
+            // Verify FOLIO instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
-              true,
+              testData.college.folioInstance.uuid,
               false,
-              Affiliations.University,
             );
           });
 
-          // Step 15: Member-2 ListIdentifiers marc21_withholdings - verify both instances present
+          // Step 16: Member-2 ListIdentifiers marc21_withholdings - verify both instances NOT present
           OaiPmhEdge.listIdentifiersRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.University),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
-              true,
+              testData.college.marcInstance.uuid,
               false,
-              Affiliations.University,
             );
+
+            // Verify FOLIO instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
-              true,
+              testData.college.folioInstance.uuid,
               false,
-              Affiliations.University,
             );
           });
 
-          // Step 16: Member-2 ListIdentifiers oai_dc - verify both instances present
+          // Step 17: Member-2 ListIdentifiers oai_dc - verify both instances NOT present
           OaiPmhEdge.listIdentifiersRequest(
             'oai_dc',
             OaiPmhEdge.getApiKey(Affiliations.University),
             fromDate,
           ).then((response) => {
+            // Verify MARC instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
-              true,
+              testData.college.marcInstance.uuid,
               false,
-              Affiliations.University,
             );
+
+            // Verify FOLIO instance NOT present
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
-              true,
+              testData.college.folioInstance.uuid,
               false,
-              Affiliations.University,
             );
           });
 
-          // Steps 17-19: Cross-tenant ListIdentifiers marc21
+          // Steps 18-20: Cross-tenant ListIdentifiers marc21
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
@@ -434,24 +475,24 @@ describe('OAI-PMH', () => {
           ).then((response) => {
             resumptionTokenMarc21 = OaiPmh.extractResumptionToken(response);
 
-            // Step 18: Check member-1 response
+            // Step 19: Check member-1 response - instances PRESENT
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.marcInstance.uuid,
+              testData.college.marcInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
             OaiPmh.verifyIdentifierInListResponse(
               response,
-              testData.folioInstance.uuid,
+              testData.college.folioInstance.uuid,
               true,
               false,
               Affiliations.College,
             );
           });
 
-          // Second request with resumptionToken - verify member-2 records
+          // Second request with resumptionToken - verify member-2 records NOT present
           cy.then(() => {
             cy.resetTenant();
             cy.getAdminToken();
@@ -460,26 +501,23 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequestWithResumptionToken(
               resumptionTokenMarc21,
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
-              // Step 19: Check member-2 response
+              // Step 20: Check member-2 response - instances NOT present (skipped)
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.marcInstance.uuid,
-                true,
+                testData.college.marcInstance.uuid,
                 false,
-                Affiliations.University,
               );
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.folioInstance.uuid,
-                true,
+                testData.college.folioInstance.uuid,
                 false,
-                Affiliations.University,
               );
             });
           });
 
-          // Steps 20-22: Cross-tenant ListIdentifiers marc21_withholdings
+          // Steps 21-23: Cross-tenant ListIdentifiers marc21_withholdings
           cy.then(() => {
             cy.resetTenant();
             cy.getAdminToken();
@@ -494,17 +532,17 @@ describe('OAI-PMH', () => {
             ).then((response) => {
               resumptionTokenWithholdings = OaiPmh.extractResumptionToken(response);
 
-              // Step 21: Check member-1 response
+              // Step 22: Check member-1 response - instances PRESENT
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.marcInstance.uuid,
+                testData.college.marcInstance.uuid,
                 true,
                 false,
                 Affiliations.College,
               );
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.folioInstance.uuid,
+                testData.college.folioInstance.uuid,
                 true,
                 false,
                 Affiliations.College,
@@ -520,26 +558,22 @@ describe('OAI-PMH', () => {
                 OaiPmhEdge.getApiKey(Affiliations.Consortia),
                 fromDate,
               ).then((responseUniversity) => {
-                // Step 22: Check member-2 response
+                // Step 23: Check member-2 response - instances NOT present
                 OaiPmh.verifyIdentifierInListResponse(
                   responseUniversity,
-                  testData.marcInstance.uuid,
-                  true,
+                  testData.college.marcInstance.uuid,
                   false,
-                  Affiliations.University,
                 );
                 OaiPmh.verifyIdentifierInListResponse(
                   responseUniversity,
-                  testData.folioInstance.uuid,
-                  true,
+                  testData.college.folioInstance.uuid,
                   false,
-                  Affiliations.University,
                 );
               });
             });
           });
 
-          // Steps 23-25: Cross-tenant ListIdentifiers oai_dc
+          // Steps 24-26: Cross-tenant ListIdentifiers oai_dc
           cy.then(() => {
             cy.resetTenant();
             cy.getAdminToken();
@@ -554,17 +588,17 @@ describe('OAI-PMH', () => {
             ).then((response) => {
               resumptionTokenOaiDc = OaiPmh.extractResumptionToken(response);
 
-              // Step 24: Check member-1 response
+              // Step 25: Check member-1 response - instances PRESENT
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.marcInstance.uuid,
+                testData.college.marcInstance.uuid,
                 true,
                 false,
                 Affiliations.College,
               );
               OaiPmh.verifyIdentifierInListResponse(
                 response,
-                testData.folioInstance.uuid,
+                testData.college.folioInstance.uuid,
                 true,
                 false,
                 Affiliations.College,
@@ -578,21 +612,18 @@ describe('OAI-PMH', () => {
               OaiPmhEdge.listIdentifiersRequestWithResumptionToken(
                 resumptionTokenOaiDc,
                 OaiPmhEdge.getApiKey(Affiliations.Consortia),
+                fromDate,
               ).then((responseUniversity) => {
-                // Step 25: Check member-2 response
+                // Step 26: Check member-2 response - instances NOT present
                 OaiPmh.verifyIdentifierInListResponse(
                   responseUniversity,
-                  testData.marcInstance.uuid,
-                  true,
+                  testData.college.marcInstance.uuid,
                   false,
-                  Affiliations.University,
                 );
                 OaiPmh.verifyIdentifierInListResponse(
                   responseUniversity,
-                  testData.folioInstance.uuid,
-                  true,
+                  testData.college.folioInstance.uuid,
                   false,
-                  Affiliations.University,
                 );
               });
             });
