@@ -142,11 +142,11 @@ describe('Inventory', () => {
           // Step 1: Open Item details from the Holdings accordion.
           openItemFromInventory();
 
-          // Step 2: Open Version history fourth pane.
+          // Step 2: Open Item's Version history fourth pane.
           ItemRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();
 
-          // Step 3: Non-default page size shows first 25 records.
+          // Step 3: Version history pane shows first 25 records.
           VersionHistorySection.verifyVersionHistoryPane(25, true, totalVersionHistoryRecords);
           VersionHistorySection.verifyVersionHistoryCard(
             0,
