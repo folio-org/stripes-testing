@@ -373,5 +373,6 @@ export default {
   waitLoading() {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());
+    cy.wait(3000);
   },
 };
