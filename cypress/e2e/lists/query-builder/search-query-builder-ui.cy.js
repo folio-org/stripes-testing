@@ -58,14 +58,13 @@ describe('Lists', () => {
       }
     };
 
-    const openQueryBuilder = (recordType, { description } = {}) => {
+    const openQueryBuilder = (recordType) => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
       Lists.openNewListPane();
       Lists.setName(listName);
-      if (description) Lists.setDescription(description);
       Lists.selectRecordType(recordType);
       Lists.buildQuery();
     };
@@ -279,9 +278,7 @@ describe('Lists', () => {
         { tags: ['criticalPath', 'corsair'] },
         () => {
           listName = getTestEntityValue('C_lists_query_builder_classification_list');
-          openQueryBuilder(recordType, {
-            description: `${listName} description`,
-          });
+          openQueryBuilder(recordType);
 
           QueryModal.typeInAndSelectField(
             instanceFieldValues.classificationsClassificationIdentifierType,
