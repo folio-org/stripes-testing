@@ -54,10 +54,12 @@ describe('agreements', () => {
       cy.loginAsAdmin({
         path: TopMenu.agreementsPath,
         waiter: Agreements.waitLoading,
+        authRefresh: true,
       });
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(firstUserId);
       Users.deleteViaApi(secondUserId);
       Agreements.deleteViaApi(agreementId);

@@ -14,10 +14,12 @@ describe('agreements', () => {
       cy.loginAsAdmin({
         path: TopMenu.agreementsPath,
         waiter: Agreements.waitLoading,
+        authRefresh: true,
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Agreements.getIdViaApi({ limit: 1000, query: `"name"=="${defaultAgreement.name}"` }).then(
         (id) => {
           Agreements.deleteViaApi(id);
