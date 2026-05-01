@@ -251,7 +251,7 @@ export default {
 
   checkPreviewSectionContains(section, value) {
     cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
-      .should('be.visible')
+      .should('be.visible');
   },
 
   checkPreviewSectionContainsField(section, field, value) {
