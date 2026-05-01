@@ -266,7 +266,18 @@ export default {
   checkTextValueOnField(textValue, section) {
     cy.xpath(
       `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
-    ).should('be.visible');
+    )
+      .scrollIntoView()
+      .should('be.visible');
+  },
+
+  checkTextValueOnDisabledField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .should('be.disabled');
   },
 
   checkHeadingProfile(profileName) {
