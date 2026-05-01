@@ -3,10 +3,14 @@ import AgreementLines from '../../../support/fragments/agreements/agreementLines
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
+const randomPostfix = getRandomPostfix();
+const tagNames = [`tag1${randomPostfix}`, `tag2${randomPostfix}`];
 let agreementLine;
 let agreementId;
 let agreementLineId;
+const tagIds = [];
 
 describe('agreements', () => {
   describe('Agreement Lines', () => {
@@ -22,17 +26,29 @@ describe('agreements', () => {
         })
         .then((response) => {
           agreementLineId = response.id;
+        })
+        .then(() => {
+          tagNames.forEach((tag) => {
+            cy.createTagApi({ label: tag }).then((tagId) => {
+              tagIds.push(tagId);
+            });
+          });
+        })
+        .then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.agreementsPath,
+            waiter: Agreements.waitLoading,
+          });
         });
-      cy.loginAsAdmin({
-        path: TopMenu.agreementsPath,
-        waiter: Agreements.waitLoading,
-      });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
       AgreementLines.deleteViaApi({ agreementId, agreementLineId });
       Agreements.deleteViaApi(agreementId);
+      tagIds.forEach((tagId) => {
+        cy.deleteTagApi(tagId, true);
+      });
     });
 
     it(
@@ -53,8 +69,10 @@ describe('agreements', () => {
         AgreementLineInformation.waitLoadingWithExistingLine(agreementLine.description);
 
         AgreementLineInformation.openTagsPane();
-        AgreementLineInformation.addTag('important');
-        AgreementLineInformation.addTag('urgent');
+        tagNames.forEach((tag) => {
+          AgreementLineInformation.addTag(tag);
+          AgreementLineInformation.verifyTagAdded(tag);
+        });
         AgreementLineInformation.closeTagsPane();
         AgreementLineInformation.verifyTagsCount('2');
       },
