@@ -290,7 +290,7 @@ describe('Lists', () => {
             instanceFieldValues.classificationsClassificationIdentifierType,
           );
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.chooseExactValueFromMultiselect(testData.classificationIdentifierTypeName);
+          QueryModal.fillInValueMultiselect(testData.classificationIdentifierTypeName);
           QueryModal.verifySelectedMultiselectValue(testData.classificationIdentifierTypeName);
           QueryModal.testQuery();
           Lists.verifyPreviewOfRecordsMatched();

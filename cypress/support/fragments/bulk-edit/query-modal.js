@@ -586,13 +586,6 @@ export default {
     cy.wait(1000);
   },
 
-  chooseExactValueFromMultiselect(text, row = 0) {
-    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
-    cy.do([MultiSelectOption(including(text)).click()]);
-    cy.do(buildQueryModal.click());
-    cy.wait(1000);
-  },
-
   verifySelectedMultiselectValue(expectedValue, row = 0) {
     const selected = Array.isArray(expectedValue) ? expectedValue : [expectedValue];
 
