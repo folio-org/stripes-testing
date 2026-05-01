@@ -36,6 +36,7 @@ describe('Lists', () => {
     };
 
     const createQueryBuilderUser = (permissions, capabilitySets = []) => {
+      cy.getAdminToken();
       cy.createTempUser(permissions).then((userProperties) => {
         userData = userProperties;
         if (Cypress.env('eureka')) {
