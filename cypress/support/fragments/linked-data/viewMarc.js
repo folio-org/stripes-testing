@@ -9,6 +9,10 @@ export default {
     cy.xpath(`//td[contains(normalize-space(), '${data}')]`).should('be.visible');
   },
 
+  checkMarcFieldContainsData(fieldCode, data) {
+    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and contains(normalize-space(), '${data}')]`).should('be.visible');
+  },
+
   closeMarcView() {
     cy.xpath(closeButton).click();
     cy.wait(500);
