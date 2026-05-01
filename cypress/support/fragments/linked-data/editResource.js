@@ -229,17 +229,17 @@ export default {
   checkPreviewContains(section, field, value) {
     cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
       .should('be.visible')
-      .filter((_, sectionBlock) => {
+      .filter((_secIdx, sectionBlock) => {
         const $sectionBlock = Cypress.$(sectionBlock);
         const $fieldBlock = $sectionBlock
           .find('.value-heading')
-          .filter((_, el) => Cypress.$(el).text() === field);
+          .filter((_fldIdx, el) => Cypress.$(el).text() === field);
 
-          if (!$fieldBlock.length) {
-            return false;
-          }
+        if (!$fieldBlock.length) {
+          return false;
+        }
 
-          return $fieldBlock.next().text() === value;
+        return $fieldBlock.next().text() === value;
       })
       .should('have.length.at.least', 1);
   },

@@ -8,11 +8,10 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-import Marigold from '../../../support/fragments/linked-data/marigold';
-import Work from '../../../support/fragments/linked-data/work';
 import EditResource from '../../../support/fragments/linked-data/editResource';
 import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
 import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
+import Work from '../../../support/fragments/linked-data/work';
 
 import {
   MARIGOLD_CAPABILITIES,
@@ -113,7 +112,7 @@ describe('Citation: check title parts MARC codes', () => {
   });
 
   it(
-    'C466260 Marigold - Verify View MARC option and page / Work preview', 
+    'C466260 Marigold - Verify View MARC option and page / Work preview',
     { tags: ['criticalPath', 'citation', 'C466260', 'marigold'] },
     () => {
       // Edit instance
@@ -130,7 +129,7 @@ describe('Citation: check title parts MARC codes', () => {
       ViewMarc.checkMarcFieldContainsData(245, resourceData.marc245);
       ViewMarc.checkMarcFieldIndicators(246, '   ');
       ViewMarc.checkMarcFieldContainsData(246, resourceData.marc246);
- 
+
       // Return to instance edit
       ViewMarc.closeMarcView();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
