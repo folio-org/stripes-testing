@@ -137,11 +137,11 @@ describe('Lists', () => {
       before('Create test user', () => {
         createQueryBuilderUser([
           Permissions.listsAll.gui,
-          // Permissions.usersViewRequests.gui,
+          Permissions.usersViewRequests.gui,
           Permissions.uiOrdersCreate.gui,
-          // Permissions.inventoryAll.gui,
-          // Permissions.loansAll.gui,
-          // Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.loansAll.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
         ]);
       });
 
