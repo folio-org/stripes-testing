@@ -210,7 +210,7 @@ describe('Citation: check category resource MARC codes', () => {
       Marigold.clickEditWorkFromSearch();
       EditResource.checkTextValueOnField(resourceData.dateOfWork, 'Date of Work');
       EditResource.checkTextValueOnDisabledField(resourceData.geographicCoverage, 'Search LCNAF, LCSH or GAC');
-      
+
       // Review precondition work's MARC
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
