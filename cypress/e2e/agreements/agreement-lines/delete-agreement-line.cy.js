@@ -24,10 +24,12 @@ describe('agreements', () => {
       cy.loginAsAdmin({
         path: TopMenu.agreementsPath,
         waiter: Agreements.waitLoading,
+        authRefresh: true,
       });
     });
 
     after(() => {
+      cy.getAdminToken();
       Agreements.deleteViaApi(agreementId);
     });
 
@@ -37,6 +39,7 @@ describe('agreements', () => {
 
       SearchAndFilterAgreementLines.search(agreementLine.description);
       AgreementLines.verifyAgreementLinesCount(1);
+      AgreementLines.checkAgreementLineFound(agreementLine.description);
 
       AgreementLines.agreementLinesListClick(agreementLine.description);
       AgreementLineInformation.waitLoadingWithExistingLine(agreementLine.description);
@@ -44,10 +47,8 @@ describe('agreements', () => {
 
       AgreementLineInformation.gotoDelete();
       DeleteConfirmationModal.waitLoading();
-
       DeleteConfirmationModal.confirmDeleteAgreementLine();
-      AgreementViewDetails.openAgreementLineFilter();
-      SearchAndFilterAgreementLines.search(agreementLine.description);
+      AgreementLines.checkAgreementLineFound(agreementLine.description, { isFound: false });
       AgreementLines.verifyAgreementLinesCount(0);
     });
   });

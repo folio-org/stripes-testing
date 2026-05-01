@@ -25,10 +25,12 @@ describe('agreements', () => {
       cy.loginAsAdmin({
         path: TopMenu.agreementsPath,
         waiter: Agreements.waitLoading,
+        authRefresh: true,
       });
     });
 
     after(() => {
+      cy.getAdminToken();
       AgreementLines.deleteViaApi({ agreementId, agreementLineId });
       Agreements.deleteViaApi(agreementId);
     });
