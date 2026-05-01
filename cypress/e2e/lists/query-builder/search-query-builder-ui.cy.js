@@ -36,13 +36,14 @@ describe('Lists', () => {
     };
 
     const createQueryBuilderUser = (permissions, capabilitySets = []) => {
-      cy.getAdminToken();
-      cy.createTempUser(permissions).then((userProperties) => {
-        userData = userProperties;
-        if (Cypress.env('eureka')) {
-          addQueryBuilderCapabilitySets([CapabilitySets.moduleListsManage, ...capabilitySets]);
-        }
-      });
+      cy.getAdminToken()
+        .then(() => cy.createTempUser(permissions))
+        .then((userProperties) => {
+          userData = userProperties;
+          if (Cypress.env('eureka')) {
+            addQueryBuilderCapabilitySets([CapabilitySets.moduleListsManage, ...capabilitySets]);
+          }
+        });
     };
 
     const deleteQueryBuilderUser = () => {
@@ -55,6 +56,7 @@ describe('Lists', () => {
       if (listName) {
         cy.getUserToken(userData.username, userData.password);
         Lists.deleteListByNameViaApi(listName, true);
+        cy.getAdminToken();
         listName = undefined;
       }
     };
@@ -292,6 +294,7 @@ describe('Lists', () => {
           QueryModal.verifySelectedMultiselectValue(testData.classificationIdentifierTypeName);
           QueryModal.testQuery();
           Lists.verifyPreviewOfRecordsMatched();
+          cy.contains(testData.instanceTitle).should('be.visible');
           QueryModal.verifyQueryAreaContent(
             `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}])`,
           );
