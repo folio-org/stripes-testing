@@ -11,7 +11,7 @@ import ClassificationIdentifierTypes from '../../../support/fragments/settings/i
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-//
+
 describe('Lists', () => {
   describe('Query Builder UI', () => {
     let userData = {};
