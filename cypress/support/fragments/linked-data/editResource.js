@@ -50,7 +50,7 @@ export default {
     return cy.url().then((url) => {
       const match = url.match(/resources\/([^/]+)\/edit/);
       const id = match ? match[1] : null;
-      return cy.wrap({ resourceId: id });;
+      return cy.wrap({ resourceId: id });
     });
   },
 

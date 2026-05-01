@@ -22,7 +22,6 @@ import {
   MARIGOLD_CAPABILITIES,
   MARIGOLD_CAPABILITY_SETS,
 } from '../../../support/dictionary/marigoldCapabilities';
-import searchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 
 let user;
 
@@ -123,7 +122,7 @@ describe('Citation: check place of work MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       EditResource.setValueForTheField(testData.uniqueMarigoldWorkTitle, 'Preferred Title for Work');
       EditResource.setValueForSimpleField(testData.marigoldPlaceFirst, 'Place of Origin of the Work');
-      EditResource.saveAndKeepEditingWithId(({ resourceId}) => {
+      EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.workId = resourceId;
       });
       EditResource.openNewInstanceFormViaNewInstanceButton();
@@ -131,7 +130,7 @@ describe('Citation: check place of work MARC codes', () => {
       InstanceProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
       NewInstance.addMainInstanceTitle(testData.uniqueMarigoldInstanceTitle);
-      EditResource.saveAndKeepEditingWithId(({ resourceId}) => {
+      EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.instanceId = resourceId;
       });
       EditResource.clickCloseResourceButton();
