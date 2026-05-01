@@ -1,4 +1,3 @@
-import { Keyboard } from '@interactors/keyboard';
 import {
   Button,
   KeyValue,
@@ -16,7 +15,6 @@ import AgreementViewDetails from './agreementViewDetails';
 const rootSection = Pane({ id: 'pane-view-agreement-line' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
-const addTagsField = MultiSelect({ label: 'Tag text area' });
 const closeIcon = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
@@ -38,14 +36,12 @@ export default {
     cy.expect(tagsPane.absent());
   },
 
-  addTag(tag) {
-    cy.do([
-      tagsPane.find(addTagsField).focus(),
-      Keyboard.type(tag),
-      Keyboard.press({ code: 'Enter' }),
-    ]);
-    // need to wait for changes to be applied
+  addTag(tagName) {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
     cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(MultiSelectMenu().find(MultiSelectOption(tagName)).click());
   },
 
   addNewTag: (tagName) => {

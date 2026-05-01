@@ -71,7 +71,7 @@ describe('agreements', () => {
 
         AgreementLineInformation.openTagsPane();
         tagNames.forEach((tag) => {
-          AgreementLineInformation.addNewTag(tag);
+          AgreementLineInformation.addTag(tag);
           AgreementLineInformation.verifyTagAdded(tag);
         });
         AgreementLineInformation.closeTagsPane();
