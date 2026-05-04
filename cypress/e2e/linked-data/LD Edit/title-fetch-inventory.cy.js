@@ -133,8 +133,8 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
 
       // Inventory view
       EditResource.openInventoryViewViaActions();
-      InventoryInstances.waitLoading();
-      InventoryInstance.waitInventoryLoading();
+      InventoryInstances.waitContentLoading();
+      InventoryInstance.verifyInstanceTitle(testData.uniqueInstanceTitle);
 
       // Return to Marigold
       InventoryInstance.editInstanceInMG();
@@ -145,7 +145,7 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       EditResource.checkSaveButtonsDisabled();
       EditResource.checkInstancePreviewRightOfWorkEditor();
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.instanceTitle, testData.uniqueWorkTitle);
+      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.instanceTitle, testData.uniqueInstanceTitle);
       EditResource.checkWorkActionsPlacement();
     },
   );
