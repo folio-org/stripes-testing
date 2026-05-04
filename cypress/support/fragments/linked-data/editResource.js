@@ -142,6 +142,14 @@ export default {
       .clear();
   },
 
+  clearSimpleField(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`)
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+  },
+
   duplicateInstance() {
     cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
@@ -158,6 +166,11 @@ export default {
     cy.do(duplicateButton.click());
     cy.wait(1000);
     cy.expect(Heading('Duplicate work').exists());
+  },
+
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
   },
 
   openNewInstanceFormViaActions() {
@@ -248,7 +261,12 @@ export default {
     cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
   },
 
-  checkPreviewContains(section, field, value) {
+  checkPreviewSectionContains(section, value) {
+    cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
+      .should('be.visible');
+  },
+
+  checkPreviewSectionContainsField(section, field, value) {
     cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
       .should('be.visible')
       .filter((_secIdx, sectionBlock) => {
@@ -301,6 +319,12 @@ export default {
       .scrollIntoView()
       .should('be.visible')
       .should('be.disabled');
+  },
+
+  checkLabelOnSimpleField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div//div[contains(@class, "simple-lookup__multi-value__label") and text()="${textValue}"]`,
+    ).should('be.visible');
   },
 
   checkHeadingProfile(profileName) {
