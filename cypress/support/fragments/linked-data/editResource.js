@@ -198,11 +198,6 @@ export default {
     cy.xpath(newInstanceActionsButton).click();
   },
 
-  editInstanceFormViaActions() {
-    cy.xpath(instanceActionsButton).click();
-    cy.xpath(instanceEditActionButton).click();
-  },
-
   openNewInstanceFormViaNewInstanceButton() {
     cy.xpath(newInstanceButton).should('be.visible');
     cy.xpath(newInstanceButton).click();

@@ -18,7 +18,6 @@ import {
   MARIGOLD_CAPABILITIES,
   MARIGOLD_CAPABILITY_SETS,
 } from '../../../support/dictionary/marigoldCapabilities';
-import { fi } from 'date-fns/locale';
 
 let user;
 
