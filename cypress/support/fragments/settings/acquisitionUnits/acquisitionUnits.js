@@ -180,11 +180,12 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteAcquisitionUnitViaApi(acqUnitId) {
+  deleteAcquisitionUnitViaApi(acqUnitId, failOnStatusCode) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/units/${acqUnitId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   assignUserViaApi(userId, acquisitionsUnitId) {
