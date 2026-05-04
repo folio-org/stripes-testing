@@ -20,7 +20,7 @@ describe('MARC', () => {
         const randomPostfix = getRandomPostfix();
         const randomLetters = getRandomLetters(2);
         const localAuthFile = {
-          name: `C514877 auth source file active ${randomPostfix}`,
+          name: `C514883 auth source file active ${randomPostfix}`,
           prefix: `${randomLetters}`,
           hridStartsWith: '1',
           baseUrl: '',
@@ -31,8 +31,8 @@ describe('MARC', () => {
         const canceledLccnNumberOfSharedAuthority = `${randomLetters}  ${randomFourDigitNumber()}${randomFourDigitNumber()}`;
         const lccnNumberOfLocalAuthority = `${randomLetters}  ${randomFourDigitNumber()}${randomFourDigitNumber()}`;
         const canceledLccnNumberOfLocalAuthority = `${randomLetters}  ${randomFourDigitNumber()}${randomFourDigitNumber()}`;
-        const sharedMarcAuthorityHeading = `AT_C514877_SharedMarcAuthority_${randomPostfix}`;
-        const localMarcAuthorityHeading = `AT_C514877_LocalMarcAuthority_${randomPostfix}`;
+        const sharedMarcAuthorityHeading = `AT_C514883_SharedMarcAuthority_${randomPostfix}`;
+        const localMarcAuthorityHeading = `AT_C514883_LocalMarcAuthority_${randomPostfix}`;
         const errorText = including('Fail: 010 $a already exists.');
         const marcAuthorityFields = [
           [
