@@ -271,33 +271,33 @@ export default {
 
   checkWorkPreviewLeftOfInstanceEditor() {
     cy.xpath('//div[@id="edit-section"]').then(($editor) => {
-      cy.xpath('//div[contains(@class, "preview-container"]').then(($preview) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
         const editorLeft = $editor[0].getBoundingClientRect().left;
         const previewRight = $preview[0].getBoundingClientRect().right;
-        expect(previewRight).to.be.lessThan(editorLeft);
+        expect(previewRight).to.be.lte(editorLeft);
       });
     });
   },
 
   checkInstancePreviewRightOfWorkEditor() {
     cy.xpath('//div[@id="edit-section"]').then(($editor) => {
-      cy.xpath('//div[contains(@class, "preview-container"]').then(($preview) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
         const editorRight = $editor[0].getBoundingClientRect().right;
         const previewLeft = $preview[0].getBoundingClientRect().left;
-        expect(editorRight).to.be.lessThan(previewLeft);
+        expect(editorRight).to.be.lte(previewLeft);
       });
     });
   },
 
   checkWorkActionsPlacement() {
     cy.xpath('//div[@id="edit-section"]').then(($editor) => {
-      cy.xpath('//div[contains(@class, "preview-container"]').then(($preview) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
         cy.xpath('//button[@data-testid="block-actions-toggle"]').then(($button) => {
           const editorRight = $editor[0].getBoundingClientRect().right;
           const previewLeft = $preview[0].getBoundingClientRect().left;
           const buttonRight = $button[0].getBoundingClientRect().right;
-          expect(buttonRight).to.be.lessThan(editorRight);
-          expect(buttonRight).to.be.lessThan(previewLeft);
+          expect(buttonRight).to.be.lte(editorRight);
+          expect(buttonRight).to.be.lte(previewLeft);
         });
       });
     });

@@ -18,15 +18,30 @@ import {
   MARIGOLD_CAPABILITIES,
   MARIGOLD_CAPABILITY_SETS,
 } from '../../../support/dictionary/marigoldCapabilities';
+import { fi } from 'date-fns/locale';
 
 let user;
 
 describe('Citation: check long title, local vocabularies, inventory view', () => {
+  const longTitle = 'Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading.';
   const testData = {
     workId: null,
     instanceId: null,
-    uniqueWorkTitle: `Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading. ${getRandomPostfix()}`,
-    uniqueInstanceTitle: `Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading. ${getRandomPostfix()}`,
+    uniqueWorkTitle: `${longTitle} ${getRandomPostfix()}`,
+    uniqueInstanceTitle: `${longTitle} ${getRandomPostfix()}`,
+  };
+
+  const fieldNames = {
+    titleSection: 'Title Information',
+    workTitle: 'Preferred Title for Work',
+    instanceTitle: 'Main Title',
+    place: 'Search place of publication',
+    issuance: 'Mode of Issuance',
+    status: 'Invalid/Canceled?',
+    noteType: 'Note type',
+    mediaType: 'Media type',
+    carrierType: 'Carrier type',
+    language: 'Language',
   };
 
   before('Create test data', () => {
@@ -66,7 +81,7 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       WorkProfileModal.waitLoading();
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
-      EditResource.setValueForTheField(testData.uniqueWorkTitle, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitle, fieldNames.workTitle);
       EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
         testData.workId = resourceId;
       });
@@ -90,15 +105,16 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       cy.intercept('GET', /^.*\/vocabular(y|ies)\/.*$/).as('vocabularies');
       Marigold.editInstanceFromSearchTable(1, 1);
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
-      EditResource.openSimpleFieldMenu('Search place of publication');
-      EditResource.openSimpleSectionFieldMenu('Mode of Issuance');
-      EditResource.openSimpleFieldMenu('Invalid/Canceled?');
-      EditResource.openSimpleFieldMenu('Note type');
-      EditResource.openSimpleSectionFieldMenu('Media type');
-      EditResource.openSimpleSectionFieldMenu('Carrier type');
-      EditResource.openSimpleFieldMenu('Language');
+      EditResource.openSimpleFieldMenu(fieldNames.place);
+      EditResource.openSimpleSectionFieldMenu(fieldNames.issuance);
+      EditResource.openSimpleFieldMenu(fieldNames.status);
+      EditResource.openSimpleFieldMenu(fieldNames.noteType);
+      EditResource.openSimpleSectionFieldMenu(fieldNames.mediaType);
+      EditResource.openSimpleSectionFieldMenu(fieldNames.carrierType);
+      EditResource.openSimpleFieldMenu(fieldNames.language);
       cy.wait('@vocabularies').then((interception) => {
         cy.location().then((here) => {
+          // Compare the base domain name, back end host may not be the exact same as the front end host
           expect(interception.request.url).to.include(here.host.split('.').slice(1).join('.'));
         });
       });
@@ -106,10 +122,10 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       // Verify work preview is open and contains work title
       EditResource.checkPreviewOpen();
       EditResource.checkWorkPreviewLeftOfInstanceEditor();
-      EditResource.checkPreviewSectionContainsField('Title Information', 'Preferred Title for Work', testData.uniqueWorkTitle);
+      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.workTitle, testData.uniqueWorkTitle);
 
       // Verify instance editor
-      EditResource.checkTextValueOnField(testData.uniqueInstanceTitle, 'Main Title');
+      EditResource.checkTextValueOnField(testData.uniqueInstanceTitle, fieldNames.instanceTitle);
 
       // Verify buttons
       EditResource.checkCloseAndCancelEnabled();
@@ -129,7 +145,7 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       EditResource.checkSaveButtonsDisabled();
       EditResource.checkInstancePreviewRightOfWorkEditor();
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField('Title Information', 'Main Title', testData.uniqueWorkTitle);
+      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.instanceTitle, testData.uniqueWorkTitle);
       EditResource.checkWorkActionsPlacement();
     },
   );
