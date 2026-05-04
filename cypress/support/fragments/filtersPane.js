@@ -30,11 +30,11 @@ import { COMMON_BUTTON_LABELS, DATE_RANGE_FIELD_LABELS, LIST_ASSERTION_MODES } f
 
 const FILTER_ACCORDION_SELECTOR_ATTRIBUTE = 'data-cy-filters-pane-filter-accordion';
 const RESET_BUTTON_SELECTOR_ATTRIBUTE = 'data-cy-filters-pane-reset-all-filters-button';
+const ACCORDION_TOGGLE_SELECTOR = 'button[id*="accordion-toggle-button-"]';
 
 const resetAllButton = Button({ text: COMMON_BUTTON_LABELS.RESET_ALL });
 
-const getFilterSectionById = (filtersPane, id) => filtersPane.find(Section({ id }));
-const getFilterAccordionButton = (filtersPane, id) => filtersPane.find(Button({ id: `accordion-toggle-button-${id}` }));
+const findFilterSectionByLabel = (filtersPane, label) => filtersPane.find(Section({ label }));
 
 /**
  * Common helper functions for filters pane interactions and assertions.
@@ -72,7 +72,7 @@ export default {
    * When `values` is empty, asserts no chips are present.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} [values=[]] - Expected chip values. Pass empty array to assert no chips.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -82,14 +82,14 @@ export default {
    * FiltersPane.assertMultiSelectFilterValues(ordersFiltersPane, 'fundCode', ['FUND-A']);
    * FiltersPane.assertMultiSelectFilterValues(ordersFiltersPane, 'fundCode', []);
    */
-  assertMultiSelectFilterValues(filtersPane, filterId, values = [], options = {}) {
+  assertMultiSelectFilterValues(filtersPane, filterLabel, values = [], options = {}) {
     const { expandAccordion = true, mode = LIST_ASSERTION_MODES.EXISTS } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
 
     if (values.length) {
       values.forEach((value) => {
@@ -105,7 +105,7 @@ export default {
    * When `values` is empty, asserts no options are visible in the dropdown.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} [values=[]] - Option labels to assert (supports partial match via `including`).
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -114,14 +114,14 @@ export default {
    * @example
    * FiltersPane.assertMultiSelectFilterOptionsValues(ordersFiltersPane, 'fundCode', ['FUND-A', 'FUND-B']);
    */
-  assertMultiSelectFilterOptionsValues(filtersPane, filterId, values = [], options = {}) {
+  assertMultiSelectFilterOptionsValues(filtersPane, filterLabel, values = [], options = {}) {
     const { expandAccordion = true, mode = LIST_ASSERTION_MODES.EXISTS } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
     const filterMultiSelect = filterSection.find(MultiSelect());
     const filterMultiSelectDropdown = MultiSelectMenu();
 
@@ -140,7 +140,7 @@ export default {
    * Note: works as toggle assertion when called multiple times for the same option.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} labels - The visible labels of the checkbox options.
    * @param {object} [options={}]
    * @param {boolean} [options.checked=true] - Whether the checkboxes are expected to be checked or unchecked.
@@ -149,15 +149,17 @@ export default {
    * @example
    * FiltersPane.assertCheckboxFilterValues(ordersFiltersPane, 'approved', ['Yes'], { checked: true });
    */
-  assertCheckboxFilterValues(filtersPane, filterId, labels, options = {}) {
+  assertCheckboxFilterValues(filtersPane, filterLabel, labels, options = {}) {
     const { checked = true, expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
     labels.forEach((label) => {
-      cy.expect(getFilterSectionById(filtersPane, filterId).find(Checkbox(label)).has({ checked }));
+      cy.expect(
+        findFilterSectionByLabel(filtersPane, filterLabel).find(Checkbox(label)).has({ checked }),
+      );
     });
   },
 
@@ -167,26 +169,26 @@ export default {
    * Note: this function only asserts the selected value, it does not assert the presence of the option in the dropdown.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string} value - The expected selected value label.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
    */
-  assertSelectFilterValue(filtersPane, filterId, value, options = {}) {
+  assertSelectFilterValue(filtersPane, filterLabel, value, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    cy.expect(getFilterSectionById(filtersPane, filterId).find(Select()).has({ value }));
+    cy.expect(findFilterSectionByLabel(filtersPane, filterLabel).find(Select()).has({ value }));
   },
 
   /**
    * Asserts the current value of a Selection (dropdown) filter.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string} value - The expected selected value label.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -194,15 +196,17 @@ export default {
    * @example
    * FiltersPane.assertSelectionFilterValue(ordersFiltersPane, 'poNumberPrefix', 'PREF-01');
    */
-  assertSelectionFilterValue(filtersPane, filterId, value, options = {}) {
+  assertSelectionFilterValue(filtersPane, filterLabel, value, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
     cy.expect(
-      getFilterSectionById(filtersPane, filterId).find(Selection()).has({ singleValue: value }),
+      findFilterSectionByLabel(filtersPane, filterLabel)
+        .find(Selection())
+        .has({ singleValue: value }),
     );
   },
 
@@ -213,7 +217,7 @@ export default {
    * To select an option, use the `filterBySelectionOption` function.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} [values=[]] - Option labels to assert (supports partial match via `including`).
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -222,14 +226,14 @@ export default {
    * FiltersPane.assertSelectionFilterOptionsValues(ordersFiltersPane, 'poNumberPrefix', ['PREF-01', 'PREF-02']);
    * FiltersPane.assertSelectionFilterOptionsValues(ordersFiltersPane, 'poNumberPrefix', []);
    */
-  assertSelectionFilterOptionsValues(filtersPane, filterId, values = [], options = {}) {
+  assertSelectionFilterOptionsValues(filtersPane, filterLabel, values = [], options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
     const filterSelection = filterSection.find(Selection());
     const filterSelectionDropdown = SelectionList();
 
@@ -248,7 +252,7 @@ export default {
    * Pass only the fields you want to assert; omit the rest.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {object} dates
    * @param {string} [dates.from] - Expected value of the "start date" text field.
    * @param {string} [dates.to] - Expected value of the "end date" text field.
@@ -258,20 +262,20 @@ export default {
    * @example
    * FiltersPane.assertDateRangeFilterValues(ordersFiltersPane, 'dateOrdered', { from: '12/01/2024', to: '12/31/2024' });
    */
-  assertDateRangeFilterValues(filtersPane, filterId, { from, to } = {}, options = {}) {
+  assertDateRangeFilterValues(filtersPane, filterLabel, { from, to } = {}, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
 
     if (from !== undefined) {
-      cy.expect(filterSection.find(TextField({ name: 'startDate' })).has({ value: from }));
+      cy.expect(filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.FROM)).has({ value: from }));
     }
     if (to !== undefined) {
-      cy.expect(filterSection.find(TextField({ name: 'endDate' })).has({ value: to }));
+      cy.expect(filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.TO)).has({ value: to }));
     }
   },
 
@@ -281,14 +285,14 @@ export default {
    * Clicks the clear (×) button for a specific filter accordion to remove all its applied values.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    *
    * @example
    * FiltersPane.clearFilter(ordersFiltersPane, 'fundCode');
    */
-  clearFilter(filtersPane, filterId) {
+  clearFilter(filtersPane, filterLabel) {
     cy.do(
-      getFilterSectionById(filtersPane, filterId)
+      findFilterSectionByLabel(filtersPane, filterLabel)
         .find(Button({ icon: 'times-circle-solid' }))
         .click(),
     );
@@ -342,7 +346,7 @@ export default {
    * Note: works as toggle assertion when called multiple times for the same option.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} [selectOptions=[]] - Option labels to select.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -350,14 +354,14 @@ export default {
    * @example
    * FiltersPane.filterByMultiSelectOptions(ordersFiltersPane, 'fundCode', ['FUND-A', 'FUND-B']);
    */
-  filterByMultiSelectOptions(filtersPane, filterId, selectOptions = [], options = {}) {
+  filterByMultiSelectOptions(filtersPane, filterLabel, selectOptions = [], options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
     const filterMultiSelect = filterSection.find(MultiSelect());
 
     cy.expect(filterMultiSelect.exists());
@@ -368,14 +372,14 @@ export default {
    * Removes specific value chips from a MultiSelect filter and confirms each chip disappears.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} [chipValues=[]] - Chip labels to remove.
    *
    * @example
    * FiltersPane.removeMultiSelectChips(ordersFiltersPane, 'fundCode', ['FUND-A']);
    */
-  removeMultiSelectChips(filtersPane, filterId, chipValues = []) {
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+  removeMultiSelectChips(filtersPane, filterLabel, chipValues = []) {
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
     const filterMultiSelect = filterSection.find(MultiSelect());
 
     cy.expect(filterMultiSelect.exists());
@@ -396,7 +400,7 @@ export default {
    * Note: works as toggle assertion when called multiple times for the same option.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string[]} labels - The visible labels of the checkbox options to click.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -405,15 +409,15 @@ export default {
    * // Select the "Yes" checkbox in the "Approved" filter
    * FiltersPane.filterByCheckboxes(ordersFiltersPane, 'approved', ['Yes']);
    */
-  filterByCheckboxes(filtersPane, filterId, labels = [], options = {}) {
+  filterByCheckboxes(filtersPane, filterLabel, labels = [], options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
     labels.forEach((label) => {
-      cy.do(getFilterSectionById(filtersPane, filterId).find(Checkbox(label)).click());
+      cy.do(findFilterSectionByLabel(filtersPane, filterLabel).find(Checkbox(label)).click());
     });
   },
 
@@ -423,19 +427,19 @@ export default {
    * Note: this function only selects the option in the dropdown, it does not assert the presence of the option before selection.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string} value - The option label to select (partial match is supported).
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
    */
-  filterBySelect(filtersPane, filterId, value, options = {}) {
+  filterBySelect(filtersPane, filterLabel, value, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    cy.do(getFilterSectionById(filtersPane, filterId).find(Select()).choose(value));
+    cy.do(findFilterSectionByLabel(filtersPane, filterLabel).find(Select()).choose(value));
   },
 
   /**
@@ -443,7 +447,7 @@ export default {
    * Opens the dropdown, filters the list to the given value, then selects a matching option.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {string} value - The option label to select (partial match is supported).
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
@@ -451,14 +455,14 @@ export default {
    * @example
    * FiltersPane.filterBySelection(ordersFiltersPane, 'poNumberPrefix', 'PREF-01');
    */
-  filterBySelection(filtersPane, filterId, value, options = {}) {
+  filterBySelection(filtersPane, filterLabel, value, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
 
     cy.do([
       filterSection.find(Selection()).open(),
@@ -472,7 +476,7 @@ export default {
    * Pass only the fields you want to set; omit the rest.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {object} dates
    * @param {string} [dates.from] - Date string to fill into the "start date" field (e.g., `'12/01/2024'`).
    * @param {string} [dates.to] - Date string to fill into the "end date" field (e.g., `'12/31/2024'`).
@@ -483,14 +487,14 @@ export default {
    * FiltersPane.filterByDateRange(ordersFiltersPane, 'dateOrdered', { from: '12/01/2024', to: '12/31/2024' });
    * FiltersPane.filterByDateRange(ordersFiltersPane, 'dateOrdered', { from: '01/01/2024' });
    */
-  filterByDateRange(filtersPane, filterId, { from, to } = {}, options = {}) {
+  filterByDateRange(filtersPane, filterLabel, { from, to } = {}, options = {}) {
     const { expandAccordion = true } = options;
 
     if (expandAccordion) {
-      this.expandFilterAccordion(filtersPane, filterId);
+      this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = getFilterSectionById(filtersPane, filterId);
+    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
 
     if (from !== undefined) {
       cy.do(filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.FROM)).fillIn(from));
@@ -509,20 +513,23 @@ export default {
    * Uses a DOM attribute to locate the toggle button reliably across interactor boundaries.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    * @param {boolean} desiredExpanded - `true` to expand, `false` to collapse.
    *
    * @example
    * FiltersPane.setFilterAccordionExpanded(ordersFiltersPane, 'fundCode', true);
    */
-  setFilterAccordionExpanded(filtersPane, filterId, desiredExpanded) {
+  setFilterAccordionExpanded(filtersPane, filterLabel, desiredExpanded) {
     cy.do(
-      getFilterAccordionButton(filtersPane, filterId).perform((el) => {
-        el.setAttribute(FILTER_ACCORDION_SELECTOR_ATTRIBUTE, filterId);
+      findFilterSectionByLabel(filtersPane, filterLabel).perform((el) => {
+        el.querySelector(ACCORDION_TOGGLE_SELECTOR).setAttribute(
+          FILTER_ACCORDION_SELECTOR_ATTRIBUTE,
+          filterLabel,
+        );
       }),
     );
 
-    cy.get(`[${FILTER_ACCORDION_SELECTOR_ATTRIBUTE}="${filterId}"]`)
+    cy.get(`[${FILTER_ACCORDION_SELECTOR_ATTRIBUTE}="${filterLabel}"]`)
       .should('exist')
       .then(($btn) => {
         if (JSON.parse($btn.attr('aria-expanded')) !== desiredExpanded) {
@@ -535,25 +542,25 @@ export default {
    * Expands a filter accordion if it is not already expanded.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    *
    * @example
    * FiltersPane.expandFilterAccordion(ordersFiltersPane, 'fundCode');
    */
-  expandFilterAccordion(filtersPane, filterId) {
-    this.setFilterAccordionExpanded(filtersPane, filterId, true);
+  expandFilterAccordion(filtersPane, filterLabel) {
+    this.setFilterAccordionExpanded(filtersPane, filterLabel, true);
   },
 
   /**
    * Collapses a filter accordion if it is not already collapsed.
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
-   * @param {string} filterId - The `id` attribute of the filter's accordion section element.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
    *
    * @example
    * FiltersPane.collapseFilterAccordion(ordersFiltersPane, 'fundCode');
    */
-  collapseFilterAccordion(filtersPane, filterId) {
-    this.setFilterAccordionExpanded(filtersPane, filterId, false);
+  collapseFilterAccordion(filtersPane, filterLabel) {
+    this.setFilterAccordionExpanded(filtersPane, filterLabel, false);
   },
 };

@@ -26,7 +26,6 @@ import {
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
-  ORDER_FILTER_IDS,
   ORDER_FILTER_LABELS,
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
@@ -1041,17 +1040,17 @@ export default {
 
   /* Filters interactions (agnostic) */
   expandFilterAccordion(filterLabel) {
-    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_IDS[filterLabel]);
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, filterLabel);
   },
 
   collapseFilterAccordion(filterLabel) {
-    FiltersPaneHelper.collapseFilterAccordion(ordersFiltersPane, ORDER_FILTER_IDS[filterLabel]);
+    FiltersPaneHelper.collapseFilterAccordion(ordersFiltersPane, filterLabel);
   },
 
   assertMultiSelectFilterValues(filterLabel, expectedValues, options = {}) {
     FiltersPaneHelper.assertMultiSelectFilterValues(
       ordersFiltersPane,
-      ORDER_FILTER_IDS[filterLabel],
+      filterLabel,
       expectedValues,
       options,
     );
@@ -1060,7 +1059,7 @@ export default {
   assertMultiSelectFilterOptions(filterLabel, expectedOptions, options = {}) {
     FiltersPaneHelper.assertMultiSelectFilterOptionsValues(
       ordersFiltersPane,
-      ORDER_FILTER_IDS[filterLabel],
+      filterLabel,
       expectedOptions,
       options,
     );
@@ -1079,17 +1078,13 @@ export default {
   },
 
   clearFilter(filterLabel) {
-    FiltersPaneHelper.clearFilter(ordersFiltersPane, ORDER_FILTER_IDS[filterLabel]);
+    FiltersPaneHelper.clearFilter(ordersFiltersPane, filterLabel);
   },
 
   // Filtering
 
   filterByMultiSelectOptions(filterLabel, options = []) {
-    FiltersPaneHelper.filterByMultiSelectOptions(
-      ordersFiltersPane,
-      ORDER_FILTER_IDS[filterLabel],
-      options,
-    );
+    FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
   },
 
   filterByFundCodes(codes = []) {
@@ -1097,10 +1092,6 @@ export default {
   },
 
   removeMultiSelectChips(filterLabel, values = []) {
-    FiltersPaneHelper.removeMultiSelectChips(
-      ordersFiltersPane,
-      ORDER_FILTER_IDS[filterLabel],
-      values,
-    );
+    FiltersPaneHelper.removeMultiSelectChips(ordersFiltersPane, filterLabel, values);
   },
 };
