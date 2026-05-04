@@ -10,6 +10,7 @@ import { Behavior } from '../../../../support/fragments/settings/oai-pmh';
 import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../../support/fragments/settings/oai-pmh/behavior';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {
@@ -100,6 +101,8 @@ describe('OAI-PMH', () => {
         'C407762 Consortia | Inventory | ListRecords |ListIdentifiers: Add local FOLIO instance to Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
         { tags: ['extendedPathECS', 'firebird', 'C407762', 'nonParallel'] },
         () => {
+          const fromDate = DateTools.getCurrentDateForOaiPmh();
+
           // Step 1: Select Actions => New local record
           InventoryInstances.addNewInventory();
 
@@ -126,6 +129,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'marc21',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -147,6 +151,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'marc21',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
@@ -161,6 +166,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'marc21_withholdings',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -182,6 +188,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'marc21_withholdings',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
@@ -196,6 +203,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'oai_dc',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -210,6 +218,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'oai_dc',
               OaiPmhEdge.getApiKey(Affiliations.College),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
@@ -224,6 +233,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'marc21',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -245,6 +255,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'marc21',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
@@ -259,6 +270,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'marc21_withholdings',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -280,6 +292,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'marc21_withholdings',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
@@ -294,6 +307,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listRecordsRequest(
               'oai_dc',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyOaiPmhRecordHeader(
                 response,
@@ -308,6 +322,7 @@ describe('OAI-PMH', () => {
             OaiPmhEdge.listIdentifiersRequest(
               'oai_dc',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),
+              fromDate,
             ).then((response) => {
               OaiPmh.verifyIdentifierInListResponse(
                 response,
