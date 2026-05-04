@@ -206,6 +206,7 @@ describe('Invoices', () => {
       });
       Invoices.createInvoiceLineFromPol(testData.order.poNumber);
       Invoices.handleDifferentCurrencyModal();
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [

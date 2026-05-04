@@ -30,3 +30,10 @@ export const ORDER_SYSTEM_CLOSING_REASONS = {
   TITLE_OUT_OF_PRINT: 'Title is out of print',
   TITLE_RECEIVED_AS_GIFT: 'Title received as a gift',
 };
+
+export const ORDER_SEARCH_OPTIONS = {
+  KEYWORD: 'Keyword',
+  DATE_CREATED: 'Date created',
+  DATE_OPENED: 'Date opened',
+  PO_NUMBER: 'PO number',
+};

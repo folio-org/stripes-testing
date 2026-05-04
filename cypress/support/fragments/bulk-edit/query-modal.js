@@ -586,8 +586,10 @@ export default {
     cy.wait(1000);
   },
 
-  verifySelectedMultiselectValue(text, row = 0) {
-    cy.expect(RepeatableFieldItem({ index: row }).find(MultiSelect()).has({ selected: text }));
+  verifySelectedMultiselectValue(expectedValue, row = 0) {
+    const selected = Array.isArray(expectedValue) ? expectedValue : [expectedValue];
+
+    cy.expect(RepeatableFieldItem({ index: row }).find(MultiSelect()).has({ selected }));
   },
 
   selectAllMatchingFromMultiselect(text, row = 0) {

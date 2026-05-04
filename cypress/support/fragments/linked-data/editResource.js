@@ -98,9 +98,9 @@ export default {
     }
   },
 
-  setValueForTheField(value, field) {
+  setValueForTheField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
+    cy.xpath(`//div[@class="label" and text()="${field}"][${repeatPosition}]/../../div/input`)
       .focus()
       .should('not.be.disabled')
       .clear()
@@ -114,6 +114,13 @@ export default {
       .click();
     cy.wait(500);
     cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
+      .click();
+    cy.wait(1000);
+  },
+
+  clickRepeatGroup(field) {
+    cy.wait(1000);
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`)
       .click();
     cy.wait(1000);
   },
@@ -169,6 +176,11 @@ export default {
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
+  },
+
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
   },
 
   openNewInstanceFormViaNewInstanceButton() {
@@ -295,7 +307,18 @@ export default {
   checkTextValueOnField(textValue, section) {
     cy.xpath(
       `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
-    ).should('be.visible');
+    )
+      .scrollIntoView()
+      .should('be.visible');
+  },
+
+  checkTextValueOnDisabledField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .should('be.disabled');
   },
 
   checkLabelOnSimpleField(textValue, section) {
@@ -328,5 +351,9 @@ export default {
   checkCloseAndCancelEnabled() {
     cy.expect(closeResourceButton.has({ disabled: false }));
     cy.expect(cancelButton.has({ disabled: false }));
+  },
+
+  checkEditWorkButtonEnabled() {
+    cy.expect(editWorkButton.has({ disabled: false }));
   },
 };
