@@ -75,7 +75,6 @@ describe('Lists', () => {
             description: `Cross-tenant indicator check for ${recordType}`,
             recordType,
             status: 'Active',
-            visibility: hasCrossTenantIndicator ? 'Private' : 'Shared',
           };
           testData.lists.push(listData);
 
@@ -83,9 +82,6 @@ describe('Lists', () => {
           Lists.setName(listData.name);
           Lists.setDescription(listData.description);
           Lists.selectRecordType(listData.recordType);
-          if (!hasCrossTenantIndicator) {
-            Lists.selectVisibility(listData.visibility);
-          }
           Lists.selectStatus(listData.status);
           Lists.saveList();
           Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
