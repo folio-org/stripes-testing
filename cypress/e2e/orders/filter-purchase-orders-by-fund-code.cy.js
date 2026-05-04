@@ -100,16 +100,14 @@ describe('Orders', () => {
         const FUND_CODE_FILTER = ORDER_FILTER_LABELS.FUND_CODE;
         const PO_NUMBER_COLUMN = ORDER_RESULTS_LIST_COLUMN_LABELS.PO_NUMBER;
 
-        OrderHelper.interceptGetOrders();
-        FinanceHelper.interceptFundsRequest();
+        // Wait for resources to be loaded: the loading state is blocking the filters.
+        FinanceHelper.waitForFundsRequestCompletion();
+        OrderHelper.waitForCustomFieldsQueryCompleted();
 
         /* STEP 1: Click "Reset all" button on Search & filter pane */
         // Expected: Results cleared, empty message displayed
         cy.log('STEP 1: Click "Reset all" button on Search & filter pane');
         Orders.resetAllFilters();
-
-        // Wait for funds to be loaded, as they are required for filter options to be displayed and orders to be queried when applying filter
-        FinanceHelper.waitForFundsRequestCompletion();
 
         /* STEP 2: Expand "Fund code" accordion on Search & filter pane */
         // Expected: Accordion expanded and contains empty dropdown (editable)
@@ -399,6 +397,10 @@ function getPreconditionSteps() {
 
   const loginAsAuthorizedUser = (flow) => {
     const user = flow.get(R.USER);
+
+    OrderHelper.interceptGetOrders();
+    OrderHelper.interceptCustomFields();
+    FinanceHelper.interceptFundsRequest();
 
     return cy.login(user.username, user.password, {
       path: TopMenu.ordersPath,

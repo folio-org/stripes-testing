@@ -28,4 +28,12 @@ export default {
   waitForOrdersQueryCompleted: () => {
     cy.wait('@waiterForOrdersQueryCompleted');
   },
+
+  interceptCustomFields: () => {
+    cy.intercept('GET', '/custom-fields*').as('waiterForCustomFieldsQueryCompleted');
+  },
+
+  waitForCustomFieldsQueryCompleted: () => {
+    cy.wait('@waiterForCustomFieldsQueryCompleted');
+  },
 };
