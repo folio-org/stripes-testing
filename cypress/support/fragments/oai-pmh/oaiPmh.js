@@ -637,34 +637,36 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listRecordsRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const searchParams = {
-      verb: 'ListRecords',
-      metadataPrefix,
-    };
+    return cy.then(() => {
+      const searchParams = {
+        verb: 'ListRecords',
+        metadataPrefix,
+      };
 
-    if (fromDate) {
-      searchParams.from = fromDate;
-    } else {
-      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
-    }
+      if (fromDate) {
+        searchParams.from = fromDate;
+      } else {
+        searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
+      }
 
-    if (untilDate) {
-      searchParams.until = untilDate;
-    } else {
-      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
-    }
+      if (untilDate) {
+        searchParams.until = untilDate;
+      } else {
+        searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
+      }
 
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'oai/records',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: true,
-      })
-      .then((response) => {
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'oai/records',
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: true,
+        })
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
 
   /**
@@ -675,34 +677,36 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listIdentifiersRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const searchParams = {
-      verb: 'ListIdentifiers',
-      metadataPrefix,
-    };
+    return cy.then(() => {
+      const searchParams = {
+        verb: 'ListIdentifiers',
+        metadataPrefix,
+      };
 
-    if (fromDate) {
-      searchParams.from = fromDate;
-    } else {
-      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
-    }
+      if (fromDate) {
+        searchParams.from = fromDate;
+      } else {
+        searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
+      }
 
-    if (untilDate) {
-      searchParams.until = untilDate;
-    } else {
-      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
-    }
+      if (untilDate) {
+        searchParams.until = untilDate;
+      } else {
+        searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
+      }
 
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'oai/records',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: true,
-      })
-      .then((response) => {
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'oai/records',
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: true,
+        })
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
 
   /**
