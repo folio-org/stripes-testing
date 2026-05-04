@@ -59,12 +59,13 @@ export default {
   },
 
   chooseActionByRow(rowIndex, actionName) {
-    cy.do([
+    cy.do(
       MultiColumnListRow({ indexRow: `row-${rowIndex}` })
         .find(Button({ icon: 'ellipsis' }))
         .click(),
-      DropdownMenu().find(Button(actionName)).click(),
-    ]);
+    );
+    cy.expect(DropdownMenu().exists());
+    cy.do(DropdownMenu().find(Button(actionName)).click());
   },
 
   verifyActionIconBorder(rowIndex) {

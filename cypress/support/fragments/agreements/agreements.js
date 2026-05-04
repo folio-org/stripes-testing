@@ -1,7 +1,7 @@
-import { HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
+  HTML,
   MultiColumnListCell,
   MultiColumnListRow,
   Section,
@@ -11,32 +11,38 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import DateTools from '../../utils/dateTools';
-import { randomFourDigitNumber } from '../../utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../utils/stringTools';
 import NewAgreement from './newAgreement';
 import SearchAndFilterAgreements from './searchAndFilterAgreements';
 import SearchHelper from '../finance/financeHelper';
 
-const section = Section({ id: 'pane-agreement-list' });
 const agreementsSection = Section({ id: 'agreements-tab-pane' });
 const agreementsViewSection = Section({ id: 'pane-view-agreement' });
 const newButton = Button('New');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
-const actionsButton = section.find(Button('Actions'));
-const actions = Button('Actions');
+const actionsButton = Button('Actions');
 const controllingLicense = Accordion({ id: 'controllingLicense' });
 const organizationSection = Accordion({ id: 'formOrganizations' });
 const addOrganizationButton = Button({ id: 'add-org-btn' });
 const linkOrganizationButton = Button({ name: 'orgs[0].org.orgsUuid' });
 const searchButtonInModal = Button('Search');
+const agreementsToggleButton = Button({ id: 'clickable-nav-agreements' });
 
 const waitLoading = () => {
   cy.expect(
     or(
-      section.find(MultiColumnListRow()).exists(),
-      section.find(HTML(including('No results found. Please check your filters.'))).exists(),
+      agreementsSection.find(MultiColumnListRow()).exists(),
+      agreementsSection
+        .find(HTML(including('No results found. Please check your filters.')))
+        .exists(),
     ),
     agreementsSection.find(actionsButton).exists(),
+  );
+  cy.do(
+    agreementsToggleButton.perform((element) => {
+      expect(element.classList[2]).to.include('primary');
+    }),
   );
 };
 
@@ -46,7 +52,7 @@ const defaultAgreement = {
       startDate: DateTools.getCurrentDateForFiscalYear(),
     },
   ],
-  name: `Default Agreement ${randomFourDigitNumber()}`,
+  name: `AT_Agreement_${getRandomPostfix()}`,
   agreementStatus: 'active',
 };
 
@@ -110,7 +116,7 @@ export default {
   },
 
   createAndCheckFields: (specialAgreement) => {
-    cy.do([agreementsSection.find(actions).click(), newButton.click()]);
+    cy.do([agreementsSection.find(actionsButton).click(), newButton.click()]);
     NewAgreement.waitLoading();
     NewAgreement.checkSelectFields();
     NewAgreement.fill(specialAgreement);
@@ -118,12 +124,12 @@ export default {
   },
 
   editAgreement() {
-    cy.do(agreementsViewSection.find(actions).click());
+    cy.do(agreementsViewSection.find(actionsButton).click());
     cy.do(editButton.click());
   },
 
   deleteAgreement() {
-    cy.do(agreementsViewSection.find(actions).click());
+    cy.do(agreementsViewSection.find(actionsButton).click());
     cy.do(deleteButton.click());
     cy.do(deleteButton.click());
   },
@@ -170,7 +176,7 @@ export default {
     cy.do(agreementsSection.find(MultiColumnListCell(agreementTitle)).click());
   },
 
-  agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent()),
+  agreementNotVisible: (agreementTitle) => cy.expect(agreementsSection.find(MultiColumnListCell(agreementTitle)).absent()),
 
   checkAgreementPresented: (name) => {
     SearchAndFilterAgreements.search(name);
