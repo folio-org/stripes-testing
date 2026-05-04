@@ -141,14 +141,6 @@ describe('MARC', () => {
                 localAuthFile.hridStartsWith,
                 localAuthFile.name,
               ).then(() => {
-                MarcAuthorities.createMarcAuthorityViaAPI(
-                  localAuthFile.prefix,
-                  localAuthFile.hridStartsWith,
-                  marcAuthorityFields[0],
-                ).then((authorityId) => {
-                  createdAuthorityId.push(authorityId);
-                });
-
                 marcAuthorityFields.forEach((field) => {
                   MarcAuthorities.createMarcAuthorityViaAPI(
                     localAuthFile.prefix,
