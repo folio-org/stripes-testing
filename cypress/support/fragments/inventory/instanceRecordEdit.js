@@ -364,6 +364,9 @@ export default {
       cy.expect(previoslyHeldCheckbox.has({ checked: true }));
     } else cy.expect(previoslyHeldCheckbox.has({ checked: false }));
   },
+  verifyCatalogedDateField(expectedDate) {
+    cy.expect(TextField({ name: 'catalogedDate' }).has({ value: expectedDate }));
+  },
   markAsStaffSuppress() {
     cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
