@@ -173,9 +173,6 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        UsersCard.close();
-        UsersSearchPane.resetAllFilters();
-        UsersSearchPane.searchByKeywords(testData.userA.username);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UserEdit.openEdit();
