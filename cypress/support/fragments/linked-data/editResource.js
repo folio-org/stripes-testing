@@ -272,4 +272,8 @@ export default {
     cy.expect(closeResourceButton.has({ disabled: false }));
     cy.expect(cancelButton.has({ disabled: false }));
   },
+
+  checkEditWorkButtonEnabled() {
+    cy.expect(editWorkButton.has({ disabled: false }));
+  },
 };
