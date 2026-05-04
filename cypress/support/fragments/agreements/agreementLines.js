@@ -1,20 +1,32 @@
 import { REQUEST_METHOD } from '../../constants';
-import { randomFourDigitNumber } from '../../utils/stringTools';
-import { MultiColumnListCell, Section, MultiColumnList } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
+import { MultiColumnListCell, Section, MultiColumnList, Button } from '../../../../interactors';
 
 const rootSection = Section({ id: 'agreements-tab-pane' });
 const agreementLinesList = rootSection.find(MultiColumnList());
+const agreementLinesToggleButton = Button({ id: 'clickable-nav-agreementLines' });
+const selectAgreementsButton = Button({ id: 'agreement-agreement-search-button' });
 
 const defaultAgreementLine = (agreementId) => {
   return {
     type: 'detached',
-    description: `Agreement Line Description ${randomFourDigitNumber()}`,
+    description: `AT_AgreementLineDescription_${getRandomPostfix()}`,
     owner: agreementId,
   };
 };
 
 export default {
   defaultAgreementLine,
+
+  waitLoading() {
+    cy.expect(rootSection.exists());
+    cy.do(
+      agreementLinesToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+    cy.expect(selectAgreementsButton.exists());
+  },
 
   createViaApi: (agreementLine) => {
     return cy
@@ -59,6 +71,12 @@ export default {
 
   agreementLinesListClick(agreementLineName) {
     cy.do(MultiColumnListCell(agreementLineName).click());
+  },
+
+  checkAgreementLineFound(agreementLineDescription, { isFound = true } = {}) {
+    const targetCell = rootSection.find(MultiColumnListCell({ content: agreementLineDescription }));
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
   },
 
   verifyAgreementLinesCount(itemCount) {

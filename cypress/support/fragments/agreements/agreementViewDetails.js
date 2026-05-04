@@ -25,12 +25,14 @@ import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import EditAgreement from './editAgreement';
+import AgreementLines from './agreementLines';
 
 const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
 const editButton = Button('Edit');
-const agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'));
-const agreementLinesBadge = Section({ id: 'lines' }).find(Badge());
+const agreementLinesAccordion = rootSection.find(Accordion({ id: 'lines' }));
+const agreementLine = agreementLinesAccordion.find(Button('Agreement lines'));
+const agreementLinesBadge = agreementLinesAccordion.find(Badge());
 const actionsButton = Button('Actions');
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 const agreementLineDeleteModel = Modal({ id: 'delete-agreement-line-confirmation' });
@@ -45,7 +47,6 @@ const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
 const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const supplementaryDocumentsAccordion = rootSection.find(Accordion({ id: 'supplementaryDocs' }));
-const agreementLinesAccordion = rootSection.find(Accordion({ id: 'lines' }));
 const agreementLinesList = agreementLinesAccordion.find(MultiColumnList());
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
@@ -63,11 +64,7 @@ function openAgreementLineAccordion() {
 }
 
 function selectAgreementLine() {
-  cy.do(
-    Section({ id: 'lines' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .click(),
-  );
+  cy.do(agreementLinesAccordion.find(MultiColumnListRow({ index: 0 })).click());
 }
 
 function addNewNote() {
@@ -283,11 +280,11 @@ export default {
   },
 
   openAgreementLinesSection() {
-    cy.do(Section({ id: 'lines' }).find(Button('Agreement lines')).click());
+    cy.do(agreementLinesAccordion.find(Button('Agreement lines')).click());
   },
 
   newAgreementLine(orderLineNumber) {
-    cy.do(Section({ id: 'lines' }).find(actionsButton).click());
+    cy.do(agreementLinesAccordion.find(actionsButton).click());
     cy.wait(4000);
     cy.do([
       Button('New agreement line').click(),
@@ -317,7 +314,7 @@ export default {
   openEHoldingsPackageFromAgreementLine(name, rowNumber = 0) {
     cy.do(
       viewAgreementPane
-        .find(Accordion('Agreement lines'))
+        .find(agreementLinesAccordion)
         .find(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }))
         .find(Link(name))
         .click(),
@@ -469,6 +466,7 @@ export default {
 
   openAgreementLineFilter() {
     cy.do(agreementLineFilter.click());
+    AgreementLines.waitLoading();
   },
 
   verifyNoteInList(noteTitle) {
