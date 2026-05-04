@@ -14,7 +14,7 @@ describe('Lists', () => {
     };
     const getCentralAdminToken = () => {
       cy.setTenant(Affiliations.Consortia);
-      cy.getToken('consortium_admin', 'admin');
+      cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     };
     const recordTypes = [
       { name: 'Instances', hasCrossTenantIndicator: true },
