@@ -18,6 +18,10 @@ export default {
     cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and substring(text(), ${position}, ${length})='${data}']`).should('be.visible');
   },
 
+  checkMarcFieldIndicators(fieldCode, indicators) {
+    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-indicators' and text()='${indicators}']`).should('be.visible');
+  },
+
   checkMarcFieldContainsOneOfDataAtPosition(fieldCode, position, length, dataOptions) {
     cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents']`).then((contents) => {
       const textAtPos = contents.text().substr(position, length);
