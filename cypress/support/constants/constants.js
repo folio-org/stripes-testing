@@ -1730,3 +1730,18 @@ export const EDIT_RESOURCE_HEADINGS = {
   DUPLICATE_WORK: 'Duplicate work',
   DUPLICATE_INSTANCE: 'Duplicate instance',
 };
+
+export const SORT_DIRECTIONS = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending',
+};
+
+export const COMMON_BUTTON_LABELS = {
+  RESET_ALL: 'Reset all',
+  NEXT: 'Next',
+  PREVIOUS: 'Previous',
+  CANCEL: 'Cancel',
+  CONFIRM: 'Confirm',
+};
+
+export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';
