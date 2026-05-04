@@ -100,9 +100,9 @@ export default {
     }
   },
 
-  setValueForTheField(value, field) {
+  setValueForTheField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
+    cy.xpath(`//div[@class="label" and text()="${field}"][${repeatPosition}]/../../div/input`)
       .focus()
       .should('not.be.disabled')
       .clear()
@@ -128,6 +128,23 @@ export default {
     cy.do(Keyboard.escape());
   },
 
+  setValueForSimpleField(value, field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+      .click();
+    cy.wait(500);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
+      .click();
+    cy.wait(1000);
+  },
+
+  clickRepeatGroup(field) {
+    cy.wait(1000);
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`)
+      .click();
+    cy.wait(1000);
+  },
+
   setNoteValue(value, field) {
     cy.wait(1000);
     cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div/input`)
@@ -143,6 +160,14 @@ export default {
       .focus()
       .should('not.be.disabled')
       .clear();
+  },
+
+  clearSimpleField(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`)
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
   },
 
   duplicateInstance() {
@@ -163,9 +188,19 @@ export default {
     cy.expect(Heading('Duplicate work').exists());
   },
 
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
+  },
+
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
+  },
+
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
   },
 
   openNewInstanceFormViaNewInstanceButton() {
@@ -251,6 +286,11 @@ export default {
     cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
   },
 
+  checkPreviewSectionContains(section, value) {
+    cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
+      .should('exist');
+  },
+
   checkPreviewSectionContainsField(section, field, value) {
     cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
       .should('exist')
@@ -331,6 +371,21 @@ export default {
       .should('be.visible');
   },
 
+  checkTextValueOnDisabledField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .should('be.disabled');
+  },
+
+  checkLabelOnSimpleField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div//div[contains(@class, "simple-lookup__multi-value__label") and text()="${textValue}"]`,
+    ).should('be.visible');
+  },
+
   checkHeadingProfile(profileName) {
     cy.xpath(`//h3[@class='heading' and contains(text(), '${profileName}')]`)
       .scrollIntoView()
@@ -355,5 +410,9 @@ export default {
   checkCloseAndCancelEnabled() {
     cy.expect(closeResourceButton.has({ disabled: false }));
     cy.expect(cancelButton.has({ disabled: false }));
+  },
+
+  checkEditWorkButtonEnabled() {
+    cy.expect(editWorkButton.has({ disabled: false }));
   },
 };
