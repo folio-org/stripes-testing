@@ -145,15 +145,17 @@ export default {
   listRecordsRequest(metadataPrefix = 'marc21', apiKey, fromDate = null, untilDate = null) {
     validateApiKey(apiKey);
 
-    const params = {
-      verb: 'ListRecords',
-      metadataPrefix,
-      apikey: apiKey,
-    };
+    return cy.then(() => {
+      const params = {
+        verb: 'ListRecords',
+        metadataPrefix,
+        apikey: apiKey,
+      };
 
-    addDateParams(params, fromDate, untilDate);
+      addDateParams(params, fromDate, untilDate);
 
-    return makeEdgeRequest(params);
+      return makeEdgeRequest(params);
+    });
   },
 
   /**
@@ -167,15 +169,17 @@ export default {
   listIdentifiersRequest(metadataPrefix = 'marc21', apiKey, fromDate = null, untilDate = null) {
     validateApiKey(apiKey);
 
-    const params = {
-      verb: 'ListIdentifiers',
-      metadataPrefix,
-      apikey: apiKey,
-    };
+    return cy.then(() => {
+      const params = {
+        verb: 'ListIdentifiers',
+        metadataPrefix,
+        apikey: apiKey,
+      };
 
-    addDateParams(params, fromDate, untilDate);
+      addDateParams(params, fromDate, untilDate);
 
-    return makeEdgeRequest(params);
+      return makeEdgeRequest(params);
+    });
   },
 
   /**
