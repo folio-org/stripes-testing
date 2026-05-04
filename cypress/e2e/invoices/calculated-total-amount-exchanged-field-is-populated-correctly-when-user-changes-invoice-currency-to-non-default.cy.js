@@ -1,15 +1,6 @@
-/* eslint-disable no-irregular-whitespace */
-import DateTools from '../../support/utils/dateTools';
-import {
-  CURRENCIES,
-  INVOICE_BATCH_GROUPS,
-  INVOICE_PAYMENT_METHODS,
-  INVOICE_VIEW_FIELDS,
-} from '../../support/constants';
+import { CURRENCIES, INVOICE_VIEW_FIELDS } from '../../support/constants';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import InvoiceEditForm from '../../support/fragments/invoices/invoiceEditForm';
-import InvoiceLineEditForm from '../../support/fragments/invoices/invoiceLineEditForm';
-import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Permissions from '../../support/dictionary/permissions';
@@ -23,19 +14,11 @@ describe('Invoices', () => {
       isVendor: true,
     },
     invoice: {
-      invoiceDate: DateTools.getCurrentDate(),
-      batchGroup: INVOICE_BATCH_GROUPS.FOLIO,
-      vendorInvoiceNumber: `autotest_${getRandomPostfix()}`,
-      paymentMethod: INVOICE_PAYMENT_METHODS.CASH,
-      currency: CURRENCIES.UZS,
       exchangeRate: '3',
     },
     invoiceLine: {
-      description: `autotest_description_${getRandomPostfix()}`,
-      quantity: '1',
-      subTotal: '20',
+      subTotal: 20,
     },
-    createdInvoice: {},
     user: {},
   };
 
@@ -44,6 +27,25 @@ describe('Invoices', () => {
 
     Organizations.createOrganizationViaApi(testData.organization).then((organizationId) => {
       testData.organization.id = organizationId;
+
+      cy.getBatchGroups().then(({ id: batchGroupId }) => {
+        Invoices.createInvoiceViaApi({
+          vendorId: organizationId,
+          batchGroupId,
+          accountingCode: testData.organization.erpCode,
+        }).then((invoice) => {
+          testData.invoice.id = invoice.id;
+          testData.invoice.vendorInvoiceNo = invoice.vendorInvoiceNo;
+
+          Invoices.createInvoiceLineViaApi(
+            Invoices.getDefaultInvoiceLine({
+              invoiceId: invoice.id,
+              invoiceLineStatus: invoice.status,
+              subTotal: testData.invoiceLine.subTotal,
+            }),
+          );
+        });
+      });
     });
 
     cy.createTempUser([Permissions.viewEditCreateInvoiceInvoiceLine.gui]).then((userProperties) => {
@@ -59,43 +61,52 @@ describe('Invoices', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    if (testData.createdInvoice.id) {
-      Invoices.deleteInvoiceViaApi(testData.createdInvoice.id);
-    }
+    Invoices.deleteInvoiceViaApi(testData.invoice.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
-    'C436952 "Calculated total amount (Exchanged)" field is populated correctly when user creates invoice in different currency (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C436952'] },
+    'C436956 "Calculated total amount (Exchanged)" field is populated correctly when user changes invoice currency to non-default (one invoice line exists) (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'C436956'] },
     () => {
-      Invoices.openInvoiceEditForm({ createNew: true });
-      InvoiceEditForm.fillInvoiceFields({
-        invoiceDate: testData.invoice.invoiceDate,
-        vendorInvoiceNo: testData.invoice.vendorInvoiceNumber,
-        vendorName: testData.organization.name,
-        batchGroupName: testData.invoice.batchGroup,
-        currency: testData.invoice.currency,
-        paymentMethod: testData.invoice.paymentMethod,
+      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      InvoiceView.waitLoading();
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: INVOICE_VIEW_FIELDS.SUB_TOTAL, value: `$${testData.invoiceLine.subTotal}.00` },
+        ],
+        fieldsNotDisplayed: [INVOICE_VIEW_FIELDS.CALCULATED_TOTAL_AMOUNT_EXCHANGED],
       });
+      InvoiceView.openInvoiceEditForm();
+      InvoiceEditForm.fillInvoiceFields({
+        currency: CURRENCIES.UZS,
+      });
+      InvoiceEditForm.checkFieldsConditions([
+        {
+          label: INVOICE_VIEW_FIELDS.CALCULATED_TOTAL_AMOUNT_EXCHANGED,
+          conditions: { value: `$${testData.invoiceLine.subTotal}.00` },
+        },
+      ]);
       InvoiceEditForm.verifyIsExchangeRateChecked(true);
       InvoiceEditForm.verifyIsSetExchangeRateRequired(true);
       InvoiceEditForm.fillInvoiceFields({
         exchangeRate: testData.invoice.exchangeRate,
       });
+      InvoiceEditForm.checkFieldsConditions([
+        {
+          label: INVOICE_VIEW_FIELDS.CALCULATED_TOTAL_AMOUNT_EXCHANGED,
+          conditions: {
+            value: `$${testData.invoiceLine.subTotal * testData.invoice.exchangeRate}.00`,
+          },
+        },
+      ]);
       InvoiceEditForm.clickSaveButton();
       InvoiceView.waitLoading();
-      cy.url().then((url) => {
-        testData.createdInvoice.id = url.match(/invoice\/view\/([^/]+)/)?.[1] || null;
-      });
-      InvoiceView.openInvoiceLineEditForm();
-      InvoiceLineEditForm.fillInvoiceLineFields(testData.invoiceLine);
-      InvoiceLineEditForm.clickSaveButton();
-      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNumber,
+        title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
-          { key: INVOICE_VIEW_FIELDS.BATCH_GROUP, value: testData.invoice.batchGroup },
           {
             key: INVOICE_VIEW_FIELDS.SUB_TOTAL,
             value: `UZS ${testData.invoiceLine.subTotal}.00`,
@@ -107,15 +118,6 @@ describe('Invoices', () => {
           {
             key: INVOICE_VIEW_FIELDS.CALCULATED_TOTAL_AMOUNT_EXCHANGED,
             value: `$${testData.invoiceLine.subTotal * testData.invoice.exchangeRate}.00`,
-          },
-        ],
-        invoiceLines: [
-          {
-            description: testData.invoiceLine.description,
-            quantity: testData.invoiceLine.quantity,
-            subTotal: `UZS ${testData.invoiceLine.subTotal}.00`, // Non-breaking space is needed here
-            total: `UZS ${testData.invoiceLine.subTotal}.00`, // Non-breaking space is needed here
-            totalExchanged: `$${testData.invoiceLine.subTotal * testData.invoice.exchangeRate}.00`,
           },
         ],
       });
