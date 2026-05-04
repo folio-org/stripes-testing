@@ -66,3 +66,10 @@ export const ORDER_FILTER_LABELS = {
   UPDATED_BY: 'Updated by',
   VENDOR: 'Vendor',
 };
+
+export const ORDER_SEARCH_OPTIONS = {
+  KEYWORD: 'Keyword',
+  DATE_CREATED: 'Date created',
+  DATE_OPENED: 'Date opened',
+  PO_NUMBER: 'PO number',
+};
