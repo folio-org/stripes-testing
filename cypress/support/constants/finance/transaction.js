@@ -43,3 +43,19 @@ export const TRANSACTION_LIST_COLUMNS = {
 export const TRANSACTION_TOOLTIPS = {
   VOIDED_TRANSACTION: 'Voided transaction',
 };
+
+export const TRANSACTION_RESULTS_FILTERS = {
+  SOURCE_POL: 'Source POL number',
+  SOURCE_INVOICE: 'Source Invoice number',
+  TYPE: 'Type',
+  TAGS: 'Tags',
+  EXPENSE_CLASS: 'Expense class',
+  SOURCE: 'Source',
+  ENCUMBRANCE_STATUS: 'Encumbrance status',
+};
+
+export const TRANSACTION_SOURCE_TYPES = {
+  INVOICE: 'Invoice',
+  PO_LINE: 'PO line',
+  USER: 'User',
+};

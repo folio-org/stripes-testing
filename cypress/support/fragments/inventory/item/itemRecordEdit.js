@@ -200,4 +200,8 @@ export default {
       .click();
     cy.contains(statisticalCode).should('not.exist');
   },
+
+  markAsSuppressedFromDiscovery() {
+    cy.do(Checkbox('Suppress from discovery').click());
+  },
 };
