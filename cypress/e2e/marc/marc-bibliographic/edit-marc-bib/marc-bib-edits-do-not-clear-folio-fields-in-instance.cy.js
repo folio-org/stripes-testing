@@ -139,12 +139,18 @@ describe('MARC', () => {
       });
 
       after('Delete test data', () => {
-        cy.getAdminToken().then(() => {
-          Users.deleteViaApi(testData.userProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(instanceId);
-          InventoryInstance.deleteInstanceViaApi(parentInstanceId);
-          InventoryInstance.deleteInstanceViaApi(childInstanceId);
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.userProperties.userId);
+        cy.getInstanceById(instanceId).then((instanceData) => {
+          cy.updateInstance({
+            ...instanceData,
+            parentInstances: [],
+            childInstances: [],
+          });
         });
+        InventoryInstance.deleteInstanceViaApi(instanceId);
+        InventoryInstance.deleteInstanceViaApi(parentInstanceId);
+        InventoryInstance.deleteInstanceViaApi(childInstanceId);
       });
 
       it(

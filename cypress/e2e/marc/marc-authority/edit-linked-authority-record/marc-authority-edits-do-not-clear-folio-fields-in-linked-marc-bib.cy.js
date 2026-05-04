@@ -248,9 +248,6 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(instanceId);
-          InventoryInstance.deleteInstanceViaApi(parentInstanceId);
-          InventoryInstance.deleteInstanceViaApi(childInstanceId);
           authorityIDs.forEach((id) => {
             MarcAuthority.deleteViaAPI(id, true);
           });

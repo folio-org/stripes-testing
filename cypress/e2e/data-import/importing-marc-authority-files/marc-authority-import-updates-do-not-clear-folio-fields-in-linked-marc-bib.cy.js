@@ -315,6 +315,13 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(testData.userProperties.userId);
+        cy.getInstanceById(instanceId).then((instanceData) => {
+          cy.updateInstance({
+            ...instanceData,
+            parentInstances: [],
+            childInstances: [],
+          });
+        });
         InventoryInstance.deleteInstanceViaApi(instanceId);
         InventoryInstance.deleteInstanceViaApi(parentInstanceId);
         InventoryInstance.deleteInstanceViaApi(childInstanceId);
