@@ -3,19 +3,20 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import SearchAndFilterAgreements from '../../../support/fragments/agreements/searchAndFilterAgreements';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { randomNDigitNumber } from '../../../support/utils/stringTools';
 
 let agreement;
 let agreementId;
+const randomDigits = `3460${randomNDigitNumber(10)}`;
 const user = {
   active: true,
-  username: `firstusername ${randomFourDigitNumber()}`,
+  username: `at_c3460_user_first_${randomDigits}`,
   personal: {
     preferredContactTypeId: '002',
-    firstName: 'firstUserFirstName',
-    middleName: 'firstUserMiddleName',
-    lastName: 'firstUserLastName',
-    email: 'test@folio.org',
+    firstName: `firstUserFirstName_${randomDigits}`,
+    middleName: `firstUserMiddleName_${randomDigits}`,
+    lastName: `firstUserLastName_${randomDigits}`,
+    email: `test_${randomDigits}@folio.org`,
   },
   departments: [],
 };
@@ -42,6 +43,7 @@ describe('agreements', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
       Agreements.deleteViaApi(agreementId);
     });

@@ -21,6 +21,7 @@ import InstanceStates from '../instanceStates';
 
 const saveAndCloseBtn = Button('Save & close');
 const cancelBtn = Button('Cancel');
+const saveAndKeepEditingBtn = Button('Save & keep editing');
 const callNumberTextField = TextArea('Call number');
 const callNumberTypeSelect = Select('Call number type');
 const administrativeDataSection = Section({ id: 'acc01' });
@@ -88,6 +89,23 @@ export default {
     cy.do(callNumberTypeSelect.choose(type));
   },
   save: () => cy.do(saveAndCloseBtn.click()),
+  checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
+    cy.expect(saveAndCloseBtn.has({ disabled: !saveAndClose }));
+    cy.expect(saveAndKeepEditingBtn.has({ disabled: !saveAndKeep }));
+    cy.expect(cancelBtn.has({ disabled: !cancel }));
+  },
+  saveAndKeepEditing({ itemSaved = false } = {}) {
+    cy.do(saveAndKeepEditingBtn.click());
+
+    if (itemSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(InstanceStates.itemSavedSuccessfully)),
+      );
+    }
+  },
+  verifyMaterialTypeSelected(materialType) {
+    cy.expect(Select({ id: 'additem_materialType' }).has({ checkedOptionText: materialType }));
+  },
   saveAndClose({ itemSaved = false } = {}) {
     cy.do(saveAndCloseBtn.click());
     cy.expect(itemEditForm.absent());

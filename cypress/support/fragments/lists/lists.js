@@ -24,7 +24,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 
 const listInformationAccording = Accordion('List information');
@@ -170,7 +170,9 @@ const UI = {
     cy.get('[id^=selected-field-option]').contains(query.field);
     cy.get('[data-testid="operator-option-0"]').contains(query.operator);
     // Check the selected value in the Selection component by looking at the button text
-    cy.get('[data-testid="data-input-select-boolType"]').find('button').should('contain', query.value);
+    cy.get('[data-testid="data-input-select-boolType"]')
+      .find('button')
+      .should('contain', query.value);
   },
 
   closeQueryEditor() {
@@ -413,13 +415,8 @@ const UI = {
   },
 
   selectRecordType(type) {
-    cy.get('button[name=recordType]')
-      .click()
-      .then(() => {
-        cy.wait(500);
-        cy.get('li[role=option]').contains(type).click();
-        cy.wait(500);
-      });
+    cy.get('button[name=recordType]').click();
+    cy.do([SelectionList().filter(type), SelectionList().select(type)]);
     cy.wait(500);
   },
 
@@ -692,7 +689,9 @@ const UI = {
   },
 
   verifyRecordTypeFilterDropdownNoMatchingItem() {
-    cy.get('[class^=multiSelectEmptyMessage-]').contains('No matching items found!').should('be.visible');
+    cy.get('[class^=multiSelectEmptyMessage-]')
+      .contains('No matching items found!')
+      .should('be.visible');
   },
 
   verifyCheckboxChecked(name) {
@@ -783,9 +782,7 @@ const UI = {
 
   verifyNoEntityTypePermissionsWarning() {
     cy.expect(
-      HTML(
-        including('You do not have the required permissions to use the Lists app'),
-      ).exists(),
+      HTML(including('You do not have the required permissions to use the Lists app')).exists(),
     );
   },
 
@@ -1028,10 +1025,18 @@ const QueryBuilder = {
   verifyPreviewOfRecordsMatched() {
     cy.xpath('.//h3[starts-with(., "Query returns")]').then(($element) => {
       const text = $element.text();
-      const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
-      const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
-      expect(text.startsWith(`Query returns ${totalRecords} records.`)).to.equal(true);
-      expect(previewLabel).to.equal(`Preview of first ${Math.min(previewRecords, 100)} records.`);
+      const [totalRecordsStr, previewRecordsStr] = text.match(/[\d,]+/g);
+      const [totalRecords, previewRecords] = [totalRecordsStr, previewRecordsStr].map((value) => {
+        return Number(value.replace(/,/g, ''));
+      });
+      const totalRecordText = pluralize(totalRecords, 'record');
+      const previewCount = Math.min(previewRecords, 100);
+      const previewRecordText = pluralize(previewCount, 'record');
+
+      expect(text.startsWith(`Query returns ${totalRecordsStr} ${totalRecordText}.`)).to.equal(
+        true,
+      );
+      expect(text).to.include(`${previewCount} ${previewRecordText}`);
     });
   },
 
@@ -1145,14 +1150,16 @@ const API = {
 
   createViaApi(list) {
     function createList(listToCreate) {
-      return cy.okapiRequest({
-        method: 'POST',
-        path: 'lists',
-        body: listToCreate,
-        isDefaultSearchParamsRequired: false,
-      }).then((newListResponse) => {
-        return newListResponse.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'POST',
+          path: 'lists',
+          body: listToCreate,
+          isDefaultSearchParamsRequired: false,
+        })
+        .then((newListResponse) => {
+          return newListResponse.body;
+        });
     }
 
     const newList = JSON.parse(JSON.stringify(list));
@@ -1267,7 +1274,7 @@ const API = {
         searchParams: {
           field: `${fieldName}`,
           search: '',
-        }
+        },
       })
       .then((response) => {
         return response.body;
@@ -1282,7 +1289,11 @@ const API = {
     };
   },
 
-  generateCustomEntityTypeBodyWithSources(entityTypeName = '', entityTypeSources, privateEntityType = true) {
+  generateCustomEntityTypeBodyWithSources(
+    entityTypeName = '',
+    entityTypeSources,
+    privateEntityType = true,
+  ) {
     return {
       ...this.generateCustomEntityTypeBodyWithoutSources(entityTypeName, privateEntityType),
       sources: [...entityTypeSources],
@@ -1290,7 +1301,9 @@ const API = {
   },
 
   getSimpleUsersEntityTypeSourceTargetId() {
-    return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
+    return cy.wrap(true).then(() => {
+      return 'f2615ea6-450b-425d-804d-6a495afd9308';
+    });
   },
 
   generateSimpleUsersEntityTypeSource() {
@@ -1301,7 +1314,7 @@ const API = {
         type: 'entity-type',
         targetId: targetSourceId,
         essentialOnly: false,
-        useIdColumns: true
+        useIdColumns: true,
       };
     });
   },
