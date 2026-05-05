@@ -129,6 +129,7 @@ describe('Invoices', () => {
       });
       Invoices.createInvoiceLineFromPol(testData.order.poNumber);
       Invoices.handleDifferentCurrencyModal();
+      cy.wait(4000);
       InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
@@ -175,6 +176,7 @@ describe('Invoices', () => {
         },
       ]);
       InvoiceEditForm.clickSaveButton();
+      cy.wait(4000);
       InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
