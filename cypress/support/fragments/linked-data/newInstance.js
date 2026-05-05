@@ -6,8 +6,10 @@ export default {
   addMainInstanceTitle(title) {
     cy.wait(1000);
     cy.xpath("(//div[text() = 'Title Information']//following::div/div/input)[2]")
+      .scrollIntoView()
       .clear()
       .type(title);
+    cy.wait(1000);
   },
 
   addInstanceIdentifiers(testData) {
