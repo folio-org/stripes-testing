@@ -31,13 +31,16 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
   BATCH_GROUP: 'Batch group',
-  FISCAL_YEAR: 'Fiscal year',
-  INVOICE_STATUS: 'Status',
-  SUB_TOTAL: 'Sub-total',
-  TOTAL_ADJUSTMENTS: 'Total adjustments',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
   CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
+  FISCAL_YEAR: 'Fiscal year',
+  INVOICE_DATE: 'Invoice date',
+  INVOICE_STATUS: 'Status',
+  PAYMENT_METHOD: 'Payment method',
+  SUB_TOTAL: 'Sub-total',
+  TOTAL_ADJUSTMENTS: 'Total adjustments',
   VENDOR_NAME: 'Vendor name',
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice number',
   VOUCHER_STATUS: 'Status',
 };
 
@@ -71,6 +74,13 @@ export const INVOICE_PAYMENT_METHODS = {
 };
 
 export const CURRENCIES = {
+  USD: 'US Dollar (USD)',
   UZS: 'Uzbekistani Som (UZS)',
   UAH: 'Ukrainian Hryvnia (UAH)',
+};
+
+export const INVOICE_AND_INVOICE_LINE_BUTTONS = {
+  CANCEL: 'Cancel',
+  SAVE_AND_CLOSE: 'Save & close',
+  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
 };

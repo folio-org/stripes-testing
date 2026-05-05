@@ -50,7 +50,7 @@ export default {
     return cy.url().then((url) => {
       const match = url.match(/resources\/([^/]+)\/edit/);
       const id = match ? match[1] : null;
-      return cy.wrap({ workId: id, instanceId: null });
+      return cy.wrap({ resourceId: id });
     });
   },
 
@@ -98,13 +98,30 @@ export default {
     }
   },
 
-  setValueForTheField(value, field) {
+  setValueForTheField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
+    cy.xpath(`//div[@class="label" and text()="${field}"][${repeatPosition}]/../../div/input`)
       .focus()
       .should('not.be.disabled')
       .clear()
       .type(value);
+    cy.wait(1000);
+  },
+
+  setValueForSimpleField(value, field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+      .click();
+    cy.wait(500);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
+      .click();
+    cy.wait(1000);
+  },
+
+  clickRepeatGroup(field) {
+    cy.wait(1000);
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`)
+      .click();
     cy.wait(1000);
   },
 
@@ -125,6 +142,14 @@ export default {
       .clear();
   },
 
+  clearSimpleField(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`)
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+  },
+
   duplicateInstance() {
     cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
@@ -143,9 +168,19 @@ export default {
     cy.expect(Heading('Duplicate work').exists());
   },
 
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
+  },
+
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
+  },
+
+  editInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(instanceEditActionButton).click();
   },
 
   openNewInstanceFormViaNewInstanceButton() {
@@ -221,6 +256,34 @@ export default {
     ).should('be.visible');
   },
 
+  checkPreviewOpen() {
+    cy.xpath('//div[@class="titled-preview"]').should('be.visible');
+    cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
+  },
+
+  checkPreviewSectionContains(section, value) {
+    cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
+      .should('be.visible');
+  },
+
+  checkPreviewSectionContainsField(section, field, value) {
+    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+      .should('be.visible')
+      .filter((_secIdx, sectionBlock) => {
+        const $sectionBlock = Cypress.$(sectionBlock);
+        const $fieldBlock = $sectionBlock
+          .find('.value-heading')
+          .filter((_fldIdx, el) => Cypress.$(el).text() === field);
+
+        if (!$fieldBlock.length) {
+          return false;
+        }
+
+        return $fieldBlock.next().text() === value;
+      })
+      .should('have.length.at.least', 1);
+  },
+
   clickCancel() {
     cy.do(Button('Cancel').click());
     cy.wait(500);
@@ -244,6 +307,23 @@ export default {
   checkTextValueOnField(textValue, section) {
     cy.xpath(
       `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible');
+  },
+
+  checkTextValueOnDisabledField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .should('be.disabled');
+  },
+
+  checkLabelOnSimpleField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div//div[contains(@class, "simple-lookup__multi-value__label") and text()="${textValue}"]`,
     ).should('be.visible');
   },
 
@@ -271,5 +351,9 @@ export default {
   checkCloseAndCancelEnabled() {
     cy.expect(closeResourceButton.has({ disabled: false }));
     cy.expect(cancelButton.has({ disabled: false }));
+  },
+
+  checkEditWorkButtonEnabled() {
+    cy.expect(editWorkButton.has({ disabled: false }));
   },
 };

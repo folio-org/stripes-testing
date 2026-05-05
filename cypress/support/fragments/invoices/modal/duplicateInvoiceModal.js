@@ -1,4 +1,4 @@
-import { InvoiceView } from '..';
+import InvoiceView from '../invoiceView';
 import { Button, Modal, including } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InvoiceStates from '../invoiceStates';
