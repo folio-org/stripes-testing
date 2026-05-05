@@ -180,6 +180,7 @@ export default {
     voucherExport = [],
     voucherInformation = [],
     vendorDetailsInformation = [],
+    fieldsNotDisplayed = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -229,6 +230,11 @@ export default {
 
     if (invoiceLevelAdjustments) {
       this.checkInvoiceLevelAdjustmentsTableContent(invoiceLevelAdjustments);
+    }
+    if (fieldsNotDisplayed) {
+      fieldsNotDisplayed.forEach((field) => {
+        cy.expect(invoiceDetailsPane.find(KeyValue(field)).absent());
+      });
     }
   },
 
