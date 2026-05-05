@@ -8,9 +8,9 @@ import {
 } from '../../../../../interactors';
 
 const selectUserModal = Modal('Select User');
-const searchField = TextField({ type: 'search' });
-const searchButton = Button('Search');
-const usersList = MultiColumnList({ id: 'list-plugin-find-user' });
+const searchField = selectUserModal.find(TextField({ type: 'search' }));
+const searchButton = selectUserModal.find(Button('Search'));
+const usersList = selectUserModal.find(MultiColumnList({ id: 'list-plugin-find-user' }));
 export default {
   verifyModalIsShown() {
     cy.expect(selectUserModal.exists());
