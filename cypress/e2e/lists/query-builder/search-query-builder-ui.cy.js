@@ -1,6 +1,13 @@
 import Permissions from '../../../support/dictionary/permissions';
-import QueryModal, { QUERY_OPERATIONS } from '../../../support/fragments/bulk-edit/query-modal';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import QueryModal, {
+  instanceFieldValues,
+  QUERY_OPERATIONS,
+} from '../../../support/fragments/bulk-edit/query-modal';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { Lists } from '../../../support/fragments/lists/lists';
+import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
@@ -10,12 +17,55 @@ describe('Lists', () => {
     let userData = {};
     let listName;
 
+    const addQueryBuilderCapabilitySets = (capabilitySets) => {
+      const capabilitySetIds = [];
+
+      cy.then(() => {
+        capabilitySets.forEach((capabilitySet) => {
+          cy.getCapabilitySetIdViaApi({
+            type: capabilitySet.type,
+            resource: capabilitySet.resource,
+            action: capabilitySet.action,
+          }).then((capabilitySetId) => capabilitySetIds.push(capabilitySetId));
+        });
+      }).then(() => {
+        if (capabilitySetIds.length) {
+          cy.addCapabilitySetsToNewUserApi(userData.userId, capabilitySetIds, true);
+        }
+      });
+    };
+
+    const createQueryBuilderUser = (permissions, capabilitySets = []) => {
+      cy.getAdminToken()
+        .then(() => cy.createTempUser(permissions))
+        .then((userProperties) => {
+          userData = userProperties;
+          if (Cypress.env('eureka')) {
+            addQueryBuilderCapabilitySets([CapabilitySets.moduleListsManage, ...capabilitySets]);
+          }
+        });
+    };
+
+    const deleteQueryBuilderUser = () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userData.userId);
+      userData = {};
+    };
+
+    const deleteTestList = () => {
+      if (listName) {
+        cy.getUserToken(userData.username, userData.password);
+        Lists.deleteListByNameViaApi(listName, true);
+        cy.getAdminToken();
+        listName = undefined;
+      }
+    };
+
     const openQueryBuilder = (recordType) => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
-      // cy.loginAsAdmin({ path: TopMenu.listsPath, waiter: Lists.waitLoading });
       Lists.openNewListPane();
       Lists.setName(listName);
       Lists.selectRecordType(recordType);
@@ -51,23 +101,18 @@ describe('Lists', () => {
     describe('Organizations', () => {
       const recordType = 'Organizations';
       before('Create test user', () => {
-        cy.getAdminToken();
-        cy.createTempUser([
+        createQueryBuilderUser([
           Permissions.listsEdit.gui,
           Permissions.uiOrganizationsViewEditCreate.gui,
-        ]).then((userProperties) => {
-          userData = userProperties;
-        });
+        ]);
       });
 
       after('Delete test user', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(userData.userId);
+        deleteQueryBuilderUser();
       });
 
       afterEach('Delete test list', () => {
-        cy.getAdminToken();
-        Lists.deleteListByNameViaApi(listName, true);
+        deleteTestList();
       });
 
       it(
@@ -92,27 +137,22 @@ describe('Lists', () => {
       const recordType = 'Purchase order lines';
 
       before('Create test user', () => {
-        cy.getAdminToken();
-        cy.createTempUser([
+        createQueryBuilderUser([
           Permissions.listsAll.gui,
-          // Permissions.usersViewRequests.gui,
+          Permissions.usersViewRequests.gui,
           Permissions.uiOrdersCreate.gui,
-          // Permissions.inventoryAll.gui,
-          // Permissions.loansAll.gui,
-          // Permissions.uiOrganizationsViewEditCreate.gui,
-        ]).then((userProperties) => {
-          userData = userProperties;
-        });
+          Permissions.inventoryAll.gui,
+          Permissions.loansAll.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
+        ]);
       });
 
       after('Delete test user', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(userData.userId);
+        deleteQueryBuilderUser();
       });
 
       afterEach('Delete test list', () => {
-        cy.getAdminToken();
-        Lists.deleteListByNameViaApi(listName, true);
+        deleteTestList();
       });
 
       it(
@@ -137,22 +177,15 @@ describe('Lists', () => {
       const recordType = 'Users';
 
       before('Create test user', () => {
-        cy.getAdminToken();
-        cy.createTempUser([Permissions.listsAll.gui, Permissions.usersViewRequests.gui]).then(
-          (userProperties) => {
-            userData = userProperties;
-          },
-        );
+        createQueryBuilderUser([Permissions.listsAll.gui, Permissions.usersViewRequests.gui]);
       });
 
       after('Delete test user', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(userData.userId);
+        deleteQueryBuilderUser();
       });
 
       afterEach('Delete test list', () => {
-        cy.getAdminToken();
-        Lists.deleteListByNameViaApi(listName, true);
+        deleteTestList();
       });
 
       it(
@@ -176,24 +209,53 @@ describe('Lists', () => {
 
     describe('Instances', () => {
       const recordType = 'Instances';
+      const testData = {
+        instanceTitle: getTestEntityValue('C_lists_query_builder_classification_instance'),
+        classificationNumber: 'BJ1533.C4',
+        classificationIdentifierTypeName: getTestEntityValue(
+          'C_lists_query_builder_classification_type',
+        ),
+      };
 
-      before('Create test user', () => {
+      before('Create test user and instance', () => {
         cy.getAdminToken();
-        cy.createTempUser([Permissions.listsAll.gui, Permissions.inventoryAll.gui]).then(
-          (userProperties) => {
-            userData = userProperties;
-          },
+        ClassificationIdentifierTypes.createViaApi({
+          name: testData.classificationIdentifierTypeName,
+          source: 'local',
+        }).then((response) => {
+          testData.classificationIdentifierTypeId = response.body.id;
+        });
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: instanceTypes[0].id,
+              title: testData.instanceTitle,
+              classifications: [
+                {
+                  classificationNumber: testData.classificationNumber,
+                  classificationTypeId: testData.classificationIdentifierTypeId,
+                },
+              ],
+            },
+          }).then(({ instanceId }) => {
+            testData.instanceId = instanceId;
+          });
+        });
+        createQueryBuilderUser(
+          [Permissions.listsAll.gui, Permissions.inventoryAll.gui],
+          [CapabilitySets.uiInventory],
         );
       });
 
-      after('Delete test user', () => {
+      after('Delete test user and instance', () => {
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        ClassificationIdentifierTypes.deleteViaApi(testData.classificationIdentifierTypeId);
       });
 
       afterEach('Delete test list', () => {
-        cy.getAdminToken();
-        Lists.deleteListByNameViaApi(listName, true);
+        deleteTestList();
       });
 
       it(
@@ -210,6 +272,31 @@ describe('Lists', () => {
             'instance.discovery_suppress is null/empty false',
             'list-column-instance.discovery_suppress',
             'False',
+          );
+        },
+      );
+
+      it(
+        'Search instances in the query builder by classification identifier type (corsair)',
+        { tags: ['criticalPath', 'corsair'] },
+        () => {
+          listName = getTestEntityValue('C_lists_query_builder_classification_list');
+          openQueryBuilder(recordType);
+
+          QueryModal.typeInAndSelectField(
+            instanceFieldValues.classificationsClassificationIdentifierType,
+          );
+          QueryModal.verifySelectedField(
+            instanceFieldValues.classificationsClassificationIdentifierType,
+          );
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.fillInValueMultiselect(testData.classificationIdentifierTypeName);
+          QueryModal.verifySelectedMultiselectValue(testData.classificationIdentifierTypeName);
+          QueryModal.testQuery();
+          Lists.verifyPreviewOfRecordsMatched();
+          cy.contains(testData.instanceTitle).should('be.visible');
+          QueryModal.verifyQueryAreaContent(
+            `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}])`,
           );
         },
       );

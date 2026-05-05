@@ -11,6 +11,7 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import { Behavior } from '../../../../support/fragments/settings/oai-pmh';
 import { BEHAVIOR_SETTINGS_OPTIONS_API } from '../../../../support/fragments/settings/oai-pmh/behavior';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testData = {
@@ -126,6 +127,8 @@ describe('OAI-PMH', () => {
         'C402375 Consortia | SRS | ListRecords | Share local MARC instance (with associated Holdings) from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
         { tags: ['extendedPathECS', 'firebird', 'C402375', 'nonParallel'] },
         () => {
+          const fromDate = DateTools.getCurrentDateForOaiPmh();
+
           // Step 1-2: Search for local MARC Instance with Holdings from Preconditions and copy UUID
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.waitContentLoading();
@@ -137,12 +140,14 @@ describe('OAI-PMH', () => {
           cy.resetTenant();
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
-          OaiPmhEdge.listRecordsRequest('marc21', OaiPmhEdge.getApiKey(Affiliations.College)).then(
-            (response) => {
-              // Verify the response doesn't include MARC Instance with Instance UUID
-              OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
-            },
-          );
+          OaiPmhEdge.listRecordsRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
+          ).then((response) => {
+            // Verify the response doesn't include MARC Instance with Instance UUID
+            OaiPmh.verifyIdentifierInListResponse(response, testData.marcInstance.uuid, false);
+          });
 
           // Step 5: Share local instance via UI
           cy.resetTenant();
@@ -164,35 +169,38 @@ describe('OAI-PMH', () => {
           cy.getAdminToken();
           cy.setTenant(Affiliations.College);
 
-          OaiPmhEdge.listRecordsRequest('marc21', OaiPmhEdge.getApiKey(Affiliations.College)).then(
-            (response) => {
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.marcInstance.uuid,
-                false,
-                true,
-                Affiliations.College,
-              );
-              OaiPmh.verifyMarcField(
-                response,
-                testData.marcInstance.uuid,
-                '999',
-                { ind1: 'f', ind2: 'f' },
-                { t: '0' },
-              );
-              OaiPmh.verifyMarcControlField(
-                response,
-                testData.marcInstance.uuid,
-                '001',
-                testData.marcInstance.hrid,
-              );
-            },
-          );
+          OaiPmhEdge.listRecordsRequest(
+            'marc21',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
+          ).then((response) => {
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.marcInstance.uuid,
+              false,
+              true,
+              Affiliations.College,
+            );
+            OaiPmh.verifyMarcField(
+              response,
+              testData.marcInstance.uuid,
+              '999',
+              { ind1: 'f', ind2: 'f' },
+              { t: '0' },
+            );
+            OaiPmh.verifyMarcControlField(
+              response,
+              testData.marcInstance.uuid,
+              '001',
+              testData.marcInstance.hrid,
+            );
+          });
 
           // Step 7: Verify single-tenant ListRecords marc21_withholdings for College tenant
           OaiPmhEdge.listRecordsRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -224,22 +232,25 @@ describe('OAI-PMH', () => {
           });
 
           // Step 8: Verify single-tenant ListRecords oai_dc for College tenant
-          OaiPmhEdge.listRecordsRequest('oai_dc', OaiPmhEdge.getApiKey(Affiliations.College)).then(
-            (response) => {
-              OaiPmh.verifyOaiPmhRecordHeader(
-                response,
-                testData.marcInstance.uuid,
-                false,
-                true,
-                Affiliations.College,
-              );
-            },
-          );
+          OaiPmhEdge.listRecordsRequest(
+            'oai_dc',
+            OaiPmhEdge.getApiKey(Affiliations.College),
+            fromDate,
+          ).then((response) => {
+            OaiPmh.verifyOaiPmhRecordHeader(
+              response,
+              testData.marcInstance.uuid,
+              false,
+              true,
+              Affiliations.College,
+            );
+          });
 
           // Step 9: Verify cross-tenant ListRecords marc21 for Central tenant
           OaiPmhEdge.listRecordsRequest(
             'marc21',
             OaiPmhEdge.getApiKey(Affiliations.Consortia),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -267,6 +278,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'marc21_withholdings',
             OaiPmhEdge.getApiKey(Affiliations.Consortia),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,
@@ -301,6 +313,7 @@ describe('OAI-PMH', () => {
           OaiPmhEdge.listRecordsRequest(
             'oai_dc',
             OaiPmhEdge.getApiKey(Affiliations.Consortia),
+            fromDate,
           ).then((response) => {
             OaiPmh.verifyOaiPmhRecordHeader(
               response,

@@ -72,8 +72,8 @@ describe('Citation: create work', () => {
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.setNoteValue(testData.summaryNote, 'Summary note');
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.workId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.workId = resourceId;
       });
       EditResource.clickCloseResourceButton();
       // wait for LDE page to be displayed
