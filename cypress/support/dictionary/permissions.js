@@ -803,6 +803,10 @@ export default {
     internal: 'ui-checkout.circulation.execute',
     gui: 'Check out: Check out circulating items',
   },
+  checkoutViewLoans: {
+    internal: 'ui-checkout.viewLoans.view',
+    gui: 'Check out: View loans',
+  },
   checkoutViewFeeFines: {
     internal: 'ui-checkout.viewFeeFines.view',
     gui: 'Check out: View fees/fines',
