@@ -1,15 +1,25 @@
-import { Keyboard } from '@interactors/keyboard';
-import { Button, KeyValue, Pane, MultiSelect, Badge } from '../../../../interactors';
+import {
+  Button,
+  KeyValue,
+  Pane,
+  PaneHeader,
+  MultiSelect,
+  Badge,
+  ValueChipRoot,
+  MultiSelectMenu,
+  MultiSelectOption,
+  including,
+} from '../../../../interactors';
 import AgreementViewDetails from './agreementViewDetails';
 
 const rootSection = Pane({ id: 'pane-view-agreement-line' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
-const addTagsField = MultiSelect({ label: 'Tag text area' });
-const closeButton = rootSection.find(Button({ icon: 'times' }));
+const closeIcon = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
+const tagsMultiSelect = MultiSelect({ id: 'input-tag' });
 
 export default {
   waitLoadingWithExistingLine(title) {
@@ -22,18 +32,32 @@ export default {
   },
 
   closeTagsPane() {
-    cy.do([tagsPane.dismiss()]);
+    cy.do(tagsPane.find(PaneHeader()).find(closeIcon).click());
     cy.expect(tagsPane.absent());
   },
 
-  addTag(tag) {
-    cy.do([
-      tagsPane.find(addTagsField).focus(),
-      Keyboard.type(tag),
-      Keyboard.press({ code: 'Enter' }),
-    ]);
-    // need to wait for changes to be applied
+  addTag(tagName) {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
     cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(MultiSelectMenu().find(MultiSelectOption(tagName)).click());
+  },
+
+  addNewTag: (tagName) => {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+    cy.expect(MultiSelectMenu({ visible: true }).exists());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including('Add tag for:')))
+        .click(),
+    );
+  },
+
+  verifyTagAdded: (tag) => {
+    cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
   verifyTagsCount(itemCount) {
@@ -45,7 +69,7 @@ export default {
   },
 
   close() {
-    cy.do(closeButton.click());
+    cy.do(rootSection.find(closeIcon).click());
     cy.expect(rootSection.absent());
     AgreementViewDetails.waitLoading();
   },

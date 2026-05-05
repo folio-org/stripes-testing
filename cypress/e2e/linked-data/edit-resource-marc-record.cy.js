@@ -138,8 +138,8 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       cy.wait(6000);
       EditResource.setEdition(testData.edition);
-      EditResource.saveAndKeepEditingWithId().then(({ instanceId }) => {
-        testData.duplicateInstanceId = instanceId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.duplicateInstanceId = resourceId;
       });
       EditResource.viewMarc();
       // check changes in MARC
