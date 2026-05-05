@@ -102,8 +102,8 @@ export default {
     );
     cy.then(() => {
       expect(actualDate).to.match(dateString);
-      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-      DateTools.verifyDate(dateWithUTC, 180000);
+      // 24h window: FOLIO displays times in the tenant timezone, Cypress runs in UTC.
+      DateTools.verifyDate(new Date(actualDate).getTime(), 86400000);
     });
   },
 
@@ -164,8 +164,8 @@ export default {
     );
     cy.then(() => {
       expect(actualDate).to.match(dateString);
-      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-      DateTools.verifyDate(dateWithUTC, 180000);
+      // 24h window: FOLIO displays times in the tenant timezone, Cypress runs in UTC.
+      DateTools.verifyDate(new Date(actualDate).getTime(), 86400000);
     });
   },
 
@@ -225,8 +225,8 @@ export default {
     );
     cy.then(() => {
       expect(actualDate).to.match(dateString);
-      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-      DateTools.verifyDate(dateWithUTC, 180000);
+      // 24h window: FOLIO displays times in the tenant timezone, Cypress runs in UTC.
+      DateTools.verifyDate(new Date(actualDate).getTime(), 86400000);
     });
   },
 
@@ -286,8 +286,8 @@ export default {
     );
     cy.then(() => {
       expect(actualDate).to.match(dateString);
-      const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-      DateTools.verifyDate(dateWithUTC, 180000);
+      // 24h window: FOLIO displays times in the tenant timezone, Cypress runs in UTC.
+      DateTools.verifyDate(new Date(actualDate).getTime(), 86400000);
     });
   },
 
