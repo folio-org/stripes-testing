@@ -118,9 +118,8 @@ describe('Citation: duplicate work', () => {
       // duplicate work
       EditResource.duplicateWork();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditingWithId().then(({ workId, instanceId }) => {
-        testData.duplicateWorkId = workId;
-        testData.duplicateInstanceId = instanceId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.duplicateWorkId = resourceId;
       });
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();

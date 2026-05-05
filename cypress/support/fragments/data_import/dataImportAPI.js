@@ -190,7 +190,7 @@ function getParentJobExecutions() {
   // splitting process creates additional job executions for parent/child
   // so we need to query to get the correct job execution ID COMPOSITE_PARENT
   return cy.okapiRequest({
-    path: 'metadata-provider/jobExecutions?limit=10000&sortBy=started_date,desc&subordinationTypeNotAny=COMPOSITE_CHILD&subordinationTypeNotAny=PARENT_SINGLE',
+    path: 'metadata-provider/jobExecutions?limit=100&sortBy=started_date,desc&subordinationTypeNotAny=COMPOSITE_CHILD&subordinationTypeNotAny=PARENT_SINGLE',
     isDefaultSearchParamsRequired: false,
   });
 }
