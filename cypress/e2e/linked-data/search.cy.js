@@ -5,7 +5,7 @@ import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
-import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import Marigold from '../../support/fragments/linked-data/marigold';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
@@ -73,7 +73,7 @@ describe('Citation: Search Linked data resources', () => {
       waiter: InventorySearchAndFilter.waitLoading,
     });
     // create test data based on uploaded marc file
-    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
+    Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   describe('Linked-data Search', () => {

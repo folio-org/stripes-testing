@@ -35,6 +35,7 @@ describe('agreements', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       NoteTypes.deleteNoteTypeViaApi(noteTypeId);
       Agreements.deleteViaApi(agreementId);
     });
