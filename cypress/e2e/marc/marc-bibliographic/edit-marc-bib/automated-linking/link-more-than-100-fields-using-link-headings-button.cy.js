@@ -22,39 +22,6 @@ describe('MARC', () => {
         ];
         const createdRecordIDs = [];
 
-        // Sample of naturalIds for cleanup (from bib file $0 values, excluding OCLC prefixed)
-        const naturalIds = [
-          'n2005071082',
-          'n78086419',
-          'n79070057',
-          'n83073581',
-          'n83164443',
-          'n85062620',
-          'n85378890',
-          'n86140489',
-          'n90714928',
-          'n93079658',
-          'n93080601',
-          'no2006070901',
-          'no2007082016',
-          'no2010133283',
-          'no92009121',
-          'no93035732',
-          'no97033948',
-          'no98084452',
-          'nr91004026',
-          'nr98015068',
-          'gf2011026123',
-          'gf2011026247',
-          'gf2011026255',
-          'gf2011026277',
-          'gf2011026283',
-          'gf2011026570',
-          'sh85023582',
-          'sj96004798',
-          'sj2021053307',
-        ];
-
         const marcFiles = [
           {
             marc: 'C388555MarcBib.mrc',
@@ -74,7 +41,7 @@ describe('MARC', () => {
 
         const testData = {
           searchQuery: 'C388555 Disney rarities : celebrated shorts, 1920s-1960s',
-          expectedLinkedFieldsCount: 100, // More than 100, but not all 121 fields will link
+          expectedLinkedFieldsCount: 100,
           successCallout:
             'Field 650, 655, 700, 710, and 830 has been linked to MARC authority record(s).',
           errorCallout: 'Field 650 and 655 must be set manually by selecting the link icon.',
@@ -83,15 +50,23 @@ describe('MARC', () => {
         before('Create test data', () => {
           cy.getAdminToken();
 
-          // Clean up any duplicate authority records by naturalId
-          naturalIds.forEach((id) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 200,
-              query: `naturalId="${id}*" and authRefType=="Authorized"`,
-            }).then((records) => {
-              records.forEach((record) => {
-                MarcAuthority.deleteViaAPI(record.id, true);
-              });
+          // Step 1: Delete any existing bib records with test title to remove old links
+          InventoryInstances.getInstancesViaApi({
+            limit: 100,
+            query: `title="${testData.searchQuery}"`,
+          }).then((instances) => {
+            instances.forEach((instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            });
+          });
+
+          // Step 2: Delete authority records by heading prefix (C388555 test case ID prefix)
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 500,
+            query: 'headingRef="C388555*"',
+          }).then((records) => {
+            records.forEach((record) => {
+              MarcAuthority.deleteViaAPI(record.id, true);
             });
           });
 

@@ -24,28 +24,35 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'C389492MarcBib.mrc',
+            marc: 'C389494MarcBib.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
-            marc: 'C389492MarcAuth1.mrc',
+            marc: 'C389494MarcAuth1.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
           },
           {
-            marc: 'C389492MarcAuth2.mrc',
+            marc: 'C389494MarcAuth2.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
           },
           {
-            marc: 'C389492MarcAuth3.mrc',
+            marc: 'C389494MarcAuth3.mrc',
+            fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+            numOfRecords: 1,
+            propertyName: 'authority',
+          },
+          {
+            marc: 'C389494MarcAuth4.mrc',
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
@@ -54,16 +61,15 @@ describe('MARC', () => {
         ];
 
         const testData = {
-          searchQuery: 'C389492 On the road',
-          successCallout: 'Field 100 has been linked to MARC authority record(s).',
-          authorityHeading: 'C389492 Jackson, Peter,',
+          searchQuery: 'C389494 On the road',
+          errorCallout: 'Field 100, 650, and 830 must be set manually by selecting the link icon.',
+          updated245Content: '$a C389494 On the road updated',
         };
 
         before('Create test data', () => {
           cy.getAdminToken();
-          // Delete any existing test data before creating new records
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389492*');
-          InventoryInstances.deleteInstanceByTitleViaApi('C389492*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389494*');
+          InventoryInstances.deleteInstanceByTitleViaApi('C389494*');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -108,8 +114,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389492 Auto-linking fields with multiple "$0" when only one "MARC Authority" record can be linked when editing "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389492'] },
+          'C389494 Auto-linking fields with multiple "$0" when none of the "MARC Authority" records can be linked when editing "MARC Bib" record (spitfire)',
+          { tags: ['extendedPath', 'spitfire', 'C389494'] },
           () => {
             // Step 1: Find and open detail view
             InventoryInstances.searchByTitle(testData.searchQuery);
@@ -125,29 +131,54 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkHeadingsButton();
             cy.wait(2000);
 
-            // Verify field 100 was linked successfully
-            QuickMarcEditor.checkCallout(testData.successCallout);
-            QuickMarcEditor.verifyDisabledLinkHeadingsButton();
+            // Verify none of the fields were linked
+            QuickMarcEditor.checkCallout(testData.errorCallout);
+            QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
-            // Verify field 100 has been linked (checking for link/unlink buttons)
-            // Controlled subfields from authority + uncontrolled $e from original bib
-            QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
+            // Verify field 100 remains unlinked
+            QuickMarcEditor.verifyTagFieldNotLinked(
+              15,
               '100',
               '1',
               '\\',
-              `$a ${testData.authorityHeading} $d 1950-2022 $c Inspector Banks series ;`,
-              '$e author.',
-              '$0 3052328889',
-              '',
+              '$a Kerouac, Jack, $d 1922-1969, $e author. $0 n79041362 $0 n93094742 $0 n79084169',
             );
 
-            // Step 4: Save & close
+            // Verify field 650 remains unlinked
+            QuickMarcEditor.verifyTagFieldNotLinked(
+              31,
+              '650',
+              '\\',
+              '0',
+              '$a Beats (Persons) $v Fiction. $0 y055055 $0 y044044 $0 y033033',
+            );
+
+            // Verify field 830 remains unlinked
+            QuickMarcEditor.verifyTagFieldNotLinked(
+              36,
+              '830',
+              '\\',
+              '\\',
+              '$a Value830 $0 y088088 $0 gf2014026297 $0 y099099',
+            );
+
+            // Step 4: Update value in 245 field
+            QuickMarcEditor.updateExistingField('245', testData.updated245Content);
+
+            // Step 5: Save & close
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
-            // Step 5: View source
+            // Step 6: View source
             InventoryInstance.viewSource();
-            InventoryViewSource.verifyLinkedToAuthorityIconByTag('100', true);
+
+            // Verify NO MARC authority app icon is displayed next to any field
+            InventoryViewSource.verifyLinkedToAuthorityIconByTag('100', false);
+            InventoryViewSource.verifyLinkedToAuthorityIconByTag('650', false);
+            InventoryViewSource.verifyLinkedToAuthorityIconByTag('830', false);
+
+            // Verify updates made at Step 4 are applied
+            InventoryViewSource.contains('C389494 On the road updated');
           },
         );
       });

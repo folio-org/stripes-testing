@@ -211,9 +211,10 @@ describe('MARC', () => {
               testData.tag100,
               testData.authorityUpdatedField100Content,
             );
+            cy.wait(2000);
 
             // Step 4: Click "Save & close" (ignore Warn errors) >> Click "Save" in "Are you sure?" modal
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
 
             // Step 5: Navigate to Inventory app and find linked MARC bibliographic
             cy.visit(TopMenu.inventoryPath);
