@@ -22,6 +22,7 @@ const workPreviewPanel = "//div[@class='preview-panel']";
 const actionsHubButton = Button({ dataTestID: 'hubs-actions-dropdown' });
 const newHubButton = Button({ dataTestID: 'hubs-actions-dropdown__option-ld.newHub' });
 const editWorkButton = Button('Edit Work');
+const editInstanceButton = Button('Edit Instance');
 
 export default {
   waitLoading: () => {
@@ -31,6 +32,11 @@ export default {
 
   clickEditWorkFromSearch() {
     cy.do(editWorkButton.click());
+    cy.wait(1000);
+  },
+
+  clickEditInstanceFromSearch() {
+    cy.do(editInstanceButton.click());
     cy.wait(1000);
   },
 

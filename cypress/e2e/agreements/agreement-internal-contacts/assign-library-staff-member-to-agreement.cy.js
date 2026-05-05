@@ -58,6 +58,7 @@ describe('agreements', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(firstUserId);
       Users.deleteViaApi(secondUserId);
       Agreements.deleteViaApi(agreementId);
