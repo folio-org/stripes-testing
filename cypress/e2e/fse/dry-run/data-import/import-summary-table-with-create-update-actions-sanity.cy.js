@@ -37,6 +37,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import FileManager from '../../../../support/utils/fileManager';
@@ -68,6 +69,8 @@ describe('Data Import', () => {
       updateMaterialTypeName: '',
       createLoanTypeName: '',
       updateLoanTypeName: '',
+      statisticalCode: '',
+      itemNoteType: '',
     };
 
     const collectionOfProfilesForCreate = [
@@ -147,8 +150,8 @@ describe('Data Import', () => {
           name: `C356791 autotest instance mapping profile.${getRandomPostfix()}`,
           catalogingDate: '###TODAY###',
           statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-          statisticalCode: 'RVBI: artigo de jornal - art-jor',
-          statisticalCodeUI: 'RVBI',
+          statisticalCode: '',
+          statisticalCodeUI: '',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -177,7 +180,7 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
           materialType: '',
-          noteType: '"Nota"',
+          noteType: '',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
@@ -277,6 +280,23 @@ describe('Data Import', () => {
           testData.createLoanTypeName;
         collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType =
           testData.updateLoanTypeName;
+      });
+      ItemNoteTypes.getItemNoteTypesViaApi().then((resp) => {
+        testData.itemNoteType = resp.itemNoteTypes[0].name;
+        collectionOfProfilesForUpdate[2].mappingProfile.noteType = `"${testData.itemNoteType}"`;
+      });
+      cy.getStatisticalCodes({ limit: 1 }).then((code) => {
+        testData.statisticalCode = code[0];
+        cy.getStatisticalCodeTypes({ limit: 200 }).then((codeTypes) => {
+          testData.statisticalCode.typeName = codeTypes.filter(
+            (item) => item.id === testData.statisticalCode.statisticalCodeTypeId,
+          )[0].name;
+          testData.statisticalCode.fullName = `${testData.statisticalCode.typeName}: ${testData.statisticalCode.code} - ${testData.statisticalCode.name}`;
+          collectionOfProfilesForUpdate[0].mappingProfile.statisticalCode =
+            testData.statisticalCode.fullName;
+          collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI =
+            testData.statisticalCode.name;
+        });
       });
 
       cy.allure().logCommandSteps(false);

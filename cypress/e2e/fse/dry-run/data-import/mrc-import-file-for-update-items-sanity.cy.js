@@ -35,7 +35,7 @@ import NewFieldMappingProfile from '../../../../support/fragments/settings/dataI
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import { SETTINGS_TABS } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
-import noteTypes from '../../../../support/fragments/settings/notes/noteTypes';
+import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -281,9 +281,8 @@ describe('Data Import', () => {
               );
             });
         });
-        noteTypes.getNoteTypesViaApi().then((noteTypesResp) => {
-          console.log('noteTypesResponse', noteTypesResp);
-          testData.noteType = noteTypesResp.name;
+        ItemNoteTypes.getItemNoteTypesViaApi().then((resp) => {
+          testData.itemNoteType = resp.itemNoteTypes[0].name;
         });
       });
 
@@ -362,7 +361,7 @@ describe('Data Import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillMaterialType(`"${testData.materialTypeForUpdate.name}"`);
       NewFieldMappingProfile.addItemNotes(
-        `"${testData.noteType}"`,
+        `"${testData.itemNoteType}"`,
         '"Smith Family Foundation"',
         'Mark for all affected records',
       );
