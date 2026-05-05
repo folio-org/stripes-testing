@@ -242,7 +242,7 @@ describe('Data Export', () => {
             jobId,
             user.username,
             jobProfileShortName,
-            '.cql',
+            new Date(jobData.completedDate).getTime(),
           );
 
           cy.getUserToken(user.username, user.password);
