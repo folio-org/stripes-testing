@@ -18,28 +18,23 @@ Cypress.Commands.add('getAuthorityHeadingsUpdatesViaAPI', (startDate, endDate, l
   });
 });
 
-Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
+Cypress.Commands.add('getAuthoritySourceFilesViaAPI', (searchParams = { limit: 1000 }) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'authority-source-files',
-    searchParams: {
-      query: `name="${authorityFileName}"`,
-    },
+    searchParams,
     isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
+  });
+});
+
+Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
+  cy.getAuthoritySourceFilesViaAPI({ query: `name="${authorityFileName}"` }).then(({ body }) => {
     return body.authoritySourceFiles[0].id;
   });
 });
 
 Cypress.Commands.add('getAuthoritySourceFileDataViaAPI', (authorityFileName) => {
-  cy.okapiRequest({
-    method: REQUEST_METHOD.GET,
-    path: 'authority-source-files',
-    searchParams: {
-      query: `name="${authorityFileName}"`,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
+  cy.getAuthoritySourceFilesViaAPI({ query: `name="${authorityFileName}"` }).then(({ body }) => {
     Cypress.env('authoritySourceFiles', body.authoritySourceFiles);
     return cy.wrap(body.authoritySourceFiles[0]);
   });
