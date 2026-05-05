@@ -1,21 +1,25 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import {
   Budgets,
   FinanceHelper,
   FiscalYears,
   Funds,
-  Ledgers,
   LedgerDetails,
   LedgerRolloverInProgress,
+  Ledgers,
   Transactions,
 } from '../../../../support/fragments/finance';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../../../support/fragments/orders';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import { CodeTools, StringTools } from '../../../../support/utils';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../../support/constants';
 
 describe('Finance', () => {
   describe('Fiscal Year Rollover', () => {
@@ -94,7 +98,7 @@ describe('Finance', () => {
                   }),
                   acquisitionMethod: acquisitionMethodId,
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: materialType.id,
                     materialSupplier: testData.organization.id,
                     volumes: [],
@@ -116,7 +120,7 @@ describe('Finance', () => {
                   id: uuid(),
                   acquisitionMethod: acquisitionMethodId,
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: materialType.id,
                     materialSupplier: testData.organization.id,
                     volumes: [],

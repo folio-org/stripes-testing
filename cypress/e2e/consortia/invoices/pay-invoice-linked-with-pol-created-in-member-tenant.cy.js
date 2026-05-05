@@ -4,6 +4,7 @@ import {
   APPLICATION_NAMES,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
@@ -120,7 +121,8 @@ describe('Invoices', () => {
                                 ],
                                 acquisitionMethod: params.body.acquisitionMethods[0].id,
                                 physical: {
-                                  createInventory: 'Instance, Holding, Item',
+                                  createInventory:
+                                    POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                                   materialType: mtypes.body.id,
                                   materialSupplier: responseOrganizations,
                                   volumes: [],

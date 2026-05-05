@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -62,7 +63,7 @@ describe('Orders', () => {
                       ],
                       acquisitionMethod: amResp.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: mtypeResp.id,
                         materialSupplier: orgResp,
                         volumes: [],

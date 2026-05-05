@@ -1,31 +1,32 @@
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import { TransactionDetails } from '../../support/fragments/finance';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { TransactionDetails } from '../../support/fragments/finance';
+import Invoices from '../../support/fragments/invoices/invoices';
+import invoiceView from '../../support/fragments/invoices/invoiceView';
+import { OrderLineDetails } from '../../support/fragments/orders';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
-import Invoices from '../../support/fragments/invoices/invoices';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
-  APPLICATION_NAMES,
-  INVOICE_STATUSES,
-} from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { OrderLineDetails } from '../../support/fragments/orders';
-import invoiceView from '../../support/fragments/invoices/invoiceView';
-import Approvals from '../../support/fragments/settings/invoices/approvals';
 
 describe('Orders', () => {
   const testData = {
@@ -69,7 +70,7 @@ describe('Orders', () => {
       ],
       acquisitionMethod: acquisitionMethodId,
       physical: {
-        createInventory: 'Instance, Holding, Item',
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
         materialType: materialTypeId,
         materialSupplier: testData.organization.id,
         volumes: [],

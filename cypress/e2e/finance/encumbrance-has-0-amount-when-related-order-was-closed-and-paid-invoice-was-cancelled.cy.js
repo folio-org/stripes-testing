@@ -1,9 +1,19 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  INVOICE_STATUSES,
+  ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -12,15 +22,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  INVOICE_STATUSES,
-  ORDER_STATUSES,
-  ORDER_LINE_PAYMENT_STATUS,
-  RECEIPT_STATUS_VIEW,
-} from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 
 describe('Finance', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -103,7 +104,7 @@ describe('Finance', () => {
                       locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                       acquisitionMethod: params.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: mtype.id,
                         materialSupplier: responseOrganizations,
                         volumes: [],
