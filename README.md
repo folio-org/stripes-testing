@@ -11,7 +11,7 @@ stripes-testing is a toolkit for building integration tests against Stripes
 UI modules and platforms. This repository contains:
 
 * `accessibility`: axe helper functions
-* `bigtest`: BigTest helper furnctions, compatible with React >= 17
+* `bigtest`: BigTest helper functions, compatible with React >= 17
 * `cypress`: end-to-end tests
 * `interactors`: interactors provide "hooks" into components as rendered in the DOM,
   allowing tests written in BigTest, Cypress, etc. to use the interactor's consistent
