@@ -40,7 +40,6 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.getAdminToken();
         cy.createTempUser([
-          permissions.bulkEditView.gui,
           permissions.bulkEditEdit.gui,
           permissions.bulkEditLogsView.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
