@@ -153,7 +153,7 @@ describe('Invoices', () => {
       InteractorsTools.checkCalloutErrorMessage(
         `Invoice line cannot be saved because Fund ${testData.fund.code} has no current budget for fiscal year ${testData.fiscalYearSecond.code}.`,
       );
-      InvoiceLineEditForm.clickCancelButton('Close without saving');
+      InvoiceLineEditForm.cancelWithUnsavedChanges();
       InvoiceView.checkInvoiceDetails({
         invoiceLines: [],
       });
