@@ -35,6 +35,7 @@ const itemData = {
   enumeration: `Enumeration ${getRandomPostfix()}`,
   chronology: `Chronology ${getRandomPostfix()}`,
   volume: `Volume ${getRandomPostfix()}`,
+  displaySummary: `Display summary ${getRandomPostfix()}`,
   permanentLoanType: 'Can circulate',
   temporaryLoanType: 'Reading room',
 };
@@ -153,19 +154,22 @@ describe('OAI-PMH', () => {
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
 
-        // Step 5: Add Temporary loan type
+        // Step 5: Add Temporary loan type and Display summary
         ItemRecordView.openItemEditForm(marcInstance.title);
         ItemRecordEdit.addTemporaryLoanType(itemData.temporaryLoanType);
+        ItemRecordEdit.addDisplaySummary(itemData.displaySummary);
 
         // Step 6: Save the item
         ItemRecordEdit.saveAndClose();
         ItemRecordView.verifyCalloutMessage();
         ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000); // Wait for the changes to be processed and reflected in the OAI-PMH response
 
         // Step 7: Send the same OAI-PMH GetRecord request again
         cy.getAdminToken();
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
-          // Step 8: Verify 952 field subfields with temporary loan type
+          // Step 8: Verify 952 field subfields with Display summary in subfield "k", Chronology absent in "l"
           OaiPmh.verifyMarcField(
             response,
             marcInstance.id,
@@ -174,12 +178,80 @@ describe('OAI-PMH', () => {
             {
               i: itemData.materialType,
               j: itemData.volume,
-              k: itemData.enumeration,
-              l: itemData.chronology,
+              k: itemData.displaySummary,
               m: itemData.barcode,
               n: itemData.copyNumber,
               p: itemData.temporaryLoanType,
             },
+            ['l'],
+          );
+        });
+
+        // Step 9: Navigate to item and edit
+        cy.getUserToken(user.username, user.password);
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.openItemByBarcode(itemData.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.openItemEditForm(marcInstance.title);
+        ItemRecordEdit.addEnumeration('');
+        ItemRecordEdit.saveAndClose();
+        ItemRecordView.verifyCalloutMessage();
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000); // wait for changes to be applied
+
+        // Step 10: Send the same OAI-PMH GetRecord request again
+        cy.getAdminToken();
+        OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
+          // Step 11: Verify Display summary remains in subfield "k"
+          OaiPmh.verifyMarcField(
+            response,
+            marcInstance.id,
+            '952',
+            { ind1: 'f', ind2: 'f' },
+            {
+              i: itemData.materialType,
+              j: itemData.volume,
+              k: itemData.displaySummary,
+              m: itemData.barcode,
+              n: itemData.copyNumber,
+              p: itemData.temporaryLoanType,
+            },
+            ['l'],
+          );
+        });
+
+        // Step 12: Navigate to item and edit
+        cy.getUserToken(user.username, user.password);
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.openItemByBarcode(itemData.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.openItemEditForm(marcInstance.title);
+        ItemRecordEdit.addChronology('');
+        ItemRecordEdit.saveAndClose();
+        ItemRecordView.verifyCalloutMessage();
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000); // wait for changes to be applied
+
+        // Step 13: Send the same OAI-PMH GetRecord request again
+        cy.getAdminToken();
+        OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
+          // Step 14: Verify Display summary still in subfield "k"
+          OaiPmh.verifyMarcField(
+            response,
+            marcInstance.id,
+            '952',
+            { ind1: 'f', ind2: 'f' },
+            {
+              i: itemData.materialType,
+              j: itemData.volume,
+              k: itemData.displaySummary,
+              m: itemData.barcode,
+              n: itemData.copyNumber,
+              p: itemData.temporaryLoanType,
+            },
+            ['l'],
           );
         });
       },
