@@ -23,6 +23,7 @@ const fundDistributionSection = Section({ id: 'invoiceLineForm-fundDistribution'
 const cancelButtom = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndKeepEditingButton = Button('Save & keep editing');
+const clearButton = Button({ icon: 'times-circle-solid' });
 const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
 
@@ -224,5 +225,22 @@ export default {
           .has({ error: 'Required!' }),
       );
     });
+  },
+
+  clearField(fieldName) {
+    if (fieldName === INVOICE_LINE_VIEW_FIELDS.DESCRIPTION) {
+      cy.do(infoFields.description.focus());
+      cy.do(infoFields.description.find(clearButton).click());
+    }
+
+    if (fieldName === INVOICE_LINE_VIEW_FIELDS.SUB_TOTAL) {
+      cy.do(infoFields.subTotal.focus());
+      cy.do(infoFields.subTotal.find(clearButton).click());
+    }
+
+    if (fieldName === INVOICE_LINE_VIEW_FIELDS.QUANTITY) {
+      cy.do(infoFields.quantity.focus());
+      cy.do(infoFields.quantity.find(clearButton).click());
+    }
   },
 };
