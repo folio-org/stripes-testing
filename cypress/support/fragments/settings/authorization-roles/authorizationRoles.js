@@ -119,6 +119,8 @@ const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
+const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
+const saveNameErrorText = (tenantNames) => `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.DATA]: [
     CAPABILITY_ACTIONS.VIEW,
@@ -1130,5 +1132,25 @@ export default {
         }),
       );
     });
+  },
+
+  verifyShareNameError: (tenantNames) => {
+    const tenantNamesArray = Array.isArray(tenantNames) ? tenantNames : [tenantNames];
+    cy.expect([Callout(shareNameErrorText(tenantNamesArray)).exists(), shareToAllModal.exists()]);
+    InteractorsTools.dismissCallout(shareNameErrorText(tenantNamesArray));
+    cy.expect(Callout(shareNameErrorText(tenantNamesArray)).absent());
+  },
+
+  verifySaveNameError: (tenantNames) => {
+    const tenantNamesArray = Array.isArray(tenantNames) ? tenantNames : [tenantNames];
+    const errorText = saveNameErrorText(tenantNamesArray);
+    cy.expect(Callout(errorText).exists());
+    InteractorsTools.dismissCallout(errorText);
+    cy.expect([Callout(errorText).absent(), editRolePane.exists()]);
+  },
+
+  closeConfirmShareModal: () => {
+    cy.do(shareToAllModal.find(cancelButton).click());
+    cy.expect(shareToAllModal.absent());
   },
 };
