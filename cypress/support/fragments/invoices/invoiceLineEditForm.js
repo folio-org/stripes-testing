@@ -1,6 +1,5 @@
 import {
   Button,
-  Modal,
   Checkbox,
   SearchField,
   Section,
@@ -9,9 +8,10 @@ import {
   TextField,
   including,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, INVOICE_LINE_VIEW_FIELDS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
+import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
 import InvoiceStates from './invoiceStates';
 
 const invoiceLineEditFormRoot = Section({ id: 'pane-invoice-line-form' });
@@ -22,6 +22,8 @@ const fundDistributionSection = Section({ id: 'invoiceLineForm-fundDistribution'
 
 const cancelButtom = Button('Cancel');
 const saveButton = Button('Save & close');
+const saveAndKeepEditingButton = Button('Save & keep editing');
+const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
 
 const infoFields = {
@@ -44,7 +46,14 @@ const buttons = {
   'Release encumbrance': infoFields.releaseEncumbrance,
   Cancel: cancelButtom,
   'Save & close': saveButton,
+  'Save & keep editing': saveAndKeepEditingButton,
 };
+
+const requiredFields = [
+  { fieldName: INVOICE_LINE_VIEW_FIELDS.DESCRIPTION, type: TextField },
+  { fieldName: INVOICE_LINE_VIEW_FIELDS.QUANTITY, type: TextField },
+  { fieldName: INVOICE_LINE_VIEW_FIELDS.SUB_TOTAL, type: TextField },
+];
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -61,6 +70,7 @@ export default {
       cy.expect(fundFields[label].has(conditions));
     });
   },
+
   selectOrderLines(orderLine) {
     cy.do([
       Button('POL look-up').click(),
@@ -128,13 +138,20 @@ export default {
       cy.do(infoFields.subTotal.has({ value: invoiceLine.subTotal }));
     }
   },
-  clickCancelButton(buttonName = null) {
+
+  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
     cy.do(cancelButtom.click());
-    if (buttonName) {
-      cy.do(Modal('Are you sure?').find(Button(buttonName)).click());
+    areYouSureModal.verifyModalElements(unsavedChangesMessage);
+
+    if (keepEditing) {
+      areYouSureModal.clickKeepEditing();
+      cy.expect(invoiceLineEditFormRoot.exists());
+    } else {
+      areYouSureModal.clickCloseWithoutSaving();
+      cy.expect(invoiceLineEditFormRoot.absent());
     }
-    cy.expect(invoiceLineEditFormRoot.absent());
   },
+
   clickSaveButton({ invoiceLineSaved = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
     cy.wait(2000);
@@ -145,6 +162,15 @@ export default {
     }
     // wait for changes to be applied
     cy.wait(1500);
+  },
+
+  clickSaveAndKeepEditingButton({ isSaved = true } = {}) {
+    cy.expect(saveAndKeepEditingButton.has({ disabled: false }));
+    cy.do(saveAndKeepEditingButton.click());
+    this.waitLoading();
+    if (isSaved) {
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+    }
   },
 
   setNegativeSubTotal(amount) {
@@ -186,5 +212,17 @@ export default {
     if (value) {
       cy.do(TextField({ name: `fundDistributions[${index}].value` }).fillIn(value));
     }
+  },
+
+  checkRequiredFields(fields = []) {
+    fields.forEach((field) => {
+      const requiredFieldsConfig = requiredFields.find((f) => f.fieldName === field);
+      if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
+      cy.expect(
+        requiredFieldsConfig
+          .type(including(requiredFieldsConfig.fieldName))
+          .has({ error: 'Required!' }),
+      );
+    });
   },
 };

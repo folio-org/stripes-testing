@@ -2441,10 +2441,11 @@ export default {
       body: orderLine,
     });
   },
-  deleteOrderLineViaApi(orderLineId) {
+  deleteOrderLineViaApi(orderLineId, failOnStatusCode) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `orders/order-lines/${orderLineId}`,
+      failOnStatusCode,
     });
   },
   verifyPOlineListIncludesLink: (POlinenumber) => {

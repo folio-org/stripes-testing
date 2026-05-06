@@ -20,4 +20,20 @@ export default {
         }),
     );
   },
+
+  interceptGetOrders: () => {
+    cy.intercept('GET', '/orders/composite-orders*').as('waiterForOrdersQueryCompleted');
+  },
+
+  waitForOrdersQueryCompleted: () => {
+    cy.wait('@waiterForOrdersQueryCompleted');
+  },
+
+  interceptCustomFields: () => {
+    cy.intercept('GET', '/custom-fields*').as('waiterForCustomFieldsQueryCompleted');
+  },
+
+  waitForCustomFieldsQueryCompleted: () => {
+    cy.wait('@waiterForCustomFieldsQueryCompleted');
+  },
 };

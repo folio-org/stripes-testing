@@ -364,6 +364,9 @@ export default {
       cy.expect(previoslyHeldCheckbox.has({ checked: true }));
     } else cy.expect(previoslyHeldCheckbox.has({ checked: false }));
   },
+  verifyCatalogedDateField(expectedDate) {
+    cy.expect(TextField({ name: 'catalogedDate' }).has({ value: expectedDate }));
+  },
   markAsStaffSuppress() {
     cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
@@ -615,6 +618,22 @@ export default {
   clickSetForDeletionCheckbox(isChecked) {
     cy.do(setForDeletionChecbox.click());
     cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
+  },
+
+  verifyInstanceStatusTermSelected(statusTerm) {
+    cy.expect(instanceStatusTerm.has({ checkedOptionText: including(statusTerm) }));
+  },
+
+  verifyStatisticalCodeSelected(code) {
+    cy.expect(Selection({ value: including(code) }).exists());
+  },
+
+  verifyAdministrativeNote(note) {
+    cy.expect(TextArea({ ariaLabel: 'Administrative note' }).has({ value: note }));
+  },
+
+  verifyNatureOfContentSelected(nature) {
+    cy.expect(Select('Nature of content term').has({ checkedOptionText: including(nature) }));
   },
 
   verifyParentInstance(title, hrid) {
