@@ -50,9 +50,9 @@ describe('Data Import', () => {
     const testData = {
       tag100: '100',
       tag700: '700',
-      authorityHeading: 'Stelfreeze, Brian',
-      updatedAuthorityHeading: '$a Stelfreeze, Brian UPDATED',
-      sprouseHeading: 'Sprouse, Chris',
+      authorityHeading: `Stelfreeze, Brian ${randomPostfix}`,
+      updatedAuthorityHeading: `$a Stelfreeze, Brian ${randomPostfix} UPDATED`,
+      sprouseHeading: `Sprouse, Chris ${randomPostfix}`,
       searchOption: 'Keyword',
       calloutMessage:
         "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
@@ -81,7 +81,7 @@ describe('Data Import', () => {
 
     const linkingTagAndValue = {
       bibFieldIndex: 5,
-      value: '$a Stelfreeze, Brian $e artist.',
+      value: `$a ${testData.authorityHeading} $e artist.`,
       tag: '700',
       authorityTag: '100',
     };
@@ -98,12 +98,12 @@ describe('Data Import', () => {
       },
       {
         tag: '700',
-        content: '$a Stelfreeze, Brian $e artist.',
+        content: `$a ${testData.authorityHeading} $e artist.`,
         indicators: ['1', '\\'],
       },
       {
         tag: '700',
-        content: '$a Sprouse, Chris $e artist.',
+        content: `$a ${testData.sprouseHeading} $e artist.`,
         indicators: ['1', '\\'],
       },
     ];
@@ -146,8 +146,8 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Stelfreeze, Brian');
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Sprouse, Chris');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.sprouseHeading);
 
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
         .then((mappingProfileResponse) => {
@@ -228,7 +228,10 @@ describe('Data Import', () => {
               authorityIds: [authorityId, authorityId2],
               bibFieldTags: [testData.tag700, testData.tag700],
               authorityFieldTags: [testData.tag100, testData.tag100],
-              finalBibFieldContents: [linkingTagAndValue.value, '$a Sprouse, Chris $e artist.'],
+              finalBibFieldContents: [
+                linkingTagAndValue.value,
+                `$a ${testData.sprouseHeading} $e artist.`,
+              ],
               bibFieldIndexes: [
                 linkingTagAndValue.bibFieldIndex,
                 linkingTagAndValue.bibFieldIndex + 1,
@@ -335,7 +338,7 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1292050 Verify that MARC authority record data import updates do not clear FOLIO fields in linked MARC bib records (spitfire) (TaaS)',
+      'C1292050 Verify that MARC authority record data import updates do not clear FOLIO fields in linked MARC bib records (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C1292050'] },
       () => {
         // Step 1. Click Actions - Export (MARC) on the MARC authority record detail pane
@@ -391,7 +394,7 @@ describe('Data Import', () => {
           testData.searchOption,
           `${testData.authorityHeading} UPDATED`,
         );
-        MarcAuthorities.selectTitle(`${testData.authorityHeading} UPDATED`);
+        MarcAuthorities.selectTitle(`Shared\n${testData.authorityHeading} UPDATED`);
 
         // Step 8. Go to Inventory, open the linked instance - verify FOLIO fields are not cleared
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -407,6 +410,8 @@ describe('Data Import', () => {
         InstanceRecordView.verifyStatisticalCode(testData.statisticalCode);
         InstanceRecordView.verifyAdministrativeNote(testData.administrativeNote);
         InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
+        InstanceRecordView.verifyParentInstanceTitle(testData.parentInstanceTitle);
+        InstanceRecordView.verifyChildInstanceTitle(testData.childInstanceTitle);
 
         // Step 9. Click Actions - Edit MARC bibliographic record - verify linked field is updated
         InventoryInstance.editMarcBibliographicRecord();
@@ -429,6 +434,10 @@ describe('Data Import', () => {
         InstanceRecordEdit.verifyStaffSuppressCheckbox(true);
         InstanceRecordEdit.verifyPreviouslyHeldCheckbox(true);
         InstanceRecordEdit.verifyCatalogedDateField(testData.catalogedDate);
+        InstanceRecordEdit.verifyInstanceStatusTermSelected(testData.instanceStatusTerm);
+        InstanceRecordEdit.verifyStatisticalCodeSelected(testData.statisticalCode);
+        InstanceRecordEdit.verifyAdministrativeNote(testData.administrativeNote);
+        InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
         InstanceRecordEdit.verifyParentInstance(testData.parentInstanceTitle, parentInstanceHrid);
         InstanceRecordEdit.verifyChildInstance(testData.childInstanceTitle, childInstanceHrid);
         InstanceRecordEdit.close();

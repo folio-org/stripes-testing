@@ -620,6 +620,22 @@ export default {
     cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
   },
 
+  verifyInstanceStatusTermSelected(statusTerm) {
+    cy.expect(instanceStatusTerm.has({ checkedOptionText: including(statusTerm) }));
+  },
+
+  verifyStatisticalCodeSelected(code) {
+    cy.expect(Selection({ value: including(code) }).exists());
+  },
+
+  verifyAdministrativeNote(note) {
+    cy.expect(TextArea({ ariaLabel: 'Administrative note' }).has({ value: note }));
+  },
+
+  verifyNatureOfContentSelected(nature) {
+    cy.expect(Select('Nature of content term').has({ checkedOptionText: including(nature) }));
+  },
+
   verifyParentInstance(title, hrid) {
     cy.expect([
       parentInstanceFieldSet

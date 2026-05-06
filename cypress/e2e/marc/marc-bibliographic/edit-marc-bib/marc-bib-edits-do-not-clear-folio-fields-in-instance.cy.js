@@ -154,7 +154,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C1292051 Verify that MARC bib record edits do not clear FOLIO fields in Instance record (spitfire) (TaaS)',
+        'C1292051 Verify that MARC bib record edits do not clear FOLIO fields in Instance record (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C1292051'] },
         () => {
           // Preconditions: Open the linked Instance detail view via Inventory
@@ -179,6 +179,8 @@ describe('MARC', () => {
           InstanceRecordView.verifyStatisticalCode(testData.statisticalCode);
           InstanceRecordView.verifyAdministrativeNote(testData.administrativeNote);
           InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
+          InstanceRecordView.verifyParentInstanceTitle(testData.parentInstanceTitle);
+          InstanceRecordView.verifyChildInstanceTitle(testData.childInstanceTitle);
           InventoryInstance.openTagsPane();
           InventoryInstance.checkTagSelectedInDropdown(testData.tagName);
 
@@ -189,6 +191,10 @@ describe('MARC', () => {
           InstanceRecordEdit.verifyStaffSuppressCheckbox(true);
           InstanceRecordEdit.verifyPreviouslyHeldCheckbox(true);
           InstanceRecordEdit.verifyCatalogedDateField(testData.catalogedDate);
+          InstanceRecordEdit.verifyInstanceStatusTermSelected(testData.instanceStatusTerm);
+          InstanceRecordEdit.verifyStatisticalCodeSelected(testData.statisticalCode);
+          InstanceRecordEdit.verifyAdministrativeNote(testData.administrativeNote);
+          InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
           InstanceRecordEdit.verifyParentInstance(testData.parentInstanceTitle, parentInstanceHrid);
           InstanceRecordEdit.verifyChildInstance(testData.childInstanceTitle, childInstanceHrid);
           InstanceRecordEdit.close();

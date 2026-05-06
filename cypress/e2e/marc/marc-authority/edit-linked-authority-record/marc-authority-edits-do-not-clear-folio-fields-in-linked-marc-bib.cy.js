@@ -255,7 +255,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C1292048 Verify that MARC authority record edits do not clear FOLIO fields in linked MARC bib records (spitfire) (TaaS)',
+        'C1292048 Verify that MARC authority record edits do not clear FOLIO fields in linked MARC bib records (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C1292048'] },
         () => {
           // Step 1. Open first linked authority record (Stelfreeze, Brian) and click Edit
@@ -285,6 +285,8 @@ describe('MARC', () => {
           InstanceRecordView.verifyStatisticalCode(testData.statisticalCode);
           InstanceRecordView.verifyAdministrativeNote(testData.administrativeNote);
           InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
+          InstanceRecordView.verifyParentInstanceTitle(testData.parentInstanceTitle);
+          InstanceRecordView.verifyChildInstanceTitle(testData.childInstanceTitle);
           InventoryInstance.openTagsPane();
           InventoryInstance.checkTagSelectedInDropdown(testData.tagName);
 
@@ -309,6 +311,10 @@ describe('MARC', () => {
           InstanceRecordEdit.verifyStaffSuppressCheckbox(true);
           InstanceRecordEdit.verifyPreviouslyHeldCheckbox(true);
           InstanceRecordEdit.verifyCatalogedDateField(testData.catalogedDate);
+          InstanceRecordEdit.verifyInstanceStatusTermSelected(testData.instanceStatusTerm);
+          InstanceRecordEdit.verifyStatisticalCodeSelected(testData.statisticalCode);
+          InstanceRecordEdit.verifyAdministrativeNote(testData.administrativeNote);
+          InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
           InstanceRecordEdit.verifyParentInstance(testData.parentInstanceTitle, parentInstanceHrid);
           InstanceRecordEdit.verifyChildInstance(testData.childInstanceTitle, childInstanceHrid);
           InstanceRecordEdit.close();
@@ -341,6 +347,8 @@ describe('MARC', () => {
           InstanceRecordView.verifyStatisticalCode(testData.statisticalCode);
           InstanceRecordView.verifyAdministrativeNote(testData.administrativeNote);
           InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
+          InstanceRecordView.verifyParentInstanceTitle(testData.parentInstanceTitle);
+          InstanceRecordView.verifyChildInstanceTitle(testData.childInstanceTitle);
 
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -360,6 +368,10 @@ describe('MARC', () => {
           InstanceRecordEdit.verifyStaffSuppressCheckbox(true);
           InstanceRecordEdit.verifyPreviouslyHeldCheckbox(true);
           InstanceRecordEdit.verifyCatalogedDateField(testData.catalogedDate);
+          InstanceRecordEdit.verifyInstanceStatusTermSelected(testData.instanceStatusTerm);
+          InstanceRecordEdit.verifyStatisticalCodeSelected(testData.statisticalCode);
+          InstanceRecordEdit.verifyAdministrativeNote(testData.administrativeNote);
+          InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
           InstanceRecordEdit.verifyParentInstance(testData.parentInstanceTitle, parentInstanceHrid);
           InstanceRecordEdit.verifyChildInstance(testData.childInstanceTitle, childInstanceHrid);
           InstanceRecordEdit.close();
@@ -387,6 +399,8 @@ describe('MARC', () => {
           InstanceRecordView.verifyStatisticalCode(testData.statisticalCode);
           InstanceRecordView.verifyAdministrativeNote(testData.administrativeNote);
           InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
+          InstanceRecordView.verifyParentInstanceTitle(testData.parentInstanceTitle);
+          InstanceRecordView.verifyChildInstanceTitle(testData.childInstanceTitle);
 
           // Step 15. Click Actions - Edit MARC bibliographic record - verify 2nd linked field is unlinked
           InventoryInstance.editMarcBibliographicRecord();
@@ -400,6 +414,10 @@ describe('MARC', () => {
           InstanceRecordEdit.verifyStaffSuppressCheckbox(true);
           InstanceRecordEdit.verifyPreviouslyHeldCheckbox(true);
           InstanceRecordEdit.verifyCatalogedDateField(testData.catalogedDate);
+          InstanceRecordEdit.verifyInstanceStatusTermSelected(testData.instanceStatusTerm);
+          InstanceRecordEdit.verifyStatisticalCodeSelected(testData.statisticalCode);
+          InstanceRecordEdit.verifyAdministrativeNote(testData.administrativeNote);
+          InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
           InstanceRecordEdit.verifyParentInstance(testData.parentInstanceTitle, parentInstanceHrid);
           InstanceRecordEdit.verifyChildInstance(testData.childInstanceTitle, childInstanceHrid);
           InstanceRecordEdit.close();
