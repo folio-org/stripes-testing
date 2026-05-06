@@ -6,6 +6,7 @@ import {
   NavListItem,
   Section,
   SelectionOption,
+  Selection,
   TextField,
   including,
 } from '../../../../../interactors';
@@ -16,6 +17,11 @@ const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
 );
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 const CENTRAL_ORDERING_SETTINGS_KEY = 'ALLOW_ORDERING_WITH_AFFILIATED_LOCATIONS';
+const selectAffiliationModal = Modal('Select affiliation');
+const selectAffiliationButtonInModal = Button({ id: 'consortium-affiliations-select' });
+const affiliationSelect = Selection({ id: 'consortium-affiliations-select' });
+const saveAffiliationButton = Button({ id: 'save-active-affiliation' });
+const cancelAffiliationButton = selectAffiliationModal.find(Button('Cancel'));
 
 export default {
   waitLoading() {
@@ -70,21 +76,45 @@ export default {
     ]);
   },
 
-  switchActiveAffiliation(currentTenantName, newTenantName) {
-    cy.wait(5000);
-    cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
-    cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
+  checkSelectAffiliationModalIsDisplayed({ isShown = true } = {}) {
     cy.wait(2000);
+    if (isShown) cy.expect(selectAffiliationModal.exists());
+    else cy.expect(selectAffiliationModal.absent());
+  },
+
+  openSelectAffiliationModal() {
+    cy.wait(5000);
+    cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
+    this.checkSelectAffiliationModalIsDisplayed();
+  },
+
+  selectAffiliationInModal(newTenantName) {
     cy.do([
-      Modal('Select affiliation')
-        .find(Button({ id: 'consortium-affiliations-select' }))
-        .click(),
+      selectAffiliationModal.find(selectAffiliationButtonInModal).click(),
       SelectionOption(including(newTenantName)).click(),
     ]);
+    cy.expect(SelectionOption(including(newTenantName)).absent());
+    cy.expect(affiliationSelect.has({ singleValue: newTenantName }));
     cy.wait(2000);
-    cy.do(Button({ id: 'save-active-affiliation' }).click());
+  },
+
+  clickSaveInSelectAffiliationModal() {
+    cy.do(saveAffiliationButton.click());
+    this.checkSelectAffiliationModalIsDisplayed({ isShown: false });
     cy.wait(8000);
-    cy.expect(myProfileButton.find(HTML({ text: including(newTenantName) })).exists());
+  },
+
+  clickCancelInSelectAffiliationModal() {
+    cy.do(cancelAffiliationButton.click());
+    this.checkSelectAffiliationModalIsDisplayed({ isShown: false });
+  },
+
+  switchActiveAffiliation(currentTenantName, newTenantName) {
+    this.checkCurrentTenantInTopMenu(currentTenantName);
+    this.openSelectAffiliationModal();
+    this.selectAffiliationInModal(newTenantName);
+    this.clickSaveInSelectAffiliationModal();
+    this.checkCurrentTenantInTopMenu(newTenantName);
     cy.wait(4000);
   },
 

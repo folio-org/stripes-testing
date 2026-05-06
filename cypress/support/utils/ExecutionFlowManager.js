@@ -67,6 +67,22 @@ export class ExecutionFlowManager {
   }
 
   /**
+   * Registers a cleanup callback for a context key.
+   * If the key already has a cleanup callback, it will be overwritten.
+   *
+   * @param {string} key - Context key.
+   * @param {(value: any) => void} cleanupFn - Cleanup callback for this key.
+   * @returns {ExecutionFlowManager}
+   */
+  toCleanup(key, cleanupFn) {
+    if (cleanupFn) {
+      this.cleanupSteps.set(key, () => cleanupFn(this.context.get(key)));
+    }
+
+    return this;
+  }
+
+  /**
    * Executes registered cleanup callbacks in reverse registration order.
    * Clears context and cleanup steps after execution.
    *
