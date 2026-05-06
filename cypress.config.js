@@ -9,6 +9,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
+const httpTasks = require('./cypress/tasks/httpTasks');
 
 let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
 let environments = {};
@@ -144,6 +145,9 @@ module.exports = defineConfig({
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
+
+        // HTTP tasks (axios requests in Node.js context)
+        ...httpTasks,
       });
 
       // keep Cypress running until the ReportPortal reporter is finished. this is a

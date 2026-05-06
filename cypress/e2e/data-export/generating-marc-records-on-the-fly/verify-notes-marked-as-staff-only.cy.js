@@ -114,6 +114,7 @@ describe('Data Export', () => {
             user.username,
             'Default instances',
           );
+          cy.getUserToken(user.username, user.password);
 
           // Step 4: Download the recently created file with extension .mrc by clicking on file name
           DataExportLogs.clickButtonWithText(exportedFileName);
