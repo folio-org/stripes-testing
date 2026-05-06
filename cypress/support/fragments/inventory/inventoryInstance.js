@@ -1103,6 +1103,11 @@ export default {
     else cy.expect(ValueChipRoot(tag).absent());
   },
 
+  openTagsPane() {
+    cy.do(instanceDetailsSection.find(tagButton).click());
+    cy.wait(1000);
+  },
+
   checkAddedTag(tagName, instanceTitle) {
     cy.do(MultiColumnListCell(instanceTitle).click());
     cy.wait(1500);
@@ -1195,6 +1200,16 @@ export default {
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     });
+  },
+
+  getInstanceRelationshipTypesViaApi() {
+    return cy
+      .okapiRequest({
+        path: 'instance-relationship-types',
+        searchParams: { limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.instanceRelationshipTypes);
   },
 
   shareInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId, targetTenantId) {
