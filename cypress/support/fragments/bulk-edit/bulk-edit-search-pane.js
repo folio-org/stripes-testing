@@ -179,6 +179,7 @@ export const ERROR_MESSAGES = {
   ADMINISTRATIVE_NOTES_NOT_SUPPORTED_FOR_MARC:
     'Change note type for administrative notes is not supported for MARC Instances.',
   getInvalidStatusValueMessage: (statusValue) => `New status value "${statusValue}" is not allowed`,
+  noteTypeNotFoundById: (noteTypeId) => `Note type not found by id=${noteTypeId}`,
 };
 export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
   return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
