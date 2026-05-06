@@ -54,6 +54,7 @@ const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
+const instanceRelationshipAccordion = Accordion('Instance relationship');
 const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
@@ -1153,6 +1154,14 @@ export default {
 
   openAccordion: (name) => {
     cy.do(Accordion(name).clickHeader());
+  },
+
+  verifyParentInstanceTitle(title) {
+    cy.expect(instanceRelationshipAccordion.find(HTML(including(title))).exists());
+  },
+
+  verifyChildInstanceTitle(title) {
+    cy.expect(instanceRelationshipAccordion.find(HTML(including(title))).exists());
   },
 
   verifyMemberHoldingsAccordionExpanded(memberName, isOpen = true) {
