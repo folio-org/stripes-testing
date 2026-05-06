@@ -4,12 +4,15 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Addresses } from '../../../support/fragments/settings/tenant/general';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Tenant', () => {
   describe('Settings', () => {
+    const addressName = `autotest_address_name_${randomFourDigitNumber()}`;
     const testData = {
-      address: Addresses.generateAddressConfig(),
+      address: Addresses.generateAddressConfig({
+        name: addressName,
+      }),
       user: {},
     };
     const updatedName = `autotest_address_name_upd_${getRandomPostfix()}`;
@@ -45,10 +48,10 @@ describe('Tenant', () => {
         // Go to Settings/Tenant/Addresses
         TenantPane.selectTenant(TENANTS.ADDRESSES);
         Addresses.waitLoading();
-        Addresses.verifyAddressInList(testData.address.name);
+        Addresses.verifyAddressInList(addressName);
 
         // Click the Edit pencil on the address
-        Addresses.clickEditButtonForAddress(testData.address.name);
+        Addresses.clickEditButtonForAddress(addressName);
         Addresses.verifyAddressIsInEditMode();
 
         // Change the name and press Cancel
@@ -57,11 +60,11 @@ describe('Tenant', () => {
 
         // Verify address is back to View mode and changes were NOT saved
         Addresses.verifyAddressIsNotInEditMode();
-        Addresses.verifyAddressInList(testData.address.name);
+        Addresses.verifyAddressInList(addressName);
         Addresses.addressRowWithValueIsAbsent(cancelledName);
 
         // Click the Edit pencil again, change the name and press Save
-        Addresses.clickEditButtonForAddress(testData.address.name);
+        Addresses.clickEditButtonForAddress(addressName);
         Addresses.verifyAddressIsInEditMode();
         Addresses.fillInEditAddressName(updatedName);
         Addresses.clickSaveEditButton();
@@ -69,7 +72,7 @@ describe('Tenant', () => {
         // Verify address is back to View mode and the new name was saved
         Addresses.verifyAddressIsNotInEditMode();
         Addresses.verifyAddressInList(updatedName);
-        Addresses.addressRowWithValueIsAbsent(testData.address.name);
+        Addresses.addressRowWithValueIsAbsent(addressName);
 
         // Click the Edit pencil again, change the name, then click "Tenant" in the nav to leave
         Addresses.clickEditButtonForAddress(updatedName);

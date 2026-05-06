@@ -70,7 +70,7 @@ describe('Tenant', () => {
         Addresses.waitLoading();
 
         // Click New, add address name, fill in the address, Save — first address
-        cy.intercept('POST', '/tenant-addresses').as('createAddress');
+        cy.intercept('POST', '/configurations/entries').as('createAddress');
         Addresses.createAddressViaUi(testData.addresses[0]);
         cy.wait('@createAddress').then(({ response }) => {
           testData.addresses[0].id = response.body.id;
@@ -80,7 +80,7 @@ describe('Tenant', () => {
         Addresses.verifyAddressInList(testData.addresses[0].name);
 
         // Click New, add address name, fill in the address, Save — second address
-        cy.intercept('POST', '/tenant-addresses').as('createAddress');
+        cy.intercept('POST', '/configurations/entries').as('createAddress');
         Addresses.createAddressViaUi(testData.addresses[1]);
         cy.wait('@createAddress').then(({ response }) => {
           testData.addresses[1].id = response.body.id;

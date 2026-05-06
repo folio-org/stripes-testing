@@ -3,11 +3,13 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Addresses } from '../../../support/fragments/settings/tenant/general';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Tenant', () => {
   describe('Settings', () => {
+    const addressName = `autotest_address_name_${randomFourDigitNumber()}`;
     const testData = {
-      address: Addresses.generateAddressConfig(),
+      address: Addresses.generateAddressConfig({ name: addressName }),
       user: {},
     };
 
@@ -39,26 +41,26 @@ describe('Tenant', () => {
         // Go to Settings/Tenant/Addresses
         TenantPane.selectTenant(TENANTS.ADDRESSES);
         Addresses.waitLoading();
-        Addresses.verifyAddressInList(testData.address.name);
+        Addresses.verifyAddressInList(addressName);
 
         // Click the trashcan icon — confirm modal appears
-        Addresses.clickDeleteButtonForAddressValue(testData.address.name);
+        Addresses.clickDeleteButtonForAddressValue(addressName);
         Addresses.verifyDeleteModalDisplayed();
 
         // Click Cancel — modal closes, address still present
         Addresses.clickCancelButtonInDeleteModal();
         Addresses.verifyDeleteModalIsNotDisplayed();
-        Addresses.verifyAddressInList(testData.address.name);
+        Addresses.verifyAddressInList(addressName);
 
         // Click the trashcan icon again — confirm modal appears
-        Addresses.clickDeleteButtonForAddressValue(testData.address.name);
+        Addresses.clickDeleteButtonForAddressValue(addressName);
         Addresses.verifyDeleteModalDisplayed();
 
         // Click Delete — modal closes, address removed
         Addresses.clickDeleteButtonInDeleteModal();
         Addresses.verifyDeleteModalIsNotDisplayed();
         Addresses.verifyCalloutForAddressDeletionAppears();
-        Addresses.addressRowWithValueIsAbsent(testData.address.name);
+        Addresses.addressRowWithValueIsAbsent(addressName);
       },
     );
   });
