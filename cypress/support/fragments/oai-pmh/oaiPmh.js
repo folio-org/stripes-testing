@@ -394,6 +394,24 @@ export default {
   },
 
   /**
+   * Extract resumptionToken from OAI-PMH ListRecords or ListIdentifiers response
+   * In consortia environments, OAI-PMH returns records from different tenants in separate pages.
+   * Each response includes a resumptionToken that must be used to fetch the next page.
+   * @param {string} xmlString - The XML response as a string
+   * @returns {string|null} Resumption token if present, null if no more pages
+   */
+  extractResumptionToken(xmlString) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const resumptionTokenElement = xmlDoc.getElementsByTagName('resumptionToken')[0];
+
+    if (resumptionTokenElement && resumptionTokenElement.textContent.trim()) {
+      return resumptionTokenElement.textContent.trim();
+    }
+
+    return null;
+  },
+
+  /**
    * Verify that a subfield with a specific value is ABSENT in a MARC field
    * @param {string} xmlString - The XML response as a string
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
