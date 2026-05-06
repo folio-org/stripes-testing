@@ -1,35 +1,14 @@
 import { Permissions } from '../../../support/dictionary';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import PreferredPlugins from '../../../support/fragments/settings/tenant/general/preferredPlugins';
+import PreferredPlugins, {
+  PLUGIN_TYPES,
+} from '../../../support/fragments/settings/tenant/general/preferredPlugins';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Tenant', () => {
   describe('Settings', () => {
     const testData = {};
-    // Plugin types displayed in the right pane of "Preferred plugins"
-    const pluginTypes = [
-      'bursar-export',
-      'create-inventory-records',
-      'ui-agreements-extension',
-      'find-agreement',
-      'find-authority',
-      'find-contact',
-      'find-eresource',
-      'find-erm-usage-data-provider',
-      'find-fund',
-      'find-import-profile',
-      'find-instance',
-      'find-interface',
-      'find-license',
-      'find-organization',
-      'find-package-title',
-      'find-po-line',
-      'find-user',
-      'select-application',
-      'query-builder',
-      'quick-marc',
-    ];
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -46,7 +25,7 @@ describe('Tenant', () => {
       // Reset the plugin chosen by the test to default ("---") so the next run
       // starts pristine; otherwise re-selecting the same value won't dirty the
       // form and Save will stay disabled.
-      PreferredPlugins.resetPluginToDefaultViaApi(pluginTypes[1]);
+      PreferredPlugins.resetPluginToDefaultViaApi(PLUGIN_TYPES[1]);
       Users.deleteViaApi(testData.user.userId);
     });
 
@@ -69,13 +48,13 @@ describe('Tenant', () => {
         PreferredPlugins.verifyPaneContent();
 
         // Verify the preferred plugin selectors are displayed in the right pane
-        pluginTypes.forEach((pluginType) => {
+        PLUGIN_TYPES.forEach((pluginType) => {
           PreferredPlugins.verifyPluginSelectExists(pluginType);
         });
 
         // Step 7.2: Select and save plugin version for plugins available in the right pane
-        PreferredPlugins.selectPluginVersion(pluginTypes[1], '(none)');
-        PreferredPlugins.verifySelectedPluginVersion(pluginTypes[1], '(none)');
+        PreferredPlugins.selectPluginVersion(PLUGIN_TYPES[1], '(none)');
+        PreferredPlugins.verifySelectedPluginVersion(PLUGIN_TYPES[1], '(none)');
         PreferredPlugins.verifySaveButtonEnabled();
         PreferredPlugins.clickSaveButton();
       },

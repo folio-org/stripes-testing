@@ -1,35 +1,14 @@
 import { Permissions } from '../../../support/dictionary';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import PreferredPlugins from '../../../support/fragments/settings/tenant/general/preferredPlugins';
+import PreferredPlugins, {
+  PLUGIN_TYPES,
+} from '../../../support/fragments/settings/tenant/general/preferredPlugins';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Tenant', () => {
   describe('Settings', () => {
     const testData = {};
-    // Plugin types displayed in the right pane of "Preferred plugins"
-    const pluginTypes = [
-      'bursar-export',
-      'create-inventory-records',
-      'ui-agreements-extension',
-      'find-agreement',
-      'find-authority',
-      'find-contact',
-      'find-eresource',
-      'find-erm-usage-data-provider',
-      'find-fund',
-      'find-import-profile',
-      'find-instance',
-      'find-interface',
-      'find-license',
-      'find-organization',
-      'find-package-title',
-      'find-po-line',
-      'find-user',
-      'select-application',
-      'query-builder',
-      'quick-marc',
-    ];
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -63,14 +42,14 @@ describe('Tenant', () => {
         TenantPane.selectTenant(TENANTS.PREFERRED_PLUGINS);
         PreferredPlugins.waitLoading();
         PreferredPlugins.verifyReadOnlyPaneContent();
-        pluginTypes.forEach((pluginType) => {
+        PLUGIN_TYPES.forEach((pluginType) => {
           PreferredPlugins.verifyPluginSelectExists(pluginType);
           PreferredPlugins.verifyPluginLabelHasLockIcon(pluginType);
         });
 
         // Step 4: For every dropdown all choices except the currently selected
         // one are inactive (disabled).
-        pluginTypes.forEach((pluginType) => {
+        PLUGIN_TYPES.forEach((pluginType) => {
           PreferredPlugins.verifyPluginSelectIsReadOnly(pluginType);
         });
       },

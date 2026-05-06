@@ -4,6 +4,31 @@ import { Button, Pane, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
 const PLUGIN_SCOPE = 'ui-tenant-settings.plugins.manage';
+
+// Plugin types displayed in the right pane of "Preferred plugins"
+export const PLUGIN_TYPES = [
+  'bursar-export',
+  'create-inventory-records',
+  'ui-agreements-extension',
+  'find-agreement',
+  'find-authority',
+  'find-contact',
+  'find-eresource',
+  'find-erm-usage-data-provider',
+  'find-fund',
+  'find-import-profile',
+  'find-instance',
+  'find-interface',
+  'find-license',
+  'find-organization',
+  'find-package-title',
+  'find-po-line',
+  'find-user',
+  'select-application',
+  'query-builder',
+  'quick-marc',
+];
+
 const rootPane = Pane('Preferred plugins');
 const saveButton = Button('Save');
 const pluginSelect = (pluginType) => rootPane.find(Select({ id: pluginType }));
