@@ -5,7 +5,6 @@ import InstanceRecordEdit from '../../../../support/fragments/inventory/instance
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -49,7 +48,6 @@ describe('MARC', () => {
           sharedNatureOfContent: null,
           localNatureOfContent: null,
           tagName: 'c1307993',
-          heldByAccordionName: 'Held by',
           searchOption: 'Keyword',
         };
 
@@ -397,7 +395,6 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
 
             // Step 8. Open Local linked Instance - verify FOLIO fields and tags not cleared
-            InventorySearchAndFilter.clearDefaultFilter(testData.heldByAccordionName);
             InventoryInstances.searchByTitle(localInstanceId);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
