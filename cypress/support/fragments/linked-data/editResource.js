@@ -13,6 +13,8 @@ const instanceEditActionButton =
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
+const inventoryViewActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.inventoryView']";
 const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
@@ -138,6 +140,24 @@ export default {
     cy.wait(1000);
   },
 
+  openSimpleFieldMenu(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[div[@class="label" and text()="${field}"]])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+      .scrollIntoView()
+      .click();
+    cy.wait(1000);
+    cy.do(Keyboard.escape());
+  },
+
+  openSimpleSectionFieldMenu(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+      .scrollIntoView()
+      .click();
+    cy.wait(1000);
+    cy.do(Keyboard.escape());
+  },
+
   setValueForSimpleField(value, field, repeatPosition = 1) {
     cy.wait(1000);
     cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
@@ -221,6 +241,11 @@ export default {
   openNewInstanceFormViaNewInstanceButton() {
     cy.xpath(newInstanceButton).should('be.visible');
     cy.xpath(newInstanceButton).click();
+  },
+
+  openInventoryViewViaActions() {
+    cy.do(workActionsButton.click());
+    cy.xpath(inventoryViewActionsButton).click();
   },
 
   setEdition(edition) {
@@ -362,6 +387,40 @@ export default {
         return $fieldBlock.next().text() === value;
       })
       .should('have.length.at.least', 1);
+  },
+
+  checkWorkPreviewLeftOfInstanceEditor() {
+    cy.xpath('//div[@id="edit-section"]').then(($editor) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
+        const editorLeft = $editor[0].getBoundingClientRect().left;
+        const previewRight = $preview[0].getBoundingClientRect().right;
+        expect(previewRight).to.be.lte(editorLeft);
+      });
+    });
+  },
+
+  checkInstancePreviewRightOfWorkEditor() {
+    cy.xpath('//div[@id="edit-section"]').then(($editor) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
+        const editorRight = $editor[0].getBoundingClientRect().right;
+        const previewLeft = $preview[0].getBoundingClientRect().left;
+        expect(editorRight).to.be.lte(previewLeft);
+      });
+    });
+  },
+
+  checkWorkActionsPlacement() {
+    cy.xpath('//div[@id="edit-section"]').then(($editor) => {
+      cy.xpath('//div[contains(@class, "preview-container")]').then(($preview) => {
+        cy.xpath('//button[@data-testid="block-actions-toggle"]').then(($button) => {
+          const editorRight = $editor[0].getBoundingClientRect().right;
+          const previewLeft = $preview[0].getBoundingClientRect().left;
+          const buttonRight = $button[0].getBoundingClientRect().right;
+          expect(buttonRight).to.be.lte(editorRight);
+          expect(buttonRight).to.be.lte(previewLeft);
+        });
+      });
+    });
   },
 
   clickCancel() {
