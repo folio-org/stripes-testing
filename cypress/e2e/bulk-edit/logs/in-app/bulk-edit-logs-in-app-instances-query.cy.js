@@ -158,7 +158,7 @@ describe('Bulk-edit', () => {
             // Step 12: Verify the "Bulk edit query" main pane
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.updated_at >= ${today}) AND (instance.title starts with AT_C446085_)`,
+              `(instance.updated_at >= ${todayToPick}) AND (instance.title starts with AT_C446085_)`,
             );
             BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
