@@ -1,18 +1,21 @@
 import { DEFAULT_LOCALE_OBJECT } from '../constants';
 
-Cypress.Commands.add('getConfigForTenantByName', (configName) => {
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'settings/entries',
-    searchParams: {
-      query: `(scope==stripes-core.prefs.manage and key==${configName})`,
-    },
-    failOnStatusCode: true,
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    return body.items.length ? body.items[0] : null;
-  });
-});
+Cypress.Commands.add(
+  'getConfigForTenantByName',
+  (configName, scope = 'stripes-core.prefs.manage') => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'settings/entries',
+      searchParams: {
+        query: `(scope==${scope} and key==${configName})`,
+      },
+      failOnStatusCode: true,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.items.length ? body.items[0] : null;
+    });
+  },
+);
 
 Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
   return cy.okapiRequest({

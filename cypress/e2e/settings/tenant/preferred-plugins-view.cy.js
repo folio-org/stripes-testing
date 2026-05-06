@@ -33,7 +33,10 @@ describe('Tenant', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiSettingsTenantPlugins.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.settingsTenantView.gui,
+        Permissions.settingsTenantViewLocation.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password);
@@ -43,41 +46,33 @@ describe('Tenant', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      // Reset the plugin chosen by the test to default ("---") so the next run
-      // starts pristine; otherwise re-selecting the same value won't dirty the
-      // form and Save will stay disabled.
-      PreferredPlugins.resetPluginToDefaultViaApi(pluginTypes[1]);
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
-      'C515 Permissions: Settings (tenant): Can maintain preferred plugins (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C515'] },
+      'C410761 Settings - UI-Tenant-Settings Settings - View: Preferred Plugins (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C410761'] },
       () => {
-        // Step 6: Open Settings App and navigate to Tenant settings -> Preferred plugins
+        // Step 2: Click on the "Tenant" option — verify General + Location setup items
         TenantPane.goToTenantTab();
-        // Step 7.1: Confirm that user can see "Preferred plugins" menu option
-        TenantPane.verifyNavigationOption(TENANTS.PREFERRED_PLUGINS);
-        // User without other tenant permissions should not see other General items
-        [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.SERVICE_POINTS].forEach(
-          (item) => {
-            TenantPane.verifyNavigationOption(item, false);
-          },
-        );
+        TenantPane.verifyGeneralItems(true);
+        TenantPane.verifyLocationSetupItems(true);
+
+        // Step 3: Click on "Preferred Plugins" — pane opens, every plugin select is shown
+        // with a lock icon next to its label, and there is no Save button (read-only).
         TenantPane.selectTenant(TENANTS.PREFERRED_PLUGINS);
         PreferredPlugins.waitLoading();
-        PreferredPlugins.verifyPaneContent();
-
-        // Verify the preferred plugin selectors are displayed in the right pane
+        PreferredPlugins.verifyReadOnlyPaneContent();
         pluginTypes.forEach((pluginType) => {
           PreferredPlugins.verifyPluginSelectExists(pluginType);
+          PreferredPlugins.verifyPluginLabelHasLockIcon(pluginType);
         });
 
-        // Step 7.2: Select and save plugin version for plugins available in the right pane
-        PreferredPlugins.selectPluginVersion(pluginTypes[1], '(none)');
-        PreferredPlugins.verifySelectedPluginVersion(pluginTypes[1], '(none)');
-        PreferredPlugins.verifySaveButtonEnabled();
-        PreferredPlugins.clickSaveButton();
+        // Step 4: For every dropdown all choices except the currently selected
+        // one are inactive (disabled).
+        pluginTypes.forEach((pluginType) => {
+          PreferredPlugins.verifyPluginSelectIsReadOnly(pluginType);
+        });
       },
     );
   });

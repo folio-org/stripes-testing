@@ -73,6 +73,13 @@ export default {
       }
     });
   },
+  verifyNavigationOption(option, exist = true) {
+    if (exist) {
+      cy.expect(NavListItem(option).exists());
+    } else {
+      cy.expect(NavListItem(option).absent());
+    }
+  },
   verifyPageTitle(title) {
     cy.wait(1000);
     cy.title().should('eq', title);
