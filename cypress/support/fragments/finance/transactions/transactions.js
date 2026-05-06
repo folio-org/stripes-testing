@@ -276,14 +276,6 @@ const api = {
     cy.do(transactionFiltersPane.find(resetAllButton).click());
     cy.expect(resetAllButton.is({ disabled: true }));
   },
-
-  interceptTransactionsRequest() {
-    cy.intercept('GET', '/finance/transactions*').as('getTransactions');
-  },
-
-  waitForTransactionsRequestCompletion() {
-    cy.wait('@getTransactions');
-  },
 };
 
 export default api;

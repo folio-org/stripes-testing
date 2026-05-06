@@ -59,8 +59,8 @@ describe('Citation: return to search results - Work', () => {
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.workId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.workId = resourceId;
       });
       EditResource.clickCloseResourceButton();
       Marigold.waitLoading();
@@ -164,8 +164,8 @@ describe('Citation: return to search results - Work', () => {
       // Step 13: Edit Work, change field, Save & keep editing — save buttons become disabled
       Marigold.clickEditWorkFromSearch();
       EditResource.setValueForTheField(testData.partName, 'Part name');
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.workId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.workId = resourceId;
       });
       EditResource.checkSaveButtonsDisabled();
 
