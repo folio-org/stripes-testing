@@ -2,6 +2,7 @@ import {
   Button,
   PaneHeader,
   TextField,
+  Checkbox,
   Select,
   TextArea,
   TextFieldIcon,
@@ -16,6 +17,7 @@ const cancelButton = Button('Cancel');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const selectMappingProfileDropdown = Select({ name: 'mappingProfileId' });
+const lockProfileCheckbox = Checkbox('Lock profile');
 
 export default {
   fillJobProfile: (profileName, mappingProfileName) => {
@@ -39,6 +41,14 @@ export default {
       saveAndCloseButton.has({ disabled: true }),
       cancelButton.has({ disabled: false }),
     ]);
+  },
+
+  verifyLockProfileCheckbox(isChecked, isDisabled) {
+    cy.expect(lockProfileCheckbox.has({ checked: isChecked, disabled: isDisabled }));
+  },
+
+  clickLockProfileCheckbox() {
+    cy.do(lockProfileCheckbox.click());
   },
 
   clickNameTextfield() {
@@ -103,7 +113,7 @@ export default {
     });
   },
 
-  createNewJobProfileViaApi: (name, mappingProfileId) => {
+  createNewJobProfileViaApi: (name, mappingProfileId, isLocked = false) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -111,6 +121,7 @@ export default {
         body: {
           mappingProfileId,
           name,
+          locked: isLocked,
         },
         isDefaultSearchParamsRequired: false,
       })

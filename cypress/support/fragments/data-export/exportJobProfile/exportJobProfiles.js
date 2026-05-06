@@ -101,12 +101,14 @@ export default {
       });
   },
 
-  deleteJobProfileViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-export/job-profiles/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteJobProfileViaApi: (id) => {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-export/job-profiles/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
 
   verifyDefaultProfiles() {
     this.scrollDownIfListOfResultsIsLong();
