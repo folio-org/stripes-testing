@@ -55,8 +55,8 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
   }).then((response) => {
     let userGroupIdx = 0;
     if (patronGroupName) {
-      userGroupIdx =
-        response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
+      const foundIdx = response.body.usergroups.findIndex(({ group }) => group === patronGroupName);
+      userGroupIdx = foundIdx !== -1 ? foundIdx : 0;
     }
     return response.body.usergroups[userGroupIdx];
   });
