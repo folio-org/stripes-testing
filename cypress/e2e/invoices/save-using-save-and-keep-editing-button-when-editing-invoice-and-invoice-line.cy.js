@@ -58,13 +58,9 @@ describe('Invoices', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
+      cy.setDefaultLocaleApi();
       cy.getAdminUserDetails().then((adminUser) => {
         testData.adminUser = adminUser;
-      });
-
-      cy.getTenantLocaleApi().then((locale) => {
-        testData.locale = locale.locale || 'en-US';
-        testData.timezone = locale.timezone || 'UTC';
       });
 
       Organizations.createOrganizationViaApi(testData.organization)

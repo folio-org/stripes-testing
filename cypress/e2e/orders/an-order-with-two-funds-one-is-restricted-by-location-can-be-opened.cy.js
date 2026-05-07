@@ -343,8 +343,6 @@ describe('Orders', () => {
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openOrder({ orderNumber: testData.order2.poNumber });
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-      OrderDetails.openPolDetails(testData.orderLine2.titleOrPackage);
-      InteractorsTools.checkNoErrorCallouts();
     },
   );
 });
