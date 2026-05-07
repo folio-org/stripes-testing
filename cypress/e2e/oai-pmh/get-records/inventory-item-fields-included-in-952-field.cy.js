@@ -28,8 +28,9 @@ const itemData = {
   enumeration: `Enumeration ${getRandomPostfix()}`,
   chronology: `Chronology ${getRandomPostfix()}`,
   volume: `Volume ${getRandomPostfix()}`,
+  displaySummary: `Display summary ${getRandomPostfix()}`,
   permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-  temporaryLoanType: LOAN_TYPE_NAMES.SELECTED,
+  temporaryLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
   callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
 };
 const holdingsCopyNumber = `Holdings copy number ${getRandomPostfix()}`;
@@ -146,14 +147,17 @@ describe('OAI-PMH', () => {
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.openItemEditForm(folioInstance.title);
 
-        // Step 5: Add Temporary loan type different from Permanent
+        // Step 5: Add Temporary loan type different from Permanent and Display summary
         ItemRecordEdit.addTemporaryLoanType(itemData.temporaryLoanType);
+        ItemRecordEdit.addDisplaySummary(itemData.displaySummary);
 
         // Step 6: Save & close item
         ItemRecordEdit.saveAndClose();
         ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000); // wait for changes to be applied
 
-        // Steps 7-8: Send OAI-PMH GetRecord request and verify 952 field with Temporary loan type
+        // Steps 7-8: Send OAI-PMH GetRecord request and verify 952 field with Display summary in subfield "k", Chronology absent in "l"
         cy.getAdminToken();
         OaiPmh.getRecordRequest(folioInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(
@@ -164,13 +168,77 @@ describe('OAI-PMH', () => {
             {
               i: itemData.materialType,
               j: itemData.volume,
-              k: itemData.enumeration,
-              l: itemData.chronology,
+              k: itemData.displaySummary,
               m: itemData.barcode,
               n: itemData.copyNumber,
               p: itemData.temporaryLoanType,
               h: itemData.callNumberType,
             },
+            ['l'],
+          );
+        });
+
+        // Step 9: Navigate to item and edit
+        cy.getUserToken(user.username, user.password);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
+        InventoryInstance.openItemByBarcode(itemData.barcode);
+        ItemRecordView.openItemEditForm(folioInstance.title);
+        ItemRecordEdit.addEnumeration('');
+        ItemRecordEdit.saveAndClose();
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000); // wait for changes to be applied
+
+        // Steps 10-11: Send OAI-PMH GetRecord request and verify Display summary remains in subfield "k"
+        cy.getAdminToken();
+        OaiPmh.getRecordRequest(folioInstance.id, 'marc21_withholdings').then((response) => {
+          OaiPmh.verifyMarcField(
+            response,
+            folioInstance.id,
+            '952',
+            { ind1: 'f', ind2: 'f' },
+            {
+              i: itemData.materialType,
+              j: itemData.volume,
+              k: itemData.displaySummary,
+              m: itemData.barcode,
+              n: itemData.copyNumber,
+              p: itemData.temporaryLoanType,
+              h: itemData.callNumberType,
+            },
+            ['l'],
+          );
+        });
+
+        // Step 12: Navigate to item and edit
+        cy.getUserToken(user.username, user.password);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
+        InventoryInstance.openItemByBarcode(itemData.barcode);
+        ItemRecordView.openItemEditForm(folioInstance.title);
+        ItemRecordEdit.addChronology('');
+        ItemRecordEdit.saveAndClose();
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        cy.wait(3000);
+
+        // Steps 13-14: Send OAI-PMH GetRecord request and verify Display summary still in subfield "k"
+        cy.getAdminToken();
+        OaiPmh.getRecordRequest(folioInstance.id, 'marc21_withholdings').then((response) => {
+          OaiPmh.verifyMarcField(
+            response,
+            folioInstance.id,
+            '952',
+            { ind1: 'f', ind2: 'f' },
+            {
+              i: itemData.materialType,
+              j: itemData.volume,
+              k: itemData.displaySummary,
+              m: itemData.barcode,
+              n: itemData.copyNumber,
+              p: itemData.temporaryLoanType,
+              h: itemData.callNumberType,
+            },
+            ['l'],
           );
         });
       },

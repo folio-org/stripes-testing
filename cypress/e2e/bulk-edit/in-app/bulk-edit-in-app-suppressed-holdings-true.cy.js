@@ -1,3 +1,4 @@
+import moment from 'moment';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -35,6 +36,7 @@ describe('Bulk-edit', () => {
         );
         cy.getHoldings({ query: `"instanceId"="${instanceId}"` }).then((holdings) => {
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+          cy.wait(120_000); // need to wait for clear test results when verifying the holding's last updated date
         });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -60,6 +62,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         const suppressFromDiscovery = true;
+
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
         BulkEditActions.openStartBulkEditForm();
@@ -82,6 +85,18 @@ describe('Bulk-edit', () => {
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+        HoldingsRecordView.checkLastUpdatedDate(`${user.lastName}, ${user.firstName}`);
+        HoldingsRecordView.getRecordLastUpdatedDate().then((holdingsUpdateDate) => {
+          const updateMoment = moment.utc(holdingsUpdateDate, 'M/D/YYYY h:mm A');
+          const currentMoment = moment.utc();
+          const diffInMinutes = currentMoment.diff(updateMoment, 'minutes');
+
+          // Verify the update is within ±1 minute of current time (allows for clock skew)
+          cy.then(() => {
+            expect(diffInMinutes).to.be.at.most(1);
+            expect(diffInMinutes).to.be.at.least(-1);
+          });
+        });
       },
     );
   });

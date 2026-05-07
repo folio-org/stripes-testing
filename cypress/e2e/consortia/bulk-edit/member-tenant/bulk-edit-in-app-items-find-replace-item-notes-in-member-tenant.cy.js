@@ -56,11 +56,11 @@ const notes = {
 };
 const sharedItemNoteType = {
   payload: {
-    name: `AT_C566167 shared note type ${randomFourDigitNumber()}`,
+    name: `AT_C566167 Shared Last Check In Date ${randomFourDigitNumber()} (Sierra)`,
   },
 };
 const localItemNoteType = {
-  name: `AT_C566167 local note type ${randomFourDigitNumber()}`,
+  name: `AT_C566167 Local Last Check In Date ${randomFourDigitNumber()} (Sierra)`,
 };
 const localItemNoteTypeName = localItemNoteType.name;
 const instances = [folioInstance, marcInstance];
