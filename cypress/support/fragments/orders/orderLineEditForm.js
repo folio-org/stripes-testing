@@ -4,6 +4,7 @@ import {
   HTML,
   KeyValue,
   Popover,
+  RepeatableField,
   RepeatableFieldItem,
   Section,
   Select,
@@ -286,7 +287,8 @@ export default {
   },
   expandFundIdDropdown(index = 0) {
     cy.do(
-      RepeatableFieldItem({ index })
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
         .find(Selection(including('Fund ID')))
         .open(),
     );
@@ -325,21 +327,43 @@ export default {
 
   checkIsLocationRequired(shouldHaveWarning = true) {
     if (shouldHaveWarning) {
-      cy.expect(locationSection.has({ error: 'At least one location must be entered' }));
+      cy.expect(locationSection.has({ error: OrderStates.locationRequired }));
     } else {
       cy.expect(locationSection.find(HTML({ className: including('feedbackError') })).absent());
     }
+  },
+
+  checkPercentageAmountIsEqualTo100(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(
+        fundDistributionDetailsSection.has({ error: OrderStates.percentageAmountShouldBeEqual }),
+      );
+    } else {
+      cy.expect(
+        fundDistributionDetailsSection
+          .find(HTML({ className: including('feedbackError') }))
+          .absent(),
+      );
+    }
+  },
+
+  checkRemainingAmountToBeDistributed(remainingAmount) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableField(OrderStates.remainingAmountToBeDistributed(remainingAmount)))
+        .exists(),
+    );
   },
 
   selectExpenseClass(expenseClass, index) {
     this.selectDropDownValue('Expense class', expenseClass, index);
   },
   setFundDistributionValue(value, index) {
-    cy.do(
-      RepeatableFieldItem({ index })
-        .find(TextField({ label: including('Value') }))
-        .fillIn(value),
-    );
+    // Use cy.get().type() to allow entering decimals; .fillIn() only works with integers
+    cy.get(`[name="fundDistribution[${index}].value"]`).type('{selectall}{backspace}', {
+      delay: 50,
+    });
+    cy.get(`[name="fundDistribution[${index}].value"]`).type(value, { delay: 100 }).blur();
   },
   checkValidatorError({ locationDetails } = {}) {
     if (locationDetails) {
