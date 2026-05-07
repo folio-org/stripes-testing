@@ -32,14 +32,20 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
+// Labels visible in UI
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic resource',
-  ELECTRONIC_RESOURCE_Check: 'Electronic Resource', // Deprecated, need to be removed after all tests will be updated
   PE_MIX: 'P/E mix',
-  PE_MIX_Check: 'P/E Mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
-  PHYSICAL_RESOURCE_Check: 'Physical Resource', // Deprecated, need to be removed after all tests will be updated
+};
+
+// Values for API
+export const ORDER_FORMAT_VALUES = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  OTHER: 'Other',
+  PE_MIX: 'P/E Mix',
+  PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
 export const ORDER_PAYMENT_STATUS = {

@@ -107,6 +107,16 @@ export default {
     cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
+  checkTitleNoOverlap() {
+    cy.xpath('//div[@class="search-result-entry-container"][1]//button[contains(@class, "title")]').then(($title) => {
+      cy.xpath('//div[@class="search-result-entry-container"][1]//table').then(($instances) => {
+        const titleBottom = $title[0].getBoundingClientRect().bottom;
+        const instancesTop = $instances[0].getBoundingClientRect().top;
+        expect(titleBottom).to.be.lessThan(instancesTop);
+      });
+    });
+  },
+
   selectAdvancedSearch() {
     cy.do(advancedSearchButton.click());
   },
