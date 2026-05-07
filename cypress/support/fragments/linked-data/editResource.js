@@ -112,7 +112,9 @@ export default {
 
   openSimpleFieldMenu(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[div[@class="label" and text()="${field}"]])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+    cy.xpath(
+      `(//div[div[@class="label" and text()="${field}"]])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    )
       .scrollIntoView()
       .click();
     cy.wait(1000);
@@ -121,7 +123,9 @@ export default {
 
   openSimpleSectionFieldMenu(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    )
       .scrollIntoView()
       .click();
     cy.wait(1000);
@@ -130,18 +134,21 @@ export default {
 
   setValueForSimpleField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
     cy.wait(1000);
   },
 
   clickRepeatGroup(field) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`)
-      .click();
+    cy.xpath(
+      `//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`,
+    ).click();
     cy.wait(1000);
   },
 
@@ -164,7 +171,9 @@ export default {
 
   clearSimpleField(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`)
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`,
+    )
       .scrollIntoView()
       .should('be.visible')
       .click();
@@ -282,12 +291,15 @@ export default {
   },
 
   checkPreviewSectionContains(section, value) {
-    cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
-      .should('exist');
+    cy.xpath(
+      `//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`,
+    ).should('exist');
   },
 
   checkPreviewSectionContainsField(section, field, value) {
-    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+    cy.xpath(
+      `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
+    )
       .should('exist')
       .filter((_secIdx, sectionBlock) => {
         const $sectionBlock = Cypress.$(sectionBlock);
@@ -367,9 +379,7 @@ export default {
   },
 
   checkTextValueOnDisabledField(textValue, section) {
-    cy.xpath(
-      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
-    )
+    cy.xpath(`//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`)
       .scrollIntoView()
       .should('be.visible')
       .should('be.disabled');
@@ -409,5 +419,45 @@ export default {
 
   checkEditWorkButtonEnabled() {
     cy.expect(editWorkButton.has({ disabled: false }));
+  },
+
+  toggleSectionMarcTooltip(section) {
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
+    cy.wait(500);
+  },
+
+  toggleSingleFieldMarcTooltip(field) {
+    cy.xpath(
+      `//div[text()="${field}"]/ancestor::*[1]//div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
+    cy.wait(500);
+  },
+
+  checkMarcTooltipContains(field, mapping) {
+    cy.xpath(
+      `//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`,
+    )
+      .scrollIntoView()
+      .should('be.visible');
+  },
+
+  setSectionFieldValue(value, section) {
+    cy.wait(1000);
+    cy.xpath(
+      `//div[@class="label" and text()="${section}"]/following-sibling::div[@class="children-container"]/input`,
+    )
+      .focus()
+      .type(`{selectall}${value}`);
+    cy.wait(1000);
+  },
+
+  checkSectionFieldValue(value, section) {
+    cy.xpath(
+      `//div[@class="label" and text()="${section}"]/following-sibling::div[@class="children-container"]/input[@value="${value}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible');
   },
 };
