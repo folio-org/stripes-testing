@@ -287,6 +287,15 @@ export default {
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
+  clearInstanceStatusTerm() {
+    cy.do(instanceStatusTerm.choose('Select instance status'));
+  },
+  chooseModeOfIssuance(modeOfIssuance) {
+    cy.do(Select('Mode of issuance').choose(including(modeOfIssuance)));
+  },
+  chooseDateType(dateType) {
+    cy.do(Select('Date type').choose(including(dateType)));
+  },
   saveAndClose() {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
@@ -363,6 +372,9 @@ export default {
     if (isChecked) {
       cy.expect(previoslyHeldCheckbox.has({ checked: true }));
     } else cy.expect(previoslyHeldCheckbox.has({ checked: false }));
+  },
+  verifyCatalogedDateField(expectedDate) {
+    cy.expect(TextField({ name: 'catalogedDate' }).has({ value: expectedDate }));
   },
   markAsStaffSuppress() {
     cy.do(rootSection.find(staffSuppressCheckbox).click());
@@ -615,6 +627,22 @@ export default {
   clickSetForDeletionCheckbox(isChecked) {
     cy.do(setForDeletionChecbox.click());
     cy.expect(setForDeletionChecbox.has({ checked: isChecked }));
+  },
+
+  verifyInstanceStatusTermSelected(statusTerm) {
+    cy.expect(instanceStatusTerm.has({ checkedOptionText: including(statusTerm) }));
+  },
+
+  verifyStatisticalCodeSelected(code) {
+    cy.expect(Selection({ value: including(code) }).exists());
+  },
+
+  verifyAdministrativeNote(note) {
+    cy.expect(TextArea({ ariaLabel: 'Administrative note' }).has({ value: note }));
+  },
+
+  verifyNatureOfContentSelected(nature) {
+    cy.expect(Select('Nature of content term').has({ checkedOptionText: including(nature) }));
   },
 
   verifyParentInstance(title, hrid) {

@@ -22,15 +22,16 @@ import { pluralize } from '../../utils/stringTools';
 
 const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
-const testQueryButton = Button('Test query');
-const cancelButton = Button('Cancel');
-const runQueryButton = Button('Run query');
-const runQueryAndSave = Button('Run query & save');
-const xButton = Button({ icon: 'times' });
+const testQueryButton = buildQueryModal.find(Button('Test query'));
+const cancelButton = buildQueryModal.find(Button('Cancel'));
+const runQueryButton = buildQueryModal.find(Button('Run query'));
+const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
+const xButton = buildQueryModal.find(Button({ icon: 'times' }));
+const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button({ id: 'field-option-0' });
-const showColumnsButton = Button('Show columns');
+const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 
 const booleanValues = ['AND'];
@@ -83,6 +84,7 @@ export const embeddedFields = {
 export const holdingsFieldValues = {
   holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
+  tenantId: 'Holdings — Tenant ID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
   formerIds: 'Holdings — Former identifiers',
@@ -90,6 +92,8 @@ export const holdingsFieldValues = {
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Holdings permanent location — Name',
   temporaryLocation: 'Holdings temporary location — Name',
+  effectiveLocationName: 'Holdings effective location — Name',
+  effectiveLibraryName: 'Holdings effective library — Name',
   notes: 'Holdings — Notes — Note',
   notesNoteType: 'Holdings — Notes — Note type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
@@ -724,6 +728,51 @@ export default {
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
     cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
+  verifyValueMultiselectContainsValuesFromPreviewTableColumn(
+    columnName,
+    row = 0,
+    closeDropdownAfterVerification = false,
+  ) {
+    const valuesFromPreviewTableColumn = [];
+    const emptyCellPlaceholder = '-';
+
+    cy.do(previewTable.scrollHeaderIntoView(columnName));
+    cy.expect(previewTable.find(MultiColumnListHeader(columnName)).exists());
+    cy.then(() => previewTable.rowCount()).then((rowCount) => {
+      cy.wrap([...Array(rowCount).keys()])
+        .each((rowIndex) => {
+          return cy.do(
+            previewTable
+              .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+              .find(MultiColumnListCell({ column: columnName }))
+              .perform((element) => {
+                const value = element.textContent.trim();
+                // Empty cells in the preview table are rendered as "-", but the value dropdown
+                // contains only real values.
+                if (value && value !== emptyCellPlaceholder) {
+                  valuesFromPreviewTableColumn.push(value);
+                }
+              }),
+          );
+        })
+        .then(() => {
+          const uniqueValues = [...new Set(valuesFromPreviewTableColumn)];
+          const valueMultiSelect = RepeatableFieldItem({ index: row }).find(MultiSelect());
+
+          expect(
+            uniqueValues,
+            `Values from preview table column ${columnName}`,
+          ).to.have.length.greaterThan(0);
+          cy.do(valueMultiSelect.open());
+          cy.wrap(uniqueValues).each((value) => {
+            cy.do(valueMultiSelect.fillIn(value));
+            cy.expect(MultiSelectOption(including(value)).exists());
+          });
+          if (closeDropdownAfterVerification) cy.do(buildQueryModal.click());
+        });
+    });
   },
 
   clickRunQueryAndSave() {
