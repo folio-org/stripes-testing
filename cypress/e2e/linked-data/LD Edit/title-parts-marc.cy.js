@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
+import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
 import Work from '../../../support/fragments/linked-data/work';
 
@@ -118,8 +118,8 @@ describe('Citation: check title parts MARC codes', () => {
       // Edit instance
       InventoryInstances.searchByTitle(testData.uniqueMainTitle);
       InventoryInstance.editInstanceInMG();
-      ExternalResourcePreview.waitLoading();
-      ExternalResourcePreview.clickContinueButton();
+      PreviewResource.waitLoading();
+      PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
 
       // View MARC
