@@ -108,6 +108,10 @@ const api = {
     cy.expect(listInteractor.has({ loading: false }));
   },
 
+  sortListBy(listInteractor, column) {
+    cy.do(listInteractor.find(MultiColumnListHeader(column)).click());
+  },
+
   /**
    * Asserts current sort direction for a given list column.
    *
@@ -121,8 +125,8 @@ const api = {
    * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE);
    * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE, SORT_DIRECTIONS.ASCENDING);
    */
-  assertColumnSortDirection(column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
-    cy.expect(MultiColumnListHeader(column).has({ sort: sortDirection }));
+  assertColumnSortDirection(listInteractor, column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
+    cy.expect(listInteractor.find(MultiColumnListHeader(column)).has({ sort: sortDirection }));
   },
 
   /**
