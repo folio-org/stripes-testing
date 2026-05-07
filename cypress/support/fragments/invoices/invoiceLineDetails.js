@@ -4,6 +4,7 @@ import {
   HTML,
   KeyValue,
   Link,
+  MetaSection,
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
@@ -287,5 +288,17 @@ export default {
       .find(Link());
 
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
+  },
+
+  toggleMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy }) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
   },
 };

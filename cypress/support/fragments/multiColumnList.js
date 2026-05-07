@@ -1,9 +1,10 @@
 import {
+  Button,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
 } from '../../../interactors';
-import { SORT_DIRECTIONS } from '../constants';
+import { COMMON_BUTTON_LABELS, SORT_DIRECTIONS } from '../constants';
 
 /**
  * Minimal contract for an Interactor used by list helper methods.
@@ -224,6 +225,16 @@ const api = {
     rowsConfig.forEach(({ rowIndex, expectedCells }) => {
       assertCellsForRow(expectedCells, rowIndex);
     });
+  },
+
+  /* Pagination */
+  assertPaginationControlsDisabled(listInteractor, state) {
+    const { previous, next } = state || { previous: true, next: true };
+
+    cy.expect([
+      listInteractor.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).has({ disabled: previous }),
+      listInteractor.find(Button(COMMON_BUTTON_LABELS.NEXT)).has({ disabled: next }),
+    ]);
   },
 };
 

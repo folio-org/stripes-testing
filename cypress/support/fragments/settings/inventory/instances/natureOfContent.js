@@ -20,6 +20,15 @@ export default {
       })
       .then(({ body }) => body);
   },
+  getFirstViaApi: () => {
+    return cy
+      .okapiRequest({
+        path: 'nature-of-content-terms',
+        searchParams: { limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.natureOfContentTerms[0]);
+  },
   createViaApi: (body) => {
     return cy
       .okapiRequest({

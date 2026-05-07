@@ -204,4 +204,16 @@ export default {
   markAsSuppressedFromDiscovery() {
     cy.do(Checkbox('Suppress from discovery').click());
   },
+
+  addDisplaySummary(displaySummary) {
+    cy.do(TextField('Display summary').fillIn(displaySummary));
+  },
+
+  addEnumeration(value) {
+    cy.do(TextArea('Enumeration').fillIn(value));
+  },
+
+  addChronology(value) {
+    cy.do(TextArea('Chronology').fillIn(value));
+  },
 };
