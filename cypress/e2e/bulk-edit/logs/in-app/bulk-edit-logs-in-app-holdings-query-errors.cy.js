@@ -10,7 +10,6 @@ import Users from '../../../../support/fragments/users/users';
 import QueryModal, {
   QUERY_OPERATIONS,
   holdingsFieldValues,
-  instanceFieldValues,
   booleanOperators,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
@@ -155,11 +154,11 @@ describe('Bulk-edit', () => {
 
           // Step 7: Select "True" option
           QueryModal.chooseValueSelect('True');
-          QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == true)');
+          QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == True)');
 
           QueryModal.addNewRow();
-          QueryModal.selectField(instanceFieldValues.instanceId, 1);
-          QueryModal.verifySelectedField(instanceFieldValues.instanceId, 1);
+          QueryModal.selectField(holdingsFieldValues.instanceUuid, 1);
+          QueryModal.verifySelectedField(holdingsFieldValues.instanceUuid, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
           QueryModal.fillInValueTextfield(instance.id, 1);
 
@@ -191,7 +190,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.discovery_suppress == true) AND (instance.id == ${instance.id})`,
+              `(holdings.discovery_suppress == True) AND (holdings.instance_id == ${instance.id})`,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               firstHolding.hrid,
@@ -203,22 +202,19 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               secondHolding.hrid,
             );
-
-            // TODO: Uncomment when the issue MODBULKOPS-640 is fixed
 
             // Verify Errors & warnings accordion with proper counts and pagination
-            // BulkEditSearchPane.verifyErrorLabel(1, 0);
-            // BulkEditSearchPane.verifyErrorByIdentifier(
-            //   firstHolding.id,
-            //   ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId),
-            //   'Warning',
-            // );
-            // BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
-            // BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+            BulkEditSearchPane.verifyErrorLabel(0, 1);
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              firstHolding.id,
+              ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId),
+              'Warning',
+            );
+            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+            BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
 
             // Step 13: Download matched records (CSV)
             BulkEditActions.downloadMatchedResults();
-
             BulkEditFiles.verifyValueInRowByUUID(
               fileNames.matchedRecordsCSV,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
@@ -236,12 +232,10 @@ describe('Bulk-edit', () => {
             BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.matchedRecordsCSV, 2);
 
             // Step 14: Download errors (CSV)
-            // TODO: Uncomment when the issue MODBULKOPS-640 is fixed
-
-            // BulkEditActions.downloadErrors();
-            // ExportFile.verifyFileIncludes(fileNames.matchingErrors, [
-            //   `WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,
-            // ]);
+            BulkEditActions.downloadErrors();
+            ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
+              `WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,
+            ]);
 
             // Step 15: Navigate to Logs tab => Check holdings => Verify status "Data modification" and "Query"
             BulkEditSearchPane.openLogsSearch();
@@ -254,9 +248,10 @@ describe('Bulk-edit', () => {
             BulkEditLogs.verifyLogsRowActionWhenRunQuery();
 
             // Step 17: Download "File with errors encountered during the record matching"
-            // TODO: Uncomment when the issue MODBULKOPS-640 is fixed
-            //  BulkEditLogs.downloadFileWithErrorsEncountered();
-            //  ExportFile.verifyFileIncludes(fileNames.matchingErrors, [`WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,]);
+            BulkEditLogs.downloadFileWithErrorsEncountered();
+            ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
+              `WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,
+            ]);
 
             // Remove earlier downloaded files
             BulkEditFiles.deleteAllDownloadedFiles(fileNames);
@@ -313,13 +308,18 @@ describe('Bulk-edit', () => {
               newLocationName,
             );
             // Verify Errors & warnings accordion after committing changes - second holding gets "No changes required" error
-            BulkEditSearchPane.verifyErrorLabel(0, 1);
+            BulkEditSearchPane.verifyErrorLabel(0, 2);
             BulkEditSearchPane.verifyErrorByIdentifier(
               secondHolding.id,
               ERROR_MESSAGES.NO_CHANGE_REQUIRED,
               'Warning',
             );
-            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              firstHolding.id,
+              `Field "notes" : Note type not found by id=${holdingsNoteTypeId}`,
+              'Warning',
+            );
+            BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
             BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
 
             // Step 23: Download changed records (CSV)
@@ -338,6 +338,9 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
               `WARNING,${secondHolding.id},${ERROR_MESSAGES.NO_CHANGE_REQUIRED}`,
             ]);
+            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+              `WARNING,${firstHolding.id},Field "notes" : Note type not found by id=${holdingsNoteTypeId}`,
+            ]);
 
             // Remove earlier downloaded files
             BulkEditFiles.deleteAllDownloadedFiles(fileNames);
@@ -352,12 +355,16 @@ describe('Bulk-edit', () => {
             BulkEditLogs.verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery();
 
             // Step 27: Download "File with errors encountered during the record matching" from Logs
-            // TODO: Uncomment when the issue MODBULKOPS-640 is fixed
-            //  BulkEditLogs.downloadFileWithErrorsEncountered();
-            //  ExportFile.verifyFileIncludes(fileNames.matchingErrors, [`WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,]);
+            BulkEditLogs.downloadFileWithErrorsEncountered();
+            ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
+              `WARNING,${firstHolding.id},${ERROR_MESSAGES.noteTypeNotFoundById(holdingsNoteTypeId)}`,
+            ]);
             BulkEditLogs.downloadFileWithCommitErrors();
             ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
               `WARNING,${secondHolding.id},${ERROR_MESSAGES.NO_CHANGE_REQUIRED}`,
+            ]);
+            ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
+              `WARNING,${firstHolding.id},Field "notes" : Note type not found by id=${holdingsNoteTypeId}`,
             ]);
           });
         },

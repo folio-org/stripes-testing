@@ -67,6 +67,10 @@ const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
 
 export default {
+  waitLogsTableLoading() {
+    cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
   resetAllBtnIsDisabled(isDisabled) {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },

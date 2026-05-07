@@ -159,7 +159,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectOption('Temporary item location');
 
         // Step 6: Select "Replace with" option from the "Actions" dropdown
-        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
+        BulkEditActions.selectSecondAction(BULK_EDIT_ACTIONS.REPLACE_WITH);
 
         // Step 7: Select the same location that items are related to
         BulkEditActions.selectLocation(locationName);

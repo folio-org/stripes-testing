@@ -145,7 +145,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
 
         // Step 7: Modify downloaded file - change first user's first name
-        BulkEditActions.prepareValidBulkEditFile(
+        BulkEditActions.prepareValidBulkEditFileWithAllRowsReplacement(
           matchedRecordsFileName,
           editedFileName,
           testUsers[0].firstName,
