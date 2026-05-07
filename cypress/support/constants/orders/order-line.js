@@ -58,7 +58,7 @@ export const RECEIPT_STATUS_SELECTED = {
   PENDING: 'Pending',
   RECEIPT_NOT_REQUIRED: 'Receipt not required',
 };
-
+// Title case is used in Sunflower
 export const RECEIPT_STATUS_VIEW = {
   AWAITING_RECEIPT: 'Awaiting receipt',
   CANCELLED: 'Cancelled',
