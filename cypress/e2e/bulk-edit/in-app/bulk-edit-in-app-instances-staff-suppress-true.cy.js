@@ -13,6 +13,7 @@ import SelectInstanceModal from '../../../support/fragments/requests/selectInsta
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
 let instanceTypeId;
@@ -58,6 +59,8 @@ describe('Bulk-edit', () => {
                 `cypress/fixtures/${instanceUUIDsFileName}`,
                 `${marcInstance.instanceId}\n${folioInstance.instanceId}`,
               );
+
+              cy.wait(120_000); // need to wait for clear test results when verifying the instance's last updated date
             });
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
@@ -99,7 +102,9 @@ describe('Bulk-edit', () => {
         ]);
         BulkEditActions.openStartBulkEditFolioInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
+
         const possibleActions = ['Staff suppress', 'Suppress from discovery'];
+
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectOption('Staff suppress');
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
@@ -135,6 +140,8 @@ describe('Bulk-edit', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InventoryInstance.verifyStaffSuppress();
+          InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
+          InventoryInstance.verifyLastUpdatedSource(user.firstName, user.lastName);
         });
       },
     );

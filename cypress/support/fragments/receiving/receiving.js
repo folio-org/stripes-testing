@@ -19,6 +19,7 @@ import {
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
+import MultiColumnListHelper from '../multiColumnList';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
@@ -47,6 +48,7 @@ const filterOpenReceiving = () => {
 const routingListSection = rootsection.find(Section({ id: 'routing-list' }));
 const addRoutingListButton = routingListSection.find(Button('Add routing list'));
 const titleLookUpButton = Button('Title look-up');
+const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -55,6 +57,7 @@ export default {
       Pane({ id: 'receiving-filters-pane' }).exists(),
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
+    MultiColumnListHelper.waitLoadingComplete(receivingResultsList);
   },
   clearSearchField() {
     cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
@@ -383,7 +386,7 @@ export default {
     cy.wait(1000);
     cy.expect(
       Pane('Receiving')
-        .find(MultiColumnList({ id: 'receivings-list' }))
+        .find(receivingResultsList)
         .find(MultiColumnListCell({ content: title }))
         .exists(),
     );

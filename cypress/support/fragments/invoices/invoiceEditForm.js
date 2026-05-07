@@ -3,6 +3,7 @@ import { HTML } from '@interactors/html';
 import {
   Button,
   Checkbox,
+  KeyValue,
   SearchField,
   Section,
   Select,
@@ -16,7 +17,7 @@ import {
   MultiSelectOption,
   Pane,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, INVOICE_VIEW_FIELDS } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
@@ -34,7 +35,9 @@ const extendedInformationSection = invoiceEditFormRoot.find(
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
+const saveAndKeepEditingButton = Button('Save & keep editing');
 const deleteButton = Button({ icon: 'trash' });
+const clearButton = Button({ icon: 'times-circle-solid' });
 const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
 const linkNameTextField = TextField('Link name*');
 const externalUrlTextField = TextField('External URL');
@@ -61,8 +64,17 @@ const buttons = {
   'Vendor name': vendorFields.vendorName,
   Cancel: cancelButton,
   'Save & close': saveButton,
+  'Save & keep editing': saveAndKeepEditingButton,
   Delete: deleteButton,
 };
+
+const requiredFields = [
+  { fieldName: INVOICE_VIEW_FIELDS.INVOICE_DATE, type: TextField },
+  { fieldName: INVOICE_VIEW_FIELDS.BATCH_GROUP, type: Selection },
+  { fieldName: INVOICE_VIEW_FIELDS.VENDOR_INVOICE_NUMBER, type: TextField },
+  { fieldName: INVOICE_VIEW_FIELDS.VENDOR_NAME, type: TextField },
+  { fieldName: INVOICE_VIEW_FIELDS.PAYMENT_METHOD, type: Select },
+];
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -74,6 +86,18 @@ export default {
       cy.expect(buttons[label].has(conditions));
     });
   },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(invoiceEditFormRoot.find(KeyValue(label)).has(conditions));
+    });
+  },
+
+  checkButtonsNotDisplayed(buttonsNotDisplayed = []) {
+    buttonsNotDisplayed.forEach((label) => {
+      cy.expect(buttons[label].absent());
+    });
+  },
+
   checkFiscalYearIsAbsent() {
     cy.get('#selected-invoice-fiscal-year-item').invoke('text').should('eq', '');
   },
@@ -160,7 +184,7 @@ export default {
     cy.expect(invoiceEditFormRoot.absent());
   },
 
-  cancelWithUnsavedChanges(keepEditing = false) {
+  cancelWithUnsavedChanges({ keepEditing = false, shouldShowInvoiceDetails = false } = {}) {
     cy.do(cancelButton.click());
     areYouSureModal.verifyModalElements(unsavedChangesMessage);
 
@@ -170,7 +194,12 @@ export default {
     } else {
       areYouSureModal.clickCloseWithoutSaving();
       cy.expect(invoiceEditFormRoot.absent());
-      cy.expect(invoiceDetailsPane.absent());
+
+      if (shouldShowInvoiceDetails) {
+        cy.expect(invoiceDetailsPane.exists());
+      } else {
+        cy.expect(invoiceDetailsPane.absent());
+      }
     }
   },
 
@@ -189,6 +218,15 @@ export default {
     cy.wait(2000);
   },
 
+  clickSaveAndKeepEditingButton({ isSaved = true } = {}) {
+    cy.expect(saveAndKeepEditingButton.has({ disabled: false }));
+    cy.do(saveAndKeepEditingButton.click());
+    this.waitLoading();
+    if (isSaved) {
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    }
+  },
+
   verifyIsExchangeRateChecked(isChecked) {
     if (isChecked) {
       cy.expect(extendedInfoFields.useExchangeRate.has({ checked: true }));
@@ -202,6 +240,30 @@ export default {
       cy.expect(extendedInfoFields.exchangeRate.has({ required: isRequired }));
     } else {
       cy.expect(extendedInfoFields.exchangeRate.has({ required: false }));
+    }
+  },
+
+  checkRequiredFields(fields = []) {
+    fields.forEach((field) => {
+      const requiredFieldsConfig = requiredFields.find((f) => f.fieldName === field);
+      if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
+      cy.expect(
+        requiredFieldsConfig
+          .type(including(requiredFieldsConfig.fieldName))
+          .has({ error: 'Required!' }),
+      );
+    });
+  },
+
+  clearField(fieldName) {
+    if (fieldName === INVOICE_VIEW_FIELDS.VENDOR_NAME) {
+      cy.do(vendorFields.vendorName.focus());
+      cy.do(vendorFields.vendorName.find(clearButton).click());
+    }
+
+    if (fieldName === INVOICE_VIEW_FIELDS.VENDOR_INVOICE_NUMBER) {
+      cy.do(vendorFields.vendorInvoiceNo.focus());
+      cy.do(vendorFields.vendorInvoiceNo.find(clearButton).click());
     }
   },
 };

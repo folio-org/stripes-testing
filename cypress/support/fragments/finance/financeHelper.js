@@ -165,4 +165,20 @@ export default {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
   },
+
+  interceptTransactionsRequest() {
+    cy.intercept('GET', '/finance/transactions*').as('getTransactions');
+  },
+
+  waitForTransactionsRequestCompletion() {
+    cy.wait('@getTransactions');
+  },
+
+  interceptFundsRequest() {
+    cy.intercept('GET', '/finance/funds*').as('getFunds');
+  },
+
+  waitForFundsRequestCompletion() {
+    cy.wait('@getFunds');
+  },
 };

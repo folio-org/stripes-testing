@@ -30,3 +30,46 @@ export const ORDER_SYSTEM_CLOSING_REASONS = {
   TITLE_OUT_OF_PRINT: 'Title is out of print',
   TITLE_RECEIVED_AS_GIFT: 'Title received as a gift',
 };
+
+export const ORDER_RESULTS_LIST_COLUMN_LABELS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
+  ASSIGNED_TO: 'Assigned to',
+  LAST_UPDATED: 'Last updated',
+  ORDER_TYPE: 'Order type',
+  PO_NUMBER: 'PO number', // Used as a link to open order details
+  STATUS: 'Status',
+  VENDOR_CODE: 'Vendor code',
+};
+
+export const ORDER_FILTER_LABELS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
+  APPROVED: 'Approved',
+  ASSIGNED_TO: 'Assigned to',
+  BILL_TO: 'Bill to',
+  CREATED_BY: 'Created by',
+  DATE_CREATED: 'Date created',
+  DATE_OPENED: 'Date opened',
+  DATE_UPDATED: 'Date updated',
+  FUND_CODE: 'Fund code',
+  MANUAL_RENEWAL: 'Manual renewal',
+  ORDER_TYPE: 'Order type',
+  PREFIX: 'Prefix',
+  REASON_FOR_CLOSURE: 'Reason for closure',
+  RE_ENCUMBER: 'Re-encumber',
+  RENEWAL_DATE: 'Renewal date',
+  REVIEW_PERIOD: 'Review period',
+  SHIP_TO: 'Ship to',
+  STATUS: 'Status',
+  SUBSCRIPTION: 'Subscription',
+  SUFFIX: 'Suffix',
+  TAGS: 'Tags',
+  UPDATED_BY: 'Updated by',
+  VENDOR: 'Vendor',
+};
+
+export const ORDER_SEARCH_OPTIONS = {
+  KEYWORD: 'Keyword',
+  DATE_CREATED: 'Date created',
+  DATE_OPENED: 'Date opened',
+  PO_NUMBER: 'PO number',
+};

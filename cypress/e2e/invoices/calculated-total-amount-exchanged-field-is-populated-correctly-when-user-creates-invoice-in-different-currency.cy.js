@@ -91,6 +91,7 @@ describe('Invoices', () => {
       InvoiceView.openInvoiceLineEditForm();
       InvoiceLineEditForm.fillInvoiceLineFields(testData.invoiceLine);
       InvoiceLineEditForm.clickSaveButton();
+      InvoiceView.waitLoading();
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNumber,
         invoiceInformation: [
