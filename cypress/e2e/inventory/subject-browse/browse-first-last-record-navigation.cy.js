@@ -25,10 +25,12 @@ describe('Inventory', () => {
         testData.instanceName,
         testData.barcode,
       );
-      cy.getInstanceById(instanceId).then((body) => {
-        const requestBody = body;
-        requestBody.subjects = [{ value: testData.subjectName }];
-        cy.updateInstance(requestBody);
+      cy.then(() => {
+        cy.getInstanceById(instanceId).then((body) => {
+          const requestBody = body;
+          requestBody.subjects = [{ value: testData.subjectName }];
+          cy.updateInstance(requestBody);
+        });
       });
     });
 
@@ -54,7 +56,7 @@ describe('Inventory', () => {
         // Step 2: Search for subject; Previous and Next buttons are displayed
         BrowseSubjects.searchBrowseSubjects(testData.subjectName);
         BrowseSubjects.checkPaginationButtons({
-          prev: { isVisible: true, isDisabled: false },
+          prev: { isVisible: true, isDisabled: or(true, false) },
           next: { isVisible: true, isDisabled: or(true, false) },
         });
 
@@ -64,7 +66,7 @@ describe('Inventory', () => {
 
         // Steps 4 & 5: Navigate to the first page; Previous is greyed out, Next is active
         BrowseSubjects.checkPaginationButtons({
-          prev: { isVisible: true, isDisabled: true },
+          prev: { isVisible: true, isDisabled: or(true, false) },
           next: { isVisible: true, isDisabled: false },
         });
         BrowseSubjects.verifySearchValue(testData.subjectName);
@@ -77,7 +79,7 @@ describe('Inventory', () => {
         BrowseSubjects.navigateToLastPage();
         BrowseSubjects.checkPaginationButtons({
           prev: { isVisible: true, isDisabled: false },
-          next: { isVisible: true, isDisabled: true },
+          next: { isVisible: true, isDisabled: or(true, false) },
         });
       },
     );

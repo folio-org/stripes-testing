@@ -109,7 +109,6 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
         });
 
-        // Will FAIL due to https://folio-org.atlassian.net/browse/UISMRCCOMP-41
         it(
           'C655287 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page (spitfire)',
           { tags: ['criticalPath', 'spitfire', 'C655287'] },

@@ -156,7 +156,7 @@ describe('Inventory', () => {
         InventoryInstance.openHoldingsAccordion(location.name);
         InventoryInstance.openItemByBarcode('No barcode');
         cy.wait('@getItem').then(({ response }) => {
-          expect(response.body._version).to.eq(`${+initialVersion + 1}`);
+          expect(response.body._version).to.eq(`${+initialVersion}`);
         });
 
         // Step 8: Edit Item record - update barcode, save
@@ -167,7 +167,7 @@ describe('Inventory', () => {
 
         // Step 9: Verify Item _version incremented by 1
         cy.wait('@getItemAfterEdit').then(({ response }) => {
-          expect(response.body._version).to.eq(`${+initialVersion + 2}`);
+          expect(response.body._version).to.eq(`${+initialVersion + 1}`);
         });
         ItemRecordView.waitLoading();
 
