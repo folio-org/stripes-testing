@@ -173,7 +173,7 @@ describe('Citation: check classification number MARC codes', () => {
       // Edit instance from Inventory
       InventoryInstances.searchByTitle(resourceData.inventoryTitle);
       InventoryInstance.editInstanceInMG();
-      PreviewResource.waitLoading()
+      PreviewResource.waitLoading();
       PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
 

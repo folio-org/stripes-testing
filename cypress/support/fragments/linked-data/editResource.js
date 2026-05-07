@@ -106,6 +106,8 @@ export default {
   },
 
   clearStatusMessages() {
+    // Toasts are stacked in an overlapping way likely obscuring close button; close them all anwyays.
+    // eslint-disable-next-line cypress/no-force
     cy.xpath('//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]')
       .click({ multiple: true, force: true });
     cy.wait(1000);
@@ -369,7 +371,7 @@ export default {
           && $linkEl.attr('href') === link;
       })
       .should('have.length.at.least', 1);
-  },  
+  },
 
   checkPreviewSectionContainsField(section, field, value) {
     cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
