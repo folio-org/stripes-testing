@@ -287,6 +287,15 @@ export default {
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
+  clearInstanceStatusTerm() {
+    cy.do(instanceStatusTerm.choose('Select instance status'));
+  },
+  chooseModeOfIssuance(modeOfIssuance) {
+    cy.do(Select('Mode of issuance').choose(including(modeOfIssuance)));
+  },
+  chooseDateType(dateType) {
+    cy.do(Select('Date type').choose(including(dateType)));
+  },
   saveAndClose() {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
