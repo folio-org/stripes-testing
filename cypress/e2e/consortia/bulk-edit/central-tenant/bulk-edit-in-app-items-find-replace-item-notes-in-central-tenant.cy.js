@@ -41,7 +41,7 @@ const folioInstance = {
   holdingIds: [],
 };
 const marcInstance = {
-  title: `C478262 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C478262 marc instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
@@ -59,11 +59,11 @@ const notes = {
 };
 const centralSharedItemNoteType = {
   payload: {
-    name: `C478262 shared note type ${randomFourDigitNumber()}`,
+    name: `AT_C478262 Shared Last Check In Date ${randomFourDigitNumber()} (Sierra)`,
   },
 };
 const collegeItemNoteType = {
-  name: `C478262 College NoteType ${randomFourDigitNumber()}`,
+  name: `AT_C478262 Local Last Check In Date ${randomFourDigitNumber()} (Sierra)`,
 };
 const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
@@ -99,9 +99,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
+
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -114,6 +112,9 @@ describe('Bulk-edit', () => {
             },
           );
           cy.setTenant(Affiliations.College);
+          cy.getLocations({ limit: 1 }).then((res) => {
+            locationId = res.id;
+          });
           // create local item note type in College
           ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
             .then((noteId) => {
