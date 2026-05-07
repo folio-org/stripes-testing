@@ -157,7 +157,7 @@ describe('Finance', () => {
           ],
         ];
 
-        const waitForTransactions = () => Transactions.waitForTransactionsRequestCompletion();
+        const waitForTransactions = () => FinanceHelper.waitForTransactionsRequestCompletion();
 
         const applyAndWait = (action) => {
           action();
@@ -200,7 +200,7 @@ describe('Finance', () => {
         /* STEP 1: Click "Actions" and open transactions for current budget */
         // Expected: Transactions pane appears with transactions from Preconditions in descending order.
         Funds.viewTransactionsForCurrentBudget();
-        Transactions.interceptTransactionsRequest();
+        FinanceHelper.interceptTransactionsRequest();
         Transactions.waitLoading();
         Transactions.checkTransactionDatesSorted(SORT_DIRECTIONS.DESCENDING);
         Transactions.assertRowCellsContent(allTransactionsInList);
