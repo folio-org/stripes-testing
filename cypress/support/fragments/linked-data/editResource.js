@@ -112,7 +112,9 @@ export default {
 
   openSimpleFieldMenu(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[div[@class="label" and text()="${field}"]])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+    cy.xpath(
+      `(//div[div[@class="label" and text()="${field}"]])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    )
       .scrollIntoView()
       .click();
     cy.wait(1000);
@@ -121,7 +123,9 @@ export default {
 
   openSimpleSectionFieldMenu(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    )
       .scrollIntoView()
       .click();
     cy.wait(1000);
@@ -130,18 +134,21 @@ export default {
 
   setValueForSimpleField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
     cy.wait(1000);
   },
 
   clickRepeatGroup(field) {
     cy.wait(1000);
-    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`)
-      .click();
+    cy.xpath(
+      `//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`,
+    ).click();
     cy.wait(1000);
   },
 
@@ -164,7 +171,9 @@ export default {
 
   clearSimpleField(field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`)
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`,
+    )
       .scrollIntoView()
       .should('be.visible')
       .click();
@@ -282,12 +291,15 @@ export default {
   },
 
   checkPreviewSectionContains(section, value) {
-    cy.xpath(`//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`)
-      .should('exist');
+    cy.xpath(
+      `//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`,
+    ).should('exist');
   },
 
   checkPreviewSectionContainsField(section, field, value) {
-    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+    cy.xpath(
+      `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
+    )
       .should('exist')
       .filter((_secIdx, sectionBlock) => {
         const $sectionBlock = Cypress.$(sectionBlock);
@@ -367,9 +379,7 @@ export default {
   },
 
   checkTextValueOnDisabledField(textValue, section) {
-    cy.xpath(
-      `//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`,
-    )
+    cy.xpath(`//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`)
       .scrollIntoView()
       .should('be.visible')
       .should('be.disabled');
@@ -409,5 +419,118 @@ export default {
 
   checkEditWorkButtonEnabled() {
     cy.expect(editWorkButton.has({ disabled: false }));
+  },
+
+  checkNewInstanceButtonEnabled() {
+    cy.xpath(newInstanceButton).should('be.visible').and('not.be.disabled');
+  },
+
+  verifyTitleOrder(titles) {
+    cy.get('[data-testid="literal-field"]').should(($inputs) => {
+      const values = [...$inputs].map((el) => el.value).filter(Boolean);
+      titles.forEach((title, index) => {
+        const foundIndex = values.indexOf(title);
+        if (index > 0) {
+          const prevIndex = values.indexOf(titles[index - 1]);
+          expect(foundIndex).to.be.greaterThan(prevIndex);
+        }
+        expect(foundIndex).to.be.at.least(0);
+      });
+    });
+  },
+
+  selectTitleType(type, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .first()
+      .select(type);
+    cy.wait(500);
+  },
+
+  verifyTitleTypeOptions(options, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .first()
+      .find('option')
+      .then(($options) => {
+        const texts = [...$options].map((el) => el.textContent.trim());
+        options.forEach((option) => {
+          expect(texts).to.include(option);
+        });
+      });
+  },
+
+  verifyTitleFields(fields) {
+    fields.forEach((field) => {
+      cy.xpath(`//div[@class="label" and text()="${field}"]`).should('be.visible');
+    });
+  },
+
+  clickInfoIcon(sectionTestId = 'title') {
+    cy.get(`button[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`)
+      .first()
+      .click();
+    cy.wait(500);
+  },
+
+  verifyMarcEquivalents(entries, sectionTestId = 'title') {
+    const dialogSelector = `dialog[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`;
+    entries.forEach((entry) => {
+      const colonIndex = entry.indexOf(': ');
+      const field = entry.substring(0, colonIndex);
+      const marc = entry.substring(colonIndex + 2);
+      cy.get(dialogSelector).should(($el) => {
+        const text = $el.text();
+        expect(text).to.contain(field);
+        expect(text).to.contain(marc);
+      });
+    });
+  },
+
+  closeInfoIcon(sectionTestId = 'title') {
+    cy.get(`button[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`)
+      .first()
+      .click();
+    cy.wait(300);
+  },
+
+  clickDuplicateTitleSection(formType = 'Work') {
+    cy.get(`button[data-testid*="${formType}"][data-testid*="title"][data-testid*="addDuplicate"]`)
+      .first()
+      .click();
+    cy.wait(500);
+  },
+
+  verifyWarningToast(message) {
+    cy.get('.status-message-text', { timeout: 5000 }).should('be.visible').and('contain', message);
+  },
+
+  closeToast() {
+    cy.get('button.status-message-close').first().click();
+    cy.wait(500);
+  },
+
+  verifyInfoToast(message) {
+    cy.get('.status-message-text', { timeout: 5000 }).should('be.visible').and('contain', message);
+  },
+
+  setValueForTitleSectionByIndex(value, fieldLabel, sectionIndex) {
+    cy.xpath(`(//div[@class="label" and text()="${fieldLabel}"])[${sectionIndex}]/../../div/input`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(500);
+  },
+
+  selectTitleTypeByIndex(type, dropdownIndex, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .eq(dropdownIndex)
+      .select(type);
+    cy.wait(500);
   },
 };
