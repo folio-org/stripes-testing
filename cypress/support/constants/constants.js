@@ -1758,3 +1758,5 @@ export const DATE_RANGE_FIELD_LABELS = {
   FROM: 'From',
   TO: 'To',
 };
+
+export const NO_VALUE = 'No value set-';
