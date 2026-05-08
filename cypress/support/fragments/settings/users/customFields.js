@@ -2,6 +2,7 @@ import { including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
   Dropdown,
   Modal,
   MultiColumnListRow,
@@ -20,6 +21,17 @@ const saveAndCloseButton = Button('Save & close');
 const saveLoseDataButton = Button('Save & lose data');
 const fieldLabel = TextField('Field label*');
 const helpText = TextField('Help text');
+const getEditCustomFieldAccordion = (fieldLabelText) => {
+  return editCustomFieldsPane.find(
+    Accordion({ label: including(fieldLabelText), isWrapper: false }),
+  );
+};
+const getCustomFieldSection = (fieldLabelText) => {
+  return customFieldsPane.find(Section({ label: including(fieldLabelText) }));
+};
+const findCustomFieldSectionByLabel = (fieldLabelText) => {
+  return customFieldsPane.find(Section({ label: including(fieldLabelText) }));
+};
 
 export default {
   openTabFromInventorySettingsList() {
@@ -28,6 +40,10 @@ export default {
   },
 
   waitLoading() {
+    cy.expect(customFieldsPane.exists());
+  },
+
+  verifyCustomFieldsPaneIsOpen() {
     cy.expect(customFieldsPane.exists());
   },
 
@@ -43,6 +59,66 @@ export default {
     cy.expect(addCustomFieldDropdown.exists());
   },
 
+  openEdit() {
+    this.editButton();
+  },
+
+  verifyCustomFieldsPresent(fieldLabels) {
+    fieldLabels.forEach((fieldLabelText) => {
+      cy.expect(getEditCustomFieldAccordion(fieldLabelText).exists());
+    });
+  },
+
+  expandCustomFieldInEditPane(fieldLabelText) {
+    const fieldAccordion = getEditCustomFieldAccordion(fieldLabelText);
+
+    cy.expect(fieldAccordion.exists());
+    cy.do(fieldAccordion.clickHeader());
+    cy.expect(fieldAccordion.has({ open: true }));
+  },
+
+  verifyRequiredOptionVisible(fieldLabelText, isVisible = true) {
+    const checkboxInteractor = getEditCustomFieldAccordion(fieldLabelText).find(
+      Checkbox('Required'),
+    );
+    if (isVisible) {
+      checkboxInteractor.exists();
+    } else {
+      checkboxInteractor.absent();
+    }
+  },
+
+  setRequiredOption(fieldLabelText) {
+    const requiredCheckbox = getEditCustomFieldAccordion(fieldLabelText).find(Checkbox('Required'));
+    cy.do(requiredCheckbox.click());
+    cy.expect(requiredCheckbox.has({ checked: true }));
+  },
+
+  verifySaveAndCloseButtonEnabled() {
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+  },
+
+  saveAndClose() {
+    this.verifySaveAndCloseButtonEnabled();
+    cy.do(saveAndCloseButton.click());
+    cy.expect(editCustomFieldsPane.absent());
+    this.verifyCustomFieldsPaneIsOpen();
+  },
+
+  expandCustomFieldInViewPane(fieldLabelText) {
+    const customFieldSection = getCustomFieldSection(fieldLabelText);
+
+    cy.expect(customFieldSection.exists());
+    cy.do(customFieldSection.toggle());
+    cy.expect(getCustomFieldSection(fieldLabelText).has({ expanded: true }));
+  },
+
+  verifyRequiredValue(fieldLabelText, checked = true) {
+    findCustomFieldSectionByLabel(fieldLabelText).find(
+      Checkbox('Required', { disabled: true, checked }),
+    );
+  },
+
   addMultiSelectCustomField(data) {
     this.clickEditNewButton();
     cy.do([
@@ -50,9 +126,10 @@ export default {
       TextField('Field label*').fillIn(data.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
-      saveAndCloseButton.click(),
     ]);
+    this.saveAndClose();
     cy.wait(15000);
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   fillMultiSelectCustomFieldOnly(data) {
@@ -76,10 +153,6 @@ export default {
     );
   },
 
-  clickSaveAndClose() {
-    cy.do(saveAndCloseButton.click());
-    cy.wait(15000);
-  },
   clickEditNewButton() {
     cy.do(editNewButton.click());
   },
@@ -90,18 +163,23 @@ export default {
       TextField('Field label*').fillIn(newData.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(newData.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(newData.label2),
-      saveAndCloseButton.click(),
     ]);
+    this.saveAndClose();
     // Wait for changes to be saved and reflected
     cy.wait(15000);
   },
+  // It supports passing a single field name as a string or an array of field names for bulk deletion
   deleteCustomField(name) {
     this.editButton();
-    cy.do([
-      Accordion({ label: including(name), isWrapper: false })
-        .find(Button({ icon: 'trash' }))
-        .click(),
-    ]);
+
+    [].concat(name).forEach((fieldName) => {
+      cy.do([
+        Accordion({ label: including(fieldName), isWrapper: false })
+          .find(Button({ icon: 'trash' }))
+          .click(),
+      ]);
+    });
+
     cy.wait(500);
     cy.do(saveAndCloseButton.click());
     cy.wait(1000);
@@ -116,11 +194,8 @@ export default {
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
     ]);
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-    cy.expect(Pane('Custom fields').exists());
-    cy.expect(Accordion(`${data.fieldLabel} · Text field`).exists());
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomTextArea(data) {
@@ -130,19 +205,14 @@ export default {
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
     ]);
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-    cy.expect(Accordion(`${data.fieldLabel} · Text area`).exists());
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addTextAreaCustomField(text) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Text area'),
-      TextField('Field label*').fillIn(text),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do([addCustomFieldDropdown.choose('Text area'), TextField('Field label*').fillIn(text)]);
+    this.saveAndClose();
   },
 
   addCustomCheckBox(data) {
@@ -152,11 +222,19 @@ export default {
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
     ]);
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-    cy.expect(Pane('Custom fields').exists());
-    cy.expect(Accordion(`${data.fieldLabel} · Checkbox`).exists());
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
+  },
+
+  addCustomDatePicker(data) {
+    this.editButton();
+    cy.do([
+      addCustomFieldDropdown.choose('Date picker'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+    ]);
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomRadioButton({ data }) {
@@ -168,10 +246,8 @@ export default {
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
     ]);
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-    cy.expect(Accordion(`${data.fieldLabel} · Radio button set`).exists());
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomSingleSelect({ data }) {
@@ -183,11 +259,8 @@ export default {
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
     ]);
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-    cy.expect(Pane('Custom fields').exists());
-    cy.expect(Accordion(`${data.fieldLabel} · Single select`).exists());
+    this.saveAndClose();
+    this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   editButton() {
@@ -215,12 +288,13 @@ export default {
 
   getCustomFieldsViaApi() {
     return cy.getModUsersVersion().then((modUsersVersion) => {
-      return cy.okapiRequest({
-        method: 'GET',
-        path: 'custom-fields',
-        isDefaultSearchParamsRequired: false,
-        additionalHeaders: { 'x-okapi-module-id': modUsersVersion },
-      })
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'custom-fields',
+          isDefaultSearchParamsRequired: false,
+          additionalHeaders: { 'x-okapi-module-id': modUsersVersion },
+        })
         .then((response) => {
           return response.body;
         });
