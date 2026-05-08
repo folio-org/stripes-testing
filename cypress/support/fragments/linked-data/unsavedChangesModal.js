@@ -21,7 +21,7 @@ export default {
     cy.do(dismissButton.click());
     cy.wait(1000);
   },
-  
+
   clickContinueWithoutSaving() {
     cy.do(continueWithoutSaveButton.click());
     cy.wait(1000);
@@ -33,6 +33,7 @@ export default {
   },
 
   clickOverlayToDismiss() {
+    // eslint-disable-next-line cypress/no-force
     cy.xpath(modalOverlay)
       .should('be.visible')
       .click('topLeft', { force: true });

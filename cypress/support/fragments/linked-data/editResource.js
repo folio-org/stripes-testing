@@ -119,6 +119,13 @@ export default {
     cy.wait(500);
   },
 
+  toggleSingleFieldMarcTooltip(field) {
+    cy.xpath(
+      `//div[text()="${field}"]/ancestor::*[1]//div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
+    cy.wait(500);
+  },
+
   checkMarcTooltipContains(field, mapping) {
     cy.xpath(`//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`)
       .scrollIntoView()
@@ -534,37 +541,15 @@ export default {
   },
 
   checkNewInstanceButtonEnabled() {
-    cy.expect(newInstanceButton.has({ disabled: false}));
+    cy.expect(newInstanceButton.has({ disabled: false }));
   },
 
   checkNewInstanceButtonDisabled() {
-    cy.expect(newInstanceButton.has({ disabled: true}));
+    cy.expect(newInstanceButton.has({ disabled: true }));
   },
 
   checkInstanceActionsHidden() {
     cy.xpath(instanceActionsButton).should('not.exist');
-  },
-
-  toggleSectionMarcTooltip(section) {
-    cy.xpath(
-      `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
-    ).click();
-    cy.wait(500);
-  },
-
-  toggleSingleFieldMarcTooltip(field) {
-    cy.xpath(
-      `//div[text()="${field}"]/ancestor::*[1]//div[contains(@class, "marc-tooltip-wrapper")]/button`,
-    ).click();
-    cy.wait(500);
-  },
-
-  checkMarcTooltipContains(field, mapping) {
-    cy.xpath(
-      `//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`,
-    )
-      .scrollIntoView()
-      .should('be.visible');
   },
 
   setSectionFieldValue(value, section) {

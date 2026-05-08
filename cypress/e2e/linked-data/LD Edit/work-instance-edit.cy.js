@@ -3,7 +3,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-import CloseResourceModal from '../../../support/fragments/linked-data/closeResourceModal';
 import EditResource from '../../../support/fragments/linked-data/editResource';
 import InstanceProfileModal from '../../../support/fragments/linked-data/instanceProfileModal';
 import Marigold from '../../../support/fragments/linked-data/marigold';
@@ -38,7 +37,7 @@ describe('Citation: core work and instance editor features', () => {
   const fieldData = {
     booksProfile: 'Books',
     titleSection: 'Title Information',
-    workTitle: 'Preferred Work for Title',
+    workTitle: 'Preferred Title for Work',
     instanceTitle: 'Main Title',
   };
 
@@ -136,7 +135,7 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.clickOverlayToDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
       EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, fieldData.instanceTitle);
-      
+
       // Unsaved changes modal, continue without saving
       EditResource.clickEditWork();
       UnsavedChangesModal.waitLoading();
