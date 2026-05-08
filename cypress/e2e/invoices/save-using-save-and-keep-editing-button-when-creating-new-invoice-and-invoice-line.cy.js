@@ -51,6 +51,25 @@ describe('Invoices', () => {
     user: {},
   };
 
+  const buttonConditions = {
+    saveCloseEnabled: [
+      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      {
+        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        conditions: { disabled: false },
+      },
+      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+    ],
+    saveCloseDisabled: [
+      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      {
+        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        conditions: { disabled: true },
+      },
+      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+    ],
+  };
+
   before('Create test data', () => {
     cy.getAdminToken();
 
@@ -124,27 +143,19 @@ describe('Invoices', () => {
       // Step 1: Check the initial state of the buttons on invoice edit form
       Invoices.openNewInvoiceForm();
       InvoiceEditForm.waitLoading();
-      InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 2: Check buttons state after filling one field
       InvoiceEditForm.fillInvoiceFields({
         invoiceDate: testData.invoice.invoiceDate,
       });
-      InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: false },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
-      ]);
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseEnabled);
+
+      // Step 2: Check buttons state after filling one field
+      InvoiceEditForm.fillInvoiceFields({
+        invoiceDate: testData.invoice.invoiceDate,
+      });
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseEnabled);
 
       // Step 3: Check Required fields after clicking "Save & keep editing" button
       InvoiceEditForm.clickSaveAndKeepEditingButton({ isSaved: false });
@@ -163,38 +174,17 @@ describe('Invoices', () => {
         paymentMethod: testData.invoice.paymentMethod,
       });
       InvoiceEditForm.clickSaveAndKeepEditingButton();
-      InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 5: Check buttons state after making changes
       InvoiceEditForm.fillInvoiceFields({
         vendorInvoiceNo: testData.invoice.vendorInvoiceNumberSecond,
       });
-      InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: false },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
-      ]);
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseEnabled);
 
       // Step 6: Check buttons state after clicking "Save & keep editing" button
       InvoiceEditForm.clickSaveAndKeepEditingButton();
-      InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 7: Make changes and Close without saving, check that changes are not saved, save invoice id for clean up
       InvoiceEditForm.fillInvoiceFields({
@@ -213,27 +203,13 @@ describe('Invoices', () => {
 
       // Step 8: Check the initial state of the buttons on invoice line edit form
       InvoiceView.openInvoiceLineEditForm();
-      InvoiceLineEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceLineEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 9: Check buttons state after filling one field
       InvoiceLineEditForm.fillInvoiceLineFields({
         description: testData.invoiceLine.descriptionFirst,
       });
-      InvoiceLineEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: false },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
-      ]);
+      InvoiceLineEditForm.checkButtonsConditions(buttonConditions.saveCloseEnabled);
 
       // Step 10: Check Required fields after clicking "Save & keep editing" button
       InvoiceLineEditForm.clickSaveAndKeepEditingButton({ isSaved: false });
@@ -248,38 +224,17 @@ describe('Invoices', () => {
         subTotal: testData.invoiceLine.subTotal,
       });
       InvoiceLineEditForm.clickSaveAndKeepEditingButton();
-      InvoiceLineEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceLineEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 12: Check buttons state after making changes
       InvoiceLineEditForm.fillInvoiceLineFields({
         description: testData.invoiceLine.descriptionSecond,
       });
-      InvoiceLineEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: false },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
-      ]);
+      InvoiceLineEditForm.checkButtonsConditions(buttonConditions.saveCloseEnabled);
 
       // Step 13: Check buttons state after clicking "Save & keep editing" button
       InvoiceLineEditForm.clickSaveAndKeepEditingButton();
-      InvoiceLineEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        {
-          label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: true },
-        },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
-      ]);
+      InvoiceLineEditForm.checkButtonsConditions(buttonConditions.saveCloseDisabled);
 
       // Step 14: Make changes and Close without saving, check that changes are not saved
       InvoiceLineEditForm.fillInvoiceLineFields({
