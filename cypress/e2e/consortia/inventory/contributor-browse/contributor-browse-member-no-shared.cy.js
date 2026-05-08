@@ -43,7 +43,9 @@ describe('Inventory', () => {
           .then(() => {
             cy.resetTenant();
             BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
-              BrowseContributors.getContributorTypes().then((contributorTypes) => {
+              BrowseContributors.getContributorTypes({
+                searchParams: { query: 'source<>local', limit: 1 },
+              }).then((contributorTypes) => {
                 InventoryInstance.createInstanceViaApi({
                   instanceTitle: testData.sharedInstanceTitle,
                 }).then(({ instanceData }) => {
@@ -151,15 +153,12 @@ describe('Inventory', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.resetTenant();
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.resetTenant();
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();

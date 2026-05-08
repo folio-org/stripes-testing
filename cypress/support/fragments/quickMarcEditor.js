@@ -1023,12 +1023,12 @@ export default {
   },
 
   closeEditorPane() {
-    cy.do(PaneHeader().find(closeButton).click());
+    cy.do(rootSection.find(PaneHeader()).find(closeButton).click());
     cy.expect([rootSection.absent(), instanceDetailsPane.exists()]);
   },
 
   closeAuthorityEditorPane() {
-    cy.do(PaneHeader().find(closeButton).click());
+    cy.do(rootSection.find(PaneHeader()).find(closeButton).click());
     cy.expect([rootSection.absent(), viewMarcSection.exists()]);
   },
 

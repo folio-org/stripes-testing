@@ -118,6 +118,8 @@ describe('Data Import', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405144');
+
         // create user A
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -253,6 +255,7 @@ describe('Data Import', () => {
           cy.login(users.userBProperties.username, users.userBProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
+            authRefresh: true,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);

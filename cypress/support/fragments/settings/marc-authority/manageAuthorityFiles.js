@@ -255,7 +255,7 @@ const defaultFolioAuthorityFiles = [
   },
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.THESAURUS_FOR_GRAPHIC_MATERIALS,
-    prefix: or('lcgtm', 'lcgtm,tgm'),
+    prefix: or('lcgtm', 'lcgtm,tgm', 'tgm,lcgtm'),
     startsWith: '',
     baseUrl: 'http://id.loc.gov/vocabulary/graphicMaterials/',
   },
