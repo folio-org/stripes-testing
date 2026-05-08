@@ -136,7 +136,7 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.clickContinueWithoutSaving();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.checkNewInstanceButtonEnabled();
-      // @@@ new fn: check instance list is empty
+      EditResource.checkNoInstances();
 
       // Create new instance
       EditResource.openNewInstanceFormViaNewInstanceButton();
@@ -214,12 +214,14 @@ describe('Citation: core work and instance editor features', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.uniqueInstanceTitle);
 
       // See work preview
-      // @@@ click on work title
-      // @@@ check preview for title in field
+      SearchAndFilter.openSearchResultPreviewByTitle(resourceData.uniqueWorkTitle);
+      SearchAndFilter.waitPreviewLoading();
+      SearchAndFilter.checkPreviewContains('Preferred Title for Work', resourceData.uniqueWorkTitle);
 
       // See instance preview
-      // @@@ click on instance title
-      // @@@ check preview for title in field
+      SearchAndFilter.openSearchResultPreviewByTitle(resourceData.uniqueInstanceTitle);
+      SearchAndFilter.waitPreviewLoading();
+      SearchAndFilter.checkPreviewContains('Main Title', resourceData.uniqueInstanceTitle);
     },
   );
 });

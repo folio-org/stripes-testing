@@ -355,6 +355,10 @@ export default {
     cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
   },
 
+  checkNoInstances() {
+    cy.xpath('//div[@class="no-instances"]').should('be.visible');
+  },
+
   checkPreviewSectionContains(section, value) {
     cy.xpath(
       `//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`,
