@@ -115,8 +115,8 @@ describe('Bulk-edit', () => {
 
         // Step 5: Verify sticky headers after scrolling - split columns into sets
         const firstSetOfColumnNames = columnNames.slice(0, 7);
-        const secondSetOfColumnNames = columnNames.slice(7, 18);
-        const thirdSetOfColumnNames = columnNames.slice(18);
+        const secondSetOfColumnNames = columnNames.slice(7, 16);
+        const thirdSetOfColumnNames = columnNames.slice(16);
 
         firstSetOfColumnNames.forEach((columnName) => {
           BulkEditSearchPane.verifyResultColumnTitles(columnName);
