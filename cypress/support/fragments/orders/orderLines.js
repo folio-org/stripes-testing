@@ -1276,7 +1276,14 @@ export default {
     if (amountType) {
       cy.do([Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click()]);
     }
-    cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
+    // Use cy.get().type() to allow entering decimals; .fillIn() only works with integers
+    cy.get(`[name="fundDistribution[${indexOfPreviusFund}].value"]`).type(
+      '{selectall}{backspace}',
+      { delay: 50 },
+    );
+    cy.get(`[name="fundDistribution[${indexOfPreviusFund}].value"]`)
+      .type(value, { delay: 100 })
+      .blur();
   },
 
   addLocationToPOLWithoutSave({ index = 0, location, physicalQuantity, electronicQuantity } = {}) {
