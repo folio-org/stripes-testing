@@ -349,6 +349,20 @@ export default {
     cy.do(barcodeField.clear());
   },
 
+  clearUsername() {
+    cy.do(usernameField.clear());
+  },
+
+  verifyUsernameAlreadyExistsError() {
+    cy.expect(
+      usernameField.has({
+        error: 'This username already exists',
+        errorBorder: true,
+        errorIcon: true,
+      }),
+    );
+  },
+
   changeStatus(status) {
     cy.do(statusSelect.choose(status));
   },
