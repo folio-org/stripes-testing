@@ -1,149 +1,249 @@
-import permissions from '../../support/dictionary/permissions';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
+import getRandomPostfix from '../../support/utils/stringTools';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import OrderLineEditForm from '../../support/fragments/orders/orderLineEditForm';
+import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
+import Organizations from '../../support/fragments/organizations/organizations';
+import Permissions from '../../support/dictionary/permissions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
+  ORDER_SEARCH_OPTIONS,
+  ORDER_TYPES,
+} from '../../support/constants';
 
 describe('Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  const testData = {
+    fiscalYear: {},
+    ledger: {},
+    funds: {
+      fundA: {},
+      fundB: {},
+      fundC: {},
+    },
+    budgets: {
+      fundA: {},
+      fundB: {},
+      fundC: {},
+    },
+    organization: {},
+    order: {},
+    user: {},
+    location: {},
   };
-  const thirdFund = {
-    name: `autotest_fund3_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-  };
-  const secondBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-  };
-  const thirdBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-  };
-  let user;
-  let orderNumber;
-  let servicePointId;
-  let location;
 
-  before(() => {
+  const polData = {
+    itemDetails: {
+      title: `autotest_pol_title_${getRandomPostfix()}`,
+    },
+    poLineDetails: {
+      acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE,
+      orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
+      materialType: MATERIAL_TYPE_NAMES.BOOK,
+    },
+    costDetails: {
+      electronicUnitPrice: '90',
+      quantityElectronic: '1',
+    },
+  };
+
+  const createFundWithBudget = (ledgerId, fiscalYearId) => {
+    const fund = {
+      ...Funds.getDefaultFund(),
+      ledgerId,
+    };
+
+    return Funds.createViaApi(fund).then((fundResponse) => {
+      const budget = {
+        ...Budgets.getDefaultBudget(),
+        fiscalYearId,
+        fundId: fundResponse.fund.id,
+        allocated: 100,
+      };
+
+      return Budgets.createViaApi(budget).then((budgetResponse) => {
+        return { fund: fundResponse.fund, budget: budgetResponse };
+      });
+    });
+  };
+
+  const createFinanceData = () => {
+    return FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYearResponse) => {
+      testData.fiscalYear = fiscalYearResponse;
+
+      const ledger = {
+        ...Ledgers.defaultUiLedger,
+        fiscalYearOneId: fiscalYearResponse.id,
+      };
+
+      return Ledgers.createViaApi(ledger).then((ledgerResponse) => {
+        testData.ledger = ledgerResponse;
+
+        return createFundWithBudget(ledgerResponse.id, fiscalYearResponse.id).then((fundAData) => {
+          testData.funds.fundA = fundAData.fund;
+          testData.budgets.fundA = fundAData.budget;
+
+          return createFundWithBudget(ledgerResponse.id, fiscalYearResponse.id).then(
+            (fundBData) => {
+              testData.funds.fundB = fundBData.fund;
+              testData.budgets.fundB = fundBData.budget;
+
+              return createFundWithBudget(ledgerResponse.id, fiscalYearResponse.id).then(
+                (fundCData) => {
+                  testData.funds.fundC = fundCData.fund;
+                  testData.budgets.fundC = fundCData.budget;
+                },
+              );
+            },
+          );
+        });
+      });
+    });
+  };
+
+  const createOrderData = () => {
+    return Organizations.createOrganizationViaApi({
+      ...NewOrganization.defaultUiOrganizations,
+      isVendor: true,
+    }).then((organizationResponse) => {
+      testData.organization = {
+        id: organizationResponse,
+      };
+
+      const order = {
+        ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+        orderType: ORDER_TYPES.ONGOING,
+        ongoing: { isSubscription: false, manualRenewal: false },
+        approved: true,
+        reEncumber: true,
+      };
+
+      return Orders.createOrderViaApi(order).then((orderResponse) => {
+        testData.order = orderResponse;
+
+        return ServicePoints.getViaApi().then((servicePoint) => {
+          return NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoint[0].id)).then(
+            (locationResponse) => {
+              testData.location = locationResponse;
+            },
+          );
+        });
+      });
+    });
+  };
+
+  before('Create test data', () => {
     cy.getAdminToken();
+    return createFinanceData().then(() => {
+      return createOrderData().then(() => {
+        cy.createTempUser([Permissions.uiOrdersEdit.gui, Permissions.uiOrdersCreate.gui]).then(
+          (userProperties) => {
+            testData.user = userProperties;
 
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-      secondBudget.fiscalYearId = firstFiscalYearResponse.id;
-      thirdBudget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
-        thirdFund.ledgerId = defaultLedger.id;
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-          firstBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(firstBudget);
-        });
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-          secondBudget.fundId = secondFundResponse.fund.id;
-          Budgets.createViaApi(secondBudget);
-        });
-        Funds.createViaApi(thirdFund).then((thirdFundResponse) => {
-          thirdFund.id = thirdFundResponse.fund.id;
-          thirdBudget.fundId = thirdFundResponse.fund.id;
-          Budgets.createViaApi(thirdBudget);
-        });
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.ordersPath,
+              waiter: Orders.waitLoading,
+            });
+          },
+        );
       });
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      defaultOrder.vendor = organization.id;
-
-      Orders.createOrderViaApi(defaultOrder).then((orderResponse) => {
-        defaultOrder.id = orderResponse.id;
-        orderNumber = orderResponse.poNumber;
-      });
-    });
-
-    cy.createTempUser([permissions.uiOrdersEdit.gui, permissions.uiOrdersCreate.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-      },
-    );
   });
 
   after(() => {
-    cy.getAdminToken();
-    Budgets.deleteViaApi(firstBudget.id);
-    Funds.deleteFundViaApi(defaultFund.id);
-    Budgets.deleteViaApi(secondBudget.id);
-    Funds.deleteFundViaApi(secondFund.id);
-    Budgets.deleteViaApi(thirdBudget.id);
-    Funds.deleteFundViaApi(thirdFund.id);
-    Users.deleteViaApi(user.userId);
+    cy.getAdminToken().then(() => {
+      Orders.deleteOrderViaApi(testData.order.id);
+      Object.values(testData.budgets).forEach((budget) => Budgets.deleteViaApi(budget.id));
+      Object.values(testData.funds).forEach((fund) => Funds.deleteFundViaApi(fund.id));
+      Ledgers.deleteLedgerViaApi(testData.ledger.id);
+      FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
+      Users.deleteViaApi(testData.user.userId);
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+    });
   });
 
   it(
     'C359009 Correct validation of total "Fund distribution" amount (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C359009'] },
     () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
+      // Step 1: Search for the order
+      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order.poNumber);
+      Orders.selectFromResultsList(testData.order.poNumber);
+
+      // Step 2: Click "Add PO line" button
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoForElectronicWithThreeFunds(
-        defaultFund,
-        '90',
-        '1',
-        '90',
-        location.name,
-      );
+
+      // Step 3: Fill in order line fields
+      OrderLineEditForm.fillOrderLineFields(polData);
+
+      // Step 5: Select Fund A, fill in distribution value, check remaining amount to be distributed
+      OrderLines.addFundToPOLWithoutSave(0, testData.funds.fundA, '33.33');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed('60.00');
+
+      // Step 6: Select Fund B, fill in distribution value, check remaining amount to be distributed
+      OrderLines.addFundToPOLWithoutSave(1, testData.funds.fundB, '33.33');
+      OrderLineEditForm.checkPercentageAmountIsEqualTo100();
+      OrderLineEditForm.checkRemainingAmountToBeDistributed('30.01');
+
+      // Step 7-8: Select Fund C, fill in distribution value, check remaining amount to be distributed
+      OrderLines.addFundToPOLWithoutSave(2, testData.funds.fundC, '30.33');
+      OrderLineEditForm.checkPercentageAmountIsEqualTo100();
+      OrderLineEditForm.checkRemainingAmountToBeDistributed('2.71');
+
+      // Step 9-10: Add location and quantity
+      OrderLineEditForm.clickAddLocationButton();
+      OrderLines.addLocationToPOLWithoutSave({
+        location: testData.location,
+        electronicQuantity: '1',
+      });
+
+      // Step 11: Attempt to save PO line and check warnings
       OrderLines.saveOrderLine();
-      OrderLines.backToEditingOrder();
+      OrderLineEditForm.checkPercentageAmountIsEqualTo100();
+      OrderLineEditForm.checkRemainingAmountToBeDistributed('2.71');
+
+      // Step 12-13: Adjust distribution value for Fund C, save PO line, verify warnings and fund distribution table
+      OrderLineEditForm.setFundDistributionValue('33.34', 2);
+      OrderLineEditForm.checkPercentageAmountIsEqualTo100(false);
+      OrderLineEditForm.checkRemainingAmountToBeDistributed('0.00');
+      OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
+      OrderLineDetails.checkFundDistibutionTableContent([
+        {
+          name: testData.funds.fundA.name,
+          expenseClass: '',
+          value: '33.33%',
+          amount: '$29.99',
+          initialEncumbrance: '',
+          currentEncumbrance: '',
+        },
+        {
+          name: testData.funds.fundB.name,
+          expenseClass: '',
+          value: '33.33%',
+          amount: '$30.00',
+          initialEncumbrance: '',
+          currentEncumbrance: '',
+        },
+        {
+          name: testData.funds.fundC.name,
+          expenseClass: '',
+          value: '33.34%',
+          amount: '$30.01',
+          initialEncumbrance: '',
+          currentEncumbrance: '',
+        },
+      ]);
     },
   );
 });

@@ -25,6 +25,7 @@ export default {
         .find(HTML(including(barcode)))
         .exists(),
     );
+    cy.wait(2000);
   },
 
   checkContent: (
