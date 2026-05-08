@@ -1,4 +1,17 @@
-import { FUND_DISTRIBUTION_TYPES, INVALID_REFERENCE_MESSAGE } from '../constants';
+import { FUND_DISTRIBUTION_TYPES } from '../constants';
+
+export const formatDateTime = (locale, date) => {
+  if (!date) return '';
+
+  return new Intl.DateTimeFormat(locale.locale, {
+    timeZone: locale.timezone,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(new Date(date));
+};
 
 export function getMoneyMultiplier(currency) {
   const numberFormat = new Intl.NumberFormat(undefined, { style: 'currency', currency });
@@ -20,36 +33,4 @@ export const calculateFundAmount = (fundDistr, totalAmount, currency) => {
   return Math.round(amount * multiplier) / multiplier;
 };
 
-export const getOrderLineExportLocationFieldValue = (
-  orderLine,
-  locationMap = new Map(),
-  holdingMap = new Map(),
-  invalidReferenceLabel = INVALID_REFERENCE_MESSAGE,
-) => orderLine.locations
-  ?.map((l) => {
-    const location = l.holdingId
-      ? locationMap.get(holdingMap.get(l.holdingId)?.permanentLocationId)
-      : locationMap.get(l.locationId);
-
-    const locationCode = location?.code ?? invalidReferenceLabel;
-
-    return `"${locationCode}""${l?.quantityPhysical || 0}""${l?.quantityElectronic || 0}"`;
-  })
-  .join(' | ');
-
-export const getOrderLineExportFundDistributionFieldValue = (
-  orderLine,
-  expenseClassMap = new Map(),
-  invalidReferenceLabel = INVALID_REFERENCE_MESSAGE,
-) => orderLine.fundDistribution
-  ?.map((fund) => {
-    const expenseClassName = fund?.expenseClassId
-      ? (expenseClassMap.get(fund?.expenseClassId)?.name ?? invalidReferenceLabel)
-      : '';
-
-    return `"${fund.code || ''}""${expenseClassName}"
-      "${fund.value || '0'}${fund.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE ? '%' : ''}"
-      "${calculateFundAmount(fund, orderLine.cost?.poLineEstimatedPrice || 0, orderLine.cost?.currency || 0)}"`;
-  })
-  .join(' | ')
-  .replaceAll(/\n\s+/g, '');
+export const chunk = (array, size) => array.reduce((acc, _, i) => (i % size ? acc : [...acc, array.slice(i, i + size)]), []);

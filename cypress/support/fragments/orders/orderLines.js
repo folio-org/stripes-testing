@@ -2182,7 +2182,7 @@ export default {
 
       Object.entries(row).forEach(([key, value]) => {
         const cellValue = fileRowData[key];
-        expect(cellValue).to.equal(value);
+        expect(cellValue).to.equal(value === undefined ? '' : value);
       });
     };
 
@@ -2191,7 +2191,7 @@ export default {
         throw new Error(`No CSV files found in ${downloadsFolder}`);
       }
 
-      const filePath = `${downloadsFolder}/${fileName || path.basename(files[0])}`;
+      const filePath = `${downloadsFolder}/${fileName || path.basename(files.toSorted().at(-1))}`;
 
       cy.readFile(filePath).then((fileContent) => {
         cy.task('convertCsvToJson', fileContent).then((jsonData) => {
