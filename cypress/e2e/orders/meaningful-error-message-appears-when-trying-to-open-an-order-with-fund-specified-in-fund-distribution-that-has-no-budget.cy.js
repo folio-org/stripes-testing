@@ -1,26 +1,27 @@
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+  POLINE_DETAILS_FIELDS,
+  RECEIPT_STATUS_VIEW,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import { OrderLineDetails } from '../../support/fragments/orders';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
-  POLINE_DETAILS_FIELDS,
-  ORDER_LINE_PAYMENT_STATUS,
-  RECEIPT_STATUS_VIEW,
-} from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { OrderLineDetails } from '../../support/fragments/orders';
 
 describe('Orders', () => {
   const testData = {
@@ -62,7 +63,7 @@ describe('Orders', () => {
       ],
       acquisitionMethod: acquisitionMethodId,
       physical: {
-        createInventory: 'Instance, Holding, Item',
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
         materialType: materialTypeId,
         materialSupplier: testData.organization.id,
         volumes: [],

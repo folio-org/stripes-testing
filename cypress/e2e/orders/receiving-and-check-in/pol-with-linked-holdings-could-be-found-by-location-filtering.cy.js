@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, POL_CREATE_INVENTORY_SETTINGS } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
@@ -86,7 +86,7 @@ describe('Orders', () => {
               },
               orderFormat: 'Other',
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: testData.materialTypeId,
               },
               locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
@@ -103,7 +103,7 @@ describe('Orders', () => {
               },
               orderFormat: 'Other',
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: testData.materialTypeId,
               },
               locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
@@ -120,7 +120,7 @@ describe('Orders', () => {
               },
               orderFormat: 'Other',
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: testData.materialTypeId,
               },
               locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
@@ -137,7 +137,7 @@ describe('Orders', () => {
               },
               orderFormat: 'Other',
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: testData.materialTypeId,
               },
               locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
