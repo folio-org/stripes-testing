@@ -35,6 +35,13 @@ describe('Citation: core work and instance editor features', () => {
     uniqueInstanceTitle: testData.uniqueInstanceTitleSecond,
   };
 
+  const fieldData = {
+    booksProfile: 'Books',
+    titleSection: 'Title Information',
+    workTitle: 'Preferred Work for Title',
+    instanceTitle: 'Main Title',
+  };
+
   before('Create test data', () => {
     cy.getAdminToken();
 
@@ -83,7 +90,7 @@ describe('Citation: core work and instance editor features', () => {
       // New work actions with no input
       Marigold.openNewResourceForm();
       WorkProfileModal.waitLoading();
-      WorkProfileModal.checkOptionSelected('Books');
+      WorkProfileModal.checkOptionSelected(fieldData.booksProfile);
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       EditResource.checkSaveButtonsDisabled();
@@ -92,7 +99,7 @@ describe('Citation: core work and instance editor features', () => {
       EditResource.checkInstanceActionsHidden();
 
       // New work actions with unsaved input
-      EditResource.setValueForTheField(testData.uniqueWorkTitleFirst, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitleFirst, fieldData.workTitle);
       EditResource.checkSaveButtonsEnabled();
 
       // Saved new work
@@ -121,14 +128,14 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.checkButtonsEnabled();
       UnsavedChangesModal.clickDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, 'Main Title');
+      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, fieldData.instanceTitle);
 
       // Unsaved changes modal, dismissed indirectly
       EditResource.clickEditWork();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickOverlayToDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, 'Main Title');
+      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, fieldData.instanceTitle);
       
       // Unsaved changes modal, continue without saving
       EditResource.clickEditWork();
@@ -149,42 +156,42 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.clickSaveAndContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField('Title Information', 'Main Title', testData.uniqueInstanceTitleFirst);
+      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.instanceTitle, testData.uniqueInstanceTitleFirst);
       EditResource.checkSaveButtonsDisabled();
       EditResource.checkCloseAndCancelEnabled();
 
       // Unsaved work changes, dismiss directly
-      EditResource.setValueForTheField(testData.uniqueWorkTitleSecond, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitleSecond, fieldData.workTitle);
       EditResource.editInstanceFormViaActions();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.checkButtonsEnabled();
       UnsavedChangesModal.clickDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkTextValueOnField(testData.uniqueWorkTitleSecond, 'Preferred Title for Work');
+      EditResource.checkTextValueOnField(testData.uniqueWorkTitleSecond, fieldData.workTitle);
 
       // Unsaved work changes, dismiss indirectly
       EditResource.editInstanceFormViaActions();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickOverlayToDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkTextValueOnField(testData.uniqueWorkTitleSecond, 'Preferred Title for Work');
+      EditResource.checkTextValueOnField(testData.uniqueWorkTitleSecond, fieldData.workTitle);
 
       // Unsaved work changes, continue without saving
       EditResource.editInstanceFormViaActions();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickContinueWithoutSaving();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
-      EditResource.checkPreviewSectionContainsField('Title Information', 'Preferred Title for Work', testData.uniqueWorkTitleFirst);
+      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.workTitle, testData.uniqueWorkTitleFirst);
 
       // Unsaved work changes saved through modal
       EditResource.clickEditWork();
-      EditResource.setValueForTheField(testData.uniqueWorkTitleSecond, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitleSecond, fieldData.workTitle);
       EditResource.editInstanceFormViaActions();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickSaveAndContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField('Title Information', 'Preferred Title for Work', testData.uniqueWorkTitleSecond);
+      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.workTitle, testData.uniqueWorkTitleSecond);
 
       // Back to work and then back to instance
       EditResource.clickEditWork();
@@ -195,13 +202,13 @@ describe('Citation: core work and instance editor features', () => {
       // Update work title one final time
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.setValueForTheField(testData.uniqueWorkTitleThird, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitleThird, fieldData.workTitle);
       EditResource.saveAndKeepEditing();
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
 
       // Update instance title one final time
-      EditResource.setValueForTheField(testData.uniqueInstanceTitleSecond, 'Main Title');
+      EditResource.setValueForTheField(testData.uniqueInstanceTitleSecond, fieldData.instanceTitle);
       EditResource.saveAndKeepEditing();
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
@@ -216,12 +223,12 @@ describe('Citation: core work and instance editor features', () => {
       // See work preview
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.uniqueWorkTitle);
       SearchAndFilter.waitPreviewLoading();
-      SearchAndFilter.checkPreviewContains('Preferred Title for Work', resourceData.uniqueWorkTitle);
+      SearchAndFilter.checkPreviewContains(fieldData.workTitle, resourceData.uniqueWorkTitle);
 
       // See instance preview
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.uniqueInstanceTitle);
       SearchAndFilter.waitPreviewLoading();
-      SearchAndFilter.checkPreviewContains('Main Title', resourceData.uniqueInstanceTitle);
+      SearchAndFilter.checkPreviewContains(fieldData.instanceTitle, resourceData.uniqueInstanceTitle);
     },
   );
 });
