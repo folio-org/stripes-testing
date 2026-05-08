@@ -236,4 +236,16 @@ describe('fse-edge', () => {
       });
     },
   );
+
+  it(
+    `TC196413 - edge-orders mosaic integration verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-orders', 'app-edge-complete'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeOrdersMosaicIntegration().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('status', 'SUCCESS');
+      });
+    },
+  );
 });

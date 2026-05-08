@@ -81,15 +81,8 @@ describe('Check out', () => {
     cy.createTempUser([permissions.checkoutCirculatingItems.gui])
       .then((userProperties) => {
         user = userProperties;
+        userBarcode = userProperties.barcode;
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
-      })
-      .then(() => {
-        cy.getUsers({
-          limit: 1,
-          query: `username=${user.username}`,
-        }).then((users) => {
-          userBarcode = users[0].barcode;
-        });
       });
 
     // Fetching the current "Other settings" values.
@@ -101,27 +94,28 @@ describe('Check out', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
-    cy.wrap(
-      testInstanceIds.holdingIds.forEach((holdingsId) => {
-        cy.wrap(
-          holdingsId.itemIds.forEach((itemId) => {
-            cy.deleteItemViaApi(itemId);
-          }),
-        ).then(() => {
-          cy.deleteHoldingRecordViaApi(holdingsId.id);
-        });
-      }),
-    ).then(() => {
-      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+    cy.getAdminToken().then(() => {
+      cy.wrap(
+        testInstanceIds.holdingIds.forEach((holdingsId) => {
+          cy.wrap(
+            holdingsId.itemIds.forEach((itemId) => {
+              cy.deleteItemViaApi(itemId);
+            }),
+          ).then(() => {
+            cy.deleteHoldingRecordViaApi(holdingsId.id);
+          });
+        }),
+      ).then(() => {
+        InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+      });
+      Users.deleteViaApi(user.userId);
+      // Fetching the current "Other settings" values.
+      // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
+      // Verifying that it was enabled earlier.
+      // Ensuring that "ID" is not the only enabled value, since at least one value is required.
+      // Disabling "ID" if appropriate.
+      OtherSettings.disablePrefPatronIdentifierIfNeeded(ID, shouldRemoveBarcodeAfterTest);
     });
-    Users.deleteViaApi(user.userId);
-    // Fetching the current "Other settings" values.
-    // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
-    // Verifying that it was enabled earlier.
-    // Ensuring that "ID" is not the only enabled value, since at least one value is required.
-    // Disabling "ID" if appropriate.
-    OtherSettings.disablePrefPatronIdentifierIfNeeded(ID, shouldRemoveBarcodeAfterTest);
   });
 
   const fullCheckOut = ({
