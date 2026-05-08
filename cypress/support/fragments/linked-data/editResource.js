@@ -19,7 +19,7 @@ const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
 const searchMarcAuthInputField = '#id-search-textarea';
-const newInstanceButton = "//button[@data-testid='new-instance']";
+const newInstanceButton = Button({ dataTestID: 'new-instance' });
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
@@ -250,8 +250,8 @@ export default {
   },
 
   openNewInstanceFormViaNewInstanceButton() {
-    cy.xpath(newInstanceButton).should('be.visible');
-    cy.xpath(newInstanceButton).click();
+    cy.expect(newInstanceButton.exists());
+    cy.do(newInstanceButton.click());
   },
 
   openInventoryViewViaActions() {
@@ -527,6 +527,18 @@ export default {
 
   checkEditWorkButtonEnabled() {
     cy.expect(editWorkButton.has({ disabled: false }));
+  },
+
+  checkNewInstanceButtonEnabled() {
+    cy.expect(newInstanceButton.has({ disabled: false}));
+  },
+
+  checkNewInstanceButtonDisabled() {
+    cy.expect(newInstanceButton.has({ disabled: true}));
+  },
+
+  checkInstanceActionsHidden() {
+    cy.xpath(instanceActionsButton).should('not.exist');
   },
 
   toggleSectionMarcTooltip(section) {
