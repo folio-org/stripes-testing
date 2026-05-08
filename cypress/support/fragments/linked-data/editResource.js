@@ -361,6 +361,28 @@ export default {
     ).should('exist');
   },
 
+  checkPreviewSectionContainsLink(section, field, text, link) {
+    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+      .should('exist')
+      .filter((_secIdx, sectionBlock) => {
+        const $sectionBlock = Cypress.$(sectionBlock);
+        const $fieldBlock = $sectionBlock
+          .find('.value-heading')
+          .filter((_fldIdx, el) => Cypress.$(el).text() === field);
+
+        if (!$fieldBlock.length) {
+          return false;
+        }
+
+        const $linkEl = $fieldBlock.next().find('.preview-value-link');
+
+        return $linkEl.text() === text
+          && $linkEl.attr('target') === 'blank'
+          && $linkEl.attr('href') === link;
+      })
+      .should('have.length.at.least', 1);
+  },
+
   checkPreviewSectionContainsField(section, field, value) {
     cy.xpath(
       `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
@@ -444,7 +466,9 @@ export default {
   },
 
   checkTextValueOnDisabledField(textValue, section) {
-    cy.xpath(`//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"]`)
+    cy.xpath(
+      `(//div[text()="${section}"]/../..//input[@class="input" and @value="${textValue}"])[1]`,
+    )
       .scrollIntoView()
       .should('be.visible')
       .should('be.disabled');
