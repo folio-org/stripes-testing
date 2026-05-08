@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe.skip('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const bigFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;

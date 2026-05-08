@@ -45,7 +45,7 @@ describe('Inventory', () => {
 
     it(
       'C9214 In Accordion Descriptive Data --> Test assigning Nature of content (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C9214', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C9214'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

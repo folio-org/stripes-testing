@@ -47,7 +47,7 @@ describe('Inventory', () => {
 
     it(
       'C602 In Accordion Administrative Data --> Instance status term --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C602', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C602'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
@@ -65,7 +65,7 @@ describe('Inventory', () => {
 
     it(
       'C604 In Accordion Administrative Data --> Go to the Statistical code --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C604', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C604'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
