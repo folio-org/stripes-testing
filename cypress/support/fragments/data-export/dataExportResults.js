@@ -42,6 +42,7 @@ export default {
     jobId,
     userName = null,
     jobType = 'Default instances',
+    completedDateUTC = null,
   ) {
     const row = ListRow({ content: including(resultFileName) });
     const resultRow = {
@@ -103,7 +104,12 @@ export default {
     cy.then(() => {
       expect(actualDate).to.match(dateString);
       const dateWithUTC = Date.parse(new Date(actualDate + ' UTC'));
-      DateTools.verifyDate(dateWithUTC, 180000);
+      if (completedDateUTC !== null) {
+        // UI displays in tenant timezone; compare against API's UTC timestamp with 24h tolerance
+        expect(dateWithUTC).to.be.closeTo(completedDateUTC, 86400000);
+      } else {
+        DateTools.verifyDate(dateWithUTC, 180000);
+      }
     });
   },
 
