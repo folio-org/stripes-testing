@@ -973,10 +973,11 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
 
-  deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
+  deleteOrganizationViaApi: (organizationId, { failOnStatusCode = false } = {}) => cy.okapiRequest({
     method: 'DELETE',
     path: `organizations/organizations/${organizationId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   addDonorInfoViaApi: (organizationId, requestData) => cy.okapiRequest({

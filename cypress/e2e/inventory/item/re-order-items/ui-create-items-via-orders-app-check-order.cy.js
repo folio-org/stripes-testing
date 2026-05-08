@@ -1,6 +1,6 @@
 import {
+  ORDER_FORMAT_VALUES,
   ORDER_STATUSES,
-  ORDER_FORMAT_NAMES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
@@ -59,7 +59,7 @@ describe('Inventory', () => {
                       listUnitPrice: 1,
                       quantityPhysical: 4,
                     },
-                    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+                    orderFormat: ORDER_FORMAT_VALUES.PHYSICAL_RESOURCE,
                     checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.SYNCHRONIZED],
                     physical: {
                       createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,

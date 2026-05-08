@@ -9,7 +9,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
@@ -19,7 +20,9 @@ import {
 
 let user;
 let instance;
+let itemNoteTypeIdWithBrackets;
 let itemHRIDsFileName;
+const noteTypeWithBrackets = `Last Check In Date note ${randomFourDigitNumber()} (Sierra)`;
 let fileNames;
 const notes = {
   administrative: 'C423588 Administrative\n note text',
@@ -62,6 +65,10 @@ const headerValues = [
   {
     header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
     value: notes.electronicBookplate,
+  },
+  {
+    header: noteTypeWithBrackets,
+    value: '',
   },
   {
     header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NOTE,
@@ -114,6 +121,11 @@ describe('Bulk-edit', () => {
         itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
         fileNames = BulkEditFiles.getAllDownloadedFileNames(itemHRIDsFileName);
         cy.clearLocalStorage();
+        cy.getAdminToken();
+
+        ItemNoteTypes.createItemNoteTypeViaApi(noteTypeWithBrackets).then((noteTypeId) => {
+          itemNoteTypeIdWithBrackets = noteTypeId;
+        });
         cy.createTempUser([
           permissions.bulkEditView.gui,
           permissions.bulkEditEdit.gui,
@@ -145,6 +157,7 @@ describe('Bulk-edit', () => {
 
       afterEach('delete test data', () => {
         cy.getAdminToken();
+        ItemNoteTypes.deleteItemNoteTypeViaApi(itemNoteTypeIdWithBrackets);
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
@@ -196,8 +209,11 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
 
-          // Step 8: Click "Select option" dropdown in "Options" column under "Bulk edits" accordion
+          // Step 8: Click `Select option` dropdown in `Options` column under `Bulk edits` accordion
           BulkEditActions.verifyGroupOptionsInSelectOptionsDropdown('item');
+          BulkEditActions.clickOptionsSelection();
+          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(noteTypeWithBrackets);
+          BulkEditActions.clickOptionsSelection();
 
           // Step 9: Select "Administrative note" option from "Select option" dropdown
           BulkEditActions.selectOption(ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE);
