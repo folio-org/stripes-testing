@@ -34,8 +34,8 @@ if (activeEnvironment && !environments[activeEnvironment]) {
 
 let cypressLocal = {};
 try {
-  // eslint-disable-next-line global-require
-  cypressLocal = require('./cypress.local');
+  // eslint-disable-next-line global-require, import/extensions
+  cypressLocal = require('./cypress.local.js');
 } catch (e) {
   // cypress.local.js is gitignored and optional
 }

@@ -51,8 +51,8 @@ beforeEach(() => {
 
 // cypress.local.js support hooks (gitignored, local-only)
 try {
-  // eslint-disable-next-line global-require
-  require('../../cypress.local').support?.();
+  // eslint-disable-next-line global-require, import/extensions
+  require('../../cypress.local.js').support?.();
 } catch (e) {
   // cypress.local.js is optional
 }
