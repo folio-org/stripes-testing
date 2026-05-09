@@ -334,6 +334,15 @@ export default {
     ).should('be.visible');
   },
 
+  checkDropdownContainsOptions(field, optionLabels) {
+    cy.xpath(
+      `//div[text()="${field}"]/../following-sibling::div//select/option`
+    ).then(($options) => {
+      const labels = [...$options].map(opt => opt.text);
+      expect(labels).to.include.members(optionLabels);
+    });
+  },
+
   checkSectionDropdownContainsOptions(section, field, optionLabels, repeatPosition = 1) {
     cy.xpath(
       `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`
@@ -486,6 +495,15 @@ export default {
   },
 
   checkDropdownTextValue(textValue, field) {
+    cy.xpath(`//div[text()="${field}"]/../following-sibling::div//select[@data-testid="dropdown-field"]`)
+      .filter((_selectIdx, selectBlock) => {
+        const opt = selectBlock.options[selectBlock.selectedIndex];
+        return opt && opt.text === textValue;
+      })
+      .should('have.length.at.least', 1);
+  },
+
+  checkSectionDropdownTextValue(textValue, field) {
     cy.xpath(`//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`)
       .filter((_selectIdx, selectBlock) => {
         const opt = selectBlock.options[selectBlock.selectedIndex];
