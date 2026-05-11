@@ -12,6 +12,7 @@ import './blocks';
 import './fees-fines';
 import './permissions';
 import './orders';
+import './mosaic';
 import './batch-groups';
 import './data-import';
 import './data-export';

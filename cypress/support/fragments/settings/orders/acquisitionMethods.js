@@ -30,10 +30,11 @@ export default {
     })
     .then((response) => response.body),
 
-  deleteAcquisitionMethodViaAPI: (id) => cy.okapiRequest({
+  deleteAcquisitionMethodViaAPI: (id, { failOnStatusCode } = {}) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/acquisition-methods/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   waitLoading: () => {

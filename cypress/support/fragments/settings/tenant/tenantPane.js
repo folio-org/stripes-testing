@@ -1,4 +1,4 @@
-import { Addresses, Localization } from './general';
+import { Addresses, Localization, PreferredPlugins } from './general';
 import { Campuses, Institutions, Libraries, Locations } from './location-setup';
 import { NavListItem, Pane } from '../../../../../interactors';
 
@@ -20,6 +20,7 @@ export const TENANTS = {
 const tenantSections = {
   [TENANTS.ADDRESSES]: Addresses,
   [TENANTS.LANGUAGE_AND_LOCALIZATION]: Localization,
+  [TENANTS.PREFERRED_PLUGINS]: PreferredPlugins,
   [TENANTS.INSTITUTIONS]: Institutions,
   [TENANTS.CAMPUSES]: Campuses,
   [TENANTS.LIBRARIES]: Libraries,
@@ -71,6 +72,13 @@ export default {
         cy.expect(NavListItem(item).absent());
       }
     });
+  },
+  verifyNavigationOption(option, exist = true) {
+    if (exist) {
+      cy.expect(NavListItem(option).exists());
+    } else {
+      cy.expect(NavListItem(option).absent());
+    }
   },
   verifyPageTitle(title) {
     cy.wait(1000);

@@ -124,10 +124,40 @@ describe('Eureka', () => {
             true,
           );
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
-          // TO DO: Replace `undefined` with `testData.capabilitiesForFirstApp.length` when UIROLES-166 is fixed
+          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[1], false);
+          AuthorizationRoles.clickSaveInModalAndCheckUnselectModal(
+            testData.originalApplications,
+            testData.capabilitiesForFirstApp.length + testData.capabilitiesForSecondApp.length,
+            2,
+          );
+          AuthorizationRoles.cancelAppUnselection();
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[0],
+            true,
+            false,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            false,
+          );
+
+          AuthorizationRoles.clickCancelInModal();
+          AuthorizationRoles.clickSelectApplication();
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[0],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.originalApplications[1],
+            true,
+            true,
+          );
+          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
           AuthorizationRoles.clickSaveInModalAndCheckUnselectModal(
             testData.originalApplications[0],
-            undefined,
+            testData.capabilitiesForFirstApp.length,
             1,
           );
           AuthorizationRoles.cancelAppUnselection();
@@ -144,10 +174,9 @@ describe('Eureka', () => {
 
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], true);
           AuthorizationRoles.selectApplicationInModal(testData.originalApplications[1], false);
-          // TO DO: Replace `undefined` with `testData.capabilitiesForSecondApp.length` when UIROLES-166 is fixed
           AuthorizationRoles.clickSaveInModalAndCheckUnselectModal(
             testData.originalApplications[1],
-            undefined,
+            testData.capabilitiesForSecondApp.length,
             1,
           );
           AuthorizationRoles.confirmAppUnselection();
