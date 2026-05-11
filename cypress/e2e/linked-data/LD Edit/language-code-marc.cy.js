@@ -1,5 +1,5 @@
 import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
-//import Permissions from '../../../support/dictionary/permissions';
+import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -83,11 +83,14 @@ describe('Citation: check language MARC codes', () => {
 
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-      //cy.assignPermissionsToExistingUser(user.userId, [Permissions.inventoryAll.gui]);
       cy.assignCapabilitiesToExistingUser(
         user.userId,
         MARIGOLD_CAPABILITIES,
-        MARIGOLD_CAPABILITY_SETS,
+        [
+          ...MARIGOLD_CAPABILITY_SETS,
+          CapabilitySets.uiInventoryInstanceView,
+          CapabilitySets.uiInventoryInstanceEdit,
+        ],
       );
     });
 
@@ -166,6 +169,7 @@ describe('Citation: check language MARC codes', () => {
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.workId = resourceId;
       });
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.openNewInstanceFormViaNewInstanceButton();
       InstanceProfileModal.waitLoading();
       InstanceProfileModal.selectDefaultOption();
@@ -186,11 +190,11 @@ describe('Citation: check language MARC codes', () => {
       // Review in inventory
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.waitContentLoading();
-      //InventorySearchAndFilter.bySource('LINKED_DATA');
+      InventorySearchAndFilter.bySource('LINKED_DATA');
       InventoryInstances.searchByTitle(resourceData.marigoldInstanceTitle);
       InventoryInstance.editInstance();
       InstanceRecordEdit.waitLoading();
-      //InstanceRecordEdit.verifyLanguage('English');
+      InstanceRecordEdit.verifyLanguage('English');
     },
   );
 });
