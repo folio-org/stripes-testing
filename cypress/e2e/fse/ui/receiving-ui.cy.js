@@ -7,7 +7,7 @@ describe('fse-receiving - UI (no data manipulation)', () => {
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
       path: TopMenu.receivingPath,
-      waiter: Receiving.waitLoading,
+      waiter: Receiving.verifyPageDisplayed,
     });
     cy.allure().logCommandSteps();
   });
@@ -16,7 +16,7 @@ describe('fse-receiving - UI (no data manipulation)', () => {
     `TC195378 - verify that receiving page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'receiving', 'TC195378'] },
     () => {
-      Receiving.waitLoading();
+      Receiving.verifySearchAndActionsAvailable();
     },
   );
 });
