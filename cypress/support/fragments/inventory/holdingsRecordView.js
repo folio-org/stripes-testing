@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -10,15 +10,13 @@ import {
   MultiColumnListRow,
   PaneHeader,
   Section,
-  matching,
-  or,
 } from '../../../../interactors';
+import { Affiliations } from '../../dictionary';
+import InteractorsTools from '../../utils/interactorsTools';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
-import InteractorsTools from '../../utils/interactorsTools';
-import { Affiliations } from '../../dictionary';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -33,6 +31,7 @@ const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
 const numberOfItemsKeyValue = KeyValue('Number of items');
+const versionHistoryButton = Button({ icon: 'clock' });
 
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists()]);
@@ -435,5 +434,9 @@ export default {
   copyHoldingsHrid() {
     cy.do(holdingHrIdKeyValue.find(Button({ icon: 'clipboard' })).click());
     InteractorsTools.checkCalloutMessage(matching(/Successfully copied ".*" to clipboard./));
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
   },
 };

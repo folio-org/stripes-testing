@@ -19,6 +19,7 @@ export const INVENTORY_SETTINGS_TABS = {
   INSTANCE_STATUS_TYPES: 'Instance status types',
   CONTRIBUTOR_TYPES: 'Contributor types',
   HOLDINGS_TYPES: 'Holdings types',
+  ITEM_NOTE_TYPES: 'Item note types',
 };
 
 export default {

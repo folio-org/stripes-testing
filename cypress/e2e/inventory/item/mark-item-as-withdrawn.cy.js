@@ -88,62 +88,58 @@ describe('Inventory', () => {
       });
     });
 
-    it(
-      'C10930 Mark items as withdrawn (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C10930'] },
-      () => {
-        markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-        markItemAsMissing.getItemsToMarkAsMissing
-          .call(markItemAsWithdrawn, createdItems)
-          .forEach((item) => {
-            markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-            markItemAsMissing.openItem(item.barcode);
-            markItemAsWithdrawn.checkActionButtonExists({
-              isExist: true,
-              button: markItemAsWithdrawn.withdrawItemButton,
-            });
-            markItemAsWithdrawn.clickMarkAsWithdrawn();
-            markItemAsWithdrawn.checkIsconfirmItemWithdrawnModalExist(
-              instanceData.instanceTitle,
-              item.barcode,
-              materialType,
-            );
-            markItemAsWithdrawn.cancelModal();
-            markItemAsMissing.verifyItemStatus(item.status.name);
-            markItemAsWithdrawn.clickMarkAsWithdrawn();
-            markItemAsWithdrawn.confirmModal();
-            markItemAsMissing.verifyItemStatus('Withdrawn');
-            markItemAsMissing.verifyItemStatusUpdatedDate();
-            ItemRecordView.closeDetailView();
+    it('C10930 Mark items as withdrawn (folijet)', { tags: ['smoke', 'folijet', 'C10930'] }, () => {
+      markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+      markItemAsMissing.getItemsToMarkAsMissing
+        .call(markItemAsWithdrawn, createdItems)
+        .forEach((item) => {
+          markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          markItemAsMissing.openItem(item.barcode);
+          markItemAsWithdrawn.checkActionButtonExists({
+            isExist: true,
+            button: markItemAsWithdrawn.withdrawItemButton,
           });
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
-        markItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
-          Requests.findCreatedRequest(item.barcode);
-          Requests.selectFirstRequest(instanceData.instanceTitle);
-          markItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+          markItemAsWithdrawn.clickMarkAsWithdrawn();
+          markItemAsWithdrawn.checkIsconfirmItemWithdrawnModalExist(
+            instanceData.instanceTitle,
+            item.barcode,
+            materialType,
+          );
+          markItemAsWithdrawn.cancelModal();
+          markItemAsMissing.verifyItemStatus(item.status.name);
+          markItemAsWithdrawn.clickMarkAsWithdrawn();
+          markItemAsWithdrawn.confirmModal();
+          markItemAsMissing.verifyItemStatus('Withdrawn');
+          markItemAsMissing.verifyItemStatusUpdatedDate();
+          ItemRecordView.closeDetailView();
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        markItemAsMissing.getItemsNotToMarkAsMissing
-          .call(markItemAsWithdrawn, createdItems)
-          .forEach((item) => {
-            markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-            markItemAsMissing.openItem(item.barcode);
-            markItemAsWithdrawn.checkActionButtonExists({
-              isExist: false,
-              button: markItemAsWithdrawn.withdrawItemButton,
-            });
-            ItemRecordView.closeDetailView();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      markItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
+        Requests.findCreatedRequest(item.barcode);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        markItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+      });
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      markItemAsMissing.getItemsNotToMarkAsMissing
+        .call(markItemAsWithdrawn, createdItems)
+        .forEach((item) => {
+          markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          markItemAsMissing.openItem(item.barcode);
+          markItemAsWithdrawn.checkActionButtonExists({
+            isExist: false,
+            button: markItemAsWithdrawn.withdrawItemButton,
           });
-        markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
-        markItemAsWithdrawn.checkActionButtonExists({
-          isExist: false,
-          button: markItemAsWithdrawn.newRequestButton,
+          ItemRecordView.closeDetailView();
         });
-        ItemRecordView.closeDetailView();
-      },
-    );
+      markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+      markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
+      markItemAsWithdrawn.checkActionButtonExists({
+        isExist: false,
+        button: markItemAsWithdrawn.newRequestButton,
+      });
+      ItemRecordView.closeDetailView();
+    });
   });
 });

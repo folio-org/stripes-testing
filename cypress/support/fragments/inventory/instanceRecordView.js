@@ -992,6 +992,14 @@ export default {
     ]);
   },
 
+  checkButtonsStateWhenVersionHistoryPaneIsOpen() {
+    cy.expect([
+      rootSection.find(actionsButton).absent(),
+      rootSection.find(versionHistoryButton).has({ disabled: true }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: true }),
+    ]);
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
   },
@@ -1167,5 +1175,18 @@ export default {
   verifyMemberHoldingsAccordionExpanded(memberName, isOpen = true) {
     cy.wait(2000);
     cy.expect(rootSection.find(Accordion(memberName)).has({ open: isOpen }));
+  },
+
+  checkVersionHistoryButtonToolTipText() {
+    cy.do(rootSection.find(Button({ id: 'version-history-btn' })).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
+  checkButtonsStateWhenVersionHistoryPaneClosed() {
+    cy.expect([
+      rootSection.find(actionsButton).has({ disabled: false }),
+      rootSection.find(versionHistoryButton).has({ disabled: false }),
+      rootSection.find(Button({ icon: 'tag' })).has({ disabled: false }),
+    ]);
   },
 };

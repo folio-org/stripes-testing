@@ -91,45 +91,41 @@ describe('Inventory', () => {
       });
     });
 
-    it(
-      'C714 Mark an item as Missing (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C714'] },
-      () => {
-        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-        MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach((item) => {
-          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-          MarkItemAsMissing.openItem(item.barcode);
-          MarkItemAsMissing.checkIsMarkAsMissingExist(true);
-          InventoryItems.markAsMissing();
-          MarkItemAsMissing.checkIsConfirmItemMissingModalExist(
-            instanceData.instanceTitle,
-            item.barcode,
-            materialType,
-          );
-          InventoryItems.cancelMarkAsMissing();
-          ItemRecordView.verifyItemStatusInPane(item.status.name);
-          InventoryItems.markAsMissing();
-          InventoryItems.confirmMarkAsMissing();
-          ItemRecordView.verifyItemStatusInPane('Missing');
-          MarkItemAsMissing.verifyItemStatusUpdatedDate();
-          ItemRecordView.closeDetailView();
-        });
+    it('C714 Mark an item as Missing (folijet)', { tags: ['smoke', 'folijet', 'C714'] }, () => {
+      MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+      MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach((item) => {
+        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+        MarkItemAsMissing.openItem(item.barcode);
+        MarkItemAsMissing.checkIsMarkAsMissingExist(true);
+        InventoryItems.markAsMissing();
+        MarkItemAsMissing.checkIsConfirmItemMissingModalExist(
+          instanceData.instanceTitle,
+          item.barcode,
+          materialType,
+        );
+        InventoryItems.cancelMarkAsMissing();
+        ItemRecordView.verifyItemStatusInPane(item.status.name);
+        InventoryItems.markAsMissing();
+        InventoryItems.confirmMarkAsMissing();
+        ItemRecordView.verifyItemStatusInPane('Missing');
+        MarkItemAsMissing.verifyItemStatusUpdatedDate();
+        ItemRecordView.closeDetailView();
+      });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
-        MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
-          Requests.findCreatedRequest(item.barcode);
-          Requests.selectFirstRequest(instanceData.instanceTitle);
-          MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
-        });
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
+        Requests.findCreatedRequest(item.barcode);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+      });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach((item) => {
-          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-          MarkItemAsMissing.openItem(item.barcode);
-          MarkItemAsMissing.checkIsMarkAsMissingExist(false);
-          ItemRecordView.closeDetailView();
-        });
-      },
-    );
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach((item) => {
+        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+        MarkItemAsMissing.openItem(item.barcode);
+        MarkItemAsMissing.checkIsMarkAsMissingExist(false);
+        ItemRecordView.closeDetailView();
+      });
+    });
   });
 });

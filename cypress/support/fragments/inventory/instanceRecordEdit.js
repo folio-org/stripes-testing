@@ -656,4 +656,14 @@ export default {
   closeSelectInstanceModal() {
     InventoryInstanceModal.close();
   },
+
+  clearInstanceStatusTerm() {
+    cy.do(instanceStatusTerm.choose('Select instance status'));
+  },
+  chooseModeOfIssuance(modeOfIssuance) {
+    cy.do(Select('Mode of issuance').choose(including(modeOfIssuance)));
+  },
+  chooseDateType(dateType) {
+    cy.do(Select('Date type').choose(including(dateType)));
+  },
 };

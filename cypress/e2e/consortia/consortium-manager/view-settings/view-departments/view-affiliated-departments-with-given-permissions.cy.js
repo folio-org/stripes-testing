@@ -233,7 +233,7 @@ describe('Consortium manager', () => {
             ],
             [],
           );
-          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
@@ -407,7 +407,7 @@ describe('Consortium manager', () => {
             ],
             [],
           );
-          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
+          ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(true);
 
           ConsortiumManagerApp.clickSelectMembers();
           SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);

@@ -1,3 +1,4 @@
+import { HTML, including, matching, not } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -5,12 +6,8 @@ import {
   calloutTypes,
   Checkbox,
   FieldSet,
-  HTML,
-  including,
-  matching,
   Modal,
   MultiSelectOption,
-  not,
   RepeatableField,
   RepeatableFieldItem,
   Select,
@@ -48,6 +45,7 @@ const saveAndKeepEditingButton = footerPane.find(Button('Save & keep editing'));
 const holdingsTypeSelect = Select({ id: 'additem_holdingstype' });
 const numberOfItemsField = TextField('Number of items');
 const receiptStatusField = TextField({ name: 'receiptStatus' });
+const illPolicySelect = Select({ name: 'illPolicyId' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -117,9 +115,10 @@ export default {
         .choose(including(code)),
     ]);
   },
-  addStatisticalCode(code) {
+  addStatisticalCode(code, index = 1) {
     this.clickAddStatisticalCode();
-    this.chooseStatisticalCode(code);
+    cy.wait(1000);
+    this.chooseStatisticalCode(code, index);
   },
   openStatisticalCodeDropdown() {
     cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
@@ -341,5 +340,11 @@ export default {
   },
   fillReceiptStatus(status) {
     cy.do(receiptStatusField.fillIn(status));
+  },
+  clearHoldingsType: () => {
+    cy.do(holdingsTypeSelect.choose('Select holdings type'));
+  },
+  chooseIllPolicy(policy) {
+    cy.do(illPolicySelect.choose(policy));
   },
 };

@@ -63,7 +63,7 @@ describe('Inventory', () => {
 
     it(
       'C423380 Check that item barcodes with slashes can be searched (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C423380', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C423380'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.folioInstances[0].instanceTitle);

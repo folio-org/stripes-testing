@@ -186,7 +186,7 @@ const existingRecordTypes = {
 };
 
 const suppressFromDiscoveryOptions = {
-  'Select checkbox field mapping': '',
+  'Select сheckbox field mapping': '',
   'Mark for all affected records': 'ALL_TRUE',
   'Unmark for all affected records': 'ALL_FALSE',
   'Keep the existing value for all affected records': 'AS_IS',

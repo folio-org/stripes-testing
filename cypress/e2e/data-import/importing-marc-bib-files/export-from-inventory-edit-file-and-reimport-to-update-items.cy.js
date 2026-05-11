@@ -269,8 +269,8 @@ describe('Data Import', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
-          InventorySearchAndFilter.selectResultCheckboxes(1);
           cy.intercept('/inventory/instances/*').as('getId');
+          InventorySearchAndFilter.selectResultCheckboxes(1);
           cy.wait('@getId', getLongDelay()).then((req) => {
             InventorySearchAndFilter.saveUUIDs();
             // need to create a new file with instance UUID because tests are runing in multiple threads
