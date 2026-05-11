@@ -35,6 +35,15 @@ export default {
     });
   },
 
+  getItemNoteTypesViaApi: () => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'item-note-types',
+      })
+      .then((response) => response.body);
+  },
+
   verifyConsortiumItemNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });

@@ -29,33 +29,30 @@ describe('Organizations', () => {
 
   before('Create users and organizations', () => {
     cy.setTenant(memberTenant.id);
-    cy.getUserToken(user.username, user.password, { log: false }).then(() => {
-      cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((user1) => {
-        testData.users[0] = user1;
-        cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((user2) => {
-          testData.users[1] = user2;
+    cy.getUserToken(user.username, user.password, { log: false });
+    cy.createTempUser([Permissions.uiOrganizationsViewEditCreate.gui]).then((user1) => {
+      testData.users[0] = user1;
 
-          cy.login(user1.username, user1.password, {
-            path: TopMenu.organizationsPath,
-            waiter: Organizations.waitLoading,
-          });
-          NewOrganization.createViaApi(testData.organizations.org1).then((responseOrganization) => {
-            testData.organizations.org1.id = responseOrganization.id;
-          });
-          cy.logout();
-
-          cy.allure().logCommandSteps(false);
-          cy.login(user.username, user.password, {
-            path: TopMenu.organizationsPath,
-            waiter: Organizations.waitLoading,
-          });
-          cy.allure().logCommandSteps(true);
-          NewOrganization.createViaApi(testData.organizations.org2).then((responseOrganization) => {
-            testData.organizations.org2.id = responseOrganization.id;
-          });
-        });
+      cy.login(user1.username, user1.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      NewOrganization.createViaApi(testData.organizations.org1).then((responseOrganization) => {
+        testData.organizations.org1.id = responseOrganization.id;
       });
     });
+
+    cy.setTenant(memberTenant.id);
+    cy.getUserToken(user.username, user.password, { log: false });
+    NewOrganization.createViaApi(testData.organizations.org2).then((responseOrganization) => {
+      testData.organizations.org2.id = responseOrganization.id;
+    });
+    cy.allure().logCommandSteps(false);
+    cy.login(user.username, user.password, {
+      path: TopMenu.organizationsPath,
+      waiter: Organizations.waitLoading,
+    });
+    cy.allure().logCommandSteps(true);
   });
 
   after('Delete test data', () => {

@@ -43,7 +43,7 @@ describe('Data Import', () => {
         id = logId;
       });
       LogsViewAll.resetAllFilters();
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+      TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_IMPORT);
     });
 
     after('delete test data', () => {

@@ -81,6 +81,8 @@ describe('Acquisition Units', () => {
       cy.wait(1000);
       InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
       FiscalYears.waitForFiscalYearDetailsLoading();
+      cy.setTenant(memberTenant.id);
+      cy.getUserToken(user.username, user.password, { log: false });
       FiscalYears.getFiscalYearIdByName(newFiscalYear.name).then((fiscalYearId) => {
         createdFiscalYearId = fiscalYearId;
       });
