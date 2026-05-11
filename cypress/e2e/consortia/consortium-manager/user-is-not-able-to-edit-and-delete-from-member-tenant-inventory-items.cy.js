@@ -1,6 +1,7 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import ItemNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import LoanTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
 import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
@@ -8,7 +9,11 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import LoanTypes from '../../../support/fragments/settings/inventory/items/loanTypes';
 import MaterialTypes from '../../../support/fragments/settings/inventory/items/materialTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
@@ -73,8 +78,8 @@ describe('Consortium manager', () => {
           cy.assignAffiliationToUser(Affiliations.College, testData.user401725.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user401725.userId, [
-            permissions.inventoryCRUDItemNoteTypes.gui,
-            permissions.uiCreateEditDeleteLoanTypes.gui,
+            Permissions.inventoryCRUDItemNoteTypes.gui,
+            Permissions.uiCreateEditDeleteLoanTypes.gui,
           ]);
           ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes.name);
           LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanTypes);
@@ -83,7 +88,7 @@ describe('Consortium manager', () => {
           cy.assignAffiliationToUser(Affiliations.University, testData.user401725.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user401725.userId, [
-            permissions.uiCreateEditDeleteMaterialTypes.gui,
+            Permissions.uiCreateEditDeleteMaterialTypes.gui,
           ]);
           MaterialTypes.createMaterialTypesViaApi(testData.universityMaterialTypes);
           cy.resetTenant();
@@ -105,50 +110,51 @@ describe('Consortium manager', () => {
         { tags: ['criticalPathECS', 'thunderjet', 'C401725'] },
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.itemNoteTypesPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsPane.waitLoading();
+          SettingsInventory.goToSettingsInventory();
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.ITEM_NOTE_TYPES);
           ItemNoteTypes.verifyConsortiumItemNoteTypesInTheList({
             name: testData.centralSharedItemNoteTypes.payload.name,
           });
-
           ItemNoteTypes.verifyLocalItemNoteTypesInTheList({
             name: testData.collegeLocalItemNoteTypes.name,
             actions: ['edit', 'trash'],
           });
-
           ItemNoteTypes.clickTrashButtonForItemNoteTypes(testData.collegeLocalItemNoteTypes.name);
-
           ItemNoteTypes.verifyItemNoteTypesAbsentInTheList({
             name: testData.collegeLocalItemNoteTypes.name,
           });
-          cy.visit(SettingsMenu.loanTypesPath);
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsPane.waitLoading();
+          SettingsInventory.goToSettingsInventory();
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
           LoanTypes.verifyLoanTypesInTheList({
             name: testData.centralSharedLoanTypes.payload.name,
           });
-
           LoanTypes.verifyLoanTypesInTheList({
             name: testData.collegeLocalLoanTypes.name,
             actions: ['edit', 'trash'],
           });
-
           LoanTypes.clickTrashButtonForLoanTypes(testData.collegeLocalLoanTypes.name);
-
           LoanTypes.verifyLoanTypesAbsentInTheList({
             name: testData.collegeLocalLoanTypes.name,
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.materialTypePath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsPane.waitLoading();
+          SettingsInventory.goToSettingsInventory();
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
           MaterialTypes.verifyConsortiumMaterialTypesInTheList({
             name: testData.centralSharedMaterialTypes.payload.name,
           });
-
           MaterialTypes.verifyLocalMaterialTypesInTheList({
             name: testData.universityMaterialTypes.name,
             actions: ['edit', 'trash'],
           });
-
           MaterialTypes.clickTrashButtonForMaterialTypes(testData.universityMaterialTypes.name);
-
           MaterialTypes.verifyMaterialTypesAbsentInTheList({
             name: testData.universityMaterialTypes.name,
           });

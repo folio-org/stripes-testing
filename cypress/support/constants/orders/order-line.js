@@ -16,7 +16,7 @@ export const ORDER_LINE_ACCORDION_NAMES = {
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
-  AWAITING_PAYMENT: 'Awaiting payment',
+  AWAITING_PAYMENT: 'Awaiting Payment',
   CANCELLED: 'Cancelled',
   FULLY_PAID: 'Fully paid',
   ONGOING: 'Ongoing',

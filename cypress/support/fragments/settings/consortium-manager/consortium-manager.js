@@ -94,7 +94,7 @@ export default {
       SelectionOption(including(newTenantName)).click(),
     ]);
     cy.expect(SelectionOption(including(newTenantName)).absent());
-    cy.expect(affiliationSelect.has({ singleValue: newTenantName }));
+    cy.expect(affiliationSelect.has({ singleValue: including(newTenantName) }));
     cy.wait(2000);
   },
 

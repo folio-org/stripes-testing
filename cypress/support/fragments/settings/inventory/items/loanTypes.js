@@ -46,7 +46,7 @@ export default {
   },
 
   verifyLoanTypesInTheList({ name, actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 2 });
     cy.expect([row.exists()]);
     if (actions.length === 0) {
@@ -64,13 +64,13 @@ export default {
   },
 
   verifyLoanTypesAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     cy.expect(row.absent());
   },
 
   clickTrashButtonForLoanTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: true })
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .find(Button({ icon: 'trash' }))
         .click(),
