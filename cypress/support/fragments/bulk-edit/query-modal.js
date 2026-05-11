@@ -1070,6 +1070,14 @@ export default {
     cy.wait(2000);
   },
 
+  selectCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
+  },
+
   verifyColumnDisplayed(columnName, isDisplayed = true) {
     if (isDisplayed) {
       cy.expect(MultiColumnListHeader(columnName).exists());
@@ -1098,5 +1106,12 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
       });
     });
+  },
+
+  verifyColumnValueForRow(recordTitle, columnName, expectedValue) {
+    const targetRowFirst = MultiColumnListRow(including(recordTitle), { isContainer: false });
+    cy.expect(
+      targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
+    );
   },
 };
