@@ -193,6 +193,7 @@ const api = {
 
   checkTransactionDatesSorted(order = SORT_DIRECTIONS.DESCENDING) {
     MultiColumnListHelper.assertColumnSortDirection(
+      transactionResultsList,
       TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE,
       order,
     );
@@ -275,14 +276,6 @@ const api = {
   clickResetAllButton() {
     cy.do(transactionFiltersPane.find(resetAllButton).click());
     cy.expect(resetAllButton.is({ disabled: true }));
-  },
-
-  interceptTransactionsRequest() {
-    cy.intercept('GET', '/finance/transactions*').as('getTransactions');
-  },
-
-  waitForTransactionsRequestCompletion() {
-    cy.wait('@getTransactions');
   },
 };
 

@@ -37,11 +37,11 @@ const marcInstance = {
 };
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `C478258 shared note type ${randomFourDigitNumber()}`,
+    name: `AT_C478258 Shared Provenance Note ${randomFourDigitNumber()} (Voyager)`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `C478258 College NoteType ${randomFourDigitNumber()}`,
+  name: `AT_C478258 Local Provenance Note ${randomFourDigitNumber()} (Voyager)`,
 };
 const notes = {
   adminUpperCase: 'Test [administrative] note',
