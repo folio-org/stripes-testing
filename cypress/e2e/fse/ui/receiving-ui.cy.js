@@ -1,5 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Receiving from '../../../support/fragments/receiving/receiving';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-receiving - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -10,6 +12,12 @@ describe('fse-receiving - UI (no data manipulation)', () => {
       waiter: Receiving.verifyPageDisplayed,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
