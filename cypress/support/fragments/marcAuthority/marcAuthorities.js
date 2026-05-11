@@ -687,10 +687,14 @@ export default {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
       if (!isOpen) {
+        cy.intercept('search/authorities/facets?facet=headingType*').as('getFacetsHeadingType');
         cy.do(headingTypeAccordion.clickHeader());
+        cy.wait('@getFacetsHeadingType').its('response.statusCode').should('eq', 200);
       }
     });
-    const multiSelect = headingTypeAccordion.find(MultiSelect());
+    const multiSelect = headingTypeAccordion.find(
+      MultiSelect({ label: including('Type of heading') }),
+    );
     const matchers = headingTypesArray.map((value) => including(value));
     cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(matchers)]);
   },
