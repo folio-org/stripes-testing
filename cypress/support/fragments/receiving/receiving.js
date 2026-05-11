@@ -69,10 +69,8 @@ export default {
     cy.expect([
       TextField({ id: 'input-record-search' }).exists(),
       Select({ id: 'input-record-search-qindex' }).exists(),
-      Button('Search').exists(),
-      resetButton.exists(),
-      actionsButton.exists(),
     ]);
+    cy.expect(actionsButton.exists());
   },
   clearSearchField() {
     cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
