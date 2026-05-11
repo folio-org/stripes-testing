@@ -1743,11 +1743,14 @@ export const COMMON_BUTTON_LABELS = {
   NEXT: 'Next',
   PREVIOUS: 'Previous',
   RESET_ALL: 'Reset all',
+  YES: 'Yes',
+  NO: 'No',
 };
 
 export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';
 export const RESULTS_PANE_CHOOSE_FILTER_MESSAGE =
   'Choose a filter or enter a search query to show results.';
+export const INVALID_REFERENCE_MESSAGE = 'Invalid reference';
 
 export const LIST_ASSERTION_MODES = {
   ABSENT: 'absent',

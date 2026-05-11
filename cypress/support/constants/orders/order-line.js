@@ -32,14 +32,20 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
+// Labels visible in UI
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic resource',
-  ELECTRONIC_RESOURCE_Check: 'Electronic Resource', // Deprecated, need to be removed after all tests will be updated
   PE_MIX: 'P/E mix',
-  PE_MIX_Check: 'P/E Mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
-  PHYSICAL_RESOURCE_Check: 'Physical Resource', // Deprecated, need to be removed after all tests will be updated
+};
+
+// Values for API
+export const ORDER_FORMAT_VALUES = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  OTHER: 'Other',
+  PE_MIX: 'P/E Mix',
+  PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
 export const ORDER_PAYMENT_STATUS = {
@@ -131,4 +137,119 @@ export const POLINE_DETAILS_FIELDS = {
   ELECTRONIC_UNIT_PRICE: 'Electronic unit price',
   QUANTITY_ELECTRONIC: 'Quantity electronic',
   CREATE_INVENTORY: 'Create inventory',
+};
+
+export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {
+  EXPORT_CSV: 'Export results (CSV)',
+};
+
+export const ORDER_LINE_RESULTS_LIST_COLUMNS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
+  FUND_CODE: 'Fund code',
+  ORDER_STATUS: 'Order status',
+  PO_LINE_NUMBER: 'POL number',
+  PRODUCT_ID: 'Product ID',
+  VENDOR_REF_NUMBER: 'Vendor reference number',
+  TITLE_OR_PACKAGE: 'Title or package name',
+  UPDATED_DATE: 'Updated date',
+};
+
+export const ORDER_LINE_EXPORT_CSV_FIELDS = {
+  PO_LINE_NUMBER: 'POLine number',
+  TITLE_OR_PACKAGE: 'Title',
+  INSTANCE_ID: 'Instance UUID',
+  SUBSCRIPTION_FROM: 'Subscription from',
+  SUBSCRIPTION_TO: 'Subscription to',
+  SUBSCRIPTION_INTERVAL: 'Subscription interval',
+  RECEIVING_NOTE: 'Receiving note',
+  PUBLISHER: 'Publisher',
+  EDITION: 'Edition',
+  PACKAGE_PO_LINE_ID: 'Linked package',
+  CONTRIBUTOR: 'Contributor, Contributor type',
+  PRODUCT_IDENTIFIER: 'Product ID, Qualifier, Product ID type',
+  DESCRIPTION: 'Internal note',
+  ACQUISITION_METHOD: 'Acquisition method',
+  ORDER_FORMAT: 'Order format',
+  RECEIPT_DATE: 'Receipt date',
+  RECEIPT_STATUS: 'Receipt status',
+  PAYMENT_STATUS: 'Payment status',
+  SOURCE: 'Source',
+  DONOR: 'Donor',
+  SELECTOR: 'Selector',
+  REQUESTER: 'Requester',
+  CANCELLATION_RESTRICTION: 'Cancellation restriction',
+  CANCELLATION_RESTRICTION_NOTE: 'Cancellation description',
+  RUSH: 'Rush',
+  COLLECTION: 'Collection',
+  PO_LINE_DESCRIPTION: 'Line description',
+  REF_NUMBER: 'Vendor reference number, reference type',
+  INSTRUCTIONS: 'Instructions to vendor',
+  VENDOR_ACCOUNT: 'Account number',
+  LIST_UNIT_PRICE: 'Physical unit price',
+  QUANTITY_PHYSICAL: 'Quantity physical',
+  LIST_UNIT_PRICE_ELECTRONIC: 'Electronic unit price',
+  QUANTITY_ELECTRONIC: 'Quantity electronic',
+  DISCOUNT: 'Discount',
+  PO_LINE_ESTIMATED_PRICE: 'Estimated price',
+  CURRENCY: 'Currency',
+  FUND_DISTRIBUTION: 'Fund code, Expense class, Value, Amount',
+  LOCATION: 'Location, Quantity P, Quantity E',
+  MATERIAL_SUPPLIER: 'Material supplier',
+  RECEIPT_DUE: 'Receipt due',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  VOLUMES: 'Volumes',
+  CREATE_INVENTORY: 'Create inventory',
+  MATERIAL_TYPE: 'Material type',
+  ACCESS_PROVIDER: 'Access provider',
+  ACTIVATED: 'Activation status',
+  ACTIVATION_DUE: 'Activation due',
+  CREATE_INVENTORY_E: 'Create inventory E',
+  MATERIAL_TYPE_E: 'Material type E',
+  TRIAL: 'Trial',
+  EXPECTED_ACTIVATION: 'Expected activation',
+  USER_LIMIT: 'User limit',
+  RESOURCE_URL: 'URL',
+  PO_LINE_TAGS: 'POLine tags',
+  RENEWAL_NOTE: 'Renewal note',
+  EXCHANGE_RATE: 'Exchange rate',
+  PO_LINE_CREATED_BY: 'Created by (PO Line)',
+  PO_LINE_DATE_CREATED: 'Created on (PO Line)',
+  PO_LINE_UPDATED_BY: 'Updated by (PO Line)',
+  PO_LINE_DATE_UPDATED: 'Updated on (PO Line)',
+};
+
+export const ORDER_LINE_FILTER_LABELS = {
+  ACCESS_PROVIDER: 'Access provider',
+  ACTIVATED: 'Activated',
+  ACTUAL_RECEIPT_DATE: 'Actual receipt date',
+  ACQUISITION_UNIT: 'Acquisition unit',
+  ACQUISITION_METHOD: 'Acquisition method',
+  COLLECTION: 'Collection',
+  CREATED_BY: 'Created by',
+  DATE_CREATED: 'Date created',
+  DATE_UPDATED: 'Date updated',
+  DONOR: 'Donor',
+  EXPECTED_ACTIVATION: 'Expected activation',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  EXPENSE_CLASS: 'Expense class',
+  EXPORT_DATE: 'Export date',
+  FUND_CODE: 'Fund code',
+  LINKED_PACKAGE_POL: 'Linked package POL',
+  LOCATION: 'Location',
+  MATERIAL_TYPE_ELECTRONIC: 'Material type, electronic',
+  MATERIAL_TYPE_PHYSICAL: 'Material type, physical',
+  ORDER_FORMAT: 'Order format',
+  PAYMENT_STATUS: 'Payment status',
+  PREFIX: 'Prefix',
+  RECEIPT_DUE: 'Receipt due',
+  RECEIPT_STATUS: 'Receipt status',
+  RUSH: 'Rush',
+  SOURCE: 'Source',
+  SUBSCRIPTION_FROM: 'Subscription from',
+  SUBSCRIPTION_TO: 'Subscription to',
+  SUFFIX: 'Suffix',
+  TAGS: 'Tags',
+  TRIAL: 'Trial',
+  UPDATED_BY: 'Updated by',
+  VENDOR: 'Vendor',
 };
