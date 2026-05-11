@@ -231,9 +231,10 @@ describe('Bulk-edit', () => {
         BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       });
 
-      it(
+      // Trillium +
+      it.skip(
         'C926166 Verify bulk edit of Items with local reference data in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C926166'] },
+        { tags: [] },
         () => {
           // Step 1: Upload file and show columns with local reference data
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');

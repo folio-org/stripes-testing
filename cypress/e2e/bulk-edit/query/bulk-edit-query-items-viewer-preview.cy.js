@@ -173,9 +173,9 @@ describe('Bulk-edit', () => {
         QueryModal.clickShowColumnsButton();
         QueryModal.clickCheckboxInShowColumns(itemFieldValues.itemBarcode);
         QueryModal.verifyColumnDisplayed(itemFieldValues.itemBarcode, false);
-        QueryModal.clickCheckboxInShowColumns('Item — Check in notes');
+        QueryModal.clickCheckboxInShowColumns('Items — Last check in date time');
         QueryModal.scrollResultTable('right');
-        QueryModal.verifyColumnDisplayed('Item — Check in notes', true);
+        QueryModal.verifyColumnDisplayed('Items — Last check in date time', true);
 
         // Step 11: Build the query to retrieve no records => Click "Test query" button
         QueryModal.selectField(itemFieldValues.instanceId);

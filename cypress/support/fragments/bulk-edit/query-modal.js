@@ -731,7 +731,7 @@ export default {
         .then((text) => {
           if (numberOfMatchedRecords) {
             expect(text).to.equal(
-              `Query would return ${numberOfMatchedRecords} records. Preview of first ${numberOfMatchedRecords} records.`,
+              `Query would return ${numberOfMatchedRecords} records. Preview of first ${Math.min(numberOfMatchedRecords, 100)} records.`,
             );
           } else {
             expect(text).to.equal('Query returns no records.');

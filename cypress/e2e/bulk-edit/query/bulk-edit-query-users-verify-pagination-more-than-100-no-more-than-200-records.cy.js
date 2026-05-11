@@ -18,7 +18,7 @@ const recordsToCreate = 102;
 const testUsers = [];
 const testCasePrefix = `AT_C436770_${randomFourDigitNumber()}`;
 const newExpirationDate = DateTools.addDays(30);
-const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })}`;
+const newExpirationDateInFile = `${DateTools.getFormattedDate({ date: newExpirationDate })} 23:59:59.000Z`;
 
 describe('Bulk-edit', () => {
   describe('Query', () => {

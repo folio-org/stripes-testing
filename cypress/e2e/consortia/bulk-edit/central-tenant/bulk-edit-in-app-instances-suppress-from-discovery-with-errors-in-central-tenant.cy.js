@@ -313,8 +313,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
 
           // Step 7: Select "Set false" option
-          BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_FALSE);
-          BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_FALSE);
+          BulkEditActions.selectSecondAction(BULK_EDIT_ACTIONS.SET_FALSE);
+          BulkEditActions.verifySecondActionSelected(BULK_EDIT_ACTIONS.SET_FALSE);
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
@@ -476,7 +476,6 @@ describe('Bulk-edit', () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.searchInstanceByTitle(instance.title);
             InventoryInstances.selectInstance();
-            InventoryInstance.waitLoading();
             InstanceRecordView.verifyInstanceIsMarkedAsSuppressedFromDiscovery(false);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();

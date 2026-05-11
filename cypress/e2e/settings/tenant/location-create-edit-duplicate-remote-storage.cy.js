@@ -84,6 +84,7 @@ describe('Settings: Tenant', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
+  // fails on Sunflower due to issue UITEN-327
   it(
     'C566501 Verify create, edit, duplicate actions for Location with remote storage (firebird)',
     { tags: ['extendedPath', 'firebird', 'C566501'] },

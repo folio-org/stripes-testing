@@ -127,7 +127,7 @@ describe('Bulk-edit', () => {
 
           // Step 7: Select the date in the pop-up calendar to search instances
           QueryModal.selectDayFromCalendar(todayToPick);
-          QueryModal.verifySelectedDateInCalendar(today);
+          QueryModal.verifySelectedDateInCalendar(todayToPick);
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle, 1);
@@ -207,8 +207,8 @@ describe('Bulk-edit', () => {
             // Step 17: Select Staff suppress and Set false
             BulkEditActions.selectOption(staffSuppressOption);
             BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-            BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE);
-            BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.SET_TRUE);
+            BulkEditActions.selectSecondAction(BULK_EDIT_ACTIONS.SET_TRUE);
+            BulkEditActions.verifySecondActionSelected(BULK_EDIT_ACTIONS.SET_TRUE);
             BulkEditActions.verifyCheckboxAbsent();
             BulkEditActions.verifyConfirmButtonDisabled(false);
 

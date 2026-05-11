@@ -336,8 +336,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyTheActionOptions(Object.values(actions));
 
           // Step 8: Select "Set true" option in "Select action" dropdown
-          BulkEditActions.selectAction(actions.setTrue);
-          BulkEditActions.verifyActionSelected(actions.setTrue);
+          BulkEditActions.selectSecondAction(actions.setTrue);
+          BulkEditActions.verifySecondActionSelected(actions.setTrue);
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
@@ -441,8 +441,8 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
 
           // Step 15: Select "Set false" option in "Select action" dropdown
-          BulkEditActions.selectAction(actions.setFalse);
-          BulkEditActions.verifyActionSelected(actions.setFalse);
+          BulkEditActions.selectSecondAction(actions.setFalse);
+          BulkEditActions.verifySecondActionSelected(actions.setFalse);
           BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
