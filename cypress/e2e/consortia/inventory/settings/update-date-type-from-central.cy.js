@@ -110,6 +110,8 @@ describe('Inventory', () => {
                 InstanceRecordEdit.verifyDateFieldsPresent();
                 InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.newName);
                 InventoryNewInstance.clickSaveCloseButton();
+                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstances.searchByTitle(testData.instanceTitle);
                 InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
                 InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
@@ -138,6 +140,8 @@ describe('Inventory', () => {
                 InstanceRecordEdit.verifyDateFieldsPresent();
                 InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.newName);
                 InventoryNewInstance.clickSaveCloseButton();
+                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
                 InventoryInstances.searchByTitle(testData.instanceTitleLocal);
                 InventoryInstances.selectInstanceByTitle(testData.instanceTitleLocal);
                 InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitleLocal);

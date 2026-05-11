@@ -47,7 +47,7 @@ describe('Inventory', () => {
             instance: {
               instanceTypeId: instanceTypes[0].id,
               title: testData.instance.title,
-              languages: ['jap'],
+              languages: ['jpn'],
             },
           }).then((instanceId) => {
             testData.instance.id = instanceId;

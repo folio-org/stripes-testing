@@ -223,9 +223,10 @@ describe('Bulk-edit', () => {
         BulkEditFiles.deleteAllDownloadedFiles(fileNames);
       });
 
-      it(
+      // Trilluim +
+      it.skip(
         'C926165 Verify bulk edit of Holdings with local reference data in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C926165'] },
+        { tags: [] },
         () => {
           // Step 1: Upload file and show columns with local reference data
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

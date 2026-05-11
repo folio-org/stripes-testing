@@ -15,13 +15,14 @@ export const ORDER_LINE_ACCORDION_NAMES = {
   CUSTOM_FIELDS: 'Custom fields',
 };
 
+// Title case is used in Sunflower
 export const ORDER_LINE_PAYMENT_STATUS = {
   AWAITING_PAYMENT: 'Awaiting Payment',
   CANCELLED: 'Cancelled',
-  FULLY_PAID: 'Fully paid',
+  FULLY_PAID: 'Fully Paid',
   ONGOING: 'Ongoing',
-  PARTIALLY_PAID: 'Partially paid',
-  PAYMENT_NOT_REQUIRED: 'Payment not required',
+  PARTIALLY_PAID: 'Partially Paid',
+  PAYMENT_NOT_REQUIRED: 'Payment Not Required',
 };
 
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
@@ -57,15 +58,15 @@ export const RECEIPT_STATUS_SELECTED = {
   PENDING: 'Pending',
   RECEIPT_NOT_REQUIRED: 'Receipt not required',
 };
-
+// Title case is used in Sunflower
 export const RECEIPT_STATUS_VIEW = {
   AWAITING_RECEIPT: 'Awaiting receipt',
   CANCELLED: 'Cancelled',
   PENDING: 'Pending',
-  FULLY_RECEIVED: 'Fully received',
+  FULLY_RECEIVED: 'Fully Received',
   ONGOING: 'Ongoing',
-  PARTIALLY_RECEIVED: 'Partially received',
-  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+  PARTIALLY_RECEIVED: 'Partially Received',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {

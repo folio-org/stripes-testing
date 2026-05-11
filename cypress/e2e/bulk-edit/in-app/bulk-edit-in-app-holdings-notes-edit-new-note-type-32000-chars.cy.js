@@ -197,8 +197,8 @@ describe('Bulk-edit', () => {
         // Steps 13-14: Select custom note type and "Mark as staff only"
         BulkEditActions.selectOption(specialNoteTypeName, 1);
         cy.wait(1000);
-        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
-        BulkEditActions.verifyActionSelected(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
+        BulkEditActions.selectSecondAction(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
+        BulkEditActions.verifySecondActionSelected(BULK_EDIT_ACTIONS.MARK_AS_STAFF_ONLY, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 15: Confirm changes

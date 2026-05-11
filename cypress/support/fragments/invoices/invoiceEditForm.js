@@ -37,6 +37,7 @@ const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndKeepEditingButton = Button('Save & keep editing');
 const deleteButton = Button({ icon: 'trash' });
+const clearButton = Button({ icon: 'times-circle-solid' });
 const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
 const linkNameTextField = TextField('Link name*');
 const externalUrlTextField = TextField('External URL');
@@ -251,5 +252,17 @@ export default {
           .has({ error: 'Required!' }),
       );
     });
+  },
+
+  clearField(fieldName) {
+    if (fieldName === INVOICE_VIEW_FIELDS.VENDOR_NAME) {
+      cy.do(vendorFields.vendorName.focus());
+      cy.do(vendorFields.vendorName.find(clearButton).click());
+    }
+
+    if (fieldName === INVOICE_VIEW_FIELDS.VENDOR_INVOICE_NUMBER) {
+      cy.do(vendorFields.vendorInvoiceNo.focus());
+      cy.do(vendorFields.vendorInvoiceNo.find(clearButton).click());
+    }
   },
 };

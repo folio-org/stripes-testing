@@ -147,7 +147,6 @@ describe(
           BulkEditLogs.verifyLogsPane();
           BulkEditLogs.checkUsersCheckbox();
 
-          BulkEditLogs.scrollLogsTableTo('right');
           BulkEditLogs.clickActionsRunBy(user.username);
           BulkEditLogs.verifyLogsRowActionWhenCompleted();
           BulkEditLogs.downloadFileUsedToTrigger();
