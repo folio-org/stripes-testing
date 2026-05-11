@@ -1360,6 +1360,27 @@ export default {
     });
   },
 
+  prepareValidBulkEditFileWithAllRowsReplacement(
+    fileMask,
+    finalFileName,
+    stringToBeReplaced,
+    replaceString,
+  ) {
+    FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+      FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+        const content = actualContent.split('\n');
+        // Keep header row (index 0) unchanged, replace in all other rows
+        for (let i = 1; i < content.length; i++) {
+          if (content[i]) {
+            content[i] = content[i].replace(stringToBeReplaced, replaceString);
+          }
+        }
+        FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
+    });
+  },
+
   commitChanges(isNeedToWait = true) {
     cy.wait(2000);
     cy.do([Modal().find(commitChanges).click()]);
