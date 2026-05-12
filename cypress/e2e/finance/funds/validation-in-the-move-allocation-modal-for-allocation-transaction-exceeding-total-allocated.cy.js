@@ -1,4 +1,8 @@
-import { APPLICATION_NAMES, FUNDING_INFORMATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FUND_STATUSES,
+  FUNDING_INFORMATION_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import {
   Budgets,
@@ -21,7 +25,7 @@ describe('Finance', () => {
       name: `autotest_fund2_${getRandomPostfix()}`,
       code: getRandomPostfix(),
       externalAccountNo: getRandomPostfix(),
-      fundStatus: 'Active',
+      fundStatus: FUND_STATUSES.ACTIVE,
       description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
     };
 
