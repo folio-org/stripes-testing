@@ -32,6 +32,8 @@ import {
   TextField,
   ValueChipRoot,
   matching,
+  Row,
+  Datepicker,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -104,7 +106,7 @@ const preferableServicePointSelect = Select({ id: 'servicePointPreference' });
 const barcodeField = TextField({ id: 'adduser_barcode' });
 const emailField = TextField({ id: 'adduser_email' });
 const expirationDateField = TextField({ id: 'adduser_expirationdate' });
-const birthDateField = TextField({ id: 'adduser_dateofbirth' });
+const birthDateField = Datepicker({ id: 'adduser_dateofbirth' });
 const phoneField = TextField({ id: 'adduser_phone' });
 const mobilePhoneField = TextField({ id: 'adduser_mobilePhone' });
 const addressSelect = Select({ id: 'adduser_group' });
@@ -126,6 +128,12 @@ const promoteUserModalText = 'This operation will create new record in Keycloak 
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
 const pronounsField = TextField('Pronouns');
+const dateEnrolledField = Datepicker('Date enrolled');
+const deliveryCheckbox = Checkbox('Delivery');
+const fulfillmentPreferenceSelect = Select('Fulfillment preference');
+const defaultDeliveryAddressSelect = Select({ label: including('Default delivery address') });
+const defaultPickupServicePointSelect = Select('Default pickup service point');
+const departmentNameMultiSelect = MultiSelect({ label: 'Department name' });
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
@@ -175,9 +183,10 @@ export default {
   addServicePointsViaApi,
 
   openEdit() {
-    cy.wait(1000);
-    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
-    cy.wait(2000);
+    cy.expect(userDetailsPane.find(actionsButton).exists());
+    cy.do(userDetailsPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().find(editButton).exists());
+    cy.do(editButton.click());
     cy.expect(rootPane.exists());
     cy.wait(3000);
   },
@@ -227,10 +236,12 @@ export default {
 
   changeExternalSystemId(externalSystemId) {
     cy.do(externalSystemIdTextfield.fillIn(externalSystemId));
+    cy.expect(externalSystemIdTextfield.has({ value: externalSystemId }));
   },
 
   changeBirthDate(birthDate) {
     cy.do(birthDateField.fillIn(birthDate));
+    cy.expect(birthDateField.has({ inputValue: birthDate }));
   },
 
   changePhone(phone) {
@@ -336,6 +347,20 @@ export default {
 
   clearBarcode() {
     cy.do(barcodeField.clear());
+  },
+
+  clearUsername() {
+    cy.do(usernameField.clear());
+  },
+
+  verifyUsernameAlreadyExistsError() {
+    cy.expect(
+      usernameField.has({
+        error: 'This username already exists',
+        errorBorder: true,
+        errorIcon: true,
+      }),
+    );
   },
 
   changeStatus(status) {
@@ -783,7 +808,11 @@ export default {
   },
 
   addAddress(type = 'Home') {
-    cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+    cy.expect(Button('Add address').exists());
+    cy.do(Button('Add address').click());
+    cy.expect(Select('Address Type*').exists());
+    cy.do(Select('Address Type*').choose(type));
+    cy.expect(Select('Address Type*').checkedOptionText(type));
   },
 
   addAddressWithCountry(type = 'Home', country = 'Australia') {
@@ -990,6 +1019,42 @@ export default {
         .click(),
     );
     cy.expect(HTML(data.helpText).exists());
+  },
+
+  openCustomFieldsAccordion() {
+    cy.expect(customFieldsAccordion.exists());
+    cy.do(customFieldsAccordion.clickHeader());
+    cy.expect(customFieldsAccordion.has({ open: true }));
+  },
+
+  verifyCheckboxCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Checkbox(fieldLabel)).exists());
+  },
+
+  verifyDatePickerCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Datepicker({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyMultiSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(MultiSelect({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyRadioButtonCustomFieldExists(fieldLabel) {
+    cy.expect(
+      customFieldsAccordion.find(RadioButtonGroup({ label: including(fieldLabel) })).exists(),
+    );
+  },
+
+  verifySingleSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Select({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextAreaCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextArea({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextFieldCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextField({ label: `${fieldLabel}*` })).exists());
   },
 
   verifyUserTypeItems() {
@@ -1554,5 +1619,148 @@ export default {
   checkRolesAffiliationDropdownShown(isShown = true) {
     if (isShown) cy.expect(rolesAffiliationSelect.exists());
     else cy.expect(rolesAffiliationSelect.absent());
+  },
+
+  changeDateEnrolled(date) {
+    cy.do(dateEnrolledField.fillIn(date));
+    cy.expect(dateEnrolledField.has({ inputValue: date }));
+  },
+
+  checkDeliveryCheckbox() {
+    cy.do(deliveryCheckbox.click());
+    cy.expect(deliveryCheckbox.has({ checked: true }));
+  },
+
+  uncheckDeliveryCheckbox() {
+    cy.do(deliveryCheckbox.click());
+    cy.expect(deliveryCheckbox.has({ checked: false }));
+  },
+
+  verifyFulfillmentPreferenceDisabled(isDisabled = false) {
+    cy.expect(fulfillmentPreferenceSelect.has({ disabled: isDisabled }));
+  },
+
+  verifyFulfillmentPreferenceValue(value) {
+    cy.expect(fulfillmentPreferenceSelect.has({ value }));
+  },
+
+  verifyDefaultDeliveryAddressDisabled(isDisabled = false) {
+    cy.expect(defaultDeliveryAddressSelect.has({ disabled: isDisabled }));
+  },
+
+  verifyDefaultDeliveryAddressValue(value) {
+    cy.expect(defaultDeliveryAddressSelect.checkedOptionText(value));
+  },
+
+  chooseFulfillmentPreference(value) {
+    cy.do(fulfillmentPreferenceSelect.choose(value));
+    this.verifyFulfillmentPreferenceValue(value);
+  },
+
+  chooseDefaultDeliveryAddress(value) {
+    cy.do(defaultDeliveryAddressSelect.choose(value));
+    this.verifyDefaultDeliveryAddressValue(value);
+  },
+
+  chooseDefaultPickupServicePoint(value) {
+    cy.do(defaultPickupServicePointSelect.choose(value));
+    cy.expect(defaultPickupServicePointSelect.checkedOptionText(value));
+  },
+
+  selectDepartments(departments) {
+    cy.do(departmentNameMultiSelect.choose(departments));
+    cy.expect(departmentNameMultiSelect.selectedCount(departments.length));
+  },
+
+  clickFulfillmentPreferenceInfoIcon() {
+    cy.do(fulfillmentPreferenceSelect.clickInfoButton());
+  },
+
+  verifyFulfillmentPreferenceTooltip() {
+    cy.expect(
+      HTML(
+        including(
+          'Select the Delivery checkbox to choose Fulfillment preference and Default delivery address.',
+        ),
+      ).exists(),
+    );
+  },
+
+  verifyExtendedInformationFieldsInEditMode({
+    dateEnrolled,
+    externalSystemId,
+    birthDate,
+    folioNumber,
+    holdShelfChecked = false,
+    deliveryChecked = false,
+    defaultPickupServicePoint,
+    fulfillmentPreference,
+    fulfillmentPreferenceDisabled = true,
+    defaultDeliveryAddress,
+    defaultDeliveryAddressDisabled = true,
+    departments,
+    username,
+  }) {
+    const row = (index) => extendedInformationAccordion.find(Row({ index }));
+
+    // First row
+    const _dateEnrolledField = row(0).find(dateEnrolledField);
+    const _externalSystemId = row(0).find(externalSystemIdTextfield);
+    const _birthDate = row(0).find(birthDateField);
+    const _folioNumber = row(0).find(HTML('Folio number'));
+    const folioNumberValue = row(0).find(HTML(folioNumber));
+    cy.expect([
+      dateEnrolled
+        ? _dateEnrolledField.has({ inputValue: dateEnrolled })
+        : _dateEnrolledField.exists(),
+      externalSystemId
+        ? _externalSystemId.has({ value: externalSystemId })
+        : _externalSystemId.exists(),
+      birthDate ? _birthDate.has({ inputValue: birthDate }) : _birthDate.exists(),
+      _folioNumber.exists(),
+      folioNumberValue.exists(),
+    ]);
+
+    // Second row
+    const defaultPickupServicePointField = row(1).find(defaultPickupServicePointSelect);
+    const fulfillmentPreferenceField = row(1).find(fulfillmentPreferenceSelect);
+    const defaultDeliveryAddressField = row(1).find(defaultDeliveryAddressSelect);
+    cy.expect([
+      row(1)
+        .find(
+          Checkbox({
+            name: 'requestPreferences.holdShelf',
+            disabled: true,
+            checked: holdShelfChecked,
+          }),
+        )
+        .exists(),
+      row(1)
+        .find(Checkbox({ name: 'requestPreferences.delivery', checked: deliveryChecked }))
+        .exists(),
+      defaultPickupServicePoint
+        ? defaultPickupServicePointField.checkedOptionText(defaultPickupServicePoint)
+        : defaultPickupServicePointField.exists(),
+      fulfillmentPreference && fulfillmentPreferenceField.checkedOptionText(fulfillmentPreference),
+      fulfillmentPreferenceField.has({
+        hasInfoButton: true,
+        disabled: fulfillmentPreferenceDisabled,
+      }),
+      defaultDeliveryAddress &&
+        defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
+      defaultDeliveryAddressField.has({ disabled: defaultDeliveryAddressDisabled }),
+    ]);
+
+    // Third row
+    const departmentMultiSelectField = row(2).find(departmentNameMultiSelect);
+    cy.expect(
+      departments
+        ? departmentMultiSelectField.selectedCount(departments.length)
+        : departmentMultiSelectField.exists(),
+    );
+
+    // Fourth row
+    const _usernameField = row(3).find(usernameField);
+    cy.expect([username ? _usernameField.has({ value: username }) : _usernameField.exists()]);
   },
 };

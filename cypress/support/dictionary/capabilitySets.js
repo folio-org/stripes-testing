@@ -249,6 +249,11 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiMarcAuthoritiesAuthorityRecordDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
   uiQuickMarcQuickMarcAuthoritiesEditorManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
