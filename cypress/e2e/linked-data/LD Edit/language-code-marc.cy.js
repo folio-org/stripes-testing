@@ -162,7 +162,7 @@ describe('Citation: check language MARC codes', () => {
 
       // Check work language fields
       EditResource.checkLabelOnSimpleField(resourceData.languageSelect, fieldData.languageField);
-      EditResource.checkDropdownTextValue(resource, fieldData.languageRelField);
+      EditResource.checkDropdownTextValue(resourceData.languageRel, fieldData.languageRelField);
       EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.languageField, resourceData.languagesSubset);
       EditResource.checkDropdownContainsOptions(fieldData.languageRelField, resourceData.languageRelationships);
 
