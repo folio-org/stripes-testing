@@ -9,8 +9,8 @@ import OaiPmh from '../../../support/fragments/oai-pmh/oaiPmh';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const firstMarcInstance = { title: `AT_C411613_FirstMarcInstance_${getRandomPostfix()}` };
-const secondMarcInstance = { title: `AT_C411613_SecondMarcInstance_${getRandomPostfix()}` };
+const firstFolioInstance = { title: `AT_C411617_FirstFolioInstance_${getRandomPostfix()}` };
+const secondFolioInstance = { title: `AT_C411617_SecondFolioInstance_${getRandomPostfix()}` };
 const testData = {};
 
 describe('OAI-PMH', () => {
@@ -21,7 +21,7 @@ describe('OAI-PMH', () => {
       // Configure OAI-PMH settings
       Behavior.updateBehaviorConfigViaApi(
         BEHAVIOR_SETTINGS_OPTIONS_API.SUPPRESSED_RECORDS_PROCESSING.TRUE,
-        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE,
+        BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.INVENTORY,
         BEHAVIOR_SETTINGS_OPTIONS_API.DELETED_RECORDS_SUPPORT.PERSISTENT,
         BEHAVIOR_SETTINGS_OPTIONS_API.ERRORS_PROCESSING.OK_200,
       );
@@ -40,15 +40,24 @@ describe('OAI-PMH', () => {
         testData.loanTypeId = loanTypes[0].id;
       });
 
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+        testData.instanceTypeId = instanceTypes[0].id;
+      });
+
       InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
         testData.folioSourceId = folioSource.id;
       });
 
       cy.then(() => {
-        // Create MARC instances with holdings and items
-        [firstMarcInstance, secondMarcInstance].forEach((instance) => {
-          cy.createSimpleMarcBibViaAPI(instance.title).then((instanceId) => {
-            instance.id = instanceId;
+        // Create FOLIO instances with holdings and items
+        [firstFolioInstance, secondFolioInstance].forEach((instance) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: instance.title,
+            },
+          }).then((createdInstanceData) => {
+            instance.id = createdInstanceData.instanceId;
 
             cy.getInstanceById(instance.id).then((instanceData) => {
               instance.hrid = instanceData.hrid;
@@ -82,17 +91,17 @@ describe('OAI-PMH', () => {
       cy.then(() => {
         // Create bound-with item for first instance and bind to second instance's holding
         InventoryItems.createItemViaApi({
-          holdingsRecordId: firstMarcInstance.holdingId,
+          holdingsRecordId: firstFolioInstance.holdingId,
           barcode: uuid(),
           materialType: { id: testData.materialTypeId },
           permanentLoanType: { id: testData.loanTypeId },
           status: { name: ITEM_STATUS_NAMES.AVAILABLE },
         }).then((item) => {
-          firstMarcInstance.boundWithItemId = item.id;
-          firstMarcInstance.boundWithItemBarcode = item.barcode;
+          firstFolioInstance.boundWithItemId = item.id;
+          firstFolioInstance.boundWithItemBarcode = item.barcode;
 
           // Bind this item to second instance's holding
-          InventoryItems.boundItemWithHoldingViaApi(item.id, secondMarcInstance.holdingId);
+          InventoryItems.boundItemWithHoldingViaApi(item.id, secondFolioInstance.holdingId);
         });
       });
 
@@ -107,19 +116,19 @@ describe('OAI-PMH', () => {
       // Unbind the bound-with item before deletion
       // Reset bound-with item to only its original holding
       InventoryItems.boundItemWithHoldingViaApi(
-        firstMarcInstance.boundWithItemId,
-        firstMarcInstance.holdingId,
+        firstFolioInstance.boundWithItemId,
+        firstFolioInstance.holdingId,
       );
 
       // Delete instances with all holdings and items
-      [firstMarcInstance, secondMarcInstance].forEach((instance) => {
+      [firstFolioInstance, secondFolioInstance].forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
     });
 
     it(
-      'C411613 ListRecords: SRS: Verify that bound-with items are retrieved in response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C411613'] },
+      'C411617 ListRecords: FOLIO: Verify that bound-with items are retrieved in response (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C4116170', 'nonParallel'] },
       () => {
         // Step 1: Send ListRecords request with marc21_withholdings
         const fromDate = DateTools.getCurrentDateForOaiPmh(-2);
@@ -128,56 +137,56 @@ describe('OAI-PMH', () => {
         OaiPmh.listRecordsRequest('marc21_withholdings', fromDate, untilDate).then((response) => {
           // Step 2: Verify both instances are shown in the response
           // Verify first instance header
-          OaiPmh.verifyOaiPmhRecordHeader(response, firstMarcInstance.id, false);
+          OaiPmh.verifyOaiPmhRecordHeader(response, firstFolioInstance.id, false);
 
           // Verify second instance header
-          OaiPmh.verifyOaiPmhRecordHeader(response, secondMarcInstance.id, false);
+          OaiPmh.verifyOaiPmhRecordHeader(response, secondFolioInstance.id, false);
 
           // Verify first instance contains its basic information
           OaiPmh.verifyMarcField(
             response,
-            firstMarcInstance.id,
+            firstFolioInstance.id,
             '245',
-            { ind1: ' ', ind2: ' ' },
-            { a: firstMarcInstance.title },
+            { ind1: '0', ind2: '0' },
+            { a: firstFolioInstance.title },
           );
 
           // Verify first instance contains instance ID in 999 field
           OaiPmh.verifyMarcField(
             response,
-            firstMarcInstance.id,
+            firstFolioInstance.id,
             '999',
             { ind1: 'f', ind2: 'f' },
-            { i: firstMarcInstance.id },
+            { i: firstFolioInstance.id },
           );
 
           // Verify second instance contains its basic information
           OaiPmh.verifyMarcField(
             response,
-            secondMarcInstance.id,
+            secondFolioInstance.id,
             '245',
-            { ind1: ' ', ind2: ' ' },
-            { a: secondMarcInstance.title },
+            { ind1: '0', ind2: '0' },
+            { a: secondFolioInstance.title },
           );
 
           // Verify second instance contains instance ID in 999 field
           OaiPmh.verifyMarcField(
             response,
-            secondMarcInstance.id,
+            secondFolioInstance.id,
             '999',
             { ind1: 'f', ind2: 'f' },
-            { i: secondMarcInstance.id },
+            { i: secondFolioInstance.id },
           );
 
           // Verify first instance contains two 952 fields (regular item and bound-with item)
           OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
             response,
-            firstMarcInstance.id,
+            firstFolioInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             [
-              { m: firstMarcInstance.boundWithItemBarcode },
-              { m: firstMarcInstance.regularItemBarcode },
+              { m: firstFolioInstance.boundWithItemBarcode },
+              { m: firstFolioInstance.regularItemBarcode },
             ],
             2,
           );
@@ -185,12 +194,12 @@ describe('OAI-PMH', () => {
           // Verify second instance contains two 952 fields (regular item and bound-with item from first instance)
           OaiPmh.verifyMultipleMarcFieldsWithIdenticalTagAndIndicators(
             response,
-            secondMarcInstance.id,
+            secondFolioInstance.id,
             '952',
             { ind1: 'f', ind2: 'f' },
             [
-              { m: secondMarcInstance.regularItemBarcode },
-              { m: firstMarcInstance.boundWithItemBarcode },
+              { m: secondFolioInstance.regularItemBarcode },
+              { m: firstFolioInstance.boundWithItemBarcode },
             ],
             2,
           );
