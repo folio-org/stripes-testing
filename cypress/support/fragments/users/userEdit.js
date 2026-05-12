@@ -1021,6 +1021,42 @@ export default {
     cy.expect(HTML(data.helpText).exists());
   },
 
+  openCustomFieldsAccordion() {
+    cy.expect(customFieldsAccordion.exists());
+    cy.do(customFieldsAccordion.clickHeader());
+    cy.expect(customFieldsAccordion.has({ open: true }));
+  },
+
+  verifyCheckboxCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Checkbox(fieldLabel)).exists());
+  },
+
+  verifyDatePickerCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Datepicker({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyMultiSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(MultiSelect({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyRadioButtonCustomFieldExists(fieldLabel) {
+    cy.expect(
+      customFieldsAccordion.find(RadioButtonGroup({ label: including(fieldLabel) })).exists(),
+    );
+  },
+
+  verifySingleSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Select({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextAreaCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextArea({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextFieldCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextField({ label: `${fieldLabel}*` })).exists());
+  },
+
   verifyUserTypeItems() {
     cy.expect([
       selectUserType.has({ content: including('Patron') }),
