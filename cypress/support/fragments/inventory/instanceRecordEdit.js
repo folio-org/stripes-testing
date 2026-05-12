@@ -34,6 +34,8 @@ const staffSuppressCheckbox = Checkbox({ name: 'staffSuppress' });
 const previoslyHeldCheckbox = Checkbox({ name: 'previouslyHeld' });
 const instanceStatusTerm = Select('Instance status term');
 const addStatisticalCodeButton = Button('Add statistical code');
+const statisticalCodeFieldSet = rootSection.find(FieldSet('Statistical code'));
+const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 const addNatureOfContentButton = Button('Add nature of content');
 const addParentInstanceButton = Button('Add parent instance');
 const addChildInstanceButton = Button('Add child instance');
@@ -57,8 +59,8 @@ function clickAddStatisticalCode() {
   cy.do(Button('Add statistical code').click());
 }
 
-function chooseStatisticalCode(code) {
-  cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
+function chooseStatisticalCode(code, index = 0) {
+  cy.do(Button({ name: `statisticalCodeIds[${index}]` }).click());
   cy.do(SelectionList().select(code));
 }
 
@@ -66,6 +68,35 @@ export default {
   addNatureOfContent,
   clickAddStatisticalCode,
   chooseStatisticalCode,
+  openStatisticalCodeDropdown(index = 0) {
+    cy.do(Button({ name: `statisticalCodeIds[${index}]` }).click());
+  },
+  verifyStatisticalCodeDropdown() {
+    cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
+    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+      expect(count).to.greaterThan(0);
+    });
+  },
+  filterStatisticalCodeByName(name) {
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeListOptionsFilteredBy(name) {
+    cy.then(() => statisticalCodeSelectionList.optionList()).then((list) => {
+      list.forEach((option) => expect(option).to.include(name));
+    });
+  },
+  checkErrorMessageForStatisticalCode(isPresented = true) {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
+  },
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([

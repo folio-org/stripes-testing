@@ -2,8 +2,12 @@ import {
   MultiColumnList,
   HTML,
   Button,
+  FieldSet,
+  RepeatableFieldItem,
   Section,
   Select,
+  Selection,
+  SelectionList,
   TextArea,
   including,
   matching,
@@ -22,6 +26,8 @@ const descriptiveDataSection = rootSection.find(Accordion('Descriptive data'));
 
 const cancelButton = rootSection.find(Button('Cancel'));
 const saveAndCloseButton = rootSection.find(Button('Save & close'));
+const statisticalCodeFieldSet = rootSection.find(FieldSet('Statistical code'));
+const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 
 const deafultResouceType = 'text';
 
@@ -122,6 +128,47 @@ export default {
       cy.do(descriptiveDataSection.find(Button('Add language')).click());
     }
     cy.do([descriptiveDataSection.find(Select({ name: 'languages[0]' })).choose(language)]);
+  },
+  clickAddStatisticalCodeButton() {
+    cy.do(Button('Add statistical code').click());
+    cy.expect(Selection({ singleValue: 'Select code' }).exists());
+  },
+  openStatisticalCodeDropdown() {
+    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+  },
+  verifyStatisticalCodeDropdown() {
+    cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
+    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+      expect(count).to.greaterThan(0);
+    });
+  },
+  filterStatisticalCodeByName(name) {
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeListOptionsFilteredBy(name) {
+    cy.then(() => statisticalCodeSelectionList.optionList()).then((list) => {
+      list.forEach((option) => expect(option).to.include(name));
+    });
+  },
+  chooseStatisticalCode(code, rowIndex = 1) {
+    cy.do([
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .choose(including(code)),
+    ]);
+  },
+  checkErrorMessageForStatisticalCode(isPresented = true) {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
   clickCancelButton() {
     cy.do(cancelButton.click());
