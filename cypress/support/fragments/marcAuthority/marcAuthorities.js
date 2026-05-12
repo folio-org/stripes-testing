@@ -794,6 +794,14 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
+  setActionsCheckboxState(value, shouldBeChecked = false) {
+    if (shouldBeChecked) {
+      cy.do(Checkbox(value).checkIfNotSelected());
+    } else {
+      cy.do(Checkbox(value).uncheckIfSelected());
+    }
+  },
+
   downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
     cy.do(MultiColumnListRow({ index: checkBoxNumber }).find(checkboxSeletAuthorityRecord).click());
     cy.do([actionsButton.click(), exportSelectedRecords.click()]);
@@ -813,6 +821,10 @@ export default {
         .find(checkboxSeletAuthorityRecord)
         .has({ checked: isChecked }),
     );
+  },
+
+  selectCheckboxByRowIndex(rowIndex) {
+    cy.do(MultiColumnListRow({ index: rowIndex }).find(checkboxSeletAuthorityRecord).click());
   },
 
   selectAllRecords() {
