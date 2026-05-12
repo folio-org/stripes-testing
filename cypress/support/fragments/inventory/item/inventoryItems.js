@@ -194,4 +194,21 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+  /**
+   * Binds an item with a holdings record using the bound-with API
+   * @param {string} itemId - The item ID to bind
+   * @param {string} holdingsRecordId - The holdings record ID to bind to
+   * @returns {Cypress.Chainable} The response from the API
+   */
+  boundItemWithHoldingViaApi(itemId, holdingsRecordId) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: 'inventory-storage/bound-withs',
+      body: {
+        itemId,
+        boundWithContents: [{ holdingsRecordId }],
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };
