@@ -27,6 +27,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     innerHTML: (el) => el.innerHTML,
     innerText: (el) => el.innerText,
     ariaLabel: (el) => el.getAttribute('aria-label'),
+    focused: (el) => el.contains(el.ownerDocument.activeElement),
   });
 
 export const ListRow = HTML.extend('list row')
