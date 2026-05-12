@@ -1,5 +1,5 @@
-import { InvoiceView } from '..';
 import { Button, Modal, including } from '../../../../../interactors';
+import InvoiceView from '../invoiceView';
 
 const differentCurrencyConfirmationModal = Modal({
   id: 'invoice-line-currency-confirmation',

@@ -9,4 +9,11 @@ export default {
   orderInstanceConnectionUpdatedSuccessfully:
     'Order instance connection has been successfully updated',
   exportJobStartedSuccessfully: 'Export has been started successfully',
+
+  // warnings
+  locationRequired: 'At least one location must be entered',
+  percentageAmountShouldBeEqual: 'The percentage or amount(s) should be equal 100% of the total',
+  remainingAmountToBeDistributed(remainingAmount) {
+    return `Remaining amount to be distributed: $${remainingAmount}`;
+  },
 };

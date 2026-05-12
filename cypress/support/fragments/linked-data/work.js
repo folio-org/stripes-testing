@@ -24,7 +24,7 @@ export default {
           query: `"title"=="${title}"`,
         },
       })
-      .then((response) => response.body.content[0].instances);
+      .then((response) => response.body.content[0]?.instances ?? []);
   },
 
   deleteById: (id) => {
