@@ -54,6 +54,7 @@ export default HTML.extend('text field')
     },
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ find }) => find(TextField()).focus(),
+    hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
   });
 
 export const TextFieldIcon = HTML.extend('text field icon')

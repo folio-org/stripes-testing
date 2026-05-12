@@ -46,4 +46,5 @@ export default HTML.extend('text area')
         textareaElement.style = `${heightString}${widthString}`;
       });
     },
+    hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
   });
