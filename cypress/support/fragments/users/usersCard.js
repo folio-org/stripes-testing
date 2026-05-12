@@ -25,6 +25,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  Row,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -756,25 +757,9 @@ export default {
   },
 
   openExtendedInformationAccordion() {
+    cy.expect(extendedInfoSection.exists());
     cy.do(extendedInfoSection.clickHeader());
     cy.wait(1000);
-  },
-
-  verifyExtendedInformationFieldsPresence() {
-    cy.expect([
-      KeyValue('Date enrolled').exists(),
-      KeyValue('External system ID').exists(),
-      KeyValue('Birth date').exists(),
-      KeyValue('Folio number').exists(),
-
-      KeyValue('Request preferences').exists(),
-      KeyValue('Default pickup service point').exists(),
-      KeyValue('Fulfillment preference').exists(),
-      KeyValue('Default delivery address').exists(),
-
-      KeyValue('Department name').exists(),
-      KeyValue('Username').exists(),
-    ]);
   },
 
   verifyPronounsOnUserDetailsPane(pronouns) {
@@ -998,5 +983,80 @@ export default {
       popupNoteDeleteButton.exists(),
       popupNoteCloseButton.exists(),
     ]);
+  },
+
+  verifyExtendedInformationKeyValue(label, value) {
+    cy.expect(extendedInfoSection.find(KeyValue(label)).has({ value: including(value) }));
+  },
+
+  verifyExtendedInfoRowsLayout({
+    dateEnrolled,
+    externalSystemId,
+    birthDate,
+    folioNumber,
+    holdShelfChecked = false,
+    deliveryChecked = false,
+    defaultPickupServicePoint,
+    fulfillmentPreference,
+    defaultDeliveryAddress,
+    departments,
+    username,
+  } = {}) {
+    const row = (index) => extendedInfoSection.find(Row({ index }));
+
+    // First row: Date enrolled, External system ID, Birth date, Folio number
+    const dateEnrolledKV = row(0).find(KeyValue('Date enrolled'));
+    const externalSystemIdKV = row(0).find(KeyValue('External system ID'));
+    const birthDateKV = row(0).find(KeyValue('Birth date'));
+    const folioNumberKV = row(0).find(KeyValue('Folio number'));
+    cy.expect([
+      dateEnrolled ? dateEnrolledKV.has({ value: dateEnrolled }) : dateEnrolledKV.exists(),
+      externalSystemId
+        ? externalSystemIdKV.has({ value: externalSystemId })
+        : externalSystemIdKV.exists(),
+      birthDate ? birthDateKV.has({ value: birthDate }) : birthDateKV.exists(),
+      folioNumber ? folioNumberKV.has({ value: folioNumber }) : folioNumberKV.exists(),
+    ]);
+
+    // Second row: Request preferences (with Hold Shelf and Delivery checkboxes),
+    // Default pickup service point, Fulfillment preference, and Default delivery address
+    const defaultPickupServicePointKV = row(1).find(KeyValue('Default pickup service point'));
+    const fulfillmentPreferenceKV = row(1).find(KeyValue('Fulfillment preference'));
+    const defaultDeliveryAddressKV = row(1).find(KeyValue('Default delivery address'));
+    cy.expect([
+      row(1)
+        .find(Checkbox('Hold Shelf', { disabled: true, checked: holdShelfChecked }))
+        .exists(),
+      row(1)
+        .find(Checkbox('Delivery', { disabled: true, checked: deliveryChecked }))
+        .exists(),
+      defaultPickupServicePoint
+        ? defaultPickupServicePointKV.has({ value: defaultPickupServicePoint })
+        : defaultPickupServicePointKV.exists(),
+      fulfillmentPreference
+        ? fulfillmentPreferenceKV.has({ value: fulfillmentPreference })
+        : fulfillmentPreferenceKV.exists(),
+      defaultDeliveryAddress
+        ? defaultDeliveryAddressKV.has({ value: defaultDeliveryAddress })
+        : defaultDeliveryAddressKV.exists(),
+    ]);
+
+    // Third row: Department name
+    const deptKeyValue = row(2).find(KeyValue('Department name'));
+    if (departments) {
+      departments.forEach((dept) => cy.expect(deptKeyValue.has({ value: including(dept) })));
+    } else {
+      cy.expect(deptKeyValue.exists());
+    }
+
+    // Fourth row: Username
+    const usernameKV = row(3).find(KeyValue('Username'));
+    cy.expect(username ? usernameKV.has({ value: username }) : usernameKV.exists());
+  },
+
+  verifyDeliveryCheckboxChecked(checked = true) {
+    if (checked) {
+      cy.expect(extendedInfoSection.find(HTML(including('Delivery'))).exists());
+    }
   },
 };

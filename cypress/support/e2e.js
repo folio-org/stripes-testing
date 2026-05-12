@@ -48,3 +48,11 @@ Cypress.on('fail', (err) => {
 beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
 });
+
+// cypress.local.js support hooks (gitignored, local-only)
+try {
+  // eslint-disable-next-line global-require, import/extensions
+  require('../../cypress.local.js').support?.();
+} catch (e) {
+  // cypress.local.js is optional
+}
