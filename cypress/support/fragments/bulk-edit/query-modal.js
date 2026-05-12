@@ -17,6 +17,7 @@ import {
   Checkbox,
   Calendar,
   Pane,
+  or,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
@@ -24,7 +25,7 @@ const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
 const testQueryButton = buildQueryModal.find(Button('Test query'));
 const cancelButton = buildQueryModal.find(Button('Cancel'));
-const runQueryButton = buildQueryModal.find(Button('Run query'));
+const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & save')));
 const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
 const xButton = buildQueryModal.find(Button({ icon: 'times' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
@@ -33,6 +34,7 @@ const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
+const fieldSelection = Selection({ id: including('field-option-') });
 
 const booleanValues = ['AND'];
 
@@ -449,9 +451,25 @@ export default {
     cy.get('[class^="col-sm-4"][class*="headerCell"]').contains('Value');
   },
 
+  closeOpenedSelection() {
+    cy.do(buildQueryModal.click());
+    cy.expect(SelectionList().absent());
+  },
+
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
-    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).open());
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyAllAvailableFieldOptions(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
   },
 
   pickDate(date, row = 0) {
@@ -584,9 +602,13 @@ export default {
     cy.do(buildQueryModal.click());
   },
 
-  chooseFromValueMultiselect(text, row = 0) {
+  chooseFromValueMultiselect(text, row = 0, { exactMatch = false } = {}) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    if (exactMatch) {
+      cy.do([MultiSelectOption(text).click(), buildQueryModal.click()]);
+    } else {
+      cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    }
     cy.wait(1000);
   },
 
@@ -636,7 +658,11 @@ export default {
   selectValueFromSelect(selection, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
-        .find(Selection({ dataTestId: 'data-input-select-boolType' }))
+        .find(
+          Selection({
+            dataTestId: or('data-input-select-boolType', 'data-input-select-booleanType'),
+          }),
+        )
         .choose(selection),
     );
   },
@@ -728,6 +754,13 @@ export default {
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
     cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
+  verifyQueryReturnsNoResults() {
+    cy.expect([
+      HTML('Query returns no records.').exists(),
+      HTML('The list contains no items').exists(),
+    ]);
   },
 
   verifyValueMultiselectContainsValuesFromPreviewTableColumn(
@@ -1070,6 +1103,14 @@ export default {
     cy.wait(2000);
   },
 
+  selectCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
+  },
+
   verifyColumnDisplayed(columnName, isDisplayed = true) {
     if (isDisplayed) {
       cy.expect(MultiColumnListHeader(columnName).exists());
@@ -1098,5 +1139,12 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
       });
     });
+  },
+
+  verifyColumnValueForRow(recordTitle, columnName, expectedValue) {
+    const targetRowFirst = MultiColumnListRow(including(recordTitle), { isContainer: false });
+    cy.expect(
+      targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
+    );
   },
 };
