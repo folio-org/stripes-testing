@@ -33,8 +33,12 @@ export default {
     const scrollableSelector = '#list-plugin-find-records [class^=mclScrollable-]';
 
     cy.get(scrollableSelector).then(($element) => {
-      // Check if the element is scrollable
-      const hasScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
+      const element = $element.get(0);
+      const isHorizontal = ['left', 'right', 'center'].includes(direction);
+
+      const hasScrollbar = isHorizontal
+        ? element.scrollWidth > element.clientWidth
+        : element.scrollHeight > element.clientHeight;
 
       if (hasScrollbar) {
         cy.get(scrollableSelector).scrollTo(direction);
