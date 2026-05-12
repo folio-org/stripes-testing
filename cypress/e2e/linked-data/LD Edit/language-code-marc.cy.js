@@ -1,4 +1,8 @@
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EDIT_RESOURCE_HEADINGS,
+} from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -44,6 +48,13 @@ describe('Citation: check language MARC codes', () => {
     inventoryTitle: testData.uniqueInventoryTitle,
     marigoldWorkTitle: testData.uniqueMarigoldWorkTitle,
     marigoldInstanceTitle: testData.uniqueMarigoldInstanceTitle,
+    language: 'English',
+    languageCode: 'eng',
+    languageRel: 'Primary source language',
+    languageLink: 'http://id.loc.gov/vocabulary/languages/eng',
+    languageSelect: 'English (eng)',
+    marcLanguageCode: '$a eng',
+    marc008LangPosition: 36,
     languagesSubset: [
       'Akkadian (akk)',
       'Bemba (bem)',
@@ -71,6 +82,15 @@ describe('Citation: check language MARC codes', () => {
       'Accessible visual language (non-textual)',
       'Accompanying transcripts for audiovisual material',
     ],
+  };
+
+  const fieldData = {
+    languageSection: 'Language code',
+    languageField: 'Language',
+    languageRelField: 'Language relationship',
+    workTitle: 'Preferred Title for Work',
+    instanceTitle: 'Main Title',
+    ldSource: 'LINKED_DATA',
   };
 
   before('Create test data', () => {
@@ -141,19 +161,19 @@ describe('Citation: check language MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
 
       // Check work language fields
-      EditResource.checkLabelOnSimpleField('English (eng)', 'Language');
-      EditResource.checkDropdownTextValue('Primary source language', 'Language relationship');
-      EditResource.checkSimpleFieldDropdownContainsOptions('Language', resourceData.languagesSubset);
-      EditResource.checkDropdownContainsOptions('Language relationship', resourceData.languageRelationships);
+      EditResource.checkLabelOnSimpleField(resourceData.languageSelect, fieldData.languageField);
+      EditResource.checkDropdownTextValue(resource, fieldData.languageRelField);
+      EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.languageField, resourceData.languagesSubset);
+      EditResource.checkDropdownContainsOptions(fieldData.languageRelField, resourceData.languageRelationships);
 
       // Review MARC
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      ViewMarc.checkMarcFieldContainsDataAtPosition('008', 36, 'eng');
+      ViewMarc.checkMarcFieldContainsDataAtPosition('008', resourceData.marc008LangPosition, resourceData.languageCode);
       ViewMarc.checkMarcFieldIndicators('041', '   ');
-      ViewMarc.checkMarcFieldContainsData('041', '$a eng');
+      ViewMarc.checkMarcFieldContainsData('041', resourceData.marcLanguageCode);
 
       // Create new work and instance
       ViewMarc.closeMarcView();
@@ -164,8 +184,8 @@ describe('Citation: check language MARC codes', () => {
       WorkProfileModal.waitLoading();
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
-      EditResource.setValueForTheField(testData.uniqueMarigoldWorkTitle, 'Preferred Title for Work');
-      EditResource.setValueForSectionSimpleField('English (eng)', 'Language');
+      EditResource.setValueForTheField(testData.uniqueMarigoldWorkTitle, fieldData.workTitle);
+      EditResource.setValueForSectionSimpleField(resourceData.languageSelect, fieldData.languageField);
       // Primary source language is already the default language relationship selection
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.workId = resourceId;
@@ -175,7 +195,7 @@ describe('Citation: check language MARC codes', () => {
       InstanceProfileModal.waitLoading();
       InstanceProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.setValueForTheField(testData.uniqueMarigoldInstanceTitle, 'Main Title');
+      EditResource.setValueForTheField(testData.uniqueMarigoldInstanceTitle, fieldData.instanceTitle);
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.instanceId = resourceId;
       });
@@ -183,19 +203,19 @@ describe('Citation: check language MARC codes', () => {
 
       Marigold.waitLoading();
       SearchAndFilter.searchResourceByTitle(resourceData.marigoldWorkTitle);
-      SearchAndFilter.verifySearchResultField('eng');
+      SearchAndFilter.verifySearchResultField(resourceData.languageCode);
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.marigoldWorkTitle);
       SearchAndFilter.waitPreviewLoading();
-      EditResource.checkPreviewSectionContainsLink('Language code', 'Language', 'English', 'http://id.loc.gov/vocabulary/languages/eng');
+      EditResource.checkPreviewSectionContainsLink(fieldData.languageSection, fieldData.languageField, resourceData.language, resourceData.languageLink);
 
       // Review in inventory
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
-      InventorySearchAndFilter.bySource('LINKED_DATA');
+      InventorySearchAndFilter.bySource(fieldData.ldSource);
       InventoryInstances.searchByTitle(resourceData.marigoldInstanceTitle);
       InventoryInstance.editInstance();
       InstanceRecordEdit.waitLoading();
-      InstanceRecordEdit.verifyLanguage('English');
+      InstanceRecordEdit.verifyLanguage(resourceData.language);
     },
   );
 });
