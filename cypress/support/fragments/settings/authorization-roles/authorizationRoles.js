@@ -121,13 +121,14 @@ const generalInfoDateFormat = 'M/D/YYYY h:mm A';
 const unselectAppConfirmationModal = Modal({ id: 'unselect-application-confirmation-modal' });
 const continueButton = Button('Continue');
 const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
-  const appText = Array.isArray(appNames)
-    ? appNames.map((appName) => `${appName}-\\d\\..+`).join(', ')
-    : `${appNames}-\\d\\..+`;
   const capabCountText = capabilitiesCount === undefined ? '\\d+' : capabilitiesCount;
   const setCountText = setsCount === undefined ? '\\d+' : setsCount;
+  const appPatterns = Array.isArray(appNames) ? appNames : [appNames];
+  const lookaheads = appPatterns.map((appName) => `(?=.*${appName}-\\d\\..+)`).join('');
+  const appAlternation = appPatterns.join('|');
+  const appEntry = `(?:${appAlternation})-\\d+\\.[^, ]+`;
   return new RegExp(
-    `By unselecting ${appText}, ${capabCountText} capabilit(ies|y) and ${setCountText} capability sets* will also be unselected\\. Are you sure you'd like to proceed\\?`,
+    `By unselecting ${lookaheads}${appEntry}(?:, ${appEntry})*, ${capabCountText} capabilit(ies|y) and ${setCountText} capability sets* will also be unselected\\. Are you sure you'd like to proceed\\?`,
   );
 };
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
@@ -245,6 +246,11 @@ export default {
   clickSaveInModalAndCheckUnselectModal(appNames, capabiliesCount, setsCount) {
     this.clickSaveInModal({ checkModalClosed: false });
     this.verifyUnselectModal(appNames, capabiliesCount, setsCount);
+  },
+
+  clickCancelInModal() {
+    cy.do(cancelButtonInModal.click());
+    cy.expect(selectApplicationModal.absent());
   },
 
   verifyUnselectModal(appNames, capabiliesCount, setsCount) {

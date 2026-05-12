@@ -192,11 +192,12 @@ export default {
       .then(({ body }) => body);
   },
 
-  deleteInvoiceLineViaApi(invoiceLineId) {
+  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode = true } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoice-lines/${invoiceLineId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   deleteInvoiceLinesByInvoiceIdViaApi(invoiceId) {
