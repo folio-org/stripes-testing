@@ -32,6 +32,14 @@ if (activeEnvironment && !environments[activeEnvironment]) {
   );
 }
 
+let cypressLocal = {};
+try {
+  // eslint-disable-next-line global-require, import/extensions
+  cypressLocal = require('./cypress.local.js');
+} catch (e) {
+  // cypress.local.js is gitignored and optional
+}
+
 /**
  * Chains after:spec handlers to ensure both TestRail and flaky marker handlers execute.
  * Since Cypress's on() overwrites previous handlers (except for 'task'), we need to intercept
@@ -186,6 +194,7 @@ module.exports = defineConfig({
 
         // HTTP tasks (axios requests in Node.js context)
         ...httpTasks,
+        ...cypressLocal.tasks?.(on, config),
       });
 
       // keep Cypress running until the ReportPortal reporter is finished. this is a
@@ -223,4 +232,5 @@ module.exports = defineConfig({
     baseUrl: envOverrides.baseUrl || 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
+  ...cypressLocal.cypress,
 });
