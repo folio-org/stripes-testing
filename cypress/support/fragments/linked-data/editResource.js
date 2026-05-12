@@ -362,7 +362,7 @@ export default {
         const labels = [...$options].map(opt => opt.textContent);
         expect(labels).to.include.members(optionLabels);
       });
-    cy.do(Keyboard.escape());
+    cy.get('body').type('{esc}');
     cy.wait(500);
   },
 

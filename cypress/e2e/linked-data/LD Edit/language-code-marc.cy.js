@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -9,6 +9,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
@@ -188,7 +189,7 @@ describe('Citation: check language MARC codes', () => {
       EditResource.checkPreviewSectionContainsLink('Language code', 'Language', 'English', 'http://id.loc.gov/vocabulary/languages/eng');
 
       // Review in inventory
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
       InventorySearchAndFilter.bySource('LINKED_DATA');
       InventoryInstances.searchByTitle(resourceData.marigoldInstanceTitle);
