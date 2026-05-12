@@ -590,6 +590,10 @@ export default {
     cy.do(rootSection.find(nextButton).click());
   },
 
+  clickPreviousPagination() {
+    cy.do(rootSection.find(previousButton).click());
+  },
+
   clickLinkButton() {
     cy.do(buttonLink.click());
   },
