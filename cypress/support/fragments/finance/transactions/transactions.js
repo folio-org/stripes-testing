@@ -193,6 +193,7 @@ const api = {
 
   checkTransactionDatesSorted(order = SORT_DIRECTIONS.DESCENDING) {
     MultiColumnListHelper.assertColumnSortDirection(
+      transactionResultsList,
       TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE,
       order,
     );

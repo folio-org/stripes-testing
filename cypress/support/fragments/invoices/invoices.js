@@ -216,18 +216,20 @@ export default {
       searchParams,
     });
   },
-  deleteInvoiceViaApi(invoiceId) {
+  deleteInvoiceViaApi(invoiceId, { failOnStatusCode } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoices/${invoiceId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
-  deleteInvoiceLineViaApi(invoiceLineId) {
+  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoice-lines/${invoiceLineId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   approveInvoiceViaApi({ invoice }) {

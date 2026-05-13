@@ -21,19 +21,27 @@ export default {
     );
   },
 
-  interceptGetOrders: () => {
+  interceptGetOrders() {
     cy.intercept('GET', '/orders/composite-orders*').as('waiterForOrdersQueryCompleted');
   },
 
-  waitForOrdersQueryCompleted: () => {
+  waitForOrdersQueryCompleted() {
     cy.wait('@waiterForOrdersQueryCompleted');
   },
 
-  interceptCustomFields: () => {
+  interceptGetOrderLines() {
+    cy.intercept('GET', '/orders/order-lines*').as('waiterForOrderLinesQueryCompleted');
+  },
+
+  waitForOrderLinesQueryCompleted() {
+    cy.wait('@waiterForOrderLinesQueryCompleted');
+  },
+
+  interceptCustomFields() {
     cy.intercept('GET', '/custom-fields*').as('waiterForCustomFieldsQueryCompleted');
   },
 
-  waitForCustomFieldsQueryCompleted: () => {
+  waitForCustomFieldsQueryCompleted() {
     cy.wait('@waiterForCustomFieldsQueryCompleted');
   },
 };

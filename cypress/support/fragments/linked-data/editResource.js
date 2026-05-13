@@ -19,7 +19,7 @@ const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
 const searchMarcAuthInputField = '#id-search-textarea';
-const newInstanceButton = "//button[@data-testid='new-instance']";
+const newInstanceButton = Button({ dataTestID: 'new-instance' });
 const saveKeepEditingButton = Button('Save & keep editing');
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
@@ -101,26 +101,38 @@ export default {
   },
 
   checkSuccessStatusDisplayed() {
-    cy.xpath('//span[@class="status-message-text" and text()="Resource updated. Expect a short delay before changes are visible in FOLIO."]')
-      .should('be.visible');
+    cy.xpath(
+      '//span[@class="status-message-text" and text()="Resource updated. Expect a short delay before changes are visible in FOLIO."]',
+    ).should('be.visible');
   },
 
   clearStatusMessages() {
     // Toasts are stacked in an overlapping way likely obscuring close button; close them all anwyays.
     // eslint-disable-next-line cypress/no-force
-    cy.xpath('//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]')
-      .click({ multiple: true, force: true });
+    cy.xpath(
+      '//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]',
+    ).click({ multiple: true, force: true });
     cy.wait(1000);
   },
 
   toggleSectionMarcTooltip(section) {
-    cy.xpath(`//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`)
-      .click();
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
+    cy.wait(500);
+  },
+
+  toggleSingleFieldMarcTooltip(field) {
+    cy.xpath(
+      `//div[text()="${field}"]/ancestor::*[1]//div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
     cy.wait(500);
   },
 
   checkMarcTooltipContains(field, mapping) {
-    cy.xpath(`//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`)
+    cy.xpath(
+      `//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`,
+    )
       .scrollIntoView()
       .should('be.visible');
   },
@@ -137,8 +149,9 @@ export default {
 
   setValueForSectionFieldDropdown(value, field, section, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[text()="${section}"]/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select`)
-      .select(value);
+    cy.xpath(
+      `(//div[text()="${section}"]/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select`,
+    ).select(value);
     cy.wait(1000);
   },
 
@@ -178,11 +191,13 @@ export default {
 
   setValueForSectionSimpleField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
     cy.wait(1000);
   },
 
@@ -250,8 +265,8 @@ export default {
   },
 
   openNewInstanceFormViaNewInstanceButton() {
-    cy.xpath(newInstanceButton).should('be.visible');
-    cy.xpath(newInstanceButton).click();
+    cy.expect(newInstanceButton.exists());
+    cy.do(newInstanceButton.click());
   },
 
   openInventoryViewViaActions() {
@@ -329,23 +344,25 @@ export default {
 
   checkSectionDropdownContainsOptions(section, field, optionLabels, repeatPosition = 1) {
     cy.xpath(
-      `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`
+      `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`,
     ).then(($options) => {
-      const labels = [...$options].map(opt => opt.text);
+      const labels = [...$options].map((opt) => opt.text);
       expect(labels).to.include.members(optionLabels);
     });
   },
 
   checkSimpleFieldDropdownContainsOptions(field, optionLabels, repeatPosition = 1) {
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__menu")]/div/div`)
-      .then(($options) => {
-        const labels = [...$options].map(opt => opt.textContent);
-        expect(labels).to.include.members(optionLabels);
-      });
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__menu")]/div/div`,
+    ).then(($options) => {
+      const labels = [...$options].map((opt) => opt.textContent);
+      expect(labels).to.include.members(optionLabels);
+    });
     cy.do(Keyboard.escape());
     cy.wait(500);
   },
@@ -355,6 +372,10 @@ export default {
     cy.xpath('//div[@data-testid="preview-fields"]').should('be.visible');
   },
 
+  checkNoInstances() {
+    cy.xpath('//div[@class="no-instances"]').should('be.visible');
+  },
+
   checkPreviewSectionContains(section, value) {
     cy.xpath(
       `//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`,
@@ -362,7 +383,9 @@ export default {
   },
 
   checkPreviewSectionContainsLink(section, field, text, link) {
-    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+    cy.xpath(
+      `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
+    )
       .should('exist')
       .filter((_secIdx, sectionBlock) => {
         const $sectionBlock = Cypress.$(sectionBlock);
@@ -376,9 +399,11 @@ export default {
 
         const $linkEl = $fieldBlock.next().find('.preview-value-link');
 
-        return $linkEl.text() === text
-          && $linkEl.attr('target') === 'blank'
-          && $linkEl.attr('href') === link;
+        return (
+          $linkEl.text() === text &&
+          $linkEl.attr('target') === 'blank' &&
+          $linkEl.attr('href') === link
+        );
       })
       .should('have.length.at.least', 1);
   },
@@ -475,7 +500,9 @@ export default {
   },
 
   checkDropdownTextValue(textValue, field) {
-    cy.xpath(`//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`)
+    cy.xpath(
+      `//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`,
+    )
       .filter((_selectIdx, selectBlock) => {
         const opt = selectBlock.options[selectBlock.selectedIndex];
         return opt && opt.text === textValue;
@@ -529,26 +556,16 @@ export default {
     cy.expect(editWorkButton.has({ disabled: false }));
   },
 
-  toggleSectionMarcTooltip(section) {
-    cy.xpath(
-      `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
-    ).click();
-    cy.wait(500);
+  checkNewInstanceButtonEnabled() {
+    cy.expect(newInstanceButton.has({ disabled: false }));
   },
 
-  toggleSingleFieldMarcTooltip(field) {
-    cy.xpath(
-      `//div[text()="${field}"]/ancestor::*[1]//div[contains(@class, "marc-tooltip-wrapper")]/button`,
-    ).click();
-    cy.wait(500);
+  checkNewInstanceButtonDisabled() {
+    cy.expect(newInstanceButton.has({ disabled: true }));
   },
 
-  checkMarcTooltipContains(field, mapping) {
-    cy.xpath(
-      `//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`,
-    )
-      .scrollIntoView()
-      .should('be.visible');
+  checkInstanceActionsHidden() {
+    cy.xpath(instanceActionsButton).should('not.exist');
   },
 
   setSectionFieldValue(value, section) {

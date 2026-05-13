@@ -49,6 +49,7 @@ export const Checkbox = HTML.extend('checkbox')
       const input = el.querySelector('input');
       if (input.checked) input.click();
     }),
+    hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
   });
 
 export const CheckboxInTable = HTML.extend('checkboxInTable')
