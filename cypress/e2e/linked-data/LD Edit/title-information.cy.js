@@ -74,17 +74,19 @@ describe('Citation: Title Information section', () => {
     Users.deleteViaApi(user.userId);
   });
 
+  beforeEach(() => {
+    cy.login(user.username, user.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
+      authRefresh: true,
+    });
+  });
+
   it(
     'C1307932 Marigold - Title Information section verification (citation)',
     { tags: ['criticalPath', 'citation', 'C1307932', 'marigold'] },
     () => {
-      // Precondition: Navigate to Inventory, find uploaded MARC record, open in Marigold
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-        authRefresh: true,
-      });
-
+      // Precondition: Find uploaded MARC record in Inventory and open in Marigold
       InventoryInstances.searchByTitle(testData.mainTitle);
       InventoryInstance.editInstanceInMG();
       PreviewResource.waitLoading();
@@ -300,12 +302,11 @@ describe('Citation: Title Information section', () => {
       SearchAndFilter.searchResourceByTitle(testData.workTitle1);
       SearchAndFilter.checkSearchResultsByTitle(testData.workTitle1);
       // Verify Collapse/Expand button near Work
-      cy.get('[data-testid="work-details-card-toggle"]').should('be.visible');
+      SearchAndFilter.verifyCollapseExpandButton();
 
       // Step 15: Click Collapse/Expand button — verify instance collapsed
-      cy.get('[data-testid="work-details-card-toggle"]').first().click();
-      cy.wait(500);
-      cy.get('[class*="instance-list"]').should('not.exist');
+      SearchAndFilter.clickCollapseExpandButton();
+      SearchAndFilter.verifyInstanceListCollapsed();
     },
   );
 });
