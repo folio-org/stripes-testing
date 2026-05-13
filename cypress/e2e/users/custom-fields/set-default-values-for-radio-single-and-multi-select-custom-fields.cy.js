@@ -5,46 +5,28 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import { buildCustomFieldsApiPayload } from '../../../support/utils/customFields';
-import getRandomPostfix from '../../../support/utils/stringTools';
-
-const getFieldLabel = (description) => `AT_C15700_${description}_${getRandomPostfix()}`;
-const getHelpText = (description) => `AT_C15700_${description}_Help_${getRandomPostfix()}`;
+import {
+  generateCheckboxCustomFieldData,
+  generateDatePickerCustomFieldData,
+  generateMultiSelectCustomFieldData,
+  generateRadioButtonCustomFieldData,
+  generateSingleSelectCustomFieldData,
+  generateTextAreaCustomFieldData,
+  generateTextFieldCustomFieldData,
+} from '../../../support/utils/customFields';
 
 describe('Users', () => {
   describe('Custom Fields (Users)', () => {
+    const testNumber = 'C15700';
     const testData = {
       customFields: {
-        checkbox: {
-          name: getFieldLabel('Checkbox'),
-          helpText: getHelpText('Checkbox'),
-        },
-        datePicker: {
-          name: getFieldLabel('DatePicker'),
-          helpText: getHelpText('DatePicker'),
-        },
-        multiSelect: {
-          name: getFieldLabel('MultiSelect'),
-          options: [getFieldLabel('MultiSelectOption1'), getFieldLabel('MultiSelectOption2')],
-        },
-        radioButton: {
-          name: getFieldLabel('RadioButtonSet'),
-          helpText: getHelpText('RadioButtonSet'),
-          options: [getFieldLabel('RadioButtonOption1'), getFieldLabel('RadioButtonOption2')],
-        },
-        singleSelect: {
-          name: getFieldLabel('SingleSelect'),
-          helpText: getHelpText('SingleSelect'),
-          options: [getFieldLabel('SingleSelectOption1'), getFieldLabel('SingleSelectOption2')],
-        },
-        textArea: {
-          name: getFieldLabel('TextArea'),
-          helpText: getHelpText('TextArea'),
-        },
-        textField: {
-          name: getFieldLabel('TextField'),
-          helpText: getHelpText('TextField'),
-        },
+        checkbox: generateCheckboxCustomFieldData({ testNumber }),
+        datePicker: generateDatePickerCustomFieldData({ testNumber }),
+        multiSelect: generateMultiSelectCustomFieldData({ testNumber }),
+        radioButton: generateRadioButtonCustomFieldData({ testNumber }),
+        singleSelect: generateSingleSelectCustomFieldData({ testNumber }),
+        textArea: generateTextAreaCustomFieldData({ testNumber }),
+        textField: generateTextFieldCustomFieldData({ testNumber }),
       },
     };
 
@@ -79,9 +61,8 @@ describe('Users', () => {
         })
         .then(() => {
           return cy
-            .createCustomFieldsViaApi(buildCustomFieldsApiPayload(testData.customFields))
+            .createCustomFieldsViaApi(Object.values(testData.customFields))
             .then((createdCustomFields) => {
-              console.log('createdCustomFields', createdCustomFields);
               testData.createdCustomFields = createdCustomFields;
             });
         })
@@ -104,9 +85,14 @@ describe('Users', () => {
       'C15700 - Set a default value for the following custom fields: Radio button, Single select, Multi-select',
       { tags: ['extendedPath', 'volaris', 'C15700'] },
       () => {
-        const multiSelectDefaults = testData.customFields.multiSelect.options;
-        const radioButtonDefault = testData.customFields.radioButton.options[1];
-        const singleSelectDefault = testData.customFields.singleSelect.options[1];
+        const multiSelectDefaults =
+          testData.customFields.multiSelect.selectField.options.values.map(
+            (option) => option.value,
+          );
+        const radioButtonDefault =
+          testData.customFields.radioButton.selectField.options.values[1].value;
+        const singleSelectDefault =
+          testData.customFields.singleSelect.selectField.options.values[1].value;
 
         // Step 1: Open the custom fields settings pane
         CustomFields.verifyCustomFieldsPaneIsOpen();
@@ -188,7 +174,6 @@ describe('Users', () => {
           testData.customFields.singleSelect.name,
           singleSelectDefault,
         );
-        UserEdit.clickCloseWithoutSavingIfModalExists();
       },
     );
   });
