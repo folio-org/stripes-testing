@@ -35,6 +35,7 @@ describe('Settings (Users) - Custom Fields', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
+    CustomFields.deleteCustomField(testData.fieldLabel);
   });
 
   it(
@@ -56,7 +57,7 @@ describe('Settings (Users) - Custom Fields', () => {
       CustomFields.fillMultiSelectCustomFieldOnly(multiSelectData);
       CustomFields.clickAddOptionButton();
       CustomFields.fillOptionInRow(2, testData.option3);
-      CustomFields.clickSaveAndClose();
+      CustomFields.saveAndClose();
       CustomFields.verifyCustomFieldExists(testData.fieldLabel);
     },
   );

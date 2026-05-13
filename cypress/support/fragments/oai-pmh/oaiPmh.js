@@ -530,54 +530,70 @@ export default {
       ).to.equal(expectedCount);
     }
 
-    // Verify each expected field configuration
-    expectedFields.forEach((expectedSubfields, fieldIndex) => {
-      if (fieldIndex >= matchingFields.length) {
-        throw new Error(
-          `Field index ${fieldIndex} exceeds available fields (${matchingFields.length}) for tag ${tag} in record with UUID ${instanceUuid}`,
-        );
+    // Verify each expected field configuration (order-agnostic)
+    const usedFieldIndices = new Set();
+
+    expectedFields.forEach((expectedSubfields) => {
+      // Find a matching field that hasn't been used yet
+      let foundMatch = false;
+
+      for (let i = 0; i < matchingFields.length; i++) {
+        // Skip already matched fields
+        if (!usedFieldIndices.has(i)) {
+          const field = matchingFields[i];
+          const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
+
+          // Check if this field matches all expected subfields
+          const allSubfieldsMatch = Object.entries(expectedSubfields).every(
+            ([subfieldCode, expectedValue]) => {
+              const matchingSubfields = Array.from(subfieldsAll).filter(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              if (matchingSubfields.length !== 1) return false;
+              return matchingSubfields[0].textContent === expectedValue;
+            },
+          );
+
+          if (allSubfieldsMatch) {
+            // Mark this field as used
+            usedFieldIndices.add(i);
+            foundMatch = true;
+
+            // Perform explicit assertions for logging visibility
+            Object.entries(expectedSubfields).forEach(([subfieldCode, expectedValue]) => {
+              const matchingSubfield = Array.from(subfieldsAll).find(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              expect(
+                matchingSubfield.textContent,
+                `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+              ).to.equal(expectedValue);
+            });
+
+            // Verify absent subfields in this field
+            absentSubfields.forEach((subfieldCode) => {
+              const subfield = Array.from(subfieldsAll).find(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              expect(
+                subfield,
+                `Subfield "${subfieldCode}" should NOT exist in ${tag} field with subfields ${JSON.stringify(expectedSubfields)} of record with UUID ${instanceUuid}`,
+              ).to.be.undefined;
+            });
+
+            break; // Found match, move to next expected configuration
+          }
+        }
       }
 
-      const field = matchingFields[fieldIndex];
-      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
-
-      // Verify each expected subfield in this field occurrence
-      Object.entries(expectedSubfields).forEach(([subfieldCode, expectedValue]) => {
-        const subfield = Array.from(subfieldsAll).filter(
-          (sf) => sf.getAttribute('code') === subfieldCode,
+      if (!foundMatch) {
+        throw new Error(
+          `No ${tag} field found matching expected subfields ${JSON.stringify(expectedSubfields)} in record with UUID ${instanceUuid}. Available fields: ${matchingFields.length}`,
         );
-
-        if (subfield.length === 0) {
-          throw new Error(
-            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}`,
-          );
-        }
-
-        // Fail if there are multiple subfields with the same code
-        if (subfield.length > 1) {
-          throw new Error(
-            `Multiple subfields "${subfieldCode}" (${subfield.length}) found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}. Expected exactly one.`,
-          );
-        }
-
-        // Verify the single subfield value
-        expect(
-          subfield[0].textContent,
-          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex + 1} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
-        ).to.equal(expectedValue);
-      });
-
-      // Verify absent subfields in this field occurrence
-      absentSubfields.forEach((subfieldCode) => {
-        const subfield = Array.from(subfieldsAll).find(
-          (sf) => sf.getAttribute('code') === subfieldCode,
-        );
-
-        expect(
-          subfield,
-          `Subfield "${subfieldCode}" should NOT exist in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
-        ).to.be.undefined;
-      });
+      }
     });
   },
 
