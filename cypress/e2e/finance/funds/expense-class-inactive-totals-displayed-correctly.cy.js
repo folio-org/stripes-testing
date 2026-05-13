@@ -128,7 +128,7 @@ describe('Finance', () => {
                 ...budgetResp,
                 statusExpenseClasses: budgetResp.statusExpenseClasses.map((ec) => ({
                   ...ec,
-                  status: 'Inactive',
+                  status: EXPENSE_CLASS_STATUSES.INACTIVE,
                 })),
               });
             });
