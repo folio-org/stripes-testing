@@ -148,7 +148,7 @@ describe('Citation: check language MARC codes', () => {
   });
 
   it(
-    'C499692 Marigold - Language Code Work / Inventory / View MARC',
+    'C499692 Marigold - Language Code Work / Inventory / View MARC (citation)',
     { tags: ['criticalPath', 'citation', 'C499692', 'marigold'] },
     () => {
       // Edit instance from Inventory
@@ -210,7 +210,6 @@ describe('Citation: check language MARC codes', () => {
 
       // Review in inventory
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-      InventoryInstances.waitContentLoading();
       InventorySearchAndFilter.bySource(fieldData.ldSource);
       InventoryInstances.searchByTitle(resourceData.marigoldInstanceTitle);
       InventoryInstance.editInstance();
