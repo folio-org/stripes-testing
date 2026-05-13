@@ -1,12 +1,36 @@
 import uuid from 'uuid';
-import { Pane, Button, Select, Option } from '../../../../../interactors';
+import {
+  Pane,
+  Button,
+  Select,
+  Option,
+  MessageBanner,
+  Tooltip,
+  including,
+} from '../../../../../interactors';
 
 const behaviorPane = Pane('Behavior');
 const deletedRecordsSupportDropdown = Select('Deleted records support*');
+const deletedRecordsSupportDropdownNotRequired = Select('Deleted records support');
 const suppressedRecordsProcessingDropdown = Select('Suppressed records processing*');
+const suppressedRecordsProcessingDropdownNotRequired = Select('Suppressed records processing');
 const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing*');
+const oaipmhErrorsProcessingDropdownNotRequired = Select('OAI-PMH errors processing');
 const recordSourceDropdown = Select('Record source*');
+const recordSourceDropdownNotRequired = Select('Record source');
 const saveButton = Button('Save');
+
+export const BEHAVIOR_MESSAGES = {
+  WARNING_BANNER_DISABLED:
+    'OAI service is disabled. To affect OAI-PMH features by settings please Enable OAI service in the General section.',
+  TOOLTIP_DISABLED: 'To enable this field, select Enable OAI service in the General section.',
+  TOOLTIP_DELETED_RECORDS:
+    'The manner in which the repository supports the notion of deleted records.',
+  TOOLTIP_SUPPRESSED_RECORDS:
+    'Defines if suppressed records should be skipped or added into OAI response with discovery flag value.',
+  TOOLTIP_OAI_PMH_ERRORS: 'Defines which HTTP statuses should OAI-level errors be associated with.',
+  TOOLTIP_RECORD_SOURCE: 'Record source',
+};
 
 export const BEHAVIOR_SETTINGS_OPTIONS_UI = {
   DELETED_RECORDS_SUPPORT: {
@@ -88,6 +112,50 @@ export default {
 
   verifySaveButton(disabled = false) {
     cy.expect(saveButton.has({ disabled }));
+  },
+
+  verifyWarningBanner(message = null) {
+    if (message) {
+      cy.expect(MessageBanner({ textContent: including(message) }).exists());
+    } else {
+      cy.expect(MessageBanner().absent());
+    }
+  },
+
+  verifyBehaviorPaneWhenDisabled() {
+    cy.expect([
+      deletedRecordsSupportDropdownNotRequired.has({ disabled: true }),
+      suppressedRecordsProcessingDropdownNotRequired.has({ disabled: true }),
+      oaipmhErrorsProcessingDropdownNotRequired.has({ disabled: true }),
+      recordSourceDropdownNotRequired.has({ disabled: true }),
+      saveButton.has({ disabled: true }),
+    ]);
+  },
+
+  verifyBehaviorPaneWhenEnabled() {
+    cy.expect([
+      deletedRecordsSupportDropdown.has({ disabled: false, required: true }),
+      suppressedRecordsProcessingDropdown.has({ disabled: false, required: true }),
+      oaipmhErrorsProcessingDropdown.has({ disabled: false, required: true }),
+      recordSourceDropdown.has({ disabled: false, required: true }),
+      saveButton.has({ disabled: true }),
+    ]);
+  },
+
+  hoverAndVerifyTooltip(fieldName, tooltipText) {
+    const fieldMap = {
+      'Deleted records support*': deletedRecordsSupportDropdown,
+      'Deleted records support': deletedRecordsSupportDropdownNotRequired,
+      'Suppressed records processing*': suppressedRecordsProcessingDropdown,
+      'Suppressed records processing': suppressedRecordsProcessingDropdownNotRequired,
+      'OAI-PMH errors processing*': oaipmhErrorsProcessingDropdown,
+      'OAI-PMH errors processing': oaipmhErrorsProcessingDropdownNotRequired,
+      'Record source*': recordSourceDropdown,
+      'Record source': recordSourceDropdownNotRequired,
+    };
+
+    cy.do(fieldMap[fieldName].hoverMouse());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
   },
 
   /**

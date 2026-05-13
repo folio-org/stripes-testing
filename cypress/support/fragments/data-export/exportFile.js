@@ -278,13 +278,15 @@ export default {
             if (Array.isArray(element)) {
               // Check for nested array
               element.forEach((nestedElement) => {
-                expect(actualContent).to.include(nestedElement);
+                expect(actualContent, `Checking "${nestedElement}" present`).to.include(
+                  nestedElement,
+                );
               });
             } else {
               // Check for regular element
-              expect(actualContent).to.include(element);
+              expect(actualContent, `Checking "${element}" present`).to.include(element);
             }
-          } else expect(actualContent).to.not.include(element);
+          } else expect(actualContent, `Checking "${element}" absent`).to.not.include(element);
         });
       });
     });
