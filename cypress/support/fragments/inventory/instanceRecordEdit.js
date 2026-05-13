@@ -37,6 +37,8 @@ const staffSuppressCheckbox = Checkbox({ name: 'staffSuppress' });
 const previoslyHeldCheckbox = Checkbox({ name: 'previouslyHeld' });
 const setForDeletionChecbox = Checkbox({ name: 'deleted' });
 const instanceStatusTerm = Select('Instance status term');
+const descriptiveDataAccordion = Accordion('Descriptive data');
+const languageSelect = Select('Language*');
 const addStatisticalCodeButton = Button('Add statistical code');
 const statisticalCodeFieldSet = rootSection.find(FieldSet('Statistical code'));
 const statisticalCodeSelectionList = SelectionList();
@@ -674,6 +676,11 @@ export default {
 
   verifyNatureOfContentSelected(nature) {
     cy.expect(Select('Nature of content term').has({ checkedOptionText: including(nature) }));
+  },
+
+  verifyLanguage(language) {
+    cy.do(descriptiveDataAccordion.clickHeader());
+    cy.expect(languageSelect.has({ checkedOptionText: including(language) }));
   },
 
   verifyParentInstance(title, hrid) {
