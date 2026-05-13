@@ -1508,6 +1508,13 @@ const API = {
       return response.body.content.find((item) => item.name === listName).id;
     });
   },
+
+  verifyExportCallouts(listName) {
+    this.verifyCalloutMessage(
+      `Export of ${listName} is being generated. This may take some time for larger lists.`,
+    );
+    this.verifyCalloutMessage(`List ${listName} was successfully exported to CSV.`);
+  },
 };
 
 export const Lists = {

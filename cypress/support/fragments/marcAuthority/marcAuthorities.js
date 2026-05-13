@@ -34,6 +34,7 @@ import {
   and,
   matching,
   MultiColumnListHeader,
+  Spinner,
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -1243,6 +1244,14 @@ export default {
     );
   },
 
+  waitResultsLoading() {
+    this.verifySearchResultTabletIsAbsent(false);
+    cy.expect([
+      authoritiesList.find(MultiColumnListCell({ row: 0 })).exists(),
+      rootSection.find(Spinner()).absent(),
+    ]);
+  },
+
   verifySearchResultTabletIsAbsent(absent = true) {
     if (absent) {
       cy.expect(authoritiesList.absent());
@@ -1290,6 +1299,19 @@ export default {
   verifyTypeOfHeadingAccordionAndClick: () => {
     cy.expect(headingTypeAccordion.exists());
     cy.do(headingTypeAccordion.clickHeader());
+  },
+
+  fillInTypeOfHeadingMultiSelectFilter(value) {
+    cy.do(typeOfHeadingSelect.fillIn(value));
+    cy.expect(typeOfHeadingSelect.has({ filterValue: value }));
+  },
+
+  checkFilterNoMatchMessage({ isPresent = true } = {}) {
+    if (isPresent) {
+      cy.expect(filtersSection.find(HTML('No matching items found!')).exists());
+    } else {
+      cy.expect(filtersSection.find(HTML('No matching items found!')).absent());
+    }
   },
 
   chooseThesaurus: (thesaurusTypes) => {

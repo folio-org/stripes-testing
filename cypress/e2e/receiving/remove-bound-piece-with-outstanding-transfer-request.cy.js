@@ -5,6 +5,7 @@ import {
   BOUND_PIECES_DATA_LIST_COLUMNS,
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
+  NO_VALUE,
   ORDER_FORMAT_VALUES,
   ORDER_STATUSES,
   RECEIVING_PIECE_FORM_MODES,
@@ -15,7 +16,6 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
   RECEIVING_PIECE_FORM_FIELD_LABELS,
-  KEY_VALUE_NO_VALUE_MESSAGE,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -204,7 +204,7 @@ describe('Receiving', () => {
       cy.expect(Checkbox(RECEIVING_PIECE_FORM_FIELD_LABELS.BOUND).has({ checked: false }));
       cy.expect(
         KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.REQUEST).has({
-          value: KEY_VALUE_NO_VALUE_MESSAGE,
+          value: NO_VALUE,
         }),
       );
 

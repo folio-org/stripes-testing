@@ -47,6 +47,7 @@ export default HTML.extend('select')
     allOptionsText: (el) => [...el.querySelectorAll('option')].map((option) => {
       return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
     }),
+    hasInfoButton: (el) => !!el.querySelector('[data-test-info-popover-trigger="true"]'),
   })
   .actions({
     choose,
@@ -58,4 +59,5 @@ export default HTML.extend('select')
       return blur(...args);
     },
     hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
+    clickInfoButton: ({ perform }) => perform((el) => el.querySelector('[data-test-info-popover-trigger="true"]').click()),
   });

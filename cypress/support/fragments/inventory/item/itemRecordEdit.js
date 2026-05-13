@@ -36,6 +36,9 @@ const loanDataFields = {
   loanType: itemEditForm.find(Select({ id: 'additem_loanTypePerm' })),
   temporaryLoanType: itemEditForm.find(Select({ id: 'additem_loanTypeTemp' })),
 };
+const conditionFields = {
+  damagedStatus: itemEditForm.find(Select({ id: 'input_item_damaged_status_id' })),
+};
 const addNoteBtn = Accordion('Item notes').find(Button('Add note'));
 
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
@@ -144,6 +147,14 @@ export default {
     cy.do(loanDataFields.temporaryLoanType.choose(temporaryLoanType));
     cy.expect(loanDataFields.temporaryLoanType.has({ checkedOptionText: temporaryLoanType }));
   },
+  chooseItemDamagedStatus: (damagedStatus) => {
+    cy.do(conditionFields.damagedStatus.choose(damagedStatus));
+    cy.expect(conditionFields.damagedStatus.has({ checkedOptionText: damagedStatus }));
+  },
+  clearItemDamagedStatus: () => {
+    cy.do(conditionFields.damagedStatus.choose('Select status'));
+    cy.expect(conditionFields.damagedStatus.has({ checkedOptionText: 'Select status' }));
+  },
   openTemporaryLocation() {
     cy.do(temporaryLocationDropdown.click());
   },
@@ -160,6 +171,13 @@ export default {
   },
   openPermanentLocation() {
     cy.do(permanentLocationDropdown.click());
+  },
+  choosePermanentLocation(permanentLocation) {
+    cy.do([
+      permanentLocationDropdown.click(),
+      permanentLocationList.filter(permanentLocation),
+      permanentLocationList.select(including(permanentLocation)),
+    ]);
   },
   verifyPermanentLocationItemExists: (permanentLocation) => {
     cy.expect(permanentLocationList.exists());
