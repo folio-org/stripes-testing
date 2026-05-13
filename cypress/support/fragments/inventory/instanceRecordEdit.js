@@ -40,6 +40,8 @@ const instanceStatusTerm = Select('Instance status term');
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const languageSelect = Select('Language*');
 const addStatisticalCodeButton = Button('Add statistical code');
+const statisticalCodeFieldSet = rootSection.find(FieldSet('Statistical code'));
+const statisticalCodeSelectionList = SelectionList();
 const addNatureOfContentButton = Button('Add nature of content');
 const addFormatsButton = Button('Add format');
 const addParentInstanceButton = Button('Add parent instance');
@@ -86,6 +88,35 @@ export default {
   addFormats,
   clickAddStatisticalCodeButton,
   chooseStatisticalCode,
+  openStatisticalCodeDropdown(index = 0) {
+    cy.do(Button({ name: `statisticalCodeIds[${index}]` }).click());
+  },
+  verifyStatisticalCodeDropdown() {
+    cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
+    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+      expect(count).to.greaterThan(0);
+    });
+  },
+  filterStatisticalCodeByName(name) {
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeListOptionsFilteredBy(name) {
+    cy.get('[class^=optionSegment-]').each(($option) => {
+      cy.wrap($option).invoke('text').should('include', name);
+    });
+  },
+  checkErrorMessageForStatisticalCode(isPresented = true) {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
+  },
   dateTypePlaceholderOption,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {

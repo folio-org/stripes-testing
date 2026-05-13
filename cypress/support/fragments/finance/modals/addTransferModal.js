@@ -29,6 +29,7 @@ const descriptionTextArea = addTransferModal.find(TextArea({ name: 'description'
 
 const cancelButton = addTransferModal.find(Button('Cancel'));
 const confirmButton = addTransferModal.find(Button('Confirm'));
+const feedbackErrorSelector = '[class*="feedbackError"]';
 
 export default {
   verifyModalView({ header = TRANSFER_ACTIONS.TRANSFER } = {}) {
@@ -53,6 +54,7 @@ export default {
         SelectionList().filter(fromFund),
         SelectionList().select(including(fromFund)),
       ]);
+      cy.wait(2000);
     }
     if (toFund) {
       cy.do([
@@ -127,7 +129,7 @@ export default {
   },
 
   expectErrorPresent(message) {
-    cy.get('[class*="feedbackError"]').should('contain', message);
+    cy.get(feedbackErrorSelector).should('contain', message);
   },
 
   clickSwapButton() {
@@ -165,6 +167,10 @@ export default {
 
   verifyConfirmButtonDisabled(isDisabled = true) {
     cy.expect(confirmButton.has({ disabled: isDisabled }));
+  },
+
+  verifyCancelButtonDisabled(isDisabled = true) {
+    cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
 
   addNewTag(tagName) {
