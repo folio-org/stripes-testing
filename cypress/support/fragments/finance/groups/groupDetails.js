@@ -15,7 +15,7 @@ export default {
   verifyGroupName: (title) => {
     cy.expect(groupDetailsPane.find(groupDetailsPaneHeader).has({ text: including(title) }));
   },
-  checkGroupDetails({ information, financialSummary, funds, expenseClass } = {}) {
+  checkGroupDetails({ information, financialSummary, funds, expenseClass, expenseClasses } = {}) {
     if (information) {
       FinanceDetails.checkInformation(information);
     }
@@ -25,10 +25,11 @@ export default {
     if (funds) {
       FinanceDetails.checkFundsDetails(funds);
     }
-    if (expenseClass) {
+    const classes = expenseClasses || (expenseClass ? [expenseClass] : null);
+    if (classes) {
       FinanceDetails.checkExpenseClassesTableContent({
         section: expenseClassSection,
-        items: [expenseClass],
+        items: classes,
       });
     }
   },
