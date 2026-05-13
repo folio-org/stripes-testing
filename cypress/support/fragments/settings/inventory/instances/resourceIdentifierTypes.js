@@ -24,10 +24,11 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
+  deleteViaApi: (id, { failOnStatusCode } = {}) => cy.okapiRequest({
     method: 'DELETE',
     path: `identifier-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
   verifyConsortiumResourceIdentifierTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });

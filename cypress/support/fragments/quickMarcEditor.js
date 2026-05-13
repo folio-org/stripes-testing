@@ -1048,12 +1048,17 @@ export default {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
+    cy.intercept({ method: /GET/, url: /\/records-editor\/records\?externalId=.*$/ }).as(
+      'getSavedRecordRequest',
+    );
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutAfterSaveAndClose.exists());
     cy.wait('@saveRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
-    cy.expect(rootSection.exists());
+    cy.wait('@getSavedRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('eq', 200);
+    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.exists()]);
   },
 
   deleteFieldAndCheck(rowIndex, tag) {
@@ -2969,7 +2974,7 @@ export default {
     let timeCounter = 0;
     function checkBib() {
       cy.okapiRequest({
-        path: 'instance-storage/instances',
+        path: 'search/instances',
         searchParams: { query: `(title all "${marcBibTitle}")` },
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
@@ -3162,6 +3167,7 @@ export default {
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.C:
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.D:
       case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.I:
+      case INVENTORY_LDR_FIELD_TYPE_DROPDOWN.J:
         this.selectFieldsDropdownOption('008', 'Comp', 'an - Anthems');
         cy.wait(1000);
         this.selectFieldsDropdownOption('008', 'FMus', 'a - Full score');

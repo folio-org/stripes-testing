@@ -136,6 +136,38 @@ export default {
             .has({ content: including(record.paymentStatus) }),
         );
       }
+
+      if (record.quantity) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Quantity' }))
+            .has({ content: including(record.quantity) }),
+        );
+      }
+
+      if (record.subTotal) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Sub-total' }))
+            .has({ content: including(record.subTotal) }),
+        );
+      }
+
+      if (record.total) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Total' }))
+            .has({ content: including(record.total) }),
+        );
+      }
+
+      if (record.totalExchanged) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Total (Exchanged)' }))
+            .has({ content: including(record.totalExchanged) }),
+        );
+      }
     });
   },
   checkInvoiceDetails({
@@ -148,6 +180,7 @@ export default {
     voucherExport = [],
     voucherInformation = [],
     vendorDetailsInformation = [],
+    fieldsNotDisplayed = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -198,6 +231,11 @@ export default {
 
     if (invoiceLevelAdjustments) {
       this.checkInvoiceLevelAdjustmentsTableContent(invoiceLevelAdjustments);
+    }
+    if (fieldsNotDisplayed) {
+      fieldsNotDisplayed.forEach((field) => {
+        cy.expect(invoiceDetailsPane.find(KeyValue(field)).absent());
+      });
     }
   },
 
@@ -491,7 +529,7 @@ export default {
 
   cancelInvoiceWithUpdatePOLPaymentStatus({
     errorMessage,
-    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT,
+    status = INVOICE_POL_PAYMENT_STATUSES.AWAITING_PAYMENT_UI,
   } = {}) {
     this.clickCancelInActionsMenu();
     CancelInvoiceModal.clickSubmitButton(false);

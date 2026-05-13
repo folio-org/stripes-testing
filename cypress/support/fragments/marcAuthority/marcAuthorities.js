@@ -34,6 +34,7 @@ import {
   and,
   matching,
   MultiColumnListHeader,
+  Spinner,
 } from '../../../../interactors';
 import { MARC_AUTHORITY_BROWSE_OPTIONS, MARC_AUTHORITY_SEARCH_OPTIONS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -1243,6 +1244,14 @@ export default {
     );
   },
 
+  waitResultsLoading() {
+    this.verifySearchResultTabletIsAbsent(false);
+    cy.expect([
+      authoritiesList.find(MultiColumnListCell({ row: 0 })).exists(),
+      rootSection.find(Spinner()).absent(),
+    ]);
+  },
+
   verifySearchResultTabletIsAbsent(absent = true) {
     if (absent) {
       cy.expect(authoritiesList.absent());
@@ -1290,6 +1299,19 @@ export default {
   verifyTypeOfHeadingAccordionAndClick: () => {
     cy.expect(headingTypeAccordion.exists());
     cy.do(headingTypeAccordion.clickHeader());
+  },
+
+  fillInTypeOfHeadingMultiSelectFilter(value) {
+    cy.do(typeOfHeadingSelect.fillIn(value));
+    cy.expect(typeOfHeadingSelect.has({ filterValue: value }));
+  },
+
+  checkFilterNoMatchMessage({ isPresent = true } = {}) {
+    if (isPresent) {
+      cy.expect(filtersSection.find(HTML('No matching items found!')).exists());
+    } else {
+      cy.expect(filtersSection.find(HTML('No matching items found!')).absent());
+    }
   },
 
   chooseThesaurus: (thesaurusTypes) => {
@@ -1783,11 +1805,32 @@ export default {
     LDR = defaultLDR,
     tag008Values = valid008FieldValues,
   ) {
-    return cy.createMarcAuthorityViaAPI(LDR, [
-      { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
-      { tag: '008', content: tag008Values },
-      ...fields,
-    ]);
+    return cy
+      .createMarcAuthorityViaAPI(LDR, [
+        { tag: '001', content: `${authorityFilePrefix}${authorityFileHridStartsWith}` },
+        { tag: '008', content: tag008Values },
+        ...fields,
+      ])
+      .then((authorityId) => {
+        return cy
+          .recurse(
+            () => cy.okapiRequest({
+              path: 'search/authorities',
+              searchParams: { query: `id=="${authorityId}"` },
+              isDefaultSearchParamsRequired: false,
+            }),
+            (response) => {
+              const authorities = response.body?.authorities;
+              return (
+                Array.isArray(authorities) &&
+                authorities.length > 0 &&
+                authorities[0].id === authorityId
+              );
+            },
+            { limit: 20, timeout: 30000, delay: 1000 },
+          )
+          .then(() => authorityId);
+      });
   },
 
   deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {

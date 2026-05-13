@@ -472,6 +472,22 @@ export default {
     );
   },
 
+  confirmCloseWithoutSaving: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }))
+        .click(),
+    );
+  },
+
+  openItemByBarcode: (barcode) => {
+    cy.do(itemInfoSection.find(Link(including(barcode))).click());
+  },
+
+  verifyItemBarcodeLink: (barcode) => {
+    cy.expect(itemInfoSection.find(Link(including(barcode))).exists());
+  },
+
   openRequesterLookup: () => {
     cy.do(Button('Requester look-up').click());
   },

@@ -1,25 +1,20 @@
-const profileModalSelector = 'div[class="modal modal-choose-profile"]';
+import { Button } from '../../../../interactors';
+
+const profileModalSelector = '[data-testid="modal-choose-profile-content"]';
+const createButton = Button({ dataTestID: 'modal-button-submit' });
 
 export default {
   waitLoading() {
     cy.get(profileModalSelector).should('be.visible');
   },
   checkOptionSelected(option) {
-    cy.get(profileModalSelector).then((modal) => {
-      if (modal.is(':visible')) {
-        // verify selected option
-        cy.get('select#select-profile option:selected').should('have.text', option);
-      } else {
-        cy.log('Work profile modal is not displayed');
-      }
-    });
+    cy.get(`${profileModalSelector} select#select-profile option:selected`).should(
+      'have.text',
+      option,
+    );
   },
   selectDefaultOption() {
-    cy.get(profileModalSelector).then((modal) => {
-      if (modal.is(':visible')) {
-        cy.xpath('//button[@data-testid="modal-button-submit"]').click();
-        cy.wait(1000);
-      }
-    });
+    cy.do(createButton.click());
+    cy.wait(1000);
   },
 };

@@ -98,12 +98,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory).
    * @param {boolean} shouldBeDeleted - Whether the instance should have deleted status (default: false).
    * @param {boolean} verifyIdentifier - Whether to verify the identifier format (default: true).
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyOaiPmhRecordHeader(
     xmlString,
     instanceUuid,
     shouldBeDeleted = false,
     verifyIdentifier = true,
+    tenantId = null,
   ) {
     const expectedStatus = shouldBeDeleted ? 'deleted' : null;
 
@@ -130,7 +132,8 @@ export default {
       const identifier = identifierElement.textContent;
 
       this.getBaseUrl().then((baseUrl) => {
-        const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+        const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+        const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
         expect(
           identifier,
           `Identifier should match expected OAI format for record with UUID ${instanceUuid}`,
@@ -391,6 +394,24 @@ export default {
   },
 
   /**
+   * Extract resumptionToken from OAI-PMH ListRecords or ListIdentifiers response
+   * In consortia environments, OAI-PMH returns records from different tenants in separate pages.
+   * Each response includes a resumptionToken that must be used to fetch the next page.
+   * @param {string} xmlString - The XML response as a string
+   * @returns {string|null} Resumption token if present, null if no more pages
+   */
+  extractResumptionToken(xmlString) {
+    const xmlDoc = this._parseXmlString(xmlString);
+    const resumptionTokenElement = xmlDoc.getElementsByTagName('resumptionToken')[0];
+
+    if (resumptionTokenElement && resumptionTokenElement.textContent.trim()) {
+      return resumptionTokenElement.textContent.trim();
+    }
+
+    return null;
+  },
+
+  /**
    * Verify that a subfield with a specific value is ABSENT in a MARC field
    * @param {string} xmlString - The XML response as a string
    * @param {string} instanceUuid - The instance UUID to target a specific record (mandatory)
@@ -509,54 +530,70 @@ export default {
       ).to.equal(expectedCount);
     }
 
-    // Verify each expected field configuration
-    expectedFields.forEach((expectedSubfields, fieldIndex) => {
-      if (fieldIndex >= matchingFields.length) {
-        throw new Error(
-          `Field index ${fieldIndex} exceeds available fields (${matchingFields.length}) for tag ${tag} in record with UUID ${instanceUuid}`,
-        );
+    // Verify each expected field configuration (order-agnostic)
+    const usedFieldIndices = new Set();
+
+    expectedFields.forEach((expectedSubfields) => {
+      // Find a matching field that hasn't been used yet
+      let foundMatch = false;
+
+      for (let i = 0; i < matchingFields.length; i++) {
+        // Skip already matched fields
+        if (!usedFieldIndices.has(i)) {
+          const field = matchingFields[i];
+          const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
+
+          // Check if this field matches all expected subfields
+          const allSubfieldsMatch = Object.entries(expectedSubfields).every(
+            ([subfieldCode, expectedValue]) => {
+              const matchingSubfields = Array.from(subfieldsAll).filter(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              if (matchingSubfields.length !== 1) return false;
+              return matchingSubfields[0].textContent === expectedValue;
+            },
+          );
+
+          if (allSubfieldsMatch) {
+            // Mark this field as used
+            usedFieldIndices.add(i);
+            foundMatch = true;
+
+            // Perform explicit assertions for logging visibility
+            Object.entries(expectedSubfields).forEach(([subfieldCode, expectedValue]) => {
+              const matchingSubfield = Array.from(subfieldsAll).find(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              expect(
+                matchingSubfield.textContent,
+                `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
+              ).to.equal(expectedValue);
+            });
+
+            // Verify absent subfields in this field
+            absentSubfields.forEach((subfieldCode) => {
+              const subfield = Array.from(subfieldsAll).find(
+                (sf) => sf.getAttribute('code') === subfieldCode,
+              );
+
+              expect(
+                subfield,
+                `Subfield "${subfieldCode}" should NOT exist in ${tag} field with subfields ${JSON.stringify(expectedSubfields)} of record with UUID ${instanceUuid}`,
+              ).to.be.undefined;
+            });
+
+            break; // Found match, move to next expected configuration
+          }
+        }
       }
 
-      const field = matchingFields[fieldIndex];
-      const subfieldsAll = field.getElementsByTagNameNS(namespaceURI, 'subfield');
-
-      // Verify each expected subfield in this field occurrence
-      Object.entries(expectedSubfields).forEach(([subfieldCode, expectedValue]) => {
-        const subfield = Array.from(subfieldsAll).filter(
-          (sf) => sf.getAttribute('code') === subfieldCode,
+      if (!foundMatch) {
+        throw new Error(
+          `No ${tag} field found matching expected subfields ${JSON.stringify(expectedSubfields)} in record with UUID ${instanceUuid}. Available fields: ${matchingFields.length}`,
         );
-
-        if (subfield.length === 0) {
-          throw new Error(
-            `Subfield "${subfieldCode}" not found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}`,
-          );
-        }
-
-        // Fail if there are multiple subfields with the same code
-        if (subfield.length > 1) {
-          throw new Error(
-            `Multiple subfields "${subfieldCode}" (${subfield.length}) found in ${tag} field occurrence ${fieldIndex + 1} of record with UUID ${instanceUuid}. Expected exactly one.`,
-          );
-        }
-
-        // Verify the single subfield value
-        expect(
-          subfield[0].textContent,
-          `Subfield "${subfieldCode}" of ${tag} field with indicators ${JSON.stringify(indicators)} occurrence ${fieldIndex + 1} should have value "${expectedValue}" in record with UUID ${instanceUuid}`,
-        ).to.equal(expectedValue);
-      });
-
-      // Verify absent subfields in this field occurrence
-      absentSubfields.forEach((subfieldCode) => {
-        const subfield = Array.from(subfieldsAll).find(
-          (sf) => sf.getAttribute('code') === subfieldCode,
-        );
-
-        expect(
-          subfield,
-          `Subfield "${subfieldCode}" should NOT exist in ${tag} field occurrence ${fieldIndex} of record with UUID ${instanceUuid}`,
-        ).to.be.undefined;
-      });
+      }
     });
   },
 
@@ -616,34 +653,36 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listRecordsRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const searchParams = {
-      verb: 'ListRecords',
-      metadataPrefix,
-    };
+    return cy.then(() => {
+      const searchParams = {
+        verb: 'ListRecords',
+        metadataPrefix,
+      };
 
-    if (fromDate) {
-      searchParams.from = fromDate;
-    } else {
-      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
-    }
+      if (fromDate) {
+        searchParams.from = fromDate;
+      } else {
+        searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
+      }
 
-    if (untilDate) {
-      searchParams.until = untilDate;
-    } else {
-      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
-    }
+      if (untilDate) {
+        searchParams.until = untilDate;
+      } else {
+        searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
+      }
 
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'oai/records',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: true,
-      })
-      .then((response) => {
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'oai/records',
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: true,
+        })
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
 
   /**
@@ -654,34 +693,36 @@ export default {
    * @returns {Cypress.Chainable} The response body from the OAI-PMH request
    */
   listIdentifiersRequest(metadataPrefix = 'marc21', fromDate = null, untilDate = null) {
-    const searchParams = {
-      verb: 'ListIdentifiers',
-      metadataPrefix,
-    };
+    return cy.then(() => {
+      const searchParams = {
+        verb: 'ListIdentifiers',
+        metadataPrefix,
+      };
 
-    if (fromDate) {
-      searchParams.from = fromDate;
-    } else {
-      searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
-    }
+      if (fromDate) {
+        searchParams.from = fromDate;
+      } else {
+        searchParams.from = DateTools.getCurrentDateForOaiPmh(-2); // Current time minus 2 minutes
+      }
 
-    if (untilDate) {
-      searchParams.until = untilDate;
-    } else {
-      searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
-    }
+      if (untilDate) {
+        searchParams.until = untilDate;
+      } else {
+        searchParams.until = DateTools.getCurrentDateForOaiPmh(2); // Current time plus 2 minutes
+      }
 
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'oai/records',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: true,
-      })
-      .then((response) => {
-        return response.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'GET',
+          path: 'oai/records',
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: true,
+        })
+        .then((response) => {
+          return response.body;
+        });
+    });
   },
 
   /**
@@ -729,12 +770,14 @@ export default {
    * @param {string} instanceUuid - The instance UUID to find in the response (mandatory)
    * @param {boolean} shouldExist - Whether the identifier should exist in the response (default: true)
    * @param {boolean} shouldBeDeleted - Whether the identifier should have deleted status (default: false). Ignored when shouldExist is false.
+   * @param {string} tenantId - Optional tenant ID for identifier verification (defaults to OKAPI_TENANT from env).
    */
   verifyIdentifierInListResponse(
     xmlString,
     instanceUuid,
     shouldExist = true,
     shouldBeDeleted = false,
+    tenantId = null,
   ) {
     const xmlDoc = this._parseXmlString(xmlString);
     const headers = xmlDoc.getElementsByTagName('header');
@@ -780,7 +823,8 @@ export default {
 
     // Verify the identifier format and deleted status (must be in the same async chain)
     this.getBaseUrl().then((baseUrl) => {
-      const expectedIdentifier = `oai:${baseUrl}:${Cypress.env('OKAPI_TENANT')}/${instanceUuid}`;
+      const tenant = tenantId || Cypress.env('OKAPI_TENANT');
+      const expectedIdentifier = `oai:${baseUrl}:${tenant}/${instanceUuid}`;
       expect(
         foundIdentifier,
         `Identifier should match expected OAI format for UUID ${instanceUuid}`,

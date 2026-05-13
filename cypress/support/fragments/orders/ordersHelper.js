@@ -20,4 +20,28 @@ export default {
         }),
     );
   },
+
+  interceptGetOrders() {
+    cy.intercept('GET', '/orders/composite-orders*').as('waiterForOrdersQueryCompleted');
+  },
+
+  waitForOrdersQueryCompleted() {
+    cy.wait('@waiterForOrdersQueryCompleted');
+  },
+
+  interceptGetOrderLines() {
+    cy.intercept('GET', '/orders/order-lines*').as('waiterForOrderLinesQueryCompleted');
+  },
+
+  waitForOrderLinesQueryCompleted() {
+    cy.wait('@waiterForOrderLinesQueryCompleted');
+  },
+
+  interceptCustomFields() {
+    cy.intercept('GET', '/custom-fields*').as('waiterForCustomFieldsQueryCompleted');
+  },
+
+  waitForCustomFieldsQueryCompleted() {
+    cy.wait('@waiterForCustomFieldsQueryCompleted');
+  },
 };

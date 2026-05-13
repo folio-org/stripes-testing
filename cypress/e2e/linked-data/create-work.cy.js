@@ -4,44 +4,37 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Marigold from '../../support/fragments/linked-data/marigold';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, MARIGOLD_ROLES, EDIT_RESOURCE_HEADINGS } from '../../support/constants';
+import { APPLICATION_NAMES, EDIT_RESOURCE_HEADINGS } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
 import Users from '../../support/fragments/users/users';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: create work', () => {
   const testData = {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     partName: `Part test name ${getRandomPostfix()}`,
     summaryNote: 'test summary note',
-    roleIds: [],
     workId: null,
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
   });
 
@@ -79,8 +72,8 @@ describe('Citation: create work', () => {
       EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.setNoteValue(testData.summaryNote, 'Summary note');
-      EditResource.saveAndKeepEditingWithId().then(({ workId }) => {
-        testData.workId = workId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.workId = resourceId;
       });
       EditResource.clickCloseResourceButton();
       // wait for LDE page to be displayed

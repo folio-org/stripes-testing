@@ -155,6 +155,7 @@ describe('Data Export', () => {
         SettingsDataExport.goToSettingsDataExport();
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(lockedNotReferencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedNotReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedNotReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -181,6 +182,8 @@ describe('Data Export', () => {
         );
 
         // Step 4: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.clearSearchField();
+        ExportJobProfiles.searchJobProfile(lockedNotReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(
           lockedNotReferencedJobProfile.duplicatedJobProfileName,
           user,
@@ -200,7 +203,9 @@ describe('Data Export', () => {
 
         // Step 6: Close Job profile view page by clicking "X" button, Select existing locked job profile from Preconditions: job profile referenced in an existing export job
         SingleJobProfile.clickXButton();
+        ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
+        ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(lockedReferencedJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -219,6 +224,8 @@ describe('Data Export', () => {
         );
 
         // Step 8: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.clearSearchField();
+        ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(
           lockedReferencedJobProfile.duplicatedJobProfileName,
           user,
@@ -238,6 +245,8 @@ describe('Data Export', () => {
         SingleJobProfile.verifyLockProfileCheckbox(true, true);
 
         // Step 10: Select existing job profile from Preconditions: default job profile
+        ExportJobProfiles.clearSearchField();
+        ExportJobProfiles.searchJobProfile(defaultJobProfile.jobProfileName);
         ExportJobProfiles.clickProfileNameFromTheList(defaultJobProfile.jobProfileName);
         SingleJobProfile.waitLoading(defaultJobProfile.jobProfileName);
         SingleJobProfile.verifyElements();
@@ -256,6 +265,7 @@ describe('Data Export', () => {
         );
 
         // Step 12: Verify row with duplicated job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(defaultJobProfile.duplicatedJobProfileName);
         ExportJobProfiles.verifyProfileInTable(
           defaultJobProfile.duplicatedJobProfileName,
           user,

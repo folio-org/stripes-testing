@@ -46,6 +46,29 @@ const getdefaultPackage = () => {
   return defaultPackage;
 };
 
+const generatePackageBodyForUpdate = (updatedPackageData) => {
+  updatedPackageData.attributes.allowKbToAddTitles =
+    updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom;
+  return {
+    data: {
+      id: updatedPackageData.id,
+      type: updatedPackageData.type,
+      attributes: {
+        name: updatedPackageData.attributes.name,
+        isSelected: updatedPackageData.attributes.isSelected,
+        allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
+        contentType: updatedPackageData.attributes.contentType,
+        customCoverage: updatedPackageData.attributes.customCoverage,
+        visibilityData: updatedPackageData.attributes.visibilityData,
+        isCustom: updatedPackageData.attributes.isCustom,
+        proxy: updatedPackageData.attributes.proxy,
+        packageToken: updatedPackageData.attributes.packageToken,
+        isFullPackage: true,
+      },
+    },
+  };
+};
+
 export default {
   defaultPackage,
   getdefaultPackage,
@@ -253,41 +276,32 @@ export default {
     });
   },
 
-  unassignPackageViaAPI(packageName) {
-    this.getPackageViaApi(packageName).then(({ body: { data } }) => {
-      const packageData = data[0];
-      const { attributes } = packageData;
-      attributes.isSelected = false;
-      cy.okapiRequest({
-        method: 'PUT',
-        path: `eholdings/packages/${packageData.id}`,
-        contentTypeHeader: 'application/vnd.api+json',
-        body: {
-          data: {
-            id: packageData.id,
-            type: packageData.type,
-            attributes: {
-              name: attributes.name,
-              isSelected: attributes.isSelected,
-              allowKbToAddTitles: false,
-              contentType: attributes.contentType,
-              customCoverage: {},
-              visibilityData: {
-                isHidden: false,
-                reason: '',
-              },
-              isCustom: attributes.isCustom,
-              proxy: {
-                id: 'ezproxy',
-                inherited: true,
-              },
-              packageToken: {},
-              isFullPackage: false,
-              accessTypeId: null,
-            },
-          },
-        },
-        isDefaultSearchParamsRequired: false,
+  getPackageDataViaApi(packageId) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/packages/${packageId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  updatePackageViaApi(updatedPackageData) {
+    const packageId = updatedPackageData.id;
+    const packageBody = generatePackageBodyForUpdate(updatedPackageData);
+    cy.okapiRequest({
+      method: 'PUT',
+      path: `eholdings/packages/${packageId}`,
+      contentTypeHeader: 'application/vnd.api+json',
+      body: packageBody,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  unassignPackageViaAPI(packageName, { isHidden = false } = {}) {
+    this.getPackageViaApi(packageName).then((searchResponse) => {
+      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+        data.attributes.isSelected = false;
+        data.attributes.visibilityData.isHidden = isHidden;
+        this.updatePackageViaApi(data);
       });
     });
   },
@@ -347,7 +361,7 @@ export default {
     return cy
       .then(() => proxySelect.checkedOptionText())
       .then((selectedProxy) => {
-        cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
+        cy.getEholdingsProxyNamesViaAPI().then((existingProxies) => {
           const notSelectedProxy = existingProxies.filter(
             (existingProxy) => existingProxy !== selectedProxy,
           )[0];
@@ -377,5 +391,17 @@ export default {
 
   fillDateCoverage(startDate, endDate) {
     cy.do([startDateInput.fillIn(startDate), endDateInput.fillIn(endDate)]);
+  },
+
+  setCustomCoverageForPackageViaAPI(packageName, beginDate, endDate) {
+    this.getPackageViaApi(packageName).then((searchResponse) => {
+      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+        data.attributes.customCoverage = {
+          beginCoverage: beginDate,
+          endCoverage: endDate,
+        };
+        this.updatePackageViaApi(data);
+      });
+    });
   },
 };

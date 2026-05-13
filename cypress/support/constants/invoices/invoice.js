@@ -30,12 +30,17 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
 
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
+  BATCH_GROUP: 'Batch group',
+  CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
+  CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
   FISCAL_YEAR: 'Fiscal year',
+  INVOICE_DATE: 'Invoice date',
   INVOICE_STATUS: 'Status',
+  PAYMENT_METHOD: 'Payment method',
   SUB_TOTAL: 'Sub-total',
   TOTAL_ADJUSTMENTS: 'Total adjustments',
-  CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
   VENDOR_NAME: 'Vendor name',
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice number',
   VOUCHER_STATUS: 'Status',
 };
 
@@ -54,4 +59,28 @@ export const INVOICE_LEVEL_ADJUSTMENTS_COLUMNS = {
   VALUE: 'Value',
   PRORATE: 'Pro rate',
   RELATION_TO_TOTAL: 'Relation to total',
+};
+
+export const INVOICE_BATCH_GROUPS = {
+  AMHERST: 'Amherst (AC)',
+  FOLIO: 'FOLIO',
+};
+
+export const INVOICE_PAYMENT_METHODS = {
+  CASH: 'Cash',
+  CHECK: 'Check',
+  CREDIT_CARD: 'Credit card',
+  EFT: 'EFT',
+};
+
+export const CURRENCIES = {
+  USD: 'US Dollar (USD)',
+  UZS: 'Uzbekistani Som (UZS)',
+  UAH: 'Ukrainian Hryvnia (UAH)',
+};
+
+export const INVOICE_AND_INVOICE_LINE_BUTTONS = {
+  CANCEL: 'Cancel',
+  SAVE_AND_CLOSE: 'Save & close',
+  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
 };

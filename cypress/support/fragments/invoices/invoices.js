@@ -34,6 +34,7 @@ import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
 import VoucherExportForm from './voucherExportForm';
 import DuplicateInvoiceModal from './modal/duplicateInvoiceModal';
+import DifferentCurrencyConfirmationModal from './modal/differentCurrencyConfirmationModal';
 
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
@@ -96,9 +97,10 @@ const getDefaultInvoice = ({
   invoiceStatus = 'Open',
   invoiceDate = moment.utc().format(),
   exportToAccounting = true,
+  currency = 'USD',
 }) => ({
   chkSubscriptionOverlap: true,
-  currency: 'USD',
+  currency,
   source: 'User',
   batchGroupId,
   batchGroupName,
@@ -167,6 +169,7 @@ export default {
     exportToAccounting,
     adjustments,
     acqUnitIds,
+    currency,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -180,6 +183,7 @@ export default {
     const invoice = getDefaultInvoice({
       fiscalYearId,
       batchGroupId,
+      currency,
       vendorId,
       accountingCode,
       invoiceStatus,
@@ -212,18 +216,20 @@ export default {
       searchParams,
     });
   },
-  deleteInvoiceViaApi(invoiceId) {
+  deleteInvoiceViaApi(invoiceId, { failOnStatusCode } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoices/${invoiceId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
-  deleteInvoiceLineViaApi(invoiceLineId) {
+  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoice-lines/${invoiceLineId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   approveInvoiceViaApi({ invoice }) {
@@ -276,6 +282,7 @@ export default {
     exportToAccounting,
     adjustments,
     acqUnitIds,
+    currency,
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -286,6 +293,7 @@ export default {
       exportToAccounting,
       adjustments,
       acqUnitIds,
+      currency,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -1461,13 +1469,13 @@ export default {
     });
   },
 
-  differentCurrencyConfirmation: () => {
-    cy.do(
-      Modal({ id: 'invoice-line-currency-confirmation' })
-        .find(Button({ id: 'clickable-invoice-line-currency-confirmation-confirm' }))
-        .click(),
-    );
-    cy.wait(4000);
+  handleDifferentCurrencyModal(confirm = true) {
+    DifferentCurrencyConfirmationModal.verifyModalView();
+    if (confirm) {
+      DifferentCurrencyConfirmationModal.clickConfirmButton();
+    } else {
+      DifferentCurrencyConfirmationModal.closeModal();
+    }
   },
 
   verifySearchResult(invoiceNumber) {

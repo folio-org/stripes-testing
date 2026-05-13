@@ -30,10 +30,15 @@ import {
   RECEIPT_STATUS_SELECTED,
   RECEIVING_WORKFLOW_NAMES,
   POL_CREATE_INVENTORY_SETTINGS_VIEW,
+  ORDER_EXPORT_CSV_FIELDS,
+  ORDER_LINE_EXPORT_CSV_FIELDS,
+  ORDER_LINE_FILTER_LABELS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
+import FiltersPaneHelper from '../filtersPane';
 import SearchHelper from '../finance/financeHelper';
+import MultiColumnListHelper from '../multiColumnList';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import OrderLineDetails from './orderLineDetails';
@@ -191,6 +196,9 @@ export default {
     ]);
     cy.wait(4000);
   },
+  waitResultsListLoading() {
+    MultiColumnListHelper.waitLoadingComplete(orderLineList);
+  },
 
   selectFund: (fundName) => {
     cy.wait(4000);
@@ -260,11 +268,7 @@ export default {
     this.checkCreatedPOLineResource(orderLineTitleName, ORDER_FORMAT_NAMES.OTHER, fund);
   },
   checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
-    this.checkCreatedPOLineResource(
-      orderLineTitleName,
-      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
-      fund,
-    );
+    this.checkCreatedPOLineResource(orderLineTitleName, ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE, fund);
     cy.expect(locationSection.find(KeyValue({ value: quantityPhysical })).exists());
   },
   checkCreatedPOLineElectronicResource(orderLineTitleName, fund) {
@@ -1272,7 +1276,14 @@ export default {
     if (amountType) {
       cy.do([Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click()]);
     }
-    cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
+    // Use cy.get().type() to allow entering decimals; .fillIn() only works with integers
+    cy.get(`[name="fundDistribution[${indexOfPreviusFund}].value"]`).type(
+      '{selectall}{backspace}',
+      { delay: 50 },
+    );
+    cy.get(`[name="fundDistribution[${indexOfPreviusFund}].value"]`)
+      .type(value, { delay: 100 })
+      .blur();
   },
 
   addLocationToPOLWithoutSave({ index = 0, location, physicalQuantity, electronicQuantity } = {}) {
@@ -1762,6 +1773,7 @@ export default {
     ]);
     SearchHelper.selectFromResultsList();
     cy.do(buttonFVendorFilter.click());
+    cy.wait(3000);
   },
 
   selectFilterNoInRushPOL: () => {
@@ -2163,29 +2175,48 @@ export default {
     cy.get('[id=FundDistribution]').contains('a', '$').should('exist');
   },
 
-  checkDownloadedFile() {
+  checkDownloadedFile({ fileName, expectedFields, content }) {
     cy.wait(10000);
-    // Get the path to the Downloads folder
-    const downloadsFolder =
-      Cypress.config('downloadsFolder') || Cypress.env('downloadsFolder') || 'Downloads';
 
-    // Find the most recently downloaded file
-    cy.task('findFiles', `${downloadsFolder}/*.csv`, {
-      sortBy: 'modified',
-      sortOrder: 'desc',
-      recursive: true,
-      timeout: 15000,
-    }).then((files) => {
-      // if (files.length === 0) {
-      //   throw new Error(`No files found in ${downloadsFolder}`);
-      // }
-      const fileName = path.basename(files[0]);
-      const filePath = `${downloadsFolder}/${fileName}`;
+    const downloadsFolder =
+      Cypress.config('downloadsFolder') || Cypress.env('downloadsFolder') || 'cypress/downloads';
+
+    // globby requires forward slashes even on Windows
+    const globMask = downloadsFolder.replace(/\\/g, '/') + '/*.csv';
+
+    const handleListRow = (jsonData, row, i) => {
+      const fileRowData = jsonData[i];
+
+      Object.entries(row).forEach(([key, value]) => {
+        const cellValue = fileRowData[key];
+        expect(cellValue).to.equal(value === undefined ? '' : value);
+      });
+    };
+
+    cy.task('findFiles', globMask, { timeout: 15000 }).then((files) => {
+      if (!files || files.length === 0) {
+        throw new Error(`No CSV files found in ${downloadsFolder}`);
+      }
+
+      const filePath = `${downloadsFolder}/${fileName || path.basename(files.toSorted().at(-1))}`;
+
       cy.readFile(filePath).then((fileContent) => {
-        const fileRows = fileContent.split('\n');
-        expect(fileRows[0].trim()).to.equal(
-          '"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note","Exchange rate"',
-        );
+        cy.task('convertCsvToJson', fileContent).then((jsonData) => {
+          const headersSet = new Set(Object.keys(jsonData[0]));
+          const expectedFieldsSet = new Set(
+            expectedFields || [
+              ...Object.values(ORDER_EXPORT_CSV_FIELDS),
+              ...Object.values(ORDER_LINE_EXPORT_CSV_FIELDS),
+            ],
+          );
+
+          cy.expect(expectedFieldsSet.difference(headersSet).size).to.equal(0);
+
+          if (content) {
+            cy.expect(jsonData.length).to.equal(content.length);
+            content.forEach(handleListRow.bind(null, jsonData));
+          }
+        });
       });
     });
   },
@@ -2448,10 +2479,11 @@ export default {
       body: orderLine,
     });
   },
-  deleteOrderLineViaApi(orderLineId) {
+  deleteOrderLineViaApi(orderLineId, failOnStatusCode) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `orders/order-lines/${orderLineId}`,
+      failOnStatusCode,
     });
   },
   verifyPOlineListIncludesLink: (POlinenumber) => {
@@ -2744,5 +2776,41 @@ export default {
       physicalUnitPriceTextField.fillIn(physicalPrice),
       quantityPhysicalTextField.fillIn(quantity),
     ]);
+  },
+
+  sortOrderLinesBy(columnName) {
+    MultiColumnListHelper.sortListBy(searchResultsPane, columnName);
+  },
+
+  filterByCheckboxOptions(filterLabel, options = []) {
+    FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, options);
+  },
+
+  filterByMultiSelectOptions(filterLabel, options = []) {
+    FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+  },
+
+  filterByRush(options) {
+    this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RUSH, options);
+  },
+
+  filterByFundCodes(codes = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  assertResultsCount(expectedCount) {
+    searchResultsPane
+      .find(
+        PaneHeader({ subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found` }),
+      )
+      .exists();
+  },
+
+  assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {
+    const actionsBtn = searchResultsPane.find(actionsButton);
+
+    cy.do(actionsBtn.click());
+    cy.do(Button(actionButtonName).has({ disabled: expectedDisabledState }));
+    cy.do(actionsBtn.click());
   },
 };

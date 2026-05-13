@@ -6,9 +6,12 @@ import {
   INSTANCE_SOURCE_NAMES,
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  MARIGOLD_ROLES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
 import Marigold from '../../support/fragments/linked-data/marigold';
@@ -21,7 +24,6 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: MARC Authority integration', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;
@@ -36,7 +38,6 @@ describe('Citation: MARC Authority integration', () => {
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
     edition: 'test edition',
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -66,22 +67,13 @@ describe('Citation: MARC Authority integration', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(
@@ -146,8 +138,8 @@ describe('Citation: MARC Authority integration', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       cy.wait(6000);
       EditResource.setEdition(testData.edition);
-      EditResource.saveAndKeepEditingWithId().then(({ instanceId }) => {
-        testData.duplicateInstanceId = instanceId;
+      EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
+        testData.duplicateInstanceId = resourceId;
       });
       EditResource.viewMarc();
       // check changes in MARC

@@ -10,6 +10,7 @@ const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 const testRailPlugin = require('cypress-testrail-simple/src/plugin');
+const httpTasks = require('./cypress/tasks/httpTasks');
 const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
 let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
@@ -29,6 +30,14 @@ if (activeEnvironment && !environments[activeEnvironment]) {
   throw new Error(
     `Environment "${activeEnvironment}" not found in cypress/environments.js\nAvailable: ${available}`,
   );
+}
+
+let cypressLocal = {};
+try {
+  // eslint-disable-next-line global-require, import/extensions
+  cypressLocal = require('./cypress.local.js');
+} catch (e) {
+  // cypress.local.js is gitignored and optional
 }
 
 /**
@@ -182,6 +191,10 @@ module.exports = defineConfig({
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
+
+        // HTTP tasks (axios requests in Node.js context)
+        ...httpTasks,
+        ...cypressLocal.tasks?.(on, config),
       });
 
       // keep Cypress running until the ReportPortal reporter is finished. this is a
@@ -219,4 +232,5 @@ module.exports = defineConfig({
     baseUrl: envOverrides.baseUrl || 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
+  ...cypressLocal.cypress,
 });

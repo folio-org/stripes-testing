@@ -7,8 +7,11 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  MARIGOLD_ROLES,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -19,9 +22,8 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
-describe('Citation: duplicate resource', () => {
+describe('Citation: duplicate instance', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C624280 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -31,7 +33,6 @@ describe('Citation: duplicate resource', () => {
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -61,22 +62,13 @@ describe('Citation: duplicate resource', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(

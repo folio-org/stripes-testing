@@ -803,6 +803,10 @@ export default {
     internal: 'ui-checkout.circulation.execute',
     gui: 'Check out: Check out circulating items',
   },
+  checkoutViewLoans: {
+    internal: 'ui-checkout.viewLoans.view',
+    gui: 'Check out: View loans',
+  },
   checkoutViewFeeFines: {
     internal: 'ui-checkout.viewFeeFines.view',
     gui: 'Check out: View fees/fines',
@@ -1520,5 +1524,10 @@ export default {
   ebsconetAll: {
     internal: 'ebsconet.all',
     gui: 'Ebsconet API module - all permissions',
+  },
+  // Numbers generator
+  numbersGeneratorView: {
+    internal: 'ui-service-interaction.numberGenerator.view',
+    gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
   },
 };

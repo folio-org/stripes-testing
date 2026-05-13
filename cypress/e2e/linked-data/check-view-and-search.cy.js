@@ -10,16 +10,18 @@ import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTo
 import DataImport from '../../support/fragments/data_import/dataImport';
 import {
   APPLICATION_NAMES,
-  MARIGOLD_ROLES,
   DEFAULT_JOB_PROFILE_NAMES,
   EDIT_RESOURCE_HEADINGS,
 } from '../../support/constants';
+import {
+  MARIGOLD_CAPABILITIES,
+  MARIGOLD_CAPABILITY_SETS,
+} from '../../support/dictionary/marigoldCapabilities';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import WorkProfileModal from '../../support/fragments/linked-data/workProfileModal';
 import Users from '../../support/fragments/users/users';
 
 let user;
-const roleNames = [MARIGOLD_ROLES.CATALOGER, MARIGOLD_ROLES.CATALOGER_MARIGOLD];
 
 describe('Citation: check navigation', () => {
   const testData = {
@@ -29,7 +31,6 @@ describe('Citation: check navigation', () => {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
-    roleIds: [],
     workId: null,
     instanceId: null,
     inventoryId: null,
@@ -57,22 +58,13 @@ describe('Citation: check navigation', () => {
     );
     cy.getAdminToken();
 
-    roleNames.forEach((roleName) => {
-      cy.getUserRoleIdByNameApi(roleName).then((roleId) => {
-        if (roleId) {
-          testData.roleIds.push(roleId);
-        }
-      });
-    });
-
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-    });
-
-    cy.then(() => {
-      if (testData.roleIds.length > 0) {
-        cy.updateRolesForUserApi(user.userId, testData.roleIds);
-      }
+      cy.assignCapabilitiesToExistingUser(
+        user.userId,
+        MARIGOLD_CAPABILITIES,
+        MARIGOLD_CAPABILITY_SETS,
+      );
     });
 
     DataImport.uploadFileViaApi(
