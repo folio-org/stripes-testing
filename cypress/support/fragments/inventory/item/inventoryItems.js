@@ -122,6 +122,13 @@ export default {
       })
       .then(({ body }) => body.items);
   },
+  getItemByIdViaApi(itemId) {
+    return cy
+      .okapiRequest({
+        path: `inventory/items/${itemId}`,
+      })
+      .then(({ body }) => body);
+  },
   createItemViaApi(item) {
     return cy
       .okapiRequest({
