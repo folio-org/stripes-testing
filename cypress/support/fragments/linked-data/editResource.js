@@ -541,7 +541,33 @@ export default {
   },
 
   checkNewInstanceButtonEnabled() {
-    cy.xpath(newInstanceButton).should('be.visible').and('not.be.disabled');
+    cy.expect(newInstanceButton.has({ disabled: false }));
+  },
+
+  checkNewInstanceButtonDisabled() {
+    cy.expect(newInstanceButton.has({ disabled: true }));
+  },
+
+  checkInstanceActionsHidden() {
+    cy.xpath(instanceActionsButton).should('not.exist');
+  },
+
+  setSectionFieldValue(value, section) {
+    cy.wait(1000);
+    cy.xpath(
+      `//div[@class="label" and text()="${section}"]/following-sibling::div[@class="children-container"]/input`,
+    )
+      .focus()
+      .type(`{selectall}${value}`);
+    cy.wait(1000);
+  },
+
+  checkSectionFieldValue(value, section) {
+    cy.xpath(
+      `//div[@class="label" and text()="${section}"]/following-sibling::div[@class="children-container"]/input[@value="${value}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible');
   },
 
   verifyTitleOrder(titles) {
@@ -606,15 +632,6 @@ export default {
         expect(text).to.contain(marc);
       });
     });
-    cy.expect(newInstanceButton.has({ disabled: false }));
-  },
-
-  checkNewInstanceButtonDisabled() {
-    cy.expect(newInstanceButton.has({ disabled: true }));
-  },
-
-  checkInstanceActionsHidden() {
-    cy.xpath(instanceActionsButton).should('not.exist');
   },
 
   closeInfoIcon(sectionTestId = 'title') {
