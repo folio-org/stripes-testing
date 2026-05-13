@@ -2050,4 +2050,102 @@ export default {
     if (isShown) cy.expect(option.exists());
     else cy.expect(option.absent());
   },
+
+  getPaneAuthoritiesFilterWidth() {
+    return cy.get('[id="pane-authorities-filters"]').invoke('width');
+  },
+
+  getPaneMarcViewWidth() {
+    return cy.get('[id="marc-view-pane"]').invoke('width');
+  },
+
+  resizePaneAuthoritiesFilter(targetWidth) {
+    cy.get('[id="pane-authorities-filters"]').then(($pane) => {
+      const paneRect = $pane[0].getBoundingClientRect();
+      const targetX = paneRect.left + targetWidth;
+
+      cy.get('[id="marc-authorities-paneset"]')
+        .siblings()
+        .find('[role="presentation"][class*="handle"]')
+        .first()
+        .should('be.visible')
+        .then(($handle) => {
+          const rect = $handle[0].getBoundingClientRect();
+          const startX = rect.left + rect.width / 2;
+          const startY = rect.top + rect.height / 2;
+
+          cy.wrap($handle)
+            .trigger('mousedown', { which: 1, clientX: startX, clientY: startY, button: 0 })
+            .wait(50);
+
+          // Move in 5 steps to simulate gradual drag
+          const steps = 5;
+          const deltaX = (targetX - startX) / steps;
+          for (let i = 1; i <= steps; i++) {
+            // eslint-disable-next-line cypress/no-force
+            cy.wrap($handle)
+              .trigger('mousemove', {
+                clientX: startX + deltaX * i,
+                clientY: startY,
+                force: true,
+              })
+              .wait(20);
+          }
+
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap($handle).trigger('mouseup', { force: true }).wait(50);
+        });
+    });
+    cy.wait(500);
+  },
+
+  resizePaneMarcView(targetWidth) {
+    cy.get('[id="marc-view-pane"]').then(($pane) => {
+      const paneRect = $pane[0].getBoundingClientRect();
+      const targetX = paneRect.left + targetWidth;
+
+      cy.get('[id="marc-authorities-paneset"]')
+        .siblings()
+        .find('[role="presentation"][class*="handle"]')
+        .eq(1)
+        .should('be.visible')
+        .then(($handle) => {
+          const rect = $handle[0].getBoundingClientRect();
+          const startX = rect.left + rect.width / 2;
+          const startY = rect.top + rect.height / 2;
+
+          cy.wrap($handle)
+            .trigger('mousedown', { which: 1, clientX: startX, clientY: startY, button: 0 })
+            .wait(50);
+
+          // Move in 5 steps to simulate gradual drag
+          const steps = 5;
+          const deltaX = (targetX - startX) / steps;
+          for (let i = 1; i <= steps; i++) {
+            // eslint-disable-next-line cypress/no-force
+            cy.wrap($handle)
+              .trigger('mousemove', {
+                clientX: startX + deltaX * i,
+                clientY: startY,
+                force: true,
+              })
+              .wait(20);
+          }
+
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap($handle).trigger('mouseup', { force: true }).wait(50);
+        });
+    });
+    cy.wait(500);
+  },
+
+  verifyPaneAuthoritiesFilterWidth(expectedWidth, tolerance = 5) {
+    cy.get('[id="pane-authorities-filters"]')
+      .invoke('width')
+      .should('be.closeTo', expectedWidth, tolerance);
+  },
+
+  verifyPaneMarcViewWidth(expectedWidth, tolerance = 5) {
+    cy.get('[id="marc-view-pane"]').invoke('width').should('be.closeTo', expectedWidth, tolerance);
+  },
 };
