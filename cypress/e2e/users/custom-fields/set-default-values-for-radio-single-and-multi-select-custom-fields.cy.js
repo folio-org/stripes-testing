@@ -1,9 +1,7 @@
-import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -19,7 +17,7 @@ import {
 
 describe('Users', () => {
   describe('Custom Fields (Users)', () => {
-    const testNumber = 'C15699';
+    const testNumber = 'C15700';
     const testData = {
       customFields: {
         checkbox: generateCheckboxCustomFieldData({ testNumber }),
@@ -84,78 +82,98 @@ describe('Users', () => {
     });
 
     it(
-      'C15699 - Set custom fields to required',
-      { tags: ['extendedPath', 'volaris', 'C15699'] },
+      'C15700 - Set a default value for the following custom fields: Radio button, Single select, Multi-select',
+      { tags: ['extendedPath', 'volaris', 'C15700'] },
       () => {
+        const multiSelectDefaults =
+          testData.customFields.multiSelect.selectField.options.values.map(
+            (option) => option.value,
+          );
+        const radioButtonDefault =
+          testData.customFields.radioButton.selectField.options.values[1].value;
+        const singleSelectDefault =
+          testData.customFields.singleSelect.selectField.options.values[1].value;
+
         // Step 1: Open the custom fields settings pane
         CustomFields.verifyCustomFieldsPaneIsOpen();
 
-        // Step 2: Open the edit custom fields pane and verify all custom fields are present
+        // Step 2: Open the edit custom fields pane
         CustomFields.openEdit();
         CustomFields.verifyEditCustomFieldsPaneIsOpen();
         CustomFields.verifyCustomFieldsPresent(allCustomFieldLabels);
 
-        // Step 3: Expand the Checkbox custom field and verify the Required option is absent
-        CustomFields.expandCustomFieldInEditPane(testData.customFields.checkbox.name);
-        CustomFields.verifyRequiredOptionVisible(testData.customFields.checkbox.name, false);
+        // Step 3: Expand the Multi-select custom field
+        CustomFields.expandCustomFieldInEditPane(testData.customFields.multiSelect.name);
+        CustomFields.verifyDefaultCheckboxesVisible(
+          testData.customFields.multiSelect.name,
+          multiSelectDefaults,
+        );
 
-        // Step 4: Expand the Date picker custom field and verify the Required option is present
-        CustomFields.expandCustomFieldInEditPane(testData.customFields.datePicker.name);
-        CustomFields.verifyRequiredOptionVisible(testData.customFields.datePicker.name);
-
-        // Step 5: Set the Date picker custom field as required
-        CustomFields.setRequiredOption(testData.customFields.datePicker.name);
+        // Step 4: Set default values for the Multi-select custom field
+        CustomFields.setMultiSelectDefaults(
+          testData.customFields.multiSelect.name,
+          multiSelectDefaults,
+        );
         CustomFields.verifySaveAndCloseButtonEnabled();
 
-        // Step 6: Expand the Multi-select custom field and set it as required
-        CustomFields.expandCustomFieldInEditPane(testData.customFields.multiSelect.name);
-        CustomFields.setRequiredOption(testData.customFields.multiSelect.name);
-
-        // Step 7: Expand the Radio button set custom field and verify the Required option is absent
+        // Step 5: Set a default value for the Radio button set custom field
         CustomFields.expandCustomFieldInEditPane(testData.customFields.radioButton.name);
-        CustomFields.verifyRequiredOptionVisible(testData.customFields.radioButton.name, false);
+        CustomFields.setRadioButtonDefault(
+          testData.customFields.radioButton.name,
+          radioButtonDefault,
+        );
 
-        // Step 8: Expand the Single select custom field and set it as required
+        // Step 6: Set a default value for the Single select custom field
         CustomFields.expandCustomFieldInEditPane(testData.customFields.singleSelect.name);
-        CustomFields.setRequiredOption(testData.customFields.singleSelect.name);
+        CustomFields.setSingleSelectDefault(
+          testData.customFields.singleSelect.name,
+          singleSelectDefault,
+        );
 
-        // Step 9: Expand the Text area custom field and set it as required
-        CustomFields.expandCustomFieldInEditPane(testData.customFields.textArea.name);
-        CustomFields.setRequiredOption(testData.customFields.textArea.name);
-
-        // Step 10: Expand the Text field custom field and set it as required
-        CustomFields.expandCustomFieldInEditPane(testData.customFields.textField.name);
-        CustomFields.setRequiredOption(testData.customFields.textField.name);
-
-        // Step 11: Save changes and verify the Custom fields pane is displayed again
+        // Step 7: Save changes and return to the custom fields pane
         CustomFields.saveAndClose();
 
-        // Step 12: Verify the required value is set to Yes for every required custom field
-        CustomFields.expandCustomFieldInViewPane(testData.customFields.datePicker.name);
-        CustomFields.verifyRequiredValue(testData.customFields.datePicker.name);
+        // Step 8: Verify the saved default values in the view pane
         CustomFields.expandCustomFieldInViewPane(testData.customFields.multiSelect.name);
-        CustomFields.verifyRequiredValue(testData.customFields.multiSelect.name);
+        CustomFields.verifyMultiSelectDefaults(
+          testData.customFields.multiSelect.name,
+          multiSelectDefaults,
+        );
+        CustomFields.expandCustomFieldInViewPane(testData.customFields.radioButton.name);
+        CustomFields.verifyRadioButtonDefault(
+          testData.customFields.radioButton.name,
+          radioButtonDefault,
+        );
         CustomFields.expandCustomFieldInViewPane(testData.customFields.singleSelect.name);
-        CustomFields.verifyRequiredValue(testData.customFields.singleSelect.name);
-        CustomFields.expandCustomFieldInViewPane(testData.customFields.textArea.name);
-        CustomFields.verifyRequiredValue(testData.customFields.textArea.name);
-        CustomFields.expandCustomFieldInViewPane(testData.customFields.textField.name);
-        CustomFields.verifyRequiredValue(testData.customFields.textField.name);
+        CustomFields.verifySingleSelectDefault(
+          testData.customFields.singleSelect.name,
+          singleSelectDefault,
+        );
 
-        // Step 13: Open the create user page and verify all custom fields and required markers
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        // Step 9: Open the create user page and verify the configured defaults
+        cy.visit(TopMenu.usersPath);
         UsersSearchPane.waitLoading();
         Users.clickNewButton();
         Users.checkCreateUserPaneOpened();
-
         UserEdit.verifyCheckboxCustomFieldExists(testData.customFields.checkbox.name);
+        UserEdit.verifyDatePickerCustomFieldExists(testData.customFields.datePicker.name);
+        UserEdit.verifyMultiSelectCustomFieldExists(testData.customFields.multiSelect.name);
         UserEdit.verifyRadioButtonCustomFieldExists(testData.customFields.radioButton.name);
-
-        UserEdit.verifyDatePickerCustomFieldRequired(testData.customFields.datePicker.name);
-        UserEdit.verifyMultiSelectCustomFieldRequired(testData.customFields.multiSelect.name);
-        UserEdit.verifySingleSelectCustomFieldRequired(testData.customFields.singleSelect.name);
-        UserEdit.verifyTextAreaCustomFieldRequired(testData.customFields.textArea.name);
-        UserEdit.verifyTextFieldCustomFieldRequired(testData.customFields.textField.name);
+        UserEdit.verifySingleSelectCustomFieldExists(testData.customFields.singleSelect.name);
+        UserEdit.verifyTextAreaCustomFieldExists(testData.customFields.textArea.name);
+        UserEdit.verifyTextFieldCustomFieldExists(testData.customFields.textField.name);
+        UserEdit.verifyMultiSelectCustomFieldDefaultValues(
+          testData.customFields.multiSelect.name,
+          multiSelectDefaults,
+        );
+        UserEdit.verifyRadioButtonCustomFieldDefaultValue(
+          testData.customFields.radioButton.name,
+          radioButtonDefault,
+        );
+        UserEdit.verifySingleSelectCustomFieldDefaultValue(
+          testData.customFields.singleSelect.name,
+          singleSelectDefault,
+        );
       },
     );
   });
