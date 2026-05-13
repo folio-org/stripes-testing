@@ -1823,3 +1823,13 @@ export const DATE_RANGE_FIELD_LABELS = {
 };
 
 export const NO_VALUE = 'No value set-';
+
+export const FTP_PROTOCOLS = {
+  SFTP: 'SFTP',
+  FTP: 'FTP',
+};
+
+export const FILE_TYPES = {
+  CSV: 'csv',
+  JSON: 'json',
+};
