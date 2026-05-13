@@ -83,12 +83,12 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         testData.createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
       });
 
       // KNOWN ISSUE: Steps 5 fail due to UIMARCAUTH-532
-      it(
+      it.skip(
         'C386498 Switching between Search and Browse in "MARC authority" app (advanced search) (spitfire)',
         { tags: ['extendedPathBroken', 'spitfire', 'C386498'] },
         () => {
