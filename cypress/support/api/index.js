@@ -52,3 +52,4 @@ import './smtp';
 import './aoi-pmh';
 import './timers';
 import './calendar';
+import './custom-fields';
