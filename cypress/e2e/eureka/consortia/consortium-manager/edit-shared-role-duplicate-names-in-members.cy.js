@@ -218,8 +218,8 @@ describe('Eureka', () => {
         AuthorizationRoles.checkRoleCentrallyManaged(testData.sharedRoleName);
 
         // Step 3: Click user profile and select "Switch active affiliation"
-        ConsortiumManager.openSelectAffiliationModal();
         verifyPageNotReloaded(() => {
+          ConsortiumManager.openSelectAffiliationModal();
           AuthorizationRoles.verifyRoleViewPane(testData.sharedRoleName);
         });
 
