@@ -96,6 +96,15 @@ export default {
       });
   },
 
+  verifySearchResultField(fieldValue) {
+    cy.get('[class*="search-result-entry-container"]')
+      .first()
+      .find('[class*="work-details-card"]')
+      .find('[class*="details"]')
+      .contains(fieldValue)
+      .should('exist');
+  },
+
   verifyNoResultsFound() {
     cy.get('[class*="search-result-entry-container"]').should('not.exist');
     cy.get('[class*="item-search-content"]')
