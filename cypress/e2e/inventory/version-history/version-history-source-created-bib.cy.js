@@ -9,6 +9,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
+import topMenu from '../../../support/fragments/topMenu';
 
 describe('Inventory', () => {
   describe('MARC Bibliographic', () => {
@@ -49,9 +50,10 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
-          cy.login(testData.userProperties.username, testData.userProperties.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            waiter: InventoryInstances.waitContentLoading,
+            path: topMenu.inventoryPath,
+          });
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
