@@ -61,13 +61,16 @@ describe('Lists', () => {
       }
     };
 
-    const openQueryBuilder = (recordType) => {
+    const openQueryBuilder = (recordType, description) => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
       Lists.openNewListPane();
       Lists.setName(listName);
+      if (description) {
+        Lists.setDescription(description);
+      }
       Lists.selectRecordType(recordType);
       Lists.buildQuery();
     };
@@ -230,6 +233,7 @@ describe('Lists', () => {
             instance: {
               instanceTypeId: instanceTypes[0].id,
               title: testData.instanceTitle,
+              languages: ['eng'],
               classifications: [
                 {
                   classificationNumber: testData.classificationNumber,
@@ -273,6 +277,68 @@ describe('Lists', () => {
             'list-column-instance.discovery_suppress',
             'False',
           );
+        },
+      );
+
+      it(
+        'C1259783 Verify that no undefined values are displayed when editing a query (corsair)',
+        { tags: ['smoke', 'corsair', 'C1259783'] },
+        () => {
+          const language = 'English';
+          const recordAmount = 1;
+          const expectedLanguageQuery = `(instance.languages in [${language}])`;
+          const expectedQuery = `${expectedLanguageQuery} AND (instance.title == ${testData.instanceTitle})`;
+
+          listName = getTestEntityValue('C1259783_List');
+          openQueryBuilder(recordType, listName);
+
+          QueryModal.selectField(instanceFieldValues.languages);
+          QueryModal.verifySelectedField(instanceFieldValues.languages);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.chooseValueSelect(language);
+          QueryModal.verifySelectedValue(language);
+          QueryModal.verifyQueryAreaContent(`(instance.languages == ${language})`);
+
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.verifySelectedMultiselectValue(language);
+          QueryModal.verifyQueryAreaContent(expectedLanguageQuery);
+          QueryModal.verifyQueryAreaDoesNotContain('undefined');
+
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
+          QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.fillInValueTextfield(testData.instanceTitle, 1);
+          QueryModal.verifyTextFieldValue(testData.instanceTitle, 1);
+          QueryModal.verifyQueryAreaContent(expectedQuery);
+          QueryModal.verifyQueryAreaDoesNotContain('undefined');
+
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyNumberOfMatchedRecords(recordAmount);
+          QueryModal.verifyRecordWithContent(testData.instanceTitle);
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          Lists.verifyRefreshCompleteCallout(recordAmount);
+          Lists.viewUpdatedList();
+          Lists.verifySingleRecordNumber();
+          Lists.verifyRecordWithContent(testData.instanceTitle);
+
+          Lists.openActions();
+          Lists.editList();
+          Lists.editQuery();
+          QueryModal.verifySelectedField(instanceFieldValues.languages);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
+          QueryModal.verifySelectedMultiselectValue(language);
+          QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle, 1);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.verifyTextFieldValue(testData.instanceTitle, 1);
+          QueryModal.verifyQueryAreaContent(expectedQuery);
+          QueryModal.testQueryDisabled(false);
+          QueryModal.verifyRowDoesNotContain('eng');
+          QueryModal.verifyQueryAreaDoesNotContain('undefined');
         },
       );
 

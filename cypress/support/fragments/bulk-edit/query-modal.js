@@ -421,6 +421,18 @@ export default {
     cy.wait(1000);
   },
 
+  verifySelectedOperator(selection, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .has({ checkedOptionText: selection }),
+    );
+  },
+
+  verifyRowDoesNotContain(content, row = 0) {
+    cy.get(`[data-testid="row-${row}"]`).should('not.contain.text', content);
+  },
+
   verifyOperatorsList(operators, row = 0) {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
       (options) => {
@@ -436,6 +448,12 @@ export default {
 
   verifyQueryAreaContent(content) {
     cy.get('[class^="queryArea"]').should('have.text', content);
+  },
+
+  verifyQueryAreaDoesNotContain(content) {
+    cy.get('[class^="queryArea"]').should(($queryArea) => {
+      expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
+    });
   },
 
   verifyQueryTextboxReadOnly() {
@@ -754,6 +772,10 @@ export default {
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
     cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
+  verifyRecordWithContent(content) {
+    cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
   },
 
   verifyQueryReturnsNoResults() {
