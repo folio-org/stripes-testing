@@ -41,9 +41,9 @@ describe('Eureka', () => {
 
     after('Delete users', () => {
       cy.getAdminToken();
+      cy.setFrontEndBaseUrlViaApi(defaultBaseUrl);
       Users.deleteViaApi(tempUser.userId);
       Users.deleteViaApi(userA.userId);
-      cy.setFrontEndBaseUrlViaApi(defaultBaseUrl);
     });
 
     it(
