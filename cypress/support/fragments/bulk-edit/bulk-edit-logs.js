@@ -198,11 +198,16 @@ export default {
       .should('have.length.at.least', 1)
       .each((value) => {
         if (!value.includes('No value set')) {
-          const cellDate = new Date(value);
-          const to = new Date(toDate);
-          to.setDate(to.getDate() + 1);
-          expect(cellDate).to.greaterThan(new Date(fromDate));
-          expect(cellDate).to.lessThan(to);
+          const cellDateNormalized = new Date(value);
+          const fromNormalized = new Date(fromDate);
+          const toNormalized = new Date(toDate);
+
+          cellDateNormalized.setHours(0, 0, 0, 0);
+          fromNormalized.setHours(0, 0, 0, 0);
+          toNormalized.setHours(0, 0, 0, 0);
+
+          expect(cellDateNormalized).to.be.at.least(fromNormalized);
+          expect(cellDateNormalized).to.be.at.most(toNormalized);
         }
       });
   },
