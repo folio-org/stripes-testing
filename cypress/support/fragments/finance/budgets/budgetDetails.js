@@ -27,7 +27,13 @@ export default {
     cy.wait(ms);
     cy.expect(budgetPane.exists());
   },
-  checkBudgetDetails({ summary = [], information = [], balance = {}, expenseClass } = {}) {
+  checkBudgetDetails({
+    summary = [],
+    information = [],
+    balance = {},
+    expenseClass,
+    expenseClasses,
+  } = {}) {
     cy.wait(4000);
     summary.forEach(({ key, value }) => {
       cy.expect(
@@ -48,10 +54,11 @@ export default {
       this.checkBalance({ name: 'Available', value: balance.available });
     }
 
-    if (expenseClass) {
+    const classes = expenseClasses || (expenseClass ? [expenseClass] : null);
+    if (classes) {
       FinanceDetails.checkExpenseClassesTableContent({
         section: expenseClassSection,
-        items: [expenseClass],
+        items: classes,
       });
     }
   },

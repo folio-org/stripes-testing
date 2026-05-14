@@ -15,7 +15,6 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 
 describe('Check out', () => {
   let user = {};
-  let userBarcode;
   let servicePoint;
   let materialTypeName;
   let testInstanceIds;
@@ -78,12 +77,10 @@ describe('Check out', () => {
           testInstanceIds = specialInstanceIds;
         });
       });
-    cy.createTempUser([permissions.checkoutCirculatingItems.gui])
-      .then((userProperties) => {
-        user = userProperties;
-        userBarcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
-      });
+    cy.createTempUser([permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
+      user = userProperties;
+      UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
+    });
 
     // Fetching the current "Other settings" values.
     // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
@@ -143,8 +140,8 @@ describe('Check out', () => {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,
       });
-      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
-      CheckOutActions.checkPatronInformation(user.username, userBarcode);
+      CheckOutActions.checkOutItemUser(user.userId, testItems[0].barcode);
+      CheckOutActions.checkPatronInformation(user.username, user.userId);
       cy.expect(CheckOutActions.modal.absent());
 
       fullCheckOut(testItems[1]);

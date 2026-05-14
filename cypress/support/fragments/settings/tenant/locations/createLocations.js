@@ -1,7 +1,15 @@
-import { Accordion, Button, Select, TextField, including } from '../../../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Form,
+  Select,
+  TextField,
+  including,
+} from '../../../../../../interactors';
 import getRandomPostfix from '../../../../utils/stringTools';
 
 const locationDetailsSection = Accordion({ id: 'detailsSection' });
+const formRoot = Form({ id: 'form-locations' });
 
 export default {
   verifyNewFormIsOpen({ institution, campus, library }) {
@@ -21,10 +29,19 @@ export default {
     ]);
   },
   fillFolioName(name) {
-    cy.do(TextField('FOLIO name*').fillIn(name));
+    const field = TextField('FOLIO name*');
+    cy.intercept('GET', '/locations?query=*name*').as('validateUniqName');
+    cy.do([field.fillIn(name), field.blur()]);
+    cy.get('input[id="input-location-name"]').should('have.value', name);
+    cy.wait('@validateUniqName', { timeout: 10000 });
   },
   fillCode(code) {
-    cy.do(TextField('Code*').fillIn(code || `testCode${getRandomPostfix()}`));
+    const value = code || `testCode${getRandomPostfix()}`;
+    const field = TextField('Code*');
+    cy.intercept('GET', '/locations?query=*code*').as('validateUniqCode');
+    cy.do([field.fillIn(value), field.blur()]);
+    cy.get('input[id="input-location-code"]').should('have.value', value);
+    cy.wait('@validateUniqCode', { timeout: 10000 });
   },
   fillDiscoveryDisplayName(name) {
     cy.do(
@@ -61,5 +78,43 @@ export default {
   },
   saveAndClose() {
     cy.do(Button({ id: 'clickable-save-location' }).click());
+  },
+  saveAndCloseSuccessfully() {
+    cy.do(Button({ id: 'clickable-save-location' }).click());
+    cy.expect(formRoot.absent());
+  },
+  verifyFormIsOpen() {
+    cy.expect(formRoot.exists());
+  },
+  waitFormReadyToEdit({ name, code }) {
+    if (name !== undefined) {
+      cy.get('input[id="input-location-name"]', { timeout: 15000 }).should('have.value', name);
+    }
+    if (code !== undefined) {
+      cy.get('input[id="input-location-code"]', { timeout: 15000 }).should('have.value', code);
+    }
+    // Stability gate: give RFF time to flush any pending `initialValues` reinitialize,
+    cy.wait(2000);
+    if (name !== undefined) {
+      cy.get('input[id="input-location-name"]').should('have.value', name);
+    }
+    if (code !== undefined) {
+      cy.get('input[id="input-location-code"]').should('have.value', code);
+    }
+  },
+  verifyFolioNameFieldError(error) {
+    cy.expect(TextField('FOLIO name*').has({ error }));
+  },
+  verifyCodeFieldError(error) {
+    cy.expect(TextField('Code*').has({ error }));
+  },
+  verifyFolioNameFieldNoError() {
+    cy.expect(TextField('FOLIO name*').has({ error: undefined }));
+  },
+  verifyCodeFieldNoError() {
+    cy.expect(TextField('Code*').has({ error: undefined }));
+  },
+  verifySaveButtonEnabled() {
+    cy.expect(Button({ id: 'clickable-save-location' }).has({ disabled: false }));
   },
 };

@@ -89,8 +89,6 @@ describe('Inventory', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        // Reset cards per page to default (10) via API
-        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordId);
         Users.deleteViaApi(testData.userProperties.userId);
       });
