@@ -8,7 +8,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Eureka', () => {
   describe('Users', () => {
-    const defaultBaseUrl = Cypress.config().baseUrl;
     const newBaseUrl = `https://at_c1322906_${getRandomPostfix()}.org`;
     const capabSetsToAssign = [
       CapabilitySets.uiUsersView,
@@ -17,6 +16,7 @@ describe('Eureka', () => {
       CapabilitySets.baseUrlManage,
     ];
 
+    let defaultBaseUrl;
     let tempUser;
     let userA;
 
@@ -32,6 +32,9 @@ describe('Eureka', () => {
             path: TopMenu.usersPath,
             waiter: Users.waitLoading,
           });
+
+          defaultBaseUrl = Cypress.config().baseUrl;
+
           UsersSearchPane.searchByUsername(userA.username);
           UsersSearchPane.selectUserFromList(userA.username);
           UserEdit.openEdit();

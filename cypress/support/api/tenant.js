@@ -116,6 +116,9 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
 });
 
 Cypress.Commands.add('setFrontEndBaseUrlViaApi', (newBaseUrl) => {
+  if (!newBaseUrl) {
+    throw new Error('A new base URL must be provided');
+  }
   return cy.okapiRequest({
     method: 'PUT',
     path: 'base-url',
