@@ -108,7 +108,7 @@ describe('Lists', () => {
       QueryModal.selectOperator(operator);
       QueryModal.populateFiled(filedType, value);
       QueryModal.testQuery();
-      cy.wait.skip(2000); // wait for query to process
+      cy.wait(2000); // wait for query to process
       Lists.verifyQueryHeader(field);
       Lists.verifyQueryValue(value, operator, locator, valueInColumn);
       Lists.verifyPreviewOfRecordsMatched();
@@ -138,7 +138,7 @@ describe('Lists', () => {
         deleteTestList();
       });
 
-      it.skip(
+      it(
         'C451507 Search for "organizations" in the query builder using "Status" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451507'] },
         () => {
@@ -178,7 +178,7 @@ describe('Lists', () => {
         deleteTestList();
       });
 
-      it.skip(
+      it(
         'C451553 Verify that grouped fields display within a list row for "POL — Fund distribution" column (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451553'] },
         () => {
@@ -211,7 +211,7 @@ describe('Lists', () => {
         deleteTestList();
       });
 
-      it.skip(
+      it(
         'C451548 Verify the operator null/empty with "True" value (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451548'] },
         () => {
@@ -298,7 +298,7 @@ describe('Lists', () => {
         }
       });
 
-      it.skip(
+      it(
         'C451549 Verify the operator null/empty with "False" value (corsair)',
         { tags: ['criticalPath', 'corsair', 'C451549'] },
         () => {
@@ -386,7 +386,7 @@ describe('Lists', () => {
         },
       );
 
-      it.skip(
+      it(
         'Search instances in the query builder by classification identifier type (corsair)',
         { tags: ['criticalPath', 'corsair'] },
         () => {
