@@ -10,6 +10,7 @@ import {
   MultiSelect,
   Select,
   TextArea,
+  TextField,
   PaneContent,
 } from '../../../../interactors';
 import marcAuthorities from './marcAuthorities';
@@ -17,6 +18,7 @@ import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
 
 const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
+const dateCreatedAccordion = Accordion('Date created');
 const authorityList = MultiColumnList({ id: 'authority-result-list' });
 const collapseButton = Button({ icon: 'caret-left' });
 const expandButton = Button({ icon: 'caret-right' });
@@ -26,6 +28,9 @@ const searchInput = SearchField({ id: 'textarea-authorities-search' });
 const searchButton = Button({ id: 'submit-authorities-search' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const advancedSearchButton = Button('Advanced search');
+const dateFromField = TextField({ name: 'startDate' });
+const dateToField = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
 const searchAccordionNames = [
   'Authority source',
   'References',
@@ -208,5 +213,14 @@ export default {
 
   checkSearchQuery(value) {
     cy.expect(searchInput.has({ value }));
+  },
+
+  filterByDateCreated(fromDate, toDate) {
+    cy.do([
+      dateCreatedAccordion.clickHeader(),
+      dateCreatedAccordion.find(dateFromField).fillIn(fromDate),
+      dateCreatedAccordion.find(dateToField).fillIn(toDate),
+      dateCreatedAccordion.find(applyButton).click(),
+    ]);
   },
 };
