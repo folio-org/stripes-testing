@@ -85,7 +85,12 @@ describe('Lists', () => {
       cy.then(() => previewTable
         .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(MultiColumnListCell({ column: columnName }))
-        .liValues()).then((values) => {
+        .innerText()).then((cellText) => {
+        const values = cellText
+          .split('\n')
+          .map((value) => value.trim())
+          .filter(Boolean);
+
         expect(values).to.deep.equal(expectedValues);
       });
     };
