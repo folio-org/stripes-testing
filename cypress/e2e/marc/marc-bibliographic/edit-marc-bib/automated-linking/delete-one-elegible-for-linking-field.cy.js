@@ -189,14 +189,10 @@ describe('MARC', () => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -250,8 +246,6 @@ describe('MARC', () => {
 
             QuickMarcEditor.undoDelete();
             QuickMarcEditor.verifyTagFieldNotLinked(...testData.field100Values);
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(27);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(29);

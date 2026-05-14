@@ -61,12 +61,10 @@ describe('MARC', () => {
             });
           });
 
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          }, 20_000).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventorySearchAndFilter.selectSearchOptions(
               testData.searchOption,
               testData.marcBibTitle,
@@ -80,17 +78,17 @@ describe('MARC', () => {
             cy.wait(1000); // need to wait for choose Type of Heading
             MarcAuthorities.chooseTypeOfHeading('Conference Name');
             InventoryInstance.searchResults(testData.marcAuthTitle);
+            MarcAuthority.waitLoading();
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          }, 20_000);
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 
