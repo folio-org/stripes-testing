@@ -23,11 +23,12 @@ export default {
   },
 
   // https://s3.amazonaws.com/foliodocs/api/mod-orders/r/pieces-batch.html#orders_pieces_batch_post
-  upsertOrderPiecesBatchViaApi(pieces) {
+  upsertOrderPiecesBatchViaApi(pieces, { createItem } = {}) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'orders/pieces-batch',
+        searchParams: { createItem },
         body: {
           pieces,
           totalRecords: pieces.length,

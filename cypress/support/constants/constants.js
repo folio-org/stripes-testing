@@ -76,27 +76,6 @@ export const MATERIAL_TYPE_NAMES = {
   VIDEO_RECORDING: 'video recording',
 };
 
-export const ITEM_STATUS_NAMES = {
-  ON_ORDER: 'On order',
-  IN_PROCESS: 'In process',
-  AVAILABLE: 'Available',
-  MISSING: 'Missing',
-  LONG_MISSING: 'Long missing',
-  IN_TRANSIT: 'In transit',
-  PAGED: 'Paged',
-  AWAITING_PICKUP: 'Awaiting pickup',
-  CHECKED_OUT: 'Checked out',
-  CLAIMED_RETURNED: 'Claimed returned',
-  DECLARED_LOST: 'Declared lost',
-  MARKED_AS_MISSING: 'Marked as missing',
-  AWAITING_DELIVERY: 'Awaiting delivery',
-  FOUND_BY_LIBRARY: 'Checked in (found by library)',
-  AGED_TO_LOST: 'Aged to lost',
-  LOST_AND_PAID: 'Lost and paid',
-  WITHDRAWN: 'Withdrawn',
-  ORDER_CLOSED: 'Order closed',
-};
-
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -1797,11 +1776,13 @@ export const SORT_DIRECTIONS = {
 };
 
 export const COMMON_BUTTON_LABELS = {
+  ACTIONS: 'Actions',
   APPLY: 'Apply',
   CANCEL: 'Cancel',
   CONFIRM: 'Confirm',
   NEXT: 'Next',
   PREVIOUS: 'Previous',
+  REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   YES: 'Yes',
   NO: 'No',

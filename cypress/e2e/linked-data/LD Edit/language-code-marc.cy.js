@@ -104,15 +104,11 @@ describe('Citation: check language MARC codes', () => {
 
     cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-      cy.assignCapabilitiesToExistingUser(
-        user.userId,
-        MARIGOLD_CAPABILITIES,
-        [
-          ...MARIGOLD_CAPABILITY_SETS,
-          CapabilitySets.uiInventoryInstanceView,
-          CapabilitySets.uiInventoryInstanceEdit,
-        ],
-      );
+      cy.assignCapabilitiesToExistingUser(user.userId, MARIGOLD_CAPABILITIES, [
+        ...MARIGOLD_CAPABILITY_SETS,
+        CapabilitySets.uiInventoryInstanceView,
+        CapabilitySets.uiInventoryInstanceEdit,
+      ]);
     });
 
     DataImport.uploadFileViaApi(
@@ -163,15 +159,25 @@ describe('Citation: check language MARC codes', () => {
       // Check work language fields
       EditResource.checkLabelOnSimpleField(resourceData.languageSelect, fieldData.languageField);
       EditResource.checkDropdownTextValue(resourceData.languageRel, fieldData.languageRelField);
-      EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.languageField, resourceData.languagesSubset);
-      EditResource.checkDropdownContainsOptions(fieldData.languageRelField, resourceData.languageRelationships);
+      EditResource.checkSimpleFieldDropdownContainsOptions(
+        fieldData.languageField,
+        resourceData.languagesSubset,
+      );
+      EditResource.checkDropdownContainsOptions(
+        fieldData.languageRelField,
+        resourceData.languageRelationships,
+      );
 
       // Review MARC
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      ViewMarc.checkMarcFieldContainsDataAtPosition('008', resourceData.marc008LangPosition, resourceData.languageCode);
+      ViewMarc.checkMarcFieldContainsDataAtPosition(
+        '008',
+        resourceData.marc008LangPosition,
+        resourceData.languageCode,
+      );
       ViewMarc.checkMarcFieldIndicators('041', '   ');
       ViewMarc.checkMarcFieldContainsData('041', resourceData.marcLanguageCode);
 
@@ -185,7 +191,10 @@ describe('Citation: check language MARC codes', () => {
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
       EditResource.setValueForTheField(testData.uniqueMarigoldWorkTitle, fieldData.workTitle);
-      EditResource.setValueForSectionSimpleField(resourceData.languageSelect, fieldData.languageField);
+      EditResource.setValueForSectionSimpleField(
+        resourceData.languageSelect,
+        fieldData.languageField,
+      );
       // Primary source language is already the default language relationship selection
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.workId = resourceId;
@@ -195,7 +204,10 @@ describe('Citation: check language MARC codes', () => {
       InstanceProfileModal.waitLoading();
       InstanceProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.setValueForTheField(testData.uniqueMarigoldInstanceTitle, fieldData.instanceTitle);
+      EditResource.setValueForTheField(
+        testData.uniqueMarigoldInstanceTitle,
+        fieldData.instanceTitle,
+      );
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.instanceId = resourceId;
       });
@@ -206,7 +218,12 @@ describe('Citation: check language MARC codes', () => {
       SearchAndFilter.verifySearchResultField(resourceData.languageCode);
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.marigoldWorkTitle);
       SearchAndFilter.waitPreviewLoading();
-      EditResource.checkPreviewSectionContainsLink(fieldData.languageSection, fieldData.languageField, resourceData.language, resourceData.languageLink);
+      EditResource.checkPreviewSectionContainsLink(
+        fieldData.languageSection,
+        fieldData.languageField,
+        resourceData.language,
+        resourceData.languageLink,
+      );
 
       // Review in inventory
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

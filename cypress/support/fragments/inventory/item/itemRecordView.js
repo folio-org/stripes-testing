@@ -3,10 +3,12 @@ import {
   Accordion,
   Button,
   Callout,
+  ConfirmationModal,
   KeyValue,
   Link,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiSelect,
   Pane,
   PaneHeader,
@@ -14,8 +16,9 @@ import {
   TextField,
   ValueChipRoot,
 } from '../../../../../interactors';
-import { ITEM_STATUS_NAMES } from '../../../constants';
+import { COMMON_BUTTON_LABELS, ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
+import MCLHelper from '../../multiColumnList';
 import ConfirmDeleteItemModal from '../modals/confirmDeleteItemModal';
 import UpdateOwnershipModal from '../modals/updateOwnershipModal';
 import ItemRecordEdit from './itemRecordEdit';
@@ -30,10 +33,14 @@ const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
+const boundPiecesDataAccordion = Accordion('Bound pieces data');
 const hridKeyValue = KeyValue('Item HRID');
 const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 const closeIcon = Button({ icon: 'times' });
 const versionHistoryButton = Button({ icon: 'clock' });
+const confirmationModal = ConfirmationModal('Are you sure?');
+
+const NO_BARCODE = 'No barcode';
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -712,5 +719,40 @@ export default {
 
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
+  },
+
+  assertBoundPiecesResultsCount(expectedCount) {
+    cy.expect(boundPiecesDataAccordion.find(MultiColumnList()).has({ rowCount: expectedCount }));
+  },
+
+  assertBoundPiecesDataContent(rowsConfig = []) {
+    MCLHelper.assertRowsCellsContent(boundPiecesDataAccordion.find(MultiColumnList(), rowsConfig));
+  },
+
+  clickBarcodeLinkInBoundPiecesDataAccordion(barcode) {
+    cy.do(
+      boundPiecesDataAccordion
+        .find(MultiColumnListRow({ content: including(barcode || NO_BARCODE), isContainer: false }))
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
+  },
+
+  removePieceFromBoundItem(content) {
+    const removeBtn = boundPiecesDataAccordion
+      .find(MultiColumnListRow({ content: including(content), isContainer: false }))
+      .find(Button({ button: true }));
+
+    cy.expect(removeBtn.exists());
+    cy.do(removeBtn.click());
+    cy.expect(confirmationModal.exists());
+    cy.expect(confirmationModal.has({ message: 'Remove this piece from the bound item?' }));
+    cy.do(confirmationModal.confirm(COMMON_BUTTON_LABELS.REMOVE));
+    cy.expect(confirmationModal.absent());
   },
 };
