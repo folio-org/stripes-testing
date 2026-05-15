@@ -155,7 +155,8 @@ describe('Inventory', () => {
         // Step 6-8: Receiving app — open edit pane → Title look-up → search and verify
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
         AreYouSureModal.clickCloseWithoutSavingButton();
-        Receiving.waitLoading();
+        Receiving.verifyPageDisplayed();
+        Receiving.verifySearchAndActionsAvailable();
         Receiving.clickNewTitleOption();
 
         Receiving.clickTitleLookUpButton();
