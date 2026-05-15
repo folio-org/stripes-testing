@@ -555,6 +555,10 @@ export default {
     cy.do(rootSection.find(nextButton).click());
   },
 
+  clickPreviousPagination() {
+    cy.do(rootSection.find(previousButton).click());
+  },
+
   clickLinkButton() {
     cy.do(buttonLink.click());
   },
@@ -638,10 +642,14 @@ export default {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
       if (!isOpen) {
+        cy.intercept('search/authorities/facets?facet=headingType*').as('getFacetsHeadingType');
         cy.do(headingTypeAccordion.clickHeader());
+        cy.wait('@getFacetsHeadingType').its('response.statusCode').should('eq', 200);
       }
     });
-    const multiSelect = headingTypeAccordion.find(MultiSelect());
+    const multiSelect = headingTypeAccordion.find(
+      MultiSelect({ label: including('Type of heading') }),
+    );
     const matchers = headingTypesArray.map((value) => including(value));
     cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(matchers)]);
   },
@@ -737,6 +745,14 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
+  setActionsCheckboxState(value, shouldBeChecked = false) {
+    if (shouldBeChecked) {
+      cy.do(Checkbox(value).checkIfNotSelected());
+    } else {
+      cy.do(Checkbox(value).uncheckIfSelected());
+    }
+  },
+
   downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
     cy.do(MultiColumnListRow({ index: checkBoxNumber }).find(checkboxSeletAuthorityRecord).click());
     cy.do([actionsButton.click(), exportSelectedRecords.click()]);
@@ -756,6 +772,10 @@ export default {
         .find(checkboxSeletAuthorityRecord)
         .has({ checked: isChecked }),
     );
+  },
+
+  selectCheckboxByRowIndex(rowIndex) {
+    cy.do(MultiColumnListRow({ index: rowIndex }).find(checkboxSeletAuthorityRecord).click());
   },
 
   selectAllRecords() {
@@ -1999,5 +2019,103 @@ export default {
     if (isFound) {
       cy.expect(MultiSelectOption(including(fullValue)).exists());
     } else cy.expect(MultiSelectOption(including(fullValue)).absent());
+  },
+
+  getPaneAuthoritiesFilterWidth() {
+    return cy.get('[id="pane-authorities-filters"]').invoke('width');
+  },
+
+  getPaneMarcViewWidth() {
+    return cy.get('[id="marc-view-pane"]').invoke('width');
+  },
+
+  resizePaneAuthoritiesFilter(targetWidth) {
+    cy.get('[id="pane-authorities-filters"]').then(($pane) => {
+      const paneRect = $pane[0].getBoundingClientRect();
+      const targetX = paneRect.left + targetWidth;
+
+      cy.get('[id="marc-authorities-paneset"]')
+        .siblings()
+        .find('[role="presentation"][class*="handle"]')
+        .first()
+        .should('be.visible')
+        .then(($handle) => {
+          const rect = $handle[0].getBoundingClientRect();
+          const startX = rect.left + rect.width / 2;
+          const startY = rect.top + rect.height / 2;
+
+          cy.wrap($handle)
+            .trigger('mousedown', { which: 1, clientX: startX, clientY: startY, button: 0 })
+            .wait(50);
+
+          // Move in 5 steps to simulate gradual drag
+          const steps = 5;
+          const deltaX = (targetX - startX) / steps;
+          for (let i = 1; i <= steps; i++) {
+            // eslint-disable-next-line cypress/no-force
+            cy.wrap($handle)
+              .trigger('mousemove', {
+                clientX: startX + deltaX * i,
+                clientY: startY,
+                force: true,
+              })
+              .wait(20);
+          }
+
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap($handle).trigger('mouseup', { force: true }).wait(50);
+        });
+    });
+    cy.wait(500);
+  },
+
+  resizePaneMarcView(targetWidth) {
+    cy.get('[id="marc-view-pane"]').then(($pane) => {
+      const paneRect = $pane[0].getBoundingClientRect();
+      const targetX = paneRect.left + targetWidth;
+
+      cy.get('[id="marc-authorities-paneset"]')
+        .siblings()
+        .find('[role="presentation"][class*="handle"]')
+        .eq(1)
+        .should('be.visible')
+        .then(($handle) => {
+          const rect = $handle[0].getBoundingClientRect();
+          const startX = rect.left + rect.width / 2;
+          const startY = rect.top + rect.height / 2;
+
+          cy.wrap($handle)
+            .trigger('mousedown', { which: 1, clientX: startX, clientY: startY, button: 0 })
+            .wait(50);
+
+          // Move in 5 steps to simulate gradual drag
+          const steps = 5;
+          const deltaX = (targetX - startX) / steps;
+          for (let i = 1; i <= steps; i++) {
+            // eslint-disable-next-line cypress/no-force
+            cy.wrap($handle)
+              .trigger('mousemove', {
+                clientX: startX + deltaX * i,
+                clientY: startY,
+                force: true,
+              })
+              .wait(20);
+          }
+
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap($handle).trigger('mouseup', { force: true }).wait(50);
+        });
+    });
+    cy.wait(500);
+  },
+
+  verifyPaneAuthoritiesFilterWidth(expectedWidth, tolerance = 5) {
+    cy.get('[id="pane-authorities-filters"]')
+      .invoke('width')
+      .should('be.closeTo', expectedWidth, tolerance);
+  },
+
+  verifyPaneMarcViewWidth(expectedWidth, tolerance = 5) {
+    cy.get('[id="marc-view-pane"]').invoke('width').should('be.closeTo', expectedWidth, tolerance);
   },
 };
