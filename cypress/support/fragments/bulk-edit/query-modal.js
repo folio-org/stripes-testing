@@ -1147,4 +1147,10 @@ export default {
       targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
     );
   },
+
+  verifyResultFound(expectedValue, { isFound = true, partialMatch = false } = {}) {
+    const targetCell = MultiColumnListCell(partialMatch ? including(expectedValue) : expectedValue);
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
 };
