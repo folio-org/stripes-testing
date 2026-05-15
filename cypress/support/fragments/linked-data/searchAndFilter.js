@@ -96,6 +96,15 @@ export default {
       });
   },
 
+  verifySearchResultField(fieldValue) {
+    cy.get('[class*="search-result-entry-container"]')
+      .first()
+      .find('[class*="work-details-card"]')
+      .find('[class*="details"]')
+      .contains(fieldValue)
+      .should('exist');
+  },
+
   verifyNoResultsFound() {
     cy.get('[class*="search-result-entry-container"]').should('not.exist');
     cy.get('[class*="item-search-content"]')
@@ -149,5 +158,18 @@ export default {
   clickResetButton() {
     cy.do(resetButton.click());
     cy.wait(500);
+  },
+
+  verifyCollapseExpandButton() {
+    cy.get('[data-testid="work-details-card-toggle"]').should('be.visible');
+  },
+
+  clickCollapseExpandButton() {
+    cy.get('[data-testid="work-details-card-toggle"]').first().click();
+    cy.wait(500);
+  },
+
+  verifyInstanceListCollapsed() {
+    cy.get('[class*="instance-list"]').should('not.exist');
   },
 };

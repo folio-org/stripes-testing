@@ -6,6 +6,8 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import AccessStatusTypes from '../../../support/fragments/settings/eholdings/accessStatusTypes';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -13,25 +15,40 @@ describe('eHoldings', () => {
       packageName: 'Wiley Online Library',
     };
     let user;
+    let accessStatusTypeId;
 
     before('Create user and login', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleeHoldingsEnabled.gui,
-        Permissions.uiTagsPermissionAll.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
+      // need to have at least 1 access status type to have related checkbox in UI
+      AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((types) => {
+        if (!types.length) {
+          AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+            `AT_C1259792_AccessStatusType_${getRandomPostfix()}`,
+          ).then((id) => {
+            accessStatusTypeId = id;
+          });
+        }
+      });
+
+      cy.then(() => {
+        cy.createTempUser([
+          Permissions.moduleeHoldingsEnabled.gui,
+          Permissions.uiTagsPermissionAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+          });
+          EHoldingSearch.switchToPackages();
         });
-        EHoldingSearch.switchToPackages();
       });
     });
 
     after('Delete user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      AccessStatusTypes.deleteAccessStatusTypeFromDefaultKbViaApi(accessStatusTypeId);
     });
 
     it(

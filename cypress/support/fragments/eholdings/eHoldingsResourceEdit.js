@@ -8,6 +8,7 @@ import {
   KeyValue,
   HTML,
   including,
+  or,
 } from '../../../../interactors';
 
 const addNewRange = () => {
@@ -104,13 +105,23 @@ export default {
             cy.do(proxySelect.choose(newProxyValue));
             return cy.wrap(newProxyValue);
           } else {
-            cy.getEholdingsProxyNamesViaAPI().then((existingProxies) => {
-              const notSelectedProxy = existingProxies.filter(
-                (existingProxy) => existingProxy !== selectedProxy && existingProxy !== 'None',
-              )[0];
-              cy.do(proxySelect.choose(notSelectedProxy));
-              cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-              return cy.wrap(notSelectedProxy);
+            cy.getEholdingsProxiesViaAPI().then(({ body }) => {
+              const availableProxies = body.data.map((proxy) => ({
+                id: proxy.id,
+                name: proxy.attributes.name,
+              }));
+              const notSelectedProxy = availableProxies.filter(
+                (availableProxy) => ![selectedProxy, `inherited - ${selectedProxy}`].includes(
+                  availableProxy.id.toLowerCase(),
+                ),
+              )[1];
+              cy.do(
+                proxySelect.choose(
+                  or(notSelectedProxy.name, `Inherited - ${notSelectedProxy.name}`),
+                ),
+              );
+              cy.expect(proxySelect.find(HTML(including(notSelectedProxy.name))).exists());
+              return cy.wrap(notSelectedProxy.name);
             });
           }
         })

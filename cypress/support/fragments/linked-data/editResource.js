@@ -342,6 +342,15 @@ export default {
     ).should('be.visible');
   },
 
+  checkDropdownContainsOptions(field, optionLabels) {
+    cy.xpath(`//div[text()="${field}"]/../following-sibling::div//select/option`).then(
+      ($options) => {
+        const labels = [...$options].map((opt) => opt.text);
+        expect(labels).to.include.members(optionLabels);
+      },
+    );
+  },
+
   checkSectionDropdownContainsOptions(section, field, optionLabels, repeatPosition = 1) {
     cy.xpath(
       `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`,
@@ -363,7 +372,7 @@ export default {
       const labels = [...$options].map((opt) => opt.textContent);
       expect(labels).to.include.members(optionLabels);
     });
-    cy.do(Keyboard.escape());
+    cy.get('body').type('{esc}');
     cy.wait(500);
   },
 
@@ -501,6 +510,17 @@ export default {
 
   checkDropdownTextValue(textValue, field) {
     cy.xpath(
+      `//div[text()="${field}"]/../following-sibling::div//select[@data-testid="dropdown-field"]`,
+    )
+      .filter((_selectIdx, selectBlock) => {
+        const opt = selectBlock.options[selectBlock.selectedIndex];
+        return opt && opt.text === textValue;
+      })
+      .should('have.length.at.least', 1);
+  },
+
+  checkSectionDropdownTextValue(textValue, field) {
+    cy.xpath(
       `//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`,
     )
       .filter((_selectIdx, selectBlock) => {
@@ -584,5 +604,114 @@ export default {
     )
       .scrollIntoView()
       .should('be.visible');
+  },
+
+  verifyTitleOrder(titles) {
+    cy.get('[data-testid="literal-field"]').should(($inputs) => {
+      const values = [...$inputs].map((el) => el.value).filter(Boolean);
+      titles.forEach((title, index) => {
+        const foundIndex = values.indexOf(title);
+        if (index > 0) {
+          const prevIndex = values.indexOf(titles[index - 1]);
+          expect(foundIndex).to.be.greaterThan(prevIndex);
+        }
+        expect(foundIndex).to.be.at.least(0);
+      });
+    });
+  },
+
+  selectTitleType(type, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .first()
+      .select(type);
+    cy.wait(500);
+  },
+
+  verifyTitleTypeOptions(options, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .first()
+      .find('option')
+      .then(($options) => {
+        const texts = [...$options].map((el) => el.textContent.trim());
+        options.forEach((option) => {
+          expect(texts).to.include(option);
+        });
+      });
+  },
+
+  verifyTitleFields(fields) {
+    fields.forEach((field) => {
+      cy.xpath(`//div[@class="label" and text()="${field}"]`).should('be.visible');
+    });
+  },
+
+  clickInfoIcon(sectionTestId = 'title') {
+    cy.get(`button[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`)
+      .first()
+      .click();
+    cy.wait(500);
+  },
+
+  verifyMarcEquivalents(entries, sectionTestId = 'title') {
+    const dialogSelector = `dialog[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`;
+    entries.forEach((entry) => {
+      const colonIndex = entry.indexOf(': ');
+      const field = entry.substring(0, colonIndex);
+      const marc = entry.substring(colonIndex + 2);
+      cy.get(dialogSelector).should(($el) => {
+        const text = $el.text();
+        expect(text).to.contain(field);
+        expect(text).to.contain(marc);
+      });
+    });
+  },
+
+  closeInfoIcon(sectionTestId = 'title') {
+    cy.get(`button[data-testid*="${sectionTestId}"][data-testid*="showMarcEquivalents"]`)
+      .first()
+      .click();
+    cy.wait(300);
+  },
+
+  clickDuplicateTitleSection(formType = 'Work') {
+    cy.get(`button[data-testid*="${formType}"][data-testid*="title"][data-testid*="addDuplicate"]`)
+      .first()
+      .click();
+    cy.wait(500);
+  },
+
+  verifyWarningToast(message) {
+    cy.get('.status-message-text', { timeout: 5000 }).should('be.visible').and('contain', message);
+  },
+
+  closeToast() {
+    cy.get('button.status-message-close').first().click();
+    cy.wait(500);
+  },
+
+  verifyInfoToast(message) {
+    cy.get('.status-message-text', { timeout: 5000 }).should('be.visible').and('contain', message);
+  },
+
+  setValueForTitleSectionByIndex(value, fieldLabel, sectionIndex) {
+    cy.xpath(`(//div[@class="label" and text()="${fieldLabel}"])[${sectionIndex}]/../../div/input`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(500);
+  },
+
+  selectTitleTypeByIndex(type, dropdownIndex, formType = 'Work') {
+    cy.get(
+      `select[data-testid="dropdown-field"][aria-labelledby*="${formType}"][aria-labelledby*="title"]`,
+    )
+      .eq(dropdownIndex)
+      .select(type);
+    cy.wait(500);
   },
 };
