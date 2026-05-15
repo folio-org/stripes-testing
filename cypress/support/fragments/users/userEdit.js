@@ -1021,14 +1021,24 @@ export default {
     cy.expect(HTML(data.helpText).exists());
   },
 
-  openCustomFieldsAccordion() {
-    cy.expect(customFieldsAccordion.exists());
-    cy.do(customFieldsAccordion.clickHeader());
-    cy.expect(customFieldsAccordion.has({ open: true }));
+  verifyTextFieldCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextField({ label: fieldLabel })).exists());
+  },
+
+  verifyTextAreaCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextArea({ label: fieldLabel })).exists());
   },
 
   verifyCheckboxCustomFieldExists(fieldLabel) {
     cy.expect(customFieldsAccordion.find(Checkbox(fieldLabel)).exists());
+  },
+
+  verifyDatePickerCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Datepicker({ label: fieldLabel })).exists());
+  },
+
+  verifyMultiSelectCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(MultiSelect({ label: fieldLabel })).exists());
   },
 
   verifyDatePickerCustomFieldRequired(fieldLabel) {
@@ -1043,6 +1053,36 @@ export default {
     cy.expect(
       customFieldsAccordion.find(RadioButtonGroup({ label: including(fieldLabel) })).exists(),
     );
+  },
+
+  verifyRadioButtonCustomFieldDefaultValue(fieldLabel, optionLabel) {
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup({ label: including(fieldLabel) }))
+        .find(RadioButton(optionLabel, { checked: true }))
+        .exists(),
+    );
+  },
+
+  verifySingleSelectCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Select({ label: fieldLabel })).exists());
+  },
+
+  verifySingleSelectCustomFieldDefaultValue(fieldLabel, optionLabel) {
+    cy.expect(
+      customFieldsAccordion.find(Select({ label: fieldLabel })).checkedOptionText(optionLabel),
+    );
+  },
+
+  verifyMultiSelectCustomFieldDefaultValues(fieldLabel, optionLabels) {
+    const multiSelect = customFieldsAccordion.find(
+      MultiSelect({ label: fieldLabel, selectedCount: optionLabels.length }),
+    );
+
+    cy.expect(multiSelect.exists());
+    optionLabels.forEach((optionLabel) => {
+      cy.expect(multiSelect.has({ selected: including(optionLabel) }));
+    });
   },
 
   verifySingleSelectCustomFieldRequired(fieldLabel) {
@@ -1192,6 +1232,11 @@ export default {
 
   verifyUserRolesCounter(expectedCount) {
     cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
+  },
+
+  dismissResetLinkModal() {
+    cy.do(resetPasswordModal.dismiss());
+    cy.expect(resetPasswordModal.absent());
   },
 
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {

@@ -145,6 +145,8 @@ describe('Inventory', () => {
         cy.wait(3000);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventoryInstances.selectInstanceById(instanceId);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.verifyHoldingsAbsent(location.name);
 
         // Step 5: Verify Instance _version did not change after Holdings and Item deletion

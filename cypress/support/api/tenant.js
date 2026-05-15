@@ -114,3 +114,23 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
     body: DEFAULT_LOCALE_OBJECT,
   });
 });
+
+Cypress.Commands.add('setFrontEndBaseUrlViaApi', (newBaseUrl) => {
+  if (!newBaseUrl) {
+    throw new Error('A new base URL must be provided');
+  }
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'base-url',
+    isDefaultSearchParamsRequired: false,
+    body: { baseUrl: newBaseUrl },
+  });
+});
+
+Cypress.Commands.add('getFrontEndBaseUrlViaApi', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'base-url',
+    isDefaultSearchParamsRequired: false,
+  });
+});

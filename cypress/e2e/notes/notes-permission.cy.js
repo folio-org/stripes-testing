@@ -6,10 +6,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 describe('Notes', () => {
   const testData = {};
   const urlToEholdings = '/eholdings/providers/38';
-  const note = {
-    title: `Test Title ${getRandomPostfix()}`,
-    details: `Test details ${getRandomPostfix()}`,
-  };
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -27,11 +23,13 @@ describe('Notes', () => {
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
+    });
+  });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
+  beforeEach('Login before each test', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: urlToEholdings,
+      waiter: NotesEholdings.waitLoading,
     });
   });
 
@@ -45,6 +43,11 @@ describe('Notes', () => {
     'C527 Notes: Can create notes (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C527'] },
     () => {
+      const note = {
+        title: `Test Title ${getRandomPostfix()}`,
+        details: `Test details ${getRandomPostfix()}`,
+      };
+
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteCreation(note.title, note.details);
       NotesEholdings.openNoteView(note.title, note.details);
@@ -56,6 +59,11 @@ describe('Notes', () => {
     'C1245 Notes: Can view notes (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C1245'] },
     () => {
+      const note = {
+        title: `Test Title ${getRandomPostfix()}`,
+        details: `Test details ${getRandomPostfix()}`,
+      };
+
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteCreation(note.title, note.details);
 
@@ -80,10 +88,15 @@ describe('Notes', () => {
     'C526 Notes: Can edit a note (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C526'] },
     () => {
+      const note = {
+        title: `Test Title ${getRandomPostfix()}`,
+        details: `Test details ${getRandomPostfix()}`,
+      };
       const newNote = {
         title: `Changed Title ${getRandomPostfix()}`,
         details: `Changed details ${getRandomPostfix()}`,
       };
+
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.editNote(note.title, newNote.title, newNote.details);
       NotesEholdings.verifyNoteTitle(newNote.title);
@@ -96,6 +109,11 @@ describe('Notes', () => {
     'C528 Notes: Can delete notes (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C528'] },
     () => {
+      const note = {
+        title: `Test Title ${getRandomPostfix()}`,
+        details: `Test details ${getRandomPostfix()}`,
+      };
+
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteCreation(note.title, note.details);
       NotesEholdings.openNoteView(note.title, note.details);

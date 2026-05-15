@@ -76,27 +76,6 @@ export const MATERIAL_TYPE_NAMES = {
   VIDEO_RECORDING: 'video recording',
 };
 
-export const ITEM_STATUS_NAMES = {
-  ON_ORDER: 'On order',
-  IN_PROCESS: 'In process',
-  AVAILABLE: 'Available',
-  MISSING: 'Missing',
-  LONG_MISSING: 'Long missing',
-  IN_TRANSIT: 'In transit',
-  PAGED: 'Paged',
-  AWAITING_PICKUP: 'Awaiting pickup',
-  CHECKED_OUT: 'Checked out',
-  CLAIMED_RETURNED: 'Claimed returned',
-  DECLARED_LOST: 'Declared lost',
-  MARKED_AS_MISSING: 'Marked as missing',
-  AWAITING_DELIVERY: 'Awaiting delivery',
-  FOUND_BY_LIBRARY: 'Checked in (found by library)',
-  AGED_TO_LOST: 'Aged to lost',
-  LOST_AND_PAID: 'Lost and paid',
-  WITHDRAWN: 'Withdrawn',
-  ORDER_CLOSED: 'Order closed',
-};
-
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -1797,11 +1776,13 @@ export const SORT_DIRECTIONS = {
 };
 
 export const COMMON_BUTTON_LABELS = {
+  ACTIONS: 'Actions',
   APPLY: 'Apply',
   CANCEL: 'Cancel',
   CONFIRM: 'Confirm',
   NEXT: 'Next',
   PREVIOUS: 'Previous',
+  REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   YES: 'Yes',
   NO: 'No',
@@ -1832,4 +1813,18 @@ export const FTP_PROTOCOLS = {
 export const FILE_TYPES = {
   CSV: 'csv',
   JSON: 'json',
+};
+
+export const CUSTOM_FIELD_ENTITY_TYPES = {
+  USER: 'user',
+};
+
+export const CUSTOM_FIELD_TYPES = {
+  SINGLE_CHECKBOX: 'SINGLE_CHECKBOX',
+  DATE_PICKER: 'DATE_PICKER',
+  MULTI_SELECT_DROPDOWN: 'MULTI_SELECT_DROPDOWN',
+  RADIO_BUTTON: 'RADIO_BUTTON',
+  SINGLE_SELECT_DROPDOWN: 'SINGLE_SELECT_DROPDOWN',
+  TEXTBOX_LONG: 'TEXTBOX_LONG',
+  TEXTBOX_SHORT: 'TEXTBOX_SHORT',
 };
