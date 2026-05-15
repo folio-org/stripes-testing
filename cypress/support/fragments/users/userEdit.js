@@ -1234,6 +1234,11 @@ export default {
     cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
   },
 
+  dismissResetLinkModal() {
+    cy.do(resetPasswordModal.dismiss());
+    cy.expect(resetPasswordModal.absent());
+  },
+
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {
     cy.do(userRolesAccordion.clickHeader());
     cy.expect(userRolesAccordion.has({ open: isExpanded }));
