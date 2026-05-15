@@ -214,6 +214,11 @@ describe('Lists', () => {
       const recordType = 'Instances';
       const testData = {
         instanceTitle: getTestEntityValue('C_lists_query_builder_classification_instance'),
+        uuidInstanceTitles: [
+          getTestEntityValue('C446019_Instance_1'),
+          getTestEntityValue('C446019_Instance_2'),
+        ],
+        instanceIds: [],
         classificationNumber: 'BJ1533.C4',
         classificationIdentifierTypeName: getTestEntityValue(
           'C_lists_query_builder_classification_type',
@@ -243,6 +248,17 @@ describe('Lists', () => {
             },
           }).then(({ instanceId }) => {
             testData.instanceId = instanceId;
+            testData.instanceIds.push(instanceId);
+          });
+          testData.uuidInstanceTitles.forEach((title) => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: instanceTypes[0].id,
+                title,
+              },
+            }).then(({ instanceId }) => {
+              testData.instanceIds.push(instanceId);
+            });
           });
         });
         createQueryBuilderUser(
@@ -255,6 +271,11 @@ describe('Lists', () => {
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        testData.instanceIds
+          .filter((instanceId) => instanceId !== testData.instanceId)
+          .forEach((instanceId) => {
+            InventoryInstance.deleteInstanceViaApi(instanceId);
+          });
         ClassificationIdentifierTypes.deleteViaApi(testData.classificationIdentifierTypeId);
       });
 
@@ -339,6 +360,65 @@ describe('Lists', () => {
           QueryModal.testQueryDisabled(false);
           QueryModal.verifyRowDoesNotContain('eng');
           QueryModal.verifyQueryAreaDoesNotContain('undefined');
+        },
+      );
+
+      it(
+        'C446019 The IN operator is rendered correctly in the query builder when editing existing queries (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C446019'] },
+        () => {
+          const recordAmount = 3;
+          const instanceIds = testData.instanceIds;
+          const value = instanceIds.join(',');
+          const formattedValue = instanceIds.join(', ');
+          const expectedQuery = `(instance.id in (${formattedValue}))`;
+
+          listName = getTestEntityValue('C446019_List');
+          openQueryBuilder(recordType);
+
+          QueryModal.selectField(instanceFieldValues.instanceId);
+          QueryModal.verifySelectedField(instanceFieldValues.instanceId);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          QueryModal.fillInValueTextfield(value);
+          QueryModal.verifyTextFieldValue(value);
+          QueryModal.verifyQueryAreaContent(expectedQuery);
+          QueryModal.testQueryDisabled(false);
+          QueryModal.runQueryDisabled();
+
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyNumberOfMatchedRecords(recordAmount);
+          instanceIds.forEach((instanceId) => {
+            QueryModal.verifyRecordWithContent(instanceId);
+          });
+
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          Lists.verifyRefreshCompleteCallout(recordAmount);
+          Lists.viewUpdatedList();
+          Lists.verifyRecordsNumber(recordAmount);
+          instanceIds.forEach((instanceId) => {
+            Lists.verifyRecordWithContent(instanceId);
+          });
+
+          Lists.openActions();
+          Lists.editList();
+          Lists.editQuery();
+          QueryModal.verifySelectedField(instanceFieldValues.instanceId);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
+          QueryModal.verifyTextFieldValue(value);
+          QueryModal.verifyQueryAreaDoesNotContain('undefined');
+          QueryModal.testQueryDisabled(false);
+          QueryModal.runQueryDisabled();
+
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyNumberOfMatchedRecords(recordAmount);
+          instanceIds.forEach((instanceId) => {
+            QueryModal.verifyRecordWithContent(instanceId);
+          });
         },
       );
 

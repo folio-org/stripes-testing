@@ -750,7 +750,7 @@ export default {
     this.testQueryDisabled(false);
     this.cancelDisabled(false);
     this.runQueryDisabled(false);
-    cy.get('[class^="col-xs-10"]').then(($element) => {
+    cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
@@ -870,7 +870,7 @@ export default {
 
   verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
     cy.wait(3000);
-    cy.get('[class^="col-xs-10"]').then(($element) => {
+    cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
