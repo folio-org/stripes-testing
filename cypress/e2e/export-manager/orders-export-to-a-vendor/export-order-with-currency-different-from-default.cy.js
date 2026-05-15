@@ -51,10 +51,17 @@ const EXPORT_WAIT_TIME_MS = 10_000;
 
 const FOREIGN_CURRENCIES = ['AUD', 'CAD', 'CHF', 'EUR', 'GBP', 'JPY', 'PLN'];
 
-const toEdiAmount = (value) => Number(value)
-  .toFixed(2)
-  .replace(/\.0+$/, '')
-  .replace(/(\.\d*[1-9])0+$/, '$1');
+const toEdiAmount = (value) => {
+  const amount = Number(value);
+  const rounded = Math.round((amount + Number.EPSILON) * 100) / 100;
+  const normalized = String(rounded);
+
+  if (Number.isInteger(rounded)) {
+    return normalized.replace(/$/, '.0');
+  }
+
+  return normalized.replace(/(\.\d*[1-9])0+$/, '$1').replace(/\.0+$/, '');
+};
 
 const createOrderLinesCleanup = (orderLines) => () => {
   orderLines.forEach((orderLine) => {
@@ -62,18 +69,23 @@ const createOrderLinesCleanup = (orderLines) => () => {
   });
 };
 
-const assertSegmentExists = (segments, expectedPrefix) => {
-  expect(segments.some((segment) => segment.startsWith(expectedPrefix))).to.equal(true);
+const assertSegmentExists = (segments, expectedPrefix, options = {}) => {
+  const { exact = false } = options;
+
+  expect(
+    segments.some((segment) => {
+      return exact ? segment === expectedPrefix : segment.startsWith(expectedPrefix);
+    }),
+  ).to.equal(true);
+};
+
+const assertSegmentCount = (segments, expectedPrefix, expectedCount) => {
+  const actualCount = segments.filter((segment) => segment.startsWith(expectedPrefix)).length;
+  expect(actualCount).to.equal(expectedCount);
 };
 
 const assertCurrencySegments = (segments, currencies) => {
-  const hasAnyOrderCurrency = [currencies.pol1Currency, currencies.pol2Currency].some(
-    (currency) => {
-      return segments.some((segment) => segment.startsWith(`CUX+2:${currency}:`));
-    },
-  );
-
-  expect(hasAnyOrderCurrency).to.equal(true);
+  assertSegmentCount(segments, 'CUX+2:', 3); // 2 order lines + 1 order level currency segment
   assertSegmentExists(segments, `CUX+2:${currencies.pol1Currency}:`);
   assertSegmentExists(segments, `CUX+2:${currencies.pol2Currency}:`);
 };
@@ -83,11 +95,16 @@ const assertAddressSegments = (segments, shipToAddress) => {
   expect(segments.join("'")).to.include(shipToAddress.address);
 };
 
-const assertPriceSegments = (segments) => {
-  assertSegmentExists(segments, `PRI+AAF:${toEdiAmount(PRICE.POL1_TOTAL)}`);
-  assertSegmentExists(segments, `PRI+AAB:${toEdiAmount(PRICE.POL1_TOTAL)}`);
-  assertSegmentExists(segments, `PRI+AAF:${toEdiAmount(PRICE.POL2_TOTAL)}`);
-  assertSegmentExists(segments, `PRI+AAB:${toEdiAmount(PRICE.POL2_UNIT * PRICE.POL2_QUANTITY)}`);
+const assertPriceSegments = (flow, segments) => {
+  const [poLine1, poLine2] = flow.ctx().orderLines;
+  const assertExists = (expected) => assertSegmentExists(segments, expected, { exact: true });
+
+  assertExists(`PRI+AAF:${toEdiAmount(+poLine1.cost.poLineEstimatedPrice)}`);
+  assertExists(`PRI+AAB:${toEdiAmount(+poLine1.cost.poLineEstimatedPrice)}`);
+  assertExists(`PRI+AAF:${toEdiAmount(+poLine2.cost.poLineEstimatedPrice)}`);
+  assertExists(
+    `PRI+AAB:${toEdiAmount(Number(poLine2.cost.listUnitPrice) * Number(poLine2.cost.quantityPhysical))}`,
+  );
 };
 
 const createOrderLine = ({
@@ -402,7 +419,7 @@ describe('Export Manager', () => {
             assertAddressSegments(segments, shipToAddress);
 
             cy.log('< --- STEP 7: Check calculation price --- >');
-            assertPriceSegments(segments);
+            assertPriceSegments(flow, segments);
           });
         });
       },
