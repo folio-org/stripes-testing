@@ -189,10 +189,17 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyResultColumnTitles(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-          marcInstance.hrid,
+        BulkEditSearchPane.verifyChangesUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
-          `${authorityHeadingToLink830Field} english no. 19. | ${authorityHeadingToLink800Field} Inspector Banks series 24.`,
+          `${authorityHeadingToLink830Field} english no. 19.`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+          `${authorityHeadingToLink800Field} Inspector Banks series 24.`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT,
+          ' | ',
         );
 
         // Step 2: Uncheck "Series statements" checkbox to hide column

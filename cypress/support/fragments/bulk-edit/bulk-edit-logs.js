@@ -439,6 +439,22 @@ export default {
     );
   },
 
+  verifyProcessedColumnValue(runByUsername, content) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content, column: 'Processed' }))
+        .exists(),
+    );
+  },
+
+  verifyNumberOfRecordsColumnValue(runByUsername, content) {
+    cy.expect(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content, column: '# of records' }))
+        .exists(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
