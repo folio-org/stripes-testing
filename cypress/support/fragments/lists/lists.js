@@ -22,6 +22,7 @@ import {
   MultiSelectOption,
   not,
   Pane,
+  PaneHeader,
   RadioButton,
   SelectionList,
   TextArea,
@@ -619,6 +620,19 @@ const UI = {
   verifySingleRecordNumber() {
     cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
+  },
+
+  verifyLandingPageRecordsCount(number) {
+    cy.expect(listsPane.has({ subtitle: including(`${number} records found`) }));
+  },
+
+  verifyListDetailsHeaderWithIcon(listName) {
+    cy.expect(PaneHeader(including(listName)).exists());
+    cy.get('[class^=paneHeader-]')
+      .contains(listName)
+      .parents('[class^=paneHeader-]')
+      .find('[class*="appIcon"]')
+      .should('be.visible');
   },
 
   verifyQuery(query) {
@@ -1322,6 +1336,12 @@ const API = {
     return cy.okapiRequest({
       method: 'GET',
       path: 'lists',
+    });
+  },
+
+  getTotalRecordsViaApi() {
+    return this.getViaApi().then((response) => {
+      return response.body.totalRecords;
     });
   },
 
