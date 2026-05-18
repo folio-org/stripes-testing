@@ -181,9 +181,14 @@ export default {
     voucherInformation = [],
     vendorDetailsInformation = [],
     fieldsNotDisplayed = [],
+    subtitle,
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
+    }
+
+    if (subtitle) {
+      cy.expect(invoiceDetailsPane.has({ subtitle }));
     }
 
     invoiceInformation.forEach(({ key, value }) => {

@@ -64,7 +64,7 @@ export default {
    * FiltersPane.assertResetAllButtonState(ordersFiltersPane, { disabled: true });
    */
   assertResetAllButtonState(filtersPane, { disabled }) {
-    cy.expect(filtersPane.find(resetAllButton).has({ disabled: disabled.toString() }));
+    cy.expect(filtersPane.find(resetAllButton).has({ disabled }));
   },
 
   /**
