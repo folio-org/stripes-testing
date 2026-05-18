@@ -27,6 +27,7 @@ import QueryModal, {
   itemFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 let instanceTypeId;
@@ -56,6 +57,7 @@ const marcInstance = {
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
+const todayDate = DateTools.getCurrentDate();
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -181,6 +183,10 @@ describe('Bulk-edit', () => {
               QueryModal.selectField(itemFieldValues.instanceTitle, 1);
               QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
               QueryModal.fillInValueTextfield(`C496127_${postfix}`, 1);
+              QueryModal.addNewRow();
+              QueryModal.selectField(itemFieldValues.itemCreatedDate, 2);
+              QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+              QueryModal.pickDate(todayDate, 2);
               cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
               cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
               QueryModal.clickTestQuery();
@@ -237,7 +243,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.discovery_suppress != True) AND (instances.title starts with C496127_${postfix})`,
+              `(items.discovery_suppress != True) AND (instances.title starts with C496127_${postfix}) AND (items.created_date == ${todayDate})`,
             );
 
             instances.forEach((instance) => {

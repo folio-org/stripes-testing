@@ -180,6 +180,7 @@ export const itemFieldValues = {
   instanceTitle: 'Instances — Resource title',
   itemAccessionNumber: 'Items — Accession number',
   itemBarcode: 'Items — Barcode',
+  itemCreatedDate: 'Items — Created date',
   itemCheckOutNotesNote: 'Item — Check out notes — Note',
   itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
   itemCheckInNotesNote: 'Item — Check in notes — Note',
