@@ -37,6 +37,17 @@ Cypress.Commands.add('getAdminUserId', () => {
   });
 });
 
+Cypress.Commands.add('getPatronGroupsApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'groups',
+      searchParams,
+    })
+    .then(({ body }) => {
+      return body.usergroups;
+    });
+});
+
 Cypress.Commands.add('getUserGroups', (searchParams) => {
   cy.okapiRequest({
     path: 'groups',

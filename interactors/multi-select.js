@@ -67,17 +67,59 @@ export const ValueChipRoot = HTML.extend('value chip root')
     return str;
   });
 
+const toArray = (values = []) => (Array.isArray(values) ? values : [values]).filter(
+  (value) => value !== undefined && value !== null,
+);
+
 const select = async (interactor, values) => {
   await interactor.open();
-  let valuesParam = values;
-  if (!Array.isArray(values)) {
-    valuesParam = [values];
-  }
+  const valuesParam = toArray(values);
+
   for (const value of valuesParam) {
     await MultiSelectMenu().find(MultiSelectOption(value)).click();
   }
 
   await interactor.close();
+};
+
+const remove = async (interactor, values) => {
+  const valuesParam = toArray(values);
+
+  for (const value of valuesParam) {
+    await interactor
+      .find(ValueChipRoot(value))
+      .find(Button({ icon: 'times' }))
+      .click();
+  }
+};
+
+const clear = async (interactor) => {
+  const selectedValues = toArray(await interactor.selected());
+
+  if (!selectedValues.length) {
+    return;
+  }
+
+  await remove(interactor, selectedValues);
+};
+
+const set = async (interactor, values) => {
+  const expectedValues = toArray(values);
+  const selectedValues = toArray(await interactor.selected());
+  const valuesToRemove = selectedValues.filter(
+    (selectedValue) => !expectedValues.includes(selectedValue),
+  );
+  const valuesToAdd = expectedValues.filter(
+    (expectedValue) => !selectedValues.includes(expectedValue),
+  );
+
+  if (valuesToRemove.length) {
+    await remove(interactor, valuesToRemove);
+  }
+
+  if (valuesToAdd.length) {
+    await select(interactor, valuesToAdd);
+  }
 };
 
 export default createInteractor('multi select')
@@ -119,5 +161,8 @@ export default createInteractor('multi select')
     filter,
     select,
     choose: select,
+    remove,
+    clear,
+    set,
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
   });

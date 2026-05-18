@@ -29,6 +29,7 @@ import {
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
+import { NO_VALUE } from '../../constants';
 
 const affiliationsAccordion = Accordion('Affiliations');
 const patronBlocksAccordion = Accordion('Patron blocks');
@@ -92,6 +93,8 @@ const rolesAffiliationSelectionList = SelectionList({
 const popupNoteModal = Modal({ id: 'popup-note-modal' });
 const popupNoteDeleteButton = popupNoteModal.find(Button('Delete note'));
 const popupNoteCloseButton = popupNoteModal.find(Button('Close'));
+
+const getAccordionByLabel = (accordionLabel) => rootSection.find(Accordion(accordionLabel));
 
 export default {
   errors,
@@ -280,6 +283,67 @@ export default {
 
   openCustomFieldsSection() {
     cy.do(Accordion({ id: 'customFields' }).clickHeader());
+  },
+
+  openAccordion(accordionLabel) {
+    console.log('accordionLabel', accordionLabel);
+    cy.expect(getAccordionByLabel(accordionLabel).exists());
+    cy.do(getAccordionByLabel(accordionLabel).clickHeader());
+    cy.expect(getAccordionByLabel(accordionLabel).has({ open: true }));
+  },
+
+  verifyAccordionsPresent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).exists());
+    });
+  },
+
+  verifyAccordionsAbsent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).absent());
+    });
+  },
+
+  verifyFeesFinesLinksExist() {
+    this.openAccordion('Fees/fines');
+    cy.expect([openedFeesFinesLink.exists(), closedFeesFinesLink.exists()]);
+  },
+
+  verifyLoansLinksExist() {
+    this.openAccordion('Loans');
+    cy.expect(currentLoansLink.exists());
+  },
+
+  verifyRequestsInfoExists() {
+    this.openAccordion('Requests');
+    cy.expect([openedRequestsLink.exists(), closedRequestsLink.exists()]);
+  },
+
+  verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues, { isAccordionOpen } = {}) {
+    if (!isAccordionOpen) {
+      this.openAccordion(accordionLabel);
+    }
+    customFieldValues.forEach(({ customField, value }) => {
+      const fieldKeyValue = getAccordionByLabel(accordionLabel).find(KeyValue(customField.name));
+      const expectedValue =
+        customField.type === 'DATE_PICKER' ? DateTools.clearPaddingZero(value) : value;
+
+      cy.expect(fieldKeyValue.exists());
+
+      if (customField.type === 'SINGLE_CHECKBOX') {
+        if (value) {
+          cy.expect(fieldKeyValue.find(Checkbox({ disabled: true, checked: true })).exists());
+        } else {
+          cy.expect(fieldKeyValue.has({ value: NO_VALUE }));
+        }
+      } else if (customField.type === 'MULTI_SELECT_DROPDOWN') {
+        [].concat(expectedValue).forEach((expectedMultiSelectValue) => {
+          cy.expect(fieldKeyValue.has({ value: including(expectedMultiSelectValue) }));
+        });
+      } else {
+        cy.expect(fieldKeyValue.has({ value: including(expectedValue) }));
+      }
+    });
   },
 
   expandRequestSection() {
