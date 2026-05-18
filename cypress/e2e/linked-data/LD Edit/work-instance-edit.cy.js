@@ -127,14 +127,20 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.checkButtonsEnabled();
       UnsavedChangesModal.clickDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, fieldData.instanceTitle);
+      EditResource.checkTextValueOnField(
+        testData.uniqueInstanceTitleFirst,
+        fieldData.instanceTitle,
+      );
 
       // Unsaved changes modal, dismissed indirectly
       EditResource.clickEditWork();
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickOverlayToDismiss();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_INSTANCE);
-      EditResource.checkTextValueOnField(testData.uniqueInstanceTitleFirst, fieldData.instanceTitle);
+      EditResource.checkTextValueOnField(
+        testData.uniqueInstanceTitleFirst,
+        fieldData.instanceTitle,
+      );
 
       // Unsaved changes modal, continue without saving
       EditResource.clickEditWork();
@@ -155,7 +161,11 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.clickSaveAndContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.instanceTitle, testData.uniqueInstanceTitleFirst);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.titleSection,
+        fieldData.instanceTitle,
+        testData.uniqueInstanceTitleFirst,
+      );
       EditResource.checkSaveButtonsDisabled();
       EditResource.checkCloseAndCancelEnabled();
 
@@ -180,7 +190,11 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.waitLoading();
       UnsavedChangesModal.clickContinueWithoutSaving();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
-      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.workTitle, testData.uniqueWorkTitleFirst);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.titleSection,
+        fieldData.workTitle,
+        testData.uniqueWorkTitleFirst,
+      );
 
       // Unsaved work changes saved through modal
       EditResource.clickEditWork();
@@ -190,7 +204,11 @@ describe('Citation: core work and instance editor features', () => {
       UnsavedChangesModal.clickSaveAndContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldData.titleSection, fieldData.workTitle, testData.uniqueWorkTitleSecond);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.titleSection,
+        fieldData.workTitle,
+        testData.uniqueWorkTitleSecond,
+      );
 
       // Back to work and then back to instance
       EditResource.clickEditWork();
@@ -227,7 +245,10 @@ describe('Citation: core work and instance editor features', () => {
       // See instance preview
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.uniqueInstanceTitle);
       SearchAndFilter.waitPreviewLoading();
-      SearchAndFilter.checkPreviewContains(fieldData.instanceTitle, resourceData.uniqueInstanceTitle);
+      SearchAndFilter.checkPreviewContains(
+        fieldData.instanceTitle,
+        resourceData.uniqueInstanceTitle,
+      );
     },
   );
 });

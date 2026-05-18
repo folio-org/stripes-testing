@@ -390,14 +390,19 @@ export default {
     cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
   },
 
-  verifyUsernameOnUserDetailsPane(username) {
-    cy.contains('[class^=accordion]', 'Extended information')
+  ensureAccordionOpen(accordionLabel) {
+    cy.contains('[id^=accordion-toggle-button]', accordionLabel)
       .invoke('attr', 'aria-expanded')
       .then((ariaExpanded) => {
-        if (!ariaExpanded) {
-          cy.do(Accordion('Extended information').clickHeader());
+        if (ariaExpanded === 'false') {
+          cy.do(Accordion(accordionLabel).clickHeader());
         }
       });
+    cy.expect(Accordion(accordionLabel).has({ open: true }));
+  },
+
+  verifyUsernameOnUserDetailsPane(username) {
+    this.ensureAccordionOpen('Extended information');
     cy.expect(userDetailsPane.find(KeyValue('Username')).has({ value: username }));
   },
 
@@ -453,44 +458,27 @@ export default {
   },
 
   clickNewButton: () => {
-    cy.do([
-      Dropdown('Actions').find(Button()).click(),
-      Button({ id: 'clickable-newuser' }).click(),
-    ]);
+    cy.do(Dropdown('Actions').open());
+    cy.expect(Button({ id: 'clickable-newuser' }).exists());
+    cy.do(Button({ id: 'clickable-newuser' }).click());
+    cy.expect(Spinner().exists());
+    cy.expect(Spinner().absent());
     cy.wait(500);
   },
 
   verifyAddressOnUserDetailsPane(address) {
     cy.wait(2000);
-    cy.contains('[class^=accordion]', 'Contact information')
-      .invoke('attr', 'aria-expanded')
-      .then((ariaExpanded) => {
-        if (!ariaExpanded) {
-          cy.do(Accordion('Contact information').clickHeader());
-        }
-      });
+    this.ensureAccordionOpen('Contact information');
     cy.expect(userDetailsPane.find(KeyValue('Address Type')).has({ value: address }));
   },
 
   verifyCountryOnUserDetailsPane(country) {
-    cy.contains('[class^=accordion]', 'Contact information')
-      .invoke('attr', 'aria-expanded')
-      .then((ariaExpanded) => {
-        if (!ariaExpanded) {
-          cy.do(Accordion('Contact information').clickHeader());
-        }
-      });
+    this.ensureAccordionOpen('Contact information');
     cy.expect(userDetailsPane.find(KeyValue('Country')).has({ value: country }));
   },
 
   expandLoansAccordion() {
-    cy.contains('[class^=accordion]', 'Loans')
-      .invoke('attr', 'aria-expanded')
-      .then((ariaExpanded) => {
-        if (!ariaExpanded) {
-          cy.do(Accordion('Loans').clickHeader());
-        }
-      });
+    this.ensureAccordionOpen('Loans');
   },
 
   clickOpenLoansLink() {

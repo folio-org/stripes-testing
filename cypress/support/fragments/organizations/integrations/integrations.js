@@ -67,6 +67,14 @@ export default {
       })
       .then(({ body }) => body);
   },
+  getIntegrationConfigViaApi(configId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `data-export-spring/configs/${configId}`,
+      })
+      .then(({ body }) => body);
+  },
   deleteIntegrationViaApi(configId) {
     return cy.okapiRequest({
       method: 'DELETE',

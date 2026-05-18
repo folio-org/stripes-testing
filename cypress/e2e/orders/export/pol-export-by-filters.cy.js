@@ -9,7 +9,7 @@ import {
 import { OrderHelper, OrderLines, Orders, OrdersExport } from '../../../support/fragments/orders';
 import { ExecutionFlowManager } from '../../../support/utils';
 import FileManager from '../../../support/utils/fileManager';
-import { buildExportReport } from '../../../support/utils/ordersExport';
+import { buildExportReportRow } from '../../../support/utils/ordersExport';
 
 const { EXPORT_CSV } = ORDER_LINE_RESULTS_ACTIONS_LABELS;
 
@@ -76,7 +76,7 @@ describe('Orders', () => {
           const content = expectedOrderLines.map((line) => {
             const order = ordersMap.get(line.purchaseOrderId);
 
-            return buildExportReport({
+            return buildExportReportRow({
               order,
               line,
               acquisitionMethodsMap,

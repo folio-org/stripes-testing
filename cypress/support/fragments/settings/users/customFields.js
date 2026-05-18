@@ -8,7 +8,9 @@ import {
   MultiColumnListRow,
   NavListItem,
   Pane,
+  RadioButton,
   Section,
+  Select,
   TextField,
 } from '../../../../../interactors';
 
@@ -26,16 +28,43 @@ const getEditCustomFieldAccordion = (fieldLabelText) => {
     Accordion({ label: including(fieldLabelText), isWrapper: false }),
   );
 };
+const getDisplayInAccordionSelect = (fieldLabelText) => {
+  return getEditCustomFieldAccordion(fieldLabelText).find(Select('Display in accordion'));
+};
 const getCustomFieldSection = (fieldLabelText) => {
   return customFieldsPane.find(Section({ label: including(fieldLabelText) }));
 };
 const findCustomFieldSectionByLabel = (fieldLabelText) => {
   return customFieldsPane.find(Section({ label: including(fieldLabelText) }));
 };
+const getViewCustomFieldOptionRow = (fieldLabelText, optionLabelText) => {
+  return findCustomFieldSectionByLabel(fieldLabelText).find(
+    MultiColumnListRow({ content: including(optionLabelText), isContainer: true }),
+  );
+};
+const performOnEditCustomFieldOptionRow = (fieldLabelText, optionLabelText, callback) => {
+  const optionTextField = getEditCustomFieldAccordion(fieldLabelText).find(
+    TextField({ value: optionLabelText }),
+  );
+
+  cy.expect(optionTextField.exists());
+  cy.do(
+    optionTextField.perform((element) => {
+      const rowIndex = element.closest('[data-row-index]').getAttribute('data-row-index');
+      const optionRow = getEditCustomFieldAccordion(fieldLabelText).find(
+        MultiColumnListRow({ indexRow: rowIndex }),
+      );
+
+      callback(optionRow);
+    }),
+  );
+};
 
 export default {
   openTabFromInventorySettingsList() {
+    cy.expect(NavListItem('Users').exists());
     cy.do(NavListItem('Users').click());
+    cy.expect(NavListItem('Custom fields').exists());
     cy.do(NavListItem('Custom fields').click());
   },
 
@@ -77,6 +106,30 @@ export default {
     cy.expect(fieldAccordion.has({ open: true }));
   },
 
+  setDisplayInAccordion(fieldLabelText, accordionLabel) {
+    this.expandCustomFieldInEditPane(fieldLabelText);
+    cy.expect(getDisplayInAccordionSelect(fieldLabelText).exists());
+    cy.do(getDisplayInAccordionSelect(fieldLabelText).choose(accordionLabel));
+  },
+
+  setDisplayInAccordionForFields(fieldLabelTexts, accordionLabel) {
+    [].concat(fieldLabelTexts).forEach((fieldLabelText) => {
+      this.setDisplayInAccordion(fieldLabelText, accordionLabel);
+    });
+  },
+
+  verifyDisplayInAccordion(fieldLabelText, accordionLabel) {
+    cy.expect(
+      getDisplayInAccordionSelect(fieldLabelText).has({ checkedOptionText: accordionLabel }),
+    );
+  },
+
+  verifyDisplayInAccordionForFields(fieldLabelTexts, accordionLabel) {
+    [].concat(fieldLabelTexts).forEach((fieldLabelText) => {
+      this.verifyDisplayInAccordion(fieldLabelText, accordionLabel);
+    });
+  },
+
   verifyRequiredOptionVisible(fieldLabelText, isVisible = true) {
     const checkboxInteractor = getEditCustomFieldAccordion(fieldLabelText).find(
       Checkbox('Required'),
@@ -88,10 +141,50 @@ export default {
     }
   },
 
+  verifyDefaultCheckboxesVisible(fieldLabelText, optionLabels) {
+    optionLabels.forEach((optionLabelText) => {
+      performOnEditCustomFieldOptionRow(fieldLabelText, optionLabelText, (optionRow) => {
+        cy.expect(optionRow.find(Checkbox()).exists());
+      });
+    });
+  },
+
   setRequiredOption(fieldLabelText) {
     const requiredCheckbox = getEditCustomFieldAccordion(fieldLabelText).find(Checkbox('Required'));
     cy.do(requiredCheckbox.click());
     cy.expect(requiredCheckbox.has({ checked: true }));
+  },
+
+  setMultiSelectDefaults(fieldLabelText, optionLabels) {
+    optionLabels.forEach((optionLabelText) => {
+      performOnEditCustomFieldOptionRow(fieldLabelText, optionLabelText, (optionRow) => {
+        const optionCheckbox = optionRow.find(Checkbox());
+
+        cy.expect(optionCheckbox.exists());
+        cy.do(optionCheckbox.click());
+        cy.expect(optionCheckbox.has({ checked: true }));
+      });
+    });
+  },
+
+  setRadioButtonDefault(fieldLabelText, optionLabelText) {
+    performOnEditCustomFieldOptionRow(fieldLabelText, optionLabelText, (optionRow) => {
+      const optionRadioButton = optionRow.find(RadioButton());
+
+      cy.expect(optionRadioButton.exists());
+      cy.do(optionRadioButton.click());
+      cy.expect(optionRadioButton.has({ checked: true }));
+    });
+  },
+
+  setSingleSelectDefault(fieldLabelText, optionLabelText) {
+    performOnEditCustomFieldOptionRow(fieldLabelText, optionLabelText, (optionRow) => {
+      const optionRadioButton = optionRow.find(RadioButton());
+
+      cy.expect(optionRadioButton.exists());
+      cy.do(optionRadioButton.click());
+      cy.expect(optionRadioButton.has({ checked: true }));
+    });
   },
 
   verifySaveAndCloseButtonEnabled() {
@@ -119,6 +212,32 @@ export default {
     );
   },
 
+  verifyMultiSelectDefaults(fieldLabelText, optionLabels) {
+    optionLabels.forEach((optionLabelText) => {
+      cy.expect(
+        getViewCustomFieldOptionRow(fieldLabelText, optionLabelText)
+          .find(Checkbox({ disabled: true, checked: true }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyRadioButtonDefault(fieldLabelText, optionLabelText) {
+    cy.expect(
+      getViewCustomFieldOptionRow(fieldLabelText, optionLabelText)
+        .find(RadioButton({ disabled: true, checked: true }))
+        .exists(),
+    );
+  },
+
+  verifySingleSelectDefault(fieldLabelText, optionLabelText) {
+    cy.expect(
+      getViewCustomFieldOptionRow(fieldLabelText, optionLabelText)
+        .find(RadioButton({ disabled: true, checked: true }))
+        .exists(),
+    );
+  },
+
   addMultiSelectCustomField(data) {
     this.clickEditNewButton();
     cy.do([
@@ -138,6 +257,58 @@ export default {
       TextField('Field label*').fillIn(data.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
+    ]);
+  },
+
+  fillCustomTextFieldOnly(data) {
+    cy.do([
+      addCustomFieldDropdown.choose('Text field'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+    ]);
+  },
+
+  fillCustomTextAreaOnly(data) {
+    cy.do([
+      addCustomFieldDropdown.choose('Text area'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+    ]);
+  },
+
+  fillCustomCheckBoxOnly(data) {
+    cy.do([
+      addCustomFieldDropdown.choose('Checkbox'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+    ]);
+  },
+
+  fillCustomDatePickerOnly(data) {
+    cy.do([
+      addCustomFieldDropdown.choose('Date picker'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+    ]);
+  },
+
+  fillCustomRadioButtonOnly({ data }) {
+    cy.do([
+      addCustomFieldDropdown.choose('Radio button set'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
+      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
+    ]);
+  },
+
+  fillCustomSingleSelectOnly({ data }) {
+    cy.do([
+      addCustomFieldDropdown.choose('Single select'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
+      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
     ]);
   },
 
@@ -189,22 +360,14 @@ export default {
 
   addCustomTextField(data) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Text field'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-    ]);
+    this.fillCustomTextFieldOnly(data);
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomTextArea(data) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Text area'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-    ]);
+    this.fillCustomTextAreaOnly(data);
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
@@ -217,48 +380,28 @@ export default {
 
   addCustomCheckBox(data) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Checkbox'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-    ]);
+    this.fillCustomCheckBoxOnly(data);
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomDatePicker(data) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Date picker'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-    ]);
+    this.fillCustomDatePickerOnly(data);
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomRadioButton({ data }) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Radio button set'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
-      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
-    ]);
+    this.fillCustomRadioButtonOnly({ data });
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
 
   addCustomSingleSelect({ data }) {
     this.editButton();
-    cy.do([
-      addCustomFieldDropdown.choose('Single select'),
-      fieldLabel.fillIn(data.fieldLabel),
-      helpText.fillIn(data.helpText),
-      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
-      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
-    ]);
+    this.fillCustomSingleSelectOnly({ data });
     this.saveAndClose();
     this.verifyCustomFieldExists(data.fieldLabel);
   },
@@ -286,21 +429,6 @@ export default {
 
   // API methods
 
-  getCustomFieldsViaApi() {
-    return cy.getModUsersVersion().then((modUsersVersion) => {
-      return cy
-        .okapiRequest({
-          method: 'GET',
-          path: 'custom-fields',
-          isDefaultSearchParamsRequired: false,
-          additionalHeaders: { 'x-okapi-module-id': modUsersVersion },
-        })
-        .then((response) => {
-          return response.body;
-        });
-    });
-  },
-
   getCustomFieldsConfigViaApi() {
     return cy
       .okapiRequest({
@@ -311,5 +439,11 @@ export default {
       .then((response) => {
         return response.body;
       });
+  },
+
+  getCustomFieldsAccordionLabelViaApi(defaultLabel = 'Custom fields') {
+    return this.getCustomFieldsConfigViaApi().then((response) => {
+      return response?.items?.[0]?.value || defaultLabel;
+    });
   },
 };
