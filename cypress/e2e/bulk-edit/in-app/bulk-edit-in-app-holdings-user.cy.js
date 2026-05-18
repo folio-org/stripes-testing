@@ -22,6 +22,7 @@ const item = {
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,

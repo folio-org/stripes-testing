@@ -65,6 +65,7 @@ const itemBarcodeWithCheckedOutStatus = [
   marcInstance.checkedOutItemBarcode,
 ];
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
+const todayDate = DateTools.getCurrentDate();
 
 describe('Bulk-edit', () => {
   describe('Central tenant', () => {
@@ -184,6 +185,10 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(itemFieldValues.instanceTitle, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield(`C496144_${postfix}`, 1);
+          QueryModal.addNewRow();
+          QueryModal.selectField(itemFieldValues.itemCreatedDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+          QueryModal.pickDate(todayDate, 2);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
@@ -239,7 +244,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.status_name in [Available, Checked out]) AND (instances.title starts with C496144_${postfix})`,
+              `(items.status_name in [Available, Checked out]) AND (instances.title starts with C496144_${postfix}) AND (items.created_date == ${todayDate})`,
             );
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
