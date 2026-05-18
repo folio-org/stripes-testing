@@ -464,14 +464,16 @@ export default {
   },
 
   openRoutingList: (name) => {
+    cy.wait(1000);
     cy.do(routingListSection.find(MultiColumnListCell(name)).find(Link()).click());
   },
 
-  addRoutingListIsDisabled() {
+  verifyAddRoutingListIsDisabled() {
     this.clickActionsButtonInRoutingList();
     cy.get('[class^=overlay-]')
       .find('[data-test-routing-list-button="true"]')
       .should('have.attr', 'disabled');
+    this.clickActionsButtonInRoutingList();
   },
 
   clickActionsButtonInRoutingList() {
