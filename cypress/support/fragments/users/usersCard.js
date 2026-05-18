@@ -286,7 +286,6 @@ export default {
   },
 
   openAccordion(accordionLabel) {
-    console.log('accordionLabel', accordionLabel);
     cy.expect(getAccordionByLabel(accordionLabel).exists());
     cy.do(getAccordionByLabel(accordionLabel).clickHeader());
     cy.expect(getAccordionByLabel(accordionLabel).has({ open: true }));
