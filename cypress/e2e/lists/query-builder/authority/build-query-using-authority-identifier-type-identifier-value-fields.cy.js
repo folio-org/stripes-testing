@@ -16,6 +16,10 @@ describe('Lists', () => {
     describe('Authority', () => {
       const randomPostfix = getRandomPostfix();
       const randomDigits = `1292059${randomNDigitNumber(15)}`;
+      const authData = {
+        prefix: getRandomLetters(15),
+        startsWith: '1292059',
+      };
       const testData = {
         recordType: 'Authority',
         listName: `AT_C1292059_List_${randomPostfix}`,
@@ -26,14 +30,12 @@ describe('Lists', () => {
         rec1CanceledLccn: `n${randomDigits}2`, // 010 $z → Canceled LCCN
         rec1OtherStdId: `${randomDigits}3`, // 024 $a → Other standard identifier
         rec1SystemControlNum: `${randomDigits}4`, // 035 $a → System control number
+        rec1ControlNum: `${authData.prefix}${authData.startsWith}1`, // Control number (no subfield, pulled from 001)
         // Record 2 identifiers (4 types, no System control number)
         rec2Lccn: `nr${randomDigits}5`, // 010 $a → LCCN
         rec2CanceledLccn: `n${randomDigits}6`, // 010 $z → Canceled LCCN
         rec2OtherStdId: `${randomDigits}7`, // 024 $a → Other standard identifier
-      };
-
-      const authData = {
-        prefix: getRandomLetters(15),
+        rec2ControlNum: `${authData.prefix}${authData.startsWith}2`, // Control number (no subfield, pulled from 001)
       };
 
       const authorityFields1 = [
@@ -82,13 +84,13 @@ describe('Lists', () => {
         CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
       ];
 
-      const identifierTypeOptions = [
-        'Canceled LCCN',
-        'Control number',
-        'LCCN',
-        'Other standard identifier',
-        'System control number',
-      ];
+      const identifierTypeOptions = {
+        canceledLccn: 'Canceled LCCN',
+        controlNumber: 'Control number',
+        lccn: 'LCCN',
+        otherStandardIdentifier: 'Other standard identifier',
+        systemControlNumber: 'System control number',
+      };
 
       let userData = {};
       const createdAuthorityIds = [];
@@ -97,17 +99,21 @@ describe('Lists', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1292059_');
 
-        MarcAuthorities.createMarcAuthorityViaAPI(authData.prefix, '1', authorityFields1).then(
-          (id) => {
-            createdAuthorityIds.push(id);
-          },
-        );
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          testData.rec1ControlNum,
+          '',
+          authorityFields1,
+        ).then((id) => {
+          createdAuthorityIds.push(id);
+        });
 
-        MarcAuthorities.createMarcAuthorityViaAPI(authData.prefix, '2', authorityFields2).then(
-          (id) => {
-            createdAuthorityIds.push(id);
-          },
-        );
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          testData.rec2ControlNum,
+          '',
+          authorityFields2,
+        ).then((id) => {
+          createdAuthorityIds.push(id);
+        });
 
         cy.createTempUser([]).then((userProperties) => {
           userData = userProperties;
@@ -140,7 +146,7 @@ describe('Lists', () => {
           // Step 2: Select Authority — Identifier type, any operator, verify Value dropdown options
           QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_IDENTIFIER_TYPE);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.verifyOptionsInValueSelect(identifierTypeOptions);
+          QueryModal.verifyOptionsInValueSelect(Object.values(identifierTypeOptions));
 
           // Step 3: Identifier value equals {rec1Lccn} AND Identifier type equals LCCN → Record 1 found
           QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_IDENTIFIER_VALUE);
@@ -149,35 +155,66 @@ describe('Lists', () => {
           QueryModal.addNewRow(0);
           QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_IDENTIFIER_TYPE, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.chooseValueSelect('LCCN', 1);
+          QueryModal.chooseValueSelect(identifierTypeOptions.lccn, 1);
           QueryModal.runQueryDisabled();
           QueryModal.testQuery();
           QueryModal.runQueryDisabled(false);
+          QueryModal.verifyResultFound(testData.authorityHeading1);
+          [
+            testData.rec1CanceledLccn,
+            testData.rec1OtherStdId,
+            testData.rec1SystemControlNum,
+            testData.rec1Lccn,
+            testData.rec1ControlNum,
+          ].forEach((identifierValue) => {
+            QueryModal.verifyResultFound(identifierValue, { partialMatch: true });
+          });
           QueryModal.verifyNumberOfRowsInPreviewTable(1);
 
           // Step 4: Identifier value contains {rec2CanceledLccn} AND Identifier type equals Control number → Record 2 found
           QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS);
           QueryModal.fillInValueTextfield(testData.rec2CanceledLccn);
-          QueryModal.chooseValueSelect('Control number', 1);
+          QueryModal.chooseValueSelect(identifierTypeOptions.controlNumber, 1);
           QueryModal.runQueryDisabled();
           QueryModal.testQuery();
           QueryModal.runQueryDisabled(false);
+          QueryModal.verifyResultFound(testData.authorityHeading2);
+          [
+            testData.rec2CanceledLccn,
+            testData.rec2OtherStdId,
+            testData.rec2Lccn,
+            testData.rec2ControlNum,
+          ].forEach((identifierValue) => {
+            QueryModal.verifyResultFound(identifierValue, { partialMatch: true });
+          });
           QueryModal.verifyNumberOfRowsInPreviewTable(1);
 
           // Step 5: Identifier value starts with {rec2OtherStdId} AND Identifier type not in System control number → Record 2 found
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
           QueryModal.fillInValueTextfield(testData.rec2OtherStdId);
           QueryModal.selectOperator(QUERY_OPERATIONS.NOT_IN, 1);
-          QueryModal.chooseFromValueMultiselect('System control number', 1);
+          QueryModal.chooseFromValueMultiselect(identifierTypeOptions.controlNumber, 1);
+          QueryModal.verifySelectedMultiselectValue([], 1);
+          QueryModal.chooseFromValueMultiselect(identifierTypeOptions.systemControlNumber, 1);
+          QueryModal.verifySelectedMultiselectValue([identifierTypeOptions.systemControlNumber], 1);
           QueryModal.runQueryDisabled();
           QueryModal.testQuery();
           QueryModal.runQueryDisabled(false);
+          QueryModal.verifyResultFound(testData.authorityHeading2);
+          [
+            testData.rec2CanceledLccn,
+            testData.rec2OtherStdId,
+            testData.rec2Lccn,
+            testData.rec2ControlNum,
+          ].forEach((identifierValue) => {
+            QueryModal.verifyResultFound(identifierValue, { partialMatch: true });
+          });
           QueryModal.verifyNumberOfRowsInPreviewTable(1);
 
           // Step 6: Identifier value contains {rec2OtherStdId} AND Identifier type in System control number → No records found
           QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
-          QueryModal.verifySelectedMultiselectValue('System control number', 1);
+          QueryModal.verifySelectedMultiselectValue([identifierTypeOptions.systemControlNumber], 1);
           QueryModal.runQueryDisabled();
           QueryModal.testQuery();
           QueryModal.runQueryDisabled(false);
