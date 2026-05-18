@@ -10,7 +10,10 @@ import { Lists } from '../../../support/fragments/lists/lists';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import DateTools from '../../../support/utils/dateTools';
+import { generateDatePickerCustomFieldData } from '../../../support/utils/customFields';
+import { poll } from '../../../support/utils/polling';
+import { getCurrentTimestamp, getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Query Builder UI', () => {
@@ -52,12 +55,15 @@ describe('Lists', () => {
       userData = {};
     };
 
-    const deleteTestList = () => {
+    const deleteTestList = (
+      getToken = () => cy.getUserToken(userData.username, userData.password),
+    ) => {
       if (listName) {
-        cy.getUserToken(userData.username, userData.password);
-        Lists.deleteListByNameViaApi(listName, true);
-        cy.getAdminToken();
-        listName = undefined;
+        getToken().then(() => {
+          Lists.deleteListByNameViaApi(listName, true);
+          cy.getAdminToken();
+          listName = undefined;
+        });
       }
     };
 
@@ -73,6 +79,24 @@ describe('Lists', () => {
       }
       Lists.selectRecordType(recordType);
       Lists.buildQuery();
+    };
+
+    const waitForCustomFieldToBeQueryable = (recordType, fieldLabel) => {
+      return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+        return poll(
+          () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+          ({ body }) => {
+            return body.columns?.some(
+              ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
+            );
+          },
+          {
+            timeout: 360000,
+            delay: 15000,
+            errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+          },
+        );
+      });
     };
 
     const verifyQueryBuilder = (
@@ -206,6 +230,101 @@ describe('Lists', () => {
             'list-column-users.middle_name',
             '',
           );
+        },
+      );
+    });
+
+    describe('Users custom fields', () => {
+      const recordType = 'Users';
+      const testNumber = 'C831970';
+      const today = new Date();
+      const customFieldValue = DateTools.getFormattedDate({ date: today });
+      const customFieldValueForQuery = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
+      const testData = {
+        customField: generateDatePickerCustomFieldData({
+          testNumber,
+          data: {
+            name: `AT_C831970_Corsair_date_${getCurrentTimestamp()}`,
+          },
+        }),
+      };
+
+      before('Create date picker custom field and test user', () => {
+        cy.getAdminToken()
+          .then(() => cy.createCustomFieldsViaApi([testData.customField]))
+          .then(([createdCustomField]) => {
+            testData.createdCustomField = createdCustomField;
+            testData.customField = createdCustomField;
+
+            return cy.createTempUserParameterized(
+              {
+                ...Users.generateUserModel(),
+                customFields: {
+                  [createdCustomField.refId]: customFieldValue,
+                },
+              },
+              [],
+            );
+          })
+          .then((userProperties) => {
+            userData = userProperties;
+          })
+          .then(() => {
+            return waitForCustomFieldToBeQueryable(
+              recordType,
+              `User — ${testData.customField.name}`,
+            );
+          });
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        const customFieldIds = testData.createdCustomField ? [testData.createdCustomField.id] : [];
+        if (customFieldIds.length) {
+          cy.deleteCustomFieldsViaApi({ ids: customFieldIds });
+        }
+        Users.deleteViaApi(userData.userId);
+        userData = {};
+      });
+
+      afterEach('Delete test list', () => {
+        deleteTestList(cy.getAdminToken);
+      });
+
+      it(
+        'C831970 Verify that the custom field with a type Date picker is queryable (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C831970'] },
+        () => {
+          const customFieldLabel = `User — ${testData.customField.name}`;
+
+          listName = getTestEntityValue('C831970_List');
+          cy.loginAsAdmin({
+            path: TopMenu.listsPath,
+            waiter: Lists.filtersWaitLoading,
+          });
+
+          Lists.openNewListPane();
+          Lists.setName(listName);
+          Lists.selectRecordType(recordType);
+          Lists.verifySelectedOptionsInRecordTypeDropdown(recordType);
+          Lists.verifySaveButtonIsActive();
+          Lists.verifyCancelButtonIsActive();
+
+          Lists.buildQuery();
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          QueryModal.selectField(customFieldLabel);
+          QueryModal.verifySelectedField(customFieldLabel);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyValueColumn();
+          QueryModal.pickDate(customFieldValueForQuery);
+          QueryModal.verifyTextFieldValue(customFieldValueForQuery);
+          QueryModal.testQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyNumberOfMatchedRecords(1);
+          QueryModal.verifyRecordWithContent(userData.username);
         },
       );
     });
