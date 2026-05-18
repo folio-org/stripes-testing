@@ -97,7 +97,7 @@ describe('Invoices', () => {
 
   it(
     'C1332520 Export invoice and verify the presence of key columns in the .csv file (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1332520'] },
+    { tags: ['criticalPath', 'thunderjet', 'C1332520'] },
     () => {
       const {
         admin,
@@ -151,7 +151,15 @@ describe('Invoices', () => {
       cy.log('< --- STEP 1 --- >');
       const folioPrefix = String(invoice1.folioInvoiceNo || '').slice(0, 2);
       Invoices.searchByParameter(INVOICE_SEARCH_INDEX_LABELS.FOLIO_INVOICE_NUMBER, folioPrefix);
-      Invoices.verifySearchResult(invoice1.vendorInvoiceNo);
+      Invoices.checkSearchResultsContent({
+        records: [
+          {
+            invoiceNumber: invoice1.vendorInvoiceNo,
+            status: INVOICE_STATUSES.PAID,
+            amount: invoice1.total,
+          },
+        ],
+      });
       Invoices.assertInvoicesResultsListColumns();
 
       cy.log('< --- STEP 2 --- >');
