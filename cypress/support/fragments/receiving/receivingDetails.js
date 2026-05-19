@@ -9,12 +9,15 @@ import {
   Link,
   PaneHeader,
   MultiColumnList,
+  Checkbox,
+  DropdownMenu,
 } from '../../../../interactors';
 import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   RECEIVING_BOUND_ITEMS_COLUMN_LABELS,
 } from '../../constants';
+import { ItemRecordView } from '../inventory';
 import InventoryInstance from '../inventory/inventoryInstance';
 import MultiColumnListHelper from '../multiColumnList';
 import OrderLineDetails from '../orders/orderLineDetails';
@@ -313,11 +316,32 @@ export default {
     MultiColumnListHelper.assertPaginationControlsDisabled(boundItemsAccordion, { previous, next });
   },
 
+  filterReceivedPiecesByOptions(optionLabels = []) {
+    const actionsBtn = receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS));
+
+    cy.do(actionsBtn.click());
+    optionLabels.forEach((label) => {
+      const checkbox = DropdownMenu().find(Checkbox(label));
+
+      cy.do(checkbox.click());
+      cy.expect(checkbox.has({ checked: true, disabled: false }));
+    });
+    cy.do(actionsBtn.click());
+  },
+
   clickNextPageButtonInBoundItemsAccordion() {
     cy.do(boundItemsAccordion.find(Button(COMMON_BUTTON_LABELS.NEXT)).click());
   },
 
   clickPreviousPageButtonInBoundItemsAccordion() {
     cy.do(boundItemsAccordion.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).click());
+  },
+
+  clickBoundItemBarcodeLink(barcode) {
+    cy.contains('#bound-items-list a', barcode)
+      .invoke('removeAttr', 'target') // to open the link in the same tab
+      .click();
+
+    ItemRecordView.waitLoading();
   },
 };

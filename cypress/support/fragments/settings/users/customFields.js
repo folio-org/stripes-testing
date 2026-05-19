@@ -10,6 +10,7 @@ import {
   Pane,
   RadioButton,
   Section,
+  Select,
   TextField,
 } from '../../../../../interactors';
 
@@ -26,6 +27,9 @@ const getEditCustomFieldAccordion = (fieldLabelText) => {
   return editCustomFieldsPane.find(
     Accordion({ label: including(fieldLabelText), isWrapper: false }),
   );
+};
+const getDisplayInAccordionSelect = (fieldLabelText) => {
+  return getEditCustomFieldAccordion(fieldLabelText).find(Select('Display in accordion'));
 };
 const getCustomFieldSection = (fieldLabelText) => {
   return customFieldsPane.find(Section({ label: including(fieldLabelText) }));
@@ -58,7 +62,9 @@ const performOnEditCustomFieldOptionRow = (fieldLabelText, optionLabelText, call
 
 export default {
   openTabFromInventorySettingsList() {
+    cy.expect(NavListItem('Users').exists());
     cy.do(NavListItem('Users').click());
+    cy.expect(NavListItem('Custom fields').exists());
     cy.do(NavListItem('Custom fields').click());
   },
 
@@ -98,6 +104,30 @@ export default {
     cy.expect(fieldAccordion.exists());
     cy.do(fieldAccordion.clickHeader());
     cy.expect(fieldAccordion.has({ open: true }));
+  },
+
+  setDisplayInAccordion(fieldLabelText, accordionLabel) {
+    this.expandCustomFieldInEditPane(fieldLabelText);
+    cy.expect(getDisplayInAccordionSelect(fieldLabelText).exists());
+    cy.do(getDisplayInAccordionSelect(fieldLabelText).choose(accordionLabel));
+  },
+
+  setDisplayInAccordionForFields(fieldLabelTexts, accordionLabel) {
+    [].concat(fieldLabelTexts).forEach((fieldLabelText) => {
+      this.setDisplayInAccordion(fieldLabelText, accordionLabel);
+    });
+  },
+
+  verifyDisplayInAccordion(fieldLabelText, accordionLabel) {
+    cy.expect(
+      getDisplayInAccordionSelect(fieldLabelText).has({ checkedOptionText: accordionLabel }),
+    );
+  },
+
+  verifyDisplayInAccordionForFields(fieldLabelTexts, accordionLabel) {
+    [].concat(fieldLabelTexts).forEach((fieldLabelText) => {
+      this.verifyDisplayInAccordion(fieldLabelText, accordionLabel);
+    });
   },
 
   verifyRequiredOptionVisible(fieldLabelText, isVisible = true) {
@@ -409,5 +439,11 @@ export default {
       .then((response) => {
         return response.body;
       });
+  },
+
+  getCustomFieldsAccordionLabelViaApi(defaultLabel = 'Custom fields') {
+    return this.getCustomFieldsConfigViaApi().then((response) => {
+      return response?.items?.[0]?.value || defaultLabel;
+    });
   },
 };

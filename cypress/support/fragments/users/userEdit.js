@@ -38,6 +38,7 @@ import {
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import { CUSTOM_FIELD_TYPES } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -144,11 +145,114 @@ const preferredEmailCommunicationsSelect = MultiSelect({
 });
 const resetExpirationDateButton = Button('Reset');
 const resetExpirationDateModal = Modal('Set expiration date?');
+const recalculateExpirationDateButton = Button({ id: 'expirationDate-modal-recalculate-btn' });
 const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
 const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
+
+const clickSetExpirationDate = () => {
+  cy.expect(resetExpirationDateModal.exists());
+  cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
+  cy.expect(resetExpirationDateModal.absent());
+};
+
+const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
+
+const getCustomFieldInteractor = (accordionLabel, customField) => {
+  const accordion = getAccordionByLabel(accordionLabel);
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      return accordion.find(Checkbox(customField.name));
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      return accordion.find(Datepicker({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN:
+      return accordion.find(MultiSelect({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      return accordion.find(RadioButtonGroup({ label: including(customField.name) }));
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      return accordion.find(Select({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      return accordion.find(TextArea({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      return accordion.find(TextField({ label: customField.name }));
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
+
+const fillCustomFieldValue = (accordionLabel, { customField, value }) => {
+  const fieldInteractor = getCustomFieldInteractor(accordionLabel, customField);
+
+  cy.expect(fieldInteractor.exists());
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      cy.do(value ? fieldInteractor.checkIfNotSelected() : fieldInteractor.uncheckIfSelected());
+      break;
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN:
+      cy.do(fieldInteractor.set(value));
+      break;
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      cy.do(fieldInteractor.choose(value));
+      break;
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      cy.do(fieldInteractor.choose(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
+
+const verifyCustomFieldValue = (accordionLabel, { customField, value }) => {
+  const fieldInteractor = getCustomFieldInteractor(accordionLabel, customField);
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      cy.expect(fieldInteractor.has({ checked: value }));
+      break;
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      cy.expect(fieldInteractor.has({ inputValue: value }));
+      break;
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN: {
+      const expectedValues = [].concat(value);
+      const multiSelectInteractor = getAccordionByLabel(accordionLabel).find(
+        MultiSelect({ label: customField.name, selectedCount: expectedValues.length }),
+      );
+
+      cy.expect(multiSelectInteractor.exists());
+      expectedValues.forEach((expectedValue) => {
+        cy.expect(multiSelectInteractor.has({ selected: including(expectedValue) }));
+      });
+      break;
+    }
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      cy.expect(fieldInteractor.find(RadioButton(value, { checked: true })).exists());
+      break;
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      cy.expect(fieldInteractor.checkedOptionText(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      cy.expect(fieldInteractor.has({ value }));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      cy.expect(fieldInteractor.has({ value }));
+      break;
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
 
 Cypress.Commands.add('getUserServicePoints', (userId) => {
   cy.okapiRequest({
@@ -367,9 +471,13 @@ export default {
     cy.do(statusSelect.choose(status));
   },
 
-  changePatronGroup(patronGroup) {
+  changePatronGroup(patronGroup, { shouldSetExpirationDate = false } = {}) {
     cy.do(addressSelect.choose(patronGroup));
     cy.wait(500);
+    // Expiration date modal appears for only some patron groups based on their settings, so we need to check if it appears and click "Set" if it does
+    if (shouldSetExpirationDate) {
+      clickSetExpirationDate();
+    }
   },
 
   searchForPermission(permission) {
@@ -683,6 +791,13 @@ export default {
     cy.do(saveAndCloseBtn.click());
     cy.wait('@updateUser', { timeout: 100000 });
     cy.expect(rootPane.absent());
+  },
+
+  saveNewUser() {
+    cy.intercept('POST', /\/users(?:$|\?.*)|\/users-keycloak\/users(?:$|\?.*)/).as('createUser');
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => response.body.id);
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
@@ -1104,17 +1219,16 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+  enterValidValueToCreateViaUi(userData, patronGroup, { shouldSetExpirationDate = false } = {}) {
     cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
     cy.do([
       lastNameField.fillIn(userData.personal.lastName),
       barcodeField.fillIn(userData.barcode),
       usernameField.fillIn(userData.username),
       emailField.fillIn(userData.personal.email),
-      addressSelect.choose(patronGroup),
-      setExpirationDateButton.click(),
-      saveAndCloseBtn.click(),
     ]);
+    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
     });
@@ -1192,15 +1306,50 @@ export default {
     ]);
   },
 
-  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
+  fillRequiredFields(
+    userLastName,
+    patronGroup,
+    email,
+    userType = null,
+    userName = null,
+    { shouldSetExpirationDate = false } = {},
+  ) {
     if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
-    cy.do([
-      lastNameField.fillIn(userLastName),
-      addressSelect.choose(patronGroup),
-      emailField.fillIn(email),
-    ]);
+    cy.do(lastNameField.fillIn(userLastName));
+    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    cy.do(emailField.fillIn(email));
     cy.wait(2000);
+  },
+
+  verifyAccordionsPresent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).exists());
+    });
+  },
+
+  verifyAccordionsAbsent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).absent());
+    });
+  },
+
+  verifyCustomFieldsPresentInAccordion(accordionLabel, customFields) {
+    customFields.forEach((customField) => {
+      cy.expect(getCustomFieldInteractor(accordionLabel, customField).exists());
+    });
+  },
+
+  fillCustomFieldsInAccordion(accordionLabel, customFieldValues) {
+    customFieldValues.forEach((customFieldValue) => {
+      fillCustomFieldValue(accordionLabel, customFieldValue);
+    });
+  },
+
+  verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues) {
+    customFieldValues.forEach((customFieldValue) => {
+      verifyCustomFieldValue(accordionLabel, customFieldValue);
+    });
   },
 
   checkUserEditPaneOpened(isOpened = true) {
@@ -1232,6 +1381,11 @@ export default {
 
   verifyUserRolesCounter(expectedCount) {
     cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
+  },
+
+  dismissResetLinkModal() {
+    cy.do(resetPasswordModal.dismiss());
+    cy.expect(resetPasswordModal.absent());
   },
 
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {

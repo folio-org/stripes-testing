@@ -101,21 +101,24 @@ export default {
   },
 
   checkSuccessStatusDisplayed() {
-    cy.xpath('//span[@class="status-message-text" and text()="Resource updated. Expect a short delay before changes are visible in FOLIO."]')
-      .should('be.visible');
+    cy.xpath(
+      '//span[@class="status-message-text" and text()="Resource updated. Expect a short delay before changes are visible in FOLIO."]',
+    ).should('be.visible');
   },
 
   clearStatusMessages() {
     // Toasts are stacked in an overlapping way likely obscuring close button; close them all anwyays.
     // eslint-disable-next-line cypress/no-force
-    cy.xpath('//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]')
-      .click({ multiple: true, force: true });
+    cy.xpath(
+      '//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]',
+    ).click({ multiple: true, force: true });
     cy.wait(1000);
   },
 
   toggleSectionMarcTooltip(section) {
-    cy.xpath(`//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`)
-      .click();
+    cy.xpath(
+      `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
+    ).click();
     cy.wait(500);
   },
 
@@ -127,7 +130,9 @@ export default {
   },
 
   checkMarcTooltipContains(field, mapping) {
-    cy.xpath(`//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`)
+    cy.xpath(
+      `//dialog[contains(@class, "marc-tooltip-content")]/div[span[@class="marc-tooltip-field" and normalize-space()="${field}:"] and span[@class="marc-tooltip-mapping" and text()="${mapping}"]]`,
+    )
       .scrollIntoView()
       .should('be.visible');
   },
@@ -144,8 +149,9 @@ export default {
 
   setValueForSectionFieldDropdown(value, field, section, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[text()="${section}"]/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select`)
-      .select(value);
+    cy.xpath(
+      `(//div[text()="${section}"]/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select`,
+    ).select(value);
     cy.wait(1000);
   },
 
@@ -185,11 +191,13 @@ export default {
 
   setValueForSectionSimpleField(value, field, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
     cy.wait(1000);
   },
 
@@ -335,33 +343,35 @@ export default {
   },
 
   checkDropdownContainsOptions(field, optionLabels) {
-    cy.xpath(
-      `//div[text()="${field}"]/../following-sibling::div//select/option`
-    ).then(($options) => {
-      const labels = [...$options].map(opt => opt.text);
-      expect(labels).to.include.members(optionLabels);
-    });
+    cy.xpath(`//div[text()="${field}"]/../following-sibling::div//select/option`).then(
+      ($options) => {
+        const labels = [...$options].map((opt) => opt.text);
+        expect(labels).to.include.members(optionLabels);
+      },
+    );
   },
 
   checkSectionDropdownContainsOptions(section, field, optionLabels, repeatPosition = 1) {
     cy.xpath(
-      `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`
+      `(//div[text()='${section}']/../../div/following-sibling::div/div[@class="label" and text()="${field}"])[${repeatPosition}]/following-sibling::div/select/option`,
     ).then(($options) => {
-      const labels = [...$options].map(opt => opt.text);
+      const labels = [...$options].map((opt) => opt.text);
       expect(labels).to.include.members(optionLabels);
     });
   },
 
   checkSimpleFieldDropdownContainsOptions(field, optionLabels, repeatPosition = 1) {
     cy.wait(500);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__control")]`)
-      .click();
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__control")]`,
+    ).click();
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__menu")]/div/div`)
-      .then(($options) => {
-        const labels = [...$options].map(opt => opt.textContent);
-        expect(labels).to.include.members(optionLabels);
-      });
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div//div[contains(@class, "simple-lookup__menu")]/div/div`,
+    ).then(($options) => {
+      const labels = [...$options].map((opt) => opt.textContent);
+      expect(labels).to.include.members(optionLabels);
+    });
     cy.get('body').type('{esc}');
     cy.wait(500);
   },
@@ -382,7 +392,9 @@ export default {
   },
 
   checkPreviewSectionContainsLink(section, field, text, link) {
-    cy.xpath(`//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`)
+    cy.xpath(
+      `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
+    )
       .should('exist')
       .filter((_secIdx, sectionBlock) => {
         const $sectionBlock = Cypress.$(sectionBlock);
@@ -396,9 +408,11 @@ export default {
 
         const $linkEl = $fieldBlock.next().find('.preview-value-link');
 
-        return $linkEl.text() === text
-          && $linkEl.attr('target') === 'blank'
-          && $linkEl.attr('href') === link;
+        return (
+          $linkEl.text() === text &&
+          $linkEl.attr('target') === 'blank' &&
+          $linkEl.attr('href') === link
+        );
       })
       .should('have.length.at.least', 1);
   },
@@ -495,7 +509,9 @@ export default {
   },
 
   checkDropdownTextValue(textValue, field) {
-    cy.xpath(`//div[text()="${field}"]/../following-sibling::div//select[@data-testid="dropdown-field"]`)
+    cy.xpath(
+      `//div[text()="${field}"]/../following-sibling::div//select[@data-testid="dropdown-field"]`,
+    )
       .filter((_selectIdx, selectBlock) => {
         const opt = selectBlock.options[selectBlock.selectedIndex];
         return opt && opt.text === textValue;
@@ -504,7 +520,9 @@ export default {
   },
 
   checkSectionDropdownTextValue(textValue, field) {
-    cy.xpath(`//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`)
+    cy.xpath(
+      `//div[text()="${field}"]/following-sibling::div//select[@data-testid="dropdown-field"]`,
+    )
       .filter((_selectIdx, selectBlock) => {
         const opt = selectBlock.options[selectBlock.selectedIndex];
         return opt && opt.text === textValue;

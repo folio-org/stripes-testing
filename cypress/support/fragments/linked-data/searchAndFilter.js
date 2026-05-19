@@ -117,15 +117,12 @@ export default {
   },
 
   openSearchResultPreviewByTitle(title) {
-    cy.xpath(`//button[contains(text(),"${title}")]`)
-      .scrollIntoView()
-      .should('be.visible')
-      .click();
+    cy.xpath(`//button[contains(text(),"${title}")]`).scrollIntoView().should('be.visible').click();
   },
 
   checkPreviewContains(field, value) {
     cy.xpath(
-      `//strong[@class="value-heading" and text()="${field}"]/following-sibling::div[normalize-space()="${value}"]`
+      `//strong[@class="value-heading" and text()="${field}"]/following-sibling::div[normalize-space()="${value}"]`,
     ).should('exist');
   },
 
@@ -134,7 +131,9 @@ export default {
   },
 
   checkTitleNoOverlap() {
-    cy.xpath('//div[@class="search-result-entry-container"][1]//button[contains(@class, "title")]').then(($title) => {
+    cy.xpath(
+      '//div[@class="search-result-entry-container"][1]//button[contains(@class, "title")]',
+    ).then(($title) => {
       cy.xpath('//div[@class="search-result-entry-container"][1]//table').then(($instances) => {
         const titleBottom = $title[0].getBoundingClientRect().bottom;
         const instancesTop = $instances[0].getBoundingClientRect().top;
