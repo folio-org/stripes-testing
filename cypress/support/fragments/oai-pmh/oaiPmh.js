@@ -46,19 +46,12 @@ export default {
   },
 
   getBaseUrl() {
-    const cachedBaseUrl = Cypress.env('OAI_PMH_BASE_URL');
-
-    if (cachedBaseUrl) {
-      return cy.wrap(cachedBaseUrl);
-    }
-
     return cy.getOaiPmhConfigurations('general').then((body) => {
       // Extract baseUrl from the configuration string
       const configValue = body?.configurationSettings[0]?.configValue;
       const fullBaseUrl = configValue.baseUrl;
       const baseUrl = fullBaseUrl.replace(/^https?:\/\//, '').replace(/\/oai.*$/, '');
 
-      Cypress.env('OAI_PMH_BASE_URL', baseUrl);
       return baseUrl;
     });
   },

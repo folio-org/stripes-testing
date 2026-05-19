@@ -27,7 +27,9 @@ export default {
   },
 
   saveJobProfile: () => {
+    cy.wait(500);
     cy.do(saveAndCloseButton.click());
+    cy.wait(500);
   },
 
   verifyNewJobProfileForm() {

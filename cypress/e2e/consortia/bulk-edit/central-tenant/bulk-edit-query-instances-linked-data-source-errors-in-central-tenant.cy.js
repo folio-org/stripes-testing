@@ -204,8 +204,8 @@ describe('Bulk-edit', () => {
             BulkEditLogs.checkInstancesCheckbox();
             BulkEditLogs.verifyLogStatus(user.username, 'Data modification');
             BulkEditLogs.verifyEditingColumnValue(user.username, 'Query');
-            BulkEditLogs.verifyCellsValues(4, '3');
-            BulkEditLogs.verifyCellsValues(5, '3');
+            BulkEditLogs.verifyProcessedColumnValue(user.username, '3');
+            BulkEditLogs.verifyNumberOfRecordsColumnValue(user.username, '3');
           });
         },
       );

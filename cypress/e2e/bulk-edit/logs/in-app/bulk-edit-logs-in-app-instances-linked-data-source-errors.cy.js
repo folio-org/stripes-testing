@@ -195,7 +195,7 @@ describe('Bulk-edit', () => {
           BulkEditLogs.clickChooseUserUnderUserAccordion();
           BulkEditLogs.fillUserFilterInput(user.username);
           BulkEditLogs.selectUserFromDropdown(user.username);
-          cy.wait(2000);
+          cy.wait(5000);
 
           // Verify Status, Editing, # of records and Processed for both jobs
           BulkEditLogs.verifyCellsValues(2, 'Data modification');

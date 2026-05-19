@@ -436,27 +436,39 @@ describe('Bulk-edit', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            testData.collegeItemBarcodes.forEach((barcode) => {
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-              ItemRecordView.waitLoading();
-              ItemRecordView.checkItemAdministrativeNote('-');
-              ItemRecordView.closeDetailView();
-              InventorySearchAndFilter.resetAll();
-            });
+            InventorySearchAndFilter.byKeywords(testData.sharedFolioInstance);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(testData.collegeItemBarcodes[0]);
+            ItemRecordView.waitLoading();
+            ItemRecordView.checkItemAdministrativeNote('-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
+            InventorySearchAndFilter.byKeywords(testData.sharedMarcInstance);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(testData.collegeItemBarcodes[1]);
+            ItemRecordView.waitLoading();
+            ItemRecordView.checkItemAdministrativeNote('-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
 
             // Step 13: Switch to University tenant and verify changes NOT applied
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            testData.universityItemBarcodes.forEach((barcode) => {
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-              ItemRecordView.waitLoading();
-              ItemRecordView.checkItemAdministrativeNote('-');
-              ItemRecordView.closeDetailView();
-              InventorySearchAndFilter.resetAll();
-            });
+            InventorySearchAndFilter.byKeywords(testData.sharedFolioInstance);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(testData.universityItemBarcodes[0]);
+            ItemRecordView.waitLoading();
+            ItemRecordView.checkItemAdministrativeNote('-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
+            InventorySearchAndFilter.byKeywords(testData.sharedMarcInstance);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(testData.universityItemBarcodes[1]);
+            ItemRecordView.waitLoading();
+            ItemRecordView.checkItemAdministrativeNote('-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
           });
         },
       );
