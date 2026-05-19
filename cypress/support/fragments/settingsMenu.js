@@ -131,6 +131,9 @@ export default {
   softwareVersionsPath: 'settings/about',
   // Session locale path
   sessionLocalePath: 'settings/developer/locale',
+  // Export manager settings
+  exportManagerPath: 'settings/export-manager',
+  exportManagerJobsPath: 'settings/export-manager/jobs',
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());

@@ -1265,10 +1265,12 @@ const API = {
     });
   },
 
-  getEntityTypeByIdViaApi(id) {
+  getEntityTypeByIdViaApi(id, { failOnStatusCode = true } = {}) {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 

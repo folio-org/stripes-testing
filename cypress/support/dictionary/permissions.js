@@ -1386,6 +1386,14 @@ export default {
     internal: 'ui-export-manager.export-manager.view',
     gui: 'Export manager: View',
   },
+  exportManagerSettingsView: {
+    internal: 'ui-export-manager.settings.view',
+    gui: 'Settings (Export manager): Can view only settings',
+  },
+  exportManagerSettingsEdit: {
+    internal: 'ui-export-manager.settings.edit',
+    gui: 'Settings (Export manager): Can view and edit settings',
+  },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
     gui: 'Transfer exports: Modify configuration and start jobs',
