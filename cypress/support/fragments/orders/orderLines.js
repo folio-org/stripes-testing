@@ -33,6 +33,7 @@ import {
   ORDER_EXPORT_CSV_FIELDS,
   ORDER_LINE_EXPORT_CSV_FIELDS,
   ORDER_LINE_FILTER_LABELS,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -41,6 +42,7 @@ import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
+import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
 
 const path = require('path');
@@ -140,6 +142,11 @@ const submitOrderLine = () => {
     }
   });
 };
+
+// Filters
+const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
+const donorLookUpTrigger = donorFilterAccordion.find(Button('Donor look-up'));
+
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
 };
@@ -2782,6 +2789,10 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane, columnName);
   },
 
+  clearFilter(filterLabel) {
+    FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+  },
+
   filterByCheckboxOptions(filterLabel, options = []) {
     FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, options);
   },
@@ -2798,6 +2809,25 @@ export default {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
   },
 
+  removeMultiSelectChips(filterLabel, values = []) {
+    FiltersPaneHelper.removeMultiSelectChips(filtersPane, filterLabel, values);
+  },
+
+  filterByDonors(names = []) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.DONOR);
+    cy.expect(donorLookUpTrigger.exists());
+    cy.do(donorLookUpTrigger.click());
+    SelectDonorModal.waitLoading();
+    SelectDonorModal.assertDonorsListIncludes(names);
+    SelectDonorModal.selectDonors(names);
+    SelectDonorModal.submitSelectedDonors();
+    SelectDonorModal.assertModalClosed();
+  },
+
+  assertNoFiltersApplied() {
+    cy.expect(searchResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists());
+  },
+
   assertResultsCount(expectedCount) {
     searchResultsPane
       .find(
@@ -2806,11 +2836,34 @@ export default {
       .exists();
   },
 
+  assertOrderLinesResults(rowsConfig) {
+    cy.expect(searchResultsPane.exists());
+    MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
+    this.assertResultsCount(rowsConfig.length);
+  },
+
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {
     const actionsBtn = searchResultsPane.find(actionsButton);
 
     cy.do(actionsBtn.click());
     cy.do(Button(actionButtonName).has({ disabled: expectedDisabledState }));
     cy.do(actionsBtn.click());
+  },
+
+  assertMultiSelectFilterValues:
+    FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(filtersPane),
+  assertMultiSelectFilterOptions:
+    FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(filtersPane),
+
+  assertFundCodeFilterValues(expectedValues, options = {}) {
+    this.assertMultiSelectFilterValues(ORDER_LINE_FILTER_LABELS.FUND_CODE, expectedValues, options);
+  },
+
+  assertFundCodeFilterOptions(expectedOptions, options = {}) {
+    this.assertMultiSelectFilterOptions(
+      ORDER_LINE_FILTER_LABELS.FUND_CODE,
+      expectedOptions,
+      options,
+    );
   },
 };
