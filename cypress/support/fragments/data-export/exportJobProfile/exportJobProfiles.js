@@ -211,6 +211,7 @@ export default {
 
   searchJobProfile(text) {
     cy.do(searchField.fillIn(text));
+    cy.wait(500);
   },
 
   clearSearchField() {

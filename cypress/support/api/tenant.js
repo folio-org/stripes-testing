@@ -44,7 +44,7 @@ Cypress.Commands.add('getModUsersVersion', () => {
       body.applicationDescriptors.forEach((app) => {
         moduleIds.push(...app.modules);
       });
-      const modUsersId = moduleIds.find((m) => String(m.name).startsWith('mod-users')).id;
+      const modUsersId = moduleIds.find((m) => String(m.name) === 'mod-users').id;
       Cypress.env('MOD_USERS_VERSION', modUsersId);
       return cy.wrap(modUsersId);
     });

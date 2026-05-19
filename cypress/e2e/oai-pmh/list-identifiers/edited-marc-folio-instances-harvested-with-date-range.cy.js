@@ -99,6 +99,7 @@ describe('OAI-PMH', () => {
         // Step 5: Save and close
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(3000);
 
         // Step 6: Send ListIdentifiers request with oai_dc and verify FOLIO instance is retrieved
         cy.getAdminToken();
@@ -122,6 +123,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateExistingField('245', '$a AT_C376997_Modified MARC title');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 11: Send ListIdentifiers request with oai_dc and verify MARC instance is retrieved
         cy.getAdminToken();
