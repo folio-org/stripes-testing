@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
+import { CUSTOM_FIELD_TYPES, DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -41,6 +41,30 @@ describe('Citation: check notes MARC codes', () => {
     inventoryTitle: testData.uniqueInventoryTitle,
     workTitle: testData.uniqueWorkTitle,
     instanceTitle: testData.uniqueInstanceTitle,
+    inventoryLangNote: 'French',
+    inventoryBibNote: 'Includes bibliographical references (p. 245–260) and index, Bibliography: pages 180–195',
+    note1: 'Winner of the International Literary Prize for Contemporary Fiction, 2022.',
+    note2: 'Contains references and suggested further reading at the end of each chapter.',
+    note3: 'Text in English with summaries in French and Spanish.',
+  };
+
+  const fieldData = {
+    booksProfile: 'Books',
+    workTitle: 'Preferred Title for Work',
+    notesSection: 'Notes about the Work',
+    noteField: 'Note',
+    noteTypeField: 'Note type',
+    noteTypes: [
+      'award (award)',
+      'bibliography (biblio)',
+      'language (lang)',
+    ],
+    awardTypeValue: 'award (award)',
+    awardTypeDisplay: 'award',
+    biblioTypeValue: 'bibliography (biblio)',
+    biblioTypeDisplay: 'bibliography',
+    langTypeValue: 'language (lang)',
+    langTypeDisplay: 'language',
   };
 
   before('Create test data', () => {
@@ -105,20 +129,20 @@ describe('Citation: check notes MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
 
       // Check inventory work in Marigold
-      EditResource.checkTextValueOnField('French', 'Note');
-      EditResource.checkLabelOnSimpleField('language (lang)', 'Note type');
-      EditResource.checkTextValueOnField('Includes bibliographical references (p. 245–260) and index, Bibliography: pages 180–195', 'Note');
-      EditResource.checkLabelOnSimpleField('bibliography (biblio)', 'Note type');
+      EditResource.checkTextValueOnField(resourceData.inventoryLangNote, fieldData.noteField);
+      EditResource.checkLabelOnSimpleField(fieldData.langTypeValue, fieldData.noteTypeField);
+      EditResource.checkTextValueOnField(resourceData.inventoryBibNote, fieldData.noteField);
+      EditResource.checkLabelOnSimpleField(fieldData.biblioTypeValue, fieldData.noteTypeField);
       EditResource.clickCloseResourceButton();
 
       // Create work
       Marigold.waitLoading();
       Marigold.openNewResourceForm();
       WorkProfileModal.waitLoading();
-      WorkProfileModal.checkOptionSelected('Books');
+      WorkProfileModal.checkOptionSelected(fieldData.booksProfile);
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
-      EditResource.setValueForTheField(testData.uniqueWorkTitle, 'Preferred Title for Work');
+      EditResource.setValueForTheField(testData.uniqueWorkTitle, fieldData.workTitle);
       EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
         testData.workId = resourceId;
       });
@@ -141,65 +165,81 @@ describe('Citation: check notes MARC codes', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.workTitle);
       Marigold.clickEditWorkFromSearch();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkTextValueOnField('', 'Note');
-      EditResource.checkSimpleFieldDropdownContainsOptions('Note type', [
-        'award (award)',
-        'bibliography (biblio)',
-        'language (lang)',
-      ]);
-      // @@@ new fn set for section - Note is also in Dissertation section; pick up here
-      EditResource.setValueForTheField('Winner of the International Literary Prize for Contemporary Fiction, 2022.', 'Note');
-      EditResource.setValueForSimpleField('award (award)', 'Note type');
+      EditResource.checkTextValueOnField('', fieldData.noteField);
+      EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.noteTypeField, fieldData.noteTypes);
+      EditResource.setValueForSectionField(resourceData.note1, fieldData.noteField, fieldData.notesSection);
+      EditResource.setValueForSectionSimpleField(fieldData.awardTypeValue, fieldData.noteTypeField);
       EditResource.saveAndClose();
       
+      // Verify work preview
       Marigold.waitLoading();
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.workTitle);
       SearchAndFilter.waitPreviewLoading();
-      SearchAndFilter.checkPreviewContains('Note', 'Winner of the International Literary Prize for Contemporary Fiction, 2022.');
-      SearchAndFilter.checkPreviewContains('Note type', 'award');
+      SearchAndFilter.checkPreviewContains(fieldData.noteField, resourceData.note1);
+      SearchAndFilter.checkPreviewContains(fieldData.noteTypeField, fieldData.awardTypeDisplay);
       Marigold.clickEditWorkFromSearch();
 
-      // Add notes to work
+      // Add more notes to work
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.clickRepeatGroup('Notes about the Work');
-      EditResource.clickRepeatGroup('Notes about the Work');
-      EditResource.setValueForTheField('Contains references and suggested further reading at the end of each chapter.', 'Note', 2);
-      EditResource.setValueForSectionSimpleField('bibliograph (biblio)', 'Note type', 2);
-      EditResource.setValueForTheField('Text in English with summaries in French and Spanish.', 'Note', 3);
-      EditResource.setValueForSectionSimpleField('language (lang)', 'Note type', 3);
+      EditResource.clickRepeatGroup(fieldData.notesSection);
+      EditResource.clickRepeatGroup(fieldData.notesSection);
+      EditResource.setValueForSectionField(resourceData.note2, fieldData.noteField, fieldData.notesSection, 2);
+      EditResource.setValueForSectionSimpleField(fieldData.biblioTypeValue, fieldData.noteTypeField, 2);
+      EditResource.setValueForSectionField(resourceData.note3, fieldData.noteField, fieldData.notesSection, 3);
+      EditResource.setValueForSectionSimpleField(fieldData.langTypeValue, fieldData.noteTypeField, 3);
       EditResource.saveAndKeepEditing();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      // @@@ verify work preview contents, 3 notes; may need new fn
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note1);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.awardTypeDisplay);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note2);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.biblioTypeDisplay);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note3);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.langTypeDisplay);
 
       // Verify MARC
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      // @@@ verify in marc
+      ViewMarc.checkMarcFieldContainsData('504', `$a ${resourceData.note2}`);
+      ViewMarc.checkMarcFieldContainsData('546', `$a ${resourceData.note3}`);
+      ViewMarc.checkMarcFieldContainsData('586', `$a ${resourceData.note1}`);
 
+      // Remove note type
       ViewMarc.closeMarcView();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      // @@@ remove award note type; may need new fn
+      EditResource.clearSectionSimpleField(fieldData.noteTypeField, 1);
       EditResource.saveAndKeepEditing();
-      // skip verifying save request contents, this is what the next section is for
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
 
+      // Verify MARC
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
+      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note1);
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      // @@@ verify marc, different field
+      ViewMarc.checkMarcFieldContainsData('500', `$a ${resourceData.note1}`);
 
+      // Add multiple note types
       ViewMarc.closeMarcView();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
-      // @@@ add note types to empty type note group
+      EditResource.clickEditWork();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
+      EditResource.setValueForSectionSimpleField(fieldData.awardTypeValue, fieldData.noteTypeField, 1);
+      EditResource.setValueForSectionSimpleField(fieldData.biblioTypeValue, fieldData.noteTypeField, 1);
       EditResource.saveAndKeepEditing();
+      EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
+      EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
+
+      // Verify MARC
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      // @@@ verify marc sections
+      ViewMarc.checkMarcFieldContainsData('504', `$a ${resourceData.note1} $a ${resourceData.note2}`);
+      ViewMarc.checkMarcFieldContainsData('586', `$a ${resourceData.note1}`);
     },
   );
 });
