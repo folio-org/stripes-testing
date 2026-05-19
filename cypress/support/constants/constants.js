@@ -26,6 +26,7 @@ export const APPLICATION_NAMES = {
   ORGANIZATIONS: 'Organizations',
   COURSES: 'Courses',
   DEVELOPER: 'Developer',
+  LISTS: 'Lists',
 };
 
 export const REQUEST_METHOD = {
@@ -73,27 +74,6 @@ export const MATERIAL_TYPE_NAMES = {
   TEXT: 'text',
   UNSPECIFIED: 'unspecified',
   VIDEO_RECORDING: 'video recording',
-};
-
-export const ITEM_STATUS_NAMES = {
-  ON_ORDER: 'On order',
-  IN_PROCESS: 'In process',
-  AVAILABLE: 'Available',
-  MISSING: 'Missing',
-  LONG_MISSING: 'Long missing',
-  IN_TRANSIT: 'In transit',
-  PAGED: 'Paged',
-  AWAITING_PICKUP: 'Awaiting pickup',
-  CHECKED_OUT: 'Checked out',
-  CLAIMED_RETURNED: 'Claimed returned',
-  DECLARED_LOST: 'Declared lost',
-  MARKED_AS_MISSING: 'Marked as missing',
-  AWAITING_DELIVERY: 'Awaiting delivery',
-  FOUND_BY_LIBRARY: 'Checked in (found by library)',
-  AGED_TO_LOST: 'Aged to lost',
-  LOST_AND_PAID: 'Lost and paid',
-  WITHDRAWN: 'Withdrawn',
-  ORDER_CLOSED: 'Order closed',
 };
 
 export const CY_ENV = {
@@ -373,6 +353,65 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   RARE_BOOKS_AND_MANUSCRIPTS_SECTION: 'Rare Books and Manuscripts Section (RBMS)',
   ART_AND_ARCHITECTURE_THESAURUS: 'Art & architecture thesaurus (AAT)',
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
+};
+
+export const AUTHORITY_QUERY_FIELDS = {
+  AUTHORITY_CREATED_DATE: 'Authority — Created date',
+  AUTHORITY_HEADING: 'Authority — Heading',
+  AUTHORITY_HEADING_TYPE: 'Authority — Heading type',
+  AUTHORITY_IDENTIFIER_TYPE: 'Authority — Identifier type',
+  AUTHORITY_IDENTIFIER_VALUE: 'Authority — Identifier value',
+  AUTHORITY_NATURAL_ID: 'Authority — Natural ID',
+  AUTHORITY_NOTES_NOTE: 'Authority — Notes — Note',
+  AUTHORITY_NOTES_NOTE_TYPE: 'Authority — Notes — Note type',
+  AUTHORITY_SEE_ALSO_FROM_REFERENCE_RELATIONSHIP_TYPE:
+    'Authority — See also from reference — Relationship type',
+  AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING: 'Authority — See also from reference — Tracing',
+  AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING_TYPE:
+    'Authority — See also from reference — Tracing type',
+  AUTHORITY_SEE_FROM_REFERENCE_RELATIONSHIP_TYPE:
+    'Authority — See from reference — Relationship type',
+  AUTHORITY_SEE_FROM_REFERENCE_TRACING: 'Authority — See from reference — Tracing',
+  AUTHORITY_SEE_FROM_REFERENCE_TRACING_TYPE: 'Authority — See from reference — Tracing type',
+  AUTHORITY_SOURCE: 'Authority — Source',
+  AUTHORITY_SUBJECT_HEADING_CODE: 'Authority — Subject heading code',
+  AUTHORITY_UPDATED_DATE: 'Authority — Updated date',
+  AUTHORITY_UUID: 'Authority — UUID',
+  CREATED_BY_USER_EMAIL: 'Created by user — Email',
+  CREATED_BY_USER_LAST_NAME_FIRST_NAME: 'Created by user — Last name, first name',
+  CREATED_BY_USER_USERNAME: 'Created by user — Username',
+  MARC_AUTHORITY_CREATED_DATE: 'MARC Authority — Created date',
+  MARC_AUTHORITY_EXTERNAL_HRID: 'MARC Authority — External HRID',
+  MARC_AUTHORITY_GENERATION: 'MARC Authority — Generation',
+  MARC_AUTHORITY_LEADER_RECORD_STATUS: 'MARC Authority — Leader record status',
+  MARC_AUTHORITY_MATCHED_UUID: 'MARC Authority — Matched UUID',
+  MARC_AUTHORITY_ORDER: 'MARC Authority — Order',
+  MARC_AUTHORITY_STATE: 'MARC Authority — State',
+  MARC_AUTHORITY_UPDATED_DATE: 'MARC Authority — Updated date',
+  SOURCE_FILE_NAME: 'Source file — Name',
+  UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
+  UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
+  UPDATED_BY_USER_USERNAME: 'Updated by user — Username',
+};
+
+export const AUTHORITY_HEADING_TYPES = {
+  CHRONOLOGICAL_SUBDIVISION: 'Chronological subdivision',
+  CHRONOLOGICAL_TERM: 'Chronological term',
+  CONFERENCE_NAME: 'Conference name',
+  CONFERENCE_NAME_TITLE: 'Conference name title',
+  CORPORATE_NAME: 'Corporate name',
+  CORPORATE_NAME_TITLE: 'Corporate name title',
+  FORM_SUBDIVISION: 'Form subdivision',
+  GENERAL_SUBDIVISION: 'General subdivision',
+  GENRE_TERM: 'Genre term',
+  GEOGRAPHIC_NAME: 'Geographic name',
+  GEOGRAPHIC_SUBDIVISION: 'Geographic subdivision',
+  MEDIUM_OF_PERFORMANCE_TERM: 'Medium of performance term',
+  NAMED_EVENT: 'Named event',
+  PERSONAL_NAME: 'Personal name',
+  PERSONAL_NAME_TITLE: 'Personal name title',
+  TOPICAL_TERM: 'Topical term',
+  UNIFORM_TITLE: 'Uniform title',
 };
 
 export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
@@ -1737,17 +1776,23 @@ export const SORT_DIRECTIONS = {
 };
 
 export const COMMON_BUTTON_LABELS = {
+  ACTIONS: 'Actions',
   APPLY: 'Apply',
   CANCEL: 'Cancel',
   CONFIRM: 'Confirm',
   NEXT: 'Next',
   PREVIOUS: 'Previous',
+  REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
+  SAVE: 'Save',
+  YES: 'Yes',
+  NO: 'No',
 };
 
 export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';
 export const RESULTS_PANE_CHOOSE_FILTER_MESSAGE =
   'Choose a filter or enter a search query to show results.';
+export const INVALID_REFERENCE_MESSAGE = 'Invalid reference';
 
 export const LIST_ASSERTION_MODES = {
   ABSENT: 'absent',
@@ -1757,4 +1802,30 @@ export const LIST_ASSERTION_MODES = {
 export const DATE_RANGE_FIELD_LABELS = {
   FROM: 'From',
   TO: 'To',
+};
+
+export const NO_VALUE = 'No value set-';
+
+export const FTP_PROTOCOLS = {
+  SFTP: 'SFTP',
+  FTP: 'FTP',
+};
+
+export const FILE_TYPES = {
+  CSV: 'csv',
+  JSON: 'json',
+};
+
+export const CUSTOM_FIELD_ENTITY_TYPES = {
+  USER: 'user',
+};
+
+export const CUSTOM_FIELD_TYPES = {
+  SINGLE_CHECKBOX: 'SINGLE_CHECKBOX',
+  DATE_PICKER: 'DATE_PICKER',
+  MULTI_SELECT_DROPDOWN: 'MULTI_SELECT_DROPDOWN',
+  RADIO_BUTTON: 'RADIO_BUTTON',
+  SINGLE_SELECT_DROPDOWN: 'SINGLE_SELECT_DROPDOWN',
+  TEXTBOX_LONG: 'TEXTBOX_LONG',
+  TEXTBOX_SHORT: 'TEXTBOX_SHORT',
 };

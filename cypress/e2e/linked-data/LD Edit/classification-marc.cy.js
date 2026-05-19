@@ -197,43 +197,94 @@ describe('Citation: check classification number MARC codes', () => {
       // Review work preview
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldData.classificationSection, fieldData.classificationAgency, resourceData.assigningAgency);
-      EditResource.checkPreviewSectionContainsLink(fieldData.classificationSection, fieldData.classificationUsed, resourceData.nubaValue, resourceData.nubaLink);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.classificationSection,
+        fieldData.classificationAgency,
+        resourceData.assigningAgency,
+      );
+      EditResource.checkPreviewSectionContainsLink(
+        fieldData.classificationSection,
+        fieldData.classificationUsed,
+        resourceData.nubaValue,
+        resourceData.nubaLink,
+      );
 
       // Review editor sections
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkDropdownTextValue(fieldData.dewey, fieldData.classificationType);
+      EditResource.checkSectionDropdownTextValue(fieldData.dewey, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.dewey1Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.dewey1Additional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnField(resourceData.dewey1Edition, fieldData.classificationEdition);
+      EditResource.checkTextValueOnField(
+        resourceData.dewey1Additional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnField(
+        resourceData.dewey1Edition,
+        fieldData.classificationEdition,
+      );
       EditResource.checkTextValueOnField(resourceData.dewey1Full, fieldData.classificationFull);
-      EditResource.checkTextValueOnDisabledField(resourceData.dnlmAgency, fieldData.classificationAssigner);
-      EditResource.checkDropdownTextValue(fieldData.dewey, fieldData.classificationType);
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.dnlmAgency,
+        fieldData.classificationAssigner,
+      );
+      EditResource.checkSectionDropdownTextValue(fieldData.dewey, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.dewey2Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.dewey2Additional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnField(resourceData.dewey2Edition, fieldData.classificationEdition);
+      EditResource.checkTextValueOnField(
+        resourceData.dewey2Additional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnField(
+        resourceData.dewey2Edition,
+        fieldData.classificationEdition,
+      );
       EditResource.checkTextValueOnField(resourceData.dewey2Full, fieldData.classificationFull);
-      EditResource.checkTextValueOnDisabledField(resourceData.assigningAgency, fieldData.classificationAssigner);
-      EditResource.checkDropdownTextValue(fieldData.dewey, fieldData.classificationType);
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.assigningAgency,
+        fieldData.classificationAssigner,
+      );
+      EditResource.checkSectionDropdownTextValue(fieldData.dewey, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.dewey3Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.dewey3Additional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnField(resourceData.dewey3Edition, fieldData.classificationEdition);
+      EditResource.checkTextValueOnField(
+        resourceData.dewey3Additional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnField(
+        resourceData.dewey3Edition,
+        fieldData.classificationEdition,
+      );
       EditResource.checkTextValueOnField(resourceData.dewey3Full, fieldData.classificationFull);
-      EditResource.checkTextValueOnDisabledField(resourceData.caoonlAgency, fieldData.classificationAssigner);
-      EditResource.checkDropdownTextValue(fieldData.lccn, fieldData.classificationType);
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.caoonlAgency,
+        fieldData.classificationAssigner,
+      );
+      EditResource.checkSectionDropdownTextValue(fieldData.lccn, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.lccn1Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.lccn1Additional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnDisabledField(resourceData.assigningAgency, fieldData.classificationAgency);
+      EditResource.checkTextValueOnField(
+        resourceData.lccn1Additional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.assigningAgency,
+        fieldData.classificationAgency,
+      );
       EditResource.checkLabelOnSimpleField(resourceData.lccn1Used, fieldData.classificationUsed);
-      EditResource.checkDropdownTextValue(fieldData.lccn, fieldData.classificationType);
+      EditResource.checkSectionDropdownTextValue(fieldData.lccn, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.lccn2Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.lccn2Additional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnDisabledField(resourceData.assigningAgency, fieldData.classificationAgency);
+      EditResource.checkTextValueOnField(
+        resourceData.lccn2Additional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.assigningAgency,
+        fieldData.classificationAgency,
+      );
       EditResource.checkLabelOnSimpleField(resourceData.lccn2Used, fieldData.classificationUsed);
-      EditResource.checkDropdownTextValue(fieldData.lccn, fieldData.classificationType);
+      EditResource.checkSectionDropdownTextValue(fieldData.lccn, fieldData.classificationType);
       EditResource.checkTextValueOnField(resourceData.lccn3Number, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.lccn3Additional, fieldData.classificationAdditional);
+      EditResource.checkTextValueOnField(
+        resourceData.lccn3Additional,
+        fieldData.classificationAdditional,
+      );
       EditResource.checkTextValueOnDisabledField('', fieldData.classificationAgency);
       EditResource.checkLabelOnSimpleField(resourceData.lccn3Used, fieldData.classificationUsed);
       EditResource.clickCloseResourceButton();
@@ -251,27 +302,74 @@ describe('Citation: check classification number MARC codes', () => {
       });
 
       // Verify LCCN section contents
-      EditResource.checkSectionDropdownContainsOptions(fieldData.classificationSection, fieldData.classificationType, [fieldData.lccn, fieldData.dewey]);
-      EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.classificationUsed, fieldData.usedByLabels);
+      EditResource.checkSectionDropdownContainsOptions(
+        fieldData.classificationSection,
+        fieldData.classificationType,
+        [fieldData.lccn, fieldData.dewey],
+      );
+      EditResource.checkSimpleFieldDropdownContainsOptions(
+        fieldData.classificationUsed,
+        fieldData.usedByLabels,
+      );
       EditResource.toggleSectionMarcTooltip(fieldData.classificationSection);
-      EditResource.checkMarcTooltipContains(fieldData.classificationNumber, `${fieldData.marc050} $a`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationAdditional, `${fieldData.marc050} $b`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationAgency, `${fieldData.marc050} _0`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationUsed, `${fieldData.marc050} X_`);
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationNumber,
+        `${fieldData.marc050} $a`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationAdditional,
+        `${fieldData.marc050} $b`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationAgency,
+        `${fieldData.marc050} _0`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationUsed,
+        `${fieldData.marc050} X_`,
+      );
       EditResource.toggleSectionMarcTooltip(fieldData.classificationSection);
 
       // Switch to Dewey classification, verify contents
-      EditResource.setValueForSectionFieldDropdown(fieldData.dewey, fieldData.classificationType, fieldData.classificationSection);
+      EditResource.setValueForSectionFieldDropdown(
+        fieldData.dewey,
+        fieldData.classificationType,
+        fieldData.classificationSection,
+      );
       EditResource.toggleSectionMarcTooltip(fieldData.classificationSection);
-      EditResource.checkMarcTooltipContains(fieldData.classificationNumber, `${fieldData.marc082} $a`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationAdditional, `${fieldData.marc082} $b`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationEdition, `${fieldData.marc082} $2`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationFull, `${fieldData.marc082} X_`);
-      EditResource.checkMarcTooltipContains(fieldData.classificationAssigner, `${fieldData.marc082} _X`);
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationNumber,
+        `${fieldData.marc082} $a`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationAdditional,
+        `${fieldData.marc082} $b`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationEdition,
+        `${fieldData.marc082} $2`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationFull,
+        `${fieldData.marc082} X_`,
+      );
+      EditResource.checkMarcTooltipContains(
+        fieldData.classificationAssigner,
+        `${fieldData.marc082} _X`,
+      );
       EditResource.toggleSectionMarcTooltip(fieldData.classificationSection);
-      EditResource.setValueForTheField(testData.marigoldDeweyNumber, fieldData.classificationNumber);
-      EditResource.setValueForTheField(testData.marigoldDeweyAdditional, fieldData.classificationAdditional);
-      EditResource.setValueForTheField(testData.marigoldDeweyEdition, fieldData.classificationEdition);
+      EditResource.setValueForTheField(
+        testData.marigoldDeweyNumber,
+        fieldData.classificationNumber,
+      );
+      EditResource.setValueForTheField(
+        testData.marigoldDeweyAdditional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.setValueForTheField(
+        testData.marigoldDeweyEdition,
+        fieldData.classificationEdition,
+      );
       EditResource.saveAndClose();
       EditResource.checkSuccessStatusDisplayed();
       // Toasts no longer auto-dismiss, so manually clear them so later checks don't test against earlier toasts
@@ -283,18 +381,37 @@ describe('Citation: check classification number MARC codes', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.marigoldTitle);
       Marigold.clickEditWorkFromSearch();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkDropdownTextValue(fieldData.dewey, fieldData.classificationType);
-      EditResource.checkTextValueOnField(resourceData.marigoldDeweyNumber, fieldData.classificationNumber);
-      EditResource.checkTextValueOnField(resourceData.marigoldDeweyAdditional, fieldData.classificationAdditional);
-      EditResource.checkTextValueOnField(resourceData.marigoldDeweyEdition, fieldData.classificationEdition);
+      EditResource.checkSectionDropdownTextValue(fieldData.dewey, fieldData.classificationType);
+      EditResource.checkTextValueOnField(
+        resourceData.marigoldDeweyNumber,
+        fieldData.classificationNumber,
+      );
+      EditResource.checkTextValueOnField(
+        resourceData.marigoldDeweyAdditional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.checkTextValueOnField(
+        resourceData.marigoldDeweyEdition,
+        fieldData.classificationEdition,
+      );
 
       // Change to LCCN and verify
-      EditResource.setValueForSectionFieldDropdown(fieldData.lccn, fieldData.classificationType, fieldData.classificationSection);
+      EditResource.setValueForSectionFieldDropdown(
+        fieldData.lccn,
+        fieldData.classificationType,
+        fieldData.classificationSection,
+      );
       EditResource.checkTextValueOnField('', fieldData.classificationNumber);
       EditResource.checkTextValueOnField('', fieldData.classificationAdditional);
       EditResource.setValueForTheField(testData.marigoldLccnNumber, fieldData.classificationNumber);
-      EditResource.setValueForTheField(testData.marigoldLccnAdditional, fieldData.classificationAdditional);
-      EditResource.setValueForSectionSimpleField(testData.marigoldLccnUsed, fieldData.classificationUsed);
+      EditResource.setValueForTheField(
+        testData.marigoldLccnAdditional,
+        fieldData.classificationAdditional,
+      );
+      EditResource.setValueForSectionSimpleField(
+        testData.marigoldLccnUsed,
+        fieldData.classificationUsed,
+      );
       EditResource.saveAndKeepEditing();
       EditResource.checkSuccessStatusDisplayed();
     },

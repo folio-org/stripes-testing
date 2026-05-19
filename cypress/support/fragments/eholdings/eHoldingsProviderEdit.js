@@ -27,16 +27,21 @@ export default {
     return cy
       .then(() => proxySelect.value())
       .then((selectedProxy) => {
-        cy.getEholdingsProxyNamesViaAPI().then((proxyNames) => {
-          const availableProxies = proxyNames;
+        cy.getEholdingsProxiesViaAPI().then(({ body }) => {
+          const availableProxies = body.data.map((proxy) => ({
+            id: proxy.id,
+            name: proxy.attributes.name,
+          }));
           const notSelectedProxy = availableProxies.filter(
             (availableProxy) => ![selectedProxy, `inherited - ${selectedProxy}`].includes(
-              availableProxy.toLowerCase(),
+              availableProxy.id.toLowerCase(),
             ),
           )[1];
-          cy.do(proxySelect.choose(or(notSelectedProxy, `Inherited - ${notSelectedProxy}`)));
-          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-          return cy.wrap(notSelectedProxy);
+          cy.do(
+            proxySelect.choose(or(notSelectedProxy.name, `Inherited - ${notSelectedProxy.name}`)),
+          );
+          cy.expect(proxySelect.find(HTML(including(notSelectedProxy.name))).exists());
+          return cy.wrap(notSelectedProxy.name);
         });
       });
   },

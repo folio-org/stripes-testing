@@ -99,6 +99,7 @@ describe('OAI-PMH', () => {
         // Step 6: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 7: Send GetRecord request with marc21_withholdings - should return error (idDoesNotExist)
         cy.getAdminToken();
@@ -118,6 +119,7 @@ describe('OAI-PMH', () => {
         // Step 9: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 10: Send ListRecords request with marc21_withholdings - record should be included
         cy.getAdminToken();
@@ -144,6 +146,7 @@ describe('OAI-PMH', () => {
         // Step 12: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 13: Send ListRecords request with marc21 - record should NOT be retrieved
         cy.getAdminToken();
@@ -163,6 +166,7 @@ describe('OAI-PMH', () => {
         // Step 15: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 16: Send ListIdentifiers request with marc21_withholdings - record should be included
         cy.getAdminToken();
@@ -182,6 +186,7 @@ describe('OAI-PMH', () => {
         // Step 18: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 19: Send ListIdentifiers request with marc21 - record should NOT be retrieved
         cy.getAdminToken();
@@ -201,6 +206,7 @@ describe('OAI-PMH', () => {
         // Step 21: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 22: Final GetRecord request with marc21_withholdings - record should be active again
         cy.getAdminToken();

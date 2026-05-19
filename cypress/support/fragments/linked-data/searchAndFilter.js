@@ -96,6 +96,15 @@ export default {
       });
   },
 
+  verifySearchResultField(fieldValue) {
+    cy.get('[class*="search-result-entry-container"]')
+      .first()
+      .find('[class*="work-details-card"]')
+      .find('[class*="details"]')
+      .contains(fieldValue)
+      .should('exist');
+  },
+
   verifyNoResultsFound() {
     cy.get('[class*="search-result-entry-container"]').should('not.exist');
     cy.get('[class*="item-search-content"]')
@@ -107,8 +116,24 @@ export default {
     cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
+  openSearchResultPreviewByTitle(title) {
+    cy.xpath(`//button[contains(text(),"${title}")]`).scrollIntoView().should('be.visible').click();
+  },
+
+  checkPreviewContains(field, value) {
+    cy.xpath(
+      `//strong[@class="value-heading" and text()="${field}"]/following-sibling::div[normalize-space()="${value}"]`,
+    ).should('exist');
+  },
+
+  waitPreviewLoading() {
+    cy.xpath('//div[@data-testid="preview-contents-container"]').should('be.visible');
+  },
+
   checkTitleNoOverlap() {
-    cy.xpath('//div[@class="search-result-entry-container"][1]//button[contains(@class, "title")]').then(($title) => {
+    cy.xpath(
+      '//div[@class="search-result-entry-container"][1]//button[contains(@class, "title")]',
+    ).then(($title) => {
       cy.xpath('//div[@class="search-result-entry-container"][1]//table').then(($instances) => {
         const titleBottom = $title[0].getBoundingClientRect().bottom;
         const instancesTop = $instances[0].getBoundingClientRect().top;
@@ -133,5 +158,18 @@ export default {
   clickResetButton() {
     cy.do(resetButton.click());
     cy.wait(500);
+  },
+
+  verifyCollapseExpandButton() {
+    cy.get('[data-testid="work-details-card-toggle"]').should('be.visible');
+  },
+
+  clickCollapseExpandButton() {
+    cy.get('[data-testid="work-details-card-toggle"]').first().click();
+    cy.wait(500);
+  },
+
+  verifyInstanceListCollapsed() {
+    cy.get('[class*="instance-list"]').should('not.exist');
   },
 };

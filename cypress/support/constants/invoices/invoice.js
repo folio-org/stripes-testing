@@ -84,3 +84,74 @@ export const INVOICE_AND_INVOICE_LINE_BUTTONS = {
   SAVE_AND_CLOSE: 'Save & close',
   SAVE_AND_KEEP_EDITING: 'Save & keep editing',
 };
+
+export const INVOICE_SEARCH_INDEX_LABELS = {
+  ACCOUNTING_CODE: 'Accounting code',
+  ALL: 'All',
+  FOLIO_INVOICE_NUMBER: 'FOLIO invoice number',
+  PO_NUMBER: 'PO number',
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice number',
+  VOUCHER_NUMBER: 'Voucher number',
+};
+
+export const INVOICE_SEARCH_INDEXES = {
+  ACCOUNTING_CODE: 'accountingCode',
+  FOLIO_INVOICE_NUMBER: 'folioInvoiceNo',
+  INVOICE_LINE_DESCRIPTION: 'invoiceLines.description',
+  PO_NUMBER: 'poNumbers',
+  VENDOR_INVOICE_NUMBER: 'vendorInvoiceNo',
+  VOUCHER_NUMBER: 'voucherNumber',
+};
+
+export const INVOICE_RESULTS_LIST_COLUMNS = {
+  FOLIO_INVOICE_NUMBER: 'FOLIO invoice number',
+  INVOICE_DATE: 'Invoice date',
+  STATUS: 'Status',
+  TOTAL_AMOUNT_SYSTEM: 'Total amount (system)',
+  VENDOR: 'Vendor',
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice number',
+  VENDOR_NAME: 'Vendor name',
+};
+
+export const INVOICE_RESULTS_ACTIONS_LABELS = {
+  EXPORT_CSV: 'Export results (CSV)',
+};
+
+export const EXPORT_INVOICE_FIELDS = {
+  ACCOUNTING_CODE: 'Accounting code',
+  ACQ_UNIT_IDS: 'Acquisitions units',
+  ADJUSTMENTS_TOTAL: 'Total adjustments',
+  APPROVAL_DATE: 'Approved date',
+  APPROVED_BY: 'ApprovedBy',
+  BATCH_GROUP: 'Batch group',
+  BILL_TO: 'Bill to',
+  CHK_SUBSCRIPTION_OVERLAP: 'Check subscription overlap',
+  CREATED_BY: 'Created by',
+  CURRENCY: 'Currency',
+  DATE_CREATED: 'Created on',
+  DATE_UPDATED: 'Updated on',
+  ENCLOSURE_NEEDED: 'Enclosure needed',
+  EXCHANGE_RATE: 'Exchange rate',
+  EXPORT_TO_ACCOUNTING: 'Export to accounting',
+  FISCAL_YEAR: 'Fiscal year',
+  FOLIO_INVOICE_NO: 'FOLIO invoice number',
+  INVOICE_ADJUSTMENTS: 'Invoice adjustments',
+  INVOICE_DATE: 'Invoice date',
+  INVOICE_FUND_DISTRIBUTIONS: 'Invoice fund distributions',
+  INVOICE_TAGS: 'Invoice tags',
+  LOCK_TOTAL: 'Lock total amount',
+  NOTE: 'Note',
+  PAYMENT_DATE: 'Payment date',
+  PAYMENT_DUE: 'Payment due',
+  PAYMENT_METHOD: 'Payment method',
+  PAYMENT_TERMS: 'Terms',
+  STATUS: 'Status',
+  SUB_TOTAL: 'Sub total',
+  TOTAL_AMOUNT: 'Total amount',
+  TOTAL_UNITS: 'Total units',
+  UPDATED_BY: 'Updated by',
+  VENDOR_ADDRESS: 'Vendor address',
+  VENDOR_CODE: 'Vendor code',
+  VENDOR_INVOICE_NO: 'Vendor invoice number',
+  VENDOR_NAME: 'Vendor name',
+};

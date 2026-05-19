@@ -53,12 +53,10 @@ describe('MARC', () => {
 
           MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile);
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
       });
 
@@ -66,7 +64,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeadingPrefix);
         Users.deleteViaApi(testData.userProperties.userId);
-        toggleAllUndefinedValidationRules(specId, { enable: true });
       });
 
       it(

@@ -395,7 +395,7 @@ export default {
   },
 
   checkAmountInputError: (errorMessage) => {
-    cy.do(amountTextField.has({ error: errorMessage }));
+    cy.expect(amountTextField.has({ error: errorMessage }));
   },
 
   checkCreatedFund: (fundName) => {

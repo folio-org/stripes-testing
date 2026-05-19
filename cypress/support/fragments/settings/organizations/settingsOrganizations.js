@@ -208,10 +208,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteOrganizationTypeViaApi(organizationTypeId) {
+  deleteOrganizationTypeViaApi(organizationTypeId, { failOnStatusCode } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `organizations-storage/organization-types/${organizationTypeId}`,
+      failOnStatusCode,
     });
   },
   deleteOrganizationCategoriesViaApi(organizationCategoryId) {

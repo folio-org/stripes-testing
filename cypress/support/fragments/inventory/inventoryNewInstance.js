@@ -27,6 +27,8 @@ const descriptiveDataSection = rootSection.find(Accordion('Descriptive data'));
 const cancelButton = rootSection.find(Button('Cancel'));
 const saveAndCloseButton = rootSection.find(Button('Save & close'));
 const selectStatisticalCodeButton = Button({ name: 'statisticalCodeIds[0]' });
+const statisticalCodeFieldSet = rootSection.find(FieldSet('Statistical code'));
+const statisticalCodeSelectionList = SelectionList();
 
 const deafultResouceType = 'text';
 
@@ -271,8 +273,28 @@ export default {
     cy.do(Button('Add statistical code').click());
     cy.expect(selectStatisticalCodeButton.exists());
   },
+  openStatisticalCodeDropdown() {
+    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+  },
+  verifyStatisticalCodeDropdown() {
+    cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
+    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+      expect(count).to.greaterThan(0);
+    });
+  },
+  filterStatisticalCodeByName(name) {
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeListOptionsFilteredBy(name) {
+    cy.get('[class^=optionSegment-]').each(($option) => {
+      cy.wrap($option).invoke('text').should('include', name);
+    });
+  },
   chooseStatisticalCode(code) {
     cy.do(selectStatisticalCodeButton.click());
+    cy.do(SelectionList().select(code));
+  },
+  selectStatisticalCode(code) {
     cy.do(SelectionList().select(code));
   },
   clickCancelButton() {

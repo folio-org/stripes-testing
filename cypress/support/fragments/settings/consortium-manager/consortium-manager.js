@@ -9,6 +9,7 @@ import {
   Selection,
   TextField,
   including,
+  or,
 } from '../../../../../interactors';
 import OrderStorageSettings from '../../orders/orderStorageSettings';
 
@@ -89,12 +90,13 @@ export default {
   },
 
   selectAffiliationInModal(newTenantName) {
+    const tenantNameMatcher = or(newTenantName, `${newTenantName} (Primary)`);
     cy.do([
       selectAffiliationModal.find(selectAffiliationButtonInModal).click(),
-      SelectionOption(including(newTenantName)).click(),
+      SelectionOption(tenantNameMatcher).click(),
     ]);
-    cy.expect(SelectionOption(including(newTenantName)).absent());
-    cy.expect(affiliationSelect.has({ singleValue: newTenantName }));
+    cy.expect(SelectionOption(tenantNameMatcher).absent());
+    cy.expect(affiliationSelect.has({ singleValue: tenantNameMatcher }));
     cy.wait(2000);
   },
 
