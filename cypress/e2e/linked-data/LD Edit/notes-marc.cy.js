@@ -1,4 +1,4 @@
-import { CUSTOM_FIELD_TYPES, DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, EDIT_RESOURCE_HEADINGS } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -170,7 +170,7 @@ describe('Citation: check notes MARC codes', () => {
       EditResource.setValueForSectionField(resourceData.note1, fieldData.noteField, fieldData.notesSection);
       EditResource.setValueForSectionSimpleField(fieldData.awardTypeValue, fieldData.noteTypeField);
       EditResource.saveAndClose();
-      
+
       // Verify work preview
       Marigold.waitLoading();
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.workTitle);
