@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
+import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import InstanceProfileModal from '../../../support/fragments/linked-data/instanceProfileModal';
 import Marigold from '../../../support/fragments/linked-data/marigold';
 import NewInstance from '../../../support/fragments/linked-data/newInstance';
@@ -92,14 +92,14 @@ describe('Citation: Statement of Responsibility - Inventory / View MARC', () => 
   });
 
   it(
-    'C477531 Marigold - Statement of responsibility / Inventory / View MARC',
+    'C477531 Marigold - Statement of responsibility / Inventory / View MARC (citation)',
     { tags: ['criticalPath', 'citation', 'C477531', 'marigold'] },
     () => {
       // Import MARC bib into Marigold
       InventoryInstances.searchByTitle(testData.uniqueMarcTitle);
       InventoryInstance.editInstanceInMG();
-      ExternalResourcePreview.waitLoading();
-      ExternalResourcePreview.clickContinueButton();
+      PreviewResource.waitLoading();
+      PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.clickCloseResourceButton();
 

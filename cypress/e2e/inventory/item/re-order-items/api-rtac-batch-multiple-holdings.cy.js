@@ -40,7 +40,7 @@ describe('Inventory', () => {
           // Get required reference data
           cy.getLocations({
             limit: 1,
-            query: '(isActive=true and name<>"AT_*") and name<>"autotest*"',
+            query: '(isActive=true and name<>"AT_*") and name<>"*auto*"',
           }).then((res) => {
             location = res;
           });

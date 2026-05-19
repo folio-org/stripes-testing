@@ -1,4 +1,5 @@
 import {
+  Button,
   HTML,
   KeyValue,
   MultiColumnListCell,
@@ -140,6 +141,17 @@ export default {
         });
       });
     });
+  },
+  checkUnassignedExpenseClassTooltip(sectionId) {
+    const section = Section({ id: sectionId });
+    const unassignedCell = section.find(
+      MultiColumnListCell({ column: 'Expense class', content: including('Unassigned') }),
+    );
+
+    cy.do(unassignedCell.find(Button({ icon: 'info' })).click());
+    cy.contains(
+      'applies to transactions completed prior to the inclusion of expense classes on the budget, if there are any that exist',
+    ).should('be.visible');
   },
   checkLedgersDetails(ledgers = []) {
     this.checkTableContent({ section: ledgersSection, items: ledgers });

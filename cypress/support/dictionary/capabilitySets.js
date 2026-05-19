@@ -294,6 +294,11 @@ export default {
     resource: 'Scheduler',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  baseUrlManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Base-Url Item',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {

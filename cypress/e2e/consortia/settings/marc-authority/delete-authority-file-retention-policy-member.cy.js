@@ -61,7 +61,9 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
+            cy.wait(70_000); // source file should be processed by scheduled job before assigning
             // Create a Local MARC authority record assigned to the file in Member tenant
+            cy.getAdminToken();
             cy.setTenant(Affiliations.College);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
@@ -101,11 +103,9 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C449369'] },
           () => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              cy.reload();
-            }, 20_000);
+            cy.login(user.username, user.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
             // Step 2: Switch to Member tenant and check the source file
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(

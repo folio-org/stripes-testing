@@ -1064,7 +1064,7 @@ export default {
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
     if (!notShared) {
-      cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+      cy.expect([Callout(successShareText).exists(), shareToAllModal.absent()]);
       this.checkRoleCentrallyManaged(roleName, true);
     }
   },

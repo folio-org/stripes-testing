@@ -539,8 +539,27 @@ const UI = {
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
+  verifySingleRecordNumber() {
+    cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+    cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
+  },
+
   verifyQuery(query) {
     cy.get('#results-viewer-accordion').contains(`Query: (${query})`).should('be.visible');
+  },
+
+  verifyRecordWithContent(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  waitForCompilingAnimationToDisappear() {
+    cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
+  },
+
+  verifyRefreshCompleteCallout(recordsCount) {
+    cy.contains(`Refresh complete with ${recordsCount} records: View updated list`, {
+      timeout: 90000,
+    }).should('be.visible');
   },
 
   openList(listName) {
@@ -1246,10 +1265,12 @@ const API = {
     });
   },
 
-  getEntityTypeByIdViaApi(id) {
+  getEntityTypeByIdViaApi(id, { failOnStatusCode = true } = {}) {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 
