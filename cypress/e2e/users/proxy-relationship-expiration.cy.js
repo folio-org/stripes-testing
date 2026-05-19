@@ -23,6 +23,13 @@ describe('Users', () => {
   };
   let proxyBody;
 
+  const loginFn = () => {
+    cy.login(usersData.loginUser.username, usersData.loginUser.password, {
+      path: TopMenu.usersPath,
+      waiter: UsersSearchPane.waitLoading,
+    });
+  };
+
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
@@ -75,6 +82,9 @@ describe('Users', () => {
           usersData.loginUser.userId,
           testData.userServicePoint.id,
         );
+      })
+      .then(() => {
+        loginFn();
       });
   });
 
@@ -109,10 +119,6 @@ describe('Users', () => {
     { tags: ['extendedPath', 'volaris', 'C434'] },
     () => {
       // Step 1-2: Navigate to Users and verify proxy relationship in sponsor record
-      cy.login(usersData.loginUser.username, usersData.loginUser.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
-      });
       UsersSearchPane.searchByUsername(usersData.userSponsor.username);
       cy.wait(2000);
       UsersSearchPane.openUser(usersData.userSponsor.username);
@@ -139,6 +145,9 @@ describe('Users', () => {
         cy.updateUser(proxyUser);
       });
 
+      // Login again after applying the admin token
+      loginFn();
+
       // Step 6: Try to check out to the sponsor using inactive proxy's info
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
@@ -162,8 +171,9 @@ describe('Users', () => {
         expirationDate: DateTools.getPreviousDayDateForFiscalYear(),
       });
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-      UsersSearchPane.waitLoading();
+      // Login again after applying the admin token
+      loginFn();
+
       UsersSearchPane.searchByUsername(usersData.userSponsor.username);
       cy.wait(2000);
       UsersSearchPane.openUser(usersData.userSponsor.username);
