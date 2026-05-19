@@ -371,6 +371,7 @@ describe('Users', () => {
           testData.userRecord.email,
           'Patron',
           testData.userRecord.username,
+          { shouldSetExpirationDate: true },
         );
         UserEdit.verifyAccordionsPresent([
           'User information',
