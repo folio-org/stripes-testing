@@ -239,19 +239,26 @@ describe('eHoldings', () => {
       'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C703'] },
       () => {
-        let titleName;
+        const customPackage = {
+          data: {
+            type: 'packages',
+            attributes: {
+              name: `AT_C703_EHoldingsPackage_${getRandomPostfix()}`,
+              contentType: 'E-Book',
+            },
+          },
+        };
+        const titleName = `AT_C703_Title_${getRandomPostfix()}`;
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          EHoldingsPackages.createPackageViaAPI().then(({ data: { id } }) => {
+          EHoldingsPackages.createPackageViaAPI(customPackage).then(({ data: { id } }) => {
             eHoldingsTitles
               .createEHoldingTitleVIaApi({
                 packageId: id,
-              })
-              .then((title) => {
-                titleName = title.attributes.name;
+                titleName,
               })
               .then(() => {
                 cy.login(userProperties.username, userProperties.password, {
