@@ -66,7 +66,7 @@ describe('MARC', () => {
       }).then((authorities) => {
         if (authorities) {
           authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
         }
       });
@@ -114,7 +114,6 @@ describe('MARC', () => {
           testData.user = createdUserProperties;
         })
         .then(() => {
-          cy.logout();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -128,7 +127,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       testData.authorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
+        MarcAuthority.deleteViaAPI(id, true);
       });
       Users.deleteViaApi(testData.user.userId);
     });

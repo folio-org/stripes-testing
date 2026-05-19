@@ -100,7 +100,8 @@ export default {
       cy
         .then(() => proxySelect.checkedOptionText())
         // eslint-disable-next-line consistent-return
-        .then((selectedProxy) => {
+        .then((selectedProxyText) => {
+          const selectedProxy = selectedProxyText.replace('Inherited - ', '').toLowerCase();
           if (newProxyValue) {
             cy.do(proxySelect.choose(newProxyValue));
             return cy.wrap(newProxyValue);

@@ -1784,6 +1784,7 @@ export const COMMON_BUTTON_LABELS = {
   PREVIOUS: 'Previous',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
+  SAVE: 'Save',
   YES: 'Yes',
   NO: 'No',
 };

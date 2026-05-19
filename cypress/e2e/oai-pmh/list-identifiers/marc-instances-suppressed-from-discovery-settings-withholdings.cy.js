@@ -118,6 +118,7 @@ describe('OAI-PMH', () => {
         });
         InventoryNewHoldings.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(3000);
 
         // Step 10-11: View source and note UUID (UUID already in marcInstance.id)
         // Step 12: Send OAI-PMH ListIdentifiers request with "Transfer suppressed records" setting
@@ -135,6 +136,7 @@ describe('OAI-PMH', () => {
         );
         Behavior.clickSave();
         InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+        cy.wait(3000);
 
         // Step 14: Send OAI-PMH request again - verify suppressed record is NOT present
         cy.getAdminToken();
