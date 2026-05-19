@@ -47,7 +47,7 @@ describe(
           BulkEditLogs.verifyLogsPane();
           const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
           recordTypes.forEach((recordType) => BulkEditLogs.checkLogsCheckbox(recordType));
-          cy.wait(5000);
+          cy.wait(3000);
           BulkEditLogs.verifyUserAccordionCollapsed();
           BulkEditLogs.clickLogsStartedAccordion();
           BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
