@@ -134,3 +134,12 @@ Cypress.Commands.add('getFrontEndBaseUrlViaApi', () => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getPasswordResetConfigViaApi', () => {
+  const query = '(module=="USERSBL" AND configName=="resetPassword" AND code=="FOLIO_HOST")';
+  cy.okapiRequest({
+    method: 'GET',
+    path: `configurations/entries?query=${encodeURIComponent(query)}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
