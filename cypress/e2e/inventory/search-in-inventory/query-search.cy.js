@@ -3,8 +3,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES } from '../../../support/constants';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import topMenu from '../../../support/fragments/topMenu';
 
 let userId;
 const item = {
@@ -20,7 +19,10 @@ describe('Inventory', () => {
     before('create inventory instance', () => {
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: topMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.createInstanceViaApi(
           item.instanceName,
           item.itemBarcode,
@@ -28,7 +30,6 @@ describe('Inventory', () => {
           item.holdingCallNumber,
           item.itemCallNumber,
         );
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       });
     });
 
@@ -39,7 +40,6 @@ describe('Inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
       InventoryInstances.resetAllFilters();
     });
 

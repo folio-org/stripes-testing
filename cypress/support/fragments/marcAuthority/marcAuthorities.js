@@ -128,7 +128,7 @@ const authoritySourceOptions = [
 const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
-const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
+export const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
 const valid008FieldValues = {
   'Cat Rules': 'c',
   'Geo Subd': 'n',
