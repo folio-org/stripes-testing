@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import { EHoldingsResourceEdit, EHoldingsResourceView } from '../../../support/fragments/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -14,6 +15,10 @@ describe('eHoldings', () => {
     before('Create user and login', () => {
       cy.getAdminToken();
       EHoldingsResourceEdit.removeCustomEmbargoViaAPI(testData.resourceId);
+      EHoldingsTitle.changeResourceSelectionStatusViaApi({
+        resourceId: testData.resourceId,
+        isSelected: true,
+      });
 
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,

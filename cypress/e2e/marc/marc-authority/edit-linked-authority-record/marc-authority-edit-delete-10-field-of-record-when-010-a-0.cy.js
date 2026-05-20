@@ -24,7 +24,7 @@ describe('MARC', () => {
         field010Value: '$a n  91074080 ',
         new010tagValue: '01',
         searchOption: 'Keyword',
-        searchValue: 'Roberts',
+        searchValue: 'C374161 Roberts',
         authorityTitle: 'C374161 Roberts, Julia, 1967-',
         instanceTitle: 'Runaway bride',
         linked700Field: [
@@ -62,7 +62,7 @@ describe('MARC', () => {
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
             InventoryInstances.deleteFullInstancesByTitleViaApi(testData.instanceTitle);
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374161');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374161 ');
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -124,11 +124,12 @@ describe('MARC', () => {
       });
 
       after('Delete test data', () => {
+        cy.wait(2000);
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
         Users.deleteViaApi(testData.preconditionUserId);
         createdRecordIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
           else InventoryInstance.deleteInstanceViaApi(id);
         });
       });
@@ -141,6 +142,7 @@ describe('MARC', () => {
 
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthorities.getViewPaneContent();
+          MarcAuthorities.verifyViewPaneContent(`$a ${testData.searchValue}`);
           MarcAuthority.edit();
           cy.wait(2000);
           QuickMarcEditor.checkContent(testData.field010Value, testData.tag010RowIndex);
@@ -166,7 +168,8 @@ describe('MARC', () => {
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.checkResultList([testData.authorityTitle]);
 
-          MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+          MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.authorityTitle, '1');
+          MarcAuthorities.clickNumberOfTitlesByHeading(testData.authorityTitle);
           InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
 
           InventoryInstance.editMarcBibliographicRecord();
@@ -194,6 +197,7 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthorities.verifyViewPaneContentExists();
+          MarcAuthorities.verifyViewPaneContent(`$a ${testData.searchValue}`);
 
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(testData.field010Value, testData.tag010RowIndex);
@@ -205,7 +209,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.pressSaveAndClose({ acceptDeleteModal: true });
           MarcAuthorities.waitLoading();
-          MarcAuthorities.verifyViewPaneContentAbsent(testData.tag010);
+          MarcAuthorities.verifyViewPaneContent(`$a ${testData.searchValue}`);
+          MarcAuthorities.verifyViewPaneContentAbsent(`${testData.tag010}\t`);
         },
       );
     });
