@@ -4,6 +4,7 @@ import { Addresses } from '../../../support/fragments/settings/tenant/general';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import AddressesConfig from '../../../support/fragments/settings/tenant/addressesConfig';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -33,15 +34,9 @@ describe('Settings: Tenant', () => {
     cy.getAdminToken().then(() => {
       // Failsafe: delete the address if it still exists in case the test failed before the delete step
       [testData.address.name, testData.updatedAddress.name].forEach((name) => {
-        cy.okapiRequest({
-          method: 'GET',
-          path: 'tenant-addresses',
-          searchParams: { query: `name=="${name}"` },
-          isDefaultSearchParamsRequired: false,
-          failOnStatusCode: false,
-        }).then(({ body }) => {
-          if (body && body.addresses && body.addresses.length) {
-            Addresses.deleteAddressViaApi({ id: body.addresses[0].id });
+        AddressesConfig.getAddressesViaApi({ query: `name=="${name}"` }).then((addresses) => {
+          if (addresses.length) {
+            Addresses.deleteAddressViaApi({ id: addresses[0].id });
           }
         });
       });
