@@ -1,3 +1,14 @@
+const getOrCreateMap = (flow, key) => flow.get(key) || new Map();
+
+const setMapEntry = (flow, key, id, value, cleanup) => {
+  const currentMap = getOrCreateMap(flow, key);
+  flow.set(key, currentMap.set(id, value), cleanup);
+};
+
+const getMapValues = (flow, key) => Array.from(getOrCreateMap(flow, key).values());
+
+const getMapKeys = (flow, key) => Array.from(getOrCreateMap(flow, key).keys());
+
 export class ExecutionFlowManager {
   /**
    * Stores execution context values and optional cleanup callbacks.
@@ -14,6 +25,15 @@ export class ExecutionFlowManager {
    */
   get context() {
     return this._ctx;
+  }
+
+  static get utils() {
+    return {
+      getOrCreateMap,
+      setMapEntry,
+      getMapValues,
+      getMapKeys,
+    };
   }
 
   /**
