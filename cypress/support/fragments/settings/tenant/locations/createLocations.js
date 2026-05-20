@@ -78,6 +78,7 @@ export default {
   },
   saveAndClose() {
     cy.do(Button({ id: 'clickable-save-location' }).click());
+    cy.wait(1000);
   },
   saveAndCloseSuccessfully() {
     cy.do(Button({ id: 'clickable-save-location' }).click());
