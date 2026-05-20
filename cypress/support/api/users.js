@@ -18,8 +18,10 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getAdminUserDetails', () => {
-  if (!Cypress.env('adminUserDetails')) {
+Cypress.Commands.add('getAdminUserDetails', (options = {}) => {
+  const { force = false } = options;
+
+  if (force || !Cypress.env('adminUserDetails')) {
     return cy
       .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
       .then((users) => {

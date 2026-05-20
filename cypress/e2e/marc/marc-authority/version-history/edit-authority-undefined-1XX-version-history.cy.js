@@ -103,10 +103,12 @@ describe('MARC', () => {
           // Step 3: Update existing 100 to undefined 199 field
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag199);
           QuickMarcEditor.updateExistingField(testData.tag199, testData.undefinedFieldContent);
+          QuickMarcEditor.checkContentByTag(testData.tag199, testData.undefinedFieldContent);
 
           // Step 4: Click "Save & keep close" button - should show warning
           QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyValidationCallout(1, 0);
+          QuickMarcEditor.closeAllCallouts();
 
           // Verify warning message appears for field 199
           QuickMarcEditor.checkWarningMessageForFieldByTag(
@@ -117,16 +119,22 @@ describe('MARC', () => {
           // Step 5: Click "Save & keep editing" button
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.waitLoading();
 
+          cy.wait(2000); // wait for record to be fully loaded
           QuickMarcEditor.checkContentByTag(testData.tag199, testData.undefinedFieldContent);
 
           // Step 6: Update 199 field with indicators and additional subfields
           QuickMarcEditor.updateExistingField(testData.tag199, testData.updatedContent);
-          cy.wait(1000);
           QuickMarcEditor.updateIndicatorValue(testData.tag199, '2', 0);
-          cy.wait(1000);
           QuickMarcEditor.updateIndicatorValue(testData.tag199, '3', 1);
+          QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(
+            testData.tag199,
+            '2',
+            '3',
+            testData.updatedContent,
+          );
 
           // Step 7: Click "Save & close" button (with validation warnings)
           QuickMarcEditor.saveAndCloseWithValidationWarnings();
@@ -192,12 +200,12 @@ describe('MARC', () => {
           VersionHistorySection.checkChangeInModal(
             VersionHistorySection.fieldActions.EDITED,
             '199',
-            '1  $a Undefined 1XX field',
-            '23 $a Undefined 1XX field',
+            `1  ${testData.undefinedFieldContent}`,
+            `23 ${testData.updatedContent}`,
           );
 
           // Step 14: Verify modal has correct number of changes
-          VersionHistorySection.checkChangesCountInModal(1);
+          VersionHistorySection.checkChangesCountInModal(2);
 
           // Step 15: Close modal
           VersionHistorySection.closeChangesModal();
