@@ -15,8 +15,8 @@ function splitTestsOnChunks(numberOfThreads, grepTags, envVars = '', printSpecs 
 
   const specFiles = globby.sync('cypress/e2e/**/*.cy.js');
   const testSpecs = [];
-  const chunks = Array.from({ length: numberOfThreads }, (_) => ({ totalDuration: 0, testIds: [] }));
-  const chunksWithSpecFiles = Array.from({ length: numberOfThreads }, (_) => ({ totalDuration: 0, testSpecFiles: [] }));
+  let chunks = Array.from({ length: numberOfThreads }, (_) => ({ totalDuration: 0, testIds: [] }));
+  let chunksWithSpecFiles = Array.from({ length: numberOfThreads }, (_) => ({ totalDuration: 0, testSpecFiles: [] }));
   specFiles.forEach((specFile) => {
     const testsInSpecFile = [];
     const text = fs.readFileSync(specFile, { encoding: 'utf8' });
@@ -88,6 +88,9 @@ function splitTestsOnChunks(numberOfThreads, grepTags, envVars = '', printSpecs 
   fileJson.specs = [];
 
   console.log(`\nTotal number of tests: ${testSpecs.reduce((acc, val) => acc + val.ids.length, 0)}\n`);
+
+  chunks = chunks.filter((chunk) => chunk.testIds.length > 0);
+  chunksWithSpecFiles = chunksWithSpecFiles.filter((chunk) => chunk.testSpecFiles.length > 0);
 
   console.log(`Number of chunks: ${chunks.length}\n`);
   chunks.forEach((chunk, index) => {
