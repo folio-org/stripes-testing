@@ -130,7 +130,6 @@ describe('Inventory', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
         Users.deleteViaApi(testData.user.userId);
       });

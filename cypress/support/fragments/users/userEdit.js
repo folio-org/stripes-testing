@@ -32,10 +32,13 @@ import {
   TextField,
   ValueChipRoot,
   matching,
+  Row,
+  Datepicker,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import { CUSTOM_FIELD_TYPES } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -104,7 +107,7 @@ const preferableServicePointSelect = Select({ id: 'servicePointPreference' });
 const barcodeField = TextField({ id: 'adduser_barcode' });
 const emailField = TextField({ id: 'adduser_email' });
 const expirationDateField = TextField({ id: 'adduser_expirationdate' });
-const birthDateField = TextField({ id: 'adduser_dateofbirth' });
+const birthDateField = Datepicker({ id: 'adduser_dateofbirth' });
 const phoneField = TextField({ id: 'adduser_phone' });
 const mobilePhoneField = TextField({ id: 'adduser_mobilePhone' });
 const addressSelect = Select({ id: 'adduser_group' });
@@ -126,6 +129,12 @@ const promoteUserModalText = 'This operation will create new record in Keycloak 
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
 const pronounsField = TextField('Pronouns');
+const dateEnrolledField = Datepicker('Date enrolled');
+const deliveryCheckbox = Checkbox('Delivery');
+const fulfillmentPreferenceSelect = Select('Fulfillment preference');
+const defaultDeliveryAddressSelect = Select({ label: including('Default delivery address') });
+const defaultPickupServicePointSelect = Select('Default pickup service point');
+const departmentNameMultiSelect = MultiSelect({ label: 'Department name' });
 
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
@@ -136,11 +145,114 @@ const preferredEmailCommunicationsSelect = MultiSelect({
 });
 const resetExpirationDateButton = Button('Reset');
 const resetExpirationDateModal = Modal('Set expiration date?');
+const recalculateExpirationDateButton = Button({ id: 'expirationDate-modal-recalculate-btn' });
 const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
 const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
+
+const clickSetExpirationDate = () => {
+  cy.expect(resetExpirationDateModal.exists());
+  cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
+  cy.expect(resetExpirationDateModal.absent());
+};
+
+const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
+
+const getCustomFieldInteractor = (accordionLabel, customField) => {
+  const accordion = getAccordionByLabel(accordionLabel);
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      return accordion.find(Checkbox(customField.name));
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      return accordion.find(Datepicker({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN:
+      return accordion.find(MultiSelect({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      return accordion.find(RadioButtonGroup({ label: including(customField.name) }));
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      return accordion.find(Select({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      return accordion.find(TextArea({ label: customField.name }));
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      return accordion.find(TextField({ label: customField.name }));
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
+
+const fillCustomFieldValue = (accordionLabel, { customField, value }) => {
+  const fieldInteractor = getCustomFieldInteractor(accordionLabel, customField);
+
+  cy.expect(fieldInteractor.exists());
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      cy.do(value ? fieldInteractor.checkIfNotSelected() : fieldInteractor.uncheckIfSelected());
+      break;
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN:
+      cy.do(fieldInteractor.set(value));
+      break;
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      cy.do(fieldInteractor.choose(value));
+      break;
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      cy.do(fieldInteractor.choose(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      cy.do(fieldInteractor.fillIn(value));
+      break;
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
+
+const verifyCustomFieldValue = (accordionLabel, { customField, value }) => {
+  const fieldInteractor = getCustomFieldInteractor(accordionLabel, customField);
+
+  switch (customField.type) {
+    case CUSTOM_FIELD_TYPES.SINGLE_CHECKBOX:
+      cy.expect(fieldInteractor.has({ checked: value }));
+      break;
+    case CUSTOM_FIELD_TYPES.DATE_PICKER:
+      cy.expect(fieldInteractor.has({ inputValue: value }));
+      break;
+    case CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN: {
+      const expectedValues = [].concat(value);
+      const multiSelectInteractor = getAccordionByLabel(accordionLabel).find(
+        MultiSelect({ label: customField.name, selectedCount: expectedValues.length }),
+      );
+
+      cy.expect(multiSelectInteractor.exists());
+      expectedValues.forEach((expectedValue) => {
+        cy.expect(multiSelectInteractor.has({ selected: including(expectedValue) }));
+      });
+      break;
+    }
+    case CUSTOM_FIELD_TYPES.RADIO_BUTTON:
+      cy.expect(fieldInteractor.find(RadioButton(value, { checked: true })).exists());
+      break;
+    case CUSTOM_FIELD_TYPES.SINGLE_SELECT_DROPDOWN:
+      cy.expect(fieldInteractor.checkedOptionText(value));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_LONG:
+      cy.expect(fieldInteractor.has({ value }));
+      break;
+    case CUSTOM_FIELD_TYPES.TEXTBOX_SHORT:
+      cy.expect(fieldInteractor.has({ value }));
+      break;
+    default:
+      throw new Error(`Unsupported custom field type: ${customField.type}`);
+  }
+};
 
 Cypress.Commands.add('getUserServicePoints', (userId) => {
   cy.okapiRequest({
@@ -175,9 +287,10 @@ export default {
   addServicePointsViaApi,
 
   openEdit() {
-    cy.wait(1000);
-    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
-    cy.wait(2000);
+    cy.expect(userDetailsPane.find(actionsButton).exists());
+    cy.do(userDetailsPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().find(editButton).exists());
+    cy.do(editButton.click());
     cy.expect(rootPane.exists());
     cy.wait(3000);
   },
@@ -227,10 +340,12 @@ export default {
 
   changeExternalSystemId(externalSystemId) {
     cy.do(externalSystemIdTextfield.fillIn(externalSystemId));
+    cy.expect(externalSystemIdTextfield.has({ value: externalSystemId }));
   },
 
   changeBirthDate(birthDate) {
     cy.do(birthDateField.fillIn(birthDate));
+    cy.expect(birthDateField.has({ inputValue: birthDate }));
   },
 
   changePhone(phone) {
@@ -338,13 +453,31 @@ export default {
     cy.do(barcodeField.clear());
   },
 
+  clearUsername() {
+    cy.do(usernameField.clear());
+  },
+
+  verifyUsernameAlreadyExistsError() {
+    cy.expect(
+      usernameField.has({
+        error: 'This username already exists',
+        errorBorder: true,
+        errorIcon: true,
+      }),
+    );
+  },
+
   changeStatus(status) {
     cy.do(statusSelect.choose(status));
   },
 
-  changePatronGroup(patronGroup) {
+  changePatronGroup(patronGroup, { shouldSetExpirationDate = false } = {}) {
     cy.do(addressSelect.choose(patronGroup));
     cy.wait(500);
+    // Expiration date modal appears for only some patron groups based on their settings, so we need to check if it appears and click "Set" if it does
+    if (shouldSetExpirationDate) {
+      clickSetExpirationDate();
+    }
   },
 
   searchForPermission(permission) {
@@ -660,6 +793,13 @@ export default {
     cy.expect(rootPane.absent());
   },
 
+  saveNewUser() {
+    cy.intercept('POST', /\/users(?:$|\?.*)|\/users-keycloak\/users(?:$|\?.*)/).as('createUser');
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
+    return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => response.body.id);
+  },
+
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
@@ -783,7 +923,11 @@ export default {
   },
 
   addAddress(type = 'Home') {
-    cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+    cy.expect(Button('Add address').exists());
+    cy.do(Button('Add address').click());
+    cy.expect(Select('Address Type*').exists());
+    cy.do(Select('Address Type*').choose(type));
+    cy.expect(Select('Address Type*').checkedOptionText(type));
   },
 
   addAddressWithCountry(type = 'Home', country = 'Australia') {
@@ -992,6 +1136,82 @@ export default {
     cy.expect(HTML(data.helpText).exists());
   },
 
+  verifyTextFieldCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextField({ label: fieldLabel })).exists());
+  },
+
+  verifyTextAreaCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextArea({ label: fieldLabel })).exists());
+  },
+
+  verifyCheckboxCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Checkbox(fieldLabel)).exists());
+  },
+
+  verifyDatePickerCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Datepicker({ label: fieldLabel })).exists());
+  },
+
+  verifyMultiSelectCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(MultiSelect({ label: fieldLabel })).exists());
+  },
+
+  verifyDatePickerCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Datepicker({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyMultiSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(MultiSelect({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyRadioButtonCustomFieldExists(fieldLabel) {
+    cy.expect(
+      customFieldsAccordion.find(RadioButtonGroup({ label: including(fieldLabel) })).exists(),
+    );
+  },
+
+  verifyRadioButtonCustomFieldDefaultValue(fieldLabel, optionLabel) {
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup({ label: including(fieldLabel) }))
+        .find(RadioButton(optionLabel, { checked: true }))
+        .exists(),
+    );
+  },
+
+  verifySingleSelectCustomFieldExists(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Select({ label: fieldLabel })).exists());
+  },
+
+  verifySingleSelectCustomFieldDefaultValue(fieldLabel, optionLabel) {
+    cy.expect(
+      customFieldsAccordion.find(Select({ label: fieldLabel })).checkedOptionText(optionLabel),
+    );
+  },
+
+  verifyMultiSelectCustomFieldDefaultValues(fieldLabel, optionLabels) {
+    const multiSelect = customFieldsAccordion.find(
+      MultiSelect({ label: fieldLabel, selectedCount: optionLabels.length }),
+    );
+
+    cy.expect(multiSelect.exists());
+    optionLabels.forEach((optionLabel) => {
+      cy.expect(multiSelect.has({ selected: including(optionLabel) }));
+    });
+  },
+
+  verifySingleSelectCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(Select({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextAreaCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextArea({ label: `${fieldLabel}*` })).exists());
+  },
+
+  verifyTextFieldCustomFieldRequired(fieldLabel) {
+    cy.expect(customFieldsAccordion.find(TextField({ label: `${fieldLabel}*` })).exists());
+  },
+
   verifyUserTypeItems() {
     cy.expect([
       selectUserType.has({ content: including('Patron') }),
@@ -999,17 +1219,16 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi: (userData, patronGroup) => {
+  enterValidValueToCreateViaUi(userData, patronGroup, { shouldSetExpirationDate = false } = {}) {
     cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
     cy.do([
       lastNameField.fillIn(userData.personal.lastName),
       barcodeField.fillIn(userData.barcode),
       usernameField.fillIn(userData.username),
       emailField.fillIn(userData.personal.email),
-      addressSelect.choose(patronGroup),
-      setExpirationDateButton.click(),
-      saveAndCloseBtn.click(),
     ]);
+    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
     });
@@ -1087,15 +1306,50 @@ export default {
     ]);
   },
 
-  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
+  fillRequiredFields(
+    userLastName,
+    patronGroup,
+    email,
+    userType = null,
+    userName = null,
+    { shouldSetExpirationDate = false } = {},
+  ) {
     if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
-    cy.do([
-      lastNameField.fillIn(userLastName),
-      addressSelect.choose(patronGroup),
-      emailField.fillIn(email),
-    ]);
+    cy.do(lastNameField.fillIn(userLastName));
+    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    cy.do(emailField.fillIn(email));
     cy.wait(2000);
+  },
+
+  verifyAccordionsPresent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).exists());
+    });
+  },
+
+  verifyAccordionsAbsent(accordionLabels) {
+    [].concat(accordionLabels).forEach((accordionLabel) => {
+      cy.expect(getAccordionByLabel(accordionLabel).absent());
+    });
+  },
+
+  verifyCustomFieldsPresentInAccordion(accordionLabel, customFields) {
+    customFields.forEach((customField) => {
+      cy.expect(getCustomFieldInteractor(accordionLabel, customField).exists());
+    });
+  },
+
+  fillCustomFieldsInAccordion(accordionLabel, customFieldValues) {
+    customFieldValues.forEach((customFieldValue) => {
+      fillCustomFieldValue(accordionLabel, customFieldValue);
+    });
+  },
+
+  verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues) {
+    customFieldValues.forEach((customFieldValue) => {
+      verifyCustomFieldValue(accordionLabel, customFieldValue);
+    });
   },
 
   checkUserEditPaneOpened(isOpened = true) {
@@ -1127,6 +1381,11 @@ export default {
 
   verifyUserRolesCounter(expectedCount) {
     cy.expect(userRolesAccordion.has({ counter: `${expectedCount}` }));
+  },
+
+  dismissResetLinkModal() {
+    cy.do(resetPasswordModal.dismiss());
+    cy.expect(resetPasswordModal.absent());
   },
 
   clickUserRolesAccordion(isExpanded = true, isEditable = true) {
@@ -1554,5 +1813,148 @@ export default {
   checkRolesAffiliationDropdownShown(isShown = true) {
     if (isShown) cy.expect(rolesAffiliationSelect.exists());
     else cy.expect(rolesAffiliationSelect.absent());
+  },
+
+  changeDateEnrolled(date) {
+    cy.do(dateEnrolledField.fillIn(date));
+    cy.expect(dateEnrolledField.has({ inputValue: date }));
+  },
+
+  checkDeliveryCheckbox() {
+    cy.do(deliveryCheckbox.click());
+    cy.expect(deliveryCheckbox.has({ checked: true }));
+  },
+
+  uncheckDeliveryCheckbox() {
+    cy.do(deliveryCheckbox.click());
+    cy.expect(deliveryCheckbox.has({ checked: false }));
+  },
+
+  verifyFulfillmentPreferenceDisabled(isDisabled = false) {
+    cy.expect(fulfillmentPreferenceSelect.has({ disabled: isDisabled }));
+  },
+
+  verifyFulfillmentPreferenceValue(value) {
+    cy.expect(fulfillmentPreferenceSelect.has({ value }));
+  },
+
+  verifyDefaultDeliveryAddressDisabled(isDisabled = false) {
+    cy.expect(defaultDeliveryAddressSelect.has({ disabled: isDisabled }));
+  },
+
+  verifyDefaultDeliveryAddressValue(value) {
+    cy.expect(defaultDeliveryAddressSelect.checkedOptionText(value));
+  },
+
+  chooseFulfillmentPreference(value) {
+    cy.do(fulfillmentPreferenceSelect.choose(value));
+    this.verifyFulfillmentPreferenceValue(value);
+  },
+
+  chooseDefaultDeliveryAddress(value) {
+    cy.do(defaultDeliveryAddressSelect.choose(value));
+    this.verifyDefaultDeliveryAddressValue(value);
+  },
+
+  chooseDefaultPickupServicePoint(value) {
+    cy.do(defaultPickupServicePointSelect.choose(value));
+    cy.expect(defaultPickupServicePointSelect.checkedOptionText(value));
+  },
+
+  selectDepartments(departments) {
+    cy.do(departmentNameMultiSelect.choose(departments));
+    cy.expect(departmentNameMultiSelect.selectedCount(departments.length));
+  },
+
+  clickFulfillmentPreferenceInfoIcon() {
+    cy.do(fulfillmentPreferenceSelect.clickInfoButton());
+  },
+
+  verifyFulfillmentPreferenceTooltip() {
+    cy.expect(
+      HTML(
+        including(
+          'Select the Delivery checkbox to choose Fulfillment preference and Default delivery address.',
+        ),
+      ).exists(),
+    );
+  },
+
+  verifyExtendedInformationFieldsInEditMode({
+    dateEnrolled,
+    externalSystemId,
+    birthDate,
+    folioNumber,
+    holdShelfChecked = false,
+    deliveryChecked = false,
+    defaultPickupServicePoint,
+    fulfillmentPreference,
+    fulfillmentPreferenceDisabled = true,
+    defaultDeliveryAddress,
+    defaultDeliveryAddressDisabled = true,
+    departments,
+    username,
+  }) {
+    const row = (index) => extendedInformationAccordion.find(Row({ index }));
+
+    // First row
+    const _dateEnrolledField = row(0).find(dateEnrolledField);
+    const _externalSystemId = row(0).find(externalSystemIdTextfield);
+    const _birthDate = row(0).find(birthDateField);
+    const _folioNumber = row(0).find(HTML('Folio number'));
+    const folioNumberValue = row(0).find(HTML(folioNumber));
+    cy.expect([
+      dateEnrolled
+        ? _dateEnrolledField.has({ inputValue: dateEnrolled })
+        : _dateEnrolledField.exists(),
+      externalSystemId
+        ? _externalSystemId.has({ value: externalSystemId })
+        : _externalSystemId.exists(),
+      birthDate ? _birthDate.has({ inputValue: birthDate }) : _birthDate.exists(),
+      _folioNumber.exists(),
+      folioNumberValue.exists(),
+    ]);
+
+    // Second row
+    const defaultPickupServicePointField = row(1).find(defaultPickupServicePointSelect);
+    const fulfillmentPreferenceField = row(1).find(fulfillmentPreferenceSelect);
+    const defaultDeliveryAddressField = row(1).find(defaultDeliveryAddressSelect);
+    cy.expect([
+      row(1)
+        .find(
+          Checkbox({
+            name: 'requestPreferences.holdShelf',
+            disabled: true,
+            checked: holdShelfChecked,
+          }),
+        )
+        .exists(),
+      row(1)
+        .find(Checkbox({ name: 'requestPreferences.delivery', checked: deliveryChecked }))
+        .exists(),
+      defaultPickupServicePoint
+        ? defaultPickupServicePointField.checkedOptionText(defaultPickupServicePoint)
+        : defaultPickupServicePointField.exists(),
+      fulfillmentPreference && fulfillmentPreferenceField.checkedOptionText(fulfillmentPreference),
+      fulfillmentPreferenceField.has({
+        hasInfoButton: true,
+        disabled: fulfillmentPreferenceDisabled,
+      }),
+      defaultDeliveryAddress &&
+        defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
+      defaultDeliveryAddressField.has({ disabled: defaultDeliveryAddressDisabled }),
+    ]);
+
+    // Third row
+    const departmentMultiSelectField = row(2).find(departmentNameMultiSelect);
+    cy.expect(
+      departments
+        ? departmentMultiSelectField.selectedCount(departments.length)
+        : departmentMultiSelectField.exists(),
+    );
+
+    // Fourth row
+    const _usernameField = row(3).find(usernameField);
+    cy.expect([username ? _usernameField.has({ value: username }) : _usernameField.exists()]);
   },
 };

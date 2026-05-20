@@ -394,7 +394,7 @@ describe('Data Import', () => {
           testData.searchOption,
           `${testData.authorityHeading} UPDATED`,
         );
-        MarcAuthorities.selectTitle(`Shared\n${testData.authorityHeading} UPDATED`);
+        MarcAuthorities.selectTitle(`${testData.authorityHeading} UPDATED`);
 
         // Step 8. Go to Inventory, open the linked instance - verify FOLIO fields are not cleared
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

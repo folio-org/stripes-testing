@@ -88,6 +88,7 @@ describe('MARC', () => {
           let user;
           let createdAuthorityIdCentral;
           let createdAuthorityIdCollege;
+          let createdInstanceId;
 
           before('Create test data', () => {
             cy.resetTenant();
@@ -188,74 +189,81 @@ describe('MARC', () => {
               QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndClose();
               InventoryInstance.verifyInstanceTitle(bibTitle);
-              InventoryInstance.checkAuthorityAppIconInSection(
-                testData.contributorSectionId,
-                linkedContributorValue,
-                true,
-              );
+              InventoryInstance.getId().then((instanceId) => {
+                createdInstanceId = instanceId;
 
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventoryInstances.waitContentLoading();
+                InventoryInstance.checkAuthorityAppIconInSection(
+                  testData.contributorSectionId,
+                  linkedContributorValue,
+                  true,
+                );
 
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-              MarcAuthorities.waitLoading();
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+                InventoryInstances.waitContentLoading();
 
-              MarcAuthorities.searchBeats(authorityHeadingCollege);
-              MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCollege, '');
-              MarcAuthority.verifyLocalAuthorityDetailsHeading(authorityHeadingCollege);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+                MarcAuthorities.waitLoading();
 
-              MarcAuthorities.searchBeats(authorityHeadingCentral);
-              MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCentral, '1');
-              MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthorities.searchBeats(authorityHeadingCollege);
+                MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCollege, '');
+                MarcAuthority.verifyLocalAuthorityDetailsHeading(authorityHeadingCollege);
 
-              MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingCentral);
-              InventoryInstance.waitInstanceRecordViewOpened();
-              InventoryInstance.verifyInstanceTitle(bibTitle);
-              InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.MARC);
-              InventoryInstance.checkAuthorityAppIconInSection(
-                testData.contributorSectionId,
-                linkedContributorValue,
-                true,
-              );
-              InventoryInstance.checkAuthorityAppIconInSection(
-                testData.contributorSectionId,
-                notLinkedContributorValue,
-                false,
-              );
+                MarcAuthorities.searchBeats(authorityHeadingCentral);
+                MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCentral, '1');
+                MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
-              InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
-                testData.contributorsAccordionName,
-              );
-              MarcAuthorities.waitLoading();
-              MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingCentral);
+                InventoryInstance.waitInstanceRecordViewOpened();
+                InventoryInstance.verifyInstanceTitle(bibTitle);
+                InventoryInstance.verifySourceInAdministrativeData(INSTANCE_SOURCE_NAMES.MARC);
+                InventoryInstance.checkAuthorityAppIconInSection(
+                  testData.contributorSectionId,
+                  linkedContributorValue,
+                  true,
+                );
+                InventoryInstance.checkAuthorityAppIconInSection(
+                  testData.contributorSectionId,
+                  notLinkedContributorValue,
+                  false,
+                );
 
-              InventoryInstance.goToPreviousPage();
-              InventoryInstance.waitInstanceRecordViewOpened();
-              InventoryInstance.verifyInstanceTitle(bibTitle);
-              InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
-                testData.contributorsAccordionName,
-              );
-              MarcAuthorities.waitLoading();
-              MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
+                  testData.contributorsAccordionName,
+                );
+                MarcAuthorities.waitLoading();
+                MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
-              InventoryInstance.goToPreviousPage();
-              InventoryInstance.waitInstanceRecordViewOpened();
-              InventoryInstance.verifyInstanceTitle(bibTitle);
-              InventoryInstance.viewSource();
-              InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
+                cy.visit(`inventory/view/${createdInstanceId}`);
+                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
+                InventoryInstance.verifyInstanceTitle(bibTitle);
+                InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
+                  testData.contributorsAccordionName,
+                );
+                MarcAuthorities.waitLoading();
+                MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
 
-              InventoryViewSource.clickViewMarcAuthorityIcon();
-              MarcAuthorities.waitLoading();
-              MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                cy.visit(`inventory/view/${createdInstanceId}`);
+                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
+                InventoryInstance.verifyInstanceTitle(bibTitle);
+                InventoryInstance.viewSource();
+                InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
 
-              InventoryInstance.goToPreviousPage();
-              InventoryInstance.waitInstanceRecordViewOpened();
-              InventoryInstance.verifyInstanceTitle(bibTitle);
-              InventoryInstance.viewSource();
-              InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
-              InventoryViewSource.clickViewMarcAuthorityIcon();
-              MarcAuthorities.waitLoading();
-              MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                InventoryViewSource.clickViewMarcAuthorityIcon();
+                MarcAuthorities.waitLoading();
+                MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+
+                cy.visit(`inventory/view/${createdInstanceId}`);
+                InventoryInstance.waitLoading();
+                InventoryInstance.waitInstanceRecordViewOpened();
+                InventoryInstance.verifyInstanceTitle(bibTitle);
+                InventoryInstance.viewSource();
+                InventoryViewSource.verifyLinkedToAuthorityIcon(linkedFieldData.rowIndex);
+                InventoryViewSource.clickViewMarcAuthorityIcon();
+                MarcAuthorities.waitLoading();
+                MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+              });
             },
           );
         });

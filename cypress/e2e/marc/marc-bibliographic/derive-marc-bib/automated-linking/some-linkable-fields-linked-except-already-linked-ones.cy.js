@@ -44,7 +44,7 @@ describe('MARC', () => {
             tag: 700,
             boxFourth: '$a C388643 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n83169267',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n83169267388643',
             boxSeventh: '',
           },
           {
@@ -55,7 +55,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C388643 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
             boxFifth: '',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425388643',
             boxSeventh: '',
           },
           {
@@ -64,7 +64,7 @@ describe('MARC', () => {
             tag: 730,
             boxFourth: '$a C388643 Gone with the wind $g (Motion picture : $f 1939)',
             boxFifth: '',
-            boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095',
+            boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095388643',
             boxSeventh: '',
           },
         ];
@@ -73,42 +73,42 @@ describe('MARC', () => {
           {
             rowIndex: 32,
             tag: '100',
-            naturalId: 'n2008001084',
+            naturalId: 'n2008001084388643',
           },
           {
             rowIndex: 33,
             tag: '240',
-            naturalId: 'no2020024230',
+            naturalId: 'no2020024230388643',
           },
           {
             rowIndex: 61,
             tag: '600',
-            naturalId: 'n2016004081',
+            naturalId: 'n2016004081388643',
           },
           {
             rowIndex: 58,
             tag: '630',
-            naturalId: 'no2023006889',
+            naturalId: 'no2023006889388643',
           },
           {
             rowIndex: 69,
             tag: '655',
-            naturalId: 'gf2014026266',
+            naturalId: 'gf2014026266388643',
           },
           {
             rowIndex: 84,
             tag: '710',
-            naturalId: 'no2008081921',
+            naturalId: 'no2008081921388643',
           },
           {
             rowIndex: 87,
             tag: '800',
-            naturalId: 'n79023811',
+            naturalId: 'n79023811388643',
           },
           {
             rowIndex: 90,
             tag: '830',
-            naturalId: 'no2018018754',
+            naturalId: 'no2018018754388643',
           },
         ];
 
@@ -116,32 +116,32 @@ describe('MARC', () => {
           {
             rowIndex: 56,
             tag: '610',
-            naturalId: 'nb20090244889',
+            naturalId: 'nb20090244889388643',
           },
           {
             rowIndex: 57,
             tag: '611',
-            naturalId: 'n822167579',
+            naturalId: 'n822167579388643',
           },
           {
             rowIndex: 63,
             tag: '650',
-            naturalId: 'sh20091259899',
+            naturalId: 'sh20091259899388643',
           },
           {
             rowIndex: 67,
             tag: '651',
-            naturalId: 'sh850015319',
+            naturalId: 'sh850015319388643',
           },
           {
             rowIndex: 88,
             tag: '810',
-            naturalId: 'n800955859',
+            naturalId: 'n800955859388643',
           },
           {
             rowIndex: 89,
             tag: '811',
-            naturalId: 'no20181255879',
+            naturalId: 'no20181255879388643',
           },
         ];
 

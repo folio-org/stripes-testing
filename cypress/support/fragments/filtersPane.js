@@ -64,7 +64,7 @@ export default {
    * FiltersPane.assertResetAllButtonState(ordersFiltersPane, { disabled: true });
    */
   assertResetAllButtonState(filtersPane, { disabled }) {
-    cy.expect(filtersPane.find(resetAllButton).has({ disabled: disabled.toString() }));
+    cy.expect(filtersPane.find(resetAllButton).has({ disabled }));
   },
 
   /**
@@ -562,5 +562,43 @@ export default {
    */
   collapseFilterAccordion(filtersPane, filterLabel) {
     this.setFilterAccordionExpanded(filtersPane, filterLabel, false);
+  },
+
+  /* Helpers */
+
+  buildMultiSelectFilterValuesAssertion(filtersPane) {
+    return (filterLabel, expectedValues, options = {}) => {
+      this.assertMultiSelectFilterValues(filtersPane, filterLabel, expectedValues, options);
+    };
+  },
+
+  buildMultiSelectFilterOptionsValuesAssertion(filtersPane) {
+    return (filterLabel, expectedOptions, options = {}) => {
+      this.assertMultiSelectFilterOptionsValues(filtersPane, filterLabel, expectedOptions, options);
+    };
+  },
+
+  buildCheckboxFilterValuesAssertion(filtersPane) {
+    return (filterLabel, labels, options = {}) => {
+      this.assertCheckboxFilterValues(filtersPane, filterLabel, labels, options);
+    };
+  },
+
+  buildSelectFilterValueAssertion(filtersPane) {
+    return (filterLabel, expectedValue, options = {}) => {
+      this.assertSelectFilterValue(filtersPane, filterLabel, expectedValue, options);
+    };
+  },
+
+  buildSelectionFilterValueAssertion(filtersPane) {
+    return (filterLabel, expectedValue, options = {}) => {
+      this.assertSelectionFilterValue(filtersPane, filterLabel, expectedValue, options);
+    };
+  },
+
+  buildDateRangeFilterValuesAssertion(filtersPane) {
+    return (filterLabel, expectedDates, options = {}) => {
+      this.assertDateRangeFilterValues(filtersPane, filterLabel, expectedDates, options);
+    };
   },
 };

@@ -1,6 +1,7 @@
 import { Button } from '../../../../interactors';
 
-const unsavedChangesModal = '//dialog[@data-testid="modal" and contains(@class, "modal-switch-to-new-record")]';
+const unsavedChangesModal =
+  '//dialog[@data-testid="modal" and contains(@class, "modal-switch-to-new-record")]';
 const modalOverlay = '//div[@data-testid="modal-overlay"]';
 const dismissButton = Button({ ariaLabel: 'Close Basic modal' });
 const continueWithoutSaveButton = Button({ dataTestID: 'modal-button-cancel' });
@@ -13,7 +14,10 @@ export default {
 
   checkButtonsEnabled() {
     cy.expect([dismissButton.exists(), dismissButton.is({ disabled: false })]);
-    cy.expect([continueWithoutSaveButton.exists(), continueWithoutSaveButton.is({ disabled: false })]);
+    cy.expect([
+      continueWithoutSaveButton.exists(),
+      continueWithoutSaveButton.is({ disabled: false }),
+    ]);
     cy.expect([saveButton.exists(), saveButton.is({ disabled: false })]);
   },
 
@@ -34,9 +38,7 @@ export default {
 
   clickOverlayToDismiss() {
     // eslint-disable-next-line cypress/no-force
-    cy.xpath(modalOverlay)
-      .should('be.visible')
-      .click('topLeft', { force: true });
+    cy.xpath(modalOverlay).should('be.visible').click('topLeft', { force: true });
     cy.wait(1000);
   },
 };

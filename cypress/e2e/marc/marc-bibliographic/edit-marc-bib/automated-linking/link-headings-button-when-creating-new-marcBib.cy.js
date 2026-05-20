@@ -1,5 +1,4 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
-import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
@@ -7,7 +6,6 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -56,8 +54,6 @@ describe('MARC', () => {
           },
         ];
 
-        let userData = {};
-
         const linkableFieldsForC388562 = [100, 240, 650];
 
         const marcFiles = [
@@ -81,8 +77,6 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
-          cy.getAdminToken();
-          // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422145*');
 
           marcFiles.forEach((marcFile) => {
@@ -97,24 +91,14 @@ describe('MARC', () => {
             });
           });
 
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          ]).then((createdUserProperties) => {
-            userData = createdUserProperties;
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
         });
 
         after('Deleting created users, Instances', () => {
           cy.getAdminToken();
-          Users.deleteViaApi(userData.userId);
           for (let i = 0; i < 8; i++) {
             MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
           }
@@ -131,7 +115,7 @@ describe('MARC', () => {
             newFieldsForC388562.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
             });
-            cy.getAdminToken();
+
             linkableFieldsForC388562.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });

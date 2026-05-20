@@ -1,5 +1,7 @@
+import { Select as SelectInteractor } from '@interactors/html';
 import moment from 'moment';
 import uuid from 'uuid';
+
 import {
   Accordion,
   Button,
@@ -25,10 +27,18 @@ import {
   SelectionOption,
   TextField,
 } from '../../../../interactors';
-import { INVOICE_STATUSES } from '../../constants';
+import {
+  INVOICE_RESULTS_ACTIONS_LABELS,
+  INVOICE_RESULTS_LIST_COLUMNS,
+  INVOICE_SEARCH_INDEX_LABELS,
+  INVOICE_STATUSES,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
+import FiltersPane from '../filtersPane';
+import MCLHelper from '../multiColumnList';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceStates from './invoiceStates';
 import SelectUser from './modal/selectUser';
@@ -50,6 +60,7 @@ const duplicateButton = Button('Duplicate');
 
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
+const invoiceResultsList = MultiColumnList({ id: 'invoices-list' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
@@ -77,6 +88,7 @@ const columnHeaderRoleSelector = '[role="columnheader"]';
 
 // filters
 // TODO: Move search&filters to separate file
+const searchIndexSelect = SelectInteractor({ id: 'input-record-search-qindex' });
 const resetButton = Button({ id: 'reset-invoice-filters' });
 const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
 const batchGroupFilterSection = Section({ id: 'batchGroupId' });
@@ -165,6 +177,7 @@ export default {
     accountingCode,
     fiscalYearId,
     batchGroupId,
+    invoiceDate,
     invoiceStatus,
     exportToAccounting,
     adjustments,
@@ -186,6 +199,7 @@ export default {
       currency,
       vendorId,
       accountingCode,
+      invoiceDate,
       invoiceStatus,
       exportToAccounting,
     });
@@ -1066,6 +1080,13 @@ export default {
     VoucherExportForm.downloadVoucher();
   },
 
+  clickExportResultsCSV() {
+    cy.do([
+      invoiceResultsHeaderPane.find(actionsButton).click(),
+      Button(INVOICE_RESULTS_ACTIONS_LABELS.EXPORT_CSV).click(),
+    ]);
+  },
+
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap
@@ -1087,6 +1108,10 @@ export default {
 
   waitLoading: () => {
     cy.expect(invoiceResultsPane.exists());
+  },
+
+  waitResultsListLoading() {
+    MCLHelper.waitLoadingComplete(invoiceResultsList);
   },
 
   selectInvoiceLine: () => {
@@ -1171,6 +1196,18 @@ export default {
     cy.wait(1500);
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  assertSearchIndexValue(searchIndexLabel) {
+    cy.expect(invoiceFiltersSection.find(searchIndexSelect).has({ value: searchIndexLabel }));
+  },
+
+  assertNoFiltersApplied() {
+    this.assertSearchIndexValue(INVOICE_SEARCH_INDEX_LABELS.ALL);
+    FiltersPane.assertResetAllButtonState(invoiceFiltersSection, { disabled: true });
+    cy.expect(
+      invoiceResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
+    );
   },
 
   editInvoiceLine: () => {
@@ -1662,5 +1699,21 @@ export default {
   selectDuplicateInvoice() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), duplicateButton.click()]);
     DuplicateInvoiceModal.verifyModalView();
+  },
+
+  assertInvoicesResultsListColumns() {
+    cy.expect(
+      invoiceResultsList.has({
+        columns: [
+          INVOICE_RESULTS_LIST_COLUMNS.VENDOR_INVOICE_NUMBER,
+          INVOICE_RESULTS_LIST_COLUMNS.VENDOR,
+          INVOICE_RESULTS_LIST_COLUMNS.INVOICE_DATE,
+          INVOICE_RESULTS_LIST_COLUMNS.STATUS,
+          INVOICE_RESULTS_LIST_COLUMNS.TOTAL_AMOUNT_SYSTEM,
+          INVOICE_RESULTS_LIST_COLUMNS.VENDOR_NAME,
+          INVOICE_RESULTS_LIST_COLUMNS.FOLIO_INVOICE_NUMBER,
+        ],
+      }),
+    );
   },
 };

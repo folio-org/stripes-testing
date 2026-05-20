@@ -9,18 +9,26 @@ describe('eHoldings', () => {
     const testData = {
       resourcePath: '/resources/38-467-103587',
       titleName: 'Fashion Theory',
-      noneProxy: 'Inherited - None',
+      noneProxy: 'None',
+      defaultProxy: null,
+      firstProxy: null,
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      cy.getEholdingsProxyNamesViaAPI().then((proxies) => {
+        testData.defaultProxy = proxies.find((proxy) => proxy.includes('Inherited'));
+      });
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        EHoldingsTitle.removeTitleFromPackageViaApi(testData.resourcePath.split('/')[2]);
+        EHoldingsTitle.changeResourceSelectionStatusViaApi({
+          resourceId: testData.resourcePath.split('/').pop(),
+          isSelected: false,
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + testData.resourcePath,
@@ -46,33 +54,29 @@ describe('eHoldings', () => {
         EHoldingsResourceView.goToEdit();
         EHoldingsResourceEdit.waitLoading();
 
+        cy.getToken(testData.user.username, testData.user.password);
         EHoldingsResourceEdit.changeProxy().then((newProxy) => {
           testData.firstProxy = newProxy;
           EHoldingsResourceEdit.verifyProxiedURLNotDisplayed();
 
-          EHoldingsResourceEdit.saveAndClose();
+          if (!testData.firstProxy.includes(testData.noneProxy)) EHoldingsResourceEdit.saveAndClose();
           cy.wait(1000);
 
           EHoldingsResourceView.verifyProxy(testData.firstProxy);
-          EHoldingsResourceView.verifyProxiedURL();
-
-          EHoldingsResourceView.verifyProxiedURLLink();
+          if (testData.firstProxy.includes(testData.noneProxy)) EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+          else {
+            EHoldingsResourceView.verifyProxiedURL();
+            EHoldingsResourceView.verifyProxiedURLLink();
+          }
         });
 
         EHoldingsResourceView.removeTitleFromHolding();
         cy.wait(1000);
         EHoldingsResourceView.checkHoldingStatus('Not selected');
         EHoldingsResourceView.verifyResourceSettingsAccordion();
-
-        EHoldingsResourceView.addToHoldings();
-        EHoldingsResourceView.goToEdit();
-        EHoldingsResourceEdit.waitLoading();
-        EHoldingsResourceEdit.changeProxy('None');
-        EHoldingsResourceEdit.saveAndClose();
-        cy.wait(1000);
-
-        EHoldingsResourceView.verifyProxy('None');
-        EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+        EHoldingsResourceView.verifyProxy(testData.defaultProxy);
+        if (testData.defaultProxy.includes(testData.noneProxy)) EHoldingsResourceView.verifyProxiedURLNotDisplayed();
+        else EHoldingsResourceView.verifyProxiedURL();
       },
     );
   });
