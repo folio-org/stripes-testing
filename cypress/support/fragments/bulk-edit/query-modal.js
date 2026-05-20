@@ -678,7 +678,11 @@ export default {
       RepeatableFieldItem({ index: row })
         .find(
           Selection({
-            dataTestId: or('data-input-select-boolType', 'data-input-select-booleanType'),
+            dataTestId: or(
+              'data-input-select-boolType',
+              'data-input-select-booleanType',
+              including('data-input-select-single'),
+            ),
           }),
         )
         .choose(selection),
