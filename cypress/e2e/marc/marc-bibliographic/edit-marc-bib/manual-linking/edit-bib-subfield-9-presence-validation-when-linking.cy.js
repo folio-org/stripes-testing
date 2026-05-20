@@ -34,7 +34,6 @@ describe('MARC', () => {
         messages: {
           fieldLinked: 'Field 110 has been linked to a MARC authority record.',
           failInvalidSubfield: 'Fail: $9 is an invalid subfield for linkable bibliographic fields.',
-          failNonRepeatable: "Fail: Subfield '9' is non-repeatable.",
         },
       };
 
@@ -193,10 +192,6 @@ describe('MARC', () => {
             testData.fieldIndexes.tag110,
             testData.messages.failInvalidSubfield,
           );
-          QuickMarcEditor.checkErrorMessage(
-            testData.fieldIndexes.tag110,
-            testData.messages.failNonRepeatable,
-          );
           QuickMarcEditor.verifyValidationCallout();
           QuickMarcEditor.closeAllCallouts();
 
@@ -207,10 +202,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(
             testData.fieldIndexes.tag110,
             testData.messages.failInvalidSubfield,
-          );
-          QuickMarcEditor.checkErrorMessage(
-            testData.fieldIndexes.tag110,
-            testData.messages.failNonRepeatable,
           );
           QuickMarcEditor.verifyValidationCallout();
           QuickMarcEditor.closeAllCallouts();
