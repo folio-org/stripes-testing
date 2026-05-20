@@ -168,6 +168,20 @@ describe('Lists', () => {
           );
         },
       );
+
+      it(
+        'C613149 Query builder value dropdown options are filtered case-insensitively by search text (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C613149'] },
+        () => {
+          listName = getTestEntityValue('C613149_List');
+          openQueryBuilder(recordType);
+
+          QueryModal.selectField('Organization — Status');
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyOptionsInValueSelect(['Active', 'Inactive', 'Pending']);
+          QueryModal.verifyFilteredOptionsInValueSelect('pEn', ['Pending']);
+        },
+      );
     });
 
     describe('Purchase order lines', () => {
