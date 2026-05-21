@@ -6,6 +6,7 @@ import QueryModal, {
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { Lists } from '../../../support/fragments/lists/lists';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -340,8 +341,11 @@ describe('Lists', () => {
 
     describe('Instances', () => {
       const recordType = 'Instances';
+      const resourceTypeColumn = 'Instance — Resource type';
       const testData = {
         instanceTitle: getTestEntityValue('C_lists_query_builder_classification_instance'),
+        deletedInstanceTitle: getTestEntityValue('C808493_Instance'),
+        deletedInstanceTypeName: 'still image',
         uuidInstanceTitles: [
           getTestEntityValue('C446019_Instance_1'),
           getTestEntityValue('C446019_Instance_2'),
@@ -426,7 +430,42 @@ describe('Lists', () => {
           cy.setTenantLocaleApi(testData.originalTenantLocale);
           testData.originalTenantLocale = undefined;
         }
+        if (testData.deletedInstanceId) {
+          cy.getAdminToken();
+          InventoryInstance.deleteInstanceViaApi(testData.deletedInstanceId);
+          testData.deletedInstanceId = undefined;
+        }
       });
+
+      const createDeletedInstance = () => {
+        return cy.getAdminToken().then(() => {
+          return cy
+            .getInstanceTypes({
+              limit: 1,
+              query: `name=="${testData.deletedInstanceTypeName}"`,
+            })
+            .then((instanceTypes) => {
+              return InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: instanceTypes[0].id,
+                  title: testData.deletedInstanceTitle,
+                },
+              }).then(({ instanceId }) => {
+                testData.deletedInstanceId = instanceId;
+                InstanceRecordView.markAsDeletedViaApi(instanceId);
+              });
+            });
+        });
+      };
+
+      const verifyPreviewHridIsPopulated = () => {
+        cy.then(() => previewTable
+          .find(MultiColumnListRow({ indexRow: 'row-0' }))
+          .find(MultiColumnListCell({ column: instanceFieldValues.instanceHrid }))
+          .innerText()).then((cellText) => {
+          expect(cellText.trim()).to.not.equal('');
+        });
+      };
 
       it(
         'C451549 Verify the operator null/empty with "False" value (corsair)',
@@ -505,6 +544,66 @@ describe('Lists', () => {
           QueryModal.testQueryDisabled(false);
           QueryModal.verifyRowDoesNotContain('eng');
           QueryModal.verifyQueryAreaDoesNotContain('undefined');
+        },
+      );
+
+      it(
+        'C808493 Verify query with "Instance — Flag for deletion" returns records after opening edit query (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C808493'] },
+        () => {
+          const recordAmount = 1;
+          const verifyDeletedInstancePreview = () => {
+            QueryModal.verifyPreviewOfRecordsMatched();
+            QueryModal.verifyNumberOfMatchedRecords(recordAmount);
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              testData.deletedInstanceTitle,
+              instanceFieldValues.flagForDeletion,
+              'True',
+            );
+            verifyPreviewHridIsPopulated();
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              testData.deletedInstanceTitle,
+              resourceTypeColumn,
+              testData.deletedInstanceTypeName,
+            );
+          };
+
+          listName = getTestEntityValue('C808493_List');
+          createDeletedInstance();
+
+          openQueryBuilder(recordType, listName);
+
+          QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.fillInValueTextfield(testData.deletedInstanceTitle);
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.flagForDeletion, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.chooseValueSelect('True', 1);
+
+          QueryModal.clickTestQuery();
+          verifyDeletedInstancePreview();
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          Lists.verifyRefreshCompleteCallout(recordAmount);
+          Lists.viewUpdatedList();
+          Lists.verifySingleRecordNumber();
+          Lists.verifyRecordWithContent(testData.deletedInstanceTitle);
+          Lists.openActions();
+          Lists.editList();
+          Lists.editQuery();
+          QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyTextFieldValue(testData.deletedInstanceTitle);
+          QueryModal.verifySelectedField(instanceFieldValues.flagForDeletion, 1);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.verifySelectedValue('True', 1);
+          QueryModal.testQueryDisabled(false);
+
+          QueryModal.clickTestQuery();
+          verifyDeletedInstancePreview();
         },
       );
 
