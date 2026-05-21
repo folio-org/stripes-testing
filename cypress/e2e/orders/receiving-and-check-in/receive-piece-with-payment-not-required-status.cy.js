@@ -1,22 +1,22 @@
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
@@ -143,17 +143,7 @@ describe('Orders', () => {
     });
 
     after(() => {
-      cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Receiving.selectLinkFromResultsList();
-      Receiving.unreceiveFromReceivedSection();
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.deleteOrderLine();
-      // Need to wait until the order is opened before deleting it
-      cy.wait(2000);
+      cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
       Users.deleteViaApi(user.userId);
     });

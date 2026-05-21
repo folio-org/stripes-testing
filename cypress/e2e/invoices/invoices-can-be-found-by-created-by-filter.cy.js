@@ -87,7 +87,7 @@ describe('Invoices', () => {
     cy.getAdminToken();
     Users.deleteViaApi(users.firstUser.userId);
     Users.deleteViaApi(users.secondUser.userId);
-    Orders.deleteOrderViaApi(testData.order.id);
+    Orders.deleteOrderViaApi(testData.order.id, false);
     Invoices.deleteInvoiceViaApi(testData.firstInvoice.id);
     Invoices.deleteInvoiceViaApi(testData.secondInvoice.id);
     Organizations.deleteOrganizationViaApi(testData.organization.id);

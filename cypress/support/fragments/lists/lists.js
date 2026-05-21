@@ -7,11 +7,13 @@ import {
   calloutTypes,
   Checkbox,
   HTML,
+  Icon,
   including,
   KeyValue,
   Link,
   ListRow,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -23,6 +25,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
@@ -56,6 +59,7 @@ const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
+const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -550,6 +554,48 @@ const UI = {
 
   verifyRecordWithContent(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  selectResultColumn(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyResultColumnDisplayed(columnName) {
+    cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
+    cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyResultCellContains(rowIndex, columnName, content) {
+    this.verifyResultColumnDisplayed(columnName);
+    cy.expect(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: columnName, content: including(content) }))
+        .exists(),
+    );
+  },
+
+  verifyNoValueInResultCell(rowIndex, columnName) {
+    this.verifyResultColumnDisplayed(columnName);
+    cy.do(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: columnName }))
+        .perform((element) => {
+          expect(element.innerText.trim()).to.be.oneOf(['—', '-']);
+        }),
+    );
+  },
+
+  verifyDeletedRecordTooltip(rowIndex, tooltipText) {
+    cy.do(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: 'User — Active', content: including('Deleted') }))
+        .find(Icon())
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: tooltipText }).exists());
   },
 
   waitForCompilingAnimationToDisappear() {

@@ -147,6 +147,16 @@ export default {
     cy.wait(1000);
   },
 
+  setValueForSectionField(value, field, section, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(`(//div[@class="label" and text()="${section}"]/../../../div/following-sibling::div//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/input`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(1000);
+  },
+
   setValueForSectionFieldDropdown(value, field, section, repeatPosition = 1) {
     cy.wait(1000);
     cy.xpath(
@@ -204,7 +214,7 @@ export default {
   clickRepeatGroup(field) {
     cy.wait(1000);
     cy.xpath(
-      `//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`,
+      `(//div[@class="label" and text()="${field}"]/../../div//div[@class="duplicate-group"]/button[1])[1]`,
     ).click();
     cy.wait(1000);
   },
@@ -234,6 +244,17 @@ export default {
       .scrollIntoView()
       .should('be.visible')
       .click();
+  },
+
+  clearSectionSimpleField(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+    cy.wait(1000);
   },
 
   duplicateInstance() {

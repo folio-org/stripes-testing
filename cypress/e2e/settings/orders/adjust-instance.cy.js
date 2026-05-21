@@ -1,97 +1,110 @@
-import permissions from '../../../support/dictionary/permissions';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, APPLICATION_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
+import NewInstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/newInstanceStatusType';
+import ResourceTypes from '../../../support/fragments/settings/inventory/instances/resourceTypes';
 import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
   describe('Settings (Orders)', () => {
+    const testData = {
+      instanceStatusType: {
+        name: `C9219_instanceStatusType${getRandomPostfix()}`,
+        code: `C9219_code${getRandomPostfix()}`,
+      },
+      instanceType: {
+        name: getTestEntityValue(`C9219_centralLocalResourceType${getRandomPostfix()}`),
+        code: getTestEntityValue(`C9219_centralCode${getRandomPostfix()}`),
+        source: 'local',
+      },
+      loanType: { name: getTestEntityValue(`C9219_centralLoanType${getRandomPostfix()}`) },
+    };
     const order = {
       ...NewOrder.defaultOneTimeOrder,
       approved: true,
     };
     const organization = {
       ...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: getRandomPostfix(),
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'TestAccout1',
-          notes: '',
-          paymentMethod: 'Cash',
-        },
-      ],
     };
-    const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-    const instanceStatus = 'Cataloged';
-    const otherInstanceStatus = 'Other';
-    const instanceType = 'cartographic image';
-    const otherInstanceType = 'other';
-    const loanType = 'Can circulate';
-    const selectedLoanType = 'Selected';
-
-    let orderNumber;
-    let user;
-    let effectiveLocationServicePoint;
-    let location;
+    const defaultSettingsOfInstance = {
+      instanceStatus: 'Cataloged',
+      instanceType: 'cartographic image',
+      loanType: 'Can circulate',
+    };
 
     before(() => {
       cy.getAdminToken();
+      NewInstanceStatusType.createViaApi(
+        testData.instanceStatusType.name,
+        testData.instanceStatusType.code,
+      ).then((initialInstanceStatusType) => {
+        testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+      });
+      ResourceTypes.createViaApi(testData.instanceType).then((resourceTypeId) => {
+        testData.instanceTypeId = resourceTypeId.body.id;
+      });
+      cy.createLoanType(testData.loanType).then((loanType) => {
+        testData.loanTypeId = loanType.id;
+      });
+      cy.getLocations({ limit: 1 }).then((res) => {
+        testData.location = res;
 
-      ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
-        effectiveLocationServicePoint = servicePoint;
-        NewLocation.createViaApi(
-          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-        ).then((locationResponse) => {
-          location = locationResponse;
-          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-            organization.id = organizationsResponse;
-            order.vendor = organizationsResponse;
-          });
+        cy.getDefaultMaterialType().then((mtype) => {
+          cy.getAcquisitionMethodsApi({
+            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+          }).then((params) => {
+            Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+              organization.id = responseOrganizations;
+              order.vendor = organization.id;
 
-          cy.loginAsAdmin();
-          TopMenuNavigation.openAppFromDropdown('Orders');
-          Orders.selectOrdersPane();
-          cy.getAdminToken();
-          cy.createOrderApi(order).then((response) => {
-            orderNumber = response.body.poNumber;
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            Orders.createPOLineViaActions();
-            OrderLines.POLineInfodorPhysicalMaterialWithLocation(
-              orderLineTitle,
-              locationResponse.name,
-            );
-            OrderLines.backToEditingOrder();
+              const orderLine = {
+                ...BasicOrderLine.defaultOrderLine,
+                cost: {
+                  listUnitPrice: 100.0,
+                  currency: 'USD',
+                  discountType: 'percentage',
+                  quantityPhysical: 1,
+                  poLineEstimatedPrice: 100.0,
+                },
+                locations: [{ locationId: testData.location.id, quantity: 1, quantityPhysical: 1 }],
+                acquisitionMethod: params.body.acquisitionMethods[0].id,
+                physical: {
+                  createInventory: 'Instance, Holding, Item',
+                  materialType: mtype.id,
+                  materialSupplier: responseOrganizations,
+                  volumes: [],
+                },
+              };
+              Orders.createOrderViaApi(order).then((orderResponse) => {
+                order.id = orderResponse.id;
+                testData.orderNumber = orderResponse.poNumber;
+                orderLine.purchaseOrderId = orderResponse.id;
+
+                OrderLines.createOrderLineViaApi(orderLine);
+              });
+            });
           });
         });
       });
 
       cy.createTempUser([
-        permissions.uiOrdersReopenPurchaseOrders.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-        permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersReopenPurchaseOrders.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
-        user = userProperties;
+        testData.user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: SettingsMenu.ordersInstanceStatusPath,
           waiter: SettingsOrders.waitLoadingInstanceStatus,
@@ -100,54 +113,55 @@ describe('Orders', () => {
     });
 
     after(() => {
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.unOpenOrder();
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.deleteOrderLine();
-      // Need to wait until the order is opened before deleting it
-      cy.wait(2000);
+      cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
-
-      Organizations.deleteOrganizationViaApi(organization.id);
-      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id,
-      );
-      TopMenuNavigation.openAppFromDropdown('Settings');
-      SettingsMenu.selectOrders();
+      Users.deleteViaApi(testData.user.userId);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${testData.instanceHRID}"`,
+      }).then((instance) => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
+      });
+      InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+      ResourceTypes.deleteViaApi(testData.instanceTypeId);
+      cy.deleteLoanType(testData.loanTypeId);
+      cy.loginAsAdmin({
+        path: SettingsMenu.ordersInstanceStatusPath,
+        waiter: SettingsOrders.waitLoadingInstanceStatus,
+      });
       SettingOrdersNavigationMenu.selectInstanceStatus();
-      SettingsOrders.selectInstanceStatus(otherInstanceStatus);
+      SettingsOrders.selectInstanceStatus(defaultSettingsOfInstance.instanceStatus);
       SettingOrdersNavigationMenu.selectInstanceType();
-      SettingsOrders.selectInstanceType(otherInstanceType);
+      SettingsOrders.selectInstanceType(defaultSettingsOfInstance.instanceType);
       SettingOrdersNavigationMenu.selectLoanType();
-      SettingsOrders.selectLoanType(selectedLoanType);
-      Users.deleteViaApi(user.userId);
+      SettingsOrders.selectLoanType(defaultSettingsOfInstance.loanType);
     });
 
     it(
       'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C9219'] },
       () => {
-        SettingsOrders.selectInstanceStatus(instanceStatus);
+        SettingsOrders.selectInstanceStatus(testData.instanceStatusType.name);
         SettingOrdersNavigationMenu.selectInstanceType();
-        SettingsOrders.selectInstanceType(instanceType);
+        SettingsOrders.selectInstanceType(testData.instanceType.name);
         SettingOrdersNavigationMenu.selectLoanType();
-        SettingsOrders.selectLoanType(loanType);
-        TopMenuNavigation.navigateToApp('Orders');
+        SettingsOrders.selectLoanType(testData.loanType.name);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
         Orders.selectOrdersPane();
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', testData.orderNumber);
+        Orders.selectFromResultsList(testData.orderNumber);
         Orders.openOrder();
         OrderLines.selectPOLInOrder(0);
         OrderLines.openInstance();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.verifyLoan(loanType);
-        InstanceRecordView.verifyResourceType(instanceType);
-        InstanceRecordView.verifyInstanceStatusTerm(instanceStatus);
+        InventoryInstance.getAssignedHRID().then((instanceHRID) => {
+          testData.instanceHRID = instanceHRID;
+        });
+        InventoryInstance.openHoldingsAccordion(testData.location.name);
+        InventoryInstance.verifyLoan(testData.loanType.name);
+        InstanceRecordView.verifyResourceType(testData.instanceType.name);
+        InstanceRecordView.verifyInstanceStatusTerm(testData.instanceStatusType.name);
       },
     );
   });
