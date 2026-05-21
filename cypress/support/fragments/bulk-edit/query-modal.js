@@ -450,6 +450,10 @@ export default {
     cy.get('[class^="queryArea"]').should('have.text', content);
   },
 
+  getQueryAreaContent() {
+    return cy.get('[class^="queryArea"]').invoke('text');
+  },
+
   verifyQueryAreaDoesNotContain(content) {
     cy.get('[class^="queryArea"]').should(($queryArea) => {
       expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
@@ -755,6 +759,11 @@ export default {
   testQuery() {
     cy.do(testQueryButton.click());
     cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
+  },
+
+  waitForQueryTestToFinish() {
+    cy.contains(/^Query returns/, { timeout: 60000 }).should('be.visible');
+    this.runQueryDisabled(false);
   },
 
   verifyPreviewOfRecordsMatched() {
