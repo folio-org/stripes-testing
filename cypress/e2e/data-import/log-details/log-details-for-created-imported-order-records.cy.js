@@ -159,11 +159,13 @@ describe('Data Import', () => {
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
             const orderNumber = initialNumber.replace(/-\d+$/, '');
 
-            Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
-              (orderId) => {
-                Orders.deleteOrderViaApi(orderId[0].id);
-              },
-            );
+            cy.getAdminToken().then(() => {
+              Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+                (orderId) => {
+                  Orders.deleteOrderViaApi(orderId[0].id);
+                },
+              );
+            });
           });
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();

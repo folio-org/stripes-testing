@@ -893,6 +893,7 @@ export default {
       urlPublicNoteField.fillIn(urlPublicNote),
     ]);
     if (typeValue === 'Holdings') {
+      cy.wait(1000);
       cy.do([
         Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
         Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(

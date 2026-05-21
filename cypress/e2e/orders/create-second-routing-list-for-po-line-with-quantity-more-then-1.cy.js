@@ -106,7 +106,7 @@ describe('Orders', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     RoutingListDetails.deleteRoutingListViaApi(testData.routingListId1);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

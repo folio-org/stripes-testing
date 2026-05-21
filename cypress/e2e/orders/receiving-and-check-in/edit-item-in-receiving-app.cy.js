@@ -61,7 +61,7 @@ describe('Orders', () => {
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.receivingPath,
-          waiter: Receivings.waitLoading,
+          waiter: Receivings.verifyPageDisplayed,
         });
       });
     });
