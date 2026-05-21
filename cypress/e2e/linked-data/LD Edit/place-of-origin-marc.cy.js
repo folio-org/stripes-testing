@@ -9,10 +9,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
 import InstanceProfileModal from '../../../support/fragments/linked-data/instanceProfileModal';
 import Marigold from '../../../support/fragments/linked-data/marigold';
 import NewInstance from '../../../support/fragments/linked-data/newInstance';
+import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
 import Work from '../../../support/fragments/linked-data/work';
@@ -108,8 +108,8 @@ describe('Citation: check place of work MARC codes', () => {
       // Find and import precondition inventory instance
       InventoryInstances.searchByTitle(testData.uniqueInventoryTitle);
       InventoryInstance.editInstanceInMG();
-      ExternalResourcePreview.waitLoading();
-      ExternalResourcePreview.clickContinueButton();
+      PreviewResource.waitLoading();
+      PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.clickCloseResourceButton();
 
@@ -120,8 +120,14 @@ describe('Citation: check place of work MARC codes', () => {
       WorkProfileModal.checkOptionSelected('Books');
       WorkProfileModal.selectDefaultOption();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.NEW_WORK);
-      EditResource.setValueForTheField(testData.uniqueMarigoldWorkTitle, 'Preferred Title for Work');
-      EditResource.setValueForSimpleField(testData.marigoldPlaceFirst, 'Place of Origin of the Work');
+      EditResource.setValueForTheField(
+        testData.uniqueMarigoldWorkTitle,
+        'Preferred Title for Work',
+      );
+      EditResource.setValueForSimpleField(
+        testData.marigoldPlaceFirst,
+        'Place of Origin of the Work',
+      );
       EditResource.saveAndKeepEditingWithId(({ resourceId }) => {
         testData.workId = resourceId;
       });
@@ -143,9 +149,15 @@ describe('Citation: check place of work MARC codes', () => {
 
       // Verify place of work, change
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkLabelOnSimpleField(resourceData.marigoldPlaceFirst, 'Place of Origin of the Work');
+      EditResource.checkLabelOnSectionSimpleField(
+        resourceData.marigoldPlaceFirst,
+        'Place of Origin of the Work',
+      );
       EditResource.clearSimpleField('Place of Origin of the Work');
-      EditResource.setValueForSimpleField(testData.marigoldPlaceSecond, 'Place of Origin of the Work');
+      EditResource.setValueForSimpleField(
+        testData.marigoldPlaceSecond,
+        'Place of Origin of the Work',
+      );
       EditResource.saveAndClose();
 
       // Re-open and verify change in place of work
@@ -154,13 +166,19 @@ describe('Citation: check place of work MARC codes', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.marigoldWorkTitle);
       Marigold.clickEditWorkFromSearch();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkLabelOnSimpleField(resourceData.marigoldPlaceSecond, 'Place of Origin of the Work');
+      EditResource.checkLabelOnSectionSimpleField(
+        resourceData.marigoldPlaceSecond,
+        'Place of Origin of the Work',
+      );
 
       // Edit instance, verify change in work preview
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContains('Place of Origin of the Work', resourceData.marigoldPlaceSecondPreview);
+      EditResource.checkPreviewSectionContains(
+        'Place of Origin of the Work',
+        resourceData.marigoldPlaceSecondPreview,
+      );
 
       // Review MARC
       EditResource.viewMarc();
@@ -178,13 +196,19 @@ describe('Citation: check place of work MARC codes', () => {
 
       // Verify place of work
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.checkLabelOnSimpleField(resourceData.inventoryPlace, 'Place of Origin of the Work');
+      EditResource.checkLabelOnSectionSimpleField(
+        resourceData.inventoryPlace,
+        'Place of Origin of the Work',
+      );
 
       // Edit instance, verify place of work in work preview
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContains('Place of Origin of the Work', resourceData.inventoryPlacePreview);
+      EditResource.checkPreviewSectionContains(
+        'Place of Origin of the Work',
+        resourceData.inventoryPlacePreview,
+      );
 
       // Review MARC
       EditResource.viewMarc();

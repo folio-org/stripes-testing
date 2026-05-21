@@ -200,9 +200,11 @@ describe('Data Export', () => {
           lockedNotReferencedJobProfile.description,
         );
         SingleJobProfile.verifyLockProfileCheckbox(false, true);
+        cy.wait(500);
 
         // Step 6: Close Job profile view page by clicking "X" button, Select existing locked job profile from Preconditions: job profile referenced in an existing export job
         SingleJobProfile.clickXButton();
+        cy.wait(500);
         ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
         ExportJobProfiles.searchJobProfile(lockedReferencedJobProfile.jobProfileName);

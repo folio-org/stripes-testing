@@ -1,0 +1,33 @@
+export const ITEM_STATUS_NAMES = {
+  AGED_TO_LOST: 'Aged to lost',
+  AVAILABLE: 'Available',
+  AWAITING_DELIVERY: 'Awaiting delivery',
+  AWAITING_PICKUP: 'Awaiting pickup',
+  CHECKED_OUT: 'Checked out',
+  CLAIMED_RETURNED: 'Claimed returned',
+  DECLARED_LOST: 'Declared lost',
+  FOUND_BY_LIBRARY: 'Checked in (found by library)',
+  IN_PROCESS: 'In process',
+  IN_PROCESS_NON_REQUESTABLE: 'In process (non-requestable)',
+  IN_TRANSIT: 'In transit',
+  LONG_MISSING: 'Long missing',
+  LOST_AND_PAID: 'Lost and paid',
+  MARKED_AS_MISSING: 'Marked as missing',
+  MISSING: 'Missing',
+  ON_ORDER: 'On order',
+  ORDER_CLOSED: 'Order closed',
+  PAGED: 'Paged',
+  RESTRICTED: 'Restricted',
+  UNAVAILABLE: 'Unavailable',
+  UNKNOWN: 'Unknown',
+  WITHDRAWN: 'Withdrawn',
+};
+
+export const BOUND_PIECES_DATA_LIST_COLUMNS = {
+  BARCODE: 'Barcode',
+  DISPLAY_SUMMARY: 'Display summary',
+  CHRONOLOGY: 'Chronology',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+};

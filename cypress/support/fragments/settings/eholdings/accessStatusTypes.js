@@ -93,7 +93,7 @@ export default {
 
   getAccessStatusTypesForDefaultKbViaApi() {
     return Credentials.getCredentialsViaApi().then((credentials) => {
-      return this.getAccessStatusTypes(credentials[0].id);
+      return this.getAccessStatusTypesViaApi(credentials[0].id);
     });
   },
 

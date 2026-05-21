@@ -68,6 +68,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(4, '010', '$a 123123');
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditing();
+          cy.wait(3000);
           QuickMarcEditor.updateExistingField('010', '$a n90635366');
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditing();

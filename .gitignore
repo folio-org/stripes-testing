@@ -35,3 +35,4 @@ environments.js
 CLAUDE.md
 .claude
 .opencode
+cypress.local.js

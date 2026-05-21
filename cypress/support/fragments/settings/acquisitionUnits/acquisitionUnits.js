@@ -180,11 +180,12 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteAcquisitionUnitViaApi(acqUnitId) {
+  deleteAcquisitionUnitViaApi(acqUnitId, failOnStatusCode) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/units/${acqUnitId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
   assignUserViaApi(userId, acquisitionsUnitId) {
@@ -202,10 +203,10 @@ export default {
         return response.body.id;
       });
   },
-  unAssignUserViaApi(userId) {
+  unAssignUserViaApi(membershipId) {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `acquisitions-units/memberships/${userId}`,
+      path: `acquisitions-units/memberships/${membershipId}`,
       isDefaultSearchParamsRequired: false,
     });
   },

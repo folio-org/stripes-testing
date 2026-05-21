@@ -9,7 +9,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
@@ -19,6 +19,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 
 let user;
 let instance;
+let holdingsNoteTypeIdWithBrackets;
 let holdingUUIDsFileName;
 let matchedRecordsFileName;
 let changedRecordsFileName;
@@ -41,12 +42,14 @@ const nonAdministrativeNoteActionOptions = [
   'Remove all',
   'Remove mark as staff only',
 ];
+const noteTypeWithBrackets = `Internal Provenance Note ${randomFourDigitNumber()} (Voyager)`;
 const initialValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
+  [noteTypeWithBrackets, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, ''],
@@ -66,6 +69,7 @@ const editedValueSets = [
     BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE,
     notes.electronicBookplate,
   ],
+  [noteTypeWithBrackets, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE, notes.provenance],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION, notes.reproduction],
@@ -102,6 +106,12 @@ describe(
         changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
         cy.clearLocalStorage();
+        cy.getAdminToken();
+
+        InventoryInstances.createHoldingsNoteTypeViaApi(noteTypeWithBrackets).then((noteTypeId) => {
+          holdingsNoteTypeIdWithBrackets = noteTypeId;
+        });
+
         cy.createTempUser([
           permissions.bulkEditView.gui,
           permissions.bulkEditEdit.gui,
@@ -131,6 +141,7 @@ describe(
 
       afterEach('delete test data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteHoldingsNoteTypeViaApi(holdingsNoteTypeIdWithBrackets);
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
@@ -166,6 +177,9 @@ describe(
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyHoldingsOptions();
+          BulkEditActions.clickOptionsSelection();
+          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(noteTypeWithBrackets);
+          BulkEditActions.clickOptionsSelection();
           BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
           BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions);
           BulkEditActions.selectAction(actionsToSelect.addNote);

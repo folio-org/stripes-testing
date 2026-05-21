@@ -1,10 +1,10 @@
 export default {
-  createViaApi() {
+  createViaApi(name = 'Electronic Resource', code = 'elRes') {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'instance-statuses',
-        body: { source: 'local', name: 'Electronic Resource', code: 'elRes' },
+        body: { source: 'local', name, code },
         isDefaultSearchParamsRequired: false,
       })
       .then(({ response }) => {

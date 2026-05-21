@@ -20,6 +20,7 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.inventoryAll.gui])
           .then((userProperties) => {
             user = userProperties;
@@ -121,7 +122,9 @@ describe('Inventory', () => {
 
           HoldingsRecordView.close();
           InventoryInstance.expandMemberSubSubHoldings(
-            'college',
+            // 'college',
+            // for sprint environment we have to use tenant code instead of tenant name
+            Affiliations.College,
             testData.instanceIds.holdings[0].id,
           );
           InventoryInstance.openItemByBarcode(testData.itemBarcode);

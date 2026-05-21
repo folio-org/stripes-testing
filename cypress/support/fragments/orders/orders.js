@@ -24,12 +24,19 @@ import {
   Spinner,
   TextField,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, ORDER_SYSTEM_CLOSING_REASONS } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  ORDER_FILTER_LABELS,
+  ORDER_SYSTEM_CLOSING_REASONS,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+} from '../../constants';
+import FiltersPaneHelper from '../filtersPane';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
+import MultiColumnListHelper from '../multiColumnList';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderDetails from './orderDetails';
@@ -37,7 +44,6 @@ import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
-const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
 const ordersResults = PaneContent({ id: 'orders-results-pane-content' });
 const ordersList = MultiColumnList({ id: 'orders-list' });
@@ -73,6 +79,8 @@ const expandActionsDropdown = () => {
 };
 const selectOrganizationModal = Modal('Select Organization');
 const selectLocationsModal = Modal('Select locations');
+
+const recordsFoundText = (count) => `${count} record${count === 1 ? '' : 's'} found`;
 
 export default {
   searchByParameter(parameter, value) {
@@ -366,10 +374,8 @@ export default {
     });
   },
 
-  checkZeroSearchResultsHeader: () => {
-    cy.xpath(numberOfSearchResultsHeader)
-      .should('be.visible')
-      .and('have.text', zeroResultsFoundText);
+  checkZeroSearchResultsHeader() {
+    this.assertResultsCount(0);
   },
 
   createOrderWithAU(order, AUName, isApproved = false) {
@@ -377,6 +383,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(orderTypeSelect.choose(order.orderType));
+    cy.wait(1000);
     cy.do([
       MultiSelect({ id: 'order-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
@@ -694,6 +701,7 @@ export default {
       buttonLocationFilter.click(),
     ]);
   },
+
   selectFilterFundCodeUSHISTPOL: () => {
     cy.wait(2000);
     cy.do([
@@ -772,11 +780,11 @@ export default {
         return body;
       });
   },
-  deleteOrderViaApi: (orderId) => cy.okapiRequest({
+  deleteOrderViaApi: (orderId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${orderId}`,
     isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
+    failOnStatusCode,
   }),
 
   deleteOrderByOrderNumberViaApi(orderNumber) {
@@ -1012,5 +1020,66 @@ export default {
   selectOrdersNavigation: () => {
     cy.wait(4000);
     cy.get('[data-test-orders-navigation="true"]').click();
+  },
+
+  assertNoFiltersApplied() {
+    cy.expect(resetButton.is({ disabled: true }));
+    cy.expect(ordersResults.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists());
+  },
+
+  assertResultsCount(expectedCount) {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', recordsFoundText(expectedCount));
+  },
+
+  assertOrdersResults(rowsConfig) {
+    cy.expect(ordersResults.exists());
+    MultiColumnListHelper.assertRowsCellsContent(ordersResults, rowsConfig);
+    this.assertResultsCount(rowsConfig.length);
+  },
+
+  /* Filters interactions (agnostic) */
+  expandFilterAccordion(filterLabel) {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, filterLabel);
+  },
+
+  collapseFilterAccordion(filterLabel) {
+    FiltersPaneHelper.collapseFilterAccordion(ordersFiltersPane, filterLabel);
+  },
+
+  assertMultiSelectFilterValues:
+    FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(ordersFiltersPane),
+  assertMultiSelectFilterOptions:
+    FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(ordersFiltersPane),
+
+  assertFundCodeFilterValues(expectedValues, options = {}) {
+    this.assertMultiSelectFilterValues(ORDER_FILTER_LABELS.FUND_CODE, expectedValues, options);
+  },
+
+  assertFundCodeFilterOptions(expectedOptions, options = {}) {
+    this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
+  },
+
+  resetAllFilters() {
+    FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+  },
+
+  clearFilter(filterLabel) {
+    FiltersPaneHelper.clearFilter(ordersFiltersPane, filterLabel);
+  },
+
+  // Filtering
+
+  filterByMultiSelectOptions(filterLabel, options = []) {
+    FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
+  },
+
+  filterByFundCodes(codes = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  removeMultiSelectChips(filterLabel, values = []) {
+    FiltersPaneHelper.removeMultiSelectChips(ordersFiltersPane, filterLabel, values);
   },
 };

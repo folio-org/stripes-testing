@@ -115,11 +115,15 @@ describe('Circulation log', () => {
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(searchResultsData.userBarcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(searchResultsData.userBarcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });

@@ -8,9 +8,18 @@ import {
   MultiColumnListCell,
   Link,
   PaneHeader,
+  MultiColumnList,
+  Checkbox,
+  DropdownMenu,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  RECEIVING_BOUND_ITEMS_COLUMN_LABELS,
+} from '../../constants';
+import { ItemRecordView } from '../inventory';
 import InventoryInstance from '../inventory/inventoryInstance';
+import MultiColumnListHelper from '../multiColumnList';
 import OrderLineDetails from '../orders/orderLineDetails';
 import EditPieceModal from './modals/editPieceModal';
 import ReceivingEditForm from './receivingEditForm';
@@ -29,6 +38,9 @@ const routingListSection = receivingDetailsSection.find(Section({ id: 'routing-l
 const routingListAccordionButton = Button({ id: 'accordion-toggle-button-routing-list' });
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
+
+const boundItemsAccordion = Section({ id: 'boundItems' });
+const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
 
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
@@ -282,5 +294,54 @@ export default {
         );
       }
     });
+  },
+
+  assertBoundItemsListCount(expectedCount) {
+    cy.expect(boundItemsList.has({ rowCount: expectedCount }));
+  },
+
+  assertBoundItemsListColumns() {
+    const { BARCODE, STATUS, DISPLAY_SUMMARY, CALL_NUMBER } = RECEIVING_BOUND_ITEMS_COLUMN_LABELS;
+
+    cy.expect(boundItemsList.has({ columns: [BARCODE, STATUS, DISPLAY_SUMMARY, CALL_NUMBER] }));
+    cy.expect(
+      boundItemsList
+        .find(MultiColumnListCell({ column: BARCODE, row: 0 }))
+        .find(Link())
+        .exists(),
+    );
+  },
+
+  assertBoundItemsPaginationControlsDisabled({ previous = true, next = true } = {}) {
+    MultiColumnListHelper.assertPaginationControlsDisabled(boundItemsAccordion, { previous, next });
+  },
+
+  filterReceivedPiecesByOptions(optionLabels = []) {
+    const actionsBtn = receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS));
+
+    cy.do(actionsBtn.click());
+    optionLabels.forEach((label) => {
+      const checkbox = DropdownMenu().find(Checkbox(label));
+
+      cy.do(checkbox.click());
+      cy.expect(checkbox.has({ checked: true, disabled: false }));
+    });
+    cy.do(actionsBtn.click());
+  },
+
+  clickNextPageButtonInBoundItemsAccordion() {
+    cy.do(boundItemsAccordion.find(Button(COMMON_BUTTON_LABELS.NEXT)).click());
+  },
+
+  clickPreviousPageButtonInBoundItemsAccordion() {
+    cy.do(boundItemsAccordion.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).click());
+  },
+
+  clickBoundItemBarcodeLink(barcode) {
+    cy.contains('#bound-items-list a', barcode)
+      .invoke('removeAttr', 'target') // to open the link in the same tab
+      .click();
+
+    ItemRecordView.waitLoading();
   },
 };

@@ -18,7 +18,7 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196410 - Verify license file docs are accessible for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'licenses', 'sanity'] },
+    { tags: ['fse', 'api', 'licenses-docs', 'TC196410'] },
     () => {
       cy.getLicenses().then((response) => {
         cy.expect(response.status).to.eq(200);

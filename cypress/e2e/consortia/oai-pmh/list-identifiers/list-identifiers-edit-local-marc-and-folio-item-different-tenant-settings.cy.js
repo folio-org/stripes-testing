@@ -333,7 +333,7 @@ describe('OAI-PMH', () => {
           ItemRecordEdit.fillItemRecordFields({ copyNumber: getRandomPostfix() });
           ItemRecordEdit.saveAndClose();
           ItemRecordView.closeDetailView();
-          cy.wait(5_000); // Wait for changes to propagate
+          cy.wait(10_000); // Wait for changes to propagate
 
           // Step 12-14: Member-1 Single-tenant ListIdentifiers requests
           cy.resetTenant();
