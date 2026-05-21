@@ -12,7 +12,12 @@ import ClassificationIdentifierTypes from '../../../support/fragments/settings/i
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
-import { generateDatePickerCustomFieldData } from '../../../support/utils/customFields';
+import {
+  generateDatePickerCustomFieldData,
+  generateMultiSelectCustomFieldData,
+  generateRadioButtonCustomFieldData,
+  generateSingleSelectCustomFieldData,
+} from '../../../support/utils/customFields';
 import { poll } from '../../../support/utils/polling';
 import { getCurrentTimestamp, getTestEntityValue } from '../../../support/utils/stringTools';
 import {
@@ -92,20 +97,31 @@ describe('Lists', () => {
     };
 
     const waitForCustomFieldToBeQueryable = (recordType, fieldLabel) => {
+      const fieldLabels = Array.isArray(fieldLabel) ? fieldLabel : [fieldLabel];
+
       return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
         return poll(
           () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
           ({ body }) => {
-            return body.columns?.some(
-              ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
-            );
+            return fieldLabels.every((label) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === label && queryable));
           },
           {
             timeout: 360000,
             delay: 15000,
-            errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+            errorMessage: `"${fieldLabels.join(', ')}" custom field(s) did not become queryable for ${recordType}`,
           },
         );
+      });
+    };
+
+    const verifyUserFriendlyQueryText = ({ queryBuilderPreview, listDetails, expectedQuery }) => {
+      const actualQueryMessage = `Query builder preview: "${queryBuilderPreview}"\nList details: "${listDetails}"`;
+
+      expect(queryBuilderPreview, actualQueryMessage).to.equal(expectedQuery);
+      expect(listDetails, actualQueryMessage).to.include(`Query: ${expectedQuery}`);
+      [queryBuilderPreview, listDetails].forEach((actualQueryText) => {
+        expect(actualQueryText, actualQueryMessage).not.to.match(/\bopt_\d+\b/);
+        expect(actualQueryText, actualQueryMessage).not.to.include('customfield_');
       });
     };
 
@@ -254,6 +270,179 @@ describe('Lists', () => {
             'list-column-users.middle_name',
             '',
           );
+        },
+      );
+    });
+
+    describe('Users custom field option labels', () => {
+      const recordType = 'Users';
+      const testNumber = 'C831957';
+      const customFieldNamePostfix = getCurrentTimestamp();
+      const customFieldSpecs = {
+        multiSelect: {
+          fieldLabel: 'Corsair - multi select',
+          generator: generateMultiSelectCustomFieldData,
+          multiSelect: true,
+          valueType: 'multiselect',
+          options: [
+            { id: 'opt_0', value: 'Corsair - multi select1', default: false },
+            { id: 'opt_1', value: 'Corsair - multi select2', default: false },
+          ],
+        },
+        singleSelect: {
+          fieldLabel: 'Corsair - single select',
+          generator: generateSingleSelectCustomFieldData,
+          multiSelect: false,
+          options: [
+            { id: 'opt_0', value: 'Corsair - single select1', default: false },
+            { id: 'opt_1', value: 'Corsair - single select2', default: false },
+          ],
+        },
+        radioButton: {
+          fieldLabel: 'Corsair - radio button',
+          generator: generateRadioButtonCustomFieldData,
+          multiSelect: false,
+          options: [
+            { id: 'opt_0', value: 'Corsair - radio button1', default: false },
+            { id: 'opt_1', value: 'Corsair - radio button2', default: false },
+          ],
+        },
+      };
+      const queryCustomFieldKeys = Object.keys(customFieldSpecs);
+      const getCustomFieldName = (fieldLabel) => `${fieldLabel} ${customFieldNamePostfix}`;
+      const createCustomFieldData = ({ fieldLabel, generator, multiSelect, options }) => generator({
+        testNumber,
+        data: {
+          name: getCustomFieldName(fieldLabel),
+          selectField: {
+            multiSelect,
+            options: { values: options },
+          },
+        },
+      });
+      const testData = {
+        customFields: queryCustomFieldKeys.reduce((customFields, key) => {
+          return {
+            ...customFields,
+            [key]: createCustomFieldData(customFieldSpecs[key]),
+          };
+        }, {}),
+      };
+      const getCustomFieldLabel = ({ name }) => `User — ${name}`;
+      const getCustomFieldLabels = () => Object.values(testData.customFields).map(getCustomFieldLabel);
+      const getCustomFieldValue = (key) => customFieldSpecs[key].options[0].value;
+      const getQueryRow = (key, operator) => ({
+        field: getCustomFieldLabel(testData.customFields[key]),
+        operator,
+        value: getCustomFieldValue(key),
+        valueType: [QUERY_OPERATIONS.IN, QUERY_OPERATIONS.NOT_IN].includes(operator)
+          ? customFieldSpecs[key].valueType
+          : 'select',
+      });
+
+      const configureSelectQueryRow = (row, { field, operator, value, valueType = 'select' }) => {
+        QueryModal.selectField(field, row);
+        QueryModal.selectOperator(operator, row);
+
+        if (valueType === 'multiselect') {
+          QueryModal.chooseFromValueMultiselect(value, row, { exactMatch: true });
+        } else {
+          QueryModal.chooseValueSelect(value, row);
+        }
+      };
+
+      const createQueryRows = (queryRows) => {
+        queryRows.forEach((queryRow, rowIndex) => {
+          configureSelectQueryRow(rowIndex, queryRow);
+          if (rowIndex < queryRows.length - 1) {
+            QueryModal.addNewRow(rowIndex);
+          }
+        });
+      };
+
+      before('Create custom fields', () => {
+        cy.getAdminToken()
+          .then(() => cy.createCustomFieldsViaApi(Object.values(testData.customFields)))
+          .then((createdCustomFields) => {
+            queryCustomFieldKeys.forEach((key, index) => {
+              testData.customFields[key] = createdCustomFields[index];
+            });
+
+            testData.createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
+
+            return waitForCustomFieldToBeQueryable(recordType, getCustomFieldLabels());
+          });
+      });
+
+      after('Delete custom field test data', () => {
+        cy.getAdminToken();
+        if (testData.createdCustomFieldIds?.length) {
+          cy.deleteCustomFieldsViaApi({
+            ids: testData.createdCustomFieldIds,
+          });
+        }
+      });
+
+      afterEach('Delete test list', () => {
+        deleteTestList(cy.getAdminToken);
+      });
+
+      it(
+        'C831957 Verify custom field option labels in the user-friendly query (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C831957'] },
+        () => {
+          const multiSelectInRow = getQueryRow('multiSelect', QUERY_OPERATIONS.IN);
+          const equalsQueryRows = queryCustomFieldKeys.map((key) => getQueryRow(key, QUERY_OPERATIONS.EQUAL));
+          const [multiSelectEqualsRow, singleSelectEqualsRow, radioButtonEqualsRow] =
+            equalsQueryRows;
+          const expectedInQuery = `(${multiSelectInRow.field} in [${multiSelectInRow.value}])`;
+          const expectedEqualsQuery =
+            `(${multiSelectEqualsRow.field} == ${multiSelectEqualsRow.value}) AND ` +
+            `(${singleSelectEqualsRow.field} == ${singleSelectEqualsRow.value}) AND ` +
+            `(${radioButtonEqualsRow.field} == ${radioButtonEqualsRow.value})`;
+          const actualQueries = {};
+
+          listName = getTestEntityValue(`${testNumber}_List`);
+          cy.loginAsAdmin({
+            path: TopMenu.listsPath,
+            waiter: Lists.filtersWaitLoading,
+          });
+
+          Lists.openNewListPane();
+          Lists.setName(listName);
+          Lists.selectRecordType(recordType);
+          Lists.verifySelectedOptionsInRecordTypeDropdown(recordType);
+          Lists.verifySaveButtonIsActive();
+          Lists.verifyCancelButtonIsActive();
+
+          Lists.buildQuery();
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          configureSelectQueryRow(0, multiSelectInRow);
+          QueryModal.verifyQueryAreaContent(expectedInQuery);
+          QueryModal.verifyQueryAreaDoesNotContain('opt_');
+          QueryModal.verifyQueryAreaDoesNotContain('customfield_');
+          createQueryRows(equalsQueryRows);
+          QueryModal.testQuery();
+          QueryModal.waitForQueryTestToFinish();
+          QueryModal.getQueryAreaContent().then((actualPreviewQuery) => {
+            actualQueries.preview = actualPreviewQuery;
+          });
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.waitForCompilingToComplete(3000);
+          Lists.getQueryText().then((actualSavedQuery) => {
+            actualQueries.saved = actualSavedQuery;
+          });
+          cy.then(() => {
+            verifyUserFriendlyQueryText({
+              queryBuilderPreview: actualQueries.preview,
+              listDetails: actualQueries.saved,
+              expectedQuery: expectedEqualsQuery,
+            });
+          });
         },
       );
     });
