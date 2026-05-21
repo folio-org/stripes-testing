@@ -552,6 +552,10 @@ const UI = {
     cy.get('#results-viewer-accordion').contains(`Query: (${query})`).should('be.visible');
   },
 
+  getQueryText() {
+    return cy.get('#results-viewer-accordion').contains('Query:').invoke('text');
+  },
+
   verifyRecordWithContent(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
