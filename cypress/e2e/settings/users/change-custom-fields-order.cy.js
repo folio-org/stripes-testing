@@ -6,34 +6,74 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import {
+  generateCheckboxCustomFieldData,
+  generateTextAreaCustomFieldData,
+  generateTextFieldCustomFieldData,
+} from '../../../support/utils/customFields';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings (Users) - Custom Fields', () => {
   let user;
+  let createdCustomFieldIds = [];
   const customFields = [
     { fieldLabel: `CF_TextArea_${getRandomPostfix()}`, helpText: `Help_${getRandomPostfix()}` },
     { fieldLabel: `CF_TextField_${getRandomPostfix()}`, helpText: `Help_${getRandomPostfix()}` },
     { fieldLabel: `CF_Checkbox_${getRandomPostfix()}`, helpText: `Help_${getRandomPostfix()}` },
   ];
+  const customFieldDefinitions = [
+    generateTextAreaCustomFieldData({
+      testNumber: '15701',
+      data: {
+        name: customFields[0].fieldLabel,
+        helpText: customFields[0].helpText,
+      },
+    }),
+    generateTextFieldCustomFieldData({
+      testNumber: '15701',
+      data: {
+        name: customFields[1].fieldLabel,
+        helpText: customFields[1].helpText,
+      },
+    }),
+    generateCheckboxCustomFieldData({
+      testNumber: '15701',
+      data: {
+        name: customFields[2].fieldLabel,
+        helpText: customFields[2].helpText,
+      },
+    }),
+  ];
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUsersCreate.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-      },
-    );
-  });
-
-  beforeEach('Login', () => {
-    cy.login(user.username, user.password, {
-      path: TopMenu.customFieldsPath,
-      waiter: CustomFields.waitLoading,
-    });
+    cy.getAdminToken()
+      .then(() => {
+        return cy
+          .createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUsersCreate.gui])
+          .then((userProperties) => {
+            user = userProperties;
+          });
+      })
+      .then(() => {
+        return cy.createCustomFieldsViaApi(customFieldDefinitions).then((createdCustomFields) => {
+          createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
+        });
+      })
+      .then(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.customFieldsPath,
+          waiter: CustomFields.waitLoading,
+        });
+      });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
+
+    if (createdCustomFieldIds.length) {
+      cy.deleteCustomFieldsViaApi({ ids: createdCustomFieldIds });
+    }
+
     Users.deleteViaApi(user.userId);
   });
 
@@ -41,23 +81,7 @@ describe('Settings (Users) - Custom Fields', () => {
     'C15701 Change custom fields order (volaris)',
     { tags: ['extendedPath', 'volaris', 'C15701'] },
     () => {
-      // Precondition: Create custom fields of all possible types
       // Step 1: Go to "Settings" -> "Users" -> "Custom fields"
-      CustomFields.waitLoading();
-
-      // Create custom fields of various types for testing reorder functionality
-      CustomFields.addCustomTextArea({
-        fieldLabel: customFields[0].fieldLabel,
-        helpText: customFields[0].helpText,
-      });
-      CustomFields.addCustomTextField({
-        fieldLabel: customFields[1].fieldLabel,
-        helpText: customFields[1].helpText,
-      });
-      CustomFields.addCustomCheckBox({
-        fieldLabel: customFields[2].fieldLabel,
-        helpText: customFields[2].helpText,
-      });
 
       // Verify custom fields are created successfully
       CustomFields.verifyCustomFieldExists(customFields[0].fieldLabel);
@@ -95,15 +119,6 @@ describe('Settings (Users) - Custom Fields', () => {
         fieldLabel: customFields[2].fieldLabel,
         helpText: customFields[2].helpText,
       });
-
-      // Cleanup: Close user form and delete custom fields
-      UserEdit.clickCloseWithoutSavingIfModalExists();
-
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-      CustomFields.openTabFromInventorySettingsList();
-      CustomFields.deleteCustomField(customFields[2].fieldLabel);
-      CustomFields.deleteCustomField(customFields[1].fieldLabel);
-      CustomFields.deleteCustomField(customFields[0].fieldLabel);
     },
   );
 });

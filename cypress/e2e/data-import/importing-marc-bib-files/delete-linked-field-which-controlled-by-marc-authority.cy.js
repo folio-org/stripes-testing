@@ -143,7 +143,7 @@ describe('Data Import', () => {
           testData.userProperties = createdUserProperties;
 
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377005*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377005');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -159,13 +159,10 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin();
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -179,8 +176,6 @@ describe('Data Import', () => {
             linkingTagAndValues.tag,
             linkingTagAndValues.rowIndex,
           );
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -227,14 +222,10 @@ describe('Data Import', () => {
             actionProfile.id,
           );
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
     });
 

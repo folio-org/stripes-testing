@@ -1048,23 +1048,10 @@ export default {
     FiltersPaneHelper.collapseFilterAccordion(ordersFiltersPane, filterLabel);
   },
 
-  assertMultiSelectFilterValues(filterLabel, expectedValues, options = {}) {
-    FiltersPaneHelper.assertMultiSelectFilterValues(
-      ordersFiltersPane,
-      filterLabel,
-      expectedValues,
-      options,
-    );
-  },
-
-  assertMultiSelectFilterOptions(filterLabel, expectedOptions, options = {}) {
-    FiltersPaneHelper.assertMultiSelectFilterOptionsValues(
-      ordersFiltersPane,
-      filterLabel,
-      expectedOptions,
-      options,
-    );
-  },
+  assertMultiSelectFilterValues:
+    FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(ordersFiltersPane),
+  assertMultiSelectFilterOptions:
+    FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(ordersFiltersPane),
 
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_FILTER_LABELS.FUND_CODE, expectedValues, options);

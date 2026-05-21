@@ -44,7 +44,7 @@ Cypress.Commands.add('getModUsersVersion', () => {
       body.applicationDescriptors.forEach((app) => {
         moduleIds.push(...app.modules);
       });
-      const modUsersId = moduleIds.find((m) => String(m.name).startsWith('mod-users')).id;
+      const modUsersId = moduleIds.find((m) => String(m.name) === 'mod-users').id;
       Cypress.env('MOD_USERS_VERSION', modUsersId);
       return cy.wrap(modUsersId);
     });
@@ -112,5 +112,34 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
     path: 'locale',
     isDefaultSearchParamsRequired: false,
     body: DEFAULT_LOCALE_OBJECT,
+  });
+});
+
+Cypress.Commands.add('setFrontEndBaseUrlViaApi', (newBaseUrl) => {
+  if (!newBaseUrl) {
+    throw new Error('A new base URL must be provided');
+  }
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'base-url',
+    isDefaultSearchParamsRequired: false,
+    body: { baseUrl: newBaseUrl },
+  });
+});
+
+Cypress.Commands.add('getFrontEndBaseUrlViaApi', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'base-url',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getPasswordResetConfigViaApi', () => {
+  const query = '(module=="USERSBL" AND configName=="resetPassword" AND code=="FOLIO_HOST")';
+  cy.okapiRequest({
+    method: 'GET',
+    path: `configurations/entries?query=${encodeURIComponent(query)}`,
+    isDefaultSearchParamsRequired: false,
   });
 });

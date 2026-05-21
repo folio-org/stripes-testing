@@ -2,18 +2,19 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import CustomFields from '../../../support/fragments/settings/users/customFields';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
+import { generateTextAreaCustomFieldData } from '../../../support/utils/customFields';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
+let createdCustomFieldIds = [];
+let textAreaCustomField;
 let userBarcodesFileName;
 let customFieldName;
 let customFieldText;
@@ -39,6 +40,13 @@ describe(
         userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
         customFieldName = `customFieldName-${getRandomPostfix()}`;
         customFieldText = `customFieldText\n${getRandomPostfix()}`;
+        createdCustomFieldIds = [];
+        textAreaCustomField = generateTextAreaCustomFieldData({
+          testNumber: '399098',
+          data: {
+            name: customFieldName,
+          },
+        });
         matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
         changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
         previewFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
@@ -60,13 +68,14 @@ describe(
             );
           })
           .then(() => {
-            cy.loginAsAdmin({
-              path: SettingsMenu.customFieldsPath,
-              waiter: CustomFields.waitLoading,
+            cy.getAdminToken();
+            cy.createCustomFieldsViaApi([textAreaCustomField]).then((createdCustomFields) => {
+              createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
             });
-            CustomFields.addTextAreaCustomField(customFieldName);
-            CustomFields.verifyCustomFieldExists(customFieldName);
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
+            cy.loginAsAdmin({
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
             UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
             UserEdit.addCustomField(customFieldName, customFieldText);
 
@@ -80,6 +89,9 @@ describe(
       afterEach('delete test data', () => {
         cy.getAdminToken();
         FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+        if (createdCustomFieldIds.length) {
+          cy.deleteCustomFieldsViaApi({ ids: createdCustomFieldIds });
+        }
         testUsers.forEach((testUser) => Users.deleteViaApi(testUser.userId));
         Users.deleteViaApi(user.userId);
         FileManager.deleteFileFromDownloadsByMask(
@@ -121,12 +133,6 @@ describe(
           UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
           Users.verifyPatronGroupOnUserDetailsPane('faculty');
           Users.verifyCustomFieldOnUserDetailsPane(customFieldName, customFieldText);
-
-          cy.loginAsAdmin({
-            path: SettingsMenu.customFieldsPath,
-            waiter: CustomFields.waitLoading,
-          });
-          CustomFields.deleteCustomField(customFieldName);
         },
       );
     });

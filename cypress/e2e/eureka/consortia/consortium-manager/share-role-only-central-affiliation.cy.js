@@ -2,6 +2,7 @@ import Users from '../../../../support/fragments/users/users';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../../support/fragments/topMenu';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { APPLICATION_NAMES, AUTHORIZATION_ROLE_TYPES } from '../../../../support/constants';
@@ -56,10 +57,13 @@ describe('Eureka', () => {
       'C523612 ECS | Eureka | Share authorization role when only central tenant is selected in "Select members" (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523612'] },
       () => {
-        cy.login(testUser.username, testUser.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        cy.login(testUser.username, testUser.password, {
+          path: TopMenu.consortiumManagerPath,
+          waiter: ConsortiumManagerApp.waitLoading,
+        });
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        AuthorizationRoles.waitContentLoading();
         SelectMembers.selectAllMembers();
         ConsortiumManagerApp.verifyMembersSelected(1);
         AuthorizationRoles.waitContentLoading();
@@ -81,10 +85,8 @@ describe('Eureka', () => {
 
         // for unclear reasons, tenant name may not load for an admin without waiting
         cy.wait(15_000);
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        }, 20_000);
+        cy.loginAsAdmin();
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.openAppFromDropdown(
           APPLICATION_NAMES.SETTINGS,
           SETTINGS_SUBSECTION_AUTH_ROLES,

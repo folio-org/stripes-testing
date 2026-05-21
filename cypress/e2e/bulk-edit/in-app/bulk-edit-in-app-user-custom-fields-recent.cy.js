@@ -3,12 +3,12 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
+import { generateMultiSelectCustomFieldData } from '../../../support/utils/customFields';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
@@ -18,6 +18,7 @@ let customFieldData;
 let updatedCustomFieldData;
 let userBarcodesFileName;
 let previewOfProposedChangesFileName;
+let createdCustomFieldIds;
 
 describe(
   'Bulk-edit',
@@ -41,35 +42,78 @@ describe(
         };
         userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
         previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
+        createdCustomFieldIds = [];
 
-        cy.createTempUser(
-          [
-            permissions.bulkEditUpdateRecords.gui,
-            permissions.bulkEditLogsView.gui,
-            permissions.uiUsersPermissionsView.gui,
-            permissions.uiUsersCustomField.gui,
-            permissions.uiUserEdit.gui,
-          ],
-          'faculty',
-        ).then((userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: SettingsMenu.customFieldsPath,
-            waiter: CustomFields.waitLoading,
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          CustomFields.addMultiSelectCustomField(customFieldData);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-          UsersSearchPane.searchByUsername(user.username);
-          UserEdit.addMultiSelectCustomField(customFieldData);
+        const multiSelectCustomField = generateMultiSelectCustomFieldData({
+          testNumber: '389570',
+          data: {
+            name: customFieldData.fieldLabel,
+            selectField: {
+              multiSelect: true,
+              options: {
+                values: [
+                  {
+                    id: 'opt_0',
+                    value: customFieldData.label1,
+                    default: false,
+                  },
+                  {
+                    id: 'opt_1',
+                    value: customFieldData.label2,
+                    default: false,
+                  },
+                ],
+              },
+            },
+          },
         });
+
+        cy.getAdminToken()
+          .then(() => {
+            return cy
+              .createTempUser(
+                [
+                  permissions.bulkEditUpdateRecords.gui,
+                  permissions.bulkEditLogsView.gui,
+                  permissions.uiUsersPermissionsView.gui,
+                  permissions.uiUsersCustomField.gui,
+                  permissions.uiUserEdit.gui,
+                ],
+                'faculty',
+              )
+              .then((userProperties) => {
+                user = userProperties;
+                FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+
+                return cy
+                  .createCustomFieldsViaApi([multiSelectCustomField])
+                  .then((createdCustomFields) => {
+                    createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
+                  });
+              });
+          })
+          .then(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
+            UsersSearchPane.searchByUsername(user.username);
+            UserEdit.addMultiSelectCustomField(customFieldData);
+          });
       });
 
       afterEach('delete test data', () => {
         cy.getAdminToken();
         FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
         FileManager.deleteFileFromDownloadsByMask(previewOfProposedChangesFileName);
-        Users.deleteViaApi(user.userId);
+
+        if (createdCustomFieldIds?.length) {
+          cy.deleteCustomFieldsViaApi({ ids: createdCustomFieldIds });
+        }
+
+        if (user?.userId) {
+          Users.deleteViaApi(user.userId);
+        }
       });
 
       it(
@@ -139,11 +183,6 @@ describe(
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyPatronGroupOnUserDetailsPane('graduate');
-
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          CustomFields.openTabFromInventorySettingsList();
-          CustomFields.waitLoading();
-          CustomFields.deleteCustomField(updatedCustomFieldData.fieldLabel);
         },
       );
     });

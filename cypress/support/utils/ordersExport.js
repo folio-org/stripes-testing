@@ -1,10 +1,13 @@
 import {
-  FUND_DISTRIBUTION_TYPES,
   INVALID_REFERENCE_MESSAGE,
   ORDER_EXPORT_CSV_FIELDS,
   ORDER_LINE_EXPORT_CSV_FIELDS,
 } from '../constants';
-import { calculateFundAmount, formatDateTime } from './acquisitions';
+import {
+  formatDateTime,
+  getExportAddressFieldValue,
+  getExportFundDistributionFieldValue,
+} from './acquisitions';
 import { getFullName } from './users';
 
 const LIST_SEPARATOR = ' | ';
@@ -26,31 +29,6 @@ export const getOrderLineExportLocationFieldValue = (
     return `"${locationCode}""${l?.quantityPhysical || 0}""${l?.quantityElectronic || 0}"`;
   })
   .join(LIST_SEPARATOR);
-
-export const getOrderLineExportFundDistributionFieldValue = (
-  orderLine,
-  expenseClassMap = new Map(),
-  invalidReferenceLabel = INVALID_REFERENCE_MESSAGE,
-) => orderLine.fundDistribution
-  ?.map((fund) => {
-    const expenseClassName = fund?.expenseClassId
-      ? (expenseClassMap.get(fund?.expenseClassId)?.name ?? invalidReferenceLabel)
-      : '';
-
-    return `"${fund.code || ''}""${expenseClassName}"
-      "${fund.value || '0'}${fund.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE ? '%' : ''}"
-      "${calculateFundAmount(fund, orderLine.cost?.poLineEstimatedPrice || 0, orderLine.cost?.currency || 0)}"`;
-  })
-  .join(LIST_SEPARATOR)
-  .replaceAll(/\n\s+/g, '');
-
-export const getOrderLineExportAddressValue = (
-  addressId,
-  addressMap,
-  invalidReferenceLabel = INVALID_REFERENCE_MESSAGE,
-) => (addressMap.get(addressId)
-  ? `"${addressMap.get(addressId).name}""${addressMap.get(addressId).address}"`
-  : invalidReferenceLabel);
 
 export const getOrderLineExportOrganizationTypesValue = (orgTypeIds, orgTypeMap) => orgTypeIds
   ?.map((orgTypeId) => (orgTypeMap.get(orgTypeId)?.name ? `"${orgTypeMap.get(orgTypeId)?.name}"` : null))
@@ -84,7 +62,7 @@ export const getOrderLineExportContributorsValue = (
   )
   .join(LIST_SEPARATOR);
 
-export const buildExportReport = ({
+export const buildExportReportRow = ({
   order,
   line,
   acquisitionMethodsMap,
@@ -111,8 +89,8 @@ export const buildExportReport = ({
     [ORDER_EXPORT_CSV_FIELDS.APPROVED]: order.approved,
     [ORDER_EXPORT_CSV_FIELDS.APPROVED_BY]: getFullName(admin),
     [ORDER_EXPORT_CSV_FIELDS.ASSIGNED_TO]: admin.username,
-    [ORDER_EXPORT_CSV_FIELDS.BILL_TO]: getOrderLineExportAddressValue(order.billTo, addressesMap),
-    [ORDER_EXPORT_CSV_FIELDS.SHIP_TO]: getOrderLineExportAddressValue(order.shipTo, addressesMap),
+    [ORDER_EXPORT_CSV_FIELDS.BILL_TO]: getExportAddressFieldValue(order.billTo, addressesMap),
+    [ORDER_EXPORT_CSV_FIELDS.SHIP_TO]: getExportAddressFieldValue(order.shipTo, addressesMap),
     [ORDER_EXPORT_CSV_FIELDS.CREATED_BY]: admin.username,
     [ORDER_EXPORT_CSV_FIELDS.DATE_CREATED]: formatDateTime(locale, order.metadata?.createdDate),
     [ORDER_EXPORT_CSV_FIELDS.DATE_ORDERED]: formatDateTime(locale, order.dateOrdered),
@@ -144,8 +122,10 @@ export const buildExportReport = ({
     [ORDER_LINE_EXPORT_CSV_FIELDS.ACQUISITION_METHOD]: acquisitionMethodsMap.get(
       line.acquisitionMethod,
     )?.value,
-    [ORDER_LINE_EXPORT_CSV_FIELDS.FUND_DISTRIBUTION]: getOrderLineExportFundDistributionFieldValue(
-      line,
+    [ORDER_LINE_EXPORT_CSV_FIELDS.FUND_DISTRIBUTION]: getExportFundDistributionFieldValue(
+      line.fundDistribution,
+      line.cost?.currency,
+      line.cost?.poLineEstimatedPrice,
       expenseClassesMap,
     ),
     [ORDER_LINE_EXPORT_CSV_FIELDS.LOCATION]: getOrderLineExportLocationFieldValue(

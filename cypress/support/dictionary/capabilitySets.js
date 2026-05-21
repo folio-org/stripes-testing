@@ -249,10 +249,25 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiMarcAuthoritiesAuthorityRecordDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiQuickMarcQuickMarcAuthoritiesEditorManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiQuickMarcQuickMarcAuthoritiesEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiQuickMarcQuickMarcHoldingsEditorView: {
     type: CAPABILITY_TYPES.DATA,
@@ -282,6 +297,11 @@ export default {
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Scheduler',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  baseUrlManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Base-Url Item',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
 

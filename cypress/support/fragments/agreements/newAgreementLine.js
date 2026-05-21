@@ -1,10 +1,12 @@
-import { TextField } from '@interactors/html';
-import { Button, Pane, TextArea } from '../../../../interactors';
+import { Button, HTML, Pane, TextArea, TextField } from '../../../../interactors';
+import SelectEHoldingsModal from './modals/selectEHoldingsModal';
 
 const newAgreementLinePane = Pane({ id: 'pane-agreement-line-form' });
 const descriptionTextArea = TextArea({ label: 'Description' });
 const noteTextArea = TextArea({ label: 'Note' });
 const saveButton = Button('Save & close');
+const eHoldingsToggleButton = Button({ id: 'clickable-nav-eresources' });
+const linkEResourceButton = Button('Link e-resource');
 
 const calloutMessages = {
   ALERT_MESSAGE: 'Please provide an e-resource or description to continue',
@@ -38,5 +40,27 @@ export default {
 
   saveAndClose() {
     cy.do(saveButton.click());
+  },
+
+  verifyEHoldingsTabIsSelected() {
+    cy.do(
+      eHoldingsToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  clickEHoldingsTab() {
+    cy.do(newAgreementLinePane.find(eHoldingsToggleButton).click());
+    this.verifyEHoldingsTabIsSelected();
+  },
+
+  clickLinkEResource() {
+    cy.do(newAgreementLinePane.find(linkEResourceButton).click());
+    SelectEHoldingsModal.waitLoading();
+  },
+
+  verifyLinkedEResourceIsDisplayed(eResourceName) {
+    cy.expect(newAgreementLinePane.find(HTML(eResourceName)).exists());
   },
 };
