@@ -224,6 +224,11 @@ export default {
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryItemMove: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiDataImport: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Import',
