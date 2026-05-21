@@ -127,12 +127,16 @@ describe('Inventory', () => {
           HoldingsRecordView.checkTitle(testData.locationName);
           HoldingsRecordView.close();
           InventoryInstance.expandMemberSubSubHoldings(
-            'university',
+            // 'university',
+            // for sprint environment we have to use tenant code instead of tenant name
+            Affiliations.University,
             testData.instanceIds.holdings[0].id,
           );
           InventoryInstance.openItemByBarcode(testData.itemBarcode);
           ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
-          ItemRecordView.verifyHoldingsPermanentLocation(`${testData.locationName} (Consortium)`);
+          ItemRecordView.verifyHoldingsPermanentLocation(
+            `${testData.locationName} (${tenantNames.university})`,
+          );
           ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
         },
       );

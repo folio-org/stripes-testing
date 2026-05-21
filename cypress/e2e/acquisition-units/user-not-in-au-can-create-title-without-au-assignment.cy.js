@@ -106,7 +106,7 @@ describe('Acquisition Units', () => {
 
       cy.login(user.username, user.password, {
         path: TopMenu.receivingPath,
-        waiter: Receiving.waitLoading,
+        waiter: Receiving.verifyPageDisplayed,
       });
     });
   });
