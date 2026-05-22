@@ -46,6 +46,10 @@ const checkInCheckOutFieldSet = loanAndAvailabilitySection.find(FieldSet('Note t
 const electronicAccessFieldSet = electronicAccessSection.find(FieldSet('Electronic access'));
 const itemEditForm = HTML({ className: including('itemForm-') });
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
+const footerPane = HTML({ className: including('paneFooter-') });
+const saveAndCloseButton = footerPane.find(Button('Save & close'));
+const saveAndKeepEditingButton = footerPane.find(Button('Save & keep editing'));
+const cancelButton = footerPane.find(Button('Cancel'));
 
 function addBarcode(barcode) {
   cy.do(
@@ -319,6 +323,22 @@ export default {
     }
     if (urlPublicNote) {
       cy.do(targetRow.find(TextArea({ ariaLabel: 'URL public note' })).fillIn(urlPublicNote));
+    }
+  },
+
+  checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
+    cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));
+    cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
+    cy.expect(cancelButton.has({ disabled: !cancel }));
+  },
+
+  saveAndKeepEditing({ itemSaved = false } = {}) {
+    cy.do(saveAndKeepEditingButton.click());
+
+    if (itemSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(InstanceStates.itemSavedSuccessfully)),
+      );
     }
   },
 };
