@@ -31,10 +31,7 @@ describe('Bulk-edit', () => {
           ]).then((adminProperties) => {
             user = adminProperties;
 
-            FileManager.createFile(
-              `cypress/fixtures/${userUUIDsFileName}`,
-              `${userToEdit.userId}`,
-            );
+            FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${userToEdit.userId}`);
 
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
@@ -99,8 +96,10 @@ describe('Bulk-edit', () => {
           cy.wait(Cypress.env('downloadTimeout'));
           FileManager.findDownloadedFilesByMask(previewOfProposedChangesFileNameMask).then(
             (downloadedFilenames) => {
-              expect(downloadedFilenames, 'Exactly one preview-of-proposed-changes file should be downloaded')
-                .to.have.lengthOf(1);
+              expect(
+                downloadedFilenames,
+                'Exactly one preview-of-proposed-changes file should be downloaded',
+              ).to.have.lengthOf(1);
             },
           );
 
@@ -117,4 +116,3 @@ describe('Bulk-edit', () => {
     });
   });
 });
-
