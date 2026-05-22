@@ -32,7 +32,6 @@ describe('agreements', () => {
       Agreements.deleteViaApi(agreementId);
     });
 
-    // May faile due to https://folio-org.atlassian.net/browse/ERM-3993
     it(
       'C15829 Add agreement line with description only (erm) (TaaS)',
       { tags: ['extendedPathErm', 'erm'] },
