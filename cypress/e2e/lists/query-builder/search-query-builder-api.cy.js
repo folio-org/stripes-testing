@@ -50,7 +50,6 @@ describe('Lists', () => {
       });
     };
 
-
     const getFilteredValues = (labelName, [labels]) => {
       return getValues(labelName).then((content) => {
         const filteredValues = content
@@ -88,17 +87,15 @@ describe('Lists', () => {
     describe('Holdings', () => {
       before('Create test user', () => {
         cy.getAdminToken();
-        cy.createTempUser([
-          Permissions.listsEdit.gui,
-          Permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          userData = userProperties;
-          cy.getUserToken(userData.username, userData.password);
+        cy.createTempUser([Permissions.listsEdit.gui, Permissions.inventoryAll.gui]).then(
+          (userProperties) => {
+            userData = userProperties;
+            cy.getUserToken(userData.username, userData.password);
+          },
+        );
+        Lists.getEntityTypeIdByNameViaApi('Holdings').then((typeId) => {
+          recordTypeId = typeId;
         });
-        Lists.getEntityTypeIdByNameViaApi('Holdings')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
       });
 
       after('Delete test user', () => {
@@ -106,7 +103,8 @@ describe('Lists', () => {
         Users.deleteViaApi(userData.userId);
       });
 
-      it('C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (corsair)',
+      it(
+        'C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C446063'] },
         () => {
           const fqlQuery = { 'holdings.discovery_suppress': { $eq: 'true' } };
@@ -118,9 +116,11 @@ describe('Lists', () => {
               });
             });
           });
-        });
+        },
+      );
 
-      it('C446064 Search holdings in the Query Builder using "Holdings permanent location name" field (corsair)',
+      it(
+        'C446064 Search holdings in the Query Builder using "Holdings permanent location name" field (corsair)',
         { tags: ['criticalPath', 'corsair', 'C446064'] },
         () => {
           let fqlQuery = {};
@@ -137,14 +137,18 @@ describe('Lists', () => {
               validateResponse(fqlQuery, holdingsSchema).then((body) => {
                 body.content.forEach((item) => {
                   if (item['permanent_location.name']) {
-                    expect(['Main Library'].includes(item['permanent_location.name'])).to.be.equal(true);
+                    expect(['Main Library'].includes(item['permanent_location.name'])).to.be.equal(
+                      true,
+                    );
                   }
                 });
               });
             });
-        });
+        },
+      );
 
-      it('C446065 Search holdings in the Query Builder using "Holdings effective library — Code" field with "IN" operator (corsair)',
+      it(
+        'C446065 Search holdings in the Query Builder using "Holdings effective library — Code" field with "IN" operator (corsair)',
         { tags: ['criticalPath', 'corsair', 'C446065'] },
         () => {
           let fqlQuery = {};
@@ -167,23 +171,22 @@ describe('Lists', () => {
                 });
               });
             });
-        });
+        },
+      );
     });
 
     describe('Instances', () => {
       before('Create test user', () => {
         cy.getAdminToken();
-        cy.createTempUser([
-          Permissions.listsEdit.gui,
-          Permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          userData = userProperties;
-          cy.getUserToken(userData.username, userData.password);
+        cy.createTempUser([Permissions.listsEdit.gui, Permissions.inventoryAll.gui]).then(
+          (userProperties) => {
+            userData = userProperties;
+            cy.getUserToken(userData.username, userData.password);
+          },
+        );
+        Lists.getEntityTypeIdByNameViaApi('Instances').then((typeId) => {
+          recordTypeId = typeId;
         });
-        Lists.getEntityTypeIdByNameViaApi('Instances')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
       });
 
       after('Delete test user', () => {
@@ -234,9 +237,7 @@ describe('Lists', () => {
           cy.wrap(true).then(() => {
             validateResponse(fqlQuery, instancesSchema).then((body) => {
               body.content.forEach((item) => {
-                expect(
-                  ['FOLIO', 'MARC'].includes(item['instance.source']),
-                ).to.be.equal(true);
+                expect(['FOLIO', 'MARC'].includes(item['instance.source'])).to.be.equal(true);
               });
             });
           });
@@ -287,7 +288,9 @@ describe('Lists', () => {
               validateResponse(fqlQuery, instancesSchema).then((body) => {
                 body.content.forEach((item) => {
                   if (item['instance.mode_of_issuance_name']) {
-                    expect(['unspecified'].includes(item['instance.mode_of_issuance_name'])).to.be.equal(false);
+                    expect(
+                      ['unspecified'].includes(item['instance.mode_of_issuance_name']),
+                    ).to.be.equal(false);
                   }
                 });
               });
@@ -306,10 +309,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Organizations')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Organizations').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -429,10 +431,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Purchase order lines')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Purchase order lines').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -595,10 +596,9 @@ describe('Lists', () => {
     describe('Purchase order lines with titles', () => {
       before('Create test user', () => {
         cy.getAdminToken();
-        Lists.getEntityTypeIdByNameViaApi('Purchase order lines with titles')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Purchase order lines with titles').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       it(
@@ -691,10 +691,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Vouchers')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Vouchers').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -778,10 +777,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Invoice lines')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Invoice lines').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -952,10 +950,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Voucher lines with fund')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Voucher lines with fund').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -1128,10 +1125,11 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Voucher lines with invoice, fund, organization')
-          .then((typeId) => {
+        Lists.getEntityTypeIdByNameViaApi('Voucher lines with invoice, fund, organization').then(
+          (typeId) => {
             recordTypeId = typeId;
-          });
+          },
+        );
       });
 
       after('Delete test user', () => {
@@ -1300,10 +1298,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Transactions')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Transactions').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -1496,10 +1493,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Fund with ledger')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Fund with ledger').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
@@ -1682,10 +1678,9 @@ describe('Lists', () => {
           userData = userProperties;
           cy.getUserToken(userData.username, userData.password);
         });
-        Lists.getEntityTypeIdByNameViaApi('Budgets')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Budgets').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       after('Delete test user', () => {
