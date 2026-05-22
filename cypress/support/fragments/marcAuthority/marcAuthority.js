@@ -538,6 +538,8 @@ export default {
   selectSourceFile(sourceFileName) {
     cy.do(sourceFileSelect.choose(sourceFileName));
     this.verifySourceFileSelected(sourceFileName);
+    cy.wait(500);
+    cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(Spinner()).absent());
   },
 
   verifySourceFileOptionPresent: (option, isPresent = true) => {
