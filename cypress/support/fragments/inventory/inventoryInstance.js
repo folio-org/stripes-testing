@@ -1653,9 +1653,10 @@ export default {
     cy.get('div[class^="mclRowContainer-"]')
       .find('div[class^="mclCell-"]')
       .contains(status)
-      .then((elem) => {
-        elem.parent()[0].querySelector('a[href]').click();
-      });
+      .parent()
+      .find('a[href]')
+      .should('not.be.disabled')
+      .click();
     cy.wait(2000);
   },
 

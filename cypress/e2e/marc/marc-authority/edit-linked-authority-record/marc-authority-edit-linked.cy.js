@@ -41,6 +41,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376596');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -114,17 +117,33 @@ describe('MARC', () => {
             testData.tag010,
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.subfieldZValue}`,
           );
+          QuickMarcEditor.checkContentByTag(
+            testData.tag010,
+            `$a ${marcFiles[1].authority010FieldValue} $z ${testData.subfieldZValue}`,
+          );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
+          QuickMarcEditor.checkButtonsDisabled();
+          cy.wait(1500);
           QuickMarcEditor.updateExistingField(
+            testData.tag010,
+            `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`,
+          );
+          QuickMarcEditor.checkContentByTag(
             testData.tag010,
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
+          QuickMarcEditor.checkButtonsDisabled();
+          cy.wait(1500);
           QuickMarcEditor.updateExistingField(
+            testData.tag010,
+            `$a ${marcFiles[1].authority010FieldValue}`,
+          );
+          QuickMarcEditor.checkContentByTag(
             testData.tag010,
             `$a ${marcFiles[1].authority010FieldValue}`,
           );

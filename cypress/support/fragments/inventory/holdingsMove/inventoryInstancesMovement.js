@@ -12,6 +12,7 @@ import {
   Badge,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
+import ItemRecordView from '../item/itemRecordView';
 
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 const instancePaneFrom = Section({ id: 'movement-from-instance-details' });
@@ -45,6 +46,29 @@ export default {
   },
   closeInRightForm() {
     cy.do(instancePaneTo.find(Button({ icon: 'times' })).click());
+  },
+  openDestinationHolding(holdingName) {
+    const targetAccordion = instancePaneTo.find(
+      Accordion({ label: including(`Holdings: ${holdingName}`) }),
+    );
+
+    cy.expect(targetAccordion.exists());
+    cy.do(targetAccordion.clickHeader());
+    cy.expect(targetAccordion.has({ open: true }));
+  },
+  openItemInDestinationHolding(holdingName, barcode) {
+    const targetAccordion = instancePaneTo.find(
+      Accordion({ label: including(`Holdings: ${holdingName}`) }),
+    );
+
+    cy.expect(targetAccordion.has({ open: true }));
+    cy.do(
+      targetAccordion
+        .find(MultiColumnListCell({ columnIndex: 3, content: barcode }))
+        .find(Button(including(barcode)))
+        .click(),
+    );
+    ItemRecordView.waitLoading();
   },
   verifyHoldingsMoved(holdingName, itemCount, { instancePaneIndex = null } = {}) {
     const holdingsAccordion = Accordion({ label: including(`Holdings: ${holdingName}`) });

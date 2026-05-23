@@ -527,6 +527,7 @@ export default {
 
   clickLocationLookup(rowIndex = 0) {
     cy.do([RepeatableFieldItem({ index: rowIndex }).find(Button('Location look-up')).click()]);
+    cy.wait(1000);
   },
 
   locationLookupExists() {

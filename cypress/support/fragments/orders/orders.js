@@ -374,7 +374,7 @@ export default {
     });
   },
 
-  checkZeroSearchResultsHeader: () => {
+  checkZeroSearchResultsHeader() {
     this.assertResultsCount(0);
   },
 
@@ -383,6 +383,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(orderTypeSelect.choose(order.orderType));
+    cy.wait(1000);
     cy.do([
       MultiSelect({ id: 'order-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))

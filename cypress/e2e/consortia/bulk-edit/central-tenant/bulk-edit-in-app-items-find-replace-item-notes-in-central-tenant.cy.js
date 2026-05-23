@@ -204,16 +204,19 @@ describe('Bulk-edit', () => {
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
               });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
 
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIds.push(holding.id);
+                instances.forEach((instance) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.uuid,
+                    permanentLocationId: locationId,
+                    sourceId,
+                  }).then((holding) => {
+                    instance.holdingIds.push(holding.id);
+                  });
+                  cy.wait(1000);
                 });
-                cy.wait(1000);
               });
             })
             .then(() => {
