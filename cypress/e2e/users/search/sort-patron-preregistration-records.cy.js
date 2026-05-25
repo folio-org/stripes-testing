@@ -59,35 +59,56 @@ describe('Users', () => {
         isEmailVerified: false,
       },
     ];
-    const buildExpectedDisplayedRow = ({
-      label,
-      phone,
-      mobilePhone,
-      preferredEmailCommunication,
-    }) => ({
-      values: {
-        'First name': `${baseRecordName}_${label}_First`,
-        'Last name': `${baseRecordName}_${label}_Last`,
-        'Middle name': `${baseRecordName}_${label}_Middle`,
-        'Preferred first name': `${baseRecordName}_${label}_Preferred`,
-        Email: `${searchQuery}.${label.toLowerCase()}@example.com`,
-        'Phone number': phone,
-        'Mobile number': mobilePhone,
-        Address: `${baseRecordName} ${label} Street,Suite 100,Metropolis,NY,12345,USA`,
-        'Email communication preferences': preferredEmailCommunication.join(','),
-      },
+
+    const preRegistrationRecords = preRegistrationTemplates.map((template) => {
+      return buildPreRegistrationRecord(baseRecordName, searchQuery, template);
     });
-    const expectedDisplayedRows = preRegistrationTemplates.map(buildExpectedDisplayedRow);
+
+    const getExpectedAddressCellContent = ({ addressInfo }) => {
+      return [
+        addressInfo.addressLine0,
+        addressInfo.addressLine1,
+        addressInfo.city,
+        addressInfo.province,
+        addressInfo.zip,
+        addressInfo.country,
+      ].join(',');
+    };
+
+    const getExpectedEmailVerificationCellContent = ({ isEmailVerified }) => {
+      return isEmailVerified ? 'Activated' : 'Not activated';
+    };
+
+    const expectedRowsCellsContent = preRegistrationRecords.map((record) => [
+      { column: 'First name', content: record.generalInfo.firstName },
+      { column: 'Last name', content: record.generalInfo.lastName },
+      { column: 'Middle name', content: record.generalInfo.middleName },
+      {
+        column: 'Preferred first name',
+        content: record.generalInfo.preferredFirstName,
+      },
+      { column: 'Email', content: record.contactInfo.email },
+      { column: 'Phone number', content: record.contactInfo.phone },
+      { column: 'Mobile number', content: record.contactInfo.mobilePhone },
+      {
+        column: 'Address',
+        content: getExpectedAddressCellContent(record),
+      },
+      {
+        column: 'Email communication preferences',
+        content: record.preferredEmailCommunication.join(','),
+      },
+      {
+        column: emailVerificationColumn,
+        content: getExpectedEmailVerificationCellContent(record),
+      },
+    ]);
 
     before('Create test data', () => {
       cy.getAdminToken();
 
-      cy.wrap(preRegistrationTemplates)
-        .each((template) => {
-          cy.createStagingUserApi(
-            buildPreRegistrationRecord(baseRecordName, searchQuery, template),
-          );
-        })
+      cy.wrap(preRegistrationRecords)
+        .each((record) => cy.createStagingUserApi(record))
         .then(() => {
           cy.createTempUser([
             Permissions.uiUsersPatronPreRegistrationsView.gui,
@@ -134,7 +155,7 @@ describe('Users', () => {
         PatronPreRegistrationRecords.verifyColumnIsSortable('Email communication preferences');
         PatronPreRegistrationRecords.verifyColumnIsSortable('Submission date');
         PatronPreRegistrationRecords.verifyColumnIsSortable(emailVerificationColumn);
-        PatronPreRegistrationRecords.verifyRowsDisplayValues(expectedDisplayedRows);
+        PatronPreRegistrationRecords.verifyRowsCellsContent(expectedRowsCellsContent);
         PatronPreRegistrationRecords.verifyColumnValuesNotSorted('First name');
 
         // Step 3: Click on "First name" column name once

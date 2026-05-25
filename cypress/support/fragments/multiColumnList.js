@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   MultiColumnListCell,
@@ -5,6 +6,49 @@ import {
   MultiColumnListRow,
 } from '../../../interactors';
 import { COMMON_BUTTON_LABELS, SORT_DIRECTIONS } from '../constants';
+
+const defaultNormalizeValue = (value) => `${value}`.replace(/\s+/g, ' ').trim();
+
+const defaultGetSortableValue = (value) => {
+  return typeof value === 'string' ? value.toLowerCase() : value;
+};
+
+const defaultComparator = (leftValue, rightValue) => {
+  if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+    return leftValue - rightValue;
+  }
+
+  return `${leftValue}`.localeCompare(`${rightValue}`, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+};
+
+const getSortedValues = (
+  values,
+  direction = SORT_DIRECTIONS.ASCENDING,
+  comparator = defaultComparator,
+) => {
+  const sortedValues = [...values].sort(comparator);
+
+  return direction === SORT_DIRECTIONS.DESCENDING ? sortedValues.reverse() : sortedValues;
+};
+
+const areColumnValuesSorted = (
+  values,
+  direction,
+  getSortableValue = defaultGetSortableValue,
+  comparator = defaultComparator,
+) => {
+  const sortableValues = values.map(getSortableValue);
+  const expectedValues = getSortedValues(sortableValues, direction, comparator);
+
+  return Cypress._.isEqual(sortableValues, expectedValues);
+};
+
+const scrollHeaderIntoView = (listInteractor, column) => {
+  cy.do(listInteractor.scrollHeaderIntoView(column));
+};
 
 /**
  * Minimal contract for an Interactor used by list helper methods.
@@ -87,7 +131,14 @@ import { COMMON_BUTTON_LABELS, SORT_DIRECTIONS } from '../constants';
  *
  * @typedef {Object} MultiColumnListApi
  * @property {(listInteractor: ListInteractor) => void} waitLoadingComplete
+ * @property {(listInteractor: ListInteractor, rowCount: number) => void} assertRowCount
+ * @property {(listInteractor: ListInteractor, columns: string[]) => void} assertColumns
+ * @property {(listInteractor: ListInteractor, column: string) => void} sortListBy
  * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
+ * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
+ * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
+ * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function, waitForUpdate?: boolean, timeout?: number, delay?: number}) => Cypress.Chainable<void>} assertColumnValuesSorted
+ * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
  */
 
@@ -109,7 +160,16 @@ const api = {
     cy.expect(listInteractor.has({ loading: false }));
   },
 
+  assertRowCount(listInteractor, rowCount) {
+    cy.expect(listInteractor.has({ rowCount }));
+  },
+
+  assertColumns(listInteractor, columns) {
+    cy.expect(listInteractor.has({ columns }));
+  },
+
   sortListBy(listInteractor, column) {
+    scrollHeaderIntoView(listInteractor, column);
     cy.do(listInteractor.find(MultiColumnListHeader(column)).click());
   },
 
@@ -127,7 +187,82 @@ const api = {
    * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE, SORT_DIRECTIONS.ASCENDING);
    */
   assertColumnSortDirection(listInteractor, column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
+    scrollHeaderIntoView(listInteractor, column);
     cy.expect(listInteractor.find(MultiColumnListHeader(column)).has({ sort: sortDirection }));
+  },
+
+  assertColumnSortable(listInteractor, column, isSortable = true) {
+    scrollHeaderIntoView(listInteractor, column);
+    cy.expect(listInteractor.find(MultiColumnListHeader(column)).has({ sortable: isSortable }));
+  },
+
+  getColumnValues(listInteractor, column, options = {}) {
+    const { normalizeValue = defaultNormalizeValue } = options;
+
+    return cy.then(() => listInteractor.perform((el) => {
+      const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
+      const colIndex = headers.findIndex((h) => h.textContent.trim() === column) + 1;
+      return [
+        ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
+      ].map((cell) => normalizeValue(cell.textContent));
+    }));
+  },
+
+  assertColumnValuesSorted(listInteractor, column, options = {}) {
+    const {
+      direction = SORT_DIRECTIONS.ASCENDING,
+      normalizeValue = defaultNormalizeValue,
+      getSortableValue = defaultGetSortableValue,
+      comparator = defaultComparator,
+      waitForUpdate = true,
+      timeout = 5000,
+      delay = 300,
+    } = options;
+
+    const readValues = () => this.getColumnValues(listInteractor, column, { normalizeValue });
+
+    if (!waitForUpdate) {
+      return readValues().then((values) => {
+        expect(areColumnValuesSorted(values, direction, getSortableValue, comparator)).to.equal(
+          true,
+        );
+      });
+    }
+
+    return recurse(
+      () => readValues(),
+      (values) => areColumnValuesSorted(values, direction, getSortableValue, comparator),
+      {
+        timeout,
+        delay,
+        log: `Waiting for "${column}" to be sorted ${direction}`,
+      },
+    );
+  },
+
+  assertColumnValuesNotSorted(listInteractor, column, options = {}) {
+    const {
+      normalizeValue = defaultNormalizeValue,
+      getSortableValue = defaultGetSortableValue,
+      comparator = defaultComparator,
+    } = options;
+
+    return this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
+      const sortableValues = values.map(getSortableValue);
+      const sortedAscendingValues = getSortedValues(
+        sortableValues,
+        SORT_DIRECTIONS.ASCENDING,
+        comparator,
+      );
+      const sortedDescendingValues = getSortedValues(
+        sortableValues,
+        SORT_DIRECTIONS.DESCENDING,
+        comparator,
+      );
+
+      expect(sortableValues).to.not.deep.equal(sortedAscendingValues);
+      expect(sortableValues).to.not.deep.equal(sortedDescendingValues);
+    });
   },
 
   /**
@@ -188,9 +323,7 @@ const api = {
       const targetRow = listInteractor.find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }));
 
       expectedCells.forEach(({ exists = true, ...cellConfig }) => {
-        cy.expect([
-          targetRow.find(MultiColumnListCell(cellConfig))[exists ? 'exists' : 'absent'](),
-        ]);
+        cy.expect(targetRow.find(MultiColumnListCell(cellConfig))[exists ? 'exists' : 'absent']());
       });
     };
 

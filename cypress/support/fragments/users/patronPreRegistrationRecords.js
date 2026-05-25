@@ -116,6 +116,10 @@ export default {
     return this.getColumnValues('First name');
   },
 
+  verifyRowsCellsContent(rowsConfig) {
+    MultiColumnListHelper.assertRowsCellsContent(recordsList, rowsConfig);
+  },
+
   verifyVisibleFirstNames(expectedFirstNames) {
     this.getVisibleFirstNames().then((firstNames) => {
       expect(firstNames).to.deep.equal(expectedFirstNames);
@@ -124,10 +128,6 @@ export default {
 
   verifyColumnValuesNotSorted(columnName) {
     return MultiColumnListHelper.assertColumnValuesNotSorted(recordsList, columnName);
-  },
-
-  verifyRowsDisplayValues(rowsConfig) {
-    return MultiColumnListHelper.assertRowsDisplayValues(recordsList, rowsConfig);
   },
 
   verifyColumnValuesSorted(columnName, direction) {
