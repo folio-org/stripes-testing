@@ -363,11 +363,90 @@ const api = {
   /* Pagination */
   assertPaginationControlsDisabled(listInteractor, state) {
     const { previous, next } = state || { previous: true, next: true };
-
-    cy.expect([
+    cy.expect(
       listInteractor.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).has({ disabled: previous }),
-      listInteractor.find(Button(COMMON_BUTTON_LABELS.NEXT)).has({ disabled: next }),
-    ]);
+    );
+    cy.expect(listInteractor.find(Button(COMMON_BUTTON_LABELS.NEXT)).has({ disabled: next }));
+  },
+  /** Pagination helpers */
+  getPaginationInfo(listInteractor) {
+    return cy.then(() => listInteractor.perform((el) => {
+      const prevBtn = el.querySelector(
+        '[data-test-prev-paging-button], [id$="-prev-paging-button"]',
+      );
+      const nextBtn = el.querySelector(
+        '[data-test-next-paging-button], [id$="-next-paging-button"]',
+      );
+
+      const prevDisabled = prevBtn ? !!prevBtn.disabled : null;
+      const nextDisabled = nextBtn ? !!nextBtn.disabled : null;
+
+      let start = null;
+      let end = null;
+      const pageInfo = el.querySelector('[class*=mclPrevNextPageInfoContainer-]');
+      if (pageInfo) {
+        const divs = pageInfo.querySelectorAll('div');
+        if (divs.length >= 2) {
+          const startText = divs[0].textContent.trim().replace(/[^\d]/g, '') || null;
+          const endText = divs[1].textContent.trim().replace(/[^\d]/g, '') || null;
+          start = startText ? parseInt(startText, 10) : null;
+          end = endText ? parseInt(endText, 10) : null;
+        }
+      }
+
+      const totalCountAttr =
+          el.getAttribute('data-total-count') || el.getAttribute('aria-rowcount');
+      const totalCount = totalCountAttr ? parseInt(totalCountAttr, 10) : null;
+
+      return {
+        prevDisabled,
+        nextDisabled,
+        start,
+        end,
+        totalCount,
+      };
+    }));
+  },
+
+  clickNextPage(listInteractor) {
+    cy.do(listInteractor.find(Button(COMMON_BUTTON_LABELS.NEXT)).click());
+    this.waitLoadingComplete(listInteractor);
+    return cy.then(() => {});
+  },
+
+  clickPreviousPage(listInteractor) {
+    cy.do(listInteractor.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).click());
+    this.waitLoadingComplete(listInteractor);
+    return cy.then(() => {});
+  },
+
+  navigateToLastPage(listInteractor) {
+    return this.getPaginationInfo(listInteractor).then((info) => {
+      if (!info.nextDisabled) {
+        return this.clickNextPage(listInteractor).then(() => this.navigateToLastPage(listInteractor));
+      }
+      return cy.then(() => {});
+    });
+  },
+
+  navigateToFirstPage(listInteractor) {
+    return this.getPaginationInfo(listInteractor).then((info) => {
+      if (!info.prevDisabled) {
+        return this.clickPreviousPage(listInteractor).then(() => this.navigateToFirstPage(listInteractor));
+      }
+      return cy.then(() => {});
+    });
+  },
+
+  getTotalCount(listInteractor) {
+    return this.getPaginationInfo(listInteractor).then((info) => info.totalCount);
+  },
+
+  getVisibleRange(listInteractor) {
+    return this.getPaginationInfo(listInteractor).then((info) => ({
+      start: info.start,
+      end: info.end,
+    }));
   },
 };
 
