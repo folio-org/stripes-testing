@@ -1,4 +1,3 @@
-import { MARC_AUTHORITY_SEARCH_OPTIONS } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -18,23 +17,25 @@ describe('MARC', () => {
 
       const testData = {
         uuidSearchOption: 'Authority UUID',
-        bib1Title: `AT_C367929_Journal_${randomPostfix}`,
-        bib2Title: `AT_C367929_Crossfire_${randomPostfix}`,
-        dugmoreHeading: `AT_C367929_Dugmore_${randomPostfix}`,
+        bib1Title: `AT_C367929_MarcBibInstance_Journal_${randomPostfix}`,
+        bib2Title: `AT_C367929_MarcBibInstance_Crossfire_${randomPostfix}`,
+        dugmoreHeading: `AT_C367929_MarcAuthority_Dugmore_${randomPostfix}`,
         dugmoreReference: `AT_C367929_DugmoreRef_${randomPostfix}`,
-        woodsonHeading: `AT_C367929_Woodson_${randomPostfix}`,
-        chinHeading: `AT_C367929_Chin_${randomPostfix}`,
-        leeHeading: `AT_C367929_Lee_${randomPostfix}`,
-        feministPoetryHeading: `AT_C367929_FeministPoetry_${randomPostfix}`,
-        poetryReference: `AT_C367929_Poetry_${randomPostfix}`,
+        woodsonHeading: `AT_C367929_MarcAuthority_Woodson_${randomPostfix}`,
+        chinHeading: `AT_C367929_MarcAuthority_Chin_${randomPostfix}`,
+        leeHeading: `AT_C367929_MarcAuthority_Lee_${randomPostfix}`,
+        feministPoetryHeading: `AT_C367929_Poetry_${randomPostfix}_Feminist`,
+        poetryReference: `AT_C367929_Poetry_${randomPostfix}_Regular`,
       };
 
+      const poetryQuery = `AT_C367929_Poetry_${randomPostfix}`;
+
       // naturalIds for authority records
-      const dugmoreNaturalId = `367929dugmore${randomDigits}`;
-      const woodsonNaturalId = `367929woodson${randomDigits}`;
-      const chinNaturalId = `367929chin${randomDigits}`;
-      const leeNaturalId = `367929lee${randomDigits}`;
-      const feministPoetryNaturalId = `367929feminist${randomDigits}`;
+      const dugmoreNaturalId = `367929${randomDigits}1`;
+      const woodsonNaturalId = `367929${randomDigits}2`;
+      const chinNaturalId = `367929${randomDigits}3`;
+      const leeNaturalId = `367929${randomDigits}4`;
+      const feministPoetryNaturalId = `367929${randomDigits}5`;
 
       let userData;
       let dugmoreId;
@@ -51,17 +52,17 @@ describe('MARC', () => {
         { tag: '008', content: QuickMarcEditor.valid008ValuesInstance },
         {
           tag: '245',
-          content: `$a AT_C367929_Journal_${randomPostfix}`,
-          indicators: ['1', '0'],
+          content: `$a ${testData.bib1Title}`,
+          indicators: ['1', '1'],
         },
         {
           tag: '700',
-          content: `$a AT_C367929_Dugmore_${randomPostfix}`,
+          content: `$a ${testData.dugmoreHeading}`,
           indicators: ['1', '\\'],
         },
         {
           tag: '700',
-          content: `$a AT_C367929_Woodson_${randomPostfix}`,
+          content: `$a ${testData.woodsonHeading}`,
           indicators: ['1', '\\'],
         },
       ];
@@ -73,34 +74,34 @@ describe('MARC', () => {
         { tag: '008', content: QuickMarcEditor.valid008ValuesInstance },
         {
           tag: '245',
-          content: `$a AT_C367929_Crossfire_${randomPostfix}`,
+          content: `$a ${testData.bib2Title}`,
           indicators: ['1', '0'],
         },
         {
           tag: '100',
-          content: `$a AT_C367929_Chin_${randomPostfix}`,
+          content: `$a ${testData.chinHeading}`,
           indicators: ['1', '\\'],
         },
         {
           tag: '650',
-          content: `$a AT_C367929_FeministPoetry_${randomPostfix}`,
+          content: `$a ${testData.feministPoetryHeading}`,
           indicators: ['\\', '0'],
         },
         {
           tag: '700',
-          content: `$a AT_C367929_Woodson_${randomPostfix}`,
+          content: `$a ${testData.woodsonHeading}`,
           indicators: ['1', '\\'],
         },
         {
           tag: '700',
-          content: `$a AT_C367929_Chin_${randomPostfix}`,
+          content: `$a ${testData.chinHeading}`,
           indicators: ['1', '\\'],
         },
       ];
 
       before('Create user, data and link records', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C367929_');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C367929_');
 
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -217,6 +218,7 @@ describe('MARC', () => {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,
               });
+              MarcAuthorities.verifySearchTabIsOpened();
             });
         });
       });
@@ -234,60 +236,65 @@ describe('MARC', () => {
       });
 
       it(
-        'C367929 Verify that correct number of linked records are displayed in the "Number of titles" column when searching for linked "MARC Authority" records (spitfire) (TaaS)',
+        'C367929 Verify that correct number of linked records are displayed in the "Number of titles" column when searching for linked "MARC Authority" records (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C367929'] },
         () => {
           // Steps 1-2: Search Dugmore authorized heading → 1 title
-          MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.dugmoreHeading);
+          MarcAuthorities.searchBeats(testData.dugmoreHeading);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.dugmoreHeading, 1);
 
           // Step 3: Click "1" → Inventory opens in same tab with 1 result (Journal)
           MarcAuthorities.clickOnNumberOfTitlesForRowWithValue(testData.dugmoreHeading, 1);
-          InventoryInstance.waitInventoryLoading();
-          InventorySearchAndFilter.checkRowsCount(1);
-          InventorySearchAndFilter.verifyInstanceDisplayed(testData.bib1Title, true);
+          InventoryInstances.waitLoading();
+          InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          InventorySearchAndFilter.verifySearchResult(testData.bib1Title);
           InventoryInstances.verifySelectedSearchOption(testData.uuidSearchOption);
           InventorySearchAndFilter.checkSearchQueryText(dugmoreId);
 
           // Step 4: Navigate back to MARC Authorities
-          cy.visit(TopMenu.marcAuthorities);
+          InventoryInstance.goToPreviousPage();
+          cy.wait(1000);
+          InventoryInstances.waitLoading();
+          InventoryInstance.goToPreviousPage();
           MarcAuthorities.waitLoading();
 
           // Steps 5-6: Search Woodson authorized heading → 2 titles
-          MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.woodsonHeading);
+          MarcAuthorities.searchBeats(testData.woodsonHeading);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.woodsonHeading, 2);
 
           // Step 7: Click "2" → Inventory opens with 2 results (Journal + Crossfire)
           MarcAuthorities.clickOnNumberOfTitlesForRowWithValue(testData.woodsonHeading, 2);
-          InventoryInstance.waitInventoryLoading();
-          InventorySearchAndFilter.checkRowsCount(2);
-          InventorySearchAndFilter.verifyInstanceDisplayed(testData.bib1Title, true);
-          InventorySearchAndFilter.verifyInstanceDisplayed(testData.bib2Title, true);
+          InventoryInstances.waitLoading();
+          InventorySearchAndFilter.verifyNumberOfSearchResults(2);
+          InventorySearchAndFilter.verifySearchResult(testData.bib1Title);
+          InventorySearchAndFilter.verifySearchResult(testData.bib2Title);
           InventoryInstances.verifySelectedSearchOption(testData.uuidSearchOption);
           InventorySearchAndFilter.checkSearchQueryText(woodsonId);
 
           // Step 8: Navigate back to MARC Authorities
-          cy.visit(TopMenu.marcAuthorities);
+          InventoryInstance.goToPreviousPage();
           MarcAuthorities.waitLoading();
 
           // Steps 9-10: Search Chin authorized heading → 1 title
           // (Bib2 has both 100 and 700 linked to Chin, but counts as 1 instance)
-          MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.chinHeading);
+          MarcAuthorities.searchBeats(testData.chinHeading);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.chinHeading, 1);
+          MarcAuthority.contains(testData.chinHeading);
 
           // Steps 11-12: Search Dugmore reference heading → empty "Number of titles"
-          MarcAuthorities.searchBy(
-            MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD,
-            testData.dugmoreReference,
-          );
+          MarcAuthorities.searchBeats(testData.dugmoreReference);
           MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue(testData.dugmoreReference);
+          MarcAuthority.contains(testData.dugmoreReference);
 
           // Steps 13-14: Search Lee authorized heading (no linked bibs) → empty "Number of titles"
-          MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.leeHeading);
+          MarcAuthorities.searchBeats(testData.leeHeading);
           MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue(testData.leeHeading);
+          MarcAuthority.contains(testData.leeHeading);
 
           // Steps 15-16: Search Poetry reference → Feminist poetry = 1 title, Poetry reference = empty
-          MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.poetryReference);
+          MarcAuthorities.searchBeats(poetryQuery);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.feministPoetryHeading, 1);
           MarcAuthorities.verifyEmptyNumberOfTitlesForRowWithValue(testData.poetryReference);
         },
