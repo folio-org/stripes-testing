@@ -506,3 +506,14 @@ Cypress.Commands.add('assignDepartmentsToExistingUser', (userId, departments = [
     });
   });
 });
+
+Cypress.Commands.add('createStagingUserApi', (record) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'staging-users',
+      body: record,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body);
+});
