@@ -50,6 +50,12 @@ const scrollHeaderIntoView = (listInteractor, column) => {
   cy.do(listInteractor.scrollHeaderIntoView(column));
 };
 
+const getPaginationButton = (listInteractor, label) => listInteractor.find(Button(label));
+
+const getNextButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.NEXT);
+
+const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.PREVIOUS);
+
 /**
  * Minimal contract for an Interactor used by list helper methods.
  *
@@ -140,6 +146,12 @@ const scrollHeaderIntoView = (listInteractor, column) => {
  * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function, waitForUpdate?: boolean, timeout?: number, delay?: number}) => Cypress.Chainable<void>} assertColumnValuesSorted
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
+ * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
+ * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertPreviousPageButtonEnabled
+ * @property {(listInteractor: ListInteractor) => void} clickNextPage
+ * @property {(listInteractor: ListInteractor) => void} clickPreviousPage
+ * @property {(listInteractor: ListInteractor) => void} navigateToLastPage
+ * @property {(listInteractor: ListInteractor) => void} navigateToFirstPage
  */
 
 /** @type {MultiColumnListApi} */
@@ -364,10 +376,58 @@ const api = {
   assertPaginationControlsDisabled(listInteractor, state) {
     const { previous, next } = state || { previous: true, next: true };
 
-    cy.expect([
-      listInteractor.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).has({ disabled: previous }),
-      listInteractor.find(Button(COMMON_BUTTON_LABELS.NEXT)).has({ disabled: next }),
-    ]);
+    this.assertPreviousPageButtonEnabled(listInteractor, !previous);
+    this.assertNextPageButtonEnabled(listInteractor, !next);
+  },
+
+  assertNextPageButtonEnabled(listInteractor, isEnabled) {
+    getNextButton(listInteractor).has({ disabled: !isEnabled });
+  },
+
+  assertPreviousPageButtonEnabled(listInteractor, isEnabled) {
+    getPreviousButton(listInteractor).has({ disabled: !isEnabled });
+  },
+
+  clickNextPage(listInteractor) {
+    cy.do(getNextButton(listInteractor).click());
+    this.waitLoadingComplete(listInteractor);
+  },
+
+  clickPreviousPage(listInteractor) {
+    cy.do(getPreviousButton(listInteractor).click());
+    this.waitLoadingComplete(listInteractor);
+  },
+
+  navigateToLastPage(listInteractor) {
+    const clickNextUntilDisabled = () => {
+      return cy
+        .then(() => listInteractor.perform((el) => {
+          const nextButton = el.querySelector('[data-test-next-paging-button]');
+          return nextButton.disabled;
+        }))
+        .then((isDisabled) => {
+          if (isDisabled) return null;
+          this.clickNextPage(listInteractor);
+          return clickNextUntilDisabled();
+        });
+    };
+
+    clickNextUntilDisabled();
+  },
+
+  navigateToFirstPage(listInteractor) {
+    const clickPreviousUntilDisabled = () => {
+      cy.then(() => listInteractor.perform((el) => {
+        const prevButton = el.querySelector('[data-test-prev-paging-button]');
+        return prevButton.disabled;
+      })).then((isDisabled) => {
+        if (isDisabled) return null;
+        this.clickPreviousPage(listInteractor);
+        return clickPreviousUntilDisabled();
+      });
+    };
+
+    clickPreviousUntilDisabled();
   },
 };
 
