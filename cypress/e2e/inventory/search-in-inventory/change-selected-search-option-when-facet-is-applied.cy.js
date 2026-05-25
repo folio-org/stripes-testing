@@ -190,6 +190,8 @@ describe('Inventory', () => {
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.folioInstance.title, true);
         InventorySearchAndFilter.checkRowsCount(1);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
 
         InventorySearchAndFilter.searchByStatus('Available');
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.folioInstance.title, true);

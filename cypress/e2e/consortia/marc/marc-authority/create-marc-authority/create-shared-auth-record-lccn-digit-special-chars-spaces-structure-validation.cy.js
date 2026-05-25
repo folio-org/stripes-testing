@@ -17,9 +17,10 @@ describe('MARC', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
         const randomLetters = getRandomLetters(2);
+        const randomLetters001 = getRandomLetters(20);
         const localAuthFile = {
           name: `C569549 auth source file active ${randomPostfix}`,
-          prefix: `${randomLetters}`,
+          prefix: `${randomLetters001}`,
           hridStartsWith: '1',
           baseUrl: '',
           source: 'Local',
@@ -134,8 +135,10 @@ describe('MARC', () => {
             QuickMarcEditor.addNewField('010', '', 3);
             invalidLccn.forEach((lccn) => {
               QuickMarcEditor.updateExistingField('010', `$a ${lccn.value}`);
+              QuickMarcEditor.checkContentByTag('010', `$a ${lccn.value}`);
               QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+              QuickMarcEditor.verifyValidationCallout();
               QuickMarcEditor.closeAllCallouts();
             });
 

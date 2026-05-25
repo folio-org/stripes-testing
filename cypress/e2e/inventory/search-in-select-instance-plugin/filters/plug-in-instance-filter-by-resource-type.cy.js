@@ -161,16 +161,18 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
 
+          cy.intercept('GET', '/search/instances?*').as('getInstances1');
           SelectInstanceModal.selectMultiSelectFilterOption(
             resourceTypeAccordionName,
             resourceTypes[0].name,
           );
+          cy.wait('@getInstances1').its('response.statusCode').should('eq', 200);
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             resourceTypeAccordionName,
             resourceTypes[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             resourceTypeAccordionName,
             resourceTypes[1].name,
           );
