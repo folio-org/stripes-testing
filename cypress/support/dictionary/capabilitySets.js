@@ -52,6 +52,11 @@ export default {
     resource: 'UI-Data-Export Settings',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiDeveloperSettingsUserLocaleView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Developer Settings UserLocale Execute',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsHoldingsSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Holdings-Sources',
