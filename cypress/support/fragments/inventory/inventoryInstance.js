@@ -637,6 +637,7 @@ export default {
   },
 
   checkAbsenceOfAuthorityIconInMarcViewPane() {
+    cy.wait(1000); // icon may appear with delay
     cy.expect(marcViewPaneContent.find(Link()).absent());
   },
 
