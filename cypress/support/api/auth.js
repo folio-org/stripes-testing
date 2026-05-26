@@ -47,7 +47,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
   });
 });
 
-Cypress.Commands.add('getAdminToken', (clearCookies = true) => {
+Cypress.Commands.add('getAdminToken', (clearCookies = false) => {
   if (clearCookies) {
     cy.clearCookies({ domain: null });
     cy.wait(2000); // Wait for cookies to be cleared
