@@ -135,7 +135,7 @@ const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor
  * Common helper methods for MultiColumnList assertions.
  *
  * @typedef {Object} MultiColumnListApi
- * @property {(listInteractor: ListInteractor) => void} waitLoadingComplete
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} waitLoadingComplete
  * @property {(listInteractor: ListInteractor, rowCount: number) => void} assertRowCount
  * @property {(listInteractor: ListInteractor, columns: string[]) => void} assertColumns
  * @property {(listInteractor: ListInteractor, column: string) => void} sortListBy
@@ -147,10 +147,10 @@ const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
  * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
  * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertPreviousPageButtonEnabled
- * @property {(listInteractor: ListInteractor) => void} clickNextPage
- * @property {(listInteractor: ListInteractor) => void} clickPreviousPage
- * @property {(listInteractor: ListInteractor) => void} navigateToLastPage
- * @property {(listInteractor: ListInteractor) => void} navigateToFirstPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} clickNextPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} clickPreviousPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToLastPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToFirstPage
  */
 
 /** @type {MultiColumnListApi} */
@@ -159,7 +159,7 @@ const api = {
    * Waits until list loading indicator is disabled.
    *
    * @param {ListInteractor} listInteractor - Target multi-column list interactor.
-   * @returns {void}
+   * @returns {Cypress.Chainable<void>}
    *
    * @example
    * import { MultiColumnList } from '../../../interactors';
@@ -168,7 +168,7 @@ const api = {
    * api.waitLoadingComplete(transactionsList);
    */
   waitLoadingComplete(listInteractor) {
-    cy.expect(listInteractor.has({ loading: false }));
+    return cy.expect(listInteractor.has({ loading: false }));
   },
 
   assertRowCount(listInteractor, rowCount) {
@@ -361,13 +361,15 @@ const api = {
   },
 
   clickNextPage(listInteractor) {
-    cy.do(getNextButton(listInteractor).click());
-    this.waitLoadingComplete(listInteractor);
+    return cy
+      .do(getNextButton(listInteractor).click())
+      .then(() => this.waitLoadingComplete(listInteractor));
   },
 
   clickPreviousPage(listInteractor) {
-    cy.do(getPreviousButton(listInteractor).click());
-    this.waitLoadingComplete(listInteractor);
+    return cy
+      .do(getPreviousButton(listInteractor).click())
+      .then(() => this.waitLoadingComplete(listInteractor));
   },
 
   navigateToLastPage(listInteractor) {
@@ -379,27 +381,29 @@ const api = {
         }))
         .then((isDisabled) => {
           if (isDisabled) return null;
-          this.clickNextPage(listInteractor);
-          return clickNextUntilDisabled();
+
+          return this.clickNextPage(listInteractor).then(() => clickNextUntilDisabled());
         });
     };
 
-    clickNextUntilDisabled();
+    return clickNextUntilDisabled();
   },
 
   navigateToFirstPage(listInteractor) {
     const clickPreviousUntilDisabled = () => {
-      cy.then(() => listInteractor.perform((el) => {
-        const prevButton = el.querySelector('[data-test-prev-paging-button]');
-        return prevButton.disabled;
-      })).then((isDisabled) => {
-        if (isDisabled) return null;
-        this.clickPreviousPage(listInteractor);
-        return clickPreviousUntilDisabled();
-      });
+      return cy
+        .then(() => listInteractor.perform((el) => {
+          const prevButton = el.querySelector('[data-test-prev-paging-button]');
+          return prevButton.disabled;
+        }))
+        .then((isDisabled) => {
+          if (isDisabled) return null;
+
+          return this.clickPreviousPage(listInteractor).then(() => clickPreviousUntilDisabled());
+        });
     };
 
-    clickPreviousUntilDisabled();
+    return clickPreviousUntilDisabled();
   },
 };
 
