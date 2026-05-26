@@ -296,6 +296,12 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
           MarcAuthority.deleteViaAPI(authorityId, true);
           // Cleanup Shared instances in Central
+          cy.recurse(
+            () => cy.getInstanceLinks(sharedInstanceId),
+            (response) => response.body.links.length === 0,
+            { limit: 10, timeout: 12000, delay: 1000 },
+          );
+          cy.wait(2000);
           cy.getInstanceById(sharedInstanceId).then((instanceData) => {
             cy.updateInstance({
               ...instanceData,
@@ -309,6 +315,12 @@ describe('MARC', () => {
 
           // Cleanup Local instances in Member
           cy.setTenant(Affiliations.College);
+          cy.recurse(
+            () => cy.getInstanceLinks(localInstanceId),
+            (response) => response.body.links.length === 0,
+            { limit: 10, timeout: 12000, delay: 1000 },
+          );
+          cy.wait(2000);
           cy.getInstanceById(localInstanceId).then((instanceData) => {
             cy.updateInstance({
               ...instanceData,

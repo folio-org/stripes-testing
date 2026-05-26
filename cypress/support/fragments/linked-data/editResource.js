@@ -149,7 +149,9 @@ export default {
 
   setValueForSectionField(value, field, section, repeatPosition = 1) {
     cy.wait(1000);
-    cy.xpath(`(//div[@class="label" and text()="${section}"]/../../../div/following-sibling::div//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/input`)
+    cy.xpath(
+      `(//div[@class="label" and text()="${section}"]/../../../div/following-sibling::div//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/input`,
+    )
       .focus()
       .should('not.be.disabled')
       .clear()
@@ -216,6 +218,16 @@ export default {
     cy.xpath(
       `(//div[@class="label" and text()="${field}"]/../../div//div[@class="duplicate-group"]/button[1])[1]`,
     ).click();
+    cy.wait(1000);
+  },
+
+  deleteRepeatGroup(field, position = 2) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${position}]/../../div/div[@class="duplicate-group"]/button[2]`,
+    )
+      .first()
+      .click();
     cy.wait(1000);
   },
 

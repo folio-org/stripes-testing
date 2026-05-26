@@ -149,21 +149,27 @@ describe('MARC', () => {
 
             // Step 3: Add 100 field
             QuickMarcEditor.addNewField('100', `$a ${localMarcAuthorityHeading}_2`, 3);
+            QuickMarcEditor.checkContentByTag('100', `$a ${localMarcAuthorityHeading}_2`);
 
             // Step 4: Add "010 $a" value which matches to "010 $a" of existing Shared record
             QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfSharedAuthority}`, 3);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfSharedAuthority}`);
             QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+            QuickMarcEditor.verifyValidationCallout();
             QuickMarcEditor.closeAllCallouts();
 
             // Step 5: Update "010 $a" value which matches to "010 $a" of existing Local record
             QuickMarcEditor.updateExistingField('010', `$a ${lccnNumberOfLocalAuthority}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfLocalAuthority}`);
             QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+            QuickMarcEditor.verifyValidationCallout();
             QuickMarcEditor.closeAllCallouts();
 
             // Step 6: Update "010 $a" value which matches to "010 $z" of existing Shared record
             QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumberOfSharedAuthority}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfSharedAuthority}`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
@@ -173,7 +179,9 @@ describe('MARC', () => {
             MarcAuthority.selectSourceFile(localAuthFile.name);
             QuickMarcEditor.checkContentByTag('001', `${localAuthFile.prefix}2`);
             QuickMarcEditor.addNewField('100', `$a ${localMarcAuthorityHeading}_3`, 3);
+            QuickMarcEditor.checkContentByTag('100', `$a ${localMarcAuthorityHeading}_3`);
             QuickMarcEditor.addNewField('010', `$a ${canceledLccnNumberOfLocalAuthority}`, 3);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfLocalAuthority}`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           },
