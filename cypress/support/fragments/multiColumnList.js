@@ -1,4 +1,3 @@
-import { recurse } from 'cypress-recurse';
 import {
   Button,
   MultiColumnListCell,
@@ -143,7 +142,7 @@ const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor
  * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
  * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
- * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function, waitForUpdate?: boolean, timeout?: number, delay?: number}) => Cypress.Chainable<void>} assertColumnValuesSorted
+ * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesSorted
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
  * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
@@ -183,6 +182,7 @@ const api = {
   sortListBy(listInteractor, column) {
     scrollHeaderIntoView(listInteractor, column);
     cy.do(listInteractor.find(MultiColumnListHeader(column)).click());
+    this.waitLoadingComplete(listInteractor);
   },
 
   /**
@@ -226,30 +226,11 @@ const api = {
       normalizeValue = defaultNormalizeValue,
       getSortableValue = defaultGetSortableValue,
       comparator = defaultComparator,
-      waitForUpdate = true,
-      timeout = 5000,
-      delay = 300,
     } = options;
 
-    const readValues = () => this.getColumnValues(listInteractor, column, { normalizeValue });
-
-    if (!waitForUpdate) {
-      return readValues().then((values) => {
-        expect(areColumnValuesSorted(values, direction, getSortableValue, comparator)).to.equal(
-          true,
-        );
-      });
-    }
-
-    return recurse(
-      () => readValues(),
-      (values) => areColumnValuesSorted(values, direction, getSortableValue, comparator),
-      {
-        timeout,
-        delay,
-        log: `Waiting for "${column}" to be sorted ${direction}`,
-      },
-    );
+    this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
+      expect(areColumnValuesSorted(values, direction, getSortableValue, comparator)).to.equal(true);
+    });
   },
 
   assertColumnValuesNotSorted(listInteractor, column, options = {}) {

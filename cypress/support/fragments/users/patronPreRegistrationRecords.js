@@ -87,11 +87,7 @@ export default {
   },
 
   clickColumnHeader(columnName) {
-    // Loading in the results list is not implemented on this page, so wait for results by intercepting the request.
-    cy.intercept('GET', '**/staging-users?*sortby*').as('stagingUsersRecords');
     MultiColumnListHelper.sortListBy(recordsList, columnName);
-    cy.wait('@stagingUsersRecords').its('response.statusCode').should('eq', 200);
-    this.waitLoading();
   },
 
   clickActionHeader() {
