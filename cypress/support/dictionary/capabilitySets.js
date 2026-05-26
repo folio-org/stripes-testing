@@ -299,6 +299,16 @@ export default {
     resource: 'UI-Bulk-Edit Logs',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiBulkEditInventoryView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Scheduler',

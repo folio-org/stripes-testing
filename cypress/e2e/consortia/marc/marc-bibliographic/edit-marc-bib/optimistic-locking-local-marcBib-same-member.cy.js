@@ -117,7 +117,6 @@ describe('MARC', () => {
                     expect(status).to.eq(202);
 
                     // Switch back to User A's token in College tenant
-                    cy.clearCookies({ domain: null });
                     cy.getToken(userA.username, userA.password);
 
                     // Step 6: User A makes changes to 245 field and tries to save
