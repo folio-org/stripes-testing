@@ -144,6 +144,7 @@ describe('Data Import', () => {
             });
 
             // download exported marc file
+            cy.wait(500); // wait for file to be created
             cy.getAdminToken();
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.uploadFile(nameForCSVFile);
