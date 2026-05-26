@@ -91,6 +91,7 @@ export default {
   },
 
   clickActionHeader() {
+    // eslint-disable-next-line cypress/no-force
     cy.contains(`${listSelector} [role="columnheader"]`, 'Action')
       .scrollIntoView()
       .click({ force: true });
