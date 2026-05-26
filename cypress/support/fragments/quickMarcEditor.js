@@ -3723,4 +3723,11 @@ export default {
       }),
     );
   },
+
+  verifyIndicatorBoxesAbsentInField(tag, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(firstIndicatorBox).absent());
+    cy.expect(targetRow.find(secondIndicatorBox).absent());
+  },
 };

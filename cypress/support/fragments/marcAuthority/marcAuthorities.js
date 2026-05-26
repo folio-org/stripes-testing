@@ -1178,21 +1178,17 @@ export default {
   },
 
   verifyResultsRowContent(heading, type, headingType) {
-    cy.expect(MultiColumnListRow(including(heading), { isContainer: false }).exists());
-    if (type) {
-      cy.expect(
-        MultiColumnListRow(including(heading), { isContainer: false })
-          .find(MultiColumnListCell(type))
-          .exists(),
-      );
-    }
-    if (headingType) {
-      cy.expect(
-        MultiColumnListRow(including(heading), { isContainer: false })
-          .find(MultiColumnListCell(headingType))
-          .exists(),
-      );
-    }
+    const anchorCell = MultiColumnListCell(heading);
+    cy.expect(anchorCell.exists());
+    cy.then(() => anchorCell.row()).then((row) => {
+      const targetRow = MultiColumnListRow({ index: row, isContainer: false });
+      if (type) {
+        cy.expect(targetRow.find(MultiColumnListCell(type)).exists());
+      }
+      if (headingType) {
+        cy.expect(targetRow.find(MultiColumnListCell(headingType)).exists());
+      }
+    });
   },
 
   verifyResultRowContentSharedIcon(heading, isShared) {
