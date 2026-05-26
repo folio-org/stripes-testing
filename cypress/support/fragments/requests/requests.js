@@ -915,7 +915,6 @@ export default {
 
   clickColumnHeader(columnName) {
     MultiColumnListHelper.sortListBy(recordsList, columnName);
-    this.waitForMCLLoading();
   },
 
   verifyColumnSortOrder(columnName, expectedOrder) {

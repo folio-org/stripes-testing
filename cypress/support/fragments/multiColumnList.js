@@ -239,22 +239,13 @@ const api = {
       getSortableValue = defaultGetSortableValue,
       comparator = defaultComparator,
     } = options;
-
     return this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
-      const sortableValues = values.map(getSortableValue);
-      const sortedAscendingValues = getSortedValues(
-        sortableValues,
-        SORT_DIRECTIONS.ASCENDING,
-        comparator,
-      );
-      const sortedDescendingValues = getSortedValues(
-        sortableValues,
-        SORT_DIRECTIONS.DESCENDING,
-        comparator,
-      );
-
-      expect(sortableValues).to.not.deep.equal(sortedAscendingValues);
-      expect(sortableValues).to.not.deep.equal(sortedDescendingValues);
+      expect(
+        areColumnValuesSorted(values, SORT_DIRECTIONS.ASCENDING, getSortableValue, comparator),
+      ).to.equal(false);
+      expect(
+        areColumnValuesSorted(values, SORT_DIRECTIONS.DESCENDING, getSortableValue, comparator),
+      ).to.equal(false);
     });
   },
 
