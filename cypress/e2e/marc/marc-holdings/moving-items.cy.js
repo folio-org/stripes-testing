@@ -49,8 +49,8 @@ describe('MARC', () => {
         permissions.converterStorageAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        // cy.login(userProperties.username, userProperties.password);
+        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
