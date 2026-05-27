@@ -16,8 +16,8 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
 import DeveloperPane from '../../../../support/fragments/settings/developer/developerPane';
 import UserLocale from '../../../../support/fragments/settings/developer/user-locate/temporaryUserLocale';
-import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 import StatisticalCodes from '../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
+import SettingsPane from '../../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -187,7 +187,7 @@ describe('Inventory', () => {
           UserLocale.waitLoading();
           UserLocale.configureUserLocale({
             username: testData.user.username,
-            timezone: testData.newTimezone,
+            timezone: 'Europe/Paris',
           });
 
           // Steps 6-8: Reopen the same Item and verify timestamps are rendered in the new timezone.
