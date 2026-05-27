@@ -126,12 +126,15 @@ describe('MARC', () => {
 
             // Step 5: Add "010 $a" which matches to "LCCN" of existing Shared record and save
             QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfSharedInstance}`, 4);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfSharedInstance}`);
             QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+            QuickMarcEditor.verifyValidationCallout();
             QuickMarcEditor.closeAllCallouts();
 
             // Step 6: Update "010 $a" value with which matches to "Canceled LCCN" of existing Shared record and save
             QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumberOfSharedInstance}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfSharedInstance}`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -142,6 +145,7 @@ describe('MARC', () => {
 
             // Step 8: Add "010 $a" which matches to "LCCN" of existing Local record and save
             QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfLocalInstance}`, 4);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfLocalInstance}`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           },
