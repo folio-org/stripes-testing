@@ -38,7 +38,6 @@ const COLUMNS = {
   UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
   UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
   UPDATED_BY_USER_USERNAME: 'Updated by user — Username',
-  MARC_AUTHORITY_CREATED_DATE: 'MARC Authority — Created date',
   MARC_AUTHORITY_EXTERNAL_HRID: 'MARC Authority — External HRID',
   MARC_AUTHORITY_GENERATION: 'MARC Authority — Generation',
   MARC_AUTHORITY_LEADER_RECORD_STATUS: 'MARC Authority — Leader record status',
@@ -46,7 +45,6 @@ const COLUMNS = {
   MARC_AUTHORITY_MATCHED_UUID: 'MARC Authority — Matched UUID',
   MARC_AUTHORITY_ORDER: 'MARC Authority — Order',
   MARC_AUTHORITY_STATE: 'MARC Authority — State',
-  MARC_AUTHORITY_UPDATED_DATE: 'MARC Authority — Updated date',
 };
 
 describe('Lists', () => {
@@ -82,8 +80,6 @@ describe('Lists', () => {
           [COLUMNS.UPDATED_BY_USER_USERNAME]: null,
           [COLUMNS.AUTHORITY_CREATED_DATE]: null,
           [COLUMNS.AUTHORITY_UPDATED_DATE]: null,
-          [COLUMNS.MARC_AUTHORITY_CREATED_DATE]: null,
-          [COLUMNS.MARC_AUTHORITY_UPDATED_DATE]: null,
         },
         // Columns checked by default per TestRail spec (marked with "(Checked)")
         defaultCheckedColumns: [
@@ -185,32 +181,34 @@ describe('Lists', () => {
           testData.specificRecordValues[COLUMNS.CREATED_BY_USER_LAST_NAME_FIRST_NAME] = record;
         });
 
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            createdAuthorityIds.push(record.authority.id);
-            testData.specificRecordValues[COLUMNS.AUTHORITY_CREATED_DATE] = getDate();
-            testData.specificRecordValues[COLUMNS.MARC_AUTHORITY_CREATED_DATE] = getDate();
-            createdDateCsvFormat = getDate({ csvFormat: true });
+        cy.then(() => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdAuthorityIds.push(record.authority.id);
+              testData.specificRecordValues[COLUMNS.AUTHORITY_CREATED_DATE] = getDate();
+              createdDateCsvFormat = getDate({ csvFormat: true });
+            });
           });
-        });
-
-        // Create user with required permissions and email
-        cy.createTempUser(
-          [
-            Permissions.listsAll.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          ],
-          undefined,
-          undefined,
-          undefined,
-          testData.userEmail,
-        )
+        })
+          .then(() => {
+            // Create user with required permissions and email
+            cy.createTempUser(
+              [
+                Permissions.listsAll.gui,
+                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+                Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+                Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              ],
+              undefined,
+              undefined,
+              undefined,
+              testData.userEmail,
+            );
+          })
           .then((userProperties) => {
             userData = userProperties;
             testData.specificRecordValues[COLUMNS.UPDATED_BY_USER_EMAIL] = testData.userEmail;
@@ -233,7 +231,6 @@ describe('Lists', () => {
                   ({ status }) => {
                     expect(status).to.eq(202);
                     testData.specificRecordValues[COLUMNS.AUTHORITY_UPDATED_DATE] = getDate();
-                    testData.specificRecordValues[COLUMNS.MARC_AUTHORITY_UPDATED_DATE] = getDate();
                     updatedDateCsvFormat = getDate({ csvFormat: true });
                   },
                 );
