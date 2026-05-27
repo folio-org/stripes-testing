@@ -3,6 +3,7 @@ import Permissions from '../../support/dictionary/permissions';
 import Agreements from '../../support/fragments/agreements/agreements';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import VersionHistorySection from '../../support/fragments/inventory/versionHistorySection';
+import OrganizationVersionHistorySection from '../../support/fragments/organizations/versionHistorySection';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import OrganizationsSearchAndFilter from '../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../support/fragments/topMenu';
@@ -108,7 +109,7 @@ describe('Organizations', () => {
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.openVersionHistory();
-      Organizations.selectVersionHistoryCard(preUpdated);
+      OrganizationVersionHistorySection.selectVersionHistoryCard(preUpdated);
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         1,
         preUpdated,
@@ -117,7 +118,7 @@ describe('Organizations', () => {
         true,
         false,
       );
-      Organizations.selectVersionHistoryCard(afterUpdated);
+      OrganizationVersionHistorySection.selectVersionHistoryCard(afterUpdated);
       VersionHistorySection.verifyVersionHistoryCardWithTime(
         0,
         afterUpdated,
