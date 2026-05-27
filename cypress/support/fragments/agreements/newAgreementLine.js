@@ -1,4 +1,5 @@
-import { Button, HTML, Pane, TextArea, TextField } from '../../../../interactors';
+import { TextField } from '@interactors/html';
+import { Button, HTML, Pane, TextArea } from '../../../../interactors';
 import SelectEHoldingsModal from './modals/selectEHoldingsModal';
 
 const newAgreementLinePane = Pane({ id: 'pane-agreement-line-form' });

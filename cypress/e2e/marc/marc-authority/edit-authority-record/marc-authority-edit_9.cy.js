@@ -35,7 +35,7 @@ describe('MARC', () => {
           }).then((records) => {
             records.forEach((record) => {
               if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
+                MarcAuthority.deleteViaAPI(record.id, true);
               }
             });
           });
@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       after('delete test data', () => {
         cy.getAdminToken();
-        MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
+        MarcAuthority.deleteViaAPI(testData.createdAuthorityID, true);
         Users.deleteViaApi(testData.userProperties.userId);
         Users.deleteViaApi(testData.preconditionUserId);
       });
@@ -111,14 +111,14 @@ describe('MARC', () => {
 
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.deleteField(11);
-          QuickMarcEditor.afterDeleteNotification('');
+          QuickMarcEditor.afterDeleteNotification();
           QuickMarcEditor.afterDeleteNotification('400');
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.deleteField(8);
           QuickMarcEditor.deleteField(10);
           QuickMarcEditor.afterDeleteNotification('382');
-          QuickMarcEditor.afterDeleteNotification('');
+          QuickMarcEditor.afterDeleteNotification();
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
           QuickMarcEditor.confirmDelete();
           cy.wait(1500);

@@ -16,11 +16,11 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
       const testData = {
         authority: {
-          searchInput: 'Literature',
+          searchInput: 'C376593 Literature',
           searchOption: 'Keyword',
         },
         bibliographic: {
-          title: 'Titanic',
+          title: 'C376593 Titanic',
         },
         field010: {
           tag: '010',

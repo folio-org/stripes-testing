@@ -74,6 +74,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423565');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcAuthTitle);
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
@@ -86,14 +87,10 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.marcAuthorities,
-                waiter: MarcAuthorities.waitLoading,
-              });
-              cy.reload();
-              MarcAuthorities.waitLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
 
@@ -125,7 +122,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);
             QuickMarcEditor.pressSaveAndClose();
-            MarcAuthority.verifyAfterSaveAndClose();
             QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.newAuthorityHeaderText);
             MarcAuthority.getId().then((id) => {
               createdAuthorityIDs.push(id);

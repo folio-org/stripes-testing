@@ -16,6 +16,10 @@ describe('Data Import', () => {
       profileName: '',
       user: {},
     };
+    // for Trillium env with cyrillic 'c'
+    // const suppressFromDiscoveryValue = 'Select сheckbox field mapping';
+    // for Cyrpress env
+    const suppressFromDiscoveryValue = 'Select checkbox field mapping';
 
     before('Create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -69,7 +73,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
+          adminData: { suppressFromDiscovery: suppressFromDiscoveryValue },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -97,7 +101,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
+          adminData: { suppressFromDiscovery: suppressFromDiscoveryValue },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -141,7 +145,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
+          adminData: { suppressFromDiscovery: suppressFromDiscoveryValue },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -169,7 +173,7 @@ describe('Data Import', () => {
         // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
         // Change the value in "Electronic Access" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          adminData: { suppressFromDiscovery: 'Select checkbox field mapping' },
+          adminData: { suppressFromDiscovery: suppressFromDiscoveryValue },
           electronicAccess: { value: 'Select action' },
         });
 
@@ -216,7 +220,7 @@ describe('Data Import', () => {
         // Change the value in "Statistical codes" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
           adminData: {
-            suppressFromDiscovery: 'Select checkbox field mapping',
+            suppressFromDiscovery: suppressFromDiscoveryValue,
             statisticalCodes: 'Select action',
           },
         });
@@ -246,7 +250,7 @@ describe('Data Import', () => {
         // Change the value in "Statistical codes" dropdown back to "Select action" option
         FieldMappingProfileEditForm.fillMappingProfileFields({
           adminData: {
-            suppressFromDiscovery: 'Select checkbox field mapping',
+            suppressFromDiscovery: suppressFromDiscoveryValue,
             statisticalCodes: 'Select action',
           },
         });
