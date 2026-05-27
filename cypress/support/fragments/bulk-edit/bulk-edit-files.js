@@ -365,6 +365,17 @@ export default {
     });
   },
 
+  verifyBomAndArabicColumnsInCsvFile(fileNameMask, instanceUUID, columnsToVerify) {
+    return FileManager.parseExcelCsvFile(fileNameMask).then(({ hasBom, rows }) => {
+      expect(hasBom, 'File must have UTF-8 BOM for correct Excel display').to.be.true;
+      const row = rows.find((r) => r['Instance UUID'] === instanceUUID);
+      expect(row, `Row for UUID ${instanceUUID} must exist`).to.exist;
+      columnsToVerify.forEach(({ header, value }) => {
+        expect(row[header], `Column "${header}" must contain Arabic text`).to.include(value);
+      });
+    });
+  },
+
   verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
       if (!downloadedFilenames || downloadedFilenames.length === 0) {
