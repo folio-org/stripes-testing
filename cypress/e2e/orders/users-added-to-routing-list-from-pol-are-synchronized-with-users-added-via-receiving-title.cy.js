@@ -124,7 +124,6 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', testData.orderNumber);
       Orders.selectFromResultsList(testData.orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLineDetails.openRoutingListsAccordion();
       OrderLineDetails.openRoutingList(routingList);
       RoutingListDetails.editRoutingList();
       RoutingListEditForm.addUserToRoutingList();
