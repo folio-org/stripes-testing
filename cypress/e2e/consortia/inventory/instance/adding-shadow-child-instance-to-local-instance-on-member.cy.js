@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES, LOAN_TYPE_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
@@ -41,10 +41,10 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.shadowHoldings.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((res) => {
             testData.shadowHoldings.locationId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             testData.shadowItem.loanTypeId = res[0].id;
           });
           cy.getBookMaterialType().then((res) => {
