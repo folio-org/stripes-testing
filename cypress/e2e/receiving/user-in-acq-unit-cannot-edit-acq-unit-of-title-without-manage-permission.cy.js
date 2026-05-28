@@ -123,7 +123,7 @@ describe('Receiving', () => {
                               ...orderResponse,
                               workflowStatus: ORDER_STATUSES.OPEN,
                             }).then(() => {
-                              cy.getAdminToken();
+                              cy.getAdminToken(false);
                               Receiving.getTitleByPoLineIdViaApi(orderLine.id).then((titleData) => {
                                 Receiving.updateTitleViaApi({
                                   ...titleData,

@@ -10,6 +10,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
@@ -69,6 +70,7 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       firstLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -78,9 +80,7 @@ describe('Invoices', () => {
         firstFund.ledgerId = firstLedger.id;
         Funds.createViaApi(firstFund).then((firstFundResponse) => {
           firstFund.id = firstFundResponse.fund.id;
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          }, 20_000);
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -153,12 +153,11 @@ describe('Invoices', () => {
         permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.invoicesPath,
-            waiter: Invoices.waitLoading,
-          });
-        }, 20_000);
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
       });
     });
   });

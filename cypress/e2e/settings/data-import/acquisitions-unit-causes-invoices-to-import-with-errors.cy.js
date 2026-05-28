@@ -90,8 +90,14 @@ describe('Data Import', () => {
       cy.loginAsAdmin();
       cy.visit(SettingsMenu.acquisitionUnitsPath);
       AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
       cy.getAdminToken().then(() => {
+        AcquisitionUnits.getAcquisitionUnitViaApi({
+          query: `"name"="${defaultAcquisitionUnit.name}"`,
+        }).then((response) => {
+          if (response.acquisitionsUnits && response.acquisitionsUnits.length > 0) {
+            AcquisitionUnits.deleteAcquisitionUnitViaApi(response.acquisitionsUnits[0].id);
+          }
+        });
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
