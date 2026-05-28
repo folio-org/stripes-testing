@@ -157,7 +157,7 @@ describe('Orders', () => {
     Users.deleteViaApi(testData.user.userId);
     RoutingListDetails.deleteRoutingListViaApi(testData.routingListId1);
     RoutingListDetails.deleteRoutingListViaApi(testData.routingListId2);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
@@ -168,7 +168,7 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', testData.orderNumber);
       Orders.selectFromResultsList(testData.orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLineDetails.addRoutingListIsDisabled();
+      OrderLineDetails.verifyAddRoutingListIsDisabled();
       OrderLineDetails.openRoutingList(routingList1);
       RoutingListDetails.checkRoutingListNameDetails(routingList1);
       RoutingListDetails.editRoutingList();
@@ -182,7 +182,7 @@ describe('Orders', () => {
       RoutingListDetails.closeRoutingListDetails();
       OrderLineDetails.waitLoading();
       OrderLineDetails.verifyAddingRoutingList(routingList3);
-      OrderLineDetails.addRoutingListIsDisabled();
+      OrderLineDetails.verifyAddRoutingListIsDisabled();
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openReceivingsPage();
       Receiving.selectFromResultsListByPolNumber(`${testData.orderNumber}-1`);

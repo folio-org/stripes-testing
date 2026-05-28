@@ -165,10 +165,21 @@ describe('eHoldings', () => {
   describe('Package', () => {
     let userId;
     const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
+    const customPackage = {
+      data: {
+        type: 'packages',
+        attributes: {
+          name: `AT_C703_EHoldingsPackage_${getRandomPostfix()}`,
+          contentType: 'E-Book',
+        },
+      },
+    };
 
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
+      EHoldingsPackages.deletePackageViaAPI(customPackage.data.attributes.name);
+      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
     });
 
     it(
@@ -202,8 +213,6 @@ describe('eHoldings', () => {
               yesterdayPaddingZero,
               todayWithoutPaddingZero,
             );
-            cy.getAdminToken();
-            EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
           });
         });
       },
@@ -239,19 +248,17 @@ describe('eHoldings', () => {
       'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C703'] },
       () => {
-        let titleName;
+        const titleName = `AT_C703_Title_${getRandomPostfix()}`;
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          EHoldingsPackages.createPackageViaAPI().then(({ data: { id } }) => {
+          EHoldingsPackages.createPackageViaAPI(customPackage).then(({ data: { id } }) => {
             eHoldingsTitles
               .createEHoldingTitleVIaApi({
                 packageId: id,
-              })
-              .then((title) => {
-                titleName = title.attributes.name;
+                titleName,
               })
               .then(() => {
                 cy.login(userProperties.username, userProperties.password, {
@@ -262,7 +269,7 @@ describe('eHoldings', () => {
                 EHoldingSearch.switchToPackages();
                 // wait until package is created via API
                 cy.wait(15000);
-                UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+                UHoldingsProvidersSearch.byProvider(customPackage.data.attributes.name);
                 EHoldingsPackagesSearch.bySelectionStatus('Selected');
                 EHoldingsPackages.openPackage();
                 EHoldingsPackage.editProxyActions();
@@ -280,8 +287,6 @@ describe('eHoldings', () => {
                 EHoldingsPackage.verifyTitleFound(titleName);
                 EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
                 EHoldingsPackageView.verifyAlternativeRadio('No');
-                cy.getAdminToken();
-                EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
               });
           });
         });

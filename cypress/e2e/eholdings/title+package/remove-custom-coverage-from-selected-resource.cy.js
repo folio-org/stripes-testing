@@ -22,6 +22,11 @@ describe('eHoldings', () => {
 
     before('Create user, login as admin & set custom coverage', () => {
       cy.getAdminToken();
+      EHoldingsTitle.changeResourceSelectionStatusViaApi({
+        resourceId: testData.resourcePath.split('/').pop(),
+        isSelected: true,
+      });
+
       cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((user) => {
         testData.user = user;
 

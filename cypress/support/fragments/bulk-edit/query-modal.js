@@ -450,6 +450,10 @@ export default {
     cy.get('[class^="queryArea"]').should('have.text', content);
   },
 
+  getQueryAreaContent() {
+    return cy.get('[class^="queryArea"]').invoke('text');
+  },
+
   verifyQueryAreaDoesNotContain(content) {
     cy.get('[class^="queryArea"]').should(($queryArea) => {
       expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
@@ -477,6 +481,14 @@ export default {
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
+    cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyFilteredOptionsInValueSelect(searchText, expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.do(SelectionList().filter(searchText));
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
     this.closeOpenedSelection();
   },
@@ -678,7 +690,11 @@ export default {
       RepeatableFieldItem({ index: row })
         .find(
           Selection({
-            dataTestId: or('data-input-select-boolType', 'data-input-select-booleanType'),
+            dataTestId: or(
+              'data-input-select-boolType',
+              'data-input-select-booleanType',
+              including('data-input-select-single'),
+            ),
           }),
         )
         .choose(selection),
@@ -743,6 +759,11 @@ export default {
   testQuery() {
     cy.do(testQueryButton.click());
     cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
+  },
+
+  waitForQueryTestToFinish() {
+    cy.contains(/^Query returns/, { timeout: 60000 }).should('be.visible');
+    this.runQueryDisabled(false);
   },
 
   verifyPreviewOfRecordsMatched() {

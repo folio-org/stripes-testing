@@ -36,3 +36,6 @@ CLAUDE.md
 .claude
 .opencode
 cypress.local.js
+
+.agents/*
+skills-lock.json

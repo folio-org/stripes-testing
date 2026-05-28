@@ -219,7 +219,7 @@ describe('Data Export', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instances[1].uuid,
                   sourceId: testData.sourceId,
-                  permanentLocationId: testData.locationId,
+                  permanentLocationId: location.id,
                 }).then((holding) => {
                   instances[1].holdingsCollege.push({
                     id: holding.id,
@@ -231,7 +231,7 @@ describe('Data Export', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instances[2].uuid,
                   sourceId: testData.sourceId,
-                  permanentLocationId: testData.locationId,
+                  permanentLocationId: location.id,
                 }).then((holding) => {
                   instances[2].holdingsCollege.push({
                     id: holding.id,
@@ -269,7 +269,7 @@ describe('Data Export', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instances[3].uuid,
                   sourceId: testData.sourceId,
-                  permanentLocationId: testData.locationId,
+                  permanentLocationId: location.id,
                 }).then((holding) => {
                   instances[3].holdingsCollege.push({
                     id: holding.id,
@@ -282,7 +282,7 @@ describe('Data Export', () => {
           });
 
           cy.withinTenant(Affiliations.University, () => {
-            cy.getLocations({ limit: 1 }).then((location) => {
+            cy.getLocations({ query: 'name="Main Library"' }).then((location) => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: instances[0].uuid,
                 sourceId: testData.sourceId,

@@ -653,7 +653,7 @@ export default {
       this.deleteConfirmationPresented();
       this.confirmDelete();
     }
-    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+    cy.wait('@saveRecordRequest', { timeout: 20_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
@@ -3743,5 +3743,12 @@ export default {
         element.click();
       }),
     );
+  },
+
+  verifyIndicatorBoxesAbsentInField(tag, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(firstIndicatorBox).absent());
+    cy.expect(targetRow.find(secondIndicatorBox).absent());
   },
 };

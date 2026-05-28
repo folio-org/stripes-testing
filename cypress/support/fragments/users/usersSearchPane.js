@@ -82,6 +82,12 @@ export default {
     cy.do([Button('Actions').click(), Button('Lost items requiring actual cost').click()]);
   },
 
+  openPatronPreRegistrationRecords() {
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Search patron preregistration records').exists());
+    cy.do(Button('Search patron preregistration records').click());
+  },
+
   verifyLostItemsRequiringActualCostOptionNotDisplayed() {
     cy.do(Button('Actions').click());
     cy.expect(Button('Lost items requiring actual cost').absent());

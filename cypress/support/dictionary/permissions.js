@@ -658,6 +658,14 @@ export default {
     internal: 'ui-users.patron-blocks.all',
     gui: 'Users: Can create, edit and remove patron blocks',
   },
+  uiUsersPatronPreRegistrationsMerge: {
+    internal: 'ui-users.patron-pre-registrations.execute',
+    gui: 'Users: Can merge patron preregistration data',
+  },
+  uiUsersPatronPreRegistrationsView: {
+    internal: 'ui-users.patron-pre-registrations.view',
+    gui: 'Users: Can view patron preregistration data',
+  },
   uiUsersCreatePatronTamplate: {
     internal: 'ui-users.settings.patron-block-templates.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',

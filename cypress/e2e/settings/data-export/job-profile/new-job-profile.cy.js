@@ -95,7 +95,9 @@ describe('Data Export', () => {
         InteractorsTools.checkCalloutMessage(newJobProfileCalloutMessage);
 
         // Step 8: Verify row with newly created job profile in "Job profiles" table
+        ExportJobProfiles.searchJobProfile(newJobProfileName);
         ExportJobProfiles.verifyProfileInTable(newJobProfileName, user);
+        ExportJobProfiles.clearSearchField();
 
         // Step 9: Click "New" button in the header of "Job profiles" pane
         ExportJobProfiles.openNewJobProfileForm();
@@ -112,6 +114,7 @@ describe('Data Export', () => {
         ExportNewJobProfile.selectMappingProfileFromDropdown(fieldMappingProfileName);
         ExportNewJobProfile.saveJobProfile();
         InteractorsTools.checkCalloutMessage(secondNewJobProfileCalloutMessage);
+        ExportJobProfiles.searchJobProfile(secondNewJobProfileName);
         ExportJobProfiles.verifyProfileInTable(secondNewJobProfileName, user);
       },
     );

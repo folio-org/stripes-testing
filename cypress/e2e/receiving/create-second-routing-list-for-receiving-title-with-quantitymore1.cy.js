@@ -103,7 +103,7 @@ describe('Receiving', () => {
   after(() => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
@@ -124,7 +124,7 @@ describe('Receiving', () => {
       OrderLineDetails.waitLoading();
       OrderLineDetails.verifyAddingRoutingList(routingList1);
       OrderLineDetails.verifyAddingRoutingList(routingList2);
-      OrderLineDetails.addRoutingListIsDisabled();
+      OrderLineDetails.verifyAddRoutingListIsDisabled();
     },
   );
 });
