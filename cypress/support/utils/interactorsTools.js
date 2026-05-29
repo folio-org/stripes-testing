@@ -177,6 +177,22 @@ export default {
     if (type) cy.expect(Callout({ textContent: message, type }).exists());
     else cy.expect(Callout({ textContent: message }).exists());
   },
+
+  assertCalloutsBatch(callouts) {
+    cy.get('[class^=calloutBase-]').then(($els) => {
+      const elementsList = [...$els];
+
+      callouts.forEach(({ message, type }, index) => {
+        const matchingEl = elementsList[index];
+
+        cy.expect(
+          matchingEl.querySelector('[class^=message-]').textContent.includes(message),
+        ).to.equal(true);
+        cy.expect(matchingEl.className.includes(type)).to.equal(true);
+      });
+    });
+  },
+
   checkNoErrorCallouts: () => {
     cy.wait(1000);
     cy.get('[class^=calloutBase-][class*="error"]').should('not.exist');
