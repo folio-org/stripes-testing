@@ -74,6 +74,12 @@ export const ORDER_SEARCH_OPTIONS = {
   PO_NUMBER: 'PO number',
 };
 
+export const ORDER_SEARCH_INDEXES = {
+  DATE_CREATED: 'metadata.createdDate',
+  DATE_OPENED: 'dateOrdered',
+  PO_NUMBER: 'poNumber',
+};
+
 export const ORDER_EXPORT_CSV_FIELDS = {
   PO_NUMBER_PREFIX: 'PO number prefix',
   PO_NUMBER: 'PO number',
@@ -107,4 +113,12 @@ export const ORDER_EXPORT_CSV_FIELDS = {
   DATE_CREATED: 'Created on',
   UPDATED_BY: 'Updated by',
   DATE_UPDATED: 'Updated on',
+};
+
+export const ORDER_VIEW_FIELD_LABELS = {
+  PO_NUMBER: 'PO number',
+};
+
+export const ORDER_CALLOUT_MESSAGES = {
+  ORDER_UNOPENED: (orderNumber) => `The Purchase order - ${orderNumber} has been successfully unopened`,
 };
