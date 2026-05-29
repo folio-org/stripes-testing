@@ -104,7 +104,7 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${marcFileForUpdate.exportedFileName}`);
       FileManager.deleteFileFromDownloadsByMask(`*${marcFileForUpdate.exportedFileName}`);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);

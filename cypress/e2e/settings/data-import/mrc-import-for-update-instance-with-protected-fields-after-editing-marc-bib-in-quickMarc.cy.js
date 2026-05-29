@@ -114,7 +114,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"data"=="${firstProtectedFieldsData.data}"`,
         }).then((field) => {

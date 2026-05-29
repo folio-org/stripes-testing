@@ -256,13 +256,13 @@ export default {
     );
   },
 
-  deletePackageViaAPI(packageName, allowFailure = false) {
+  deletePackageViaAPI(packageName, throwOnFailure = false) {
     this.getPackageViaApi(packageName).then(({ body }) => {
       cy.okapiRequest({
         method: 'DELETE',
-        path: `eholdings/packages/${body.data[0].id}`,
+        path: `eholdings/packages/${body?.data[0]?.id}`,
         isDefaultSearchParamsRequired: false,
-        failOnStatusCode: allowFailure,
+        failOnStatusCode: throwOnFailure,
       });
     });
   },

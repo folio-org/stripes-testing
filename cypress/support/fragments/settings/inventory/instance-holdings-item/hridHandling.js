@@ -8,6 +8,7 @@ import {
   matching,
   including,
   MetaSection,
+  TextField,
 } from '../../../../../../interactors';
 
 const hridHandlingPane = Pane('HRID handling');
@@ -15,6 +16,7 @@ const recordLastUpdatedAccordion = Accordion();
 const removeLeadingZeroesCheckbox = Checkbox({ name: 'commonRetainLeadingZeroes' });
 const SaveAndCloseButton = Button('Save & close');
 const confirmEditHridModal = Modal({ id: 'confirm-edit-hrid-settings-modal' });
+const hridRecordTypes = ['instances', 'holdings', 'items'];
 
 const calloutMessages = 'Setting was successfully updated.';
 
@@ -23,6 +25,17 @@ export default {
 
   waitloading() {
     cy.expect(hridHandlingPane.exists());
+  },
+
+  verifyHridHandlingFieldsDisabled() {
+    cy.expect(hridHandlingPane.find(removeLeadingZeroesCheckbox).has({ disabled: true }));
+
+    hridRecordTypes.forEach((recordType) => {
+      cy.expect([
+        TextField({ name: `${recordType}.startNumber` }).has({ disabled: true }),
+        TextField({ name: `${recordType}.prefix` }).has({ disabled: true }),
+      ]);
+    });
   },
 
   recordLastUpdatedAccourdionLabelValueCorrect() {

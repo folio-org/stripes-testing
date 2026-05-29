@@ -1,5 +1,17 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  DELETE_HOLDINGS_ACTIONS,
+  ITEM_STATUS_NAMES,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -8,17 +20,6 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  DELETE_HOLDINGS_ACTIONS,
-  ITEM_STATUS_NAMES,
-  ORDER_STATUSES,
-} from '../../support/constants';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 describe(
   'Orders',
@@ -69,7 +70,7 @@ describe(
                   locations: [{ locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 }],
                   acquisitionMethod: params.body.acquisitionMethods[0].id,
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: mtype.id,
                     materialSupplier: responseOrganizations,
                     volumes: [],

@@ -44,6 +44,7 @@ const waitLoadingList = () => {
 const waitLoading = (selector) => cy.expect(selector.exists());
 
 const createJobProfile = (jobProfile) => {
+  cy.wait(1000);
   openNewJobProfileForm();
   newJobProfile.fillJobProfile(jobProfile);
 };

@@ -1,10 +1,11 @@
+import { POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import BrowseContributors from '../../support/fragments/inventory/search/browseContributors';
-import { NewInvoice, Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import { Invoices, InvoiceView, NewInvoice } from '../../support/fragments/invoices';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
-import { BatchGroups } from '../../support/fragments/settings/invoices';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import { BatchGroups } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -30,7 +31,7 @@ describe('Invoices', () => {
     selector: `Autotest_selector_${getRandomPostfix()}`,
     fundDistribution: [],
     physical: {
-      createInventory: 'Instance, Holding, Item',
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
       materialType: '',
       materialSupplier: '',
       volumes: [`test_vol_${getRandomPostfix()}`],

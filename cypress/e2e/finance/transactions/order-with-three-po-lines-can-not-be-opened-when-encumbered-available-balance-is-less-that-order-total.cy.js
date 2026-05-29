@@ -1,18 +1,21 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import Users from '../../../support/fragments/users/users';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 
 describe('Finance', () => {
   describe('Transactions', () => {
@@ -87,7 +90,7 @@ describe('Finance', () => {
                         locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtype.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],
@@ -109,7 +112,7 @@ describe('Finance', () => {
                         locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtype.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],
@@ -131,7 +134,7 @@ describe('Finance', () => {
                         locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtype.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],

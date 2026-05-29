@@ -637,6 +637,7 @@ export default {
   },
 
   checkAbsenceOfAuthorityIconInMarcViewPane() {
+    cy.wait(1000); // icon may appear with delay
     cy.expect(marcViewPaneContent.find(Link()).absent());
   },
 
@@ -1791,14 +1792,18 @@ export default {
       cy.expect(listInstanceAcquisitions.has({ rowCount: ordersCount }));
     }
   },
-  checkAcquisitionsDetails(orderLines = []) {
+  checkAcquisitionsDetails(orderLines = [], { href = true } = {}) {
     orderLines.forEach((item, index) => {
       if (item.polNumber) {
-        cy.expect(
-          acquisitionAccordion
-            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
-            .has({ content: including(item.polNumber) }),
+        const poLineCell = acquisitionAccordion.find(
+          MultiColumnListCell({ row: index, column: 'POL number' }),
         );
+
+        cy.expect(poLineCell.has({ content: including(item.polNumber) }));
+
+        if (href) {
+          cy.expect(poLineCell.find(Link({ href: including('/orders/lines/view') })).exists());
+        }
       }
       if (item.orderStatus) {
         cy.expect(
