@@ -85,7 +85,7 @@ describe('Inventory', () => {
     // functionality is not implemented yet, so test is skipped for now
     it.skip(
       'C400645 Saving record using "Save & keep editing" button when duplicating an "Item" record (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C400645'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // Step 1: Find Instance record and click Search
         InventoryInstances.searchByTitle(testData.instanceId);
