@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
@@ -57,7 +58,7 @@ describe('Orders', () => {
                     acquisitionMethod: auResp.body.acquisitionMethods[0].id,
                     locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
                     physical: {
-                      createInventory: 'Instance, Holding, Item',
+                      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                       materialType: mtypeResp.id,
                       volumes: [],
                     },

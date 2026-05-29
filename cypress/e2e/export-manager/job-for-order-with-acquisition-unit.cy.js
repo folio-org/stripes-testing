@@ -3,6 +3,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
@@ -79,7 +80,7 @@ describe('Export Manager', () => {
                       ],
                       acquisitionMethod: acqMethod.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: mtypes.body.id,
                         volumes: [],
                       },

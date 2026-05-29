@@ -1,10 +1,11 @@
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
+  ORDER_LINE_PAYMENT_STATUS,
   ORDER_STATUSES,
   ORDER_SYSTEM_CLOSING_REASONS,
+  POL_CREATE_INVENTORY_SETTINGS,
   POLINE_DETAILS_FIELDS,
-  ORDER_LINE_PAYMENT_STATUS,
   RECEIPT_STATUS_VIEW,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
@@ -89,7 +90,7 @@ describe('Orders', () => {
       ],
       acquisitionMethod: acquisitionMethodId,
       physical: {
-        createInventory: 'Instance, Holding, Item',
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
         materialType: materialTypeId,
         materialSupplier: testData.organization.id,
         volumes: [],

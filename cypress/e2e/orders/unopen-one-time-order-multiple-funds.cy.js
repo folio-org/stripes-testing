@@ -1,9 +1,14 @@
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -15,9 +20,8 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -141,7 +145,8 @@ describe('Orders', () => {
                               ],
                               acquisitionMethod: params.body.acquisitionMethods[0].id,
                               physical: {
-                                createInventory: 'Instance, Holding, Item',
+                                createInventory:
+                                  POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                                 materialType: mtypes.body.id,
                                 materialSupplier: responseOrganizations,
                                 volumes: [],

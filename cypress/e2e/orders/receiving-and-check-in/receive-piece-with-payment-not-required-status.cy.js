@@ -1,4 +1,8 @@
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -101,7 +105,7 @@ describe('Orders', () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding, Item',
+                              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],

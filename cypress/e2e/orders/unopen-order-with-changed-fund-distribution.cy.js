@@ -2,6 +2,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -24,11 +25,11 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
 
 describe('Orders', { retries: { runMode: 1 } }, () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -130,7 +131,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding',
+                              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],
