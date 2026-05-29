@@ -108,6 +108,7 @@ describe('Invoices', () => {
         title: invoice.vendorInvoiceNo,
         invoiceInformation: [
           { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.OPEN },
+          { key: INVOICE_VIEW_FIELDS.SUB_TOTAL, value: expectedSubtotal },
         ],
         invoiceLines: [
           {
