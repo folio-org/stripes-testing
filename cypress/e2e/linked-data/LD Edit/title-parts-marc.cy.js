@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
+import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
 import Work from '../../../support/fragments/linked-data/work';
 
@@ -118,8 +118,8 @@ describe('Citation: check title parts MARC codes', () => {
       // Edit instance
       InventoryInstances.searchByTitle(testData.uniqueMainTitle);
       InventoryInstance.editInstanceInMG();
-      ExternalResourcePreview.waitLoading();
-      ExternalResourcePreview.clickContinueButton();
+      PreviewResource.waitLoading();
+      PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
 
       // View MARC
@@ -137,19 +137,67 @@ describe('Citation: check title parts MARC codes', () => {
       // Review work preview
       EditResource.checkPreviewOpen();
       // Main title
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.mainTitlePreferred, resourceData.mainTitlePreferred);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.mainTitleNonSortNum, resourceData.mainTitleNonSortNum);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.mainTitlePartNumber, resourceData.mainTitlePartNumber);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.mainTitlePartName, resourceData.mainTitlePartName);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.mainTitleOther, resourceData.mainTitleOther);
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.mainTitlePreferred,
+        resourceData.mainTitlePreferred,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.mainTitleNonSortNum,
+        resourceData.mainTitleNonSortNum,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.mainTitlePartNumber,
+        resourceData.mainTitlePartNumber,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.mainTitlePartName,
+        resourceData.mainTitlePartName,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.mainTitleOther,
+        resourceData.mainTitleOther,
+      );
       // Variant title
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitle, resourceData.variantTitle);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitlePartNumber, resourceData.variantTitlePartNumber);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitlePartName, resourceData.variantTitlePartName);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitleOther, resourceData.variantTitleOther);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitleDate, resourceData.variantTitleDate);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitleType, resourceData.variantTitleType);
-      EditResource.checkPreviewSectionContainsField(previewFields.sectionTitle, previewFields.variantTitleNote, resourceData.variantTitleNote);
-    }
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitle,
+        resourceData.variantTitle,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitlePartNumber,
+        resourceData.variantTitlePartNumber,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitlePartName,
+        resourceData.variantTitlePartName,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitleOther,
+        resourceData.variantTitleOther,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitleDate,
+        resourceData.variantTitleDate,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitleType,
+        resourceData.variantTitleType,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        previewFields.sectionTitle,
+        previewFields.variantTitleNote,
+        resourceData.variantTitleNote,
+      );
+    },
   );
 });

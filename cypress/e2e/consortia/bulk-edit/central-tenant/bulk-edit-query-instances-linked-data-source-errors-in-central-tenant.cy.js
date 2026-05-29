@@ -4,6 +4,7 @@ import BulkEditSearchPane, {
   ERROR_MESSAGES,
 } from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -13,7 +14,10 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/uti
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
-import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import {
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  INSTANCE_SOURCE_NAMES,
+} from '../../../../support/constants';
 import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
@@ -54,6 +58,7 @@ describe('Bulk-edit', () => {
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
           permissions.bulkEditQueryView.gui,
+          permissions.bulkEditLogsView.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
@@ -147,7 +152,7 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651550 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit in Central tenant (consortia) (firebird)',
+        'C651550 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit in Central tenant (Logs) (consortia) (firebird)',
         { tags: ['extendedPathECS', 'firebird', 'C651550'] },
         () => {
           // Step 1: Click "Run query" button and check the Preview of record matched
@@ -161,15 +166,16 @@ describe('Bulk-edit', () => {
             fileNames = BulkEditFiles.getAllQueryDownloadedFileNames(interceptedUuid, true);
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
 
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               folioInstance.hrid,
-              'Instance HRID',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               folioInstance.hrid,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               marcInstance.hrid,
-              'Instance HRID',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
               marcInstance.hrid,
             );
 
@@ -192,6 +198,14 @@ describe('Bulk-edit', () => {
             ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
               `ERROR,${linkedDataInstance.uuid},${ERROR_MESSAGES.LINKED_DATA_SOURCE_NOT_SUPPORTED}`,
             ]);
+
+            // Step 4: Click on "Logs" tab and verify Status, Editing, # of records, Processed columns
+            BulkEditSearchPane.openLogsSearch();
+            BulkEditLogs.checkInstancesCheckbox();
+            BulkEditLogs.verifyLogStatus(user.username, 'Data modification');
+            BulkEditLogs.verifyEditingColumnValue(user.username, 'Query');
+            BulkEditLogs.verifyProcessedColumnValue(user.username, '3');
+            BulkEditLogs.verifyNumberOfRecordsColumnValue(user.username, '3');
           });
         },
       );

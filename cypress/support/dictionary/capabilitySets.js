@@ -62,6 +62,11 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsListView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings List',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiDataImportSettingsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Data-Import Settings',
@@ -224,6 +229,11 @@ export default {
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryItemMove: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiDataImport: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Import',
@@ -249,10 +259,25 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiMarcAuthoritiesAuthorityRecordDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiQuickMarcQuickMarcAuthoritiesEditorManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiQuickMarcQuickMarcAuthoritiesEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiQuickMarcQuickMarcHoldingsEditorView: {
     type: CAPABILITY_TYPES.DATA,
@@ -279,9 +304,24 @@ export default {
     resource: 'UI-Bulk-Edit Logs',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiBulkEditInventoryView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Scheduler',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  baseUrlManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Base-Url Item',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
 

@@ -1,0 +1,1 @@
+00301naa a2200097uu 4500001001400000005001700014008004100031245002800072546001100100504009600111in0000000085620260511193019.7260511|                      ||| |        aPlaceholder Title Notes  aFrench  aIncludes bibliographical references (p. 245–260) and indexbBibliography: pages 180–195

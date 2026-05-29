@@ -18,8 +18,10 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getAdminUserDetails', () => {
-  if (!Cypress.env('adminUserDetails')) {
+Cypress.Commands.add('getAdminUserDetails', (options = {}) => {
+  const { force = false } = options;
+
+  if (force || !Cypress.env('adminUserDetails')) {
     return cy
       .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
       .then((users) => {
@@ -35,6 +37,17 @@ Cypress.Commands.add('getAdminUserId', () => {
   return cy.getAdminUserDetails().then((user) => {
     return user.id;
   });
+});
+
+Cypress.Commands.add('getPatronGroupsApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'groups',
+      searchParams,
+    })
+    .then(({ body }) => {
+      return body.usergroups;
+    });
 });
 
 Cypress.Commands.add('getUserGroups', (searchParams) => {
@@ -492,4 +505,15 @@ Cypress.Commands.add('assignDepartmentsToExistingUser', (userId, departments = [
       departments,
     });
   });
+});
+
+Cypress.Commands.add('createStagingUserApi', (record) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'staging-users',
+      body: record,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body);
 });

@@ -104,14 +104,10 @@ describe('MARC', () => {
             createdAuthorityIDs.push(record[marcFiles[1].propertyName].id);
           });
         });
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
-          cy.reload();
-          MarcAuthorities.waitLoading();
-        }, 20_000);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
         MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
         MarcAuthorities.checkAuthoritySourceOptions();
@@ -170,7 +166,10 @@ describe('MARC', () => {
         cy.wait(2000);
         MarcAuthorities.verifyResultsPane();
         MarcAuthorities.clickActionsButton();
-        MarcAuthorities.verifyActionsMenu(true, true);
+        MarcAuthorities.verifyActionsMenu({
+          saveUuidsEnabled: true,
+          saveCqlEnabled: true,
+        });
 
         MarcAuthorities.actionsSortBy('Authorized/Reference');
         MarcAuthorities.checkRowsContent(marcAuthorities.authorizedReferences);

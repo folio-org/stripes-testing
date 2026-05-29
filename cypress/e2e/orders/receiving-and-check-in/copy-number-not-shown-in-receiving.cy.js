@@ -145,7 +145,7 @@ describe('Orders', () => {
 
         // Go to "Receiving" app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-        Receivings.waitLoading();
+        Receivings.verifyPageDisplayed();
 
         // Search for PO line from Precondition
         Receivings.resetFilters();

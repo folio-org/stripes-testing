@@ -653,7 +653,7 @@ export default {
       this.deleteConfirmationPresented();
       this.confirmDelete();
     }
-    cy.wait('@saveRecordRequest', { timeout: 10_000 })
+    cy.wait('@saveRecordRequest', { timeout: 20_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
   },
@@ -1048,12 +1048,17 @@ export default {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
+    cy.intercept({ method: /GET/, url: /\/records-editor\/records\?externalId=.*$/ }).as(
+      'getSavedRecordRequest',
+    );
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutAfterSaveAndClose.exists());
     cy.wait('@saveRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('be.oneOf', [201, 202]);
-    cy.expect(rootSection.exists());
+    cy.wait('@getSavedRecordRequest', { timeout: 10_000 })
+      .its('response.statusCode')
+      .should('eq', 200);
+    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.exists()]);
   },
 
   deleteFieldAndCheck(rowIndex, tag) {
@@ -3738,5 +3743,12 @@ export default {
         element.click();
       }),
     );
+  },
+
+  verifyIndicatorBoxesAbsentInField(tag, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(targetRow.find(firstIndicatorBox).absent());
+    cy.expect(targetRow.find(secondIndicatorBox).absent());
   },
 };

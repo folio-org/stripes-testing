@@ -15,7 +15,6 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 
 describe('Check out', () => {
   let user = {};
-  let userBarcode;
   let servicePoint;
   let materialTypeName;
   let testInstanceIds;
@@ -78,19 +77,10 @@ describe('Check out', () => {
           testInstanceIds = specialInstanceIds;
         });
       });
-    cy.createTempUser([permissions.checkoutCirculatingItems.gui])
-      .then((userProperties) => {
-        user = userProperties;
-        UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
-      })
-      .then(() => {
-        cy.getUsers({
-          limit: 1,
-          query: `username=${user.username}`,
-        }).then((users) => {
-          userBarcode = users[0].barcode;
-        });
-      });
+    cy.createTempUser([permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
+      user = userProperties;
+      UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
+    });
 
     // Fetching the current "Other settings" values.
     // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
@@ -101,27 +91,28 @@ describe('Check out', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
-    cy.wrap(
-      testInstanceIds.holdingIds.forEach((holdingsId) => {
-        cy.wrap(
-          holdingsId.itemIds.forEach((itemId) => {
-            cy.deleteItemViaApi(itemId);
-          }),
-        ).then(() => {
-          cy.deleteHoldingRecordViaApi(holdingsId.id);
-        });
-      }),
-    ).then(() => {
-      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+    cy.getAdminToken().then(() => {
+      cy.wrap(
+        testInstanceIds.holdingIds.forEach((holdingsId) => {
+          cy.wrap(
+            holdingsId.itemIds.forEach((itemId) => {
+              cy.deleteItemViaApi(itemId);
+            }),
+          ).then(() => {
+            cy.deleteHoldingRecordViaApi(holdingsId.id);
+          });
+        }),
+      ).then(() => {
+        InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+      });
+      Users.deleteViaApi(user.userId);
+      // Fetching the current "Other settings" values.
+      // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
+      // Verifying that it was enabled earlier.
+      // Ensuring that "ID" is not the only enabled value, since at least one value is required.
+      // Disabling "ID" if appropriate.
+      OtherSettings.disablePrefPatronIdentifierIfNeeded(ID, shouldRemoveBarcodeAfterTest);
     });
-    Users.deleteViaApi(user.userId);
-    // Fetching the current "Other settings" values.
-    // Checking if "Patron id(s) for checkout scanning" is enabled by "ID".
-    // Verifying that it was enabled earlier.
-    // Ensuring that "ID" is not the only enabled value, since at least one value is required.
-    // Disabling "ID" if appropriate.
-    OtherSettings.disablePrefPatronIdentifierIfNeeded(ID, shouldRemoveBarcodeAfterTest);
   });
 
   const fullCheckOut = ({
@@ -149,8 +140,8 @@ describe('Check out', () => {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,
       });
-      CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
-      CheckOutActions.checkPatronInformation(user.username, userBarcode);
+      CheckOutActions.checkOutItemUser(user.userId, testItems[0].barcode);
+      CheckOutActions.checkPatronInformation(user.username, user.userId);
       cy.expect(CheckOutActions.modal.absent());
 
       fullCheckOut(testItems[1]);

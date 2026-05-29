@@ -9,10 +9,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 import EditResource from '../../../support/fragments/linked-data/editResource';
-import ExternalResourcePreview from '../../../support/fragments/linked-data/externalResourcePreview';
 import InstanceProfileModal from '../../../support/fragments/linked-data/instanceProfileModal';
 import Marigold from '../../../support/fragments/linked-data/marigold';
 import NewInstance from '../../../support/fragments/linked-data/newInstance';
+import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import ViewMarc from '../../../support/fragments/linked-data/viewMarc';
 import Work from '../../../support/fragments/linked-data/work';
@@ -116,8 +116,8 @@ describe('Citation: check category resource MARC codes', () => {
     () => {
       InventoryInstances.searchByTitle(testData.uniqueGeoDateWorkTitle);
       InventoryInstance.editInstanceInMG();
-      ExternalResourcePreview.waitLoading();
-      ExternalResourcePreview.clickContinueButton();
+      PreviewResource.waitLoading();
+      PreviewResource.clickContinue();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.clickCloseResourceButton();
 
@@ -152,7 +152,10 @@ describe('Citation: check category resource MARC codes', () => {
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.setValueForSimpleField(testData.contentTypeFirst, 'Content Type');
-      EditResource.setValueForSimpleField(testData.governmentPublicationFirst, 'Government publication');
+      EditResource.setValueForSimpleField(
+        testData.governmentPublicationFirst,
+        'Government publication',
+      );
       EditResource.setValueForSimpleField(testData.intendedAudienceFirst, 'Intended Audience');
       EditResource.saveAndKeepEditing();
 
@@ -175,7 +178,11 @@ describe('Citation: check category resource MARC codes', () => {
       EditResource.clickRepeatGroup('Government publication');
       EditResource.clickRepeatGroup('Intended Audience');
       EditResource.setValueForSimpleField(testData.contentTypeSecond, 'Content Type', 2);
-      EditResource.setValueForSimpleField(testData.governmentPublicationSecond, 'Government publication', 2);
+      EditResource.setValueForSimpleField(
+        testData.governmentPublicationSecond,
+        'Government publication',
+        2,
+      );
       EditResource.setValueForSimpleField(testData.intendedAudienceSecond, 'Intended Audience', 2);
       EditResource.saveAndKeepEditing();
 
@@ -209,7 +216,10 @@ describe('Citation: check category resource MARC codes', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.geoDateWorkTitle);
       Marigold.clickEditWorkFromSearch();
       EditResource.checkTextValueOnField(resourceData.dateOfWork, 'Date of Work');
-      EditResource.checkTextValueOnDisabledField(resourceData.geographicCoverage, 'Search LCNAF, LCSH or GAC');
+      EditResource.checkTextValueOnDisabledField(
+        resourceData.geographicCoverage,
+        'Search LCNAF, LCSH or GAC',
+      );
 
       // Review precondition work's MARC
       EditResource.editInstanceFormViaActions();
@@ -218,6 +228,6 @@ describe('Citation: check category resource MARC codes', () => {
       ViewMarc.waitLoading();
       ViewMarc.checkMarcFieldContainsData('043', resourceData.marc043);
       ViewMarc.checkMarcFieldContainsData('046', resourceData.marc046);
-    }
+    },
   );
 });

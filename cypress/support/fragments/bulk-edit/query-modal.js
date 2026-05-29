@@ -17,21 +17,24 @@ import {
   Checkbox,
   Calendar,
   Pane,
+  or,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
 const buildQueryModal = Pane('Build query');
 const buildQueryButton = Button('Build query');
-const testQueryButton = Button('Test query');
-const cancelButton = Button('Cancel');
-const runQueryButton = Button('Run query');
-const runQueryAndSave = Button('Run query & save');
-const xButton = Button({ icon: 'times' });
+const testQueryButton = buildQueryModal.find(Button('Test query'));
+const cancelButton = buildQueryModal.find(Button('Cancel'));
+const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & save')));
+const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
+const xButton = buildQueryModal.find(Button({ icon: 'times' }));
+const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const selectFieldButton = Button({ id: 'field-option-0' });
-const showColumnsButton = Button('Show columns');
+const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
+const fieldSelection = Selection({ id: including('field-option-') });
 
 const booleanValues = ['AND'];
 
@@ -83,6 +86,7 @@ export const embeddedFields = {
 export const holdingsFieldValues = {
   holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
+  tenantId: 'Holdings — Tenant ID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
   formerIds: 'Holdings — Former identifiers',
@@ -90,6 +94,8 @@ export const holdingsFieldValues = {
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Holdings permanent location — Name',
   temporaryLocation: 'Holdings temporary location — Name',
+  effectiveLocationName: 'Holdings effective location — Name',
+  effectiveLibraryName: 'Holdings effective library — Name',
   notes: 'Holdings — Notes — Note',
   notesNoteType: 'Holdings — Notes — Note type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
@@ -415,6 +421,18 @@ export default {
     cy.wait(1000);
   },
 
+  verifySelectedOperator(selection, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .has({ checkedOptionText: selection }),
+    );
+  },
+
+  verifyRowDoesNotContain(content, row = 0) {
+    cy.get(`[data-testid="row-${row}"]`).should('not.contain.text', content);
+  },
+
   verifyOperatorsList(operators, row = 0) {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
       (options) => {
@@ -432,6 +450,16 @@ export default {
     cy.get('[class^="queryArea"]').should('have.text', content);
   },
 
+  getQueryAreaContent() {
+    return cy.get('[class^="queryArea"]').invoke('text');
+  },
+
+  verifyQueryAreaDoesNotContain(content) {
+    cy.get('[class^="queryArea"]').should(($queryArea) => {
+      expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
+    });
+  },
+
   verifyQueryTextboxReadOnly() {
     cy.get('[class^="queryArea"]').should('exist');
     cy.get('[class^="queryArea"] input').should('not.exist');
@@ -445,9 +473,33 @@ export default {
     cy.get('[class^="col-sm-4"][class*="headerCell"]').contains('Value');
   },
 
+  closeOpenedSelection() {
+    cy.do(buildQueryModal.click());
+    cy.expect(SelectionList().absent());
+  },
+
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
-    cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).open());
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyFilteredOptionsInValueSelect(searchText, expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.do(SelectionList().filter(searchText));
+    cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyAllAvailableFieldOptions(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
   },
 
   pickDate(date, row = 0) {
@@ -580,9 +632,13 @@ export default {
     cy.do(buildQueryModal.click());
   },
 
-  chooseFromValueMultiselect(text, row = 0) {
+  chooseFromValueMultiselect(text, row = 0, { exactMatch = false } = {}) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    if (exactMatch) {
+      cy.do([MultiSelectOption(text).click(), buildQueryModal.click()]);
+    } else {
+      cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
+    }
     cy.wait(1000);
   },
 
@@ -632,7 +688,15 @@ export default {
   selectValueFromSelect(selection, row = 0) {
     cy.do(
       RepeatableFieldItem({ index: row })
-        .find(Selection({ dataTestId: 'data-input-select-boolType' }))
+        .find(
+          Selection({
+            dataTestId: or(
+              'data-input-select-boolType',
+              'data-input-select-booleanType',
+              including('data-input-select-single'),
+            ),
+          }),
+        )
         .choose(selection),
     );
   },
@@ -697,12 +761,17 @@ export default {
     cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
   },
 
+  waitForQueryTestToFinish() {
+    cy.contains(/^Query returns/, { timeout: 60000 }).should('be.visible');
+    this.runQueryDisabled(false);
+  },
+
   verifyPreviewOfRecordsMatched() {
     cy.expect([MultiColumnList().exists(), showColumnsButton.exists()]);
     this.testQueryDisabled(false);
     this.cancelDisabled(false);
     this.runQueryDisabled(false);
-    cy.get('[class^="col-xs-10"]').then(($element) => {
+    cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
@@ -724,6 +793,62 @@ export default {
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
     cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+  },
+
+  verifyRecordWithContent(content) {
+    cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
+  },
+
+  verifyQueryReturnsNoResults() {
+    cy.expect([
+      HTML('Query returns no records.').exists(),
+      HTML('The list contains no items').exists(),
+    ]);
+  },
+
+  verifyValueMultiselectContainsValuesFromPreviewTableColumn(
+    columnName,
+    row = 0,
+    closeDropdownAfterVerification = false,
+  ) {
+    const valuesFromPreviewTableColumn = [];
+    const emptyCellPlaceholder = '-';
+
+    cy.do(previewTable.scrollHeaderIntoView(columnName));
+    cy.expect(previewTable.find(MultiColumnListHeader(columnName)).exists());
+    cy.then(() => previewTable.rowCount()).then((rowCount) => {
+      cy.wrap([...Array(rowCount).keys()])
+        .each((rowIndex) => {
+          return cy.do(
+            previewTable
+              .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+              .find(MultiColumnListCell({ column: columnName }))
+              .perform((element) => {
+                const value = element.textContent.trim();
+                // Empty cells in the preview table are rendered as "-", but the value dropdown
+                // contains only real values.
+                if (value && value !== emptyCellPlaceholder) {
+                  valuesFromPreviewTableColumn.push(value);
+                }
+              }),
+          );
+        })
+        .then(() => {
+          const uniqueValues = [...new Set(valuesFromPreviewTableColumn)];
+          const valueMultiSelect = RepeatableFieldItem({ index: row }).find(MultiSelect());
+
+          expect(
+            uniqueValues,
+            `Values from preview table column ${columnName}`,
+          ).to.have.length.greaterThan(0);
+          cy.do(valueMultiSelect.open());
+          cy.wrap(uniqueValues).each((value) => {
+            cy.do(valueMultiSelect.fillIn(value));
+            cy.expect(MultiSelectOption(including(value)).exists());
+          });
+          if (closeDropdownAfterVerification) cy.do(buildQueryModal.click());
+        });
+    });
   },
 
   clickRunQueryAndSave() {
@@ -766,7 +891,7 @@ export default {
 
   verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
     cy.wait(3000);
-    cy.get('[class^="col-xs-10"]').then(($element) => {
+    cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
@@ -1021,6 +1146,14 @@ export default {
     cy.wait(2000);
   },
 
+  selectCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
+  },
+
   verifyColumnDisplayed(columnName, isDisplayed = true) {
     if (isDisplayed) {
       cy.expect(MultiColumnListHeader(columnName).exists());
@@ -1049,5 +1182,18 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
       });
     });
+  },
+
+  verifyColumnValueForRow(recordTitle, columnName, expectedValue) {
+    const targetRowFirst = MultiColumnListRow(including(recordTitle), { isContainer: false });
+    cy.expect(
+      targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
+    );
+  },
+
+  verifyResultFound(expectedValue, { isFound = true, partialMatch = false } = {}) {
+    const targetCell = MultiColumnListCell(partialMatch ? including(expectedValue) : expectedValue);
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
   },
 };

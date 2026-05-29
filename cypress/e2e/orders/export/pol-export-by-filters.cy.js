@@ -1,137 +1,131 @@
 import moment from 'moment';
+
 import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  APPLICATION_NAMES,
-  INVOICE_STATUSES,
-  ORDER_STATUSES,
-  POL_CREATE_INVENTORY_SETTINGS,
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_RESULTS_ACTIONS_LABELS,
+  ORDER_LINE_RESULTS_LIST_COLUMNS,
 } from '../../../support/constants';
-import Permissions from '../../../support/dictionary/permissions';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
+import { OrderHelper, OrderLines, Orders, OrdersExport } from '../../../support/fragments/orders';
+import { ExecutionFlowManager } from '../../../support/utils';
 import FileManager from '../../../support/utils/fileManager';
+import { buildExportReportRow } from '../../../support/utils/ordersExport';
+
+const { EXPORT_CSV } = ORDER_LINE_RESULTS_ACTIONS_LABELS;
 
 describe('Orders', () => {
   describe('Export', () => {
-    const testData = {};
-    const order = {
-      ...NewOrder.defaultOneTimeOrder,
-      orderType: 'Ongoing',
-      ongoing: { isSubscription: false, manualRenewal: false },
-      approved: true,
-      reEncumber: true,
-    };
-    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const flow = new ExecutionFlowManager();
     const fileName = `order-export-${moment().format('YYYY-MM-DD')}-*.csv`;
 
-    before(() => {
-      cy.getAdminToken();
-      const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
-
-      testData.fiscalYear = fiscalYear;
-      testData.fund = fund;
-      testData.budget = budget;
-
-      cy.getLocations({ limit: 1 }).then((locationResp) => {
-        testData.location = locationResp;
-
-        cy.getDefaultMaterialType().then((mtypes) => {
-          cy.getAcquisitionMethodsApi({
-            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-          }).then((params) => {
-            Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-              organization.id = responseOrganizations;
-              order.vendor = organization.id;
-              const orderLine = {
-                ...BasicOrderLine.defaultOrderLine,
-                cost: {
-                  listUnitPrice: 40.0,
-                  currency: 'USD',
-                  discountType: 'percentage',
-                  quantityPhysical: 1,
-                  poLineEstimatedPrice: 40.0,
-                },
-                fundDistribution: [
-                  { code: testData.fund.code, fundId: testData.fund.id, value: 100 },
-                ],
-                locations: [{ locationId: testData.location.id, quantity: 1, quantityPhysical: 1 }],
-                acquisitionMethod: params.body.acquisitionMethods[0].id,
-                physical: {
-                  createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-                  materialType: mtypes.id,
-                  materialSupplier: responseOrganizations,
-                  volumes: [],
-                },
-              };
-              Orders.createOrderViaApi(order).then((orderResponse) => {
-                order.id = orderResponse.id;
-                orderLine.purchaseOrderId = orderResponse.id;
-                testData.orderNumber = orderResponse.poNumber;
-
-                OrderLines.createOrderLineViaApi(orderLine);
-                Orders.updateOrderViaApi({
-                  ...orderResponse,
-                  workflowStatus: ORDER_STATUSES.OPEN,
-                });
-                Invoices.createInvoiceWithInvoiceLineViaApi({
-                  vendorId: organization.id,
-                  fiscalYearId: fiscalYear.id,
-                  poLineId: orderLine.id,
-                  fundDistributions: orderLine.fundDistribution,
-                  accountingCode: organization.erpCode,
-                  releaseEncumbrance: true,
-                  subTotal: 40,
-                }).then((invoiceResponse) => {
-                  testData.invoice = invoiceResponse;
-                  testData.invoice.vendorName = organization.name;
-
-                  Invoices.changeInvoiceStatusViaApi({
-                    invoice: testData.invoice,
-                    status: INVOICE_STATUSES.PAID,
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-
-      cy.createTempUser([Permissions.uiExportOrders.gui, Permissions.uiOrdersView.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-
-          cy.login(userProperties.username, userProperties.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-        },
-      );
+    before('Create C196751 preconditions', () => {
+      cy.clearLocalStorage();
+      OrdersExport.createOrdersExportDataViaApi(flow);
     });
 
-    after(() => {
+    after('Delete C196751 data (what can be deleted)', () => {
       cy.getAdminToken();
       FileManager.deleteFilesFromDownloadsByMask(fileName);
-      Users.deleteViaApi(testData.user.userId);
+      flow.cleanup();
     });
 
     it(
       'C196751 Export orders based on orders lines search (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C196751'] },
       () => {
-        Orders.searchByParameter('PO line number', testData.orderNumber);
-        OrderLines.resetFilters();
-        OrderLines.selectFilterVendorPOL(testData.invoice);
-        Orders.exportResultsToCsv();
-        cy.wait(5000);
-        OrderLines.checkDownloadedFile();
-        OrderLines.resetFilters();
-        OrderLines.selectFilterOngoingPaymentStatus();
-        Orders.exportResultsToCsv();
-        cy.wait(5000);
-        OrderLines.checkDownloadedFile();
-        OrderLines.resetFilters();
+        const ctx = Object.fromEntries(flow.context);
+
+        const {
+          admin,
+          acquisitionMethodsMap,
+          acquisitionUnitsMap,
+          addressesMap,
+          contributorTypesMap,
+          expenseClassesMap,
+          fiscalYear,
+          fundsMap,
+          holdingsMap,
+          identifierTypesMap,
+          locale,
+          locationsMap,
+          materialTypesMap,
+          orderLinesMap,
+          ordersMap,
+          organization,
+          organizationTypesMap,
+        } = ctx;
+
+        const orderLines = Array.from(orderLinesMap.values()).sort((a, b) => a.poLineNumber.localeCompare(b.poLineNumber));
+        const locationNames = Array.from(locationsMap.values()).map((location) => location.name);
+        const fundCodes = Array.from(fundsMap.values()).map((fund) => fund.code);
+
+        OrderHelper.interceptGetOrderLines();
+
+        const waitForOrderLinesLoading = () => {
+          OrderHelper.waitForOrderLinesQueryCompleted();
+          OrderLines.waitResultsListLoading();
+        };
+
+        const performExportAndCheckFile = (filterFn, expectedOrderLines) => {
+          filterFn();
+          waitForOrderLinesLoading();
+          OrderLines.assertResultsCount(expectedOrderLines.length);
+          cy.wait(DEFAULT_WAIT_TIME);
+          Orders.exportResultsToCsv();
+
+          const content = expectedOrderLines.map((line) => {
+            const order = ordersMap.get(line.purchaseOrderId);
+
+            return buildExportReportRow({
+              order,
+              line,
+              acquisitionMethodsMap,
+              acquisitionUnitsMap,
+              addressesMap,
+              admin,
+              contributorTypesMap,
+              expenseClassesMap,
+              fiscalYear,
+              holdingsMap,
+              identifierTypesMap,
+              locale,
+              locationsMap,
+              materialTypesMap,
+              organization,
+              organizationTypesMap,
+              orderLinesMap,
+            });
+          });
+
+          OrderLines.checkDownloadedFile({ content });
+        };
+
+        OrderLines.resetFiltersIfActive();
+        OrderLines.verifyNoResultsMessage();
+        OrderLines.assertResultsActionIsDisabled(EXPORT_CSV);
+
+        // Filter by location and check that export contains only order lines with that location
+        performExportAndCheckFile(() => {
+          locationNames.forEach((location) => {
+            OrderLines.selectLocationInFilters(location);
+            waitForOrderLinesLoading();
+          });
+          OrderLines.assertResultsActionIsDisabled(EXPORT_CSV, false);
+          OrderLines.sortOrderLinesBy(ORDER_LINE_RESULTS_LIST_COLUMNS.PO_LINE_NUMBER);
+        }, orderLines);
+
+        // Filter by fund code and check that export contains only order lines with that fund code
+        const filteredByFundCodeOrderLines = orderLines.filter((line) => line.fundDistribution?.some((fund) => fundCodes.includes(fundsMap.get(fund.fundId)?.code)));
+        performExportAndCheckFile(
+          () => OrderLines.filterByFundCodes(fundCodes),
+          filteredByFundCodeOrderLines,
+        );
+
+        // Filter by rush and check that export contains only order lines with that rush value
+        performExportAndCheckFile(
+          () => OrderLines.filterByRush([COMMON_BUTTON_LABELS.YES]),
+          filteredByFundCodeOrderLines.filter((line) => line.rush === true),
+        );
       },
     );
   });

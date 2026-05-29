@@ -216,6 +216,7 @@ describe('OAI-PMH', () => {
 
         ItemRecordNew.saveAndClose({ itemSaved: true });
         InventoryInstance.waitLoading();
+        cy.wait(3000);
 
         // Steps 13-14: Verify 856 fields still have single t="0" after adding items
         cy.getAdminToken();
@@ -282,6 +283,7 @@ describe('OAI-PMH', () => {
         );
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 18-19: Verify 856 fields have single t="0"
         cy.getAdminToken();
@@ -338,6 +340,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateIndicatorValue('856', '\\', 1);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 21: Verify all 856 fields after editing instance 856 to ind2=blank
         cy.getAdminToken();
@@ -395,6 +398,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateIndicatorValue('856', '2', 1);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 23: Verify all 856 fields after editing instance 856 to ind2=2
         cy.getAdminToken();
@@ -452,6 +456,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateIndicatorValue('856', '0', 1);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 25: Verify all 856 fields after editing instance 856 to ind2=0
         cy.getAdminToken();
@@ -509,6 +514,7 @@ describe('OAI-PMH', () => {
         QuickMarcEditor.updateIndicatorValue('856', '1', 1);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(3000);
 
         // Step 27: Verify all 856 fields after editing instance 856 to ind2=1
         cy.getAdminToken();

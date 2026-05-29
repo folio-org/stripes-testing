@@ -1,5 +1,6 @@
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -8,31 +9,38 @@ import { Locations } from '../../../support/fragments/settings/tenant/location-s
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
+    const randomPostfix = getRandomPostfix();
     const testData = {
-      folioInstances: InventoryInstances.generateFolioInstances(),
-      marcInstances: InventoryInstances.generateFolioInstances(),
+      folioInstances: InventoryInstances.generateFolioInstances({
+        instanceTitlePrefix: `AT_C359148_FolioInstance_${randomPostfix}`,
+      }),
+      marcInstances: InventoryInstances.generateFolioInstances({
+        instanceTitlePrefix: `AT_C359148_MarcInstance_${randomPostfix}`,
+      }),
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
-    const admNote1 = 'Copy, Delete this Holdings 10-21-2022';
-    const admNote2 = 'Complex copy, Delete this Holdings 10-22-2022';
+    const admNote1 = 'Copy, Delete this Holdings C359148 10-21-2022';
+    const admNote2 = 'Complex copy, Delete this Holdings C359148 10-22-2022';
     const queryForNote1 = `holdings.administrativeNotes ==/ string "${admNote1}"`;
     const queryForNote2 = `holdings.administrativeNotes ==/ string "${admNote2}"`;
     const searchQueries = [
-      'holdings.administrativeNotes = "copy Holdings"',
-      'holdings.administrativeNotes == "Delete this Holdings"',
+      'holdings.administrativeNotes = "copy Holdings C359148"',
+      'holdings.administrativeNotes == "Delete this Holdings C359148"',
     ];
     const searchQueriesNotExist = [
-      'holdings.administrativeNotes == "copy Holdings"',
-      'holdings.administrativeNotes ==/ string "Delete this Holdings"',
+      'holdings.administrativeNotes == "copy Holdings C359148"',
+      'holdings.administrativeNotes ==/ string "Delete this Holdings C359148"',
     ];
     let folioInstanceData;
     let marcInstanceData;
 
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteFullInstancesByTitleViaApi('C359148_');
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
         servicePointId: testData.servicePoint.id,
@@ -112,14 +120,18 @@ describe('Inventory', () => {
       () => {
         searchQueries.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
+          cy.intercept('GET', '**/search/instances?*').as('searchInstances');
           InventorySearchAndFilter.searchByParameter('Query search', query);
+          cy.wait('@searchInstances').its('response.statusCode').should('eq', 200);
           // Search completed and at the result list are being displayed the "Instance" records with "Holdings" with "Item" records to which you created "Administrative notes" from precondition.
           InventorySearchAndFilter.verifySearchResult(folioInstanceData.instanceTitle);
           InventorySearchAndFilter.verifySearchResult(marcInstanceData.instanceTitle);
         });
         searchQueriesNotExist.forEach((query) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
+          cy.intercept('GET', '**/search/instances?*').as('searchInstances');
           InventorySearchAndFilter.searchByParameter('Query search', query);
+          cy.wait('@searchInstances').its('response.statusCode').should('eq', 200);
           // Search completed and at the result list are being displayed the "Instance" records with "Holdings" with "Item" records to which you created "Administrative notes" from precondition.
           InventorySearchAndFilter.verifyContentNotExistInSearchResult(
             folioInstanceData.instanceTitle,
@@ -136,6 +148,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Query search', queryForNote2);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" record with source value "MARC" to which you created "Administrative note" from precondition.
         InventorySearchAndFilter.verifySearchResult(marcInstanceData.instanceTitle);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
       },
     );
   });

@@ -230,5 +230,6 @@ export default {
   },
   duplicate() {
     cy.do([actionsButton.click(), Button('Duplicate').click()]);
+    cy.wait(1000);
   },
 };

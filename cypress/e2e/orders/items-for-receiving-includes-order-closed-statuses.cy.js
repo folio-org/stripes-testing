@@ -155,7 +155,7 @@ describe('Orders', () => {
 
         cy.login(userProperties.username, userProperties.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-        Receiving.waitLoading();
+        Receiving.verifyPageDisplayed();
       });
     });
 

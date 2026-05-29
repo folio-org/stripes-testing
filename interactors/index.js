@@ -17,6 +17,7 @@ export {
   Page,
 } from '@interactors/html';
 export { default as converge } from './converge';
+export { default as Row } from './row';
 
 export { default as Accordion } from './accordion';
 export { AppList } from './applist';

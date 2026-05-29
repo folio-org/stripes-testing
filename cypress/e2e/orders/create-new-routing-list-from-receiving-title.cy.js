@@ -86,7 +86,7 @@ describe('Receiving', () => {
   after('Clean up test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

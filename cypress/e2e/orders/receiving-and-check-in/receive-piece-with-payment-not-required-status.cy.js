@@ -147,17 +147,7 @@ describe('Orders', () => {
     });
 
     after(() => {
-      cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Receiving.selectLinkFromResultsList();
-      Receiving.unreceiveFromReceivedSection();
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.deleteOrderLine();
-      // Need to wait until the order is opened before deleting it
-      cy.wait(2000);
+      cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
       Users.deleteViaApi(user.userId);
     });

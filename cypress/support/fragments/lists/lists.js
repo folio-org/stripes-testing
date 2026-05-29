@@ -7,11 +7,13 @@ import {
   calloutTypes,
   Checkbox,
   HTML,
+  Icon,
   including,
   KeyValue,
   Link,
   ListRow,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -23,6 +25,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
@@ -56,6 +59,7 @@ const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
+const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -539,8 +543,73 @@ const UI = {
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
+  verifySingleRecordNumber() {
+    cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+    cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
+  },
+
   verifyQuery(query) {
     cy.get('#results-viewer-accordion').contains(`Query: (${query})`).should('be.visible');
+  },
+
+  getQueryText() {
+    return cy.get('#results-viewer-accordion').contains('Query:').invoke('text');
+  },
+
+  verifyRecordWithContent(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  selectResultColumn(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyResultColumnDisplayed(columnName) {
+    cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
+    cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyResultCellContains(rowIndex, columnName, content) {
+    this.verifyResultColumnDisplayed(columnName);
+    cy.expect(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: columnName, content: including(content) }))
+        .exists(),
+    );
+  },
+
+  verifyNoValueInResultCell(rowIndex, columnName) {
+    this.verifyResultColumnDisplayed(columnName);
+    cy.do(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: columnName }))
+        .perform((element) => {
+          expect(element.innerText.trim()).to.be.oneOf(['—', '-']);
+        }),
+    );
+  },
+
+  verifyDeletedRecordTooltip(rowIndex, tooltipText) {
+    cy.do(
+      resultViewerTable
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ column: 'User — Active', content: including('Deleted') }))
+        .find(Icon())
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: tooltipText }).exists());
+  },
+
+  waitForCompilingAnimationToDisappear() {
+    cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
+  },
+
+  verifyRefreshCompleteCallout(recordsCount) {
+    cy.contains(`Refresh complete with ${recordsCount} records: View updated list`, {
+      timeout: 90000,
+    }).should('be.visible');
   },
 
   openList(listName) {
@@ -1246,10 +1315,12 @@ const API = {
     });
   },
 
-  getEntityTypeByIdViaApi(id) {
+  getEntityTypeByIdViaApi(id, { failOnStatusCode = true } = {}) {
     return cy.okapiRequest({
       method: 'GET',
       path: `entity-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 
@@ -1507,6 +1578,13 @@ const API = {
     return this.getViaApi().then((response) => {
       return response.body.content.find((item) => item.name === listName).id;
     });
+  },
+
+  verifyExportCallouts(listName) {
+    this.verifyCalloutMessage(
+      `Export of ${listName} is being generated. This may take some time for larger lists.`,
+    );
+    this.verifyCalloutMessage(`List ${listName} was successfully exported to CSV.`);
   },
 };
 

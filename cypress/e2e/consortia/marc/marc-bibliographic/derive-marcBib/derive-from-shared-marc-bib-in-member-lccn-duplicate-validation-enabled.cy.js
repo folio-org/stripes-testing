@@ -167,13 +167,17 @@ describe('MARC', () => {
 
             // Steps 2: Update "010 $a" value with which matches to "LCCN" of existing Shared record
             QuickMarcEditor.updateExistingField('010', `$a ${lccnNumberOfSharedInstance}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfSharedInstance}`);
             QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+            QuickMarcEditor.verifyValidationCallout();
             QuickMarcEditor.closeAllCallouts();
 
             // Steps 3: Update "010 $a" value with which matches to "Canceled LCCN" of existing Shared record
             QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumberOfSharedInstance}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfSharedInstance}`);
             QuickMarcEditor.updateExistingField('245', `$a ${derivedLocalMarcInstanceTitle} 1`);
+            QuickMarcEditor.checkContentByTag('245', `$a ${derivedLocalMarcInstanceTitle} 1`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
@@ -190,13 +194,17 @@ describe('MARC', () => {
 
             // Step 6: Update "010 $a" value with which matches to "LCCN" of existing Local record
             QuickMarcEditor.updateExistingField('010', `$a ${lccnNumberOfLocalInstance}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfLocalInstance}`);
             QuickMarcEditor.pressSaveAndCloseButton();
             QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+            QuickMarcEditor.verifyValidationCallout();
             QuickMarcEditor.closeAllCallouts();
 
             // Step 7: Update "010 $a" value with which matches to "Canceled LCCN" of existing Local record
             QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumberOfLocalInstance}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfLocalInstance}`);
             QuickMarcEditor.updateExistingField('245', `$a ${derivedLocalMarcInstanceTitle} 2`);
+            QuickMarcEditor.checkContentByTag('245', `$a ${derivedLocalMarcInstanceTitle} 2`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
           },

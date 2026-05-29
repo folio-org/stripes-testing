@@ -114,7 +114,6 @@ describe('Data Export', () => {
                 jobId,
                 user.username,
                 'Default instances',
-                '.cql',
               );
 
               // Step 7: Verify the new row appeared with created ".mrc" file which is highlighted as hyperlink in blue

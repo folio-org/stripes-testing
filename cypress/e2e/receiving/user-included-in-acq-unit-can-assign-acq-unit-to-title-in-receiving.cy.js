@@ -179,7 +179,7 @@ describe('Receiving', () => {
         OrderLines.verifyPackageTitleExists(secondInstanceTitle);
 
         OrderLines.receiveOrderLinesViaActions();
-        Receiving.waitLoading();
+        Receiving.verifyPageDisplayed();
 
         Receiving.checkTitleInReceivingList(firstInstanceTitle);
         Receiving.checkTitleInReceivingList(secondInstanceTitle);

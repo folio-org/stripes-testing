@@ -1,27 +1,313 @@
 import {
+  Button,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
 } from '../../../interactors';
-import { SORT_DIRECTIONS } from '../constants';
+import { COMMON_BUTTON_LABELS, SORT_DIRECTIONS } from '../constants';
 
+const defaultNormalizeValue = (value) => `${value}`.replace(/\s+/g, ' ').trim();
+
+const defaultGetSortableValue = (value) => {
+  return typeof value === 'string' ? value.toLowerCase() : value;
+};
+
+const defaultComparator = (leftValue, rightValue) => {
+  if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+    return leftValue - rightValue;
+  }
+
+  return `${leftValue}`.localeCompare(`${rightValue}`, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+};
+
+const getSortedValues = (
+  values,
+  direction = SORT_DIRECTIONS.ASCENDING,
+  comparator = defaultComparator,
+) => {
+  const sortedValues = [...values].sort(comparator);
+
+  return direction === SORT_DIRECTIONS.DESCENDING ? sortedValues.reverse() : sortedValues;
+};
+
+const areColumnValuesSorted = (
+  values,
+  direction,
+  getSortableValue = defaultGetSortableValue,
+  comparator = defaultComparator,
+) => {
+  const sortableValues = values.map(getSortableValue);
+  const expectedValues = getSortedValues(sortableValues, direction, comparator);
+
+  return Cypress._.isEqual(sortableValues, expectedValues);
+};
+
+const scrollHeaderIntoView = (listInteractor, column) => {
+  cy.do(listInteractor.scrollHeaderIntoView(column));
+};
+
+const getPaginationButton = (listInteractor, label) => listInteractor.find(Button(label));
+
+const getNextButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.NEXT);
+
+const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.PREVIOUS);
+
+/**
+ * Minimal contract for an Interactor used by list helper methods.
+ *
+ * @typedef {Object} ListInteractor
+ * @property {(interactor: Object<string, *>) => ListInteractor} find - Finds nested interactor.
+ * @property {(attrs: Object<string, *>) => ListInteractor} has - Checks interactor attributes.
+ */
+
+/**
+ * Expected state for a cell existence assertion.
+ *
+ * @typedef {boolean} CellExistsFlag
+ */
+
+/**
+ * Configuration for a single expected cell in a row.
+ *
+ * Any properties except exists are forwarded to MultiColumnListCell.
+ * Typical keys are column and content.
+ *
+ * @typedef {Object} ExpectedCell
+ * @property {CellExistsFlag} [exists=true] - true checks that cell exists, false checks that cell is absent.
+ * @property {string} [column] - Column label or identifier accepted by MultiColumnListCell.
+ * @property {string|number} [content] - Expected cell content.
+ */
+
+/**
+ * Explicit row configuration.
+ *
+ * @typedef {Object} ExplicitRowConfig
+ * @property {number} [rowIndex=0] - Zero-based row index.
+ * @property {ExpectedCell[]} [expectedCells=[]] - Cells to assert for this row.
+ */
+
+/**
+ * Row configuration in compact format where outer array index is row index.
+ *
+ * @typedef {ExpectedCell[][]} IndexedRowsConfig
+ */
+
+/**
+ * Row configuration in explicit format for sparse/non-sequential rows.
+ *
+ * @typedef {ExplicitRowConfig[]} ExplicitRowsConfig
+ */
+
+/**
+ * Supported argument type for rows assertion.
+ *
+ * @typedef {ExplicitRowConfig|IndexedRowsConfig|ExplicitRowsConfig|null|undefined} RowsConfig
+ *
+ * @example
+ * // Contract 1: single explicit row
+ * const singleRow = {
+ *   rowIndex: 0,
+ *   expectedCells: [
+ *     { column: 'Type', content: 'Payment' },
+ *     { column: 'Source', content: 'Invoice' },
+ *   ],
+ * };
+ *
+ * @example
+ * // Contract 2: array of arrays (outer index === row index)
+ * const indexedRows = [
+ *   [{ column: 'Type', content: 'Allocation' }],
+ *   [{ column: 'Type', content: 'Transfer' }],
+ * ];
+ *
+ * @example
+ * // Contract 3: sparse rows with explicit indexes
+ * const sparseRows = [
+ *   { rowIndex: 1, expectedCells: [{ column: 'Type', content: 'Credit' }] },
+ *   { rowIndex: 5, expectedCells: [{ column: 'Type', content: 'Payment' }] },
+ * ];
+ */
+
+/**
+ * Common helper methods for MultiColumnList assertions.
+ *
+ * @typedef {Object} MultiColumnListApi
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} waitLoadingComplete
+ * @property {(listInteractor: ListInteractor, rowCount: number) => void} assertRowCount
+ * @property {(listInteractor: ListInteractor, columns: string[]) => void} assertColumns
+ * @property {(listInteractor: ListInteractor, column: string) => void} sortListBy
+ * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
+ * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
+ * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
+ * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesSorted
+ * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
+ * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
+ * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
+ * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertPreviousPageButtonEnabled
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} clickNextPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} clickPreviousPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToLastPage
+ * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToFirstPage
+ */
+
+/** @type {MultiColumnListApi} */
 const api = {
+  /**
+   * Waits until list loading indicator is disabled.
+   *
+   * @param {ListInteractor} listInteractor - Target multi-column list interactor.
+   * @returns {Cypress.Chainable<void>}
+   *
+   * @example
+   * import { MultiColumnList } from '../../../interactors';
+   *
+   * const transactionsList = MultiColumnList({ id: 'transactions-list' });
+   * api.waitLoadingComplete(transactionsList);
+   */
   waitLoadingComplete(listInteractor) {
-    cy.expect(listInteractor.has({ loading: false }));
+    return cy.expect(listInteractor.has({ loading: false }));
   },
 
-  assertColumnSortDirection(column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
-    cy.expect(MultiColumnListHeader(column).has({ sort: sortDirection }));
+  assertRowCount(listInteractor, rowCount) {
+    cy.expect(listInteractor.has({ rowCount }));
   },
 
+  assertColumns(listInteractor, columns) {
+    cy.expect(listInteractor.has({ columns }));
+  },
+
+  sortListBy(listInteractor, column) {
+    scrollHeaderIntoView(listInteractor, column);
+    cy.do(listInteractor.find(MultiColumnListHeader(column)).click());
+    this.waitLoadingComplete(listInteractor);
+  },
+
+  /**
+   * Asserts current sort direction for a given list column.
+   *
+   * @param {string} column - Column header label used by MultiColumnListHeader.
+   * @param {string} [sortDirection=SORT_DIRECTIONS.DESCENDING] - Expected sort direction.
+   * @returns {void}
+   *
+   * @example
+   * import { TRANSACTION_LIST_COLUMNS, SORT_DIRECTIONS } from '../constants';
+   *
+   * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE);
+   * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE, SORT_DIRECTIONS.ASCENDING);
+   */
+  assertColumnSortDirection(listInteractor, column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
+    scrollHeaderIntoView(listInteractor, column);
+    cy.expect(listInteractor.find(MultiColumnListHeader(column)).has({ sort: sortDirection }));
+  },
+
+  assertColumnSortable(listInteractor, column, isSortable = true) {
+    scrollHeaderIntoView(listInteractor, column);
+    cy.expect(listInteractor.find(MultiColumnListHeader(column)).has({ sortable: isSortable }));
+  },
+
+  getColumnValues(listInteractor, column, options = {}) {
+    const { normalizeValue = defaultNormalizeValue } = options;
+
+    return cy.then(() => listInteractor.perform((el) => {
+      const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
+      const colIndex = headers.findIndex((h) => h.textContent.trim() === column) + 1;
+      return [
+        ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
+      ].map((cell) => normalizeValue(cell.textContent));
+    }));
+  },
+
+  assertColumnValuesSorted(listInteractor, column, options = {}) {
+    const {
+      direction = SORT_DIRECTIONS.ASCENDING,
+      normalizeValue = defaultNormalizeValue,
+      getSortableValue = defaultGetSortableValue,
+      comparator = defaultComparator,
+    } = options;
+
+    this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
+      expect(areColumnValuesSorted(values, direction, getSortableValue, comparator)).to.equal(true);
+    });
+  },
+
+  assertColumnValuesNotSorted(listInteractor, column, options = {}) {
+    const {
+      normalizeValue = defaultNormalizeValue,
+      getSortableValue = defaultGetSortableValue,
+      comparator = defaultComparator,
+    } = options;
+    return this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
+      expect(
+        areColumnValuesSorted(values, SORT_DIRECTIONS.ASCENDING, getSortableValue, comparator),
+      ).to.equal(false);
+      expect(
+        areColumnValuesSorted(values, SORT_DIRECTIONS.DESCENDING, getSortableValue, comparator),
+      ).to.equal(false);
+    });
+  },
+
+  /**
+   * Asserts cells for one or multiple rows in a multi-column list.
+   *
+   * Supported rowsConfig contracts:
+   * 1. Single object: one explicit row config.
+   * 2. Array of arrays: outer index equals row index.
+   * 3. Array of objects: explicit row indexes for each row config.
+   *
+   * @param {ListInteractor} listInteractor - Target multi-column list interactor.
+   * @param {RowsConfig} [rowsConfig=[]] - Rows/cells configuration.
+   * @returns {void}
+   *
+   * @example
+   * import { MultiColumnList } from '../../../interactors';
+   *
+   * const transactionsList = MultiColumnList({ id: 'transactions-list' });
+   *
+   * // Contract 1: single explicit row
+   * api.assertRowsCellsContent(transactionsList, {
+   *   rowIndex: 0,
+   *   expectedCells: [
+   *     { column: 'Type', content: 'Pending payment' },
+   *     { column: 'Source', content: 'Invoice' },
+   *   ],
+   * });
+   *
+   * // Contract 2: indexed rows (0, 1, 2...)
+   * api.assertRowsCellsContent(transactionsList, [
+   *   [{ column: 'Type', content: 'Pending payment' }],
+   *   [{ column: 'Type', content: 'Payment' }],
+   * ]);
+   *
+   * // Contract 3: sparse explicit rows
+   * api.assertRowsCellsContent(transactionsList, [
+   *   { rowIndex: 1, expectedCells: [{ column: 'Type', content: 'Credit' }] },
+   *   { rowIndex: 4, expectedCells: [{ column: 'Type', content: 'Encumbrance' }] },
+   * ]);
+   *
+   * // Existence check: assert that a cell is absent
+   * api.assertRowsCellsContent(transactionsList, {
+   *   rowIndex: 0,
+   *   expectedCells: [
+   *     { column: 'Source', content: 'Invoice', exists: false },
+   *   ],
+   * });
+   */
   assertRowsCellsContent(listInteractor, rowsConfig = []) {
+    /**
+     * Asserts expected cells for a specific row index.
+     *
+     * @param {ExpectedCell[]} expectedCells - Expected cells for the row.
+     * @param {number} rowIndex - Zero-based row index.
+     * @returns {void}
+     */
     const assertCellsForRow = (expectedCells, rowIndex) => {
       const targetRow = listInteractor.find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }));
 
       expectedCells.forEach(({ exists = true, ...cellConfig }) => {
-        cy.expect([
-          targetRow.find(MultiColumnListCell(cellConfig))[exists ? 'exists' : 'absent'](),
-        ]);
+        cy.expect(targetRow.find(MultiColumnListCell(cellConfig))[exists ? 'exists' : 'absent']());
       });
     };
 
@@ -56,6 +342,68 @@ const api = {
     rowsConfig.forEach(({ rowIndex, expectedCells }) => {
       assertCellsForRow(expectedCells, rowIndex);
     });
+  },
+
+  /* Pagination */
+  assertPaginationControlsDisabled(listInteractor, state) {
+    const { previous, next } = state || { previous: true, next: true };
+
+    this.assertPreviousPageButtonEnabled(listInteractor, !previous);
+    this.assertNextPageButtonEnabled(listInteractor, !next);
+  },
+
+  assertNextPageButtonEnabled(listInteractor, isEnabled) {
+    getNextButton(listInteractor).has({ disabled: !isEnabled });
+  },
+
+  assertPreviousPageButtonEnabled(listInteractor, isEnabled) {
+    getPreviousButton(listInteractor).has({ disabled: !isEnabled });
+  },
+
+  clickNextPage(listInteractor) {
+    return cy
+      .do(getNextButton(listInteractor).click())
+      .then(() => this.waitLoadingComplete(listInteractor));
+  },
+
+  clickPreviousPage(listInteractor) {
+    return cy
+      .do(getPreviousButton(listInteractor).click())
+      .then(() => this.waitLoadingComplete(listInteractor));
+  },
+
+  navigateToLastPage(listInteractor) {
+    const clickNextUntilDisabled = () => {
+      return cy
+        .then(() => listInteractor.perform((el) => {
+          const nextButton = el.querySelector('[data-test-next-paging-button]');
+          return nextButton.disabled;
+        }))
+        .then((isDisabled) => {
+          if (isDisabled) return null;
+
+          return this.clickNextPage(listInteractor).then(() => clickNextUntilDisabled());
+        });
+    };
+
+    return clickNextUntilDisabled();
+  },
+
+  navigateToFirstPage(listInteractor) {
+    const clickPreviousUntilDisabled = () => {
+      return cy
+        .then(() => listInteractor.perform((el) => {
+          const prevButton = el.querySelector('[data-test-prev-paging-button]');
+          return prevButton.disabled;
+        }))
+        .then((isDisabled) => {
+          if (isDisabled) return null;
+
+          return this.clickPreviousPage(listInteractor).then(() => clickPreviousUntilDisabled());
+        });
+    };
+
+    return clickPreviousUntilDisabled();
   },
 };
 

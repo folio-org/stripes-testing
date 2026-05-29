@@ -40,11 +40,9 @@ export default {
   },
 
   searchByUsername(username) {
-    cy.do([
-      Select({ id: 'input-user-search-qindex' }).choose('Username'),
-      TextField({ id: 'input-user-search' }).fillIn(username),
-      Button({ id: 'submit-user-search' }).click(),
-    ]);
+    cy.do(Select({ id: 'input-user-search-qindex' }).choose('Username'));
+    cy.do(TextField({ id: 'input-user-search' }).fillIn(username));
+    cy.do(Button({ id: 'submit-user-search' }).click());
     waitClick();
   },
 
@@ -82,6 +80,12 @@ export default {
 
   openLostItemsRequiringActualCostPane() {
     cy.do([Button('Actions').click(), Button('Lost items requiring actual cost').click()]);
+  },
+
+  openPatronPreRegistrationRecords() {
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Search patron preregistration records').exists());
+    cy.do(Button('Search patron preregistration records').click());
   },
 
   verifyLostItemsRequiringActualCostOptionNotDisplayed() {

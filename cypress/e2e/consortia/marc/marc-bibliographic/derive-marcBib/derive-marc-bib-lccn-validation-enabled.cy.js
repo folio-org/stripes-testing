@@ -114,6 +114,7 @@ describe('MARC', () => {
             // Steps 2-5: Update "010 $a" value with lccn value and check error
             testCases.forEach((testCase) => {
               QuickMarcEditor.updateExistingField('010', `$a ${testCase.value}`);
+              QuickMarcEditor.checkContentByTag('010', `$a ${testCase.value}`);
               QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
               QuickMarcEditor.closeAllCallouts();
@@ -121,6 +122,7 @@ describe('MARC', () => {
 
             // Step 6: Update "010 $a" value with value with prefix and internal spaces which matches to "Canceled LCCN" of existing (saved) record
             QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumber2}`);
+            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumber2}`);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
           },

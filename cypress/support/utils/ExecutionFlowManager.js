@@ -1,3 +1,14 @@
+const getOrCreateMap = (flow, key) => flow.get(key) || new Map();
+
+const setMapEntry = (flow, key, id, value, cleanup) => {
+  const currentMap = getOrCreateMap(flow, key);
+  flow.set(key, currentMap.set(id, value), cleanup);
+};
+
+const getMapValues = (flow, key) => Array.from(getOrCreateMap(flow, key).values());
+
+const getMapKeys = (flow, key) => Array.from(getOrCreateMap(flow, key).keys());
+
 export class ExecutionFlowManager {
   /**
    * Stores execution context values and optional cleanup callbacks.
@@ -14,6 +25,15 @@ export class ExecutionFlowManager {
    */
   get context() {
     return this._ctx;
+  }
+
+  static get utils() {
+    return {
+      getOrCreateMap,
+      setMapEntry,
+      getMapValues,
+      getMapKeys,
+    };
   }
 
   /**
@@ -62,6 +82,22 @@ export class ExecutionFlowManager {
     cy.then(() => {
       return callback(this);
     });
+
+    return this;
+  }
+
+  /**
+   * Registers a cleanup callback for a context key.
+   * If the key already has a cleanup callback, it will be overwritten.
+   *
+   * @param {string} key - Context key.
+   * @param {(value: any) => void} cleanupFn - Cleanup callback for this key.
+   * @returns {ExecutionFlowManager}
+   */
+  toCleanup(key, cleanupFn) {
+    if (cleanupFn) {
+      this.cleanupSteps.set(key, () => cleanupFn(this.context.get(key)));
+    }
 
     return this;
   }

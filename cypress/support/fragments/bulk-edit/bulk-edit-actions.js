@@ -527,6 +527,7 @@ export default {
 
   clickLocationLookup(rowIndex = 0) {
     cy.do([RepeatableFieldItem({ index: rowIndex }).find(Button('Location look-up')).click()]);
+    cy.wait(1000);
   },
 
   locationLookupExists() {
@@ -1355,6 +1356,27 @@ export default {
       FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
         const content = actualContent.split('\n');
         content[1] = content[1].slice().replace(stringToBeReplaced, replaceString);
+        FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
+    });
+  },
+
+  prepareValidBulkEditFileWithAllRowsReplacement(
+    fileMask,
+    finalFileName,
+    stringToBeReplaced,
+    replaceString,
+  ) {
+    FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+      FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+        const content = actualContent.split('\n');
+        // Keep header row (index 0) unchanged, replace in all other rows
+        for (let i = 1; i < content.length; i++) {
+          if (content[i]) {
+            content[i] = content[i].replace(stringToBeReplaced, replaceString);
+          }
+        }
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
     });

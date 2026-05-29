@@ -23,7 +23,9 @@ describe('Inventory', () => {
         { length: numberOfRecords },
         (_, i) => `${instanceTitlePrefix}_${i}`,
       );
-      const itemStatusNames = Object.values(ITEM_STATUS_NAMES).slice(0, numberOfRecords);
+      const itemStatusNames = Object.values(ITEM_STATUS_NAMES)
+        .filter((name) => !name.includes('Checked in'))
+        .slice(0, numberOfRecords);
 
       let instanceTypeId;
       let materialTypeId;

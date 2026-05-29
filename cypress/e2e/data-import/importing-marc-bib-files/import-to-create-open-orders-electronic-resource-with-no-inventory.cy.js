@@ -4,7 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_VALUES,
   ORDER_STATUSES,
   RECORD_STATUSES,
 } from '../../../support/constants';
@@ -45,7 +45,7 @@ describe('Data Import', () => {
       vendor: 'GOBI Library Solutions',
       title: '245$a',
       acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-      orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+      orderFormat: ORDER_FORMAT_VALUES.ELECTRONIC_RESOURCE,
       receivingWorkflow: 'Synchronized',
       currency: 'USD',
       electronicUnitPrice: '"25"',

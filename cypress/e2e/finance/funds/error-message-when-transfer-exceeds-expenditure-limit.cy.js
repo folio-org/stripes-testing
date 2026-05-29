@@ -83,7 +83,6 @@ describe('Finance', () => {
         const AddTransferModal = BudgetDetails.openAddTransferModal();
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundA.name);
-
         AddTransferModal.fillTransferDetails({
           fromFund: fundB.name,
           amount: '200',

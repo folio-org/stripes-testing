@@ -6,8 +6,13 @@
 * Use MessageBanner stripes component for user patron blocks warning. Update its message. Refs UITEST-136.
 * Update label for 38 position of MARC authority "008" field to "Mod Rec". Refs FAT-21567.
 * Delete broken Dockerfile (Node 8, Ubuntu Xenial). Refs UITEST-139.
-* Lock `axios` to `1.14.0` to avoid other compromised versions.
+* Lock `axios` to `1.16.1` to include security updates. Refs UITEST-142.
 * Supply Personal Data Disclosure form. Refs UITEST-135.
+
+## [5.0.1](https://github.com/folio-org/stripes-testing/tree/v5.0.1) (2026-03-31)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v5.0.0...v5.0.1)
+
+* Lock `axios` to `1.14.0` to avoid other compromised versions.
 
 ## [5.0.0](https://github.com/folio-org/stripes-testing/tree/v5.0.0) (2025-02-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.8.0...v5.0.0)
