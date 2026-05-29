@@ -5,6 +5,7 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import { Budgets, FundDetails, Funds } from '../../../support/fragments/finance';
@@ -78,7 +79,7 @@ describe('Finance', () => {
             locations: [{ locationId: testData.location.id, quantity: 1, quantityPhysical: 1 }],
             acquisitionMethod: testData.acquisitionMethod.id,
             physical: {
-              createInventory: 'Instance, Holding, Item',
+              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
               materialType: testData.materialType.id,
               materialSupplier: organization.id,
               volumes: [],

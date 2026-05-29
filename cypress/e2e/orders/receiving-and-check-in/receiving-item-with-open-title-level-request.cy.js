@@ -3,13 +3,14 @@ import {
   APPLICATION_NAMES,
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   REQUEST_TYPES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { BasicOrderLine, NewOrder, Orders, OrderLines } from '../../../support/fragments/orders';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import NewRequest from '../../../support/fragments/requests/newRequest';
@@ -68,7 +69,7 @@ describe('Orders', () => {
                     },
                     orderFormat: 'Other',
                     physical: {
-                      createInventory: 'Instance, Holding, Item',
+                      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                       materialType: materialTypeId,
                     },
                     locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],

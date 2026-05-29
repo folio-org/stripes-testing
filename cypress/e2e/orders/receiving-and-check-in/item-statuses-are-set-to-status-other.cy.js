@@ -5,6 +5,7 @@ import {
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   VENDOR_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
@@ -90,7 +91,7 @@ describe('Orders', () => {
                         ],
                         acquisitionMethod: amResp.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtypeResp.id,
                           volumes: [],
                         },

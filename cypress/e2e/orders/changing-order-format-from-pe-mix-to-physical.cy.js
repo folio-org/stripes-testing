@@ -4,6 +4,7 @@ import {
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
   POLINE_DETAILS_FIELDS,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -38,11 +39,11 @@ describe('Orders', () => {
           },
           orderFormat: 'P/E Mix',
           eresource: {
-            createInventory: 'Instance, Holding',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
             accessProvider: testData.organization.id,
           },
           physical: {
-            createInventory: 'Instance, Holding, Item',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
             materialType: materialTypeId,
           },
           locations: [

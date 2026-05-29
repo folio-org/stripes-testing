@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { POL_CREATE_INVENTORY_SETTINGS } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import MaterialTypes from '../settings/inventory/materialTypes';
 
@@ -136,7 +137,7 @@ export default {
     orderFormat: 'Physical Resource',
     paymentStatus: 'Pending',
     physical: {
-      createInventory: 'Instance, Holding, Item',
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
       materialType: '',
       materialSupplier: '',
       volumes: [],
