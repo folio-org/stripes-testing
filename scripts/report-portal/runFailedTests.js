@@ -172,6 +172,8 @@ async function main() {
       );
     }
 
+    fs.writeFileSync('flaky-recheck-count.txt', String(totalMarked));
+
     process.exit(0);
   } catch (error) {
     console.error(`\n✗ Error: ${error.message}`);
