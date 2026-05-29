@@ -12,6 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import DateTools from '../../support/utils/dateTools';
+import invoiceStates from '../../support/fragments/invoices/invoiceStates';
 
 describe('Invoices', () => {
   const testData = {
@@ -136,9 +137,7 @@ describe('Invoices', () => {
       InvoiceLineEditForm.clickAddFundDistributionButton();
       InvoiceLineEditForm.selectFundDistribution(testData.fund.name);
       InvoiceLineEditForm.clickSaveButton({ invoiceLineSaved: false });
-      InteractorsTools.checkCalloutErrorMessage(
-        'Invoice line cannot be saved because invoice is not assigned to a Fiscal year.',
-      );
+      InteractorsTools.checkCalloutErrorMessage(invoiceStates.saveLineErrorBudgetNotFoundByFundId);
       InvoiceLineEditForm.cancelWithUnsavedChanges();
       InvoiceView.checkInvoiceDetails({
         invoiceLines: [],
