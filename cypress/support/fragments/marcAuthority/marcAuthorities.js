@@ -691,7 +691,7 @@ export default {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
       if (!isOpen) {
-        cy.intercept('search/authorities/facets?facet=headingType*').as('getFacetsHeadingType');
+        cy.intercept(/search\/authorities\/facets\?facet=.*headingType/).as('getFacetsHeadingType');
         cy.do(headingTypeAccordion.clickHeader());
         cy.wait('@getFacetsHeadingType').its('response.statusCode').should('eq', 200);
       }

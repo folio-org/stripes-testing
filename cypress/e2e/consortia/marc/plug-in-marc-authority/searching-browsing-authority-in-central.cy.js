@@ -136,7 +136,7 @@ describe('MARC', () => {
         // (e.g., "C404417 Auth" ) → Click "Search" button.
         MarcAuthorities.searchByParameter(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME, searchValue);
         headingsSharedRecords.forEach((heading, index) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
+          MarcAuthorities.verifyRecordFound(`Shared${heading}`);
           MarcAuthorities.verifySharedIcon(index);
         });
 
@@ -150,7 +150,7 @@ describe('MARC', () => {
         MarcAuthorities.clickAccordionByName(accordion.name);
         MarcAuthorities.actionsSelectCheckbox(accordion.option);
         headingsSharedRecords.slice(0, 2).forEach((heading) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
+          MarcAuthorities.verifyRecordFound(`Shared${heading}`);
           MarcAuthorities.verifyResultRowContentSharedIcon(heading, true);
         });
 
@@ -161,7 +161,7 @@ describe('MARC', () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME, searchValue);
         headingsSharedRecords.forEach((heading, index) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
+          MarcAuthorities.verifyRecordFound(`Shared${heading}`);
           MarcAuthorities.verifySharedIcon(index);
         });
         MarcAuthorities.checkRowAbsentByContent(headingLocalRecord);
@@ -170,7 +170,7 @@ describe('MARC', () => {
         MarcAuthorities.clickAccordionByName(accordion.name);
         MarcAuthorities.actionsSelectCheckbox(accordion.option);
         headingsSharedRecords.slice(0, 2).forEach((heading) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
+          MarcAuthorities.verifyRecordFound(`Shared${heading}`);
           MarcAuthorities.verifyResultRowContentSharedIcon(heading, true);
         });
         MarcAuthorities.checkRowAbsentByContent(headingLocalRecord);
