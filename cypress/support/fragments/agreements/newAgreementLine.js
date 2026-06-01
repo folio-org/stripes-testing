@@ -41,6 +41,7 @@ export default {
 
   saveAndClose() {
     cy.do(saveButton.click());
+    cy.expect(newAgreementLinePane.absent());
   },
 
   verifyEHoldingsTabIsSelected() {
