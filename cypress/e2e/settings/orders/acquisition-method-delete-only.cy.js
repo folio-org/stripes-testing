@@ -1,16 +1,17 @@
 import { v4 as uuid } from 'uuid';
-import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { POL_CREATE_INVENTORY_SETTINGS } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
@@ -57,7 +58,7 @@ describe('Orders', () => {
             poLineEstimatedPrice: 10.0,
           },
           physical: {
-            createInventory: 'Instance, Holding, Item',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
             materialType: materialTypeId,
             materialSupplier: vendorId,
             volumes: [],

@@ -5,6 +5,7 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
@@ -77,7 +78,7 @@ describe('Orders', () => {
                 locations: [{ locationId: locationResp.id, quantity: 2, quantityPhysical: 2 }],
                 acquisitionMethod: amResp.body.acquisitionMethods[0].id,
                 physical: {
-                  createInventory: 'Instance, Holding, Item',
+                  createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                   materialType: mtypeResp.id,
                   materialSupplier: orgResp,
                   volumes: [],

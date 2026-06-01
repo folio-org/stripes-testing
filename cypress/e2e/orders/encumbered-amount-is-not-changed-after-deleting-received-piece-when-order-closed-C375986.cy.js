@@ -3,6 +3,7 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
@@ -52,7 +53,7 @@ describe('Orders', () => {
             };
             testData.orderLine = BasicOrderLine.getDefaultOrderLine({
               checkinItems: true,
-              createInventory: 'Instance, Holding, Item',
+              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
               specialLocationId: locationResp.id,
               specialMaterialTypeId: mtypeResp.id,
               listUnitPrice: 90,

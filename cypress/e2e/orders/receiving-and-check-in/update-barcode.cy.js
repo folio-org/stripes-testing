@@ -1,23 +1,27 @@
-import { ITEM_STATUS_NAMES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ITEM_STATUS_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders', () => {
   describe('Inventory interaction', () => {
@@ -81,7 +85,7 @@ describe('Orders', () => {
                       locations: [{ locationId: location.id, quantity: 2, quantityPhysical: 2 }],
                       acquisitionMethod: params.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: mtypes.body.id,
                         materialSupplier: organizationsResponse,
                         volumes: [],

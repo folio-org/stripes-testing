@@ -28,4 +28,7 @@ export default {
   // api response
   activeBudgetNotFoundMessage: 'Active budget not found by fund id and fiscal year id',
   budgetNotFoundCode: 'budgetNotFoundByFundIdAndFiscalYearId',
+
+  saveLineErrorBudgetNotFoundByFundId:
+    'Invoice line cannot be saved because invoice is not assigned to a Fiscal year.',
 };

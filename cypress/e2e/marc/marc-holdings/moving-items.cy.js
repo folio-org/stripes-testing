@@ -1,5 +1,5 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -11,10 +11,9 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import users from '../../../support/fragments/users/users';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC', () => {
@@ -36,21 +35,20 @@ describe('MARC', () => {
 
     beforeEach('navigates to Inventory', () => {
       let source;
-
       ITEM_BARCODE = `test${getRandomPostfix()}`;
+
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.uiInventoryMoveItems.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
-        permissions.uiInventoryHoldingsMove.gui,
-        permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
-        permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        permissions.converterStorageAll.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryMoveItems.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+        Permissions.uiInventoryHoldingsMove.gui,
+        Permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+        Permissions.converterStorageAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        // cy.login(userProperties.username, userProperties.password);
-        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -100,12 +98,10 @@ describe('MARC', () => {
                 ],
               ],
             });
-            cy.wait(5000);
-            cy.waitForAuthRefresh(() => {
-              cy.login(userProperties.username, userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
             });
           });
       });
@@ -113,17 +109,8 @@ describe('MARC', () => {
 
     after('Delete all data', () => {
       cy.getAdminToken();
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"items.barcode"=="${ITEM_BARCODE}"`,
-      }).then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-      users.deleteViaApi(userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(ITEM_BARCODE);
+      Users.deleteViaApi(userId);
     });
 
     it(

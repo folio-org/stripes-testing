@@ -302,4 +302,8 @@ export default {
     if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
     if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
   },
+
+  assertPOLineLink(poLineNumber) {
+    cy.expect(informationSection.find(Link(including(poLineNumber))).exists());
+  },
 };

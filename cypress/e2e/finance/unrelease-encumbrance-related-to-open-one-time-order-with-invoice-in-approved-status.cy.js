@@ -2,6 +2,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -16,10 +17,10 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Finance', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -95,7 +96,7 @@ describe('Finance', () => {
                       locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                       acquisitionMethod: params.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: mtype.id,
                         materialSupplier: responseOrganizations,
                         volumes: [],
