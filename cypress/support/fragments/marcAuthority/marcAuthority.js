@@ -601,4 +601,9 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  closeAuthorityViewPane() {
+    cy.do(rootSection.find(closeButton).click());
+    cy.expect(rootSection.absent());
+  },
 };
