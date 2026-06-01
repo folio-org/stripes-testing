@@ -1,14 +1,17 @@
 import { Button, Modal, including } from '../../../../../interactors';
+import { COMMON_BUTTON_LABELS } from '../../../constants';
 
 const unopenConfirmationModal = Modal(including('Unopen - purchase order'));
-const cancelButton = unopenConfirmationModal.find(Button('Cancel'));
-const submitButton = unopenConfirmationModal.find(Button('Submit'));
+const cancelButton = unopenConfirmationModal.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const submitButton = unopenConfirmationModal.find(Button(COMMON_BUTTON_LABELS.SUBMIT));
 const deleteHoldingsButton = unopenConfirmationModal.find(
   Button({ id: 'clickable-order-unopen-confirmation-confirm-delete-holdings' }),
 );
 const keepHoldingsButton = unopenConfirmationModal.find(
   Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }),
 );
+
+export const DEFAULT_MODAL_MESSAGE = 'Are you sure you want to unopen the order?';
 
 const values = {
   [true]: {
@@ -39,24 +42,37 @@ export default {
     }
     cy.expect(unopenConfirmationModal.absent());
   },
-  verifyModalView({ orderNumber, checkinItems }) {
+  verifyModalView({ orderNumber, checkinItems, hasRelations = true }) {
+    const resolveExpectedMessage = () => {
+      const content = hasRelations ? values[checkinItems].content : DEFAULT_MODAL_MESSAGE;
+
+      return including(content);
+    };
+
     cy.expect([
       unopenConfirmationModal.has({
         header: including(`Unopen - purchase order - ${orderNumber}`),
       }),
-      unopenConfirmationModal.has({ message: including(values[checkinItems].content) }),
+      unopenConfirmationModal.has({ message: resolveExpectedMessage() }),
       cancelButton.has({ disabled: false, visible: true }),
-      deleteHoldingsButton.has({
-        disabled: false,
-        visible: true,
-        text: values[checkinItems].deleteHoldingsValue,
-      }),
-      keepHoldingsButton.has({
-        disabled: false,
-        visible: true,
-        text: values[checkinItems].keepHoldingsValue,
-      }),
     ]);
+
+    if (hasRelations) {
+      cy.expect([
+        deleteHoldingsButton.has({
+          disabled: false,
+          visible: true,
+          text: values[checkinItems].deleteHoldingsValue,
+        }),
+        keepHoldingsButton.has({
+          disabled: false,
+          visible: true,
+          text: values[checkinItems].keepHoldingsValue,
+        }),
+      ]);
+    } else {
+      cy.expect(submitButton.has({ disabled: false, visible: true }));
+    }
   },
   closeModal() {
     cy.do(cancelButton.click());
