@@ -584,6 +584,13 @@ export default {
     );
   },
 
+  verifySearchableFilterExists(row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.expect(SelectionList({ placeholder: 'Filter options list' }).exists());
+    this.closeOpenedSelection();
+  },
+
   selectDuplicateOptionByText(value, row = 0, optionIndex = 0) {
     // Open the dropdown if not already open - target the Value column button
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"]`)
