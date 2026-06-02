@@ -51,13 +51,6 @@ export default {
     cy.wait('@waiterForAcquisitionUnitsQueryCompleted');
   },
 
-  interceptGetOrganizations() {
-    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
-  },
-  waitForOrganizationsQueryCompleted() {
-    cy.wait('@waiterForOrganizationsQueryCompleted');
-  },
-
   interceptGetPrefixes() {
     cy.intercept('GET', '/orders/configuration/prefixes*').as('waiterForPrefixesQueryCompleted');
   },

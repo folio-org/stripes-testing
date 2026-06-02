@@ -66,4 +66,26 @@ export default {
         });
     });
   },
+
+  /* Interceptions */
+
+  interceptGetExportJobs() {
+    return cy
+      .intercept('GET', '/data-export-spring/jobs*')
+      .as('waiterForGetExportJobsQueryCompleted');
+  },
+
+  waitForGetExportJobsQueryCompleted() {
+    return cy.wait('@waiterForGetExportJobsQueryCompleted');
+  },
+
+  interceptGetExportConfigs() {
+    return cy
+      .intercept('GET', '/data-export-spring/configs*')
+      .as('waiterForGetExportConfigsQueryCompleted');
+  },
+
+  waitForGetExportConfigsQueryCompleted() {
+    return cy.wait('@waiterForGetExportConfigsQueryCompleted');
+  },
 };
