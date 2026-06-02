@@ -70,6 +70,15 @@ export default {
     return cy.get('@jsonData');
   },
 
+  parseExcelCsvFile(fileNameMask) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    return this.findDownloadedFilesByMask(fileNameMask).then((downloadedFileNames) => {
+      const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
+      return cy.task('parseExcelCsvFile', lastDownloadedFileName);
+    });
+  },
+
   writeToSeparateFile({ readFileName, writeFileName, lines = [] } = {}) {
     cy.wait(Cypress.env('downloadTimeout'));
 
