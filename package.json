@@ -85,7 +85,8 @@
     "prettier": "^3.0.2",
     "tsx": "3.14.0",
     "uuid": "^3.4.0",
-    "webpack": "^5.94.0"
+    "webpack": "^5.94.0",
+    "xlsx": "^0.18.5"
   },
   "publishConfig": {
     "registry": "https://repository.folio.org/repository/npm-folio/"

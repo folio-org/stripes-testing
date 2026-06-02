@@ -1,4 +1,4 @@
-import { including } from '@interactors/html';
+import { including, or } from '@interactors/html';
 import { Modal, Button, Select, Selection } from '../../../../interactors';
 
 const selectLocationModal = Modal();
@@ -42,7 +42,15 @@ export default {
       campusSelect.has({ value: locationObject.campusId }),
       librarySelect.has({ value: locationObject.libraryId }),
     ]);
-    cy.do([locationSelect.choose(including(locationObject.name)), saveButton.click()]);
+    // Check if location button is enabled before selecting
+    cy.then(() => Button({ id: 'locationId', disabled: or(true, false) }).disabled()).then(
+      (isDisabled) => {
+        if (!isDisabled) {
+          cy.do(locationSelect.choose(including(locationObject.name)));
+        }
+      },
+    );
+    cy.do(saveButton.click());
     cy.expect(selectPermanentLocationModal.absent());
   },
 

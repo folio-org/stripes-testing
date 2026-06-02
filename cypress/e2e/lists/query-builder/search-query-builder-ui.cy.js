@@ -2,6 +2,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import QueryModal, {
   instanceFieldValues,
+  itemFieldValues,
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -9,6 +10,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { Lists } from '../../../support/fragments/lists/lists';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
+import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -123,6 +125,12 @@ describe('Lists', () => {
         expect(actualQueryText, actualQueryMessage).not.to.match(/\bopt_\d+\b/);
         expect(actualQueryText, actualQueryMessage).not.to.include('customfield_');
       });
+    };
+
+    const verifyQueryTextDoesNotContainUuids = (actualQueryText) => {
+      expect(actualQueryText).not.to.match(
+        /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+      );
     };
 
     const verifyQueryBuilder = (
@@ -538,6 +546,131 @@ describe('Lists', () => {
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyRecordWithContent(userData.username);
+        },
+      );
+    });
+
+    describe('Items', () => {
+      const recordType = 'Items';
+      const testData = {
+        effectiveLibraryCodeFieldName: 'loclibrary.code',
+        effectiveLibraryNameFieldName: 'loclibrary.name',
+        effectiveLibraryCodeLabels: [],
+        effectiveLibraryNameLabels: [],
+        folioInstances: InventoryInstances.generateFolioInstances({
+          instanceTitlePrefix: getTestEntityValue('C829880_Instance'),
+        }),
+      };
+
+      const getFieldLabels = (fieldName, matchingValue, matchingLabel) => {
+        return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+          return Lists.getEntityTypeFieldValuesViaApi(entityTypeId, fieldName).then((body) => {
+            const matchingFieldValue = body.content.find(({ label, value }) => {
+              return value === matchingValue || label === matchingLabel;
+            });
+            expect(matchingFieldValue, `Field value for ${fieldName}`).not.to.equal(undefined);
+
+            return [
+              matchingFieldValue,
+              body.content.find(({ value }) => value !== matchingFieldValue.value),
+            ]
+              .filter(Boolean)
+              .map(({ label }) => label);
+          });
+        });
+      };
+
+      const selectMultipleValues = (values, row = 0) => {
+        values.forEach((value) => {
+          QueryModal.chooseFromValueMultiselect(value, row, { exactMatch: true });
+        });
+      };
+
+      before('Create test user and get field values', () => {
+        cy.getAdminToken();
+        InventoryInstances.getLocations({ limit: 1 }).then(([location]) => {
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location,
+          });
+          Libraries.getViaApi().then(({ loclibs }) => {
+            const library = loclibs.find(({ id }) => id === location.libraryId);
+            expect(library, `Library for location ${location.name}`).not.to.equal(undefined);
+
+            getFieldLabels(
+              testData.effectiveLibraryCodeFieldName,
+              location.libraryId,
+              library.code,
+            ).then((labels) => {
+              testData.effectiveLibraryCodeLabels = labels;
+            });
+            getFieldLabels(
+              testData.effectiveLibraryNameFieldName,
+              location.libraryId,
+              library.name,
+            ).then((labels) => {
+              testData.effectiveLibraryNameLabels = labels;
+            });
+          });
+        });
+        createQueryBuilderUser(
+          [Permissions.listsEdit.gui, Permissions.listsDelete.gui, Permissions.inventoryAll.gui],
+          [CapabilitySets.uiInventory],
+        );
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.folioInstances[0].instanceId,
+        );
+        deleteQueryBuilderUser();
+      });
+
+      afterEach('Delete test list', () => {
+        deleteTestList();
+      });
+
+      it(
+        'C829880 Verify that the fields "Item effective library — Code" and "Item effective library — Name" have correct labels in the user-friendly query for the "Items" ET (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C829880'] },
+        () => {
+          const expectedCodeQuery = `(${testData.effectiveLibraryCodeFieldName} in [${testData.effectiveLibraryCodeLabels.join(', ')}])`;
+          const expectedFullQuery = `${expectedCodeQuery} AND (${testData.effectiveLibraryNameFieldName} in [${testData.effectiveLibraryNameLabels.join(', ')}])`;
+
+          listName = getTestEntityValue('C829880_List');
+          openQueryBuilder(recordType);
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          QueryModal.selectField(itemFieldValues.itemEffectiveLibraryCode);
+          QueryModal.verifySelectedField(itemFieldValues.itemEffectiveLibraryCode);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          selectMultipleValues(testData.effectiveLibraryCodeLabels);
+          QueryModal.verifyQueryAreaContent(expectedCodeQuery);
+          QueryModal.getQueryAreaContent().then(verifyQueryTextDoesNotContainUuids);
+
+          QueryModal.addNewRow();
+          QueryModal.selectField(itemFieldValues.itemEffectiveLibraryName, 1);
+          QueryModal.verifySelectedField(itemFieldValues.itemEffectiveLibraryName, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
+          selectMultipleValues(testData.effectiveLibraryNameLabels, 1);
+          QueryModal.verifyQueryAreaContent(expectedFullQuery);
+          QueryModal.getQueryAreaContent().then(verifyQueryTextDoesNotContainUuids);
+
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          cy.contains('Refresh complete with', { timeout: 90000 }).should('be.visible');
+          Lists.viewUpdatedList();
+          Lists.getQueryText().then((actualSavedQuery) => {
+            expect(actualSavedQuery).to.include(`Query: ${expectedFullQuery}`);
+            verifyQueryTextDoesNotContainUuids(actualSavedQuery);
+          });
         },
       );
     });

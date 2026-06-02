@@ -88,9 +88,9 @@ describe('MARC', () => {
       });
 
       // KNOWN ISSUE: Steps 5 fail due to UIMARCAUTH-532
-      it.skip(
+      it(
         'C386498 Switching between Search and Browse in "MARC authority" app (advanced search) (spitfire)',
-        { tags: ['extendedPathBroken', 'spitfire', 'C386498'] },
+        { tags: ['extendedPath', 'spitfire', 'C386498'] },
         () => {
           // Step 1: Select "Advanced search" option, fill query and apply filters
           MarcAuthorities.selectSearchOptionInDropdown(testData.advancedSearchOption);
