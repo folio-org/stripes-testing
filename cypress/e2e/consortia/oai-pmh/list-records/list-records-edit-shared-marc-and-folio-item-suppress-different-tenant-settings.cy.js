@@ -53,7 +53,8 @@ const testData = {
     folioItemBarcode: `FolioItemUniversity_${getRandomPostfix()}`,
   },
   materialTypeId: null,
-  loanTypeId: null,
+  loanTypeIdCollege: null,
+  loanTypeIdUniversity: null,
 };
 
 describe('OAI-PMH', () => {
@@ -86,7 +87,7 @@ describe('OAI-PMH', () => {
           testData.materialTypeId = res.id;
         });
         cy.getLoanTypes({ limit: 1 }).then((res) => {
-          testData.loanTypeId = res[0].id;
+          testData.loanTypeIdCollege = res[0].id;
         });
 
         // Configure OAI-PMH behavior for University tenant: Skip suppressed records
@@ -127,7 +128,7 @@ describe('OAI-PMH', () => {
               barcode: testData.college.marcItemBarcode,
               holdingsRecordId: testData.college.marcHoldingsId,
               materialType: { id: testData.materialTypeId },
-              permanentLoanType: { id: testData.loanTypeId },
+              permanentLoanType: { id: testData.loanTypeIdCollege },
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             }).then((item) => {
               testData.college.marcItemId = item.id;
@@ -136,21 +137,25 @@ describe('OAI-PMH', () => {
 
           // Create holdings and items for MARC instance in University tenant
           cy.setTenant(Affiliations.University);
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId: testData.marcInstance.uuid,
-            permanentLocationId: testData.university.locationId,
-            sourceId: testData.university.sourceId,
-          }).then((holdingsData) => {
-            testData.university.marcHoldingsId = holdingsData.id;
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            testData.loanTypeIdUniversity = res[0].id;
 
-            InventoryItems.createItemViaApi({
-              barcode: testData.university.marcItemBarcode,
-              holdingsRecordId: testData.university.marcHoldingsId,
-              materialType: { id: testData.materialTypeId },
-              permanentLoanType: { id: testData.loanTypeId },
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            }).then((item) => {
-              testData.university.marcItemId = item.id;
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.marcInstance.uuid,
+              permanentLocationId: testData.university.locationId,
+              sourceId: testData.university.sourceId,
+            }).then((holdingsData) => {
+              testData.university.marcHoldingsId = holdingsData.id;
+
+              InventoryItems.createItemViaApi({
+                barcode: testData.university.marcItemBarcode,
+                holdingsRecordId: testData.university.marcHoldingsId,
+                materialType: { id: testData.materialTypeId },
+                permanentLoanType: { id: testData.loanTypeIdUniversity },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              }).then((item) => {
+                testData.university.marcItemId = item.id;
+              });
             });
           });
         });
@@ -180,7 +185,7 @@ describe('OAI-PMH', () => {
                 barcode: testData.college.folioItemBarcode,
                 holdingsRecordId: testData.college.folioHoldingsId,
                 materialType: { id: testData.materialTypeId },
-                permanentLoanType: { id: testData.loanTypeId },
+                permanentLoanType: { id: testData.loanTypeIdCollege },
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               }).then((item) => {
                 testData.college.folioItemId = item.id;
@@ -200,7 +205,7 @@ describe('OAI-PMH', () => {
                 barcode: testData.university.folioItemBarcode,
                 holdingsRecordId: testData.university.folioHoldingsId,
                 materialType: { id: testData.materialTypeId },
-                permanentLoanType: { id: testData.loanTypeId },
+                permanentLoanType: { id: testData.loanTypeIdUniversity },
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               }).then((item) => {
                 testData.university.folioItemId = item.id;
