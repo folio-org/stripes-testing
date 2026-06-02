@@ -410,6 +410,7 @@ export const AUTHORITY_HEADING_TYPES = {
   PERSONAL_NAME_TITLE: 'Personal name title',
   TOPICAL_TERM: 'Topical term',
   UNIFORM_TITLE: 'Uniform title',
+  GENRE: 'Genre',
 };
 
 export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
@@ -1530,6 +1531,12 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   STARTS_WITH: 'Starts with',
   EXACT_PHRASE: 'Exact phrase',
   CONTAINS_ANY: 'Contains any',
+};
+
+export const ADVANCED_SEARCH_LOGICAL_OPERATORS = {
+  AND: 'AND',
+  NOT: 'NOT',
+  OR: 'OR',
 };
 
 export const BULK_EDIT_FORMS = {

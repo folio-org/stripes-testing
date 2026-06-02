@@ -91,9 +91,7 @@ describe('OAI-PMH', () => {
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
             testData.materialTypeId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
-            testData.loanTypeId = res[0].id;
-          });
+
           Behavior.updateBehaviorConfigViaApi(
             suppressedProcessing,
             BEHAVIOR_SETTINGS_OPTIONS_API.RECORD_SOURCE.SOURCE_RECORD_STORAGE_AND_INVENTORY,
@@ -125,14 +123,18 @@ describe('OAI-PMH', () => {
             }).then((holdingsData) => {
               tenantData.marcHoldingsId = holdingsData.id;
 
-              InventoryItems.createItemViaApi({
-                barcode: tenantData.marcItemBarcode,
-                holdingsRecordId: tenantData.marcHoldingsId,
-                materialType: { id: testData.materialTypeId },
-                permanentLoanType: { id: testData.loanTypeId },
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              }).then((item) => {
-                tenantData.marcItemId = item.id;
+              cy.getLoanTypes({ limit: 1 }).then((res) => {
+                testData.loanTypeId = res[0].id;
+
+                InventoryItems.createItemViaApi({
+                  barcode: tenantData.marcItemBarcode,
+                  holdingsRecordId: tenantData.marcHoldingsId,
+                  materialType: { id: testData.materialTypeId },
+                  permanentLoanType: { id: testData.loanTypeId },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                }).then((item) => {
+                  tenantData.marcItemId = item.id;
+                });
               });
             });
           });
