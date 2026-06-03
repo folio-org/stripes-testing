@@ -14,10 +14,11 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordEdit from '../../../../support/fragments/inventory/item/itemRecordEdit';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
-import DeveloperPane from '../../../../support/fragments/settings/developer/developerPane';
-import UserLocale from '../../../../support/fragments/settings/developer/user-locate/temporaryUserLocale';
 import StatisticalCodes from '../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
+import LanguageAndLocalization from '../../../../support/fragments/settings/my-profile/language-and-localization';
+import MyProfile from '../../../../support/fragments/settings/my-profile/my-profile';
 import SettingsPane from '../../../../support/fragments/settings/settingsPane';
+import { LANGUAGES } from '../../../../support/fragments/settings/tenant/general/localization';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -37,6 +38,7 @@ describe('Inventory', () => {
         newTimezone: 'Europe/Paris',
         initialTimestamp: null,
         statisticalCode: {},
+        newTimeRegexp: /^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2}$/,
       };
 
       function openInstanceDetails() {
@@ -124,7 +126,7 @@ describe('Inventory', () => {
               cy.assignCapabilitiesToExistingUser(
                 testData.user.userId,
                 [],
-                [CapabilitySets.uiInventory, CapabilitySets.uiDeveloperSettingsUserLocaleView],
+                [CapabilitySets.uiInventory, CapabilitySets.myProfileMainNavOrderManage],
               );
 
               cy.login(testData.user.username, testData.user.password, {
@@ -181,18 +183,18 @@ describe('Inventory', () => {
           // Steps 4-5: Set a non-default timezone for the current user.
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
           SettingsPane.waitLoading();
-          SettingsPane.selectSettingsTab(APPLICATION_NAMES.DEVELOPER);
-          DeveloperPane.waitLoading();
-          DeveloperPane.selectOption('User locale');
-          UserLocale.waitLoading();
-          UserLocale.configureUserLocale({
-            username: testData.user.username,
-            timezone: 'Europe/Paris',
-          });
+          SettingsPane.selectSettingsTab(APPLICATION_NAMES.MY_PROFILE);
+          MyProfile.waitLoading();
+          MyProfile.openLanguageAndLocalization();
+          LanguageAndLocalization.waitLoading();
+          LanguageAndLocalization.selectLocale(LANGUAGES.BRITISH_ENGLISH);
+          LanguageAndLocalization.clickSave();
 
           // Steps 6-8: Reopen the same Item and verify timestamps are rendered in the new timezone.
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           cy.reload();
+          openInstanceDetails();
+          openItemDetails();
           ItemRecordView.waitLoading();
           openItemVersionHistory();
           VersionHistorySection.verifyCurrentVersionCard({
@@ -201,7 +203,7 @@ describe('Inventory', () => {
             changes: ['Material type (Edited)'],
           });
           VersionHistorySection.getCardTimestamp(0).then((updatedTimestamp) => {
-            VersionHistorySection.verifyTimestampFormat(updatedTimestamp);
+            VersionHistorySection.verifyTimestampFormat(updatedTimestamp, testData.newTimeRegexp);
             expect(updatedTimestamp).to.not.equal(testData.initialTimestamp);
           });
         },

@@ -82,6 +82,11 @@ export default {
     resource: 'Module Lists Refresh',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  myProfileMainNavOrderManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Myprofile Settings Main-Nav-Order',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Data capability sets
   capabilities: {

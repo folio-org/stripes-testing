@@ -27,6 +27,7 @@ export const APPLICATION_NAMES = {
   COURSES: 'Courses',
   DEVELOPER: 'Developer',
   LISTS: 'Lists',
+  MY_PROFILE: 'My profile',
 };
 
 export const REQUEST_METHOD = {
