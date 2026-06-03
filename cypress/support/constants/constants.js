@@ -374,6 +374,27 @@ export const DEFAULT_FOLIO_AUTHORITY_FILES = {
   GSAFD_GENRE_TERMS: 'GSAFD Genre Terms (GSAFD)',
 };
 
+export const AUTHORITY_HEADING_TYPES = {
+  CHRONOLOGICAL_SUBDIVISION: 'Chronological subdivision',
+  CHRONOLOGICAL_TERM: 'Chronological term',
+  CONFERENCE_NAME: 'Conference name',
+  CONFERENCE_NAME_TITLE: 'Conference name title',
+  CORPORATE_NAME: 'Corporate name',
+  CORPORATE_NAME_TITLE: 'Corporate name title',
+  FORM_SUBDIVISION: 'Form subdivision',
+  GENERAL_SUBDIVISION: 'General subdivision',
+  GENRE_TERM: 'Genre term',
+  GEOGRAPHIC_NAME: 'Geographic name',
+  GEOGRAPHIC_SUBDIVISION: 'Geographic subdivision',
+  MEDIUM_OF_PERFORMANCE_TERM: 'Medium of performance term',
+  NAMED_EVENT: 'Named event',
+  PERSONAL_NAME: 'Personal name',
+  PERSONAL_NAME_TITLE: 'Personal name title',
+  TOPICAL_TERM: 'Topical term',
+  UNIFORM_TITLE: 'Uniform title',
+  GENRE: 'Genre',
+};
+
 export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
   AUTHORITY_SOURCE: 'Authority source',
   REFERENCES: 'References',
@@ -1482,6 +1503,12 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   STARTS_WITH: 'Starts with',
   EXACT_PHRASE: 'Exact phrase',
   CONTAINS_ANY: 'Contains any',
+};
+
+export const ADVANCED_SEARCH_LOGICAL_OPERATORS = {
+  AND: 'AND',
+  NOT: 'NOT',
+  OR: 'OR',
 };
 
 export const BULK_EDIT_FORMS = {

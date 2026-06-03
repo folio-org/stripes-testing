@@ -1178,7 +1178,7 @@ export default {
   },
 
   verifyResultsRowContent(heading, type, headingType) {
-    const anchorCell = MultiColumnListCell(heading);
+    const anchorCell = MultiColumnListCell(including(heading));
     cy.expect(anchorCell.exists());
     cy.then(() => anchorCell.row()).then((row) => {
       const targetRow = MultiColumnListRow({ index: row, isContainer: false });
