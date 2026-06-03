@@ -13,6 +13,8 @@ import {
   Select,
   TextField,
 } from '../../../../../interactors';
+import { APPLICATION_NAMES } from '../../../constants';
+import TopMenuNavigation from '../../topMenuNavigation';
 
 const customFieldsPane = Pane('Custom fields');
 const editCustomFieldsPane = Pane('Edit custom fields');
@@ -70,6 +72,27 @@ export default {
 
   waitLoading() {
     cy.expect(customFieldsPane.exists());
+  },
+
+  visitCustomFieldsSettings() {
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+
+    return cy.location('pathname').then((pathname) => {
+      const alreadyVisited = pathname?.includes('/settings/users/custom-fields');
+
+      if (!alreadyVisited) {
+        this.openTabFromInventorySettingsList();
+      }
+
+      this.waitLoading();
+    });
+  },
+
+  moveAllCustomFieldsToAccordion(fieldLabelTexts, accordionLabel) {
+    this.visitCustomFieldsSettings();
+    this.openEdit();
+    this.setDisplayInAccordionForFields(fieldLabelTexts, accordionLabel);
+    this.verifyDisplayInAccordionForFields(fieldLabelTexts, accordionLabel);
   },
 
   verifyCustomFieldsPaneIsOpen() {

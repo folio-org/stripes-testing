@@ -19,8 +19,9 @@ import {
   generateTextFieldCustomFieldData,
 } from '../../../support/utils/customFields';
 
-const CASE_ID = '812849';
+const CASE_ID = '812852';
 const TEST_PREFIX = `AT_C${CASE_ID}`;
+const DOMAIN_ACCORDIONS = ['Fees/fines', 'Loans', 'Requests'];
 
 const getNamedValue = (description) => `${TEST_PREFIX}_${description}_${getRandomPostfix()}`;
 const getFutureDate = (offsetDays) => {
@@ -56,6 +57,13 @@ describe('Users', () => {
         username: `at_c${CASE_ID}_user_${getRandomPostfix()}`.toLowerCase(),
       },
       customFields: {
+        defaultTextField: generateTextFieldCustomFieldData({
+          testNumber: CASE_ID,
+          data: {
+            helpText: getNamedValue('DefaultTextFieldHelp'),
+            name: getNamedValue('DefaultTextField'),
+          },
+        }),
         checkbox: generateCheckboxCustomFieldData({
           testNumber: CASE_ID,
           data: {
@@ -133,53 +141,75 @@ describe('Users', () => {
       },
     };
 
-    const getAllCustomFields = () => Object.values(testData.customFields);
-    const getAllCustomFieldLabels = () => getAllCustomFields().map(({ name }) => name);
-    const getCustomFieldValues = (valueSet) => {
-      return [
-        {
-          customField: testData.customFields.checkbox,
-          value: valueSet.checkbox,
-        },
-        {
-          customField: testData.customFields.datePicker,
-          value: valueSet.datePicker,
-        },
-        {
-          customField: testData.customFields.multiSelect,
-          value: valueSet.multiSelect,
-        },
-        {
-          customField: testData.customFields.radioButton,
-          value: valueSet.radioButton,
-        },
-        {
-          customField: testData.customFields.singleSelect,
-          value: valueSet.singleSelect,
-        },
-        {
-          customField: testData.customFields.textArea,
-          value: valueSet.textArea,
-        },
-        {
-          customField: testData.customFields.textField,
-          value: valueSet.textField,
-        },
-      ];
-    };
+    const domainCustomFieldKeys = [
+      'checkbox',
+      'datePicker',
+      'multiSelect',
+      'radioButton',
+      'singleSelect',
+      'textArea',
+      'textField',
+    ];
+    const getDomainCustomFields = () => domainCustomFieldKeys.map((key) => testData.customFields[key]);
+    const getAllCustomFields = () => [
+      testData.customFields.defaultTextField,
+      ...getDomainCustomFields(),
+    ];
+    const getDomainCustomFieldLabels = () => getDomainCustomFields().map(({ name }) => name);
+    const getDefaultCustomFieldValues = (value) => [
+      {
+        customField: testData.customFields.defaultTextField,
+        value,
+      },
+    ];
+    const getCustomFieldValues = (valueSet) => [
+      {
+        customField: testData.customFields.checkbox,
+        value: valueSet.checkbox,
+      },
+      {
+        customField: testData.customFields.datePicker,
+        value: valueSet.datePicker,
+      },
+      {
+        customField: testData.customFields.multiSelect,
+        value: valueSet.multiSelect,
+      },
+      {
+        customField: testData.customFields.radioButton,
+        value: valueSet.radioButton,
+      },
+      {
+        customField: testData.customFields.singleSelect,
+        value: valueSet.singleSelect,
+      },
+      {
+        customField: testData.customFields.textArea,
+        value: valueSet.textArea,
+      },
+      {
+        customField: testData.customFields.textField,
+        value: valueSet.textField,
+      },
+    ];
     const getAccordionFieldValues = (customFieldValues, customFields) => {
       const customFieldNames = customFields.map(({ name }) => name);
 
       return customFieldValues.filter(({ customField }) => customFieldNames.includes(customField.name));
     };
     const getDistributedCustomFields = () => ({
-      [testData.customFieldsAccordionName]: [
-        testData.customFields.multiSelect,
+      [testData.customFieldsAccordionName]: [testData.customFields.defaultTextField],
+      'Fees/fines': [
+        testData.customFields.checkbox,
+        testData.customFields.singleSelect,
+        testData.customFields.textField,
+      ],
+      Loans: [
+        testData.customFields.datePicker,
+        testData.customFields.radioButton,
         testData.customFields.textArea,
       ],
-      'Fees/fines': [testData.customFields.datePicker, testData.customFields.radioButton],
-      Loans: [testData.customFields.checkbox],
-      Requests: [testData.customFields.singleSelect, testData.customFields.textField],
+      Requests: [testData.customFields.multiSelect],
     });
     const customFieldOptionValues = {
       multiSelect: testData.customFields.multiSelect.selectField.options.values.map(
@@ -228,6 +258,9 @@ describe('Users', () => {
       textArea: 'd',
       textField: 'h',
     });
+    const firstDefaultCustomFieldValues = getDefaultCustomFieldValues('default-a');
+    const secondDefaultCustomFieldValues = getDefaultCustomFieldValues('default-b');
+    const thirdDefaultCustomFieldValues = getDefaultCustomFieldValues('default-c');
 
     const openCreatedUserCard = () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
@@ -237,36 +270,113 @@ describe('Users', () => {
       UserEdit.openEdit();
       UserEdit.checkUserEditPaneOpened();
     };
-    const distributeCustomFieldsAcrossAccordions = () => {
+    const distributeDomainCustomFieldsAcrossAccordions = () => {
       CustomFields.visitCustomFieldsSettings();
 
       CustomFields.openEdit();
-      CustomFields.setDisplayInAccordion(testData.customFields.checkbox.name, 'Loans');
-      CustomFields.setDisplayInAccordion(testData.customFields.datePicker.name, 'Fees/fines');
-      CustomFields.setDisplayInAccordion(
-        testData.customFields.multiSelect.name,
+      CustomFields.setDisplayInAccordion(testData.customFields.checkbox.name, 'Fees/fines');
+      CustomFields.setDisplayInAccordion(testData.customFields.datePicker.name, 'Loans');
+      CustomFields.setDisplayInAccordion(testData.customFields.multiSelect.name, 'Requests');
+      CustomFields.setDisplayInAccordion(testData.customFields.radioButton.name, 'Loans');
+      CustomFields.setDisplayInAccordion(testData.customFields.singleSelect.name, 'Fees/fines');
+      CustomFields.setDisplayInAccordion(testData.customFields.textField.name, 'Fees/fines');
+      CustomFields.setDisplayInAccordion(testData.customFields.textArea.name, 'Loans');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.checkbox.name, 'Fees/fines');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.datePicker.name, 'Loans');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.multiSelect.name, 'Requests');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.radioButton.name, 'Loans');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.singleSelect.name, 'Fees/fines');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.textField.name, 'Fees/fines');
+      CustomFields.verifyDisplayInAccordion(testData.customFields.textArea.name, 'Loans');
+    };
+    const verifyHiddenDomainLinks = (accordionLabel) => {
+      if (accordionLabel === 'Fees/fines') {
+        UsersCard.verifyFeesFinesLinksAbsent();
+      } else if (accordionLabel === 'Loans') {
+        UsersCard.verifyLoansLinksAbsent();
+      } else {
+        UsersCard.verifyRequestsInfoAbsent();
+      }
+    };
+    const verifyUserDetailsWithSingleDomainAccordion = (
+      accordionLabel,
+      customFieldValues,
+      defaultFieldValues,
+    ) => {
+      UsersCard.verifyAccordionsPresent([
+        'User information',
+        'Extended information',
+        'Contact information',
         testData.customFieldsAccordionName,
+        accordionLabel,
+      ]);
+      UsersCard.verifyAccordionsAbsent(
+        DOMAIN_ACCORDIONS.filter((domainAccordion) => domainAccordion !== accordionLabel),
       );
-      CustomFields.setDisplayInAccordion(testData.customFields.radioButton.name, 'Fees/fines');
-      CustomFields.setDisplayInAccordion(testData.customFields.singleSelect.name, 'Requests');
-      CustomFields.setDisplayInAccordion(
-        testData.customFields.textArea.name,
+      UsersCard.verifyCustomFieldsPresentInAccordion(testData.customFieldsAccordionName, [
+        testData.customFields.defaultTextField,
+      ]);
+
+      if (defaultFieldValues) {
+        UsersCard.verifyCustomFieldValuesInAccordion(
+          testData.customFieldsAccordionName,
+          defaultFieldValues,
+          { isAccordionOpen: true },
+        );
+      }
+
+      UsersCard.verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues, {
+        isAccordionOpen: false,
+      });
+      verifyHiddenDomainLinks(accordionLabel);
+    };
+    const verifyUserEditWithSingleDomainAccordion = (accordionLabel) => {
+      UserEdit.verifyAccordionsPresent([
+        'User information',
+        'Extended information',
+        'Contact information',
         testData.customFieldsAccordionName,
+        accordionLabel,
+      ]);
+      UserEdit.verifyAccordionsAbsent(
+        DOMAIN_ACCORDIONS.filter((domainAccordion) => domainAccordion !== accordionLabel),
       );
-      CustomFields.setDisplayInAccordion(testData.customFields.textField.name, 'Requests');
-      CustomFields.verifyDisplayInAccordion(testData.customFields.checkbox.name, 'Loans');
-      CustomFields.verifyDisplayInAccordion(testData.customFields.datePicker.name, 'Fees/fines');
-      CustomFields.verifyDisplayInAccordion(
-        testData.customFields.multiSelect.name,
+      UserEdit.verifyCustomFieldsPresentInAccordion(testData.customFieldsAccordionName, [
+        testData.customFields.defaultTextField,
+      ]);
+      UserEdit.verifyCustomFieldsPresentInAccordion(accordionLabel, getDomainCustomFields());
+    };
+    const verifyDistributedUserDetails = (defaultFieldValues, customFieldValues) => {
+      const distributedCustomFields = getDistributedCustomFields();
+
+      UsersCard.verifyAccordionsPresent([
+        'User information',
+        'Extended information',
+        'Contact information',
         testData.customFieldsAccordionName,
-      );
-      CustomFields.verifyDisplayInAccordion(testData.customFields.radioButton.name, 'Fees/fines');
-      CustomFields.verifyDisplayInAccordion(testData.customFields.singleSelect.name, 'Requests');
-      CustomFields.verifyDisplayInAccordion(
-        testData.customFields.textArea.name,
+        'Fees/fines',
+        'Loans',
+        'Requests',
+      ]);
+      UsersCard.verifyCustomFieldValuesInAccordion(
         testData.customFieldsAccordionName,
+        defaultFieldValues,
       );
-      CustomFields.verifyDisplayInAccordion(testData.customFields.textField.name, 'Requests');
+      UsersCard.verifyCustomFieldValuesInAccordion(
+        'Fees/fines',
+        getAccordionFieldValues(customFieldValues, distributedCustomFields['Fees/fines']),
+      );
+      UsersCard.verifyFeesFinesLinksAbsent();
+      UsersCard.verifyCustomFieldValuesInAccordion(
+        'Loans',
+        getAccordionFieldValues(customFieldValues, distributedCustomFields.Loans),
+      );
+      UsersCard.verifyLoansLinksAbsent();
+      UsersCard.verifyCustomFieldValuesInAccordion(
+        'Requests',
+        getAccordionFieldValues(customFieldValues, distributedCustomFields.Requests),
+      );
+      UsersCard.verifyRequestsInfoAbsent();
     };
 
     before('Create test data', () => {
@@ -297,12 +407,7 @@ describe('Users', () => {
         })
         .then(() => {
           return cy
-            .createTempUser([
-              Permissions.uiUsersCustomField.gui,
-              Permissions.uiUsersCreate.gui,
-              Permissions.uiUsersfeefinesView.gui,
-              Permissions.usersViewRequests.gui,
-            ])
+            .createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUsersCreate.gui])
             .then((userProperties) => {
               testData.user = userProperties;
 
@@ -336,8 +441,8 @@ describe('Users', () => {
     });
 
     it(
-      'C812849 - View and edit Custom fields in Fees/fines, Loans, Requests accordions with appropriate permissions',
-      { tags: ['extendedPath', 'volaris', 'C812849'] },
+      'C812852 - View and edit Custom fields in Fees/fines, Loans, Requests accordions without appropriate permissions',
+      { tags: ['extendedPath', 'volaris', 'C812852'] },
       () => {
         const distributedCustomFields = getDistributedCustomFields();
 
@@ -355,10 +460,14 @@ describe('Users', () => {
           'User information',
           'Extended information',
           'Contact information',
+          testData.customFieldsAccordionName,
           'Fees/fines',
         ]);
-        UserEdit.verifyAccordionsAbsent([testData.customFieldsAccordionName, 'Loans', 'Requests']);
-        UserEdit.verifyCustomFieldsPresentInAccordion('Fees/fines', getAllCustomFields());
+        UserEdit.verifyAccordionsAbsent(['Loans', 'Requests']);
+        UserEdit.verifyCustomFieldsPresentInAccordion(testData.customFieldsAccordionName, [
+          testData.customFields.defaultTextField,
+        ]);
+        UserEdit.verifyCustomFieldsPresentInAccordion('Fees/fines', getDomainCustomFields());
         UserEdit.scrollToTheLastCustomField();
 
         // Step 2: Populate the custom fields in the Fees/fines accordion
@@ -370,84 +479,44 @@ describe('Users', () => {
           testData.createdUserId = userId;
         });
         UsersCard.waitLoading();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Fees/fines',
-          'Loans',
-          'Requests',
-        ]);
-        UsersCard.verifyAccordionsAbsent([testData.customFieldsAccordionName]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion('Fees/fines', initialCustomFieldValues, {
-          isAccordionOpen: true,
-        });
+        verifyUserDetailsWithSingleDomainAccordion('Fees/fines', initialCustomFieldValues);
 
-        // Step 4: Move every custom field to the Loans accordion in settings
-        CustomFields.moveAllCustomFieldsToAccordion(getAllCustomFieldLabels(), 'Loans');
+        // Step 4: Move every domain custom field to the Loans accordion in settings
+        CustomFields.moveAllCustomFieldsToAccordion(getDomainCustomFieldLabels(), 'Loans');
 
         // Step 5: Save the custom field settings after moving them to Loans
         CustomFields.saveAndClose();
+        CustomFields.verifyCustomFieldsPaneIsOpen();
 
         // Step 6: Reopen the user details pane and review the Loans accordion
         openCreatedUserCard();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Fees/fines',
-          'Loans',
-          'Requests',
-        ]);
-        UsersCard.verifyAccordionsAbsent([testData.customFieldsAccordionName]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion('Loans', initialCustomFieldValues, {
-          isAccordionOpen: true,
-        });
+        verifyUserDetailsWithSingleDomainAccordion('Loans', initialCustomFieldValues);
 
         // Step 7: Open the user edit pane and review the Loans accordion
         openCreatedUserEdit();
-        UserEdit.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Loans',
-        ]);
-        UserEdit.verifyAccordionsAbsent([
-          testData.customFieldsAccordionName,
-          'Fees/fines',
-          'Requests',
-        ]);
-        UserEdit.verifyCustomFieldsPresentInAccordion('Loans', getAllCustomFields());
+        verifyUserEditWithSingleDomainAccordion('Loans');
 
-        // Step 8: Edit the Loans custom fields and save the user record
+        // Step 8: Edit all custom fields and save the user record
+        UserEdit.fillCustomFieldsInAccordion(
+          testData.customFieldsAccordionName,
+          firstDefaultCustomFieldValues,
+        );
         UserEdit.fillCustomFieldsInAccordion('Loans', firstUpdatedCustomFieldValues);
+        UserEdit.verifyCustomFieldValuesInAccordion(
+          testData.customFieldsAccordionName,
+          firstDefaultCustomFieldValues,
+        );
         UserEdit.verifyCustomFieldValuesInAccordion('Loans', firstUpdatedCustomFieldValues);
         UserEdit.saveEditedUser();
         UsersCard.waitLoading();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Fees/fines',
+        verifyUserDetailsWithSingleDomainAccordion(
           'Loans',
-          'Requests',
-        ]);
-        UsersCard.verifyAccordionsAbsent([testData.customFieldsAccordionName]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion('Loans', firstUpdatedCustomFieldValues, {
-          isAccordionOpen: true,
-        });
+          firstUpdatedCustomFieldValues,
+          firstDefaultCustomFieldValues,
+        );
 
-        // Step 9: Move every custom field to the Requests accordion in settings
-        CustomFields.moveAllCustomFieldsToAccordion(getAllCustomFieldLabels(), 'Requests');
+        // Step 9: Move every domain custom field to the Requests accordion in settings
+        CustomFields.moveAllCustomFieldsToAccordion(getDomainCustomFieldLabels(), 'Requests');
 
         // Step 10: Save the custom field settings after moving them to Requests
         CustomFields.saveAndClose();
@@ -455,60 +524,37 @@ describe('Users', () => {
 
         // Step 11: Reopen the user details pane and review the Requests accordion
         openCreatedUserCard();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Fees/fines',
-          'Loans',
+        verifyUserDetailsWithSingleDomainAccordion(
           'Requests',
-        ]);
-        UsersCard.verifyAccordionsAbsent([testData.customFieldsAccordionName]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion('Requests', firstUpdatedCustomFieldValues, {
-          isAccordionOpen: true,
-        });
+          firstUpdatedCustomFieldValues,
+          firstDefaultCustomFieldValues,
+        );
 
         // Step 12: Open the user edit pane and review the Requests accordion
         openCreatedUserEdit();
-        UserEdit.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Requests',
-        ]);
-        UserEdit.verifyAccordionsAbsent([
-          testData.customFieldsAccordionName,
-          'Fees/fines',
-          'Loans',
-        ]);
-        UserEdit.verifyCustomFieldsPresentInAccordion('Requests', getAllCustomFields());
+        verifyUserEditWithSingleDomainAccordion('Requests');
 
-        // Step 13: Edit the Requests custom fields and save the user record
+        // Step 13: Edit all custom fields and save the user record
+        UserEdit.fillCustomFieldsInAccordion(
+          testData.customFieldsAccordionName,
+          secondDefaultCustomFieldValues,
+        );
         UserEdit.fillCustomFieldsInAccordion('Requests', secondUpdatedCustomFieldValues);
+        UserEdit.verifyCustomFieldValuesInAccordion(
+          testData.customFieldsAccordionName,
+          secondDefaultCustomFieldValues,
+        );
         UserEdit.verifyCustomFieldValuesInAccordion('Requests', secondUpdatedCustomFieldValues);
         UserEdit.saveEditedUser();
         UsersCard.waitLoading();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          'Fees/fines',
-          'Loans',
+        verifyUserDetailsWithSingleDomainAccordion(
           'Requests',
-        ]);
-        UsersCard.verifyAccordionsAbsent([testData.customFieldsAccordionName]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion('Requests', secondUpdatedCustomFieldValues, {
-          isAccordionOpen: true,
-        });
+          secondUpdatedCustomFieldValues,
+          secondDefaultCustomFieldValues,
+        );
 
-        // Step 14: Distribute the custom fields across the configured accordions in settings
-        distributeCustomFieldsAcrossAccordions();
+        // Step 14: Distribute the domain custom fields across Fees/fines, Loans, and Requests
+        distributeDomainCustomFieldsAcrossAccordions();
 
         // Step 15: Save the custom field settings after distributing the field types
         CustomFields.saveAndClose();
@@ -516,42 +562,9 @@ describe('Users', () => {
 
         // Step 16: Reopen the user details pane and review the distributed custom fields
         openCreatedUserCard();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          testData.customFieldsAccordionName,
-          'Fees/fines',
-          'Loans',
-          'Requests',
-        ]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          testData.customFieldsAccordionName,
-          getAccordionFieldValues(
-            secondUpdatedCustomFieldValues,
-            distributedCustomFields[testData.customFieldsAccordionName],
-          ),
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Fees/fines',
-          getAccordionFieldValues(
-            secondUpdatedCustomFieldValues,
-            distributedCustomFields['Fees/fines'],
-          ),
-          { isAccordionOpen: true },
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Loans',
-          getAccordionFieldValues(secondUpdatedCustomFieldValues, distributedCustomFields.Loans),
-          { isAccordionOpen: true },
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Requests',
-          getAccordionFieldValues(secondUpdatedCustomFieldValues, distributedCustomFields.Requests),
-          { isAccordionOpen: true },
+        verifyDistributedUserDetails(
+          secondDefaultCustomFieldValues,
+          secondUpdatedCustomFieldValues,
         );
 
         // Step 17: Open the user edit pane and review the distributed custom fields
@@ -576,13 +589,10 @@ describe('Users', () => {
         UserEdit.verifyCustomFieldsPresentInAccordion('Loans', distributedCustomFields.Loans);
         UserEdit.verifyCustomFieldsPresentInAccordion('Requests', distributedCustomFields.Requests);
 
-        // Step 18: Edit the distributed custom fields and save the updated user record
+        // Step 18: Edit all custom fields and save the updated user record
         UserEdit.fillCustomFieldsInAccordion(
           testData.customFieldsAccordionName,
-          getAccordionFieldValues(
-            thirdUpdatedCustomFieldValues,
-            distributedCustomFields[testData.customFieldsAccordionName],
-          ),
+          thirdDefaultCustomFieldValues,
         );
         UserEdit.fillCustomFieldsInAccordion(
           'Fees/fines',
@@ -601,10 +611,7 @@ describe('Users', () => {
         );
         UserEdit.verifyCustomFieldValuesInAccordion(
           testData.customFieldsAccordionName,
-          getAccordionFieldValues(
-            thirdUpdatedCustomFieldValues,
-            distributedCustomFields[testData.customFieldsAccordionName],
-          ),
+          thirdDefaultCustomFieldValues,
         );
         UserEdit.verifyCustomFieldValuesInAccordion(
           'Fees/fines',
@@ -623,43 +630,7 @@ describe('Users', () => {
         );
         UserEdit.saveEditedUser();
         UsersCard.waitLoading();
-        UsersCard.verifyAccordionsPresent([
-          'User information',
-          'Extended information',
-          'Contact information',
-          testData.customFieldsAccordionName,
-          'Fees/fines',
-          'Loans',
-          'Requests',
-        ]);
-        UsersCard.verifyFeesFinesLinksExist();
-        UsersCard.verifyLoansLinksExist();
-        UsersCard.verifyRequestsInfoExists();
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          testData.customFieldsAccordionName,
-          getAccordionFieldValues(
-            thirdUpdatedCustomFieldValues,
-            distributedCustomFields[testData.customFieldsAccordionName],
-          ),
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Fees/fines',
-          getAccordionFieldValues(
-            thirdUpdatedCustomFieldValues,
-            distributedCustomFields['Fees/fines'],
-          ),
-          { isAccordionOpen: true },
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Loans',
-          getAccordionFieldValues(thirdUpdatedCustomFieldValues, distributedCustomFields.Loans),
-          { isAccordionOpen: true },
-        );
-        UsersCard.verifyCustomFieldValuesInAccordion(
-          'Requests',
-          getAccordionFieldValues(thirdUpdatedCustomFieldValues, distributedCustomFields.Requests),
-          { isAccordionOpen: true },
-        );
+        verifyDistributedUserDetails(thirdDefaultCustomFieldValues, thirdUpdatedCustomFieldValues);
       },
     );
   });
