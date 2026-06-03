@@ -1,16 +1,16 @@
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import Permissions from '../../../../support/dictionary/permissions';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import Permissions from '../../../../../support/dictionary/permissions';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesDelete from '../../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix, {
   getRandomLetters,
   randomNDigitNumber,
-} from '../../../../support/utils/stringTools';
-import { AUTHORITY_TYPES } from '../../../../support/constants';
+} from '../../../../../support/utils/stringTools';
+import { AUTHORITY_TYPES } from '../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC authority', () => {
