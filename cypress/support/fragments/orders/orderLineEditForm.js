@@ -113,6 +113,26 @@ export default {
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
+  setExchangeRateValue(value) {
+    cy.get('[name="cost.exchangeRate"]').type('{selectall}{backspace}', { delay: 50 });
+    if (value !== '') {
+      cy.get('[name="cost.exchangeRate"]').type(value, { delay: 100 });
+    }
+    cy.get('[name="cost.exchangeRate"]').blur();
+  },
+  checkExchangeRateError(errorMessage = 'Amount must be a positive number', shouldExist = true) {
+    if (shouldExist) {
+      cy.get('[name="cost.exchangeRate"]')
+        .closest('[class*="textField"]')
+        .find('[role="alert"]')
+        .should('contain.text', errorMessage);
+    } else {
+      cy.get('[name="cost.exchangeRate"]')
+        .closest('[class*="textField"]')
+        .find('[role="alert"]')
+        .should('not.contain.text', errorMessage);
+    }
+  },
   checkNotAvailableInstanceData(fields = []) {
     this.checkFieldsConditions({ fields, section: disabledButtons });
   },
