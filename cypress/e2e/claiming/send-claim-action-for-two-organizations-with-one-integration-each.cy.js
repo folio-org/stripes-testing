@@ -192,9 +192,9 @@ describe('Claiming', () => {
       ExportManagerSearchPane.clickJobLinkByIntegrationInList(integration1.integrationName, {
         isEdiJobsList: true,
       });
-      cy.wait(DEFAULT_WAIT_TIME);
 
       cy.log('<--- STEP 6 --->');
+      cy.wait(DEFAULT_WAIT_TIME);
       FileManager.convertCsvToJson(getFileName(flow, FILE_FORMATS.CSV)).then((csvFileData) => {
         cy.expect(csvFileData).to.have.lengthOf(1);
 
@@ -268,6 +268,18 @@ function createOrderViaApi(flow, orderKey, vendorId) {
 }
 
 function createOrderLineViaApi(flow, options) {
+  const cleanup = (orderLineId) => {
+    Pieces.getOrderPiecesViaApi({ query: `poLineId=="${orderLineId}"` })
+      .then(({ pieces }) => {
+        pieces.forEach((piece) => {
+          Pieces.deleteOrderPieceViaApi(piece.id, false);
+        });
+      })
+      .then(() => {
+        OrderLines.deleteOrderLineViaApi(orderLineId, false);
+      });
+  };
+
   const {
     orderKey,
     orderLineKey,
@@ -293,7 +305,7 @@ function createOrderLineViaApi(flow, options) {
     claimingInterval,
   };
 
-  return OrderLines.createOrderLineViaApi(baseOrderLine).then((orderLine) => flow.set(orderLineKey, orderLine, () => OrderLines.deleteOrderLineViaApi(orderLine.id, false)));
+  return OrderLines.createOrderLineViaApi(baseOrderLine).then((orderLine) => flow.set(orderLineKey, orderLine, () => cleanup(orderLine.id)));
 }
 
 function openOrderViaApi(flow, orderKey) {
@@ -469,7 +481,7 @@ function getPreconditionSteps() {
       .createTempUser([
         Permissions.uiClaimingView.gui,
         Permissions.exportManagerAll.gui,
-        Permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiReceivingViewEdit.gui,
       ])
       .then((user) => {
         flow.set(R.USER, user, () => Users.deleteViaApi(user.userId));
