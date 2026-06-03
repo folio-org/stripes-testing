@@ -551,6 +551,18 @@ export default {
     );
   },
 
+  verifySearchErrorText(query) {
+    cy.expect(
+      searchResults
+        .find(
+          HTML(
+            `Search could not be processed for ${query}. Please check your query and try again.`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
   clickNextPagination() {
     cy.do(rootSection.find(nextButton).click());
   },
