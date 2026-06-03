@@ -102,7 +102,6 @@ export default {
   checkDeleteErrorCallout(heading) {
     cy.expect(
       Callout(getDeleteErrorCalloutText(heading), { type: calloutTypes.error }).exists(),
-      // Callout(including('Unable to delete')).exists(),
     );
   },
 };
