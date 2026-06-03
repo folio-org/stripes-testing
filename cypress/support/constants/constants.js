@@ -27,6 +27,7 @@ export const APPLICATION_NAMES = {
   COURSES: 'Courses',
   DEVELOPER: 'Developer',
   LISTS: 'Lists',
+  MY_PROFILE: 'My profile',
 };
 
 export const REQUEST_METHOD = {
@@ -1791,6 +1792,7 @@ export const COMMON_BUTTON_LABELS = {
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
+  SAVE_AND_CLOSE: 'Save & close',
   SEARCH: 'Search',
   SUBMIT: 'Submit',
   YES: 'Yes',

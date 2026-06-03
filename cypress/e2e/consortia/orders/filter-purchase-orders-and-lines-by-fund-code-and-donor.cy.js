@@ -77,7 +77,7 @@ const interceptQueries = () => {
   OrderHelper.interceptGetOrders();
   OrderHelper.interceptGetOrderLines();
   OrderHelper.interceptCustomFields();
-  OrderHelper.interceptGetOrganizations();
+  Organizations.interceptGetOrganizations();
   OrderHelper.interceptGetPrefixes();
   OrderHelper.interceptGetSuffixes();
   OrderHelper.interceptGetReasonsForClosure();
@@ -111,7 +111,7 @@ const waitForInitialOrderLinesQueriesCompleted = () => {
 
 const waitOrdersResultsLoading = () => {
   OrderHelper.waitForOrdersQueryCompleted();
-  OrderHelper.waitForOrganizationsQueryCompleted();
+  Organizations.waitForOrganizationsQueryCompleted();
   Orders.waitOrdersListLoading();
 };
 

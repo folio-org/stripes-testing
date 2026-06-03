@@ -39,6 +39,7 @@ const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 const closeIcon = Button({ icon: 'times' });
 const versionHistoryButton = Button({ icon: 'clock' });
 const confirmationModal = ConfirmationModal('Are you sure?');
+const itemViewPane = Pane({ id: 'item-view-pane' });
 
 const NO_BARCODE = 'No barcode';
 
@@ -59,7 +60,7 @@ const verifyNote = (value) => {
 };
 const waitLoading = () => {
   cy.contains('Item', { timeout: 120000 }).should('be.visible');
-  cy.expect(Pane(including('Item')).exists());
+  cy.expect(itemViewPane.exists());
 };
 const verifyItemStatus = (itemStatus) => {
   cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: itemStatus }));
@@ -68,13 +69,9 @@ const verifyItemStatusInPane = (itemStatus) => {
   cy.expect(PaneHeader(including(itemStatus)).exists());
 };
 const closeDetailView = () => {
-  cy.expect(Pane(including('Item')).exists());
-  cy.do(
-    PaneHeader()
-      .find(Button({ icon: 'times' }))
-      .click(),
-  );
-  cy.expect(Pane(including('Item')).absent());
+  cy.expect(itemViewPane.exists());
+  cy.do(itemViewPane.find(PaneHeader()).find(closeIcon).click());
+  cy.expect(itemViewPane.absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
   cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`)

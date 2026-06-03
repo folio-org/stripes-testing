@@ -1,4 +1,5 @@
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -165,7 +166,6 @@ describe('Inventory', () => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-            authRefresh: true,
           });
 
           InventorySearchAndFilter.switchToItem();
@@ -175,6 +175,8 @@ describe('Inventory', () => {
             ItemRecordView.waitLoading();
             ItemRecordView.verifyEffectiveLocation(locationB.name);
             ItemRecordView.closeDetailView();
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
           });
 
           cy.batchUpdateHoldingsViaApi(holdingsRecords2).then((batchResponse2) => {
@@ -187,6 +189,8 @@ describe('Inventory', () => {
                 `${callNumberValues.callNumberPrefix} ${callNumberValues.callNumber} ${callNumberValues.callNumberSuffix}`,
               );
               ItemRecordView.closeDetailView();
+              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
             });
           });
         });
