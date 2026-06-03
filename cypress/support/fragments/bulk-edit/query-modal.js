@@ -539,9 +539,7 @@ export default {
 
   selectDayFromCalendar(date) {
     // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
-    const day = date.split('/')[1];
-
-    cy.do(Calendar().clickDay(day));
+    cy.get(`[data-test-date="${date}"]`).click();
   },
 
   verifySelectedDateInCalendar(date, row = 0) {
