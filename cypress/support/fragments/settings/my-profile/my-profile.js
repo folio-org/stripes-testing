@@ -12,4 +12,11 @@ export default {
         .click(),
     );
   },
+  openLanguageAndLocalization() {
+    cy.do(
+      PaneContent({ id: 'app-settings-nav-pane-content' })
+        .find(NavListItem('Language & localization'))
+        .click(),
+    );
+  },
 };

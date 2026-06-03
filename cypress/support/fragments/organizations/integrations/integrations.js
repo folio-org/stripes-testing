@@ -1,5 +1,10 @@
 import uuid from 'uuid';
+
+import { ORGANIZATION_INTEGRATION_CONFIG } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
+
+const { EXPORT_TYPES, FILE_FORMATS, INTEGRATION_TYPES, TRANSMISSION_METHODS } =
+  ORGANIZATION_INTEGRATION_CONFIG;
 
 export default {
   getDefaultIntegration({
@@ -10,12 +15,16 @@ export default {
     ediSchedule,
     isDefaultConfig,
     scheduleTime,
+    fileFormat = FILE_FORMATS.EDI,
+    integrationType = INTEGRATION_TYPES.ORDERING,
+    transmissionMethod = TRANSMISSION_METHODS.FTP,
+    type = EXPORT_TYPES.EDIFACT_ORDERS,
   } = {}) {
     const integrationName = `autotest_config_name_${getRandomPostfix()}`;
     return {
       id: uuid(),
       schedulePeriod: 'NONE',
-      type: 'EDIFACT_ORDERS_EXPORT',
+      type,
       exportTypeSpecificParameters: {
         vendorEdiOrdersExportConfig: {
           vendorId,
@@ -50,9 +59,9 @@ export default {
             },
           },
           isDefaultConfig,
-          integrationType: 'Ordering',
-          transmissionMethod: 'FTP',
-          fileFormat: 'EDI',
+          integrationType,
+          transmissionMethod,
+          fileFormat,
         },
       },
       integrationName,
@@ -75,10 +84,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteIntegrationViaApi(configId) {
+  deleteIntegrationViaApi(configId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `data-export-spring/configs/${configId}`,
+      failOnStatusCode,
     });
   },
 };

@@ -27,6 +27,7 @@ export const APPLICATION_NAMES = {
   COURSES: 'Courses',
   DEVELOPER: 'Developer',
   LISTS: 'Lists',
+  MY_PROFILE: 'My profile',
 };
 
 export const REQUEST_METHOD = {
@@ -410,6 +411,7 @@ export const AUTHORITY_HEADING_TYPES = {
   PERSONAL_NAME_TITLE: 'Personal name title',
   TOPICAL_TERM: 'Topical term',
   UNIFORM_TITLE: 'Uniform title',
+  GENRE: 'Genre',
 };
 
 export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
@@ -1532,6 +1534,12 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   CONTAINS_ANY: 'Contains any',
 };
 
+export const ADVANCED_SEARCH_LOGICAL_OPERATORS = {
+  AND: 'AND',
+  NOT: 'NOT',
+  OR: 'OR',
+};
+
 export const BULK_EDIT_FORMS = {
   PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
   ARE_YOU_SURE: 'Are you sure',
@@ -1784,6 +1792,7 @@ export const COMMON_BUTTON_LABELS = {
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
+  SAVE_AND_CLOSE: 'Save & close',
   SEARCH: 'Search',
   SUBMIT: 'Submit',
   YES: 'Yes',

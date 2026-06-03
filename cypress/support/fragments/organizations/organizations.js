@@ -1990,4 +1990,12 @@ export default {
       .invoke('text')
       .then((t) => expect(t.trim()).to.eq(expected));
   },
+
+  interceptGetOrganizations() {
+    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
+  },
+
+  waitForOrganizationsQueryCompleted() {
+    cy.wait('@waiterForOrganizationsQueryCompleted');
+  },
 };

@@ -496,6 +496,17 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyFieldSearchDoesNotFilterAvailableOptions(searchText, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    // Capture the complete field list before entering symbol search text.
+    cy.then(() => SelectionList().optionList()).then((allFieldOptionsBeforeSearch) => {
+      cy.do(SelectionList().filter(searchText));
+      cy.expect(SelectionList().has({ optionList: allFieldOptionsBeforeSearch }));
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyAllAvailableFieldOptions(expectedFields, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
     cy.do(targetSelection.open());

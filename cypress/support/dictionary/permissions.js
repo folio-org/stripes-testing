@@ -830,6 +830,10 @@ export default {
     internal: 'ui-receiving.view',
     gui: 'Receiving: View',
   },
+  uiReceivingViewEdit: {
+    internal: 'ui-receiving.edit',
+    gui: 'Receiving: View, edit',
+  },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
