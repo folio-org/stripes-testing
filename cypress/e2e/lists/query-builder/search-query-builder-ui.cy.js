@@ -280,6 +280,21 @@ describe('Lists', () => {
           );
         },
       );
+
+      it(
+        'C613148 Verify that we can search for the fields that contain symbols (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C613148'] },
+        () => {
+          listName = getTestEntityValue('C613148_List');
+          openQueryBuilder(recordType);
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          QueryModal.verifyFieldSearchDoesNotFilterAvailableOptions('(');
+          QueryModal.verifyFieldSearchDoesNotFilterAvailableOptions('*');
+        },
+      );
     });
 
     describe('Users custom field option labels', () => {
