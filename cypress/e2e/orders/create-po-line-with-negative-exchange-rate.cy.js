@@ -152,13 +152,9 @@ describe('Orders', () => {
       OrderLines.addPOLine();
 
       // Step 2: Fill required PO line fields (Electronic resource format)
-      // NOTE: "User limit" sub-step is skipped per task description
-      // ("Should be verified after UIOR-1023 is done").
       OrderLineEditForm.fillOrderLineFields(polData);
 
       // Step 3: Select unsupported ECB currency (e.g. GEL).
-      // After currency selection, "Use set exchange rate" checkbox is auto-checked
-      // and "Set exchange rate" field becomes editable.
       OrderLines.selectCurrency(testData.currency);
       OrderLineEditForm.checkCostDetailsSection([
         { label: 'useSetExchangeRate', conditions: { checked: true } },
