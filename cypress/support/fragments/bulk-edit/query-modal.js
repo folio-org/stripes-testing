@@ -135,6 +135,7 @@ export const instanceFieldValues = {
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
+  previouslyHeld: 'Instance — Previously held',
   createdDate: 'Instance — Created date',
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
