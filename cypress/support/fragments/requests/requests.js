@@ -34,6 +34,7 @@ import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import Locations from '../settings/tenant/location-setup/locations';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import users from '../users/users';
+import MultiColumnListHelper from '../multiColumnList';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const requestDetailsSection = Pane({ title: 'Request details' });
@@ -48,11 +49,10 @@ const tagsPane = Pane({ title: 'Tags' });
 const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
-const nextPageButton = Button({ id: 'list-requests-next-paging-button' });
-const prevPageButton = Button({ id: 'list-requests-prev-paging-button' });
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 const resetAllButton = Button('Reset all');
+const recordsList = MultiColumnList();
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -321,20 +321,6 @@ function createRequestsForPagination(count, barcodePrefix, requesterId) {
       });
     })
     .then(() => result);
-}
-
-function getMCLColumnValues(columnName) {
-  let values;
-  cy.do(
-    MultiColumnList().perform((el) => {
-      const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
-      const colIndex = headers.findIndex((h) => h.textContent.trim() === columnName) + 1;
-      values = [
-        ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
-      ].map((cell) => cell.textContent);
-    }),
-  );
-  return cy.then(() => values);
 }
 
 function deleteRequestViaApi(requestId) {
@@ -686,7 +672,7 @@ export default {
     expect(prev).to.deep.equal(itemsClone);
   },
 
-  // This method is slow in the UI, use the getMCLColumnValues instead.
+  // This method is slow in the UI, use the MultiColumnListHelper.getColumnValues instead.
   // TODO: redesign to interactors
   getMultiColumnListCellsValues(cell) {
     const cells = [];
@@ -909,8 +895,7 @@ export default {
   },
 
   waitForMCLLoading() {
-    cy.expect(MultiColumnList().has({ loading: true }));
-    cy.expect(MultiColumnList().has({ loading: false }));
+    MultiColumnListHelper.waitLoadingComplete(recordsList);
   },
 
   selectRetrievalServicePointColumnInActions(select = true) {
@@ -929,18 +914,12 @@ export default {
   },
 
   clickColumnHeader(columnName) {
-    cy.do(MultiColumnList().scrollHeaderIntoView(columnName));
-    cy.do(MultiColumnListHeader(columnName).click());
-    this.waitForMCLLoading();
+    MultiColumnListHelper.sortListBy(recordsList, columnName);
   },
 
   verifyColumnSortOrder(columnName, expectedOrder) {
-    getMCLColumnValues(columnName).then((columnValues) => {
-      if (expectedOrder === 'ascending') {
-        this.validateStringsAscendingOrder(columnValues);
-      } else {
-        this.validateStringsDescendingOrder(columnValues);
-      }
+    MultiColumnListHelper.assertColumnValuesSorted(recordsList, columnName, {
+      direction: expectedOrder,
     });
   },
 
@@ -953,40 +932,26 @@ export default {
   },
 
   clickNextPageButton() {
-    cy.do(nextPageButton.click());
-    this.waitForMCLLoading();
+    MultiColumnListHelper.clickNextPage(recordsList);
   },
 
   clickPreviousPageButton() {
-    cy.do(prevPageButton.click());
-    this.waitForMCLLoading();
+    MultiColumnListHelper.clickPreviousPage(recordsList);
   },
 
   verifyNextPageButtonState(isActive) {
-    cy.expect(nextPageButton.has({ disabled: !isActive }));
+    MultiColumnListHelper.assertNextPageButtonEnabled(recordsList, isActive);
   },
 
   verifyPreviousPageButtonState(isActive) {
-    cy.expect(prevPageButton.has({ disabled: !isActive }));
+    MultiColumnListHelper.assertPreviousPageButtonEnabled(recordsList, isActive);
   },
 
   navigateToLastPage() {
-    cy.get('#list-requests-next-paging-button').then(($btn) => {
-      if (!$btn.is(':disabled')) {
-        cy.wrap($btn).click();
-        this.waitForMCLLoading();
-        this.navigateToLastPage();
-      }
-    });
+    MultiColumnListHelper.navigateToLastPage(recordsList);
   },
 
   navigateToFirstPage() {
-    cy.get('#list-requests-prev-paging-button').then(($btn) => {
-      if (!$btn.is(':disabled')) {
-        cy.wrap($btn).click();
-        this.waitForMCLLoading();
-        this.navigateToFirstPage();
-      }
-    });
+    MultiColumnListHelper.navigateToFirstPage(recordsList);
   },
 };

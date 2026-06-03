@@ -144,7 +144,7 @@ describe('Data Import', () => {
             });
 
             // download exported marc file
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);

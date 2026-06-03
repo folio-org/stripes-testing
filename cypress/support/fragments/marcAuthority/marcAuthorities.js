@@ -42,6 +42,7 @@ import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
+import { formatNumber } from '../../utils/numberTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -691,7 +692,7 @@ export default {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
       if (!isOpen) {
-        cy.intercept('search/authorities/facets?facet=headingType*').as('getFacetsHeadingType');
+        cy.intercept(/search\/authorities\/facets\?facet=.*headingType/).as('getFacetsHeadingType');
         cy.do(headingTypeAccordion.clickHeader());
         cy.wait('@getFacetsHeadingType').its('response.statusCode').should('eq', 200);
       }
@@ -1098,7 +1099,12 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      const recordNumber = formatNumber(item.response.body.totalRecords);
+      cy.expect(
+        Pane({
+          subtitle: matching(new RegExp(`${recordNumber} (record|result)s{0,1} found`)),
+        }).exists(),
+      );
       expect(totalRecords).lessThan(totalRecord);
     });
   },
@@ -1108,9 +1114,10 @@ export default {
     this.waitLoading();
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
+      const recordNumber = formatNumber(item.response.body.totalRecords);
       cy.expect(
         Pane({
-          subtitle: matching(new RegExp(`${totalRecords} (record|result)s{0,1} found`)),
+          subtitle: matching(new RegExp(`${recordNumber} (record|result)s{0,1} found`)),
         }).exists(),
       );
       expect(totalRecords).greaterThan(totalRecord);
@@ -1223,21 +1230,17 @@ export default {
   },
 
   verifyResultsRowContent(heading, type, headingType) {
-    cy.expect(MultiColumnListRow(including(heading), { isContainer: false }).exists());
-    if (type) {
-      cy.expect(
-        MultiColumnListRow(including(heading), { isContainer: false })
-          .find(MultiColumnListCell(type))
-          .exists(),
-      );
-    }
-    if (headingType) {
-      cy.expect(
-        MultiColumnListRow(including(heading), { isContainer: false })
-          .find(MultiColumnListCell(headingType))
-          .exists(),
-      );
-    }
+    const anchorCell = MultiColumnListCell(including(heading));
+    cy.expect(anchorCell.exists());
+    cy.then(() => anchorCell.row()).then((row) => {
+      const targetRow = MultiColumnListRow({ index: row, isContainer: false });
+      if (type) {
+        cy.expect(targetRow.find(MultiColumnListCell(type)).exists());
+      }
+      if (headingType) {
+        cy.expect(targetRow.find(MultiColumnListCell(headingType)).exists());
+      }
+    });
   },
 
   verifyResultRowContentSharedIcon(heading, isShared) {
@@ -1912,13 +1915,21 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  verifyActionsMenu(saveUuidsEnabled = false, saveCqlEnabled = false, sortOption = sortOptions[0]) {
+  verifyActionsMenu({
+    saveUuidsEnabled = false,
+    saveCqlEnabled = false,
+    newShown = null,
+    exportEnabled = null,
+    sortOption = sortOptions[0],
+  } = {}) {
     cy.expect([
       saveUuidsButton.is({ disabled: !saveUuidsEnabled }),
       saveCqlButton.is({ disabled: !saveCqlEnabled }),
       actionsMenuSortBySection.find(sortBySelect).has({ checkedOptionText: sortOption }),
       sortBySelect.has({ content: sortOptions.join('') }),
     ]);
+    if (newShown !== null) cy.expect(buttonNew[newShown ? 'exists' : 'absent']());
+    if (exportEnabled !== null) cy.expect(buttonExportSelected.is({ disabled: !exportEnabled }));
     actionsShowColumnsOptions.forEach((option) => {
       actionsMenuShowColumnsSection.find(Checkbox(option)).exists();
     });

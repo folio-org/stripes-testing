@@ -78,6 +78,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.wait(3000);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         cy.getInstance({
@@ -94,7 +95,7 @@ describe('Inventory', () => {
 
     it(
       'C350639 Verify the ability to see holdings with 1000+ items: CASE 1 (folijet)',
-      { tags: ['smoke', 'folijet', 'C350639', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'C350639'] },
       () => {
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',

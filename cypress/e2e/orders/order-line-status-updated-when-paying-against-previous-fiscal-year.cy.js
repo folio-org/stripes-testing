@@ -1,37 +1,38 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import LedgerRollovers from '../../support/fragments/finance/ledgers/ledgerRollovers';
-import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
-import DateTools from '../../support/utils/dateTools';
-import { CodeTools, StringTools } from '../../support/utils';
-import { TransactionDetails, FinanceHelper } from '../../support/fragments/finance';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
   INVOICE_POL_PAYMENT_STATUSES,
   INVOICE_STATUSES,
-  ORDER_STATUSES,
-  POLINE_DETAILS_FIELDS,
   ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+  POLINE_DETAILS_FIELDS,
 } from '../../support/constants';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import permissions from '../../support/dictionary/permissions';
+import { FinanceHelper, TransactionDetails } from '../../support/fragments/finance';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import LedgerRollovers from '../../support/fragments/finance/ledgers/ledgerRollovers';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
 import { OrderDetails } from '../../support/fragments/orders';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import topMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
+import { CodeTools, StringTools } from '../../support/utils';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Orders', () => {
   const code = CodeTools(4);
@@ -171,7 +172,7 @@ describe('Orders', () => {
         },
       ],
       physical: {
-        createInventory: 'Instance, Holding, Item',
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
         materialType: materialTypeId,
         materialSupplier: testData.organization.id,
       },

@@ -381,14 +381,12 @@ export const AUTHORITY_QUERY_FIELDS = {
   CREATED_BY_USER_EMAIL: 'Created by user — Email',
   CREATED_BY_USER_LAST_NAME_FIRST_NAME: 'Created by user — Last name, first name',
   CREATED_BY_USER_USERNAME: 'Created by user — Username',
-  MARC_AUTHORITY_CREATED_DATE: 'MARC Authority — Created date',
   MARC_AUTHORITY_EXTERNAL_HRID: 'MARC Authority — External HRID',
   MARC_AUTHORITY_GENERATION: 'MARC Authority — Generation',
   MARC_AUTHORITY_LEADER_RECORD_STATUS: 'MARC Authority — Leader record status',
   MARC_AUTHORITY_MATCHED_UUID: 'MARC Authority — Matched UUID',
   MARC_AUTHORITY_ORDER: 'MARC Authority — Order',
   MARC_AUTHORITY_STATE: 'MARC Authority — State',
-  MARC_AUTHORITY_UPDATED_DATE: 'MARC Authority — Updated date',
   SOURCE_FILE_NAME: 'Source file — Name',
   UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
   UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
@@ -413,6 +411,7 @@ export const AUTHORITY_HEADING_TYPES = {
   PERSONAL_NAME_TITLE: 'Personal name title',
   TOPICAL_TERM: 'Topical term',
   UNIFORM_TITLE: 'Uniform title',
+  GENRE: 'Genre',
 };
 
 export const AUTHORITY_SEARCH_ACCORDION_NAMES = {
@@ -1535,6 +1534,12 @@ export const ADVANCED_SEARCH_MODIFIERS = {
   CONTAINS_ANY: 'Contains any',
 };
 
+export const ADVANCED_SEARCH_LOGICAL_OPERATORS = {
+  AND: 'AND',
+  NOT: 'NOT',
+  OR: 'OR',
+};
+
 export const BULK_EDIT_FORMS = {
   PREVIEW_OF_RECORDS_MATCHED: 'Preview of records matched',
   ARE_YOU_SURE: 'Are you sure',
@@ -1788,6 +1793,7 @@ export const COMMON_BUTTON_LABELS = {
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
   SEARCH: 'Search',
+  SUBMIT: 'Submit',
   YES: 'Yes',
   NO: 'No',
 };

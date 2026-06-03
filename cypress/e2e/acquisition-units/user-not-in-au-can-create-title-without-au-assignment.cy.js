@@ -1,4 +1,8 @@
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -73,7 +77,7 @@ describe('Acquisition Units', () => {
                   locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                   acquisitionMethod: params.body.acquisitionMethods[0].id,
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: mtypes.body.id,
                     materialSupplier: responseOrganizations,
                     volumes: [],

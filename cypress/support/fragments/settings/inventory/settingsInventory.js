@@ -12,6 +12,7 @@ export const INVENTORY_SETTINGS_TABS = {
   LOAN_TYPES: 'Loan types',
   STATISTICAL_CODES: 'Statistical codes',
   DISPLAY_SETTINGS: 'Display settings',
+  HRID_HANDLING: 'HRID handling',
   SUBJECT_SOURCES: 'Subject sources',
   SUBJECT_TYPES: 'Subject types',
   FORMATS: 'Formats',

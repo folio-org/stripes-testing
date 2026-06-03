@@ -191,6 +191,8 @@ export const itemFieldValues = {
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
+  itemEffectiveLibraryCode: 'Item effective library — Code',
+  itemEffectiveLibraryName: 'Item effective library — Name',
   holdingsId: 'Holdings — UUID',
   holdingsHrid: 'Holdings — HRID',
   temporaryLocation: 'Item temporary location — Name',
@@ -490,6 +492,17 @@ export default {
     cy.do(targetSelection.open());
     cy.do(SelectionList().filter(searchText));
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldSearchDoesNotFilterAvailableOptions(searchText, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    // Capture the complete field list before entering symbol search text.
+    cy.then(() => SelectionList().optionList()).then((allFieldOptionsBeforeSearch) => {
+      cy.do(SelectionList().filter(searchText));
+      cy.expect(SelectionList().has({ optionList: allFieldOptionsBeforeSearch }));
+    });
     this.closeOpenedSelection();
   },
 

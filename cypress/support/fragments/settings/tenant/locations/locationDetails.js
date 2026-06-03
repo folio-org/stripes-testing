@@ -13,6 +13,7 @@ export default {
   },
   openEditLocationForm() {
     cy.do([actionsButton.click(), editButton.click()]);
+    cy.wait(500);
     LocationEditForm.waitLoading();
 
     return LocationEditForm;

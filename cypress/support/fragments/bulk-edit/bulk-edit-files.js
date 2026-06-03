@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
 
@@ -361,6 +362,19 @@ export default {
         const actualValue = targetRow[pair.header];
 
         expect(actualValue).to.equal(pair.value);
+      });
+    });
+  },
+
+  verifyBomAndArabicColumnsInCsvFile(fileNameMask, instanceUUID, columnsToVerify) {
+    return FileManager.parseExcelCsvFile(fileNameMask).then(({ hasBom, rows }) => {
+      expect(hasBom, 'File must have UTF-8 BOM for correct Excel display').to.be.true;
+      const row = rows.find(
+        (r) => r[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID] === instanceUUID,
+      );
+      expect(row, `Row with Instance UUID "${instanceUUID}" must exist in CSV`).to.exist;
+      columnsToVerify.forEach(({ header, value }) => {
+        expect(row[header], `Column "${header}" must contain Arabic text`).to.include(value);
       });
     });
   },

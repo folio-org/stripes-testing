@@ -94,7 +94,7 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
           MarcFieldProtection.deleteViaApi(response[0].id);
         });

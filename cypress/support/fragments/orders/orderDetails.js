@@ -147,12 +147,18 @@ export default {
       OpenConfirmationModal.confirm();
     }
   },
-  unOpenOrder({ orderNumber, checkinItems = false, confirm = true, submit = false } = {}) {
+  unOpenOrder({
+    orderNumber,
+    checkinItems = false,
+    confirm = true,
+    submit = false,
+    hasRelations,
+  } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Unopen').click());
 
     if (orderNumber) {
-      UnopenConfirmationModal.verifyModalView({ orderNumber, checkinItems });
+      UnopenConfirmationModal.verifyModalView({ orderNumber, checkinItems, hasRelations });
     }
 
     if (confirm) {

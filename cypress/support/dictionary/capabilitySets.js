@@ -67,6 +67,11 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsListView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings List',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiDataImportSettingsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Data-Import Settings',
@@ -308,6 +313,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Bulk-Edit Logs',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
