@@ -9,7 +9,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
-    const recordType = 'Items';
     const listName = `C1312673_List_${getRandomPostfix()}`;
     const testData = {
       materialType: {
@@ -42,7 +41,7 @@ describe('Lists', () => {
         // Step 1: Create new list with Item record type
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.items);
         Lists.buildQuery();
 
         // Step 2: Select field "Material type — Name" and operator "IN"
