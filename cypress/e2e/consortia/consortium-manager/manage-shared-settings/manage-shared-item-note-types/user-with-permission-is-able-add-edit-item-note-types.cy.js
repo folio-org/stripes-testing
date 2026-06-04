@@ -36,7 +36,9 @@ const getDateString = (locale) => {
 const interceptRequestToUpdateFlowContext = (flow) => {
   const cleanup = () => {
     const publicationResults = flow.get(R.PC_RESULTS);
-    const setting = publicationResults?.[0]?.response?.itemNoteTypes?.find(({ name }) => name === ITEM_NOTE_EDITED);
+    const setting = publicationResults?.[0]?.response?.itemNoteTypes?.find(
+      ({ name }) => name === ITEM_NOTE_EDITED,
+    );
     const settingId = setting?.id;
 
     ItemNoteTypesConsortiumManager.deleteViaApi({
