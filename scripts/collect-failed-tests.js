@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 
-const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
+const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath, testTypes.edgeCases];
 
 const selectedStatus = [
   // status.Passed,
