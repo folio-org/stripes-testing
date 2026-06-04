@@ -30,6 +30,7 @@ import Arrays from '../../utils/arrays';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import parseMrkFile from '../../utils/parseMrkFile';
+import { formatNumber } from '../../utils/numberTools';
 import getRandomPostfix from '../../utils/stringTools';
 import CheckinActions from '../check-in-actions/checkInActions';
 import QuickMarcEditor from '../quickMarcEditor';
@@ -1552,6 +1553,16 @@ export default {
 
   checkSearchResultCount(text) {
     cy.expect(resultsPaneHeader.find(HTML(new RegExp(text))).exists());
+  },
+
+  checkRecordsCounter(expectedCount) {
+    const recordNumber = formatNumber(expectedCount);
+    cy.expect(
+      Pane({
+        id: 'pane-results',
+        subtitle: matching(new RegExp(`${recordNumber} (record|result)s{0,1} found`)),
+      }).exists(),
+    );
   },
 
   verifyInventoryLabelText(textLabel) {
