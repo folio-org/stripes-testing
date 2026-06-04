@@ -36,12 +36,14 @@ const getDateString = (locale) => {
 const interceptRequestToUpdateFlowContext = (flow) => {
   const cleanup = () => {
     const publicationResults = flow.get(R.PC_RESULTS);
-    const settingId = publicationResults?.response?.itemNoteTypes?.find((result) => {
-      const { response } = result;
-      return response?.itemNoteTypes?.[0]?.name === ITEM_NOTE_EDITED;
-    })?.id;
+    const settingId = publicationResults?.[0]?.response?.itemNoteTypes?.find(
+      ({ name }) => name === ITEM_NOTE_EDITED,
+    )?.id;
 
-    ItemNoteTypesConsortiumManager.deleteViaApi({ settingId });
+    ItemNoteTypesConsortiumManager.deleteViaApi({
+      settingId,
+      url: '/item-note-types',
+    });
   };
 
   cy.intercept('GET', '/consortia/*/publications/*/results', (req) => {
@@ -214,7 +216,11 @@ describe('Consortia', () => {
 
 function getPreconditionSteps() {
   const createAndConfigureUser = (flow) => {
-    const cleanup = (userId) => Users.deleteViaApi(userId);
+    const cleanup = (userId) => {
+      cy.withinTenant(Affiliations.College, () => {
+        Users.deleteViaApi(userId);
+      });
+    };
 
     cy.withinTenant(Affiliations.College, () => {
       cy.createTempUser([Permissions.inventoryCRUDItemNoteTypes.gui]).then((userProperties) => flow.set(R.USER, userProperties, cleanup.bind(null, userProperties.userId)));
