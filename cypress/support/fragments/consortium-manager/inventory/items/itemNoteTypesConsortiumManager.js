@@ -1,7 +1,8 @@
 import uuid from 'uuid';
-import { REQUEST_METHOD } from '../../../../constants';
+import { INVENTORY_SETTINGS_SECTION_LABELS, REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
-import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiumManagerApp, { messages } from '../../consortiumManagerApp';
+import deleteCancelReason from '../../modal/delete-cancel-reason';
 
 const id = uuid();
 
@@ -9,6 +10,8 @@ export const typeActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+const ITEM_NOTE_TYPE = 'item note type';
 
 export default {
   createViaApi(type) {
@@ -43,9 +46,27 @@ export default {
   },
 
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Item note types');
+    ConsortiumManagerApp.chooseSecondMenuItem(INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES);
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
+  },
+
+  waitLoadingDeleteModal(typeName) {
+    deleteCancelReason.waitLoadingDeleteModal(ITEM_NOTE_TYPE, typeName);
+  },
+
+  assertSettingIsDisplayed() {
+    ConsortiumManagerApp.verifySelectedSettingIsDisplayed(
+      INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES,
+    );
+  },
+
+  assertCreatedCalloutMessage(typeName, members = 'All') {
+    ConsortiumManagerApp.checkMessage(messages.created(typeName, members));
+  },
+
+  assertDeletedCalloutMessage(typeName) {
+    ConsortiumManagerApp.checkMessage(messages.deleted(ITEM_NOTE_TYPE, typeName));
   },
 };
