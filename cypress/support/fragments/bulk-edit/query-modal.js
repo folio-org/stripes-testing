@@ -229,6 +229,10 @@ export const usersFieldValues = {
   userType: 'User — Type',
   userEmail: 'User — Email',
 };
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
 export const dateTimeOperators = [
   'Select operator',
   'equals',
