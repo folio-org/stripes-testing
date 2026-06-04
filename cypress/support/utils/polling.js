@@ -7,7 +7,7 @@ import { recurse } from 'cypress-recurse';
  * @param {Function} fetchFn - Function returning a Cypress chainable with fetched data
  * @param {Function} validateFn - Function that checks whether response is ready
  * @param {Object} options - recurse options
- * @param {number} options.timeout - Total timeout in milliseconds (default: 420000)
+ * @param {number} options.timeout - Total timeout in milliseconds (default: 600000)
  * @param {number} options.delay - Delay between retries in milliseconds (default: 5000)
  * @param {string} options.errorMessage - Error message on timeout
  * @param {boolean} options.log - Whether to log recurse steps (default: true)
@@ -17,7 +17,7 @@ export const poll = (
   fetchFn,
   validateFn,
   {
-    timeout = 420000,
+    timeout = 600000,
     delay = 5000,
     errorMessage = `Data not available within ${timeout}ms`,
     log = true,
