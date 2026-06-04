@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import { APPLICATION_NAMES, LIST_ASSERTION_MODES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -9,6 +7,7 @@ import ConsortiaControlledVocabularyPaneset, {
 import ConsortiumManagerApp, {
   messages,
   settingsItems,
+  SHARED_SETTING_LIBRARIES,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ItemNoteTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
@@ -23,6 +22,7 @@ import { ExecutionFlowManager } from '../../../../../support/utils';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 const R = {
+  LOCALE: 'locale',
   USER: 'user',
 };
 
@@ -50,6 +50,10 @@ const verifySettingInEachTenant = (settingName, mode = LIST_ASSERTION_MODES.EXIS
   });
 };
 
+const getDateString = (locale) => {
+  return new Intl.DateTimeFormat(locale.locale, { timeZone: locale.timezone }).format(new Date());
+};
+
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
@@ -58,6 +62,7 @@ describe('Consortia', () => {
 
         before('Create C411450 preconditions', () => {
           cy.getAdminToken();
+          cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
           const steps = getPreconditionSteps(); // eslint-disable-line no-use-before-define
 
@@ -74,7 +79,13 @@ describe('Consortia', () => {
           'C411450 User with "Consortium manager: Can share settings to all members" permission is able to add/delete item note type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
           { tags: ['criticalPathECS', 'thunderjet', 'C411450'] },
           () => {
-            const rowDataToCheck = [ITEM_NOTE_1, 'consortium', moment().format('l'), 'All'];
+            const { locale } = flow.ctx();
+            const rowDataToCheck = [
+              ITEM_NOTE_1,
+              'consortium',
+              getDateString(locale),
+              SHARED_SETTING_LIBRARIES,
+            ];
 
             cy.log('<--- STEP 1 --->');
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
@@ -208,19 +219,16 @@ function getPreconditionSteps() {
       .then(() => cy.assignAffiliationToUser(Affiliations.College, flow.get(R.USER).userId))
       .then(() => {
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
           Permissions.inventoryCRUDItemNoteTypes.gui,
         ]);
       })
       .then(() => {
         cy.resetTenant();
-        cy.getAdminToken();
         cy.assignAffiliationToUser(Affiliations.University, flow.get(R.USER).userId);
       })
       .then(() => {
         cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
         cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
           Permissions.inventoryCRUDItemNoteTypes.gui,
         ]);

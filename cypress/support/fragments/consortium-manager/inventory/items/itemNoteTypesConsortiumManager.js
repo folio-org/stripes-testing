@@ -1,7 +1,10 @@
 import uuid from 'uuid';
 import { INVENTORY_SETTINGS_SECTION_LABELS, REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
-import ConsortiumManagerApp, { messages } from '../../consortiumManagerApp';
+import ConsortiumManagerApp, {
+  messages,
+  SHARED_SETTING_LIBRARIES,
+} from '../../consortiumManagerApp';
 import deleteCancelReason from '../../modal/delete-cancel-reason';
 
 const id = uuid();
@@ -35,12 +38,13 @@ export default {
     });
   },
 
-  deleteViaApi(type) {
+  deleteViaApi(type, { failOnStatusCode = false } = {}) {
     cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,
         path: `consortia/${consortiaId}/sharing/settings/${type.settingId}`,
         body: type,
+        failOnStatusCode,
       });
     });
   },
@@ -62,8 +66,12 @@ export default {
     );
   },
 
-  assertCreatedCalloutMessage(typeName, members = 'All') {
+  assertCreatedCalloutMessage(typeName, members = SHARED_SETTING_LIBRARIES) {
     ConsortiumManagerApp.checkMessage(messages.created(typeName, members));
+  },
+
+  assertUpdatedCalloutMessage(typeName, members = SHARED_SETTING_LIBRARIES) {
+    ConsortiumManagerApp.checkMessage(messages.updated(typeName, members));
   },
 
   assertDeletedCalloutMessage(typeName) {
