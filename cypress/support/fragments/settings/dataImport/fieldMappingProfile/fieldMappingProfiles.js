@@ -224,6 +224,7 @@ export default {
     mappingFields = [],
     id = uuid(),
     name,
+    isDeleteProfile = false,
   } = {}) {
     const mappingFieldsNames = mappingFields.map(({ name: fieldName }) => fieldName);
     const updatedMappingFields = mappingDetails[existingRecordType].mappingFields.reduce(
@@ -246,10 +247,12 @@ export default {
         incomingRecordType,
         existingRecordType,
         description: '',
-        mappingDetails: {
-          ...mappingDetails[existingRecordType],
-          mappingFields: updatedMappingFields,
-        },
+        mappingDetails: isDeleteProfile
+          ? {}
+          : {
+            ...mappingDetails[existingRecordType],
+            mappingFields: updatedMappingFields,
+          },
       },
       addedRelations: [],
       deletedRelations: [],
