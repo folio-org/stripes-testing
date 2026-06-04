@@ -496,6 +496,17 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyValueSelectContainsOptions(expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expectedOptions.forEach((option) => {
+        expect(actualOptions, `Value dropdown options for row ${row}`).to.include(option);
+      });
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyFilteredOptionsInValueSelect(searchText, expectedOptions, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
