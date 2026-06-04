@@ -27,7 +27,6 @@ describe('Finance', () => {
   };
   const defaultGroup = { ...Groups.defaultUiGroup };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   let user;
   let location;
@@ -63,7 +62,6 @@ describe('Finance', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);

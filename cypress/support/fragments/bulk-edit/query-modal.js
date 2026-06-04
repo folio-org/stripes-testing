@@ -135,6 +135,7 @@ export const instanceFieldValues = {
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
+  previouslyHeld: 'Instance — Previously held',
   createdDate: 'Instance — Created date',
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
@@ -223,10 +224,18 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userCreatedDate: 'User — User created date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+};
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
+export const organizationFieldValues = {
+  code: 'Organization — Code',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -495,6 +504,17 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyFieldSearchDoesNotFilterAvailableOptions(searchText, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    // Capture the complete field list before entering symbol search text.
+    cy.then(() => SelectionList().optionList()).then((allFieldOptionsBeforeSearch) => {
+      cy.do(SelectionList().filter(searchText));
+      cy.expect(SelectionList().has({ optionList: allFieldOptionsBeforeSearch }));
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyAllAvailableFieldOptions(expectedFields, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
     cy.do(targetSelection.open());
@@ -538,9 +558,7 @@ export default {
 
   selectDayFromCalendar(date) {
     // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
-    const day = date.split('/')[1];
-
-    cy.do(Calendar().clickDay(day));
+    cy.get(`[data-test-date="${date}"]`).click();
   },
 
   verifySelectedDateInCalendar(date, row = 0) {
@@ -582,6 +600,13 @@ export default {
     cy.expect(
       RepeatableFieldItem({ index: row }).find(valueSelection).has({ singleValue: expectedValue }),
     );
+  },
+
+  verifySearchableFilterExists(row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.expect(SelectionList({ placeholder: 'Filter options list' }).exists());
+    this.closeOpenedSelection();
   },
 
   selectDuplicateOptionByText(value, row = 0, optionIndex = 0) {
@@ -861,6 +886,10 @@ export default {
 
   clickRunQuery() {
     cy.do(runQueryButton.click());
+  },
+
+  clickOrganizationLookup() {
+    cy.do(Button('Organization look-up').click());
   },
 
   verifyClosed() {
