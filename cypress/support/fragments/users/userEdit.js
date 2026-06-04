@@ -152,10 +152,15 @@ const userTypeChangeModalText =
 
 let totalRows;
 
-const clickSetExpirationDate = () => {
-  cy.expect(resetExpirationDateModal.exists());
-  cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
-  cy.expect(resetExpirationDateModal.absent());
+// Expiration date modal appears for only some patron groups based on their settings,
+// so we need to check if it appears and click "Set" if it does.
+const clickSetExpirationDateIfModalExists = () => {
+  cy.get('body').then(($body) => {
+    if ($body.find('#recalculate_expirationdate_modal').length > 0) {
+      cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
+      cy.expect(resetExpirationDateModal.absent());
+    }
+  });
 };
 
 const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
@@ -471,13 +476,10 @@ export default {
     cy.do(statusSelect.choose(status));
   },
 
-  changePatronGroup(patronGroup, { shouldSetExpirationDate = false } = {}) {
+  changePatronGroup(patronGroup) {
     cy.do(addressSelect.choose(patronGroup));
     cy.wait(500);
-    // Expiration date modal appears for only some patron groups based on their settings, so we need to check if it appears and click "Set" if it does
-    if (shouldSetExpirationDate) {
-      clickSetExpirationDate();
-    }
+    clickSetExpirationDateIfModalExists();
   },
 
   searchForPermission(permission) {
@@ -1219,7 +1221,7 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi(userData, patronGroup, { shouldSetExpirationDate = false } = {}) {
+  enterValidValueToCreateViaUi(userData, patronGroup) {
     cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
     cy.do([
       lastNameField.fillIn(userData.personal.lastName),
@@ -1227,7 +1229,7 @@ export default {
       usernameField.fillIn(userData.username),
       emailField.fillIn(userData.personal.email),
     ]);
-    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    this.changePatronGroup(patronGroup);
     cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
@@ -1306,18 +1308,11 @@ export default {
     ]);
   },
 
-  fillRequiredFields(
-    userLastName,
-    patronGroup,
-    email,
-    userType = null,
-    userName = null,
-    { shouldSetExpirationDate = false } = {},
-  ) {
+  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
     if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
     cy.do(lastNameField.fillIn(userLastName));
-    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    this.changePatronGroup(patronGroup);
     cy.do(emailField.fillIn(email));
     cy.wait(2000);
   },
