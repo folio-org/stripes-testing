@@ -1,4 +1,5 @@
 import { including } from '@interactors/html';
+import { CUSTOM_FIELD_ENTITY_TYPES } from '../../../constants/constants';
 import {
   Accordion,
   Button,
@@ -428,6 +429,22 @@ export default {
   },
 
   // API methods
+
+  getCustomFieldsViaApi(entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.getCustomFieldsViaApi(entityType);
+  },
+
+  createCustomFieldsViaApi(customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.createCustomFieldsViaApi(customFields, entityType);
+  },
+
+  updateCustomFieldsViaApi(customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.updateCustomFieldsViaApi(customFields, entityType);
+  },
+
+  deleteCustomFieldsViaApi({ ids, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER }) {
+    return cy.deleteCustomFieldsViaApi({ ids, entityType });
+  },
 
   getCustomFieldsConfigViaApi() {
     return cy

@@ -1,3 +1,3 @@
 export default function generateItemBarcode() {
-  return (Number(new Date()) - Math.floor(Math.random() * 100)).toString();
+  return (Number(new Date()) - Math.floor(Math.random() * 10000)).toString();
 }
