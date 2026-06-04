@@ -37,6 +37,7 @@ describe('Orders', () => {
     negativeRate: '-5',
     positiveRate: '3',
     warningMessage: 'Amount must be a positive number',
+    userLimit: 'unlimited',
   };
 
   const polData = {
@@ -136,6 +137,12 @@ describe('Orders', () => {
       Funds.deleteFundViaApi(testData.fund.id);
       Ledgers.deleteLedgerViaApi(testData.ledger.id);
       FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+        testData.location.institutionId,
+        testData.location.campusId,
+        testData.location.libraryId,
+        testData.location.id,
+      );
       Users.deleteViaApi(testData.user.userId);
     });
   });
@@ -153,6 +160,7 @@ describe('Orders', () => {
 
       // Step 2: Fill required PO line fields (Electronic resource format)
       OrderLineEditForm.fillOrderLineFields(polData);
+      cy.get('[name="eresource.userLimit"]').type(testData.userLimit);
 
       // Step 3: Select unsupported ECB currency (e.g. GEL).
       OrderLines.selectCurrency(testData.currency);
@@ -193,6 +201,9 @@ describe('Orders', () => {
           { key: 'Exchange rate', value: testData.positiveRate },
         ],
       });
+      OrderLineDetails.checkFieldsConditions([
+        { label: 'User limit', conditions: { value: testData.userLimit } },
+      ]);
     },
   );
 });
