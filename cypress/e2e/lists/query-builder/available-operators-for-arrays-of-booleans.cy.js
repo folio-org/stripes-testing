@@ -10,7 +10,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Holdings';
 const listName = `C958460_List_${getRandomPostfix()}`;
 let user;
 
@@ -41,7 +40,7 @@ describe('Lists', () => {
         // Step 1: Create new list with Holdings record type
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.holdings);
         Lists.buildQuery();
 
         // Step 2: Verify Build query form opens

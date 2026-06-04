@@ -224,10 +224,18 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userCreatedDate: 'User — User created date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+};
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
+export const organizationFieldValues = {
+  code: 'Organization — Code',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -878,6 +886,10 @@ export default {
 
   clickRunQuery() {
     cy.do(runQueryButton.click());
+  },
+
+  clickOrganizationLookup() {
+    cy.do(Button('Organization look-up').click());
   },
 
   verifyClosed() {
