@@ -308,14 +308,33 @@ export default {
     cy.expect([openedFeesFinesLink.exists(), closedFeesFinesLink.exists()]);
   },
 
+  verifyFeesFinesLinksAbsent() {
+    cy.expect([openedFeesFinesLink.absent(), closedFeesFinesLink.absent()]);
+  },
+
   verifyLoansLinksExist() {
     this.openAccordion('Loans');
     cy.expect(currentLoansLink.exists());
   },
 
+  verifyLoansLinksAbsent() {
+    cy.expect(currentLoansLink.absent());
+  },
+
   verifyRequestsInfoExists() {
     this.openAccordion('Requests');
     cy.expect([openedRequestsLink.exists(), closedRequestsLink.exists()]);
+  },
+
+  verifyRequestsInfoAbsent() {
+    cy.expect([openedRequestsLink.absent(), closedRequestsLink.absent()]);
+  },
+
+  verifyCustomFieldsPresentInAccordion(accordionLabel, customFields) {
+    this.openAccordion(accordionLabel);
+    [].concat(customFields).forEach(({ name }) => {
+      cy.expect(getAccordionByLabel(accordionLabel).find(KeyValue(name)).exists());
+    });
   },
 
   verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues, { isAccordionOpen } = {}) {
