@@ -10,6 +10,7 @@ import {
   HTML,
   PaneContent,
   Callout,
+  calloutTypes,
 } from '../../../../interactors';
 
 const actionsButton = PaneHeader({ id: 'paneHeadermarc-view-pane' }).find(Button('Actions'));
@@ -21,6 +22,7 @@ const confirmDeleteButton = deleteConfirmModal.find(Button('Delete'));
 const confirmCancelButton = deleteConfirmModal.find(Button('Cancel'));
 const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchResultPane = Section({ id: 'marc-view-pane' });
+const getDeleteErrorCalloutText = (heading) => `Unable to delete MARC authority record  ${heading} . Please try again. `;
 
 export const getDeleteModalMessage = (heading) => `Are you sure you want to permanently delete the authority record:  ${heading} ?`;
 
@@ -94,6 +96,12 @@ export default {
           ),
         )
         .exists(),
+    );
+  },
+
+  checkDeleteErrorCallout(heading) {
+    cy.expect(
+      Callout(getDeleteErrorCalloutText(heading), { type: calloutTypes.error }).exists(),
     );
   },
 };

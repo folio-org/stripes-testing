@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, Link } from '@interactors/html';
 import {
   and,
   Pane,
@@ -15,7 +15,10 @@ import {
   KeyValue,
   MultiColumnListRow,
 } from '../../../../interactors';
+import FiltersPaneHelper from '../filtersPane';
+import MCLHelper from '../multiColumnList';
 import ExportDetails from './exportDetails';
+import { EXPORT_MANAGER_JOBS_FILTER_LABELS } from '../../constants';
 
 const searchPane = Pane('Search & filter');
 const searchButton = Button({ type: 'submit' });
@@ -117,6 +120,7 @@ export default {
   },
   waitForJobs() {
     cy.expect(MultiColumnList().exists());
+    MCLHelper.waitLoadingComplete(MultiColumnList());
   },
   checkDefaultView() {
     this.checkTabHighlighted({ tabName: 'All' });
@@ -176,6 +180,18 @@ export default {
     ExportDetails.waitLoading();
 
     return ExportDetails;
+  },
+
+  clickJobLinkByIntegrationInList(integrationName, { isEdiJobsList = false } = {}) {
+    const jobsList = isEdiJobsList ? exportEdiJobsList : exportJobsList;
+
+    cy.do(
+      jobsList
+        .find(MultiColumnListRow({ isContainer: true, content: including(integrationName) }))
+        .find(MultiColumnListCell({ column: 'Job ID' }))
+        .find(Link.selector('a')())
+        .click(),
+    );
   },
 
   closeExportJobPane() {
@@ -250,6 +266,14 @@ export default {
   searchByCsvOrders() {
     waitClick();
     this.checkFilterOption({ filterName: 'CSV orders export' });
+  },
+
+  filterByCheckboxes(filterLabel, checkboxLabels) {
+    FiltersPaneHelper.filterByCheckboxes(searchPane, filterLabel, checkboxLabels);
+  },
+
+  filterByIntegrationTypes(types) {
+    this.filterByCheckboxes(EXPORT_MANAGER_JOBS_FILTER_LABELS.INTEGRATION_TYPE, types);
   },
 
   checkFilterOption({ filterName, resetAll = false }) {
@@ -365,15 +389,23 @@ export default {
     cy.expect(userSearchResults.has({ text: including(username) }));
   },
 
+  selectUserAsSourceInSearchResult(username) {
+    cy.do(
+      userSearchResults
+        .find(MultiColumnListCell({ column: 'Username', content: including(username) }))
+        .click(),
+    );
+  },
+
   selectOrganizationsSearch() {
     cy.do(searchPane.find(Button('Organizations')).click());
   },
 
-  selectExportMethod(integarationName) {
+  selectExportMethod(integrationName) {
     cy.do([
       Button({ id: 'accordion-toggle-button-exportConfigId' }).click(),
       exportMethodDropdownButton.click(),
-      SelectionOption(integarationName).click(),
+      SelectionOption(integrationName).click(),
     ]);
   },
 

@@ -136,6 +136,7 @@ describe(
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
+          cy.wait(2000);
         });
       });
 
