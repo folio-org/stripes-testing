@@ -207,10 +207,12 @@ describe('MARC', () => {
                 MarcAuthorities.searchBeats(authorityHeadingCollege);
                 MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCollege, '');
                 MarcAuthority.verifyLocalAuthorityDetailsHeading(authorityHeadingCollege);
+                MarcAuthority.closeAuthorityViewPane();
 
                 MarcAuthorities.searchBeats(authorityHeadingCentral);
                 MarcAuthorities.verifyNumberOfTitlesForRowWithValue(authorityHeadingCentral, '1');
                 MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthority.closeAuthorityViewPane();
 
                 MarcAuthorities.clickNumberOfTitlesByHeading(authorityHeadingCentral);
                 InventoryInstance.waitInstanceRecordViewOpened();
@@ -232,6 +234,7 @@ describe('MARC', () => {
                 );
                 MarcAuthorities.waitLoading();
                 MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthority.closeAuthorityViewPane();
 
                 cy.visit(`inventory/view/${createdInstanceId}`);
                 InventoryInstance.waitLoading();
@@ -242,6 +245,7 @@ describe('MARC', () => {
                 );
                 MarcAuthorities.waitLoading();
                 MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthority.closeAuthorityViewPane();
 
                 cy.visit(`inventory/view/${createdInstanceId}`);
                 InventoryInstance.waitLoading();
@@ -253,6 +257,7 @@ describe('MARC', () => {
                 InventoryViewSource.clickViewMarcAuthorityIcon();
                 MarcAuthorities.waitLoading();
                 MarcAuthority.verifySharedAuthorityDetailsHeading(authorityHeadingCentral);
+                MarcAuthority.closeAuthorityViewPane();
 
                 cy.visit(`inventory/view/${createdInstanceId}`);
                 InventoryInstance.waitLoading();

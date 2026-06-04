@@ -3,6 +3,7 @@ import {
   LOCATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   POLINE_DETAILS_FIELDS,
   RECORD_STATUSES,
 } from '../../support/constants';
@@ -45,11 +46,11 @@ describe('Orders', () => {
               },
               orderFormat: 'P/E Mix',
               eresource: {
-                createInventory: 'Instance, Holding',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                 accessProvider: organization.id,
               },
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypeResp.id,
               },
               locations: [

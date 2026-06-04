@@ -42,7 +42,8 @@ describe('Citation: check notes MARC codes', () => {
     workTitle: testData.uniqueWorkTitle,
     instanceTitle: testData.uniqueInstanceTitle,
     inventoryLangNote: 'French',
-    inventoryBibNote: 'Includes bibliographical references (p. 245–260) and index, Bibliography: pages 180–195',
+    inventoryBibNote:
+      'Includes bibliographical references (p. 245–260) and index, Bibliography: pages 180–195',
     note1: 'Winner of the International Literary Prize for Contemporary Fiction, 2022.',
     note2: 'Contains references and suggested further reading at the end of each chapter.',
     note3: 'Text in English with summaries in French and Spanish.',
@@ -54,11 +55,7 @@ describe('Citation: check notes MARC codes', () => {
     notesSection: 'Notes about the Work',
     noteField: 'Note',
     noteTypeField: 'Note type',
-    noteTypes: [
-      'award (award)',
-      'bibliography (biblio)',
-      'language (lang)',
-    ],
+    noteTypes: ['award (award)', 'bibliography (biblio)', 'language (lang)'],
     awardTypeValue: 'award (award)',
     awardTypeDisplay: 'award',
     biblioTypeValue: 'bibliography (biblio)',
@@ -167,8 +164,15 @@ describe('Citation: check notes MARC codes', () => {
       Marigold.clickEditWorkFromSearch();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.checkTextValueOnField('', fieldData.noteField);
-      EditResource.checkSimpleFieldDropdownContainsOptions(fieldData.noteTypeField, fieldData.noteTypes);
-      EditResource.setValueForSectionField(resourceData.note1, fieldData.noteField, fieldData.notesSection);
+      EditResource.checkSimpleFieldDropdownContainsOptions(
+        fieldData.noteTypeField,
+        fieldData.noteTypes,
+      );
+      EditResource.setValueForSectionField(
+        resourceData.note1,
+        fieldData.noteField,
+        fieldData.notesSection,
+      );
       EditResource.setValueForSectionSimpleField(fieldData.awardTypeValue, fieldData.noteTypeField);
       EditResource.saveAndClose();
 
@@ -184,21 +188,63 @@ describe('Citation: check notes MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.clickRepeatGroup(fieldData.notesSection);
       EditResource.clickRepeatGroup(fieldData.notesSection);
-      EditResource.setValueForSectionField(resourceData.note2, fieldData.noteField, fieldData.notesSection, 2);
-      EditResource.setValueForSectionSimpleField(fieldData.biblioTypeValue, fieldData.noteTypeField, 2);
-      EditResource.setValueForSectionField(resourceData.note3, fieldData.noteField, fieldData.notesSection, 3);
-      EditResource.setValueForSectionSimpleField(fieldData.langTypeValue, fieldData.noteTypeField, 3);
+      EditResource.setValueForSectionField(
+        resourceData.note2,
+        fieldData.noteField,
+        fieldData.notesSection,
+        2,
+      );
+      EditResource.setValueForSectionSimpleField(
+        fieldData.biblioTypeValue,
+        fieldData.noteTypeField,
+        2,
+      );
+      EditResource.setValueForSectionField(
+        resourceData.note3,
+        fieldData.noteField,
+        fieldData.notesSection,
+        3,
+      );
+      EditResource.setValueForSectionSimpleField(
+        fieldData.langTypeValue,
+        fieldData.noteTypeField,
+        3,
+      );
       EditResource.saveAndKeepEditing();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note1);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.awardTypeDisplay);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note2);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.biblioTypeDisplay);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note3);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteTypeField, fieldData.langTypeDisplay);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteField,
+        resourceData.note1,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteTypeField,
+        fieldData.awardTypeDisplay,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteField,
+        resourceData.note2,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteTypeField,
+        fieldData.biblioTypeDisplay,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteField,
+        resourceData.note3,
+      );
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteTypeField,
+        fieldData.langTypeDisplay,
+      );
 
       // Verify MARC
       EditResource.viewMarc();
@@ -219,7 +265,11 @@ describe('Citation: check notes MARC codes', () => {
       // Verify MARC
       EditResource.editInstanceFormViaActions();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
-      EditResource.checkPreviewSectionContainsField(fieldData.notesSection, fieldData.noteField, resourceData.note1);
+      EditResource.checkPreviewSectionContainsField(
+        fieldData.notesSection,
+        fieldData.noteField,
+        resourceData.note1,
+      );
       EditResource.viewMarc();
       ViewMarc.waitLoading();
       ViewMarc.checkMarcFieldContainsData('500', `$a ${resourceData.note1}`);
@@ -229,8 +279,16 @@ describe('Citation: check notes MARC codes', () => {
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
       EditResource.clickEditWork();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
-      EditResource.setValueForSectionSimpleField(fieldData.awardTypeValue, fieldData.noteTypeField, 1);
-      EditResource.setValueForSectionSimpleField(fieldData.biblioTypeValue, fieldData.noteTypeField, 1);
+      EditResource.setValueForSectionSimpleField(
+        fieldData.awardTypeValue,
+        fieldData.noteTypeField,
+        1,
+      );
+      EditResource.setValueForSectionSimpleField(
+        fieldData.biblioTypeValue,
+        fieldData.noteTypeField,
+        1,
+      );
       EditResource.saveAndKeepEditing();
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
       EditResource.editInstanceFormViaActions();
@@ -239,7 +297,10 @@ describe('Citation: check notes MARC codes', () => {
       // Verify MARC
       EditResource.viewMarc();
       ViewMarc.waitLoading();
-      ViewMarc.checkMarcFieldContainsData('504', `$a ${resourceData.note1} $a ${resourceData.note2}`);
+      ViewMarc.checkMarcFieldContainsData(
+        '504',
+        `$a ${resourceData.note1} $a ${resourceData.note2}`,
+      );
       ViewMarc.checkMarcFieldContainsData('586', `$a ${resourceData.note1}`);
     },
   );

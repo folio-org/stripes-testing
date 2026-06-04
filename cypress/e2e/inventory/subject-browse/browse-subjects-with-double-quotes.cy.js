@@ -31,6 +31,7 @@ describe('Inventory', () => {
 
     before('Creating user and test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C360948');
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
         DataImport.uploadFileViaApi(

@@ -2,6 +2,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import { TransactionDetails } from '../../support/fragments/finance';
@@ -112,7 +113,7 @@ describe('Orders', () => {
                             ],
                             acquisitionMethod: params.body.acquisitionMethods[0].id,
                             physical: {
-                              createInventory: 'Instance, Holding, Item',
+                              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                               materialType: mtypes.body.id,
                               materialSupplier: responseOrganizations,
                               volumes: [],

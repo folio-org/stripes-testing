@@ -159,7 +159,7 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
           Orders.deleteOrderViaApi(order[0].id);
         });

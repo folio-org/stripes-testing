@@ -580,9 +580,9 @@ export default {
       .get('#paneHeaderdata-export-logs-pane-subtitle')
       .invoke('text')
       .then((text) => {
-        const match = text.match(/(\d+)\srecord[s]?\sfound/);
+        const match = text.match(/([\d,]+)\srecord[s]?\sfound/);
 
-        return match ? parseInt(match[1], 10) : 0;
+        return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
       });
   },
 

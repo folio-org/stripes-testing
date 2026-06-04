@@ -126,7 +126,7 @@ describe('MARC', () => {
           // Step 4: Back to "MARC authority" record
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthorities.waitLoading();
-          MarcAuthorities.searchByParameter('Keyword', testData.createdRecordId);
+          MarcAuthorities.searchByParameter('Keyword', testData.authorityHeading);
           MarcAuthorities.selectAuthorityById(testData.createdRecordId);
           MarcAuthority.waitLoading();
           cy.reload();

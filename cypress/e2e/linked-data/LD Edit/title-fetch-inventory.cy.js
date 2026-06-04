@@ -22,7 +22,8 @@ import {
 let user;
 
 describe('Citation: check long title, local vocabularies, inventory view', () => {
-  const longTitle = 'Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading.';
+  const longTitle =
+    'Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading.';
   const testData = {
     workId: null,
     instanceId: null,
@@ -121,7 +122,11 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       // Verify work preview is open and contains work title
       EditResource.checkPreviewOpen();
       EditResource.checkWorkPreviewLeftOfInstanceEditor();
-      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.workTitle, testData.uniqueWorkTitle);
+      EditResource.checkPreviewSectionContainsField(
+        fieldNames.titleSection,
+        fieldNames.workTitle,
+        testData.uniqueWorkTitle,
+      );
 
       // Verify instance editor
       EditResource.checkTextValueOnField(testData.uniqueInstanceTitle, fieldNames.instanceTitle);
@@ -144,7 +149,11 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
       EditResource.checkSaveButtonsDisabled();
       EditResource.checkInstancePreviewRightOfWorkEditor();
       EditResource.checkPreviewOpen();
-      EditResource.checkPreviewSectionContainsField(fieldNames.titleSection, fieldNames.instanceTitle, testData.uniqueInstanceTitle);
+      EditResource.checkPreviewSectionContainsField(
+        fieldNames.titleSection,
+        fieldNames.instanceTitle,
+        testData.uniqueInstanceTitle,
+      );
       EditResource.checkWorkActionsPlacement();
     },
   );

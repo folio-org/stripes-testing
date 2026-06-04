@@ -153,9 +153,13 @@ describe('MARC', () => {
           tagSequence.forEach(({ from, to }) => {
             cy.wait(1000);
             QuickMarcEditor.updateExistingTagName(from, to);
+            QuickMarcEditor.checkTagAbsent(from);
+            QuickMarcEditor.checkTagExists(to);
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
             QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.checkAfterSaveAndKeepEditing();
             QuickMarcEditor.closeAllCallouts();
+            QuickMarcEditor.checkButtonsDisabled();
           });
 
           // Step 16-17: Change 155 to 101

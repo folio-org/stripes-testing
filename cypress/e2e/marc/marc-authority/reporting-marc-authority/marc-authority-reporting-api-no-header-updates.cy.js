@@ -26,7 +26,7 @@ const testData = {
   sourceFileName: 'LC Name Authority file (LCNAF)',
 };
 
-const twoPreviousDay = DateTools.getTwoPreviousDaysDateForFiscalYear();
+const twoFutureDay = DateTools.getTwoFutureDaysDateForFiscalYear();
 
 const marcFiles = [
   {
@@ -144,7 +144,7 @@ describe('MARC', () => {
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
-          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, twoPreviousDay);
+          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoFutureDay, twoFutureDay);
         },
       );
     });

@@ -83,8 +83,8 @@ export default {
     return cy.get('[class*="modal"]').find('[class*="headline"]').invoke('text');
   },
 
-  verifyTimestampFormat(timestamp) {
-    expect(timestamp).to.match(changesModalHeaderDefaultRegexp);
+  verifyTimestampFormat(timestamp, regexp = changesModalHeaderDefaultRegexp) {
+    expect(timestamp).to.match(regexp);
   },
 
   verifyVersionHistoryPane(versionsCount = 1, loadMore = false, totalVersionsCount) {
