@@ -9,7 +9,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Instances';
 const listName = `AT_C651430_List_${getRandomPostfix()}`;
 const testData = {
   randomUuid: uuid(),
@@ -43,7 +42,7 @@ describe('Lists', () => {
         // Step 1: Create new list with Instances record type and open Build query form
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.instances);
         Lists.buildQuery();
         QueryModal.verify();
         QueryModal.verifyQueryTextboxReadOnly();

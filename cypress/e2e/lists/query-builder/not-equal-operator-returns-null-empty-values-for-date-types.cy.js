@@ -10,7 +10,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Instances';
 const listName = `AT_C740217_List_${getRandomPostfix()}`;
 const titlePrefix = 'AT_C740217_';
 const testData = {
@@ -85,7 +84,7 @@ describe('Lists', () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.instances);
         Lists.buildQuery();
         QueryModal.verify();
 

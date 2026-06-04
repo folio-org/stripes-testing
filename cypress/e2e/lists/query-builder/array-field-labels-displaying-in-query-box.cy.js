@@ -8,7 +8,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Instances';
 const listName = `AT_C651465_List_${getRandomPostfix()}`;
 const testData = {
   statisticalCodes: [],
@@ -56,8 +55,8 @@ describe('Lists', () => {
         // Step 1: Create new list with Instances record type
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
-        Lists.verifySelectedOptionsInRecordTypeDropdown(recordType);
+        Lists.selectRecordType(Lists.recordTypes.instances);
+        Lists.verifySelectedOptionsInRecordTypeDropdown(Lists.recordTypes.instances);
         Lists.verifySaveButtonIsActive();
         Lists.verifyCancelButtonIsActive();
 

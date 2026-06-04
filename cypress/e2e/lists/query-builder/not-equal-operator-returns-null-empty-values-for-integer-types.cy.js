@@ -24,7 +24,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Transactions';
 const listName = `AT_C740220_List_${getRandomPostfix()}`;
 const testData = {
   queryValue: '100',
@@ -221,7 +220,7 @@ describe('Lists', () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();
         Lists.setName(listName);
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.transactions);
         Lists.buildQuery();
         QueryModal.verify();
 

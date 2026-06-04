@@ -74,6 +74,14 @@ const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
+  recordTypes: {
+    users: 'Users',
+    instances: 'Instances',
+    holdings: 'Holdings',
+    transactions: 'Transactions',
+    items: 'Items',
+    organizations: 'Organizations',
+  },
 };
 
 const UI = {

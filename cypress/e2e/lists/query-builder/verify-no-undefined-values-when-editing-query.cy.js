@@ -10,7 +10,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const recordType = 'Instances';
 const listName = `C1259783_List_${getRandomPostfix()}`;
 const testData = {
   instanceTitle: `AT_C1259783_FolioInstance_${getRandomPostfix()}`,
@@ -68,7 +67,7 @@ describe('Lists', () => {
         Lists.openNewListPane();
         Lists.setName(listName);
         Lists.setDescription('Test list for verifying no undefined values');
-        Lists.selectRecordType(recordType);
+        Lists.selectRecordType(Lists.recordTypes.instances);
         Lists.buildQuery();
 
         // Step 2: Configure query - Instance Languages equals English AND Instance UUID equals test instance
