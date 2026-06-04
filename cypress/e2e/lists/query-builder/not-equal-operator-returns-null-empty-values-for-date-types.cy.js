@@ -103,14 +103,11 @@ describe('Lists', () => {
         QueryModal.runQueryDisabled(false);
 
         // Step 3: Verify "Instance — Cataloged date" column contains both date values and empty values
-        // Verify at least one row with filled cataloged date
         QueryModal.verifyMatchedRecordsIncludesByIdentifier(
           testData.instanceWithDate.title,
           instanceFieldValues.catalogedDate,
           '2024',
         );
-
-        // Verify at least one row with empty cataloged date (displayed as "-")
         QueryModal.verifyMatchedRecordsIncludesByIdentifier(
           testData.instanceWithoutDate.title,
           instanceFieldValues.catalogedDate,

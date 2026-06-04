@@ -107,7 +107,6 @@ describe('Lists', () => {
         QueryModal.runQueryDisabled(false);
 
         // Step 3: Verify "User — Barcode" column contains both barcode values and empty values
-        // Verify at least one row with filled barcode
         QueryModal.clickShowColumnsButton();
         QueryModal.clickCheckboxInShowColumns(usersFieldValues.lastName);
         QueryModal.verifyMatchedRecordsIncludesByIdentifier(
@@ -115,8 +114,6 @@ describe('Lists', () => {
           usersFieldValues.userBarcode,
           testData.userWithBarcode.barcode,
         );
-
-        // Verify at least one row with empty barcode (displayed as "")
         QueryModal.verifyMatchedRecordsIncludesByIdentifier(
           testData.userWithoutBarcode.username,
           usersFieldValues.userBarcode,
