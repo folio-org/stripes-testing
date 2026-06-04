@@ -30,7 +30,7 @@ Cypress.Commands.add(
       moduleVersionPromise = cy.getModUsersVersion();
     }
 
-    return cy.getCustomFieldsViaApi(entityType).then((response) => {
+    return cy.getCustomFieldsViaApi().then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         return cy.okapiRequest({
           path: 'custom-fields',
@@ -56,7 +56,7 @@ Cypress.Commands.add(
       moduleVersionPromise = cy.getModUsersVersion();
     }
 
-    return cy.getCustomFieldsViaApi(entityType).then((response) => {
+    return cy.getCustomFieldsViaApi().then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         const createdCustomFields = [];
 
