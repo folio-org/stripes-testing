@@ -33,18 +33,6 @@ const getSortedValues = (
   return direction === SORT_DIRECTIONS.DESCENDING ? sortedValues.reverse() : sortedValues;
 };
 
-const areColumnValuesSorted = (
-  values,
-  direction,
-  getSortableValue = defaultGetSortableValue,
-  comparator = defaultComparator,
-) => {
-  const sortableValues = values.map(getSortableValue);
-  const expectedValues = getSortedValues(sortableValues, direction, comparator);
-
-  return Cypress._.isEqual(sortableValues, expectedValues);
-};
-
 const scrollHeaderIntoView = (listInteractor, column) => {
   cy.do(listInteractor.scrollHeaderIntoView(column));
 };
@@ -142,7 +130,7 @@ const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor
  * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
  * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
- * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesSorted
+ * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>, filterValues?: Function } assertColumnValuesSorted
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
  * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
@@ -226,10 +214,18 @@ const api = {
       normalizeValue = defaultNormalizeValue,
       getSortableValue = defaultGetSortableValue,
       comparator = defaultComparator,
+      filterValues = null,
     } = options;
 
-    this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
-      expect(areColumnValuesSorted(values, direction, getSortableValue, comparator)).to.equal(true);
+    this.getColumnValues(listInteractor, column, { normalizeValue }).then((allValues) => {
+      const values =
+        typeof filterValues === 'function' ? allValues.filter(filterValues) : allValues;
+      const sortableValues = values.map(getSortableValue);
+      const expectedValues = getSortedValues(sortableValues, direction, comparator);
+      expect(
+        sortableValues,
+        `Column "${column}" values are not sorted in ${direction} order`,
+      ).to.deep.equal(expectedValues);
     });
   },
 
@@ -240,12 +236,15 @@ const api = {
       comparator = defaultComparator,
     } = options;
     return this.getColumnValues(listInteractor, column, { normalizeValue }).then((values) => {
+      const sortableValues = values.map(getSortableValue);
       expect(
-        areColumnValuesSorted(values, SORT_DIRECTIONS.ASCENDING, getSortableValue, comparator),
-      ).to.equal(false);
+        sortableValues,
+        `Column "${column}" values should not be sorted in ${SORT_DIRECTIONS.ASCENDING} order`,
+      ).to.not.deep.equal(getSortedValues(sortableValues, SORT_DIRECTIONS.ASCENDING, comparator));
       expect(
-        areColumnValuesSorted(values, SORT_DIRECTIONS.DESCENDING, getSortableValue, comparator),
-      ).to.equal(false);
+        sortableValues,
+        `Column "${column}" values should not be sorted in ${SORT_DIRECTIONS.DESCENDING} order`,
+      ).to.not.deep.equal(getSortedValues(sortableValues, SORT_DIRECTIONS.DESCENDING, comparator));
     });
   },
 
