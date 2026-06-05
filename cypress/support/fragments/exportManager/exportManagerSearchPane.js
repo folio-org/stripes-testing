@@ -372,9 +372,14 @@ export default {
   },
 
   searchBySourceUserName(username) {
+    cy.expect(sourceAccordion.exists());
+    cy.do(sourceAccordion.clickHeader());
+
+    const findUserBtn = sourceAccordion.find(Button({ id: 'undefined-button' }));
+
+    cy.expect(findUserBtn.exists());
     cy.do([
-      sourceAccordion.clickHeader(),
-      sourceAccordion.find(Button({ id: 'undefined-button' })).click(),
+      findUserBtn.click(),
       Modal('Select User').find(TextField()).fillIn(username),
       searchButton.click(),
     ]);
