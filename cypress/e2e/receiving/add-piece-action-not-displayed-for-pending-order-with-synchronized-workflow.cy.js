@@ -23,46 +23,64 @@ describe('Receiving', () => {
   before('Create test data', () => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(testData.organization).then(() => {
-      testData.orderLinePhysical = {
-        ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
-        orderFormat: 'Physical Resource',
-        physical: {
-          createInventory: 'Instance, Holding, Item',
-          materialSupplier: testData.organization.id,
-          volumes: [],
-        },
-      };
-      testData.orderLineElectronic = {
-        ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
-        orderFormat: 'Electronic Resource',
-        cost: {
-          listUnitPriceElectronic: 1.0,
-          currency: 'USD',
-          discountType: 'percentage',
-          quantityElectronic: 1,
-          poLineEstimatedPrice: 1.0,
-        },
-        eresource: {
-          activated: false,
-          createInventory: 'Instance, Holding',
-          trial: false,
-          accessProvider: testData.organization.id,
-        },
-        locations: [],
-      };
+      cy.getLocations({ limit: 1 }).then((location) => {
+        cy.getDefaultMaterialType().then((materialType) => {
+          testData.orderLinePhysical = {
+            ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
+            orderFormat: 'Physical Resource',
+            physical: {
+              createInventory: 'Instance, Holding, Item',
+              materialSupplier: testData.organization.id,
+              materialType: materialType.id,
+              volumes: [],
+            },
+            locations: [
+              {
+                locationId: location.id,
+                quantity: 1,
+                quantityPhysical: 1,
+              },
+            ],
+          };
+          testData.orderLineElectronic = {
+            ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
+            orderFormat: 'Electronic Resource',
+            cost: {
+              listUnitPriceElectronic: 1.0,
+              currency: 'USD',
+              discountType: 'percentage',
+              quantityElectronic: 1,
+              poLineEstimatedPrice: 1.0,
+            },
+            eresource: {
+              activated: false,
+              createInventory: 'Instance, Holding',
+              trial: false,
+              accessProvider: testData.organization.id,
+            },
+            locations: [
+              {
+                locationId: location.id,
+                quantity: 1,
+                quantityElectronic: 1,
+              },
+            ],
+          };
 
-      Orders.createOrderWithOrderLineViaApi(
-        NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-        testData.orderLinePhysical,
-      ).then((order) => {
-        testData.orderPhysical = order;
-      });
+          Orders.createOrderWithOrderLineViaApi(
+            NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+            testData.orderLinePhysical,
+          ).then((order) => {
+            testData.orderPhysical = order;
+          });
 
-      Orders.createOrderWithOrderLineViaApi(
-        NewOrder.getDefaultOngoingOrder({ vendorId: testData.organization.id }),
-        testData.orderLineElectronic,
-      ).then((order) => {
-        testData.orderElectronic = order;
+          Orders.createOrderWithOrderLineViaApi(
+            NewOrder.getDefaultOngoingOrder({ vendorId: testData.organization.id }),
+            testData.orderLineElectronic,
+          ).then((order) => {
+            testData.orderElectronic = order;
+          });
+        });
       });
     });
 
