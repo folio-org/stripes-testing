@@ -765,6 +765,10 @@ export default {
       .and('have.text', ...booleanValues);
   },
 
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
     cy.expect([
       RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
