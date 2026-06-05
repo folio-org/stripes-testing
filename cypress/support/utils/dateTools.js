@@ -270,6 +270,12 @@ export default {
     return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
   },
 
+  getTwoFutureDaysDateForFiscalYear: () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    return `${d.getFullYear()}-${padWithZero(d.getMonth() + 1)}-${padWithZero(d.getDate())}`;
+  },
+
   getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     let day = currentDate.getDate() - 2;
