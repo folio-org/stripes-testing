@@ -132,6 +132,7 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
@@ -236,6 +237,10 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Organization — Code',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -773,6 +778,17 @@ export default {
       .find('option')
       .should('have.length', 1)
       .and('have.text', ...booleanValues);
+  },
+
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
   },
 
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
