@@ -281,7 +281,11 @@ export default {
   selectFirstRecord: () => cy.do(MultiColumnListRow({ index: 0 }).find(Button()).click()),
 
   selectAuthorityById(specialInternalId) {
-    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click());
+    cy.do(
+      authoritiesList
+        .find(Button({ href: including(`/authorities/${specialInternalId}`) }))
+        .click(),
+    );
   },
 
   selectTitle: (title) => cy.do(Button(title).click()),
@@ -1253,6 +1257,19 @@ export default {
       .then((res) => {
         return res.body.authorities || [];
       });
+  },
+
+  waitAuthorityLinked(authorityId, numberOfTitles = null) {
+    cy.recurse(
+      () => this.getMarcAuthoritiesViaApi({ query: `(id==${authorityId})` }),
+      (response) => {
+        if (numberOfTitles !== null) {
+          return response[0].numberOfTitles === numberOfTitles;
+        }
+        return response[0].numberOfTitles > 0;
+      },
+      { limit: 20, timeout: 22000, delay: 1000 },
+    );
   },
 
   checkValueResultsColumn: (columnIndex, value) => {
