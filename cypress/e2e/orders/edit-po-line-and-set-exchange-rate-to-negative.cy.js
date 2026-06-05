@@ -160,6 +160,12 @@ describe('Orders', () => {
     cy.getAdminToken().then(() => {
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+        testData.location.institutionId,
+        testData.location.campusId,
+        testData.location.libraryId,
+        testData.location.id,
+      );
       Budgets.deleteViaApi(testData.budget.id);
       Funds.deleteFundViaApi(testData.fund.id);
       Ledgers.deleteLedgerViaApi(testData.ledger.id);
