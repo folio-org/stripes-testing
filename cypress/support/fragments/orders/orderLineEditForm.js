@@ -113,6 +113,25 @@ export default {
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
+  setUserLimit(limit) {
+    cy.get('[name="eresource.userLimit"]').type(limit);
+  },
+  checkExchangeRateError(
+    errorMessage = OrderStates.exchangeRateAmountMustBePositive,
+    shouldExist = true,
+  ) {
+    if (shouldExist) {
+      cy.get('[name="cost.exchangeRate"]')
+        .closest('[class*="textField"]')
+        .find('[role="alert"]')
+        .should('contain.text', errorMessage);
+    } else {
+      cy.get('[name="cost.exchangeRate"]')
+        .closest('[class*="textField"]')
+        .find('[role="alert"]')
+        .should('not.contain.text', errorMessage);
+    }
+  },
   checkNotAvailableInstanceData(fields = []) {
     this.checkFieldsConditions({ fields, section: disabledButtons });
   },
