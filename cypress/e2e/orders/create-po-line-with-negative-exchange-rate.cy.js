@@ -3,16 +3,14 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_SEARCH_OPTIONS,
+  POLINE_DETAILS_FIELDS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 import OrderLineEditForm from '../../support/fragments/orders/orderLineEditForm';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -24,10 +22,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
   const testData = {
-    fiscalYear: {},
-    ledger: {},
-    fund: {},
-    budget: {},
     organization: {},
     order: {},
     location: {},
@@ -36,7 +30,6 @@ describe('Orders', () => {
     selectedCurrencyCode: 'GEL',
     negativeRate: '-5',
     positiveRate: '3',
-    warningMessage: 'Amount must be a positive number',
     userLimit: 'unlimited',
   };
 
@@ -57,39 +50,6 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-
-    FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYearResponse) => {
-      testData.fiscalYear = fiscalYearResponse;
-
-      const ledger = {
-        ...Ledgers.defaultUiLedger,
-        fiscalYearOneId: fiscalYearResponse.id,
-      };
-
-      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
-        testData.ledger = ledgerResponse;
-
-        const fund = {
-          ...Funds.getDefaultFund(),
-          ledgerId: ledgerResponse.id,
-        };
-
-        Funds.createViaApi(fund).then((fundResponse) => {
-          testData.fund = fundResponse.fund;
-
-          const budget = {
-            ...Budgets.getDefaultBudget(),
-            fiscalYearId: fiscalYearResponse.id,
-            fundId: fundResponse.fund.id,
-            allocated: 1000,
-          };
-
-          Budgets.createViaApi(budget).then((budgetResponse) => {
-            testData.budget = budgetResponse;
-          });
-        });
-      });
-    });
 
     Organizations.createOrganizationViaApi({
       ...NewOrganization.defaultUiOrganizations,
@@ -117,26 +77,20 @@ describe('Orders', () => {
       );
     });
 
-    cy.createTempUser([Permissions.uiOrdersCreate.gui, Permissions.uiOrdersEdit.gui]).then(
-      (userProperties) => {
-        testData.user = userProperties;
+    cy.createTempUser([Permissions.uiOrdersCreate.gui]).then((userProperties) => {
+      testData.user = userProperties;
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-      },
-    );
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      Budgets.deleteViaApi(testData.budget.id);
-      Funds.deleteFundViaApi(testData.fund.id);
-      Ledgers.deleteLedgerViaApi(testData.ledger.id);
-      FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         testData.location.institutionId,
         testData.location.campusId,
@@ -160,7 +114,7 @@ describe('Orders', () => {
 
       // Step 2: Fill required PO line fields (Electronic resource format)
       OrderLineEditForm.fillOrderLineFields(polData);
-      cy.get('[name="eresource.userLimit"]').type(testData.userLimit);
+      OrderLineEditForm.setUserLimit(testData.userLimit);
 
       // Step 3: Select unsupported ECB currency (e.g. GEL).
       OrderLines.selectCurrency(testData.currency);
@@ -170,11 +124,10 @@ describe('Orders', () => {
       ]);
 
       // Step 4: Put a negative number into "Set exchange rate" field
-      OrderLineEditForm.setExchangeRateValue(testData.negativeRate);
-      OrderLineEditForm.checkExchangeRateError(testData.warningMessage, true);
+      OrderLines.setExchangeRate(testData.negativeRate, { clickCheckbox: false });
+      OrderLineEditForm.checkExchangeRateError(OrderStates.exchangeRateAmountMustBePositive, true);
 
-      // Step 5: Fill remaining required fields (fund distribution, location) and try to save
-      OrderLines.addFundToPOLWithoutSave(0, testData.fund, '100');
+      // Step 5: Fill remaining required fields (location) and try to save
       OrderLineEditForm.clickAddLocationButton();
       OrderLines.addLocationToPOLWithoutSave({
         location: testData.location,
@@ -184,11 +137,11 @@ describe('Orders', () => {
 
       // PO line is NOT saved, "Add PO line" page remains opened, warning is still present
       OrderLineEditForm.waitLoading();
-      OrderLineEditForm.checkExchangeRateError(testData.warningMessage, true);
+      OrderLineEditForm.checkExchangeRateError(OrderStates.exchangeRateAmountMustBePositive, true);
 
       // Step 6: Put a positive number into "Set exchange rate" field
-      OrderLineEditForm.setExchangeRateValue(testData.positiveRate);
-      OrderLineEditForm.checkExchangeRateError(testData.warningMessage, false);
+      OrderLines.setExchangeRate(testData.positiveRate, { clickCheckbox: false });
+      OrderLineEditForm.checkExchangeRateError(OrderStates.exchangeRateAmountMustBePositive, false);
 
       // Step 7: Click "Save & close" - PO line is saved
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
@@ -197,12 +150,12 @@ describe('Orders', () => {
       OrderLineDetails.waitLoading();
       OrderLineDetails.checkOrderLineDetails({
         costDetails: [
-          { key: 'Currency', value: testData.selectedCurrencyCode },
-          { key: 'Exchange rate', value: testData.positiveRate },
+          { key: POLINE_DETAILS_FIELDS.CURRENCY, value: testData.selectedCurrencyCode },
+          { key: POLINE_DETAILS_FIELDS.EXCHANGE_RATE, value: testData.positiveRate },
         ],
       });
       OrderLineDetails.checkFieldsConditions([
-        { label: 'User limit', conditions: { value: testData.userLimit } },
+        { label: POLINE_DETAILS_FIELDS.USER_LIMIT, conditions: { value: testData.userLimit } },
       ]);
     },
   );

@@ -113,14 +113,13 @@ export default {
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
-  setExchangeRateValue(value) {
-    cy.get('[name="cost.exchangeRate"]').type('{selectall}{backspace}', { delay: 50 });
-    if (value !== '') {
-      cy.get('[name="cost.exchangeRate"]').type(value, { delay: 100 });
-    }
-    cy.get('[name="cost.exchangeRate"]').blur();
+  setUserLimit(limit) {
+    cy.get('[name="eresource.userLimit"]').type(limit);
   },
-  checkExchangeRateError(errorMessage = 'Amount must be a positive number', shouldExist = true) {
+  checkExchangeRateError(
+    errorMessage = OrderStates.exchangeRateAmountMustBePositive,
+    shouldExist = true,
+  ) {
     if (shouldExist) {
       cy.get('[name="cost.exchangeRate"]')
         .closest('[class*="textField"]')
