@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.userActive);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.chooseValueSelect('True');
-        QueryModal.verifyQueryAreaContent('(users.active == true)');
+        QueryModal.verifyQueryAreaContent('(users.active == True)');
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled(true);
 
