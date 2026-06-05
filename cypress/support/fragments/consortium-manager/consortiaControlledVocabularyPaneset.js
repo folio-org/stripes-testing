@@ -60,6 +60,10 @@ export default {
     cy.do(TextField({ placeholder }).fillIn(value));
   },
 
+  checkShareCheckbox() {
+    cy.do(memberLibrariesShare.checkIfNotSelected());
+  },
+
   createViaUi(isShared, textFieldData) {
     this.clickNew();
     this.verifyEditModeIsActive();
@@ -214,6 +218,12 @@ export default {
 
   verifyRecordNotInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+  },
+
+  verifyRecordHasNoDuplicatesInTheList(name) {
+    cy.get('[class^=editListRow-]')
+      .filter((_, el) => el.textContent.includes(name))
+      .should('have.length', 1);
   },
 
   verifyShareCheckboxState({ isEnabled = true, isChecked = false } = {}) {

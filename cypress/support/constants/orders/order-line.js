@@ -137,6 +137,9 @@ export const POLINE_DETAILS_FIELDS = {
   ELECTRONIC_UNIT_PRICE: 'Electronic unit price',
   QUANTITY_ELECTRONIC: 'Quantity electronic',
   CREATE_INVENTORY: 'Create inventory',
+  CURRENCY: 'Currency',
+  EXCHANGE_RATE: 'Exchange rate',
+  USER_LIMIT: 'User limit',
 };
 
 export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {
