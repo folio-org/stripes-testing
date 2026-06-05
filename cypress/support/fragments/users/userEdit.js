@@ -36,9 +36,10 @@ import {
   Datepicker,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
+import MultiColumnListHelper from '../multiColumnList';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import { CUSTOM_FIELD_TYPES } from '../../constants';
+import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -151,6 +152,15 @@ const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
+const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
+const readingRoomAccessOptionValues = {
+  allowed: 'ALLOWED',
+  'not allowed': 'NOT_ALLOWED',
+};
+
+const getReadingRoomAccessOptionValue = (optionValue) => {
+  return readingRoomAccessOptionValues[`${optionValue}`.trim().toLowerCase()] || optionValue;
+};
 
 // Expiration date modal appears for only some patron groups based on their settings,
 // so we need to check if it appears and click "Set" if it does.
@@ -601,14 +611,17 @@ export default {
           readingRoomAccessAccordion
             .find(MultiColumnListRow({ indexRow: rowNumber }))
             .find(selectReadingRoomAccess)
-            .has({ value: 'NOT_ALLOWED' }),
+            .has({ value: getReadingRoomAccessOptionValue(optionValue) }),
         );
-        cy.do(
-          readingRoomAccessAccordion
-            .find(MultiColumnListRow({ indexRow: rowNumber }))
-            .find(TextArea({ name: 'notes' }))
-            .fillIn(note),
-        );
+
+        if (note) {
+          cy.do(
+            readingRoomAccessAccordion
+              .find(MultiColumnListRow({ indexRow: rowNumber }))
+              .find(TextArea({ name: 'notes' }))
+              .fillIn(note),
+          );
+        }
       }),
     );
   },
@@ -649,8 +662,25 @@ export default {
   },
 
   openReadingRoomAccessAccordion() {
+    cy.expect(readingRoomAccessAccordion.find(Spinner()).absent());
     cy.do(readingRoomAccessAccordion.clickHeader());
-    cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
+    cy.expect(readingRoomAccessAccordion.has({ open: true }));
+    cy.expect(readingRoomAccessList.exists());
+  },
+
+  clickReadingRoomColumnHeader(columnName) {
+    MultiColumnListHelper.sortListBy(readingRoomAccessList, columnName);
+  },
+
+  verifyReadingRoomColumnSortOrder(
+    columnName,
+    expectedOrder = SORT_DIRECTIONS.ASCENDING,
+    options = {},
+  ) {
+    MultiColumnListHelper.assertColumnValuesSorted(readingRoomAccessList, columnName, {
+      direction: expectedOrder,
+      ...options,
+    });
   },
 
   addServicePoints(...points) {
