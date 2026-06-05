@@ -1,12 +1,18 @@
 import { REQUEST_METHOD } from '../constants';
 
-Cypress.Commands.add('getInstance', (searchParams) => {
+Cypress.Commands.add('getInstances', (searchParams) => {
   cy.okapiRequest({
     path: 'search/instances',
     searchParams,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    return body.instances ? body.instances[0] : [];
+    return body.instances ?? [];
+  });
+});
+
+Cypress.Commands.add('getInstance', (searchParams) => {
+  cy.getInstances(searchParams).then((instances) => {
+    return instances.length ? instances[0] : [];
   });
 });
 

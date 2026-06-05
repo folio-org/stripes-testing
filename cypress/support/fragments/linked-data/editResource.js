@@ -15,6 +15,11 @@ const newInstanceActionsButton =
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
 const inventoryViewActionsButton =
   "//button[@data-testid='block-actions-toggle__option-ld.inventoryView']";
+const exportInstanceActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.exportInstanceRdf']";
+const instanceChangeProfileActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.changeInstanceProfile']";
+const workChangeProfileActionsButton = "//button[@data-testid='block-actions-toggle__option-ld.changeWorkProfile']";
 const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
@@ -745,6 +750,36 @@ export default {
     )
       .eq(dropdownIndex)
       .select(type);
+    cy.wait(500);
+  },
+
+  verifyWorkInstanceActionOptions() {
+    cy.xpath(instanceActionsButton).should('be.visible').click();
+    cy.expect(duplicateButton.exists());
+    cy.xpath(newInstanceActionsButton).should('be.visible');
+    cy.xpath(instanceEditActionButton).should('be.visible');
+    cy.xpath(instanceActionsButton).click();
+    cy.wait(500);
+  },
+
+  verifyWorkWorkActionOptions() {
+    cy.expect(workActionsButton.exists());
+    cy.do(workActionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.xpath(workChangeProfileActionsButton).should('be.visible');
+    cy.do(workActionsButton.click());
+    cy.wait(500);
+  },
+
+  verifyInstanceInstanceActionOptions() {
+    cy.expect(actionsButton.exists());
+    cy.do(actionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.xpath(viewMarcButton).should('be.visible');
+    cy.xpath(inventoryViewActionsButton).should('be.visible');
+    cy.xpath(exportInstanceActionsButton).should('be.visible');
+    cy.xpath(instanceChangeProfileActionsButton).should('be.visible');
+    cy.do(actionsButton.click());
     cy.wait(500);
   },
 };
