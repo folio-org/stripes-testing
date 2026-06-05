@@ -238,6 +238,10 @@ export const transactionFieldValues = {
 export const organizationFieldValues = {
   code: 'Organization — Code',
 };
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
+};
 export const dateTimeOperators = [
   'Select operator',
   'equals',
@@ -767,6 +771,13 @@ export default {
 
   verifyBooleanColumnAbsent() {
     cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
   },
 
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
