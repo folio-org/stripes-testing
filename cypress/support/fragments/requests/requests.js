@@ -389,6 +389,11 @@ export default {
   waitLoading() {
     return cy.expect(Pane({ title: 'Requests' }).exists());
   },
+
+  verifyPageTitle(title) {
+    cy.wait(1000);
+    cy.title().should('eq', title);
+  },
   resetAllFilters() {
     cy.do(Button('Reset all').click());
     cy.wait(1000);
