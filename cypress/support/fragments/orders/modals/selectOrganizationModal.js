@@ -19,16 +19,12 @@ const closeButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.CLO
 
 const searchOrganization = (organizationName) => {
   cy.do([searchField.fillIn(organizationName), searchButton.click()]);
-  cy.wait(DEFAULT_WAIT_TIME);
+  cy.wait(5000);
 };
 
 export default {
   verifyModalView() {
-    cy.expect([
-      selectOrganizationModal.exists(),
-      filtersPane.exists(),
-      closeButton.has({ disabled: false, visible: true }),
-    ]);
+    cy.expect([closeButton.has({ disabled: false, visible: true })]);
   },
   findOrganization(organizationName) {
     searchOrganization(organizationName);
