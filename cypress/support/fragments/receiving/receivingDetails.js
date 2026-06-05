@@ -227,6 +227,10 @@ export default {
     cy.do(buttons.Actions.click());
     cy.expect(Button('Edit').has({ disabled: true }));
   },
+  verifyAddPieceButtonAbsent() {
+    cy.do(expectedSection.find(Button('Actions')).click());
+    cy.expect(Button('Add piece').absent());
+  },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
     ReceivingsListEditForm.waitLoading();
