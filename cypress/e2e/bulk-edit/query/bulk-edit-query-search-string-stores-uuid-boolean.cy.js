@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == true)`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == True)`,
         );
         QueryModal.addNewRow(1);
         QueryModal.verifyBooleanColumn(2);
@@ -144,7 +144,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyOperatorsList(booleanOperators, 2);
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.NOT_EQUAL, 2);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == true) AND (users.active != )`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == True) AND (users.active != )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -153,11 +153,11 @@ describe('Bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == true) AND (users.active != false)`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == True) AND (users.active != False)`,
         );
         QueryModal.clickGarbage(2);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == true)`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (users.active == True)`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
