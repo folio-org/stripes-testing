@@ -47,6 +47,9 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
+    cy.getUsers({ query: `patronGroup=="${testData.patronGroup.id}"` }).then(([user]) => {
+      Users.deleteViaApi(user.id);
+    });
     PatronGroups.deleteViaApi(testData.patronGroup.id);
   });
 
@@ -62,9 +65,9 @@ describe('Users', () => {
       UserEdit.fillEmailAddress(testData.newUser.personal.email);
       UserEdit.changePatronGroup(
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
+        { setExpirationDateIfModalExists: true },
       );
       UserEdit.changeStatus(testData.newUser.status);
-      UserEdit.setExpirationDate();
       UserEdit.changePreferredContact(testData.newUser.preferredContact);
 
       UserEdit.chooseUserType('Patron');

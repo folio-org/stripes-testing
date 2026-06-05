@@ -75,6 +75,9 @@ const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
 const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Show columns' }),
 );
+const actionsMenuReportsSection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Reports' }),
+);
 const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
 const saveCqlButton = authorityActionsDropDownMenu.find(Button('Save authorities CQL query'));
 const saveUuidsButton = authorityActionsDropDownMenu.find(Button('Save authorities UUIDs'));
@@ -188,6 +191,10 @@ export default {
   clickHeadingsUpdatesButton() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
+  verifyHeadingsUpdatesButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(marcAuthUpdatesCsvBtn.absent());
+  },
   fillReportModal(today, tomorrow) {
     cy.do([
       authReportModal.find(TextField({ name: 'fromDate' })).fillIn(today),
@@ -276,6 +283,10 @@ export default {
 
   verifyContentOfExportFile(actual, ...expectedArray) {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+  },
+
+  verifyContentAbsentInExportFile(actual, ...notExpectedArray) {
+    notExpectedArray.forEach((notExpectedItem) => expect(actual).to.not.include(notExpectedItem));
   },
 
   verifyContentOfHeadingsUpdateReportParsed(
@@ -2187,5 +2198,10 @@ export default {
 
   verifyPaneMarcViewWidth(expectedWidth, tolerance = 5) {
     cy.get('[id="marc-view-pane"]').invoke('width').should('be.closeTo', expectedWidth, tolerance);
+  },
+
+  verifyReportsSectionShownInActionsMenu(isShown = true) {
+    if (isShown) cy.expect(actionsMenuReportsSection.exists());
+    else cy.expect(actionsMenuReportsSection.absent());
   },
 };

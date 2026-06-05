@@ -27,4 +27,25 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `TC196440 - OAI-PMH general configuration verification for ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'sanity', 'oai-pmh', 'configurations'] },
+    () => {
+      cy.getOaiPmhGeneralConfigViaApi().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        // check that OAI-PMH configuration exists
+        cy.expect(response.body.totalRecords).to.be.greaterThan(0);
+        cy.expect(response.body).to.have.property('configs').that.is.an('array');
+
+        // verify the configuration has the expected edge URL
+        const config = response.body.configs[0];
+        const configValue = JSON.parse(config.value);
+        const expectedUrl = Cypress.config().baseUrl.replace('https://', 'https://edge-') + '/oai';
+        cy.expect(config.module).to.eq('OAIPMH');
+        cy.expect(config.configName).to.eq('general');
+        cy.expect(configValue.baseUrl).to.eq(expectedUrl);
+      });
+    },
+  );
 });
