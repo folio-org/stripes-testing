@@ -99,6 +99,7 @@ const waitForClaimingResultsLoading = () => {
 const waitForExportManagerResultsLoading = () => {
   ExportManagerSearchPane.waitForJobs();
   Exports.waitForGetExportJobsQueryCompleted();
+  cy.wait(DEFAULT_WAIT_TIME);
 };
 
 describe('Claiming', () => {
