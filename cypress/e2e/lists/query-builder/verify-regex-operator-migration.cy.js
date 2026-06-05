@@ -26,7 +26,7 @@ describe('Lists', () => {
 
         Lists.openNewListPane();
         Lists.setName(testData.listName);
-        Lists.selectRecordType('Users');
+        Lists.selectRecordType(Lists.recordTypes.users);
         Lists.buildQuery();
         QueryModal.selectField(usersFieldValues.userName);
         QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);

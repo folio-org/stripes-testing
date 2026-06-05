@@ -140,3 +140,6 @@ Example searches:
 - Fragments: `moduleName/subModule.js` (camelCase)
 - Place tests in appropriate module subdirectories matching FOLIO app structure
 - Use consistent prefixes for test data: `AT_C######_ModuleName_${randomPostfix}`
+
+
+TestRail MCP - to get details of a test case, use get_case tool with the test case ID, e.g. `C627455`
