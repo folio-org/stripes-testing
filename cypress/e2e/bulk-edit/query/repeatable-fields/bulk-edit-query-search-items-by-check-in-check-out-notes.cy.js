@@ -244,7 +244,7 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C805788_Item', 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(items.check_out_notes[*]->note contains damaged) AND (items.check_out_notes[*]->staff_only == true) AND (items.barcode starts with AT_C805788_Item)',
+            '(items.check_out_notes[*]->note contains damaged) AND (items.check_out_notes[*]->staff_only == True) AND (items.barcode starts with AT_C805788_Item)',
           );
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyColumnDisplayed('Item — Check out notes');
@@ -308,7 +308,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('False');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(items.check_in_notes[*]->staff_only == false) AND (items.barcode starts with AT_C805788_Item)',
+            '(items.check_in_notes[*]->staff_only == False) AND (items.barcode starts with AT_C805788_Item)',
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 

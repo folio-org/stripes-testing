@@ -153,7 +153,7 @@ describe('Bulk-edit', () => {
           // Step 6-7: Select "True" option
           QueryModal.chooseValueSelect('True');
           QueryModal.verifyOptionsInValueSelect(['True', 'False']);
-          QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == true)');
+          QueryModal.verifyQueryAreaContent('(holdings.discovery_suppress == True)');
 
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.instanceId, 1);
@@ -189,7 +189,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.discovery_suppress == true) AND (instance.id == ${instance.id})`,
+              `(holdings.discovery_suppress == True) AND (instance.id == ${instance.id})`,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               firstHolding.hrid,

@@ -97,7 +97,7 @@ describe('Bulk-edit', () => {
         QueryModal.selectValueFromSelect('True');
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent('(users.active == true)');
+        QueryModal.verifyQueryAreaContent('(users.active == True)');
         QueryModal.addNewRow();
         QueryModal.verifyBooleanColumn();
         QueryModal.verifyEmptyField(1);
@@ -106,7 +106,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.selectField(usersFieldValues.patronGroup, 1);
-        QueryModal.verifyQueryAreaContent('(users.active == true) AND (groups.group  )');
+        QueryModal.verifyQueryAreaContent('(users.active == True) AND (groups.group  )');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
@@ -116,7 +116,7 @@ describe('Bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.active == true) AND (groups.group == ${patronGroupNames.STAFF})`,
+          `(users.active == True) AND (groups.group == ${patronGroupNames.STAFF})`,
         );
         QueryModal.clickGarbage(1);
         QueryModal.testQueryDisabled(false);
