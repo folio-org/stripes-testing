@@ -37,6 +37,7 @@ describe('Orders', () => {
     initialExchangeRate: 10,
     negativeRate: '-10',
     positiveRate: '20',
+    userLimit: 'U2',
   };
 
   before('Create test data', () => {
@@ -190,8 +191,8 @@ describe('Orders', () => {
         },
       ]);
 
-      // Step 2: NOTE - Updating "User limit" sub-step is skipped per task description
-      // ("Should be verified after UIOR-1023 is done").
+      // Step 2: Update "User limit" field with alphanumeric value
+      OrderLineEditForm.setUserLimit(testData.userLimit);
 
       // Step 3: Put a negative number in "Set exchange rate" field
       OrderLines.setExchangeRate(testData.negativeRate, { clickCheckbox: false });
@@ -215,6 +216,9 @@ describe('Orders', () => {
           { key: POLINE_DETAILS_FIELDS.EXCHANGE_RATE, value: testData.positiveRate },
         ],
       });
+      OrderLineDetails.checkFieldsConditions([
+        { label: POLINE_DETAILS_FIELDS.USER_LIMIT, conditions: { value: testData.userLimit } },
+      ]);
     },
   );
 });
