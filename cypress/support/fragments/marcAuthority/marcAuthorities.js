@@ -74,6 +74,9 @@ const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
 const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Show columns' }),
 );
+const actionsMenuReportsSection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Reports' }),
+);
 const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
 const actionsShowColumnsOptions = [
   'Authorized/Reference',
@@ -184,6 +187,10 @@ export default {
   clickHeadingsUpdatesButton() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
+  verifyHeadingsUpdatesButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(marcAuthUpdatesCsvBtn.absent());
+  },
   fillReportModal(today, tomorrow) {
     cy.do([
       authReportModal.find(TextField({ name: 'fromDate' })).fillIn(today),
@@ -272,6 +279,42 @@ export default {
 
   verifyContentOfExportFile(actual, ...expectedArray) {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+  },
+
+  verifyContentAbsentInExportFile(actual, ...notExpectedArray) {
+    notExpectedArray.forEach((notExpectedItem) => expect(actual).to.not.include(notExpectedItem));
+  },
+
+  verifyContentOfHeadingsUpdateReportParsed(
+    actual,
+    rowIndex = 1,
+    originalHeading,
+    newHeading,
+    identifier,
+    expectedLinkedCount,
+  ) {
+    const clean = actual.trim();
+    const lines = clean.split(/\r?\n/);
+    const parseCsvLine = (line) => {
+      const regex = /("([^"]|"")*"|[^,]*)/g;
+      return line
+        .match(regex)
+        .filter((cell) => cell.length > 0 && cell !== ',')
+        .map((cell) => cell.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+    };
+
+    const headers = parseCsvLine(lines[0]);
+    const values = parseCsvLine(lines[rowIndex]);
+
+    const record = {};
+    headers.forEach((header, i) => {
+      record[header] = values[i] ?? '';
+    });
+    expect(record['Original heading']).to.include(originalHeading);
+    expect(record['New heading']).to.include(newHeading);
+    // eslint-disable-next-line dot-notation
+    expect(record['Identifier']).to.include(identifier);
+    expect(record['Number of bibliographic records linked']).to.eq(expectedLinkedCount);
   },
 
   select: (specialInternalId) => cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
@@ -2142,5 +2185,10 @@ export default {
 
   verifyPaneMarcViewWidth(expectedWidth, tolerance = 5) {
     cy.get('[id="marc-view-pane"]').invoke('width').should('be.closeTo', expectedWidth, tolerance);
+  },
+
+  verifyReportsSectionShownInActionsMenu(isShown = true) {
+    if (isShown) cy.expect(actionsMenuReportsSection.exists());
+    else cy.expect(actionsMenuReportsSection.absent());
   },
 };

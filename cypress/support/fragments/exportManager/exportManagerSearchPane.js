@@ -141,6 +141,12 @@ export default {
     cy.do(MultiColumnListRow({ index: 0 }).click());
   },
 
+  openJobDetailView(jobId) {
+    cy.then(() => exportJobsList.find(MultiColumnListCell(jobId)).row()).then((rowIndex) => {
+      cy.do(exportJobsList.find(MultiColumnListRow({ index: rowIndex })).click());
+    });
+  },
+
   getElementByTextAndVerify(content, amount, index) {
     const matchingElements = [];
     cy.get('div[class*=mclRow-]')
