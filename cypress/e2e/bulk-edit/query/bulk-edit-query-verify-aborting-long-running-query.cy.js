@@ -59,7 +59,7 @@ describe('Bulk-edit', () => {
         // Step 5-6: Select "True" in "Select value" dropdown
         QueryModal.chooseValueSelect('True');
         QueryModal.verifyOptionsInValueSelect(['True', 'False']);
-        QueryModal.verifyQueryAreaContent('(users.active == true)');
+        QueryModal.verifyQueryAreaContent('(users.active == True)');
         QueryModal.testQueryDisabled(false);
 
         // Step 7: Click "Test query" button
