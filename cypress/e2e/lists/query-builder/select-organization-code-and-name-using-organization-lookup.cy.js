@@ -56,9 +56,10 @@ describe('Lists', () => {
       'C740213 Verify that it is possible to select organization codes and names using "Organization look-up" plugin (corsair)',
       { tags: ['criticalPath', 'corsair', testCaseId] },
       () => {
+        const selectedOrganizationCodes = testData.organizations.map(({ code }) => code);
         const selectedOrganizationNames = testData.organizations.map(({ name }) => name);
         const selectedOrganizationName = selectedOrganizationNames[0];
-        const expectedCodeQuery = `(organization.code in [${selectedOrganizationNames.join(', ')}])`;
+        const expectedCodeQuery = `(organization.code in [${selectedOrganizationCodes.join(', ')}])`;
         const expectedFullQuery = `${expectedCodeQuery} AND (organization.name == ${selectedOrganizationName})`;
 
         // Step 1: Create new list with Organizations record type and open Build query form
@@ -76,10 +77,10 @@ describe('Lists', () => {
         QueryModal.clickOrganizationLookup();
         SelectOrganizationModal.verifyModalView();
         SelectOrganizationModal.filterByOrganizationStatus('Active');
-        SelectOrganizationModal.selectOrganizations(selectedOrganizationNames);
+        SelectOrganizationModal.selectOrganizations(selectedOrganizationCodes, 'Code');
         SelectOrganizationModal.save();
         SelectOrganizationModal.verifyClosed();
-        QueryModal.verifySelectedMultiselectValue(selectedOrganizationNames);
+        QueryModal.verifySelectedMultiselectValue(selectedOrganizationCodes);
         QueryModal.verifyQueryAreaContent(expectedCodeQuery);
 
         // Step 3: Add Organization Name condition and select one active organization

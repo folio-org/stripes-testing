@@ -17,8 +17,13 @@ const searchButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.SE
 const saveButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.SAVE));
 const closeButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.CLOSE));
 
-const searchOrganization = (organizationName) => {
-  cy.do([searchField.fillIn(organizationName), searchButton.click()]);
+const searchOrganization = (organizationSearchValue, searchIndex) => {
+  const searchActions = [];
+
+  if (searchIndex) searchActions.push(searchField.selectIndex(searchIndex));
+  searchActions.push(searchField.fillIn(organizationSearchValue), searchButton.click());
+
+  cy.do(searchActions);
   cy.wait(5000);
 };
 
@@ -34,9 +39,9 @@ export default {
     cy.do(filtersPane.find(Checkbox(status)).click());
     cy.wait(DEFAULT_WAIT_TIME);
   },
-  selectOrganizations(organizationNames = []) {
-    organizationNames.forEach((organizationName) => {
-      searchOrganization(organizationName);
+  selectOrganizations(organizationSearchValues = [], searchIndex) {
+    organizationSearchValues.forEach((organizationSearchValue) => {
+      searchOrganization(organizationSearchValue, searchIndex);
       cy.do(
         selectOrganizationModal
           .find(MultiColumnListRow({ index: 0 }))
