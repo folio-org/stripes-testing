@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -51,7 +52,7 @@ describe('Orders', () => {
               locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
               acquisitionMethod: params.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
                 materialSupplier: responseOrganizations,
                 volumes: [],
@@ -124,7 +125,6 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', testData.orderNumber);
       Orders.selectFromResultsList(testData.orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLineDetails.openRoutingListsAccordion();
       OrderLineDetails.openRoutingList(routingList);
       RoutingListDetails.editRoutingList();
       RoutingListEditForm.addUserToRoutingList();

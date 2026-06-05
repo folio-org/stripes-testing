@@ -47,6 +47,7 @@ describe(
           BulkEditLogs.verifyLogsPane();
           const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
           recordTypes.forEach((recordType) => BulkEditLogs.checkLogsCheckbox(recordType));
+          cy.wait(3000);
           BulkEditLogs.verifyUserAccordionCollapsed();
           BulkEditLogs.clickLogsStartedAccordion();
           BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
@@ -56,11 +57,13 @@ describe(
           BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'From');
           BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'From', currentDate);
           BulkEditLogs.applyStartDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateFieldWithError('Started', 'To', 'Please enter an end date');
           BulkEditLogs.fillLogsDate('Started', 'To', yesterday);
           BulkEditLogs.verifyLogsDateFilledIsEqual('Started', 'To', yesterday);
           BulkEditLogs.verifyClearSelectedDateButtonExists('Started', 'To');
           BulkEditLogs.applyStartDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateAccordionValidationMessage(
             'Started',
             'Start date is greater than end date',
@@ -71,17 +74,20 @@ describe(
           BulkEditLogs.fillLogsDate('Started', 'From', yesterday);
           BulkEditLogs.fillLogsDate('Started', 'To', currentDate);
           BulkEditLogs.applyStartDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
           BulkEditLogs.verifyClearSelectedFiltersButton('Started');
           BulkEditLogs.fillLogsDate('Ended', 'To', yesterday);
           BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'To');
           BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'To', yesterday);
           BulkEditLogs.applyEndDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateFieldWithError('Ended', 'From', 'Please enter a start date');
           BulkEditLogs.fillLogsDate('Ended', 'From', currentDate);
           BulkEditLogs.verifyLogsDateFilledIsEqual('Ended', 'From', currentDate);
           BulkEditLogs.verifyClearSelectedDateButtonExists('Ended', 'From');
           BulkEditLogs.applyEndDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateAccordionValidationMessage(
             'Ended',
             'Start date is greater than end date',
@@ -91,11 +97,13 @@ describe(
           BulkEditLogs.verifyLogsStartedAccordionExistsWithElements();
           BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
           BulkEditLogs.applyEndDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
           BulkEditLogs.verifyClearSelectedFiltersButton('Ended');
           BulkEditLogs.fillLogsDate('Ended', 'From', yesterday);
           BulkEditLogs.fillLogsDate('Ended', 'To', tomorrow);
           BulkEditLogs.applyEndDateFilters();
+          cy.wait(2000);
           BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
           BulkEditLogs.verifyDateCellsValues(7, yesterday, tomorrow);
           BulkEditLogs.clickClearStartedFilter();

@@ -6,6 +6,7 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
@@ -64,7 +65,7 @@ describe('Data Import', () => {
       quantityPhysical: '980$g',
       currency: 'USD',
       materialSupplier: VENDOR_NAMES.GOBI,
-      createInventory: 'Instance, Holding, Item',
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
       materialType: MATERIAL_TYPE_NAMES.BOOK,
       contributor: '100$a',
       contributorType: 'Personal name',
@@ -159,11 +160,13 @@ describe('Data Import', () => {
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
             const orderNumber = initialNumber.replace(/-\d+$/, '');
 
-            Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
-              (orderId) => {
-                Orders.deleteOrderViaApi(orderId[0].id);
-              },
-            );
+            cy.getAdminToken().then(() => {
+              Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+                (orderId) => {
+                  Orders.deleteOrderViaApi(orderId[0].id);
+                },
+              );
+            });
           });
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();

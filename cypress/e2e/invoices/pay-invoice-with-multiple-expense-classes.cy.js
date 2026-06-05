@@ -4,13 +4,14 @@ import {
   INVOICE_STATUSES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import { BudgetDetails, Budgets, Funds } from '../../support/fragments/finance';
 import { Invoices, InvoiceView, NewInvoice } from '../../support/fragments/invoices';
+import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
 import InvoiceLineEditForm from '../../support/fragments/invoices/invoiceLineEditForm';
 import InvoiceNewForm from '../../support/fragments/invoices/invoiceNewForm';
-import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import ExpenseClasses from '../../support/fragments/settings/finance/expenseClasses';
@@ -92,7 +93,7 @@ describe('Invoices', () => {
               locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
               acquisitionMethod: amResp.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypeResp.id,
                 materialSupplier: orgResp.id,
                 volumes: [],

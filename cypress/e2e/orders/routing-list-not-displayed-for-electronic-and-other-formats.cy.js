@@ -2,6 +2,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
   LOCATION_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -60,7 +61,7 @@ describe('Orders', () => {
                 },
               ],
               eresource: {
-                createInventory: 'Instance, Holding',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                 materialType: mtypes.id,
               },
             };
@@ -83,7 +84,7 @@ describe('Orders', () => {
               ],
               acquisitionMethod: params.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDINGs,
                 materialType: mtypes.id,
                 materialSupplier: responseOrganizations,
                 volumes: [],

@@ -1,8 +1,12 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import { Receivings } from '../../../support/fragments/receiving';
@@ -54,7 +58,7 @@ describe('Orders', () => {
                   receiptStatus: 'Awaiting Receipt',
                   orderFormat: 'Other',
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: testData.materialTypeId,
                   },
                   locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],
@@ -141,7 +145,7 @@ describe('Orders', () => {
 
         // Go to "Receiving" app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-        Receivings.waitLoading();
+        Receivings.verifyPageDisplayed();
 
         // Search for PO line from Precondition
         Receivings.resetFilters();

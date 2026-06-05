@@ -658,6 +658,14 @@ export default {
     internal: 'ui-users.patron-blocks.all',
     gui: 'Users: Can create, edit and remove patron blocks',
   },
+  uiUsersPatronPreRegistrationsMerge: {
+    internal: 'ui-users.patron-pre-registrations.execute',
+    gui: 'Users: Can merge patron preregistration data',
+  },
+  uiUsersPatronPreRegistrationsView: {
+    internal: 'ui-users.patron-pre-registrations.view',
+    gui: 'Users: Can view patron preregistration data',
+  },
   uiUsersCreatePatronTamplate: {
     internal: 'ui-users.settings.patron-block-templates.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
@@ -821,6 +829,10 @@ export default {
   uiReceivingView: {
     internal: 'ui-receiving.view',
     gui: 'Receiving: View',
+  },
+  uiReceivingViewEdit: {
+    internal: 'ui-receiving.edit',
+    gui: 'Receiving: View, edit',
   },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
@@ -1385,6 +1397,14 @@ export default {
   exportManagerView: {
     internal: 'ui-export-manager.export-manager.view',
     gui: 'Export manager: View',
+  },
+  exportManagerSettingsView: {
+    internal: 'ui-export-manager.settings.view',
+    gui: 'Settings (Export manager): Can view only settings',
+  },
+  exportManagerSettingsEdit: {
+    internal: 'ui-export-manager.settings.edit',
+    gui: 'Settings (Export manager): Can view and edit settings',
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',

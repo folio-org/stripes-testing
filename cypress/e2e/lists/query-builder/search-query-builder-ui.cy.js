@@ -2,23 +2,40 @@ import Permissions from '../../../support/dictionary/permissions';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import QueryModal, {
   instanceFieldValues,
+  itemFieldValues,
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { Lists } from '../../../support/fragments/lists/lists';
 import ClassificationIdentifierTypes from '../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
+import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
-import { generateDatePickerCustomFieldData } from '../../../support/utils/customFields';
+import {
+  generateDatePickerCustomFieldData,
+  generateMultiSelectCustomFieldData,
+  generateRadioButtonCustomFieldData,
+  generateSingleSelectCustomFieldData,
+} from '../../../support/utils/customFields';
 import { poll } from '../../../support/utils/polling';
 import { getCurrentTimestamp, getTestEntityValue } from '../../../support/utils/stringTools';
+import {
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+} from '../../../../interactors';
 
 describe('Lists', () => {
   describe('Query Builder UI', () => {
     let userData = {};
     let listName;
+
+    const buildQueryModal = Pane('Build query');
+    const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 
     const addQueryBuilderCapabilitySets = (capabilitySets) => {
       const capabilitySetIds = [];
@@ -82,21 +99,38 @@ describe('Lists', () => {
     };
 
     const waitForCustomFieldToBeQueryable = (recordType, fieldLabel) => {
+      const fieldLabels = Array.isArray(fieldLabel) ? fieldLabel : [fieldLabel];
+
       return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
         return poll(
           () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
           ({ body }) => {
-            return body.columns?.some(
-              ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
-            );
+            return fieldLabels.every((label) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === label && queryable));
           },
           {
             timeout: 360000,
             delay: 15000,
-            errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+            errorMessage: `"${fieldLabels.join(', ')}" custom field(s) did not become queryable for ${recordType}`,
           },
         );
       });
+    };
+
+    const verifyUserFriendlyQueryText = ({ queryBuilderPreview, listDetails, expectedQuery }) => {
+      const actualQueryMessage = `Query builder preview: "${queryBuilderPreview}"\nList details: "${listDetails}"`;
+
+      expect(queryBuilderPreview, actualQueryMessage).to.equal(expectedQuery);
+      expect(listDetails, actualQueryMessage).to.include(`Query: ${expectedQuery}`);
+      [queryBuilderPreview, listDetails].forEach((actualQueryText) => {
+        expect(actualQueryText, actualQueryMessage).not.to.match(/\bopt_\d+\b/);
+        expect(actualQueryText, actualQueryMessage).not.to.include('customfield_');
+      });
+    };
+
+    const verifyQueryTextDoesNotContainUuids = (actualQueryText) => {
+      expect(actualQueryText).not.to.match(
+        /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i,
+      );
     };
 
     const verifyQueryBuilder = (
@@ -156,6 +190,20 @@ describe('Lists', () => {
             'organization.status == Active',
             'list-column-organization.status',
           );
+        },
+      );
+
+      it(
+        'C613149 Query builder value dropdown options are filtered case-insensitively by search text (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C613149'] },
+        () => {
+          listName = getTestEntityValue('C613149_List');
+          openQueryBuilder(recordType);
+
+          QueryModal.selectField('Organization — Status');
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyOptionsInValueSelect(['Active', 'Inactive', 'Pending']);
+          QueryModal.verifyFilteredOptionsInValueSelect('pEn', ['Pending']);
         },
       );
     });
@@ -230,6 +278,194 @@ describe('Lists', () => {
             'list-column-users.middle_name',
             '',
           );
+        },
+      );
+
+      it(
+        'C613148 Verify that we can search for the fields that contain symbols (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C613148'] },
+        () => {
+          listName = getTestEntityValue('C613148_List');
+          openQueryBuilder(recordType);
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          QueryModal.verifyFieldSearchDoesNotFilterAvailableOptions('(');
+          QueryModal.verifyFieldSearchDoesNotFilterAvailableOptions('*');
+        },
+      );
+    });
+
+    describe('Users custom field option labels', () => {
+      const recordType = 'Users';
+      const testNumber = 'C831957';
+      const customFieldNamePostfix = getCurrentTimestamp();
+      const customFieldSpecs = {
+        multiSelect: {
+          fieldLabel: 'Corsair - multi select',
+          generator: generateMultiSelectCustomFieldData,
+          multiSelect: true,
+          valueType: 'multiselect',
+          options: [
+            { id: 'opt_0', value: 'Corsair - multi select1', default: false },
+            { id: 'opt_1', value: 'Corsair - multi select2', default: false },
+          ],
+        },
+        singleSelect: {
+          fieldLabel: 'Corsair - single select',
+          generator: generateSingleSelectCustomFieldData,
+          multiSelect: false,
+          options: [
+            { id: 'opt_0', value: 'Corsair - single select1', default: false },
+            { id: 'opt_1', value: 'Corsair - single select2', default: false },
+          ],
+        },
+        radioButton: {
+          fieldLabel: 'Corsair - radio button',
+          generator: generateRadioButtonCustomFieldData,
+          multiSelect: false,
+          options: [
+            { id: 'opt_0', value: 'Corsair - radio button1', default: false },
+            { id: 'opt_1', value: 'Corsair - radio button2', default: false },
+          ],
+        },
+      };
+      const queryCustomFieldKeys = Object.keys(customFieldSpecs);
+      const getCustomFieldName = (fieldLabel) => `${fieldLabel} ${customFieldNamePostfix}`;
+      const createCustomFieldData = ({ fieldLabel, generator, multiSelect, options }) => generator({
+        testNumber,
+        data: {
+          name: getCustomFieldName(fieldLabel),
+          selectField: {
+            multiSelect,
+            options: { values: options },
+          },
+        },
+      });
+      const testData = {
+        customFields: queryCustomFieldKeys.reduce((customFields, key) => {
+          return {
+            ...customFields,
+            [key]: createCustomFieldData(customFieldSpecs[key]),
+          };
+        }, {}),
+      };
+      const getCustomFieldLabel = ({ name }) => `User — ${name}`;
+      const getCustomFieldLabels = () => Object.values(testData.customFields).map(getCustomFieldLabel);
+      const getCustomFieldValue = (key) => customFieldSpecs[key].options[0].value;
+      const getQueryRow = (key, operator) => ({
+        field: getCustomFieldLabel(testData.customFields[key]),
+        operator,
+        value: getCustomFieldValue(key),
+        valueType: [QUERY_OPERATIONS.IN, QUERY_OPERATIONS.NOT_IN].includes(operator)
+          ? customFieldSpecs[key].valueType
+          : 'select',
+      });
+
+      const configureSelectQueryRow = (row, { field, operator, value, valueType = 'select' }) => {
+        QueryModal.selectField(field, row);
+        QueryModal.selectOperator(operator, row);
+
+        if (valueType === 'multiselect') {
+          QueryModal.chooseFromValueMultiselect(value, row, { exactMatch: true });
+        } else {
+          QueryModal.chooseValueSelect(value, row);
+        }
+      };
+
+      const createQueryRows = (queryRows) => {
+        queryRows.forEach((queryRow, rowIndex) => {
+          configureSelectQueryRow(rowIndex, queryRow);
+          if (rowIndex < queryRows.length - 1) {
+            QueryModal.addNewRow(rowIndex);
+          }
+        });
+      };
+
+      before('Create custom fields', () => {
+        cy.getAdminToken()
+          .then(() => cy.createCustomFieldsViaApi(Object.values(testData.customFields)))
+          .then((createdCustomFields) => {
+            queryCustomFieldKeys.forEach((key, index) => {
+              testData.customFields[key] = createdCustomFields[index];
+            });
+
+            testData.createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
+
+            return waitForCustomFieldToBeQueryable(recordType, getCustomFieldLabels());
+          });
+      });
+
+      after('Delete custom field test data', () => {
+        cy.getAdminToken();
+        if (testData.createdCustomFieldIds?.length) {
+          cy.deleteCustomFieldsViaApi({
+            ids: testData.createdCustomFieldIds,
+          });
+        }
+      });
+
+      afterEach('Delete test list', () => {
+        deleteTestList(cy.getAdminToken);
+      });
+
+      it(
+        'C831957 Verify custom field option labels in the user-friendly query (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C831957'] },
+        () => {
+          const multiSelectInRow = getQueryRow('multiSelect', QUERY_OPERATIONS.IN);
+          const equalsQueryRows = queryCustomFieldKeys.map((key) => getQueryRow(key, QUERY_OPERATIONS.EQUAL));
+          const [multiSelectEqualsRow, singleSelectEqualsRow, radioButtonEqualsRow] =
+            equalsQueryRows;
+          const expectedInQuery = `(${multiSelectInRow.field} in [${multiSelectInRow.value}])`;
+          const expectedEqualsQuery =
+            `(${multiSelectEqualsRow.field} == ${multiSelectEqualsRow.value}) AND ` +
+            `(${singleSelectEqualsRow.field} == ${singleSelectEqualsRow.value}) AND ` +
+            `(${radioButtonEqualsRow.field} == ${radioButtonEqualsRow.value})`;
+          const actualQueries = {};
+
+          listName = getTestEntityValue(`${testNumber}_List`);
+          cy.loginAsAdmin({
+            path: TopMenu.listsPath,
+            waiter: Lists.filtersWaitLoading,
+          });
+
+          Lists.openNewListPane();
+          Lists.setName(listName);
+          Lists.selectRecordType(recordType);
+          Lists.verifySelectedOptionsInRecordTypeDropdown(recordType);
+          Lists.verifySaveButtonIsActive();
+          Lists.verifyCancelButtonIsActive();
+
+          Lists.buildQuery();
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          configureSelectQueryRow(0, multiSelectInRow);
+          QueryModal.verifyQueryAreaContent(expectedInQuery);
+          QueryModal.verifyQueryAreaDoesNotContain('opt_');
+          QueryModal.verifyQueryAreaDoesNotContain('customfield_');
+          createQueryRows(equalsQueryRows);
+          QueryModal.testQuery();
+          QueryModal.waitForQueryTestToFinish();
+          QueryModal.getQueryAreaContent().then((actualPreviewQuery) => {
+            actualQueries.preview = actualPreviewQuery;
+          });
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.waitForCompilingToComplete(3000);
+          Lists.getQueryText().then((actualSavedQuery) => {
+            actualQueries.saved = actualSavedQuery;
+          });
+          cy.then(() => {
+            verifyUserFriendlyQueryText({
+              queryBuilderPreview: actualQueries.preview,
+              listDetails: actualQueries.saved,
+              expectedQuery: expectedEqualsQuery,
+            });
+          });
         },
       );
     });
@@ -329,15 +565,148 @@ describe('Lists', () => {
       );
     });
 
+    describe('Items', () => {
+      const recordType = 'Items';
+      const testData = {
+        effectiveLibraryCodeFieldName: 'loclibrary.code',
+        effectiveLibraryNameFieldName: 'loclibrary.name',
+        effectiveLibraryCodeLabels: [],
+        effectiveLibraryNameLabels: [],
+        folioInstances: InventoryInstances.generateFolioInstances({
+          instanceTitlePrefix: getTestEntityValue('C829880_Instance'),
+        }),
+      };
+
+      const getFieldLabels = (fieldName, matchingValue, matchingLabel) => {
+        return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+          return Lists.getEntityTypeFieldValuesViaApi(entityTypeId, fieldName).then((body) => {
+            const matchingFieldValue = body.content.find(({ label, value }) => {
+              return value === matchingValue || label === matchingLabel;
+            });
+            expect(matchingFieldValue, `Field value for ${fieldName}`).not.to.equal(undefined);
+
+            return [
+              matchingFieldValue,
+              body.content.find(({ value }) => value !== matchingFieldValue.value),
+            ]
+              .filter(Boolean)
+              .map(({ label }) => label);
+          });
+        });
+      };
+
+      const selectMultipleValues = (values, row = 0) => {
+        values.forEach((value) => {
+          QueryModal.chooseFromValueMultiselect(value, row, { exactMatch: true });
+        });
+      };
+
+      before('Create test user and get field values', () => {
+        cy.getAdminToken();
+        InventoryInstances.getLocations({ limit: 1 }).then(([location]) => {
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location,
+          });
+          Libraries.getViaApi().then(({ loclibs }) => {
+            const library = loclibs.find(({ id }) => id === location.libraryId);
+            expect(library, `Library for location ${location.name}`).not.to.equal(undefined);
+
+            getFieldLabels(
+              testData.effectiveLibraryCodeFieldName,
+              location.libraryId,
+              library.code,
+            ).then((labels) => {
+              testData.effectiveLibraryCodeLabels = labels;
+            });
+            getFieldLabels(
+              testData.effectiveLibraryNameFieldName,
+              location.libraryId,
+              library.name,
+            ).then((labels) => {
+              testData.effectiveLibraryNameLabels = labels;
+            });
+          });
+        });
+        createQueryBuilderUser(
+          [Permissions.listsEdit.gui, Permissions.listsDelete.gui, Permissions.inventoryAll.gui],
+          [CapabilitySets.uiInventory],
+        );
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.folioInstances[0].instanceId,
+        );
+        deleteQueryBuilderUser();
+      });
+
+      afterEach('Delete test list', () => {
+        deleteTestList();
+      });
+
+      it(
+        'C829880 Verify that the fields "Item effective library — Code" and "Item effective library — Name" have correct labels in the user-friendly query for the "Items" ET (corsair)',
+        { tags: ['extendedPath', 'corsair', 'C829880'] },
+        () => {
+          const expectedCodeQuery = `(${testData.effectiveLibraryCodeFieldName} in [${testData.effectiveLibraryCodeLabels.join(', ')}])`;
+          const expectedFullQuery = `${expectedCodeQuery} AND (${testData.effectiveLibraryNameFieldName} in [${testData.effectiveLibraryNameLabels.join(', ')}])`;
+
+          listName = getTestEntityValue('C829880_List');
+          openQueryBuilder(recordType);
+          QueryModal.verify();
+          QueryModal.verifyQueryTextboxReadOnly();
+          QueryModal.verifyQueryTextboxResizable();
+
+          QueryModal.selectField(itemFieldValues.itemEffectiveLibraryCode);
+          QueryModal.verifySelectedField(itemFieldValues.itemEffectiveLibraryCode);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+          selectMultipleValues(testData.effectiveLibraryCodeLabels);
+          QueryModal.verifyQueryAreaContent(expectedCodeQuery);
+          QueryModal.getQueryAreaContent().then(verifyQueryTextDoesNotContainUuids);
+
+          QueryModal.addNewRow();
+          QueryModal.selectField(itemFieldValues.itemEffectiveLibraryName, 1);
+          QueryModal.verifySelectedField(itemFieldValues.itemEffectiveLibraryName, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
+          selectMultipleValues(testData.effectiveLibraryNameLabels, 1);
+          QueryModal.verifyQueryAreaContent(expectedFullQuery);
+          QueryModal.getQueryAreaContent().then(verifyQueryTextDoesNotContainUuids);
+
+          QueryModal.clickTestQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          cy.contains('Refresh complete with', { timeout: 90000 }).should('be.visible');
+          Lists.viewUpdatedList();
+          Lists.getQueryText().then((actualSavedQuery) => {
+            expect(actualSavedQuery).to.include(`Query: ${expectedFullQuery}`);
+            verifyQueryTextDoesNotContainUuids(actualSavedQuery);
+          });
+        },
+      );
+    });
+
     describe('Instances', () => {
       const recordType = 'Instances';
+      const resourceTypeColumn = 'Instance — Resource type';
       const testData = {
         instanceTitle: getTestEntityValue('C_lists_query_builder_classification_instance'),
+        deletedInstanceTitle: getTestEntityValue('C808493_Instance'),
+        deletedInstanceTypeName: 'still image',
         uuidInstanceTitles: [
           getTestEntityValue('C446019_Instance_1'),
           getTestEntityValue('C446019_Instance_2'),
         ],
         instanceIds: [],
+        instanceTitleWithEnglishLanguage: getTestEntityValue(
+          'C_lists_query_builder_english_language_instance',
+        ),
+        localizedEnglishLanguageName: 'Englisch',
+        germanTenantLocale: 'de-DE',
         classificationNumber: 'BJ1533.C4',
         classificationIdentifierTypeName: getTestEntityValue(
           'C_lists_query_builder_classification_type',
@@ -381,7 +750,11 @@ describe('Lists', () => {
           });
         });
         createQueryBuilderUser(
-          [Permissions.listsAll.gui, Permissions.inventoryAll.gui],
+          [
+            Permissions.listsAll.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
+          ],
           [CapabilitySets.uiInventory],
         );
       });
@@ -395,12 +768,55 @@ describe('Lists', () => {
           .forEach((instanceId) => {
             InventoryInstance.deleteInstanceViaApi(instanceId);
           });
+        if (testData.instanceIdWithEnglishLanguage) {
+          InventoryInstance.deleteInstanceViaApi(testData.instanceIdWithEnglishLanguage);
+        }
         ClassificationIdentifierTypes.deleteViaApi(testData.classificationIdentifierTypeId);
       });
 
       afterEach('Delete test list', () => {
         deleteTestList();
+        if (testData.originalTenantLocale) {
+          cy.getAdminToken();
+          cy.setTenantLocaleApi(testData.originalTenantLocale);
+          testData.originalTenantLocale = undefined;
+        }
+        if (testData.deletedInstanceId) {
+          cy.getAdminToken();
+          InventoryInstance.deleteInstanceViaApi(testData.deletedInstanceId);
+          testData.deletedInstanceId = undefined;
+        }
       });
+
+      const createDeletedInstance = () => {
+        return cy.getAdminToken().then(() => {
+          return cy
+            .getInstanceTypes({
+              limit: 1,
+              query: `name=="${testData.deletedInstanceTypeName}"`,
+            })
+            .then((instanceTypes) => {
+              return InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: instanceTypes[0].id,
+                  title: testData.deletedInstanceTitle,
+                },
+              }).then(({ instanceId }) => {
+                testData.deletedInstanceId = instanceId;
+                InstanceRecordView.markAsDeletedViaApi(instanceId);
+              });
+            });
+        });
+      };
+
+      const verifyPreviewHridIsPopulated = () => {
+        cy.then(() => previewTable
+          .find(MultiColumnListRow({ indexRow: 'row-0' }))
+          .find(MultiColumnListCell({ column: instanceFieldValues.instanceHrid }))
+          .innerText()).then((cellText) => {
+          expect(cellText.trim()).to.not.equal('');
+        });
+      };
 
       it(
         'C451549 Verify the operator null/empty with "False" value (corsair)',
@@ -483,6 +899,66 @@ describe('Lists', () => {
       );
 
       it(
+        'C808493 Verify query with "Instance — Flag for deletion" returns records after opening edit query (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C808493'] },
+        () => {
+          const recordAmount = 1;
+          const verifyDeletedInstancePreview = () => {
+            QueryModal.verifyPreviewOfRecordsMatched();
+            QueryModal.verifyNumberOfMatchedRecords(recordAmount);
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              testData.deletedInstanceTitle,
+              instanceFieldValues.flagForDeletion,
+              'True',
+            );
+            verifyPreviewHridIsPopulated();
+            QueryModal.verifyMatchedRecordsByIdentifier(
+              testData.deletedInstanceTitle,
+              resourceTypeColumn,
+              testData.deletedInstanceTypeName,
+            );
+          };
+
+          listName = getTestEntityValue('C808493_List');
+          createDeletedInstance();
+
+          openQueryBuilder(recordType, listName);
+
+          QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.fillInValueTextfield(testData.deletedInstanceTitle);
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.flagForDeletion, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.chooseValueSelect('True', 1);
+
+          QueryModal.clickTestQuery();
+          verifyDeletedInstancePreview();
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifySuccessCalloutMessage(`List ${listName} saved.`);
+          Lists.waitForCompilingAnimationToDisappear();
+          Lists.verifyRefreshCompleteCallout(recordAmount);
+          Lists.viewUpdatedList();
+          Lists.verifySingleRecordNumber();
+          Lists.verifyRecordWithContent(testData.deletedInstanceTitle);
+          Lists.openActions();
+          Lists.editList();
+          Lists.editQuery();
+          QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyTextFieldValue(testData.deletedInstanceTitle);
+          QueryModal.verifySelectedField(instanceFieldValues.flagForDeletion, 1);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.verifySelectedValue('True', 1);
+          QueryModal.testQueryDisabled(false);
+
+          QueryModal.clickTestQuery();
+          verifyDeletedInstancePreview();
+        },
+      );
+
+      it(
         'C446019 The IN operator is rendered correctly in the query builder when editing existing queries (corsair)',
         { tags: ['criticalPath', 'corsair', 'C446019'] },
         () => {
@@ -538,6 +1014,79 @@ describe('Lists', () => {
           instanceIds.forEach((instanceId) => {
             QueryModal.verifyRecordWithContent(instanceId);
           });
+        },
+      );
+
+      it(
+        'C613147 Search instances in the query builder by localized language name (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C613147'] },
+        () => {
+          listName = getTestEntityValue('C_lists_query_builder_localized_language_list');
+
+          cy.getAdminToken();
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: instanceTypes[0].id,
+                title: testData.instanceTitleWithEnglishLanguage,
+                languages: ['eng'],
+              },
+            }).then(({ instanceId }) => {
+              testData.instanceIdWithEnglishLanguage = instanceId;
+            });
+          });
+          cy.getTenantLocaleApi().then((locale) => {
+            testData.originalTenantLocale = locale;
+          });
+
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.listsPath,
+            waiter: Lists.waitLoading,
+          });
+          cy.getUserToken(userData.username, userData.password);
+          cy.then(() => {
+            cy.setTenantLocaleApi({
+              ...testData.originalTenantLocale,
+              locale: testData.germanTenantLocale,
+            });
+          });
+          Lists.openNewListPane();
+          Lists.setName(listName);
+          Lists.selectRecordType(recordType);
+          Lists.buildQuery();
+
+          QueryModal.typeInAndSelectField(instanceFieldValues.languages);
+          QueryModal.verifySelectedField(instanceFieldValues.languages);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.chooseValueSelect(testData.localizedEnglishLanguageName);
+          QueryModal.addNewRow();
+          QueryModal.typeInAndSelectField(instanceFieldValues.instanceResourceTitle, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
+          QueryModal.fillInValueTextfield(testData.instanceTitleWithEnglishLanguage, 1);
+          QueryModal.testQuery();
+          Lists.verifyPreviewOfRecordsMatched();
+          QueryModal.verifyNumberOfRowsInPreviewTable(1);
+          cy.then(() => previewTable
+            .find(MultiColumnListRow({ indexRow: 'row-0' }))
+            .find(MultiColumnListCell({ column: instanceFieldValues.languages }))
+            .innerText()).then((cellText) => {
+            expect(cellText.trim()).to.equal(testData.localizedEnglishLanguageName);
+          });
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            testData.instanceTitleWithEnglishLanguage,
+            instanceFieldValues.languages,
+            testData.localizedEnglishLanguageName,
+          );
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.waitForCompilingToComplete(3000);
+          Lists.verifyQueryHeader(instanceFieldValues.languages);
+          Lists.verifyQueryValue(
+            testData.localizedEnglishLanguageName,
+            QUERY_OPERATIONS.EQUAL,
+            'list-column-instance.languages',
+          );
+          Lists.closeListDetailsPane();
         },
       );
 

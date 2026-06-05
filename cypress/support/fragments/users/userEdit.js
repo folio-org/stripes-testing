@@ -36,9 +36,10 @@ import {
   Datepicker,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
+import MultiColumnListHelper from '../multiColumnList';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import { CUSTOM_FIELD_TYPES } from '../../constants';
+import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -151,11 +152,25 @@ const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
 
 let totalRows;
+const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
+const readingRoomAccessOptionValues = {
+  allowed: 'ALLOWED',
+  'not allowed': 'NOT_ALLOWED',
+};
 
-const clickSetExpirationDate = () => {
-  cy.expect(resetExpirationDateModal.exists());
-  cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
-  cy.expect(resetExpirationDateModal.absent());
+const getReadingRoomAccessOptionValue = (optionValue) => {
+  return readingRoomAccessOptionValues[`${optionValue}`.trim().toLowerCase()] || optionValue;
+};
+
+// Expiration date modal appears for only some patron groups based on their settings,
+// so we need to check if it appears and click "Set" if it does.
+const clickSetExpirationDateIfModalExists = () => {
+  cy.get('body').then(($body) => {
+    if ($body.find('#recalculate_expirationdate_modal').length > 0) {
+      cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
+      cy.expect(resetExpirationDateModal.absent());
+    }
+  });
 };
 
 const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
@@ -471,13 +486,10 @@ export default {
     cy.do(statusSelect.choose(status));
   },
 
-  changePatronGroup(patronGroup, { shouldSetExpirationDate = false } = {}) {
+  changePatronGroup(patronGroup) {
     cy.do(addressSelect.choose(patronGroup));
     cy.wait(500);
-    // Expiration date modal appears for only some patron groups based on their settings, so we need to check if it appears and click "Set" if it does
-    if (shouldSetExpirationDate) {
-      clickSetExpirationDate();
-    }
+    clickSetExpirationDateIfModalExists();
   },
 
   searchForPermission(permission) {
@@ -599,14 +611,17 @@ export default {
           readingRoomAccessAccordion
             .find(MultiColumnListRow({ indexRow: rowNumber }))
             .find(selectReadingRoomAccess)
-            .has({ value: 'NOT_ALLOWED' }),
+            .has({ value: getReadingRoomAccessOptionValue(optionValue) }),
         );
-        cy.do(
-          readingRoomAccessAccordion
-            .find(MultiColumnListRow({ indexRow: rowNumber }))
-            .find(TextArea({ name: 'notes' }))
-            .fillIn(note),
-        );
+
+        if (note) {
+          cy.do(
+            readingRoomAccessAccordion
+              .find(MultiColumnListRow({ indexRow: rowNumber }))
+              .find(TextArea({ name: 'notes' }))
+              .fillIn(note),
+          );
+        }
       }),
     );
   },
@@ -647,8 +662,25 @@ export default {
   },
 
   openReadingRoomAccessAccordion() {
+    cy.expect(readingRoomAccessAccordion.find(Spinner()).absent());
     cy.do(readingRoomAccessAccordion.clickHeader());
-    cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
+    cy.expect(readingRoomAccessAccordion.has({ open: true }));
+    cy.expect(readingRoomAccessList.exists());
+  },
+
+  clickReadingRoomColumnHeader(columnName) {
+    MultiColumnListHelper.sortListBy(readingRoomAccessList, columnName);
+  },
+
+  verifyReadingRoomColumnSortOrder(
+    columnName,
+    expectedOrder = SORT_DIRECTIONS.ASCENDING,
+    options = {},
+  ) {
+    MultiColumnListHelper.assertColumnValuesSorted(readingRoomAccessList, columnName, {
+      direction: expectedOrder,
+      ...options,
+    });
   },
 
   addServicePoints(...points) {
@@ -1219,7 +1251,7 @@ export default {
     ]);
   },
 
-  enterValidValueToCreateViaUi(userData, patronGroup, { shouldSetExpirationDate = false } = {}) {
+  enterValidValueToCreateViaUi(userData, patronGroup) {
     cy.intercept({ method: 'POST', url: /\/users$/ }).as('createUser');
     cy.do([
       lastNameField.fillIn(userData.personal.lastName),
@@ -1227,7 +1259,7 @@ export default {
       usernameField.fillIn(userData.username),
       emailField.fillIn(userData.personal.email),
     ]);
-    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    this.changePatronGroup(patronGroup);
     cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
@@ -1306,18 +1338,11 @@ export default {
     ]);
   },
 
-  fillRequiredFields(
-    userLastName,
-    patronGroup,
-    email,
-    userType = null,
-    userName = null,
-    { shouldSetExpirationDate = false } = {},
-  ) {
+  fillRequiredFields(userLastName, patronGroup, email, userType = null, userName = null) {
     if (userType) this.changeUserType(userType);
     if (userName) cy.do(usernameField.fillIn(userName));
     cy.do(lastNameField.fillIn(userLastName));
-    this.changePatronGroup(patronGroup, { shouldSetExpirationDate });
+    this.changePatronGroup(patronGroup);
     cy.do(emailField.fillIn(email));
     cy.wait(2000);
   },

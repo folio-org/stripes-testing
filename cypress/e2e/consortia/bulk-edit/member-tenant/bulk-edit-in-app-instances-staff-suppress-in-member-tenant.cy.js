@@ -20,6 +20,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 let instanceTypeId;
@@ -44,6 +45,7 @@ const marcInstance = {
   title: `C566118_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
+const todayDate = DateTools.getCurrentDate();
 
 describe('Bulk-edit', () => {
   describe('Member tenant', () => {
@@ -116,6 +118,10 @@ describe('Bulk-edit', () => {
                   QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
                   QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
                   QueryModal.fillInValueTextfield(`C566118_${postfix}`, 1);
+                  QueryModal.addNewRow();
+                  QueryModal.selectField(instanceFieldValues.createdDate, 2);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+                  QueryModal.pickDate(todayDate, 2);
                   cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                     'getPreview',
                   );
@@ -165,7 +171,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.staff_suppress != true) AND (instance.title starts with C566118_${postfix})`,
+              `(instance.staff_suppress != True) AND (instance.title starts with C566118_${postfix}) AND (instance.created_at == ${todayDate})`,
             );
 
             instances.forEach((instance) => {

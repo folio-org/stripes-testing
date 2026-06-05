@@ -28,8 +28,9 @@ import {
   Row,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import MultiColumnListHelper from '../multiColumnList';
 import NewNote from '../notes/newNote';
-import { NO_VALUE } from '../../constants';
+import { NO_VALUE, SORT_DIRECTIONS } from '../../constants';
 
 const affiliationsAccordion = Accordion('Affiliations');
 const patronBlocksAccordion = Accordion('Patron blocks');
@@ -93,6 +94,7 @@ const rolesAffiliationSelectionList = SelectionList({
 const popupNoteModal = Modal({ id: 'popup-note-modal' });
 const popupNoteDeleteButton = popupNoteModal.find(Button('Delete note'));
 const popupNoteCloseButton = popupNoteModal.find(Button('Close'));
+const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
 
 const getAccordionByLabel = (accordionLabel) => rootSection.find(Accordion(accordionLabel));
 
@@ -181,6 +183,12 @@ export default {
 
     return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
   },
+  openReadingRoomAccessAccordion() {
+    cy.expect(readingRoomAccessAccordion.find(Spinner()).absent());
+    cy.do(readingRoomAccessAccordion.clickHeader());
+    cy.expect(readingRoomAccessAccordion.has({ open: true }));
+    cy.expect(readingRoomAccessList.exists());
+  },
   expandReadingRoomAccessSection(readingRoomName, status, isRoomCreated = true) {
     cy.do(readingRoomAccessAccordion.clickHeader());
     if (isRoomCreated) {
@@ -200,6 +208,34 @@ export default {
         readingRoomAccessAccordion.find(MultiColumnListCell({ content: readingRoomName })).absent(),
       );
     }
+  },
+  clickReadingRoomColumnHeader(columnName) {
+    MultiColumnListHelper.waitLoadingComplete(readingRoomAccessList);
+    MultiColumnListHelper.sortListBy(readingRoomAccessList, columnName);
+  },
+  verifyReadingRoomColumnSortOrder(
+    columnName,
+    expectedOrder = SORT_DIRECTIONS.ASCENDING,
+    options = {},
+  ) {
+    MultiColumnListHelper.assertColumnValuesSorted(readingRoomAccessList, columnName, {
+      direction: expectedOrder,
+      ...options,
+    });
+  },
+  verifyReadingRoomAccessRoomsOrder(roomNames) {
+    return MultiColumnListHelper.getColumnValues(readingRoomAccessList, 'Name').then(
+      (visibleRoomNames) => {
+        const filteredRoomNames = visibleRoomNames.filter((visibleRoomName) => {
+          return roomNames.includes(visibleRoomName);
+        });
+
+        expect(
+          filteredRoomNames,
+          `Reading room "Name" column order mismatch: actual ${JSON.stringify(filteredRoomNames)} vs expected ${JSON.stringify(roomNames)}`,
+        ).to.deep.equal(roomNames);
+      },
+    );
   },
   verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
     cy.expect(
@@ -308,14 +344,33 @@ export default {
     cy.expect([openedFeesFinesLink.exists(), closedFeesFinesLink.exists()]);
   },
 
+  verifyFeesFinesLinksAbsent() {
+    cy.expect([openedFeesFinesLink.absent(), closedFeesFinesLink.absent()]);
+  },
+
   verifyLoansLinksExist() {
     this.openAccordion('Loans');
     cy.expect(currentLoansLink.exists());
   },
 
+  verifyLoansLinksAbsent() {
+    cy.expect(currentLoansLink.absent());
+  },
+
   verifyRequestsInfoExists() {
     this.openAccordion('Requests');
     cy.expect([openedRequestsLink.exists(), closedRequestsLink.exists()]);
+  },
+
+  verifyRequestsInfoAbsent() {
+    cy.expect([openedRequestsLink.absent(), closedRequestsLink.absent()]);
+  },
+
+  verifyCustomFieldsPresentInAccordion(accordionLabel, customFields) {
+    this.openAccordion(accordionLabel);
+    [].concat(customFields).forEach(({ name }) => {
+      cy.expect(getAccordionByLabel(accordionLabel).find(KeyValue(name)).exists());
+    });
   },
 
   verifyCustomFieldValuesInAccordion(accordionLabel, customFieldValues, { isAccordionOpen } = {}) {

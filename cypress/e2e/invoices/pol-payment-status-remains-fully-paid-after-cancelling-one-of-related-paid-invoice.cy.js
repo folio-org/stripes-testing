@@ -4,9 +4,10 @@ import {
   APPLICATION_NAMES,
   INVOICE_STATUSES,
   LOCATION_NAMES,
-  ORDER_STATUSES,
-  POLINE_DETAILS_FIELDS,
   ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+  POLINE_DETAILS_FIELDS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import { Budgets, FiscalYears, Funds, Ledgers } from '../../support/fragments/finance';
@@ -88,7 +89,7 @@ describe('Invoices', () => {
                           ],
                           acquisitionMethod: params.body.acquisitionMethods[0].id,
                           physical: {
-                            createInventory: 'Instance, Holding, Item',
+                            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                             materialType: mtypes.body.id,
                             materialSupplier: responseOrganizations,
                             volumes: [],

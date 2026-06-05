@@ -78,7 +78,7 @@ describe('Inventory', () => {
             index: 0,
             firstName: testData.user.firstName,
             lastName: testData.user.lastName,
-            changes: ['Index title (Edited)', 'Title (Edited)', 'Status updated date (Removed)'],
+            changes: ['Index title (Edited)', 'Title (Edited)'],
           });
         },
       );

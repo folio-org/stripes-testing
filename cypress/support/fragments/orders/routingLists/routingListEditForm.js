@@ -18,8 +18,9 @@ const checkboxAll = Checkbox();
 
 export default {
   fillInRoutingListInfoAndSave: (name) => {
-    cy.wait(1500);
+    cy.wait(1000);
     cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
+    cy.wait(1000);
   },
 
   fillInRoutingListInfoWithNotesAndSave: (name, notes) => {

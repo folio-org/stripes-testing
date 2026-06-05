@@ -162,7 +162,7 @@ describe('Bulk-edit', () => {
       });
 
       afterEach('delete test data', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.instanceId);
         FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${fileNames.matchedRecordsCSV}`);

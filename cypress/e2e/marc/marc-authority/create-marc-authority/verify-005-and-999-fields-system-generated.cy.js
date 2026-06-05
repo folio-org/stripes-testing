@@ -54,6 +54,7 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+              cy.wait(70_000); // waiting for the source file to be processed
             });
           })
           .then(() => {

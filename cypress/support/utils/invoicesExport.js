@@ -29,7 +29,9 @@ const getInvoiceFundDistributionsValue = (invoice, expenseClassesMap) => {
 
 const getExportAdjustmentData = (adjustments) => adjustments
   ?.map(
-    (adj) => `"${adj.description || ''}""${adj.value || '0'}${adj.type.toLowerCase() === FUND_DISTRIBUTION_TYPES.PERCENTAGE.toLowerCase() ? '%' : ''}""${adj.prorate || ''}"
+    (
+      adj,
+    ) => `"${adj.description || ''}""${adj.value || '0'}${adj.type.toLowerCase() === FUND_DISTRIBUTION_TYPES.PERCENTAGE.toLowerCase() ? '%' : ''}""${adj.prorate || ''}"
     "${adj.relationToTotal || ''}""${Boolean(adj.exportToAccounting)}"`,
   )
   .join(LIST_SEPARATOR)

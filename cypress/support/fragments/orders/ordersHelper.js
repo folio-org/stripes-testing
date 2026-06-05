@@ -21,10 +21,11 @@ export default {
     );
   },
 
+  /* Request interceptors */
+
   interceptGetOrders() {
     cy.intercept('GET', '/orders/composite-orders*').as('waiterForOrdersQueryCompleted');
   },
-
   waitForOrdersQueryCompleted() {
     cy.wait('@waiterForOrdersQueryCompleted');
   },
@@ -32,7 +33,6 @@ export default {
   interceptGetOrderLines() {
     cy.intercept('GET', '/orders/order-lines*').as('waiterForOrderLinesQueryCompleted');
   },
-
   waitForOrderLinesQueryCompleted() {
     cy.wait('@waiterForOrderLinesQueryCompleted');
   },
@@ -40,8 +40,83 @@ export default {
   interceptCustomFields() {
     cy.intercept('GET', '/custom-fields*').as('waiterForCustomFieldsQueryCompleted');
   },
-
   waitForCustomFieldsQueryCompleted() {
     cy.wait('@waiterForCustomFieldsQueryCompleted');
+  },
+
+  interceptGetAcquisitionUnits() {
+    cy.intercept('GET', '/acquisition-units/units*').as('waiterForAcquisitionUnitsQueryCompleted');
+  },
+  waitForAcquisitionUnitsQueryCompleted() {
+    cy.wait('@waiterForAcquisitionUnitsQueryCompleted');
+  },
+
+  interceptGetPrefixes() {
+    cy.intercept('GET', '/orders/configuration/prefixes*').as('waiterForPrefixesQueryCompleted');
+  },
+  waitForPrefixesQueryCompleted() {
+    cy.wait('@waiterForPrefixesQueryCompleted');
+  },
+
+  interceptGetSuffixes() {
+    cy.intercept('GET', '/orders/configuration/suffixes*').as('waiterForSuffixesQueryCompleted');
+  },
+  waitForSuffixesQueryCompleted() {
+    cy.wait('@waiterForSuffixesQueryCompleted');
+  },
+
+  interceptGetReasonsForClosure() {
+    cy.intercept('GET', '/orders/configuration/reasons-for-closure*').as(
+      'waiterForReasonsForClosureQueryCompleted',
+    );
+  },
+  waitForReasonsForClosureQueryCompleted() {
+    cy.wait('@waiterForReasonsForClosureQueryCompleted');
+  },
+
+  interceptGetTenantAddresses() {
+    cy.intercept('GET', '/tenant-addresses*').as('waiterForTenantAddressesQueryCompleted');
+  },
+  waitForTenantAddressesQueryCompleted() {
+    cy.wait('@waiterForTenantAddressesQueryCompleted');
+  },
+
+  interceptGetSettingsEntries() {
+    cy.intercept('GET', '/settings/entries*').as('waiterForSettingsEntriesQueryCompleted');
+  },
+  waitForSettingsEntriesQueryCompleted() {
+    cy.wait('@waiterForSettingsEntriesQueryCompleted');
+  },
+
+  interceptGetTags() {
+    cy.intercept('GET', '/tags*').as('waiterForTagsQueryCompleted');
+  },
+  waitForTagsQueryCompleted() {
+    cy.wait('@waiterForTagsQueryCompleted');
+  },
+
+  interceptGetAcquisitionMethods() {
+    cy.intercept('GET', '/orders/acquisition-methods*').as(
+      'waiterForAcquisitionMethodsQueryCompleted',
+    );
+  },
+  waitForAcquisitionMethodsQueryCompleted() {
+    cy.wait('@waiterForAcquisitionMethodsQueryCompleted');
+  },
+
+  interceptGetMaterialTypes() {
+    cy.intercept('GET', '/material-types*').as('waiterForMaterialTypesQueryCompleted');
+  },
+  waitForMaterialTypesQueryCompleted() {
+    cy.wait('@waiterForMaterialTypesQueryCompleted');
+  },
+
+  interceptGetOrdersStorageSettings() {
+    cy.intercept('GET', '/orders-storage/settings*').as(
+      'waiterForOrdersStorageSettingsQueryCompleted',
+    );
+  },
+  waitForOrdersStorageSettingsQueryCompleted() {
+    cy.wait('@waiterForOrdersStorageSettingsQueryCompleted');
   },
 };

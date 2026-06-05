@@ -191,8 +191,10 @@ describe('MARC', () => {
             // Steps 4-9: Update "010 $a" with LCCNs of existing Shared record
             existingLccn.forEach((lccn) => {
               QuickMarcEditor.updateExistingField('010', `$a ${lccn.value}`);
+              QuickMarcEditor.checkContentByTag('010', `$a ${lccn.value}`);
               QuickMarcEditor.pressSaveAndCloseButton();
               QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+              QuickMarcEditor.verifyValidationCallout();
               QuickMarcEditor.closeAllCallouts();
             });
             QuickMarcEditor.close();
@@ -209,6 +211,7 @@ describe('MARC', () => {
                 3,
               );
               QuickMarcEditor.addNewField('010', `$a ${canleledLccn.value}`, 3);
+              QuickMarcEditor.checkContentByTag('010', `$a ${canleledLccn.value}`);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             });

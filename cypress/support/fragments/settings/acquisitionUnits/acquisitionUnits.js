@@ -203,10 +203,10 @@ export default {
         return response.body.id;
       });
   },
-  unAssignUserViaApi(userId) {
+  unAssignUserViaApi(membershipId) {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `acquisitions-units/memberships/${userId}`,
+      path: `acquisitions-units/memberships/${membershipId}`,
       isDefaultSearchParamsRequired: false,
     });
   },

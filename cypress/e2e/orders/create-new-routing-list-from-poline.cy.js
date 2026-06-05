@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -54,7 +55,7 @@ describe('Orders', () => {
               locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
               acquisitionMethod: params.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
                 materialSupplier: responseOrganizations,
                 volumes: [],
@@ -88,7 +89,7 @@ describe('Orders', () => {
   after('Clean up test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

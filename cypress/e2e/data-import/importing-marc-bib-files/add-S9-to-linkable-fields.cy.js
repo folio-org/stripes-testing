@@ -118,58 +118,58 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
+      ])
+        .then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
-        });
 
-        // create Match profile
-        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
-          .then((matchProfileResponse) => {
-            matchProfile.id = matchProfileResponse.body.id;
-          })
-          .then(() => {
-            // create Field mapping profile
-            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-              (mappingProfileResponse) => {
+          // create Match profile
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+            .then((matchProfileResponse) => {
+              matchProfile.id = matchProfileResponse.body.id;
+            })
+            .then(() => {
+              // create Field mapping profile
+              NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                mappingProfile,
+              ).then((mappingProfileResponse) => {
                 mappingProfile.id = mappingProfileResponse.body.id;
-              },
-            );
-          })
-          .then(() => {
-            // create Action profile and link it to Field mapping profile
-            NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
-              (actionProfileResponse) => {
-                actionProfile.id = actionProfileResponse.body.id;
-              },
-            );
-          })
-          .then(() => {
-            // create Job profile
-            NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-              jobProfile.profileName,
-              matchProfile.id,
-              actionProfile.id,
-            );
-          });
-
-        cy.waitForAuthRefresh(() => {
+              });
+            })
+            .then(() => {
+              // create Action profile and link it to Field mapping profile
+              NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+                (actionProfileResponse) => {
+                  actionProfile.id = actionProfileResponse.body.id;
+                },
+              );
+            })
+            .then(() => {
+              // create Job profile
+              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                jobProfile.profileName,
+                matchProfile.id,
+                actionProfile.id,
+              );
+            });
+        })
+        .then(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-        }, 20_000);
-      });
+        });
     });
 
     after('Delete user and test data', () => {
@@ -229,41 +229,49 @@ describe('Data Import', () => {
           });
         });
 
-        // upload the exported marc file with 999.f.f.s fields
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameForUpdatedMarcFile);
-        Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
-        Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
+        cy.then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          // upload the exported marc file with 999.f.f.s fields
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(nameForUpdatedMarcFile);
+          Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
+          Logs.openFileDetails(nameForUpdatedMarcFile);
+          Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstance.waitLoading();
-        InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the130Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the240Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the800Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the811Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the245Field);
-        QuickMarcEditor.closeEditorPane();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the130Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the240Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the800Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the811Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the245Field);
+          QuickMarcEditor.closeEditorPane();
 
-        InventoryInstance.viewSource();
-        InventoryViewSource.contains('\t130\t1  \t$a De Berquelle, Raymond $d 1933-');
-        InventoryViewSource.contains('\t240\t   \t$a The value');
-        InventoryViewSource.contains('\t800\t   \t$a Series');
-        InventoryViewSource.contains('\t811\t  0\t$a Wangaratta, Victoria, 1994.');
-        InventoryViewSource.contains('\t245\t1 0\t$a Welcome home Olympians Added subfields 9');
-        InventoryViewSource.close();
-        InventoryInstance.deriveNewMarcBib();
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the130Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the240Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the800Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the811Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the245Field);
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains('\t130\t1  \t$a De Berquelle, Raymond $d 1933-');
+          InventoryViewSource.contains('\t240\t   \t$a The value');
+          InventoryViewSource.contains('\t800\t   \t$a Series');
+          InventoryViewSource.contains('\t811\t  0\t$a Wangaratta, Victoria, 1994.');
+          InventoryViewSource.contains('\t245\t1 0\t$a Welcome home Olympians Added subfields 9');
+          InventoryViewSource.close();
+          InventoryInstance.deriveNewMarcBib();
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the130Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the240Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the800Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the811Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the245Field);
+        });
       },
     );
   });

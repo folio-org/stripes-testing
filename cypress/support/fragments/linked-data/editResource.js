@@ -15,6 +15,11 @@ const newInstanceActionsButton =
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
 const inventoryViewActionsButton =
   "//button[@data-testid='block-actions-toggle__option-ld.inventoryView']";
+const exportInstanceActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.exportInstanceRdf']";
+const instanceChangeProfileActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.changeInstanceProfile']";
+const workChangeProfileActionsButton = "//button[@data-testid='block-actions-toggle__option-ld.changeWorkProfile']";
 const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
@@ -147,6 +152,18 @@ export default {
     cy.wait(1000);
   },
 
+  setValueForSectionField(value, field, section, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${section}"]/../../../div/following-sibling::div//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/input`,
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(1000);
+  },
+
   setValueForSectionFieldDropdown(value, field, section, repeatPosition = 1) {
     cy.wait(1000);
     cy.xpath(
@@ -204,8 +221,18 @@ export default {
   clickRepeatGroup(field) {
     cy.wait(1000);
     cy.xpath(
-      `//div[@class="label" and text()="${field}"]/../../div/div[@class="duplicate-group"]/button[1]`,
+      `(//div[@class="label" and text()="${field}"]/../../div//div[@class="duplicate-group"]/button[1])[1]`,
     ).click();
+    cy.wait(1000);
+  },
+
+  deleteRepeatGroup(field, position = 2) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${position}]/../../div/div[@class="duplicate-group"]/button[2]`,
+    )
+      .first()
+      .click();
     cy.wait(1000);
   },
 
@@ -234,6 +261,17 @@ export default {
       .scrollIntoView()
       .should('be.visible')
       .click();
+  },
+
+  clearSectionSimpleField(field, repeatPosition = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[${repeatPosition}]/../../div/following-sibling::div//div[contains(@class, "simple-lookup__clear-indicator")]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+    cy.wait(1000);
   },
 
   duplicateInstance() {
@@ -712,6 +750,36 @@ export default {
     )
       .eq(dropdownIndex)
       .select(type);
+    cy.wait(500);
+  },
+
+  verifyWorkInstanceActionOptions() {
+    cy.xpath(instanceActionsButton).should('be.visible').click();
+    cy.expect(duplicateButton.exists());
+    cy.xpath(newInstanceActionsButton).should('be.visible');
+    cy.xpath(instanceEditActionButton).should('be.visible');
+    cy.xpath(instanceActionsButton).click();
+    cy.wait(500);
+  },
+
+  verifyWorkWorkActionOptions() {
+    cy.expect(workActionsButton.exists());
+    cy.do(workActionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.xpath(workChangeProfileActionsButton).should('be.visible');
+    cy.do(workActionsButton.click());
+    cy.wait(500);
+  },
+
+  verifyInstanceInstanceActionOptions() {
+    cy.expect(actionsButton.exists());
+    cy.do(actionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.xpath(viewMarcButton).should('be.visible');
+    cy.xpath(inventoryViewActionsButton).should('be.visible');
+    cy.xpath(exportInstanceActionsButton).should('be.visible');
+    cy.xpath(instanceChangeProfileActionsButton).should('be.visible');
+    cy.do(actionsButton.click());
     cy.wait(500);
   },
 };

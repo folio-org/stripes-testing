@@ -282,7 +282,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
-            '(instance.notes[*]->staff_only == true) AND (instance.title starts with AT_C808445_Instance)',
+            '(instance.notes[*]->staff_only == True) AND (instance.title starts with AT_C808445_Instance)',
           );
 
           expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];

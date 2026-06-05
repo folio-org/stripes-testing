@@ -124,6 +124,7 @@ describe('OAI-PMH', () => {
         // Step 10: Save & close item
         ItemRecordNew.saveAndClose();
         InventoryInstance.waitLoading();
+        cy.wait(3000);
 
         // Step 12-13: Send OAI-PMH GetRecord request and verify 952 field with Item temporary location
         cy.getAdminToken();
@@ -153,6 +154,7 @@ describe('OAI-PMH', () => {
         ItemRecordEdit.clearValueInTemporaryLocation();
         ItemRecordEdit.saveAndClose();
         ItemRecordView.waitLoading();
+        cy.wait(3000);
 
         // Step 17-18: Send OAI-PMH GetRecord request and verify 952 field with Item permanent location
         cy.getAdminToken();
@@ -181,6 +183,7 @@ describe('OAI-PMH', () => {
 
         // Step 22: Close item window (return to instance view)
         ItemRecordView.closeDetailView();
+        cy.wait(3000);
 
         // Step 23-24: Send OAI-PMH GetRecord request and verify 952 field with Holdings temporary location
         cy.getAdminToken();
@@ -207,6 +210,7 @@ describe('OAI-PMH', () => {
         HoldingsRecordEdit.clearTemporaryLocation();
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.checkHoldingRecordViewOpened();
+        cy.wait(3000);
 
         // Step 28-29: Send OAI-PMH GetRecord request and verify 952 field with Holdings permanent location
         cy.getAdminToken();

@@ -5,6 +5,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import {
@@ -61,11 +62,11 @@ describe('Orders', () => {
               },
               orderFormat: 'P/E Mix',
               eresource: {
-                createInventory: 'Instance, Holding',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                 accessProvider: organization.id,
               },
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
               },
               locations: [
@@ -90,7 +91,7 @@ describe('Orders', () => {
               locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
               acquisitionMethod: params.body.acquisitionMethods[0].id,
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: mtypes.id,
                 materialSupplier: responseOrganizations,
                 volumes: [],
@@ -157,7 +158,7 @@ describe('Orders', () => {
     Users.deleteViaApi(testData.user.userId);
     RoutingListDetails.deleteRoutingListViaApi(testData.routingListId1);
     RoutingListDetails.deleteRoutingListViaApi(testData.routingListId2);
-    Orders.deleteOrderViaApi(order.id);
+    Orders.deleteOrderViaApi(order.id, false);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
@@ -168,7 +169,7 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', testData.orderNumber);
       Orders.selectFromResultsList(testData.orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLineDetails.addRoutingListIsDisabled();
+      OrderLineDetails.verifyAddRoutingListIsDisabled();
       OrderLineDetails.openRoutingList(routingList1);
       RoutingListDetails.checkRoutingListNameDetails(routingList1);
       RoutingListDetails.editRoutingList();
@@ -182,7 +183,7 @@ describe('Orders', () => {
       RoutingListDetails.closeRoutingListDetails();
       OrderLineDetails.waitLoading();
       OrderLineDetails.verifyAddingRoutingList(routingList3);
-      OrderLineDetails.addRoutingListIsDisabled();
+      OrderLineDetails.verifyAddRoutingListIsDisabled();
       OrderLineDetails.backToOrderDetails();
       OrderDetails.openReceivingsPage();
       Receiving.selectFromResultsListByPolNumber(`${testData.orderNumber}-1`);

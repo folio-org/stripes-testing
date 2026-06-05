@@ -379,6 +379,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 10-12: Verify MARC instance in University tenant (idDoesNotExist)
+          cy.resetTenant();
+          cy.getAdminToken();
+          cy.setTenant(Affiliations.University);
+
           OaiPmhEdge.getRecordRequest(
             testData.marcInstance.uuid,
             Affiliations.University,
@@ -407,6 +411,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 13-15: Verify FOLIO instance in College tenant (t=1)
+          cy.resetTenant();
+          cy.getAdminToken();
+          cy.setTenant(Affiliations.College);
+
           OaiPmhEdge.getRecordRequest(
             testData.folioInstance.uuid,
             Affiliations.College,
@@ -504,6 +512,10 @@ describe('OAI-PMH', () => {
           });
 
           // Step 16-18: Verify FOLIO instance in University tenant (idDoesNotExist)
+          cy.resetTenant();
+          cy.getAdminToken();
+          cy.setTenant(Affiliations.University);
+
           OaiPmhEdge.getRecordRequest(
             testData.folioInstance.uuid,
             Affiliations.University,

@@ -3,8 +3,10 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   INVOICE_STATUSES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
+import { TransactionDetails } from '../../../../support/fragments/finance';
 import Budgets from '../../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -22,7 +24,6 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { TransactionDetails } from '../../../../support/fragments/finance';
 
 describe('Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -135,7 +136,7 @@ describe('Fiscal Year Rollover', () => {
                         locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtype.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],
@@ -157,7 +158,7 @@ describe('Fiscal Year Rollover', () => {
                         locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
                         acquisitionMethod: params.body.acquisitionMethods[0].id,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: mtype.id,
                           materialSupplier: responseOrganizations,
                           volumes: [],

@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -62,7 +63,7 @@ describe('Inventory', () => {
             quantityPhysical: 1,
           },
           physical: {
-            createInventory: 'Instance, Holding',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
             materialSupplier: vendorId,
           },
           locations: [
@@ -124,7 +125,7 @@ describe('Inventory', () => {
             quantityPhysical: 1,
           },
           physical: {
-            createInventory: 'Instance, Holding',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
             materialSupplier: vendorId,
           },
           locations: [

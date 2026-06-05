@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   LOCATION_NAMES,
   VENDOR_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
@@ -71,7 +72,7 @@ describe('Inventory', () => {
                 acquisitionMethod: testData.centralOrderLine.acquisitionMethodId,
                 listUnitPrice: testData.centralOrderLine.price,
                 poLineEstimatedPrice: testData.centralOrderLine.price,
-                createInventory: 'Instance',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE,
               }),
             ).then((order) => {
               testData.centralOrder = order;
@@ -111,7 +112,7 @@ describe('Inventory', () => {
                 acquisitionMethod: testData.memberOrderLine.acquisitionMethodId,
                 listUnitPrice: testData.memberOrderLine.price,
                 poLineEstimatedPrice: testData.memberOrderLine.price,
-                createInventory: 'Instance',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE,
               }),
             ).then((order) => {
               testData.memberOrder = order;

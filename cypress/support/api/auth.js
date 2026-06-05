@@ -47,9 +47,12 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
   });
 });
 
-Cypress.Commands.add('getAdminToken', () => {
-  cy.clearCookies({ domain: null });
-  cy.wait(2000); // Wait for cookies to be cleared
+Cypress.Commands.add('getAdminToken', (clearCookies = true) => {
+  if (clearCookies) {
+    cy.wait(1000); // Wait for any ongoing requests to finish
+    cy.clearCookies({ domain: null });
+    cy.wait(2000); // Wait for cookies to be cleared
+  }
   cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 

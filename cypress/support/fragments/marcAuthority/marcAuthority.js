@@ -474,6 +474,7 @@ export default {
   },
 
   verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.wait(3000);
     cy.get('table')
       .find('tr')
       .eq(rowIndex)
@@ -483,7 +484,6 @@ export default {
         const convertedUpdatedDate = new Date(updatedDate).getTime();
         const convertedDateFromField = new Date(dateFromField).getTime();
         const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
-
         // check that difference in time is less than 1 minute
         expect(timeDifference).to.be.lessThan(120000);
       });
@@ -538,6 +538,8 @@ export default {
   selectSourceFile(sourceFileName) {
     cy.do(sourceFileSelect.choose(sourceFileName));
     this.verifySourceFileSelected(sourceFileName);
+    cy.wait(500);
+    cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(Spinner()).absent());
   },
 
   verifySourceFileOptionPresent: (option, isPresent = true) => {
@@ -598,5 +600,10 @@ export default {
       path: `audit-data/marc/authority/${authorityUUID}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  closeAuthorityViewPane() {
+    cy.do(rootSection.find(closeButton).click());
+    cy.expect(rootSection.absent());
   },
 };

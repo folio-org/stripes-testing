@@ -52,6 +52,11 @@ export default {
     resource: 'UI-Data-Export Settings',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiDeveloperSettingsUserLocaleView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Developer Settings UserLocale Execute',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsHoldingsSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Holdings-Sources',
@@ -60,6 +65,11 @@ export default {
   uiInventorySettingsSubjectSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Subject-Sources',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsListView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings List',
     action: CAPABILITY_ACTIONS.VIEW,
   },
   uiDataImportSettingsManage: {
@@ -76,6 +86,11 @@ export default {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'Module Lists Refresh',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  myProfileMainNavOrderManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Myprofile Settings Main-Nav-Order',
+    action: CAPABILITY_ACTIONS.MANAGE,
   },
 
   // Data capability sets
@@ -224,6 +239,11 @@ export default {
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryItemMove: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiDataImport: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Data-Import',
@@ -254,10 +274,20 @@ export default {
     resource: 'UI-Marc-Authorities Authority-Record',
     action: CAPABILITY_ACTIONS.DELETE,
   },
+  uiMarcAuthoritiesAuthorityRecordCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Marc-Authorities Authority-Record',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiQuickMarcQuickMarcAuthoritiesEditorManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiQuickMarcQuickMarcAuthoritiesEditorCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Authorities-Editor',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiQuickMarcQuickMarcHoldingsEditorView: {
     type: CAPABILITY_TYPES.DATA,
@@ -283,6 +313,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Bulk-Edit Logs',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiBulkEditInventoryEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,

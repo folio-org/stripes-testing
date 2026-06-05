@@ -374,7 +374,7 @@ export default {
     });
   },
 
-  checkZeroSearchResultsHeader: () => {
+  checkZeroSearchResultsHeader() {
     this.assertResultsCount(0);
   },
 
@@ -383,6 +383,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(orderTypeSelect.choose(order.orderType));
+    cy.wait(1000);
     cy.do([
       MultiSelect({ id: 'order-acq-units' })
         .find(Button({ ariaLabel: 'open menu' }))
@@ -1047,23 +1048,10 @@ export default {
     FiltersPaneHelper.collapseFilterAccordion(ordersFiltersPane, filterLabel);
   },
 
-  assertMultiSelectFilterValues(filterLabel, expectedValues, options = {}) {
-    FiltersPaneHelper.assertMultiSelectFilterValues(
-      ordersFiltersPane,
-      filterLabel,
-      expectedValues,
-      options,
-    );
-  },
-
-  assertMultiSelectFilterOptions(filterLabel, expectedOptions, options = {}) {
-    FiltersPaneHelper.assertMultiSelectFilterOptionsValues(
-      ordersFiltersPane,
-      filterLabel,
-      expectedOptions,
-      options,
-    );
-  },
+  assertMultiSelectFilterValues:
+    FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(ordersFiltersPane),
+  assertMultiSelectFilterOptions:
+    FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(ordersFiltersPane),
 
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_FILTER_LABELS.FUND_CODE, expectedValues, options);

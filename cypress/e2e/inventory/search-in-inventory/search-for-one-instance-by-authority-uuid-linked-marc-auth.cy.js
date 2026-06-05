@@ -73,7 +73,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -114,7 +114,7 @@ describe('Inventory', () => {
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.recordIDs[0]);
       InventoryInstance.deleteInstanceViaApi(testData.recordIDs[1]);
-      MarcAuthority.deleteViaAPI(testData.recordIDs[2]);
+      MarcAuthority.deleteViaAPI(testData.recordIDs[2], true);
     });
 
     it(
@@ -133,6 +133,8 @@ describe('Inventory', () => {
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
       },
     );
   });

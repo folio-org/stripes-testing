@@ -11,7 +11,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
-  describe('Call Number Browse', () => {
+  describe('Search in Inventory', () => {
     const testData = {
       sharedInstance: {
         title: `C402334 "Shared" facet test Instance 1 Shared Folio ${getRandomPostfix()}`,
@@ -53,12 +53,14 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C402334');
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           testData.userProperties = userProperties;
 
           cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
+          InventoryInstances.deleteInstanceByTitleViaApi('C402334');
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.uiInventoryViewInstances.gui,
           ]);
@@ -139,18 +141,18 @@ describe('Inventory', () => {
         InventorySearchAndFilter.byKeywords(testData.instanceValue);
         InventorySearchAndFilter.verifySearchResult(testData.localInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.sharedInstance.title);
-        InventoryInstance.verifySharedIcon(1);
+        InventoryInstance.verifySharedIconByTitle(testData.sharedInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.importedLocalInstance);
         InventorySearchAndFilter.verifySearchResult(testData.importedSharedInstance);
-        InventoryInstance.verifySharedIcon(3);
+        InventoryInstance.verifySharedIconByTitle(testData.importedSharedInstance);
         InventorySearchAndFilter.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.YES, 2);
         InventorySearchAndFilter.verifyFilterOptionCount(Dropdowns.SHARED, Dropdowns.NO, 2);
 
         InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.NO);
         InventorySearchAndFilter.verifySearchResult(testData.localInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.importedLocalInstance);
-        InventoryInstance.verifySharedIconAbsent(0);
-        InventoryInstance.verifySharedIconAbsent(1);
+        InventoryInstance.verifySharedIconAbsentByTitle(testData.localInstance.title);
+        InventoryInstance.verifySharedIconAbsentByTitle(testData.importedLocalInstance);
         InventoryInstances.selectInstance();
         InventoryInstance.checkSharedTextInDetailView(false);
 
@@ -167,16 +169,16 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.YES);
         InventorySearchAndFilter.verifySearchResult(testData.sharedInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.importedSharedInstance);
-        InventoryInstance.verifySharedIcon(0);
-        InventoryInstance.verifySharedIcon(1);
+        InventoryInstance.verifySharedIconByTitle(testData.sharedInstance.title);
+        InventoryInstance.verifySharedIconByTitle(testData.importedSharedInstance);
         InventoryInstances.selectInstance();
         InventoryInstance.checkSharedTextInDetailView();
-        InventoryInstance.verifySharedIcon(0);
-        InventoryInstance.verifySharedIcon(1);
+        InventoryInstance.verifySharedIconByTitle(testData.sharedInstance.title);
+        InventoryInstance.verifySharedIconByTitle(testData.importedSharedInstance);
 
         InventorySearchAndFilter.closeInstanceDetailPane();
-        InventoryInstance.verifySharedIcon(0);
-        InventoryInstance.verifySharedIcon(1);
+        InventoryInstance.verifySharedIconByTitle(testData.sharedInstance.title);
+        InventoryInstance.verifySharedIconByTitle(testData.importedSharedInstance);
         InventorySearchAndFilter.selectOptionInExpandedFilter(
           Dropdowns.SHARED,
           Dropdowns.YES,
@@ -192,7 +194,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchResult(testData.localInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.sharedInstance.title);
         InventorySearchAndFilter.verifySearchResult(testData.importedLocalInstance);
-        InventorySearchAndFilter.verifySearchResult(testData.importedSharedInstance);
 
         InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);

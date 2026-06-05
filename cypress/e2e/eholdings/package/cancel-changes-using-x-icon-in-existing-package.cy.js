@@ -16,18 +16,17 @@ describe('eHoldings', () => {
     };
 
     before('Creating user, logging in', () => {
+      cy.getAdminToken();
+      EHoldingsPackages.unassignPackageViaAPI(testData.package);
       cy.createTempUser([
         permissions.moduleeHoldingsEnabled.gui,
         permissions.uieHoldingsRecordsEdit.gui,
+        permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
-        });
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          EHoldingsTitlesSearch.waitLoading();
         });
       });
     });
@@ -50,6 +49,8 @@ describe('eHoldings', () => {
 
         EHoldingsPackages.openPackage();
         EHoldingsPackage.waitLoading(testData.package);
+        EHoldingsPackage.addToHoldings();
+        EHoldingsPackage.verifySelectedPackage();
 
         EHoldingsPackage.editProxyActions();
         EHoldingsProviderEdit.changeProxy();

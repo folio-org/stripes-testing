@@ -263,14 +263,13 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
   after(() => {
     cy.getAdminToken().then(() => {
       Users.deleteViaApi(testData.user.userId);
-      Approvals.setApprovePayValueViaApi(false);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
     });
   });
 
   it(
     'C388526 Approve and pay invoice created in current FY for previous FY when related order line was created in current FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C388526'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388526', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);

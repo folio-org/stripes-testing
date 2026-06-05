@@ -1,17 +1,20 @@
-import Permissions from '../../../support/dictionary/permissions';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Permissions from '../../../support/dictionary/permissions';
 import { NewOrder, Orders } from '../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
   describe('Consortium (Orders)', () => {
@@ -121,7 +124,8 @@ describe('Orders', () => {
                                     ],
                                     acquisitionMethod: params.body.acquisitionMethods[0].id,
                                     physical: {
-                                      createInventory: 'Instance, Holding, Item',
+                                      createInventory:
+                                        POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                                       materialType: mtypes.body.id,
                                       materialSupplier: responseOrganizations,
                                       volumes: [],

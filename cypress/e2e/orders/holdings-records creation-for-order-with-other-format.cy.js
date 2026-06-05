@@ -1,4 +1,4 @@
-import { ORDER_STATUSES } from '../../support/constants';
+import { ORDER_STATUSES, POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -46,7 +46,7 @@ describe('Orders', () => {
               orderFormat: 'Other',
               checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.INDEPENDENT],
               physical: {
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 materialType: materialTypeId,
               },
               locations: [
