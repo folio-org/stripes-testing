@@ -7,7 +7,6 @@ import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils/stringTools';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
-import Affiliations from '../../../../../support/dictionary/affiliations';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -16,34 +15,69 @@ describe('MARC', () => {
         const randomPostfix = getRandomPostfix();
         const randomLetters = getRandomLetters(2);
         const localAuthFile = {
-          name: `C514881 auth source file active ${randomPostfix}`,
+          name: `C514873 auth source file active ${randomPostfix}`,
           prefix: `${randomLetters}`,
           hridStartsWith: '1',
           baseUrl: '',
           source: 'Local',
           isActive: true,
         };
-        const sharedMarcAuthorityHeadingExisting = `AT_C514881_SharedMarcAuthorityExisting_${randomPostfix}`;
-        const sharedMarcAuthorityHeadingToBeEdited = `AT_C514881_SharedMarcAuthorityToBeEdited_${randomPostfix}`;
-        const localMarcAuthorityHeading = `AT_C514881_LocalMarcAuthority_${randomPostfix}`;
+        const marcAuthorityHeadingExisting = `AT_C514873_SharedMarcAuthorityExisting_${randomPostfix}`;
+        const marcAuthorityHeadingToBeEdited = `AT_C514873_SharedMarcAuthorityToBeEdited_${randomPostfix}`;
         const errorText = including('Fail: 010 $a already exists.');
         const marcAuthorityFields = [
           [
             {
               tag: '100',
-              content: `$a ${sharedMarcAuthorityHeadingExisting}`,
+              content: `$a ${marcAuthorityHeadingExisting}_1`,
               indicators: ['1', '1'],
             },
             {
               tag: '010',
-              content: '$a vp  58020321 $z pv  19951908 ',
+              content: '$a   58020559 $z  19951908',
               indicators: ['\\', '\\'],
             },
           ],
           [
             {
               tag: '100',
-              content: `$a ${sharedMarcAuthorityHeadingToBeEdited}`,
+              content: `$a ${marcAuthorityHeadingExisting}_2`,
+              indicators: ['1', '1'],
+            },
+            {
+              tag: '010',
+              content: '$avp  58020560 $zpv  19951909',
+              indicators: ['\\', '\\'],
+            },
+          ],
+          [
+            {
+              tag: '100',
+              content: `$a ${marcAuthorityHeadingExisting}_3`,
+              indicators: ['1', '1'],
+            },
+            {
+              tag: '010',
+              content: '$avp 58020561$zpv 19951910',
+              indicators: ['\\', '\\'],
+            },
+          ],
+          [
+            {
+              tag: '100',
+              content: `$a ${marcAuthorityHeadingExisting}_4`,
+              indicators: ['1', '1'],
+            },
+            {
+              tag: '010',
+              content: '$avp58020562$zpv19951911',
+              indicators: ['\\', '\\'],
+            },
+          ],
+          [
+            {
+              tag: '100',
+              content: `$a ${marcAuthorityHeadingToBeEdited}`,
               indicators: ['1', '1'],
             },
             {
@@ -52,28 +86,57 @@ describe('MARC', () => {
               indicators: ['\\', '\\'],
             },
           ],
-          [
-            {
-              tag: '100',
-              content: `$a ${localMarcAuthorityHeading}`,
-              indicators: ['1', '1'],
-            },
-            {
-              tag: '010',
-              content: '$a vp  58020322 $z pv  19951909',
-              indicators: ['\\', '\\'],
-            },
-          ],
         ];
-        const invalidLccn = 'vp  58020321';
-        const validLccn = [
+        const invalidLccn = [
           {
-            name: 'Existing Canceled LCCN of Shared record',
-            value: 'pv  19951908',
+            name: 'value without prefix which matches to "010 $a" of existing (saved) record',
+            value: '58020559',
           },
           {
-            name: 'Existing LCCN of Local record',
-            value: 'vp  58020322',
+            name: 'value with prefix and internal spaces which matches to "010 $a" of existing (saved) record',
+            value: 'vp  58020560 ',
+          },
+          {
+            name: 'value with prefix and without spaces which matches to "010 $a" of existing (saved) record',
+            value: 'vp58020560',
+          },
+          {
+            name: 'value with prefix and one internal space which matches to "010 $a" of existing (saved) record',
+            value: 'vp 58020561',
+          },
+          {
+            name: 'value with prefix and without internal spaces which matches to "010 $a" of existing (saved) record',
+            value: 'vp58020562',
+          },
+          {
+            name: 'value with prefix and with internal spaces which matches to "010 $a" of existing (saved) record',
+            value: 'vp  58020562',
+          },
+        ];
+        const validLccn = [
+          {
+            name: 'value without prefix which matches to "010 $z" of existing (saved) record',
+            value: '19951908',
+          },
+          {
+            name: 'value with prefix and internal spaces which matches to "010 $z" of existing (saved) record',
+            value: 'pv  19951909',
+          },
+          {
+            name: 'value with prefix and without spaces which matches to "010 $z" of existing (saved) record',
+            value: 'pv19951909',
+          },
+          {
+            name: 'value with prefix and one internal space which matches to "010 $z" of existing (saved) record',
+            value: 'pv 19951910',
+          },
+          {
+            name: 'value with prefix and without internal spaces which matches to "010 $z" of existing (saved) record',
+            value: 'pv19951911',
+          },
+          {
+            name: 'value with prefix and with internal spaces which matches to "010 $z" of existing (saved) record',
+            value: 'pv  19951911',
           },
         ];
         const createdAuthorityId = [];
@@ -82,7 +145,7 @@ describe('MARC', () => {
         before('Create users, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514881');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514873');
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -99,29 +162,14 @@ describe('MARC', () => {
                 localAuthFile.hridStartsWith,
                 localAuthFile.name,
               ).then(() => {
-                MarcAuthorities.createMarcAuthorityViaAPI(
-                  localAuthFile.prefix,
-                  localAuthFile.hridStartsWith,
-                  marcAuthorityFields[0],
-                ).then((authorityId) => {
-                  createdAuthorityId.push(authorityId);
-                });
-
-                MarcAuthorities.createMarcAuthorityViaAPI(
-                  localAuthFile.prefix,
-                  localAuthFile.hridStartsWith,
-                  marcAuthorityFields[1],
-                ).then((authorityId) => {
-                  createdAuthorityId.push(authorityId);
-                });
-
-                cy.setTenant(Affiliations.College);
-                MarcAuthorities.createMarcAuthorityViaAPI(
-                  localAuthFile.prefix,
-                  localAuthFile.hridStartsWith,
-                  marcAuthorityFields[2],
-                ).then((authorityId) => {
-                  createdAuthorityId.push(authorityId);
+                marcAuthorityFields.forEach((record) => {
+                  MarcAuthorities.createMarcAuthorityViaAPI(
+                    localAuthFile.prefix,
+                    localAuthFile.hridStartsWith,
+                    record,
+                  ).then((authorityId) => {
+                    createdAuthorityId.push(authorityId);
+                  });
                 });
 
                 cy.resetTenant();
@@ -142,33 +190,34 @@ describe('MARC', () => {
           cy.getAdminToken();
           ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(localAuthFile.name);
           Users.deleteViaApi(user.userId);
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514881');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514873');
           cy.toggleLccnDuplicateCheck({ enable: false });
-          cy.setTenant(Affiliations.College);
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514881');
         });
 
         it(
-          'C514881 Cannot save existing Shared MARC authority record with value in "010 $a" subfield which matches to other Shared record "010 $a" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514881'] },
+          'C514873 Cannot save existing MARC authority record with value in "010 $a" subfield which matches to other records "010 $a" when duplicate LCCN check is enabled (consortia) (spitfire)',
+          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514873'] },
           () => {
             // Step 0: User is on detail view pane of record
-            MarcAuthorities.searchBeats(sharedMarcAuthorityHeadingToBeEdited);
+            MarcAuthorities.searchBeats(marcAuthorityHeadingToBeEdited);
             MarcAuthorities.waitLoading();
 
             // Step 1: Click on "Actions" button in second pane >> "Edit"
             MarcAuthority.edit();
 
-            // Step 2: Update "010 $a" with LCCNs of existing Shared record
-            QuickMarcEditor.updateExistingField('010', `$a ${invalidLccn}`);
-            QuickMarcEditor.pressSaveAndCloseButton();
-            QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
-            QuickMarcEditor.closeAllCallouts();
+            // Steps 2,4,5,8,10,12: Update "010 $a" with LCCNs of existing Shared record
+            invalidLccn.forEach((lccn) => {
+              QuickMarcEditor.updateExistingField('010', `$a ${lccn.value}`);
+              QuickMarcEditor.pressSaveAndCloseButton();
+              QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+              QuickMarcEditor.closeAllCallouts();
+            });
 
-            // Steps 3-4: Update "010 $a" with Canceled LCCN of Shared record, LCCN of Local record
+            // Steps 3,6,7,9,11,13: Update "010 $a" with Canceled LCCNs of existing Shared record
             validLccn.forEach((lccn) => {
               QuickMarcEditor.updateExistingField('010', `$a ${lccn.value}`);
               QuickMarcEditor.clickSaveAndKeepEditing();
+              cy.wait(3000);
             });
           },
         );
