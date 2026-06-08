@@ -42,6 +42,8 @@ const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
 
+const ADD_PIECE_BUTTON_LABEL = 'Add piece';
+
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
   Edit: Button('Edit'),
@@ -226,6 +228,10 @@ export default {
   verifyEditButtonIsInactive() {
     cy.do(buttons.Actions.click());
     cy.expect(Button('Edit').has({ disabled: true }));
+  },
+  verifyAddPieceButtonAbsent() {
+    cy.do(expectedSection.find(Button('Actions')).click());
+    cy.expect(Button(ADD_PIECE_BUTTON_LABEL).absent());
   },
   openReceiveListEditForm() {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
