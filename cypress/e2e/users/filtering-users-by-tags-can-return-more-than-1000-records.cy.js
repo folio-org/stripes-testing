@@ -58,7 +58,6 @@ describe('Users', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    console.log('testData.tagLabel', testData.tagLabel);
     cy.bulkDeleteUsersViaApi({
       limit: usersQuantity,
       query: `tags.tagList="${testData.tagLabel}"`,
