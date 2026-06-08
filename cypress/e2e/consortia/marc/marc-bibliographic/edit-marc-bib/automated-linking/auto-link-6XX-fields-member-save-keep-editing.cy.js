@@ -1,117 +1,231 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import { Permissions } from '../../../../../../support/dictionary';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DataImport from '../../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import MarcAuthorities from '../../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../../support/fragments/topMenu';
 import Users from '../../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomNDigitNumber,
+} from '../../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Automated linking', () => {
+        const randomPostfix = getRandomPostfix();
+        const randomLetters = getRandomLetters(7);
+        const randomDigits = randomNDigitNumber(7);
+
         const testData = {
+          instanceTitle: `AT_C770443_MarcBibInstance_${randomPostfix}`,
+          naturalId600: `ATC770443600${randomLetters}${randomDigits}`,
+          naturalId610: `ATC770443610${randomLetters}${randomDigits}`,
+          naturalId611: `ATC770443611${randomLetters}${randomDigits}`,
+          naturalId630: `ATC770443630${randomLetters}${randomDigits}`,
+          naturalId650: `ATC770443650${randomLetters}${randomDigits}`,
+          naturalId651: `ATC770443651${randomLetters}${randomDigits}`,
+          naturalId655: `ATC770443655${randomLetters}${randomDigits}`,
+          heading100: `AT_C770443_PersonalName_${randomPostfix}`,
+          heading110: `AT_C770443_CorporateName_${randomPostfix}.`,
+          heading111: `AT_C770443_MeetingName_${randomPostfix}`,
+          heading130: `AT_C770443_UniformTitle_${randomPostfix}`,
+          heading150: `AT_C770443_TopicalTerm_${randomPostfix}`,
+          heading151: `AT_C770443_GeographicName_${randomPostfix}`,
+          heading155: `AT_C770443_GenreForm_${randomPostfix}`,
           fields: {
             tag600: {
               tag: '600',
-              rowIndex: 45,
+              rowIndex: 5,
               ind1: '0',
               ind2: '0',
-              controlled:
-                '$a Black Panther $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              eSubfield: '$e Relator term',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2016004082',
-              seventhBox: '$4 .prt $2 test',
             },
             tag610: {
               tag: '610',
-              rowIndex: 46,
+              rowIndex: 6,
               ind1: '\\',
               ind2: '\\',
-              controlled:
-                '$a Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              eSubfield: '$e Relator term $u Affiliation',
-              zeroSubfield: '$0 4510955',
-              seventhBox: '',
             },
             tag611: {
               tag: '611',
-              rowIndex: 47,
+              rowIndex: 7,
               ind1: '\\',
               ind2: '\\',
-              controlled:
-                '$a Roma Council $c Location of meeting $d Date of meeting or treaty signing $e Subordinate unit $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $n Number of part/section/meeting $p Name of part/section of a work $q Name of meeting following jurisdiction name entry element $s Version $t Title of a work',
-              eSubfield:
-                '$b Subordinate unit $m Moo $o Opps $r right $u Date of meeting or treaty signing $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/names/n79084170',
-              seventhBox: '',
             },
             tag630: {
               tag: '630',
-              rowIndex: 48,
+              rowIndex: 8,
               ind1: '\\',
               ind2: '\\',
-              controlled:
-                '$a Marvel comics $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work',
-              eSubfield:
-                '$e Term $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/names/n80026955',
-              seventhBox: '',
             },
             tag650: {
               tag: '650',
-              rowIndex: 49,
+              rowIndex: 9,
               ind1: '\\',
               ind2: '\\',
-              controlled: '$a Speaking Oratory',
-              eSubfield:
-                '$b debating $c Location $d Date $e Term $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/subjects/sh85095298',
-              seventhBox: '',
             },
             tag651: {
               tag: '651',
-              rowIndex: 50,
+              rowIndex: 10,
               ind1: '\\',
               ind2: '\\',
-              controlled: '$a Clear Creek (Tex.)',
-              eSubfield:
-                '$e Term $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/names/n79041363',
-              seventhBox: '$4 Test',
             },
             tag655: {
               tag: '655',
-              rowIndex: 51,
+              rowIndex: 11,
               ind1: '\\',
               ind2: '\\',
-              controlled:
-                '$a Drama $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
-              eSubfield: '$b Bowl $c Chicken',
-              zeroSubfield: '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
-              seventhBox: '$7 Luck',
             },
           },
         };
 
-        const marcFiles = [
+        // Expected values after linking (controlled content comes from authority headings)
+        testData.fields.tag600.controlled = `$a ${testData.heading100} $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`;
+        testData.fields.tag600.eSubfield = '$e Relator term';
+        testData.fields.tag600.zeroSubfield = `$0 ${testData.naturalId600}`;
+        testData.fields.tag600.seventhBox = '$4 .prt $2 test';
+
+        testData.fields.tag610.controlled = `$a ${testData.heading110} $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`;
+        testData.fields.tag610.eSubfield = '$e Relator term $u Affiliation';
+        testData.fields.tag610.zeroSubfield = `$0 ${testData.naturalId610}`;
+        testData.fields.tag610.seventhBox = '';
+
+        testData.fields.tag611.controlled = `$a ${testData.heading111} $c Location of meeting $d Date of meeting or treaty signing $e Subordinate unit $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $n Number of part/section/meeting $p Name of part/section of a work $q Name of meeting following jurisdiction name entry element $s Version $t Title of a work`;
+        testData.fields.tag611.eSubfield =
+          '$b Subordinate unit $m Moo $o Opps $r right $u Date of meeting or treaty signing $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision';
+        testData.fields.tag611.zeroSubfield = `$0 ${testData.naturalId611}`;
+        testData.fields.tag611.seventhBox = '';
+
+        testData.fields.tag630.controlled = `$a ${testData.heading130} $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work`;
+        testData.fields.tag630.eSubfield =
+          '$e Term $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision';
+        testData.fields.tag630.zeroSubfield = `$0 ${testData.naturalId630}`;
+        testData.fields.tag630.seventhBox = '';
+
+        testData.fields.tag650.controlled = `$a ${testData.heading150}`;
+        testData.fields.tag650.eSubfield =
+          '$b debating $c Location $d Date $e Term $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision';
+        testData.fields.tag650.zeroSubfield = `$0 ${testData.naturalId650}`;
+        testData.fields.tag650.seventhBox = '';
+
+        testData.fields.tag651.controlled = `$a ${testData.heading151}`;
+        testData.fields.tag651.eSubfield =
+          '$e Term $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision';
+        testData.fields.tag651.zeroSubfield = `$0 ${testData.naturalId651}`;
+        testData.fields.tag651.seventhBox = '$4 Test';
+
+        testData.fields.tag655.controlled = `$a ${testData.heading155} $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`;
+        testData.fields.tag655.eSubfield = '$b Bowl $c Chicken';
+        testData.fields.tag655.zeroSubfield = `$0 ${testData.naturalId655}`;
+        testData.fields.tag655.seventhBox = '$7 Luck';
+
+        // Authority field definitions (heading fields matching source marcAuthFileC770443.mrc)
+        const marcAuthority100Fields = [
           {
-            marc: 'marcBibFileC770443.mrc',
-            fileName: `testMarcBibFileC770443.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-            propertyName: 'instance',
+            tag: '100',
+            content: `$a ${testData.heading100} $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $e Relator term $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['1', '\\'],
+          },
+        ];
+
+        const marcAuthority110Fields = [
+          {
+            tag: '110',
+            content: `$a ${testData.heading110} $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $e Relator term $e Term 2 $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['2', '\\'],
+          },
+        ];
+
+        const marcAuthority111Fields = [
+          {
+            tag: '111',
+            content: `$a ${testData.heading111} $c Location of meeting $d Date of meeting or treaty signing $e Subordinate unit $f Date of a work $g Miscellaneous information $h Medium $j Relator term $k Form subheading $l Language of a work $n Number of part/section/meeting $p Name of part/section of a work $q Name of meeting following jurisdiction name entry element $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['2', '\\'],
+          },
+        ];
+
+        const marcAuthority130Fields = [
+          {
+            tag: '130',
+            content: `$a ${testData.heading130} $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['\\', '\\'],
+          },
+        ];
+
+        const marcAuthority150Fields = [
+          {
+            tag: '150',
+            content: `$a ${testData.heading150} $b debating $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['\\', '\\'],
+          },
+        ];
+
+        const marcAuthority151Fields = [
+          {
+            tag: '151',
+            content: `$a ${testData.heading151} $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['\\', '\\'],
+          },
+        ];
+
+        const marcAuthority155Fields = [
+          {
+            tag: '155',
+            content: `$a ${testData.heading155} $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision`,
+            indicators: ['\\', '\\'],
+          },
+        ];
+
+        // Bib fields (all subfields: controlled + non-controlled + $0 + special)
+        const marcBibFields = [
+          {
+            tag: '008',
+            content: QuickMarcEditor.valid008ValuesInstance,
           },
           {
-            marc: 'marcAuthFileC770443.mrc',
-            fileName: `testMarcAuthFileC770443.${getRandomPostfix()}.mrc`,
-            jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            propertyName: 'authority',
+            tag: '245',
+            content: `$a ${testData.instanceTitle}`,
+            indicators: ['1', '1'],
+          },
+          {
+            tag: '600',
+            content: `$a ${testData.heading100} $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $e Relator term $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId600} $4 .prt $2 test`,
+            indicators: ['0', '0'],
+          },
+          {
+            tag: '610',
+            content: `$a ${testData.heading110} $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $e Relator term $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $u Affiliation $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId610}`,
+            indicators: ['\\', '\\'],
+          },
+          {
+            tag: '611',
+            content: `$a ${testData.heading111} $b Subordinate unit $c Location of meeting $d Date of meeting or treaty signing $e Subordinate unit $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Moo $n Number of part/section/meeting $o Opps $p Name of part/section of a work $q Name of meeting following jurisdiction name entry element $r right $s Version $t Title of a work $u Date of meeting or treaty signing $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId611}`,
+            indicators: ['\\', '\\'],
+          },
+          {
+            tag: '630',
+            content: `$a ${testData.heading130} $d Date of treaty signing $e Term $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId630}`,
+            indicators: ['\\', '\\'],
+          },
+          {
+            tag: '650',
+            content: `$a ${testData.heading150} $b debating $c Location $d Date $e Term $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId650}`,
+            indicators: ['\\', '\\'],
+          },
+          {
+            tag: '651',
+            content: `$a ${testData.heading151} $e Term $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId651} $4 Test`,
+            indicators: ['\\', '\\'],
+          },
+          {
+            tag: '655',
+            content: `$a ${testData.heading155} $b Bowl $c Chicken $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision $0 ${testData.naturalId655} $7 Luck`,
+            indicators: ['\\', '\\'],
           },
         ];
 
@@ -294,13 +408,19 @@ describe('MARC', () => {
         const createdRecordIDs = [];
         const users = {};
 
-        before('Create user, set linking rules, import data', () => {
+        before('Create user, set linking rules, create data via API', () => {
           cy.getAdminToken();
 
+          // Cleanup any leftover data from previous runs
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C770443_');
+          InventoryInstances.deleteInstanceByTitleViaApi('AT_C770443_');
+
+          // Set linking rules on Central
           authoritySubfieldsCentral.forEach(({ ruleId, ruleSubfields, autoLinkingEnabled }) => {
             QuickMarcEditor.setAuthoritySubfieldsViaApi(ruleId, ruleSubfields, autoLinkingEnabled);
           });
 
+          // Set linking rules on Member (College)
           cy.setTenant(Affiliations.College);
           authoritySubfieldsMember.forEach(({ ruleId, ruleSubfields, autoLinkingEnabled }) => {
             QuickMarcEditor.setAuthoritySubfieldsViaApi(ruleId, ruleSubfields, autoLinkingEnabled);
@@ -308,6 +428,71 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
 
+          // Create shared authority records on Central
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId600,
+            '',
+            marcAuthority100Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId610,
+            '',
+            marcAuthority110Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId611,
+            '',
+            marcAuthority111Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId630,
+            '',
+            marcAuthority130Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId650,
+            '',
+            marcAuthority150Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId651,
+            '',
+            marcAuthority151Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            testData.naturalId655,
+            '',
+            marcAuthority155Fields,
+          ).then((authorityId) => {
+            createdRecordIDs.push(authorityId);
+          });
+
+          // Create shared bib record on Central
+          cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcBibFields).then(
+            (instanceId) => {
+              createdRecordIDs.push(instanceId);
+            },
+          );
+
+          // Create user and assign permissions
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -326,21 +511,6 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
                 Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
-            })
-            .then(() => {
-              cy.resetTenant();
-              cy.getAdminToken();
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
-                });
-              });
             })
             .then(() => {
               cy.resetTenant();
@@ -363,9 +533,9 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(users.userProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          createdRecordIDs.slice(1).forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
+          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[7]);
+          createdRecordIDs.slice(0, 7).forEach((id) => {
+            MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
@@ -374,7 +544,7 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C770443'] },
           () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.searchByTitle(createdRecordIDs[7]);
             InventoryInstances.selectInstance();
 
             // Step 1: click Actions > Edit MARC bibliographic record
