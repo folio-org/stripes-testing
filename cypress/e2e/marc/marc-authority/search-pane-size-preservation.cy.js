@@ -10,7 +10,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Search - Authority records', () => {
       const testData = {
-        searchQuery: '*',
+        searchQuery: 'C367959',
         searchOption: 'Keyword',
         authorityPrefix: '',
         authorityRecords: [

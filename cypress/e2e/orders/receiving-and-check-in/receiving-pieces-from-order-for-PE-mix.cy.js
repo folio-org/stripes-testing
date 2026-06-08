@@ -1,5 +1,10 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -55,10 +60,10 @@ describe('Orders', () => {
                     listUnitPrice: 10,
                   },
                   eresource: {
-                    createInventory: 'Instance, Holding',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
                   },
                   physical: {
-                    createInventory: 'Instance, Holding, Item',
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                     materialType: testData.materialTypeId,
                   },
                   orderFormat: 'P/E Mix',

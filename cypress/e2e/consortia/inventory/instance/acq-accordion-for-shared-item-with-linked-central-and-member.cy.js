@@ -4,6 +4,7 @@ import {
   HOLDINGS_SOURCE_NAMES,
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
   VENDOR_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -107,7 +108,7 @@ describe('Inventory', () => {
                 acquisitionMethod: testData.centralOrderLine.acquisitionMethodId,
                 listUnitPrice: testData.centralOrderLine.price,
                 poLineEstimatedPrice: testData.centralOrderLine.price,
-                createInventory: 'Instance',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE,
               }),
             ).then((order) => {
               testData.centralOrder = order;

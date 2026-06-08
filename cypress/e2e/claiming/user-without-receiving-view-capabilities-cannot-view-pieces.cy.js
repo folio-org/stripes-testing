@@ -1,20 +1,24 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
+import Claiming from '../../support/fragments/claiming/claiming';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import Pieces from '../../support/fragments/orders/pieces/pieces';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import Receiving from '../../support/fragments/receiving/receiving';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import Claiming from '../../support/fragments/claiming/claiming';
-import Receiving from '../../support/fragments/receiving/receiving';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { ORDER_STATUSES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 
 describe('Claiming', () => {
   const testData = {
@@ -81,7 +85,7 @@ describe('Claiming', () => {
                         ],
                         acquisitionMethod: testData.acquisitionMethod,
                         physical: {
-                          createInventory: 'Instance, Holding, Item',
+                          createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                           materialType: testData.materialType.id,
                           materialSupplier: testData.organization.id,
                           volumes: [],

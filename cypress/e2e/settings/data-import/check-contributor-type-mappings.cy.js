@@ -1,4 +1,9 @@
-import { APPLICATION_NAMES, JOB_STATUS_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  JOB_STATUS_NAMES,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -53,7 +58,7 @@ describe('Data Import', () => {
             currency: 'USD',
           },
           physicalResourceDetails: {
-            createInventory: 'Instance',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE,
           },
         },
       },

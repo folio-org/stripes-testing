@@ -1,13 +1,14 @@
 import uuid from 'uuid';
+import { POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
-import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -29,7 +30,7 @@ describe('Orders', () => {
     selector: `Autotest selector_${getRandomPostfix()}`,
     fundDistribution: [],
     physical: {
-      createInventory: 'Instance, Holding, Item',
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
       materialType: '',
       materialSupplier: '',
       volumes: [`test_vol_${getRandomPostfix()}`],

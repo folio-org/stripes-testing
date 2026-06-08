@@ -21,6 +21,8 @@ export default {
   circulationRequestCancellationReasonsPath: 'settings/circulation/cancellation-reasons',
   circulationRequestPoliciesPath: 'settings/circulation/request-policies',
   circulationTitleLevelRequestsPath: 'settings/circulation/title-level-requests',
+  circulationPrintHoldRequestsPath: 'settings/circulation/print-hold-requests',
+  circulationViewPrintDetailsPath: 'settings/circulation/view-print-details',
   consortiumManagerPath: 'settings/consortia-settings',
   coursesPath: 'settings/cr',
   dashboardPath: 'settings/dashboard',

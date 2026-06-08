@@ -1,31 +1,32 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import { TransactionDetails } from '../../support/fragments/finance';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
 import LedgerRollovers from '../../support/fragments/finance/ledgers/ledgerRollovers';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import Invoices from '../../support/fragments/invoices/invoices';
+import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import DateTools from '../../support/utils/dateTools';
 import { CodeTools, StringTools } from '../../support/utils';
-import { TransactionDetails } from '../../support/fragments/finance';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
-  INVOICE_STATUSES,
-} from '../../support/constants';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Orders', () => {
   const code = CodeTools(4);
@@ -137,7 +138,7 @@ describe('Orders', () => {
       ],
       acquisitionMethod: acquisitionMethodId,
       physical: {
-        createInventory: 'Instance, Holding, Item',
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
         materialType: materialTypeId,
         materialSupplier: testData.organization.id,
         volumes: [],

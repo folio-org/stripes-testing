@@ -132,9 +132,11 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
+  previouslyHeld: 'Instance — Previously held',
   createdDate: 'Instance — Created date',
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
@@ -191,6 +193,8 @@ export const itemFieldValues = {
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
+  itemEffectiveLibraryCode: 'Item effective library — Code',
+  itemEffectiveLibraryName: 'Item effective library — Name',
   holdingsId: 'Holdings — UUID',
   holdingsHrid: 'Holdings — HRID',
   temporaryLocation: 'Item temporary location — Name',
@@ -221,10 +225,22 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userCreatedDate: 'User — User created date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+};
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
+export const organizationFieldValues = {
+  code: 'Organization — Code',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -485,11 +501,33 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyValueSelectContainsOptions(expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expectedOptions.forEach((option) => {
+        expect(actualOptions, `Value dropdown options for row ${row}`).to.include(option);
+      });
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyFilteredOptionsInValueSelect(searchText, expectedOptions, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
     cy.do(SelectionList().filter(searchText));
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldSearchDoesNotFilterAvailableOptions(searchText, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    // Capture the complete field list before entering symbol search text.
+    cy.then(() => SelectionList().optionList()).then((allFieldOptionsBeforeSearch) => {
+      cy.do(SelectionList().filter(searchText));
+      cy.expect(SelectionList().has({ optionList: allFieldOptionsBeforeSearch }));
+    });
     this.closeOpenedSelection();
   },
 
@@ -536,9 +574,7 @@ export default {
 
   selectDayFromCalendar(date) {
     // date is expected to be in format MM/DD/YYYY, e.g. 12/31/2024
-    const day = date.split('/')[1];
-
-    cy.do(Calendar().clickDay(day));
+    cy.get(`[data-test-date="${date}"]`).click();
   },
 
   verifySelectedDateInCalendar(date, row = 0) {
@@ -580,6 +616,13 @@ export default {
     cy.expect(
       RepeatableFieldItem({ index: row }).find(valueSelection).has({ singleValue: expectedValue }),
     );
+  },
+
+  verifySearchableFilterExists(row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.expect(SelectionList({ placeholder: 'Filter options list' }).exists());
+    this.closeOpenedSelection();
   },
 
   selectDuplicateOptionByText(value, row = 0, optionIndex = 0) {
@@ -737,6 +780,17 @@ export default {
       .and('have.text', ...booleanValues);
   },
 
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
+  },
+
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
     cy.expect([
       RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
@@ -859,6 +913,10 @@ export default {
 
   clickRunQuery() {
     cy.do(runQueryButton.click());
+  },
+
+  clickOrganizationLookup() {
+    cy.do(Button('Organization look-up').click());
   },
 
   verifyClosed() {

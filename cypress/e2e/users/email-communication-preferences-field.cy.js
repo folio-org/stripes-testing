@@ -43,6 +43,9 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
+    cy.getUsers({ query: `patronGroup=="${testData.patronGroup.id}"` }).then(([user]) => {
+      Users.deleteViaApi(user.id);
+    });
     PatronGroups.deleteViaApi(testData.patronGroup.id);
   });
 
@@ -58,8 +61,8 @@ describe('Users', () => {
       UserEdit.changeLastName(testData.newUser.personal.lastName);
       UserEdit.changePatronGroup(
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
+        { setExpirationDateIfModalExists: true },
       );
-      UserEdit.setExpirationDate();
       UserEdit.changeBarcode(testData.newUser.personal.barcode);
       UserEdit.changeUserType('Patron');
       UserEdit.changeUsername(testData.newUser.personal.username);
@@ -102,8 +105,7 @@ describe('Users', () => {
       UserEdit.verifyEmailCommunicationPreferenceSelected(['Services', 'Support']);
 
       // Step 10: Click on "Save & close" button
-      UserEdit.saveAndCloseStayOnEdit();
-      UserEdit.closeEditPaneIfExists();
+      UserEdit.saveNewUser();
 
       // Step 11: On 3rd pane look for "Contact information accordion" ==> expand accordion
       UsersCard.waitLoading();

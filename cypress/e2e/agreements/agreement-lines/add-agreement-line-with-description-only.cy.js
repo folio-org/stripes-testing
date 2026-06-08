@@ -16,8 +16,12 @@ describe('agreements', () => {
       Agreements.createViaApi().then((agreement) => {
         agreementId = agreement.id;
       });
+      cy.clearLocalStorage();
       cy.loginAsAdmin({
-        path: TopMenu.agreementsPath,
+        path: {
+          url: TopMenu.agreementsPath,
+          qs: { query: Agreements.defaultAgreement.name },
+        },
         waiter: Agreements.waitLoading,
       });
     });
@@ -36,17 +40,24 @@ describe('agreements', () => {
       'C15829 Add agreement line with description only (erm) (TaaS)',
       { tags: ['extendedPathErm', 'erm'] },
       () => {
+        cy.log('<--- STEP 1 --->');
         AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
         AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
           Agreements.defaultAgreement.name,
         );
         AgreementViewDetails.verifyAgreementLinesCount('0');
 
+        cy.log('<--- STEP 2 --->');
         AgreementViewDetails.openAgreementLineSection();
+
+        cy.log('<--- STEP 3 --->');
         AgreementViewDetails.clickActionsForAgreementLines();
+
+        cy.log('<--- STEP 4 --->');
         AgreementViewDetails.clickNewAgreementLine();
         NewAgreementLine.waitLoading();
 
+        cy.log('<--- STEP 5 --->');
         NewAgreementLine.clickDescriptionField();
         NewAgreementLine.clickNoteField();
         NewAgreementLine.verifyDescriptionAlertMessage(
@@ -54,19 +65,24 @@ describe('agreements', () => {
           true,
         );
 
+        cy.log('<--- STEP 6 --->');
         NewAgreementLine.fillDescription(agreementLineDescription);
         NewAgreementLine.verifyDescriptionAlertMessage(
           NewAgreementLine.calloutMessages.ALERT_MESSAGE,
           false,
         );
 
+        cy.log('<--- STEP 7 --->');
         cy.wait(2000);
         NewAgreementLine.saveAndClose();
+        AgreementLineInformation.waitLoadingWithExistingLine(Agreements.defaultAgreement.name);
         AgreementLineInformation.verifyDescription(agreementLineDescription);
 
+        cy.log('<--- STEP 8 --->');
         AgreementLineInformation.close();
-        AgreementViewDetails.verifyAgreementLinesCount('1');
 
+        cy.log('<--- STEP 9 --->');
+        AgreementViewDetails.verifyAgreementLinesCount('1');
         AgreementViewDetails.openAgreementLineSection();
         AgreementViewDetails.verifySpecialAgreementLineRow({
           description: agreementLineDescription,

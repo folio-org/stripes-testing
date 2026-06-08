@@ -17,14 +17,14 @@ describe('MARC', () => {
         tag100: '100',
         tag010: '010',
         tag010NewValue: '$a  00000912  $z n 2005070769',
-        authority100FieldValue: 'Erbil, H. Yıldırım',
+        authority100FieldValue: 'C376595 Erbil, H. Yıldırım',
         searchOption: 'Keyword',
         linked100Field: [
           16,
           '100',
           '1',
           '\\',
-          '$a Erbil, H. Yıldırım',
+          '$a C376595 Erbil, H. Yıldırım',
           '',
           '$0 http://id.loc.gov/authorities/names/n00000912',
           '',
@@ -34,7 +34,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Erbil, H. Yıldırım',
+          '$a C376595 Erbil, H. Yıldırım',
           '',
           '$0 http://id.loc.gov/authorities/names/n00000911',
           '',
@@ -58,7 +58,7 @@ describe('MARC', () => {
           fileName: `C376595 testMarcFileC376595${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
-          authorityHeading: 'Erbil, H. Yıldırım',
+          authorityHeading: 'C376595 Erbil, H. Yıldırım',
         },
       ];
 
@@ -84,13 +84,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.waitContentLoading();
-        }, 20_000)
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        })
           .then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -125,21 +122,19 @@ describe('MARC', () => {
             ]).then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.waitForAuthRefresh(() => {
-                cy.login(testData.userProperties.username, testData.userProperties.password, {
-                  path: TopMenu.marcAuthorities,
-                  waiter: MarcAuthorities.waitLoading,
-                });
-                MarcAuthorities.waitLoading();
-              }, 20_000);
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
       });
 
       after('Delete test data', () => {
+        cy.wait(2000);
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
         Users.deleteViaApi(testData.userProperties.userId);
         Users.deleteViaApi(testData.preconditionUserId);
       });

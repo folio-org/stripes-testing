@@ -5,6 +5,7 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
@@ -71,7 +72,7 @@ describe('Data Import', () => {
       quantityPhysical: '980$g',
       currency: 'USD',
       materialSupplier: VENDOR_NAMES.GOBI,
-      createInventory: 'Instance, Holding, Item',
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
       materialType: MATERIAL_TYPE_NAMES.BOOK,
       contributor: '100$a',
       contributorType: 'Personal name',

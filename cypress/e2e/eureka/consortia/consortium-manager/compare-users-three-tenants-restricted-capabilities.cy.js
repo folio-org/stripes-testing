@@ -180,12 +180,9 @@ describe('Eureka', () => {
         cy.addRolesToNewUserApi(userA.userId, [roleUniversityId]);
 
         cy.resetTenant();
-        cy.waitForAuthRefresh(() => {
-          cy.login(tempUser.username, tempUser.password);
-          cy.reload();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-        }, 20000);
+        cy.login(tempUser.username, tempUser.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
       });
     });
 
@@ -194,11 +191,11 @@ describe('Eureka', () => {
       cy.getAdminToken();
       Users.deleteViaApi(tempUser.userId);
       Users.deleteViaApi(userA.userId);
-      cy.deleteAuthorizationRoleApi(roleCentralId);
+      cy.deleteAuthorizationRoleApi(roleCentralId, true);
       cy.setTenant(Affiliations.College);
-      cy.deleteAuthorizationRoleApi(roleCollegeId);
+      cy.deleteAuthorizationRoleApi(roleCollegeId, true);
       cy.setTenant(Affiliations.University);
-      cy.deleteAuthorizationRoleApi(roleUniversityId);
+      cy.deleteAuthorizationRoleApi(roleUniversityId, true);
     });
 
     it(

@@ -292,7 +292,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('True');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            `(holdings.notes[*]->staff_only == true) AND (holdings.instance_id == ${folioInstance.id})`,
+            `(holdings.notes[*]->staff_only == True) AND (holdings.instance_id == ${folioInstance.id})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 

@@ -42,6 +42,7 @@ import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
+import { formatNumber } from '../../utils/numberTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -73,6 +74,9 @@ const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
 );
 const actionsMenuShowColumnsSection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Show columns' }),
+);
+const actionsMenuReportsSection = authorityActionsDropDownMenu.find(
+  Section({ menuSectionLabel: 'Reports' }),
 );
 const sortBySelect = Select({ dataTestID: 'sort-by-selection' });
 const saveCqlButton = authorityActionsDropDownMenu.find(Button('Save authorities CQL query'));
@@ -187,6 +191,10 @@ export default {
   clickHeadingsUpdatesButton() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
+  verifyHeadingsUpdatesButtonAbsent() {
+    cy.do(actionsButton.click());
+    cy.expect(marcAuthUpdatesCsvBtn.absent());
+  },
   fillReportModal(today, tomorrow) {
     cy.do([
       authReportModal.find(TextField({ name: 'fromDate' })).fillIn(today),
@@ -277,6 +285,10 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
 
+  verifyContentAbsentInExportFile(actual, ...notExpectedArray) {
+    notExpectedArray.forEach((notExpectedItem) => expect(actual).to.not.include(notExpectedItem));
+  },
+
   verifyContentOfHeadingsUpdateReportParsed(
     actual,
     rowIndex = 1,
@@ -316,7 +328,11 @@ export default {
   selectFirstRecord: () => cy.do(MultiColumnListRow({ index: 0 }).find(Button()).click()),
 
   selectAuthorityById(specialInternalId) {
-    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click());
+    cy.do(
+      authoritiesList
+        .find(Button({ href: including(`/authorities/${specialInternalId}`) }))
+        .click(),
+    );
   },
 
   selectTitle: (title) => cy.do(Button(title).click()),
@@ -586,6 +602,18 @@ export default {
     );
   },
 
+  verifySearchErrorText(query) {
+    cy.expect(
+      searchResults
+        .find(
+          HTML(
+            `Search could not be processed for ${query}. Please check your query and try again.`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
   clickNextPagination() {
     cy.do(rootSection.find(nextButton).click());
   },
@@ -691,7 +719,7 @@ export default {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
     cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
       if (!isOpen) {
-        cy.intercept('search/authorities/facets?facet=headingType*').as('getFacetsHeadingType');
+        cy.intercept(/search\/authorities\/facets\?facet=.*headingType/).as('getFacetsHeadingType');
         cy.do(headingTypeAccordion.clickHeader());
         cy.wait('@getFacetsHeadingType').its('response.statusCode').should('eq', 200);
       }
@@ -1098,7 +1126,12 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      const recordNumber = formatNumber(item.response.body.totalRecords);
+      cy.expect(
+        Pane({
+          subtitle: matching(new RegExp(`${recordNumber} (record|result)s{0,1} found`)),
+        }).exists(),
+      );
       expect(totalRecords).lessThan(totalRecord);
     });
   },
@@ -1108,9 +1141,10 @@ export default {
     this.waitLoading();
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
+      const recordNumber = formatNumber(item.response.body.totalRecords);
       cy.expect(
         Pane({
-          subtitle: matching(new RegExp(`${totalRecords} (record|result)s{0,1} found`)),
+          subtitle: matching(new RegExp(`${recordNumber} (record|result)s{0,1} found`)),
         }).exists(),
       );
       expect(totalRecords).greaterThan(totalRecord);
@@ -1286,6 +1320,19 @@ export default {
       .then((res) => {
         return res.body.authorities || [];
       });
+  },
+
+  waitAuthorityLinked(authorityId, numberOfTitles = null) {
+    cy.recurse(
+      () => this.getMarcAuthoritiesViaApi({ query: `(id==${authorityId})` }),
+      (response) => {
+        if (numberOfTitles !== null) {
+          return response[0].numberOfTitles === numberOfTitles;
+        }
+        return response[0].numberOfTitles > 0;
+      },
+      { limit: 20, timeout: 22000, delay: 1000 },
+    );
   },
 
   checkValueResultsColumn: (columnIndex, value) => {
@@ -2151,5 +2198,10 @@ export default {
 
   verifyPaneMarcViewWidth(expectedWidth, tolerance = 5) {
     cy.get('[id="marc-view-pane"]').invoke('width').should('be.closeTo', expectedWidth, tolerance);
+  },
+
+  verifyReportsSectionShownInActionsMenu(isShown = true) {
+    if (isShown) cy.expect(actionsMenuReportsSection.exists());
+    else cy.expect(actionsMenuReportsSection.absent());
   },
 };
