@@ -43,6 +43,21 @@ const getNextButton = (listInteractor) => getPaginationButton(listInteractor, CO
 
 const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.PREVIOUS);
 
+// When multi-column list doesn't have a loading indicator, and the Next or Previous
+// button is clicked, we wait for the first row to change, not for the loading to complete.
+const waitFirstRowChanged = (listInteractor) => {
+  const getFirstRowContent = (el) => el.querySelector('[data-row-index]')?.textContent;
+
+  return cy
+    .then(() => listInteractor.perform(getFirstRowContent))
+    .should((prevContent) => listInteractor.perform((el) => {
+      const currentContent = getFirstRowContent(el);
+      if (!prevContent || !currentContent || currentContent === prevContent) {
+        throw new Error('Page has not changed yet');
+      }
+    }));
+};
+
 /**
  * Minimal contract for an Interactor used by list helper methods.
  *
@@ -139,6 +154,7 @@ const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor
  * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} clickPreviousPage
  * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToLastPage
  * @property {(listInteractor: ListInteractor) => Cypress.Chainable<void>} navigateToFirstPage
+ * @property {(listInteractor: ListInteractor, expectedText: string) => void} assertPagingText
  */
 
 /** @type {MultiColumnListApi} */
@@ -359,19 +375,23 @@ const api = {
     getPreviousButton(listInteractor).has({ disabled: !isEnabled });
   },
 
-  clickNextPage(listInteractor) {
-    return cy
-      .do(getNextButton(listInteractor).click())
-      .then(() => this.waitLoadingComplete(listInteractor));
+  clickNextPage(listInteractor, { hasLoadingIndicator = true } = {}) {
+    return cy.do(getNextButton(listInteractor).click()).then(() => {
+      return hasLoadingIndicator
+        ? this.waitLoadingComplete(listInteractor)
+        : waitFirstRowChanged(listInteractor);
+    });
   },
 
-  clickPreviousPage(listInteractor) {
-    return cy
-      .do(getPreviousButton(listInteractor).click())
-      .then(() => this.waitLoadingComplete(listInteractor));
+  clickPreviousPage(listInteractor, { hasLoadingIndicator = true } = {}) {
+    return cy.do(getPreviousButton(listInteractor).click()).then(() => {
+      return hasLoadingIndicator
+        ? this.waitLoadingComplete(listInteractor)
+        : waitFirstRowChanged(listInteractor);
+    });
   },
 
-  navigateToLastPage(listInteractor) {
+  navigateToLastPage(listInteractor, { hasLoadingIndicator = true } = {}) {
     const clickNextUntilDisabled = () => {
       return cy
         .then(() => listInteractor.perform((el) => {
@@ -381,14 +401,15 @@ const api = {
         .then((isDisabled) => {
           if (isDisabled) return null;
 
-          return this.clickNextPage(listInteractor).then(() => clickNextUntilDisabled());
+          return this.clickNextPage(listInteractor, { hasLoadingIndicator }).then(() => clickNextUntilDisabled());
         });
     };
 
+    cy.expect(getNextButton(listInteractor).has({ disabled: false }));
     return clickNextUntilDisabled();
   },
 
-  navigateToFirstPage(listInteractor) {
+  navigateToFirstPage(listInteractor, { hasLoadingIndicator = true } = {}) {
     const clickPreviousUntilDisabled = () => {
       return cy
         .then(() => listInteractor.perform((el) => {
@@ -398,11 +419,16 @@ const api = {
         .then((isDisabled) => {
           if (isDisabled) return null;
 
-          return this.clickPreviousPage(listInteractor).then(() => clickPreviousUntilDisabled());
+          return this.clickPreviousPage(listInteractor, { hasLoadingIndicator }).then(() => clickPreviousUntilDisabled());
         });
     };
 
+    cy.expect(getPreviousButton(listInteractor).has({ disabled: false }));
     return clickPreviousUntilDisabled();
+  },
+
+  assertPagingText(listInteractor, expectedText) {
+    cy.expect(listInteractor.has({ pagingText: expectedText.replaceAll(' ', ' ') }));
   },
 };
 
