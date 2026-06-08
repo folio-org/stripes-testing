@@ -27,7 +27,6 @@ import {
   SelectionOption,
   MultiSelectOption,
   Spinner,
-  PaneHeader,
   TextArea,
   TextField,
   ValueChipRoot,
@@ -140,7 +139,6 @@ const departmentNameMultiSelect = MultiSelect({ label: 'Department name' });
 const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
 const createUserPane = Pane('Create User');
-const closeEditPaneButton = createUserPane.find(PaneHeader().find(Button({ icon: 'times' })));
 const preferredEmailCommunicationsSelect = MultiSelect({
   ariaLabelledby: 'adduserPreferredEmailCommunication-label',
 });
@@ -486,10 +484,12 @@ export default {
     cy.do(statusSelect.choose(status));
   },
 
-  changePatronGroup(patronGroup) {
+  changePatronGroup(patronGroup, { setExpirationDateIfModalExists = false } = {}) {
     cy.do(addressSelect.choose(patronGroup));
     cy.wait(500);
-    clickSetExpirationDateIfModalExists();
+    if (setExpirationDateIfModalExists) {
+      clickSetExpirationDateIfModalExists();
+    }
   },
 
   searchForPermission(permission) {
@@ -989,21 +989,6 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-  },
-
-  closeEditPaneIfExists() {
-    cy.get('body').then(($body) => {
-      if ($body.find('section [data-test-pane-header-title]')?.textContent === 'Edit') {
-        cy.do(closeEditPaneButton.click());
-      }
-    });
-    cy.get('body').then(($body) => {
-      if ($body.find('[class^=modal-]').length > 0) {
-        cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
-      }
-    });
-    cy.wait(5000);
-    cy.expect(rootPane.absent());
   },
 
   editUsername(username) {

@@ -60,6 +60,9 @@ describe('Users', () => {
     if (testData.user.userId) {
       Users.deleteViaApi(testData.user.userId);
     }
+    cy.getUsers({ query: `patronGroup=="${patronGroupId}"` }).then(([user]) => {
+      Users.deleteViaApi(user.id);
+    });
     if (patronGroupId) {
       PatronGroups.deleteViaApi(patronGroupId);
     }
@@ -98,8 +101,8 @@ describe('Users', () => {
       // Step 6 Fill in rest required fields and click "Save & close" button
       UserEdit.changePatronGroup(
         `${testData.patronGroup.name} (${testData.patronGroup.description})`,
+        { setExpirationDateIfModalExists: true },
       );
-      UserEdit.setExpirationDate();
       UserEdit.fillEmailAddress('test@example.com');
       UserEdit.chooseUserType('Patron');
       UserEdit.saveAndClose();
@@ -138,7 +141,6 @@ describe('Users', () => {
       UserEdit.verifyPronounsNoError();
 
       UserEdit.saveAndCloseStayOnEdit();
-      UserEdit.closeEditPaneIfExists();
       UsersCard.waitLoading();
       UsersCard.verifyPronounsOnUserDetailsPane(testData.pronouns300Chars);
       UsersCard.verifyPronounsWrappedVisible(testData.pronouns300Chars);
