@@ -64,6 +64,18 @@ export default {
     cy.do(buttonActions.click());
   },
 
+  clickEditButton() {
+    cy.do(Button('Edit').click());
+  },
+
+  cancelEditing() {
+    cy.do(Button({ id: 'clickable-cancel-fixedDueDateSchedule' }).click());
+  },
+
+  cancelCreating() {
+    cy.do(Button('Cancel').click());
+  },
+
   clickDeleteButton() {
     cy.do(buttonDelete.click());
   },
