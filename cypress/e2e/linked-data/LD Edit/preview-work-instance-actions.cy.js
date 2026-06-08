@@ -83,8 +83,8 @@ describe('Citation: check work / instance preview and actions', () => {
   });
 
   it(
-    'C423954 Marigold - Preview panel for Work / Instance by clicking title. Actions dropdown for Work / Instance (citation)',
-    { tags: ['criticalPath', 'citation', 'C423954', 'marigold'] },
+    'C523770 Marigold - Preview panel for Work / Instance by clicking title. Actions dropdown for Work / Instance (citation)',
+    { tags: ['criticalPath', 'citation', 'C523770', 'marigold'] },
     () => {
       // Import inventory work and instance
       InventoryInstances.searchByTitle(resourceData.inventoryWorkTitle);
@@ -101,7 +101,10 @@ describe('Citation: check work / instance preview and actions', () => {
       SearchAndFilter.checkSearchResultsByTitle(resourceData.inventoryWorkTitle);
       SearchAndFilter.openSearchResultPreviewByTitle(resourceData.inventoryWorkTitle);
       SearchAndFilter.waitPreviewLoading();
-      SearchAndFilter.checkPreviewContains('Preferred Title for Work', resourceData.inventoryWorkTitle);
+      SearchAndFilter.checkPreviewContains(
+        'Preferred Title for Work',
+        resourceData.inventoryWorkTitle,
+      );
       SearchAndFilter.checkPreviewContains('Part number', '-');
       SearchAndFilter.checkPreviewContains('Hub', '-');
       SearchAndFilter.checkPreviewContains('Note type', '-');
