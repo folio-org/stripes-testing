@@ -50,6 +50,7 @@ describe('Data Export', () => {
       cy.getAdminToken();
       cy.withinTenant(Affiliations.College, () => {
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityIdentifier);
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436900*');
       });
 
       MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE);
