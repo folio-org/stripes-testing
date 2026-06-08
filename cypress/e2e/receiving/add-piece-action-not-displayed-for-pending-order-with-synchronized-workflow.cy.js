@@ -8,6 +8,10 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import {
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants/orders/order-line';
 
 describe('Receiving', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -27,9 +31,9 @@ describe('Receiving', () => {
         cy.getDefaultMaterialType().then((materialType) => {
           testData.orderLinePhysical = {
             ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
-            orderFormat: 'Physical Resource',
+            orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
             physical: {
-              createInventory: 'Instance, Holding, Item',
+              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
               materialSupplier: testData.organization.id,
               materialType: materialType.id,
               volumes: [],
@@ -44,7 +48,7 @@ describe('Receiving', () => {
           };
           testData.orderLineElectronic = {
             ...BasicOrderLine.getDefaultOrderLine({ checkinItems: false }),
-            orderFormat: 'Electronic Resource',
+            orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.ELECTRONIC_RESOURCE,
             cost: {
               listUnitPriceElectronic: 1.0,
               currency: 'USD',
@@ -54,7 +58,7 @@ describe('Receiving', () => {
             },
             eresource: {
               activated: false,
-              createInventory: 'Instance, Holding',
+              createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
               trial: false,
               accessProvider: testData.organization.id,
             },
