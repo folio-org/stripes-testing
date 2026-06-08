@@ -237,6 +237,7 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Organization — Code',
+  name: 'Organization — Name',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -915,8 +916,8 @@ export default {
     cy.do(runQueryButton.click());
   },
 
-  clickOrganizationLookup() {
-    cy.do(Button('Organization look-up').click());
+  clickOrganizationLookup(row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(Button('Organization look-up')).click());
   },
 
   verifyClosed() {
