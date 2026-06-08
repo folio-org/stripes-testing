@@ -99,6 +99,25 @@ export default {
     ]);
   },
 
+  unselectTagOption: () => {
+    cy.do(MultiSelect({ ariaLabelledby: 'users-filter-accordion-tags' }).clear());
+    cy.wait(1000);
+  },
+
+  selectActiveUsersStatusFilter() {
+    this.searchByStatus('Active');
+  },
+
+  unselectActiveUsersStatusFilter() {
+    this.searchByStatus('Active');
+  },
+
+  clearSearchField() {
+    // There is no clear button for the search field, so we need to clear it
+    // by filling in an empty string.
+    cy.do(TextField({ id: 'input-user-search' }).fillIn(''));
+  },
+
   resetAllFilters() {
     cy.get('#clickable-reset-all').then(($button) => {
       if (!$button.prop('disabled')) {
