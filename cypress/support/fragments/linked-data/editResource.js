@@ -19,7 +19,8 @@ const exportInstanceActionsButton =
   "//button[@data-testid='block-actions-toggle__option-ld.exportInstanceRdf']";
 const instanceChangeProfileActionsButton =
   "//button[@data-testid='block-actions-toggle__option-ld.changeInstanceProfile']";
-const workChangeProfileActionsButton = "//button[@data-testid='block-actions-toggle__option-ld.changeWorkProfile']";
+const workChangeProfileActionsButton =
+  "//button[@data-testid='block-actions-toggle__option-ld.changeWorkProfile']";
 const editWorkButton = Button('Edit work');
 const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
@@ -123,7 +124,9 @@ export default {
   toggleSectionMarcTooltip(section) {
     cy.xpath(
       `//div[text()="${section}"]/following-sibling::div/div[contains(@class, "marc-tooltip-wrapper")]/button`,
-    ).click();
+    )
+      .first()
+      .click();
     cy.wait(500);
   },
 
@@ -243,6 +246,99 @@ export default {
       .should('not.be.disabled')
       .clear()
       .type(value);
+  },
+
+  setNoteValueAtPosition(value, position) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="Note"])[${position}]/../../div[@class="children-container"]/input`,
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+  },
+
+  setNoteTypeAtPosition(noteType, position) {
+    cy.wait(500);
+    cy.xpath(
+      `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__control")]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+    cy.wait(500);
+    cy.xpath(
+      `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      // eslint-disable-next-line cypress/no-force
+      .click({ force: true });
+    cy.wait(500);
+  },
+
+  setNoteTypeByNoteValue(noteType, noteValue) {
+    cy.xpath(
+      '//div[@class="label" and text()="Note"]/../../div[@class="children-container"]/input',
+    ).then(($inputs) => {
+      const index = [...$inputs].findIndex((input) => input.value === noteValue);
+      if (index === -1) throw new Error(`Note with value "${noteValue}" not found`);
+      const position = index + 1;
+      cy.xpath(
+        `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__control")]`,
+      )
+        .scrollIntoView()
+        .should('be.visible')
+        .click();
+      cy.wait(500);
+      cy.xpath(
+        `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
+      )
+        .scrollIntoView()
+        .should('be.visible')
+        // eslint-disable-next-line cypress/no-force
+        .click({ force: true });
+      cy.wait(500);
+    });
+  },
+
+  clearNoteTypeByNoteValue(noteValue) {
+    cy.xpath(
+      '//div[@class="label" and text()="Note"]/../../div[@class="children-container"]/input',
+    ).then(($inputs) => {
+      const index = [...$inputs].findIndex((input) => input.value === noteValue);
+      if (index === -1) throw new Error(`Note with value "${noteValue}" not found`);
+      const position = index + 1;
+      cy.xpath(
+        `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__clear-indicator")]`,
+      )
+        .scrollIntoView()
+        .should('be.visible')
+        .click();
+      cy.wait(500);
+    });
+  },
+
+  checkNotesAboutInstanceSectionCount(count) {
+    cy.xpath('//div[@class="label" and text()="Notes about the Instance"]').should(
+      'have.length',
+      count,
+    );
+  },
+
+  checkNoteHasType(noteValue, noteType) {
+    cy.xpath(
+      '//div[@class="label" and text()="Note"]/../../div[@class="children-container"]/input',
+    ).then(($inputs) => {
+      const index = [...$inputs].findIndex((input) => input.value === noteValue);
+      if (index === -1) throw new Error(`Note with value "${noteValue}" not found`);
+      cy.xpath(
+        `(//div[@class="label" and text()="Note type"])[${index + 1}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__multi-value__label") and text()="${noteType}"]`,
+      )
+        .scrollIntoView()
+        .should('be.visible');
+    });
   },
 
   clearField(field) {
@@ -427,6 +523,14 @@ export default {
     cy.xpath(
       `//div[@class="preview-block"]/strong[@class="sub-heading" and text()="${section}"]/following-sibling::div[normalize-space()="${value}"]`,
     ).should('exist');
+  },
+
+  checkPreviewSectionContainsText(section, text) {
+    cy.xpath(
+      `//div[@class="preview-block" and strong[@class="sub-heading" and text()="${section}"]]`,
+    )
+      .should('exist')
+      .and('contain.text', text);
   },
 
   checkPreviewSectionContainsLink(section, field, text, link) {
