@@ -68,6 +68,16 @@ export default {
     EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
   },
 
+  clickInstanceTitleInSearchTable: (rowNumber, instanceNumber) => {
+    cy.xpath(
+      `(//div[@class='search-result-entry-container'][${rowNumber}]//table[contains(@class, 'instance-list')]//button[not(contains(text(),'Edit'))])[${instanceNumber}]`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .click();
+    cy.wait(500);
+  },
+
   openNewResourceForm: () => {
     cy.do(actionsWorkButton.click());
     cy.do(newResourceButton.click());

@@ -143,3 +143,10 @@ Cypress.Commands.add('getPasswordResetConfigViaApi', () => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getGlobalWidgetDefinitions', () => {
+  cy.okapiRequest({
+    path: 'servint/widgets/definitions/global',
+    isDefaultSearchParamsRequired: false,
+  });
+});

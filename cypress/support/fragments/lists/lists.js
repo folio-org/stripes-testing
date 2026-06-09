@@ -81,6 +81,7 @@ const constants = {
     transactions: 'Transactions',
     items: 'Items',
     organizations: 'Organizations',
+    purchaseOrderLines: 'Purchase order lines',
   },
 };
 

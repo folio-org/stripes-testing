@@ -136,6 +136,7 @@ describe('Users', () => {
       cy.getUsers({ limit: 1, query: `"id"="${usersData.userProxy.userId}"` }).then((users) => {
         const proxyUser = users[0];
         proxyUser.expirationDate = DateTools.getPreviousDayDateForFiscalYear();
+        proxyUser.active = false;
         cy.updateUser(proxyUser);
       });
 
@@ -154,6 +155,10 @@ describe('Users', () => {
       cy.getUsers({ limit: 1, query: `"id"="${usersData.userProxy.userId}"` }).then((users) => {
         const proxyUser = users[0];
         proxyUser.expirationDate = DateTools.getDayTomorrowDateForFiscalYear();
+        // When expirationDate is in the past or future, the BE makes a user inactive/active with a delay.
+        // UI implementation doesn't wait for the BE, it sets active to false immediately,
+        // so we also need to set active to true to avoid waiting for BE to make user active.
+        proxyUser.active = true;
         cy.updateUser(proxyUser);
       });
 

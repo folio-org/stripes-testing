@@ -1103,7 +1103,7 @@ export default {
     const targetCheckbox = targetRow.find(Checkbox());
     if (isShown) cy.expect(targetCheckbox.exists());
     else cy.expect(targetRow.absent());
-    if (isSelected !== null) cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (isShown && isSelected !== null) cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   checkButtonsEnabledInSelectAppModal: ({ resetAll = true, search = true } = {}) => {

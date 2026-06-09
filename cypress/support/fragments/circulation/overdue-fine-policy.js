@@ -13,23 +13,24 @@ export const defaultOverdueFinePolicy = {
 };
 
 export default {
-  createViaApi(body = defaultOverdueFinePolicy) {
+  createViaApi(requestBody = defaultOverdueFinePolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'overdue-fines-policies',
-        body,
+        body: requestBody,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ responseBody }) => {
-        Cypress.env('overdueFinePolicy', responseBody);
-        return responseBody;
+      .then(({ body }) => {
+        Cypress.env('overdueFinePolicy', body);
+        return body;
       });
   },
   deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `overdue-fines-policies/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 };

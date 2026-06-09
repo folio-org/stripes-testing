@@ -132,6 +132,7 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
@@ -236,6 +237,11 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Organization — Code',
+  name: 'Organization — Name',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -493,6 +499,17 @@ export default {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyValueSelectContainsOptions(expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expectedOptions.forEach((option) => {
+        expect(actualOptions, `Value dropdown options for row ${row}`).to.include(option);
+      });
+    });
     this.closeOpenedSelection();
   },
 
@@ -764,6 +781,17 @@ export default {
       .and('have.text', ...booleanValues);
   },
 
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
+  },
+
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
     cy.expect([
       RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
@@ -888,8 +916,8 @@ export default {
     cy.do(runQueryButton.click());
   },
 
-  clickOrganizationLookup() {
-    cy.do(Button('Organization look-up').click());
+  clickOrganizationLookup(row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(Button('Organization look-up')).click());
   },
 
   verifyClosed() {
