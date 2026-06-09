@@ -275,6 +275,13 @@ export default {
     });
   },
 
+  verifySourceIsALink(index = 0, isLink = true) {
+    const targetCard = rootSection.find(Card({ index }));
+    const targetLink = targetCard.find(Link({ href: including('/users/preview/') }));
+    if (isLink) cy.expect(targetLink.exists());
+    else cy.expect(targetLink.absent());
+  },
+
   clickOnSourceLinkInCard(index = 0) {
     const targetCard = rootSection.find(Card({ index }));
     cy.do(targetCard.find(Link({ href: including('/users/preview/') })).click());
