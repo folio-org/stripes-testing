@@ -552,6 +552,7 @@ export default {
 
   verifyVersionHistoryButtonShown(isShown = true) {
     const targetButton = rootHeader.find(versionHistoryButton);
+    cy.wait(1000);
     if (isShown) {
       cy.expect(targetButton.exists());
       cy.do(targetButton.hoverMouse());
