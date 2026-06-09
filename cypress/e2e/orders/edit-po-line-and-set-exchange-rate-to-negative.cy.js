@@ -1,14 +1,11 @@
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_SEARCH_OPTIONS,
   POL_CREATE_INVENTORY_SETTINGS,
   POLINE_DETAILS_FIELDS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
@@ -25,10 +22,6 @@ import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
   const testData = {
-    fiscalYear: {},
-    ledger: {},
-    fund: {},
-    budget: {},
     organization: {},
     order: {},
     location: {},
@@ -42,39 +35,6 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
-
-    FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYearResponse) => {
-      testData.fiscalYear = fiscalYearResponse;
-
-      const ledger = {
-        ...Ledgers.defaultUiLedger,
-        fiscalYearOneId: fiscalYearResponse.id,
-      };
-
-      Ledgers.createViaApi(ledger).then((ledgerResponse) => {
-        testData.ledger = ledgerResponse;
-
-        const fund = {
-          ...Funds.getDefaultFund(),
-          ledgerId: ledgerResponse.id,
-        };
-
-        Funds.createViaApi(fund).then((fundResponse) => {
-          testData.fund = fundResponse.fund;
-
-          const budget = {
-            ...Budgets.getDefaultBudget(),
-            fiscalYearId: fiscalYearResponse.id,
-            fundId: fundResponse.fund.id,
-            allocated: 1000,
-          };
-
-          Budgets.createViaApi(budget).then((budgetResponse) => {
-            testData.budget = budgetResponse;
-          });
-        });
-      });
-    });
 
     Organizations.createOrganizationViaApi({
       ...NewOrganization.defaultUiOrganizations,
@@ -99,7 +59,7 @@ describe('Orders', () => {
           const order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
           const orderLine = {
             ...BasicOrderLine.getDefaultOrderLine(),
-            orderFormat: 'P/E Mix',
+            orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PE_MIX,
             cost: {
               currency: testData.currencyCode,
               exchangeRate: testData.initialExchangeRate,
@@ -120,14 +80,6 @@ describe('Orders', () => {
               materialType: materialType.id,
               materialSupplier: testData.organization.id,
             },
-            fundDistribution: [
-              {
-                code: testData.fund.code,
-                fundId: testData.fund.id,
-                distributionType: 'percentage',
-                value: 100,
-              },
-            ],
             locations: [
               {
                 locationId: testData.location.id,
@@ -166,10 +118,6 @@ describe('Orders', () => {
         testData.location.libraryId,
         testData.location.id,
       );
-      Budgets.deleteViaApi(testData.budget.id);
-      Funds.deleteFundViaApi(testData.fund.id);
-      Ledgers.deleteLedgerViaApi(testData.ledger.id);
-      FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
       Users.deleteViaApi(testData.user.userId);
     });
   });
