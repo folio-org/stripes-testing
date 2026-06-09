@@ -18,6 +18,15 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('bulkDeleteUsersViaApi', (searchParams) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: 'users',
+    searchParams,
+    failOnStatusCode: false,
+  });
+});
+
 Cypress.Commands.add('getAdminUserDetails', (options = {}) => {
   const { force = false } = options;
 

@@ -25,8 +25,8 @@ describe('MARC', () => {
       };
 
       const referenceHeadings = [
-        testData.searchQuery,
-        `${testData.subfield_a430} ${testData.searchQuery}`,
+        `${testData.searchQuery} Field410`,
+        `${testData.subfield_a430} ${testData.searchQuery} Field430`,
       ];
 
       let createdAuthorityId;
@@ -47,12 +47,12 @@ describe('MARC', () => {
               },
               {
                 tag: testData.tag410,
-                content: `$w ${testData.subfield_w} $a ${testData.searchQuery}  $0 ${testData.subfield_0}`,
+                content: `$w ${testData.subfield_w} $a ${testData.searchQuery} Field410  $0 ${testData.subfield_0}`,
                 indicators: ['\\', '0'],
               },
               {
                 tag: testData.tag430,
-                content: `$w ${testData.subfield_w} $a ${testData.subfield_a430}  $t ${testData.searchQuery}  $1 ${testData.subfield_1}`,
+                content: `$w ${testData.subfield_w} $a ${testData.subfield_a430}  $t ${testData.searchQuery} Field430  $1 ${testData.subfield_1}`,
                 indicators: ['\\', '0'],
               },
             ]).then((createdRecordId) => {

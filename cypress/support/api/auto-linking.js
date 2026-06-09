@@ -20,13 +20,14 @@ Cypress.Commands.add('setRulesForFieldViaApi', (ruleId, isEnabled) => {
   });
 });
 
-Cypress.Commands.add('setAuthoritySubfieldsViaApi', (ruleId, ruleSubfields) => {
+Cypress.Commands.add('setAuthoritySubfieldsViaApi', (ruleId, ruleSubfields, autoLinkingEnabled) => {
   return cy.okapiRequest({
     method: 'PATCH',
     path: `linking-rules/instance-authority/${ruleId}`,
     body: {
       id: ruleId,
       authoritySubfields: ruleSubfields,
+      autoLinkingEnabled,
     },
     isDefaultSearchParamsRequired: false,
   });

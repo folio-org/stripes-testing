@@ -245,6 +245,7 @@ describe('Data Export', () => {
           lockedReferencedJobProfile.description,
         );
         SingleJobProfile.verifyLockProfileCheckbox(true, true);
+        SingleJobProfile.clickXButton();
 
         // Step 10: Select existing job profile from Preconditions: default job profile
         ExportJobProfiles.clearSearchField();

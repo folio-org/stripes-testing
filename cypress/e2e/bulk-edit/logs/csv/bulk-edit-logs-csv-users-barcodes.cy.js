@@ -65,9 +65,10 @@ describe('Bulk-edit', () => {
         );
       });
 
-      it(
+      // Obsolete from Trillium
+      it.skip(
         'C375215 Verify generated Logs files for Users CSV - with errors (firebird)',
-        { tags: ['smoke', 'firebird', 'C375215'] },
+        { tags: [] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
           BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);

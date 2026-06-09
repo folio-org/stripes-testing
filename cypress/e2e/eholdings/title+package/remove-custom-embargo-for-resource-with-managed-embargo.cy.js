@@ -17,6 +17,11 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
+          embargoValue: 4,
+          embargoUnit: 'Months',
+        });
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
           waiter: EHoldingsResourceView.waitLoading,

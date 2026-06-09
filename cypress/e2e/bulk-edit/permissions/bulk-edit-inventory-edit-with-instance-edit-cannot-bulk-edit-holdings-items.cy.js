@@ -31,6 +31,7 @@ describe('Bulk-edit', () => {
             folioInstance.itemBarcode,
           );
         }).then(() => {
+          cy.wait(2000); // Wait for the instance to be fully indexed before proceeding
           cy.getInstance({
             limit: 1,
             expandAll: true,

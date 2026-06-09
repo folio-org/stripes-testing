@@ -41,9 +41,10 @@ describe('Bulk-edit', () => {
       });
     });
 
-    it(
+    // Obsolete from Trillium
+    it.skip(
       'C359010 Verify the successful notification and absence of empty "File with updated records" after uploading unmodified file for bulk edit Users (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C359010'] },
+      { tags: [] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

@@ -27,6 +27,26 @@ export default {
       .then((response) => response.body.content[0]?.instances ?? []);
   },
 
+  deleteByTitle: (title) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/linked-data/works',
+        isDefaultSearchParamsRequired: false,
+        searchParams: { limit: 1, query: `"title"=="${title}"` },
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        const id = response.body.content?.[0]?.id;
+        if (id) {
+          cy.okapiRequest({
+            method: 'DELETE',
+            path: `linked-data/resource/${id}`,
+          });
+        }
+      });
+  },
+
   deleteById: (id) => {
     return cy.okapiRequest({
       method: 'DELETE',

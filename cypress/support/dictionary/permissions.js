@@ -19,6 +19,14 @@ export default {
     internal: 'audit.config.groups.settings.audit.inventory.enabled.item.put',
     gui: 'Audit Configuration - enable/disable audit inventory records',
   },
+  auditConfigGroupsSettingsAuditAuthorityCollectionGet: {
+    internal: 'audit.config.groups.settings.audit.authority.collection.get',
+    gui: 'Audit Configuration - get settings for a audit authority group',
+  },
+  auditConfigGroupsSettingsAuditAuthorityEnabledItemPut: {
+    internal: 'audit.config.groups.settings.audit.authority.enabled.item.put',
+    gui: 'Audit Configuration - enable/disable audit authority records',
+  },
   // bulk edit
   bulkEditView: {
     internal: 'ui-bulk-edit.inventory.view',
@@ -829,6 +837,10 @@ export default {
   uiReceivingView: {
     internal: 'ui-receiving.view',
     gui: 'Receiving: View',
+  },
+  uiReceivingViewEdit: {
+    internal: 'ui-receiving.edit',
+    gui: 'Receiving: View, edit',
   },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',

@@ -245,14 +245,11 @@ describe('Inventory', () => {
         'C468278 Classifications of each identifier type from Local Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Member tenant only (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468278'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.setTenant(Affiliations.College);
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.resetTenant();
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();

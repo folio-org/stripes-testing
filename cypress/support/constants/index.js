@@ -1,4 +1,5 @@
 /* TODO: reduce code duplications across constants */
+export * from './claiming';
 export * from './consortia';
 export * from './constants';
 export * from './export-manager';

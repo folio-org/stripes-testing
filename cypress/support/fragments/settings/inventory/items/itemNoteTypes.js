@@ -3,9 +3,12 @@ import {
   Button,
   MultiColumnListCell,
   MultiColumnListRow,
+  Pane,
   including,
 } from '../../../../../../interactors';
-import { REQUEST_METHOD } from '../../../../constants';
+import { INVENTORY_SETTINGS_SECTION_LABELS, REQUEST_METHOD } from '../../../../constants';
+
+const settingsPane = Pane(INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES);
 
 export const reasonsActions = {
   edit: 'edit',
@@ -90,5 +93,9 @@ export default {
         .click(),
       Button('Delete').click(),
     ]);
+  },
+
+  waitLoading() {
+    cy.expect(settingsPane.exists());
   },
 };

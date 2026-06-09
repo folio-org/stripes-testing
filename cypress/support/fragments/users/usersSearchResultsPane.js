@@ -9,8 +9,10 @@ import {
   MultiColumnListRow,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
+import MultiColumnListHelper from '../multiColumnList';
 
 const searchResultsPaneContent = PaneContent({ id: 'users-search-results-pane-content' });
+const searchResultsList = MultiColumnList({ id: 'list-users' });
 const financialTransactionsReportButton = Button({ id: 'financial-transaction-report' });
 const overdueLoansExportButton = Button('Overdue loans report (CSV)');
 const actionsButtonInSearchResultsPane = Pane({ id: 'users-search-results-pane' }).find(
@@ -106,5 +108,37 @@ export default {
     this.verifyUserIsPresentInTheList(expectedPreferredName);
     this.verifyUserIsNotPresentInTheList(unexpectedPreferredName);
     cy.wait(2000);
+  },
+
+  verifyRecordsFoundInPaneHeader(count) {
+    // This will add commas to the count if it's 1000 or more.
+    const formattedCount = Number(count).toLocaleString('en-US');
+    cy.expect(
+      Pane({
+        id: 'users-search-results-pane',
+        subtitle: including(`${formattedCount} records found`),
+      }).exists(),
+    );
+  },
+
+  verifyEnterSearchCriteriaInPaneHeader() {
+    cy.expect(
+      Pane({
+        id: 'users-search-results-pane',
+        subtitle: 'Enter search criteria to start search',
+      }).exists(),
+    );
+  },
+
+  goToLastPage() {
+    MultiColumnListHelper.navigateToLastPage(searchResultsList, { hasLoadingIndicator: false });
+  },
+
+  goToFirstPage() {
+    MultiColumnListHelper.navigateToFirstPage(searchResultsList, { hasLoadingIndicator: false });
+  },
+
+  verifyPagingText(pagingText) {
+    MultiColumnListHelper.assertPagingText(searchResultsList, pagingText);
   },
 };
