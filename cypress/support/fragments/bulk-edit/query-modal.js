@@ -92,6 +92,8 @@ export const holdingsFieldValues = {
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
+  copyNumber: 'Holdings — Copy number',
+  updatedDate: 'Holdings — Updated date',
   permanentLocation: 'Holdings permanent location — Name',
   temporaryLocation: 'Holdings temporary location — Name',
   effectiveLocationName: 'Holdings effective location — Name',
@@ -230,6 +232,7 @@ export const usersFieldValues = {
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+  userMobilePhone: 'User — Mobile phone',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -910,6 +913,10 @@ export default {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
     cy.wait(3000);
+  },
+
+  runQueryAndSaveDisabled(disabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled }));
   },
 
   clickRunQuery() {
