@@ -2,6 +2,7 @@ import { REQUEST_METHOD } from '../../constants';
 import {
   Button,
   Pane,
+  PaneHeader,
   Section,
   EditableList,
   EditableListRow,
@@ -39,6 +40,12 @@ export default {
   },
   waitSettingsPaneLoading() {
     cy.xpath('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
+  },
+  checkSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeadersettings-nav-pane' }).has({ focused: true }));
+  },
+  checkAppSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }).has({ focused: true }));
   },
   clickAddNewBtn() {
     cy.wait(500);

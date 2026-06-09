@@ -308,6 +308,7 @@ describe('Data Import', () => {
       Receiving.checkIsPiecesCreated(title);
     };
 
+    // If the test fails, you must delete the created instances with IDs 9782266111560 and 9783161484100 and run it again
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
       { tags: ['smoke', 'folijet', 'C350590'] },

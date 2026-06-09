@@ -103,6 +103,7 @@ describe('Data Import', () => {
       });
     });
 
+    // bug report https://folio-org.atlassian.net/browse/MODSOURMAN-1218
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
       { tags: ['smokeFlaky', 'folijet', 'nonParallel'] },
