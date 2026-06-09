@@ -95,3 +95,10 @@ Cypress.Commands.add('setDefaultLocaleApi', () => {
     }
   });
 });
+
+Cypress.Commands.add('getGlobalWidgetDefinitions', () => {
+  cy.okapiRequest({
+    path: 'servint/widgets/definitions/global',
+    isDefaultSearchParamsRequired: false,
+  });
+});
