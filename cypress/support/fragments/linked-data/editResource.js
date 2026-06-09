@@ -273,6 +273,7 @@ export default {
     )
       .scrollIntoView()
       .should('be.visible')
+      // eslint-disable-next-line cypress/no-force
       .click({ force: true });
     cy.wait(500);
   },
@@ -296,6 +297,7 @@ export default {
       )
         .scrollIntoView()
         .should('be.visible')
+        // eslint-disable-next-line cypress/no-force
         .click({ force: true });
       cy.wait(500);
     });
