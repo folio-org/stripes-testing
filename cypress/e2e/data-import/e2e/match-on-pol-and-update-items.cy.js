@@ -25,6 +25,7 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -169,6 +170,17 @@ describe('Data Import', () => {
     };
 
     before('create test data', () => {
+      cy.getAdminToken();
+      [firstItem.productId, secondItem.productId].forEach((productId) => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(productId).then((response) => {
+          if (response.totalRecords) {
+            response.instances.forEach(({ id }) => {
+              InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+            });
+          }
+        });
+      });
+
       cy.createTempUser([
         Permissions.uiOrdersCreate.gui,
         Permissions.uiOrdersView.gui,
@@ -252,6 +264,15 @@ describe('Data Import', () => {
             });
           },
         );
+        [firstItem.productId, secondItem.productId].forEach((productId) => {
+          InventorySearchAndFilter.getInstancesByIdentifierViaApi(productId).then((response) => {
+            if (response.totalRecords) {
+              response.instances.forEach(({ id }) => {
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+              });
+            }
+          });
+        });
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` }).then(
           (order) => {
             Orders.deleteOrderViaApi(order[0].id);
@@ -308,7 +329,6 @@ describe('Data Import', () => {
       Receiving.checkIsPiecesCreated(title);
     };
 
-    // If the test fails, you must delete the created instances with IDs 9782266111560 and 9783161484100 and run it again
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
       { tags: ['smoke', 'folijet', 'C350590'] },
