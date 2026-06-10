@@ -253,7 +253,6 @@ const loginViaKeycloakOnLocalhost = (username, password) => {
 
 Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
   if (Cypress.env('eureka')) {
-    console.log('Cypress.config', Cypress.config('baseUrl'));
     const isLocalhostBaseUrl = new URL(Cypress.config('baseUrl')).hostname === 'localhost';
 
     if (isLocalhostBaseUrl) {
