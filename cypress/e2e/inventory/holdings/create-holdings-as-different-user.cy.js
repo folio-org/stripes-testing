@@ -34,7 +34,7 @@ describe('Inventory', () => {
 
         recordsData = {
           instanceTitle,
-          permanentLocationOption: 'Online (E) ',
+          permanentLocationOption: `${LOCATION_NAMES.ONLINE} `,
           permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
           source: INSTANCE_SOURCE_NAMES.FOLIO,
         };
