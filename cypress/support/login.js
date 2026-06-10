@@ -170,7 +170,11 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectTenantIfDropdown', () => {
-  cy.get('img').then(() => {
+  if (!Cypress.env('ecsEnabled')) {
+    return cy.wrap(null, { log: false });
+  }
+
+  return cy.get('img').then(() => {
     cy.wait(1000).then(() => {
       cy.get('body').then(($body) => {
         if ($body.find('select').length > 0) {
@@ -221,8 +225,42 @@ Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
   }
 });
 
+const fillInKeycloakCredentials = (origin, username, password) => {
+  cy.origin(origin, { args: { username, password } }, ({ username: user, password: pass }) => {
+    cy.get('input[name="username"], input#username').should('be.visible').clear().type(user);
+    cy.get('input[name="password"], input#password')
+      .should('be.visible')
+      .clear()
+      .type(pass, { log: false });
+    cy.get('button[name="login"], input[name="login"], #kc-login')
+      .filter(':visible')
+      .first()
+      .click();
+  });
+};
+
+const loginViaKeycloakOnLocalhost = (username, password) => {
+  const baseOrigin = new URL(Cypress.config('baseUrl')).origin;
+  const keycloakOrigin = Cypress.env('KEYCLOAK_ORIGIN');
+
+  if (!keycloakOrigin) {
+    throw new Error('KEYCLOAK_ORIGIN must be set for localhost Eureka login runs');
+  }
+
+  fillInKeycloakCredentials(keycloakOrigin, username, password);
+  cy.location('origin').should('eq', baseOrigin);
+};
+
 Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
   if (Cypress.env('eureka')) {
+    console.log('Cypress.config', Cypress.config('baseUrl'));
+    const isLocalhostBaseUrl = new URL(Cypress.config('baseUrl')).hostname === 'localhost';
+
+    if (isLocalhostBaseUrl) {
+      loginViaKeycloakOnLocalhost(username, password);
+      return;
+    }
+
     cy.do([
       TextInput('Username').fillIn(username),
       TextInput('Password').fillIn(password),
