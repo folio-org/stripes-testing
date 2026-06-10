@@ -56,6 +56,10 @@ function fillNameField(value, rowIndex = 0) {
   cy.do(TextField({ name: `items[${rowIndex}].name` }).fillIn(value));
 }
 
+function clearNameField(rowIndex = 0) {
+  cy.do(TextField({ name: `items[${rowIndex}].name` }).clear());
+}
+
 function verifyColumnAndClickEdit(rowIndexes, searchValue) {
   let foundRowIndex;
 
@@ -164,9 +168,11 @@ function verifySubjectTypeRowActions(rowIndex, actions) {
   });
 }
 
-function getRowIndexesByColumnValue(columnIdx, matcher) {
+function getRowIndexesByColumnValue(columnIdx, matcher, shouldReload = true) {
   const rowIndexes = [];
-  cy.reload();
+  if (shouldReload) {
+    cy.reload();
+  }
 
   cy.get('#editList-subjecttypes').should('exist').and('be.visible');
   cy.wait(5000);
@@ -213,6 +219,7 @@ export default {
   clickSaveButton,
   enableShareCheckbox,
   fillNameField,
+  clearNameField,
   verifyColumnAndClickEdit,
   verifySubjectTypeAbsent,
   choose() {
@@ -329,6 +336,27 @@ export default {
     clickSaveButton();
   },
 
+  clearAndVerifyErrorMessageAndEditName(name, newName) {
+    getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
+      this.clickEditByName(name);
+      this.clearSubjectTypeName();
+      clickSaveButton();
+      this.validateNameFieldWithError('Please fill this in to continue');
+      fillNameField(newName, index);
+    });
+    cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
+    clickSaveButton();
+  },
+
+  clearSubjectTypeName() {
+    cy.do(nameField.clear());
+    cy.expect([
+      nameField.has({ placeholder: 'name', disabled: false, value: '' }),
+      cancelButton.has({ disabled: false }),
+      saveButton.has({ disabled: false }),
+    ]);
+  },
+
   cancel() {
     cy.do(cancelButton.click());
     newButton.has({ disabled: true });
@@ -371,12 +399,14 @@ export default {
     });
   },
 
-  clickEditByName(name) {
-    getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then(([index]) => {
-      cy.get(`#editList-subjecttypes [data-row-index="row-${index}"]`)
-        .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions + 1}) button[icon="edit"]`)
-        .click();
-    });
+  clickEditByName(name, shouldReload = true) {
+    getRowIndexesByColumnValue(columnIndex.name, (text) => text === name, shouldReload).then(
+      ([index]) => {
+        cy.get(`#editList-subjecttypes [data-row-index="row-${index}"]`)
+          .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions + 1}) button[icon="edit"]`)
+          .click();
+      },
+    );
   },
 
   createSharedSubjectTypeViaApi(typeId, subjectTypeName, consortiaId) {

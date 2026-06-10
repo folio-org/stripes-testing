@@ -122,7 +122,9 @@ export default {
   // resulting in header elements going off the top of the screen. Suppress this
   // behavior here.
   openSearchResultPreviewByTitle(title) {
-    cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible').click({ scrollBehavior: false });
+    cy.xpath(`//button[contains(text(),"${title}")]`)
+      .should('be.visible')
+      .click({ scrollBehavior: false });
   },
 
   checkPreviewContains(field, value) {
