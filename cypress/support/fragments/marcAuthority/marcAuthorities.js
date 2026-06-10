@@ -1369,6 +1369,17 @@ export default {
     cy.expect(typeOfHeadingSelect.has({ filterValue: value }));
   },
 
+  fillInAuthoritySourceFilter(value) {
+    cy.do(
+      sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).fillIn(value),
+    );
+    cy.expect(
+      sourceFileAccordion
+        .find(MultiSelect({ label: including('Authority source') }))
+        .has({ filterValue: value }),
+    );
+  },
+
   checkFilterNoMatchMessage({ isPresent = true } = {}) {
     if (isPresent) {
       cy.expect(filtersSection.find(HTML('No matching items found!')).exists());
