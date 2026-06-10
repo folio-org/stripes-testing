@@ -89,6 +89,7 @@ export const holdingsFieldValues = {
   tenantId: 'Holdings — Tenant ID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
+  recordVersion: 'Holdings — Record version',
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
