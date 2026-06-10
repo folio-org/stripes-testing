@@ -160,7 +160,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.staff_suppress == false) AND (instance.title starts with C477642_${postfix}) AND (instance.created_at == ${todayDate})`,
+              `(instance.staff_suppress == False) AND (instance.title starts with C477642_${postfix}) AND (instance.created_at == ${todayDate})`,
             );
 
             instances.forEach((instance) => {

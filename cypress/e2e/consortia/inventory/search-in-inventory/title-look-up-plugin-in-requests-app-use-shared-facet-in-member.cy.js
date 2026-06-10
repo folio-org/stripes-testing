@@ -3,6 +3,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import NewRequest from '../../../../support/fragments/requests/newRequest';
 import Requests from '../../../../support/fragments/requests/requests';
 import SelectInstanceModal from '../../../../support/fragments/requests/selectInstanceModal';
@@ -96,6 +97,13 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      [Affiliations.Consortia, Affiliations.University, Affiliations.College].forEach(
+        (affiliation) => {
+          cy.withinTenant(affiliation, () => {
+            InventoryInstances.deleteInstanceByTitleViaApi('C410702');
+          });
+        },
+      );
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiRequestsCreate.gui,

@@ -1,22 +1,26 @@
 import uuid from 'uuid';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import DeletePieceModal from '../../support/fragments/receiving/modals/deletePieceModal';
+import EditPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
 import Receiving from '../../support/fragments/receiving/receiving';
 import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
-import EditPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
-import DeletePieceModal from '../../support/fragments/receiving/modals/deletePieceModal';
 
 describe('Receiving', () => {
   describe('Acquisition units', () => {
@@ -91,7 +95,7 @@ describe('Receiving', () => {
                       ],
                       acquisitionMethod: acquisitionMethodResponse.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: materialType.id,
                         materialSupplier: organization.id,
                         volumes: [],

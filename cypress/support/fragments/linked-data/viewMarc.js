@@ -10,20 +10,30 @@ export default {
   },
 
   checkMarcFieldIndicators(fieldCode, indicators) {
-    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-indicators' and text()='${indicators}']`).should('be.visible');
+    cy.xpath(
+      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-indicators' and text()='${indicators}']`,
+    ).should('be.visible');
   },
 
   checkMarcFieldContainsData(fieldCode, data) {
-    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and contains(normalize-space(), '${data}')]`).should('be.visible');
+    const parts = data.split("'");
+    const xpathData = parts.length === 1 ? `'${data}'` : `concat('${parts.join("', \"'\", '")}')`;
+    cy.xpath(
+      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and contains(normalize-space(), ${xpathData})]`,
+    ).should('be.visible');
   },
 
   checkMarcFieldContainsDataAtPosition(fieldCode, position, data) {
     const length = data.length;
-    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and substring(text(), ${position}, ${length})='${data}']`).should('be.visible');
+    cy.xpath(
+      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and substring(text(), ${position}, ${length})='${data}']`,
+    ).should('be.visible');
   },
 
   checkMarcFieldContainsOneOfDataAtPosition(fieldCode, position, length, dataOptions) {
-    cy.xpath(`//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents']`).then((contents) => {
+    cy.xpath(
+      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents']`,
+    ).then((contents) => {
       const textAtPos = contents.text().substr(position, length);
       expect(dataOptions.includes(textAtPos));
     });

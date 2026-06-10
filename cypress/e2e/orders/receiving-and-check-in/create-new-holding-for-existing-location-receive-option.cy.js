@@ -3,6 +3,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   LOCATION_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -67,7 +68,7 @@ describe('Orders', () => {
                       ],
                       acquisitionMethod: params.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: testData.materialType.id,
                         materialSupplier: testData.organization.id,
                         volumes: [],

@@ -282,6 +282,7 @@ describe('OAI-PMH', () => {
             // Step 12: ListRecords marc21 for Central tenant (all members)
             cy.resetTenant();
             cy.getAdminToken();
+            cy.setTenant(Affiliations.College);
             OaiPmhEdge.listRecordsRequest(
               'marc21',
               OaiPmhEdge.getApiKey(Affiliations.Consortia),

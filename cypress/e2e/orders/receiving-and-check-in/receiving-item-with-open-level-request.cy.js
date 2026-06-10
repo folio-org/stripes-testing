@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
   REQUEST_TYPES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
@@ -71,7 +72,7 @@ describe('Orders', () => {
                     },
                     orderFormat: 'Other',
                     physical: {
-                      createInventory: 'Instance, Holding, Item',
+                      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                       materialType: materialTypeId,
                     },
                     locations: [{ locationId: testData.location.id, quantityPhysical: 1 }],

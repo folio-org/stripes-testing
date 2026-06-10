@@ -114,6 +114,7 @@ describe('MARC', () => {
               });
             });
           });
+          InventoryInstances.deleteInstanceByTitleViaApi('C388503');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(

@@ -64,6 +64,16 @@ const filterByCheckbox = (checkboxLabel) => {
 };
 
 const api = {
+  getTransactionsViaApi(searchParams = {}) {
+    return cy
+      .okapiRequest({
+        path: 'finance/transactions',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.transactions);
+  },
+
   createBatchTransactionsViaApi(transactionsToCreate = []) {
     const ids = transactionsToCreate.map(() => uuid());
 

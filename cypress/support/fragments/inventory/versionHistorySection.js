@@ -83,8 +83,8 @@ export default {
     return cy.get('[class*="modal"]').find('[class*="headline"]').invoke('text');
   },
 
-  verifyTimestampFormat(timestamp) {
-    expect(timestamp).to.match(changesModalHeaderDefaultRegexp);
+  verifyTimestampFormat(timestamp, regexp = changesModalHeaderDefaultRegexp) {
+    expect(timestamp).to.match(regexp);
   },
 
   verifyVersionHistoryPane(versionsCount = 1, loadMore = false, totalVersionsCount) {
@@ -273,6 +273,13 @@ export default {
       const hasScrollbar = $modalContent[0].scrollHeight > $modalContent[0].clientHeight;
       cy.expect(hasScrollbar).to.eq(true);
     });
+  },
+
+  verifySourceIsALink(index = 0, isLink = true) {
+    const targetCard = rootSection.find(Card({ index }));
+    const targetLink = targetCard.find(Link({ href: including('/users/preview/') }));
+    if (isLink) cy.expect(targetLink.exists());
+    else cy.expect(targetLink.absent());
   },
 
   clickOnSourceLinkInCard(index = 0) {

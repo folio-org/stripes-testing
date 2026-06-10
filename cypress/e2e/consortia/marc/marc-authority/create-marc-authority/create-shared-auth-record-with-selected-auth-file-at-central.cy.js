@@ -61,6 +61,7 @@ describe('MARC', () => {
               testData.sourceName,
             ).then((sourceId) => {
               testData.authSourceID = sourceId;
+              cy.wait(70_000); // waiting for the file to be processed by scheduled job
             });
 
             ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();

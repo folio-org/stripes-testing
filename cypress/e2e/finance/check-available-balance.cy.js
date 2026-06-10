@@ -4,7 +4,6 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import Funds from '../../support/fragments/finance/funds/funds';
 import Groups from '../../support/fragments/finance/groups/groups';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -27,7 +26,6 @@ describe('Finance', () => {
   };
   const defaultGroup = { ...Groups.defaultUiGroup };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
   let user;
   let location;
@@ -63,7 +61,6 @@ describe('Finance', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);

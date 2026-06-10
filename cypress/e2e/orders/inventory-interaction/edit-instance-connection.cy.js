@@ -1,6 +1,7 @@
 import {
   ORDER_STATUSES,
   POLINE_DETAILS_FIELDS,
+  POL_CREATE_INVENTORY_SETTINGS,
   POL_CREATE_INVENTORY_SETTINGS_VIEW,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
@@ -41,7 +42,7 @@ describe('Orders', () => {
           testData.orderLine = BasicOrderLine.getDefaultOrderLine({
             specialLocationId: testData.location.id,
             specialMaterialTypeId: testData.materialType.id,
-            createInventory: 'Instance, Holding',
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING,
           });
 
           Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(

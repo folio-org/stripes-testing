@@ -52,6 +52,11 @@ export default {
     resource: 'UI-Data-Export Settings',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiDeveloperSettingsUserLocaleView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Developer Settings UserLocale Execute',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsHoldingsSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Holdings-Sources',
@@ -60,6 +65,11 @@ export default {
   uiInventorySettingsSubjectSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Subject-Sources',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsListView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings List',
     action: CAPABILITY_ACTIONS.VIEW,
   },
   uiDataImportSettingsManage: {
@@ -76,6 +86,11 @@ export default {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'Module Lists Refresh',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  myProfileMainNavOrderManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Myprofile Settings Main-Nav-Order',
+    action: CAPABILITY_ACTIONS.MANAGE,
   },
 
   // Data capability sets

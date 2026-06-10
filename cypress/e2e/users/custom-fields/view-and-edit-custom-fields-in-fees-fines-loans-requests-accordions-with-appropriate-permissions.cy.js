@@ -229,18 +229,6 @@ describe('Users', () => {
       textField: 'h',
     });
 
-    const visitCustomFieldsSettings = () => {
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-
-      return cy.location('pathname').then((pathname) => {
-        const alreadyVisited = pathname?.includes('/settings/users/custom-fields');
-        if (!alreadyVisited) {
-          CustomFields.openTabFromInventorySettingsList();
-        }
-
-        CustomFields.waitLoading();
-      });
-    };
     const openCreatedUserCard = () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersCard.waitLoading();
@@ -249,16 +237,8 @@ describe('Users', () => {
       UserEdit.openEdit();
       UserEdit.checkUserEditPaneOpened();
     };
-    const moveAllCustomFieldsToAccordion = (accordionLabel) => {
-      visitCustomFieldsSettings();
-
-      CustomFields.openEdit();
-      CustomFields.setDisplayInAccordionForFields(getAllCustomFieldLabels(), accordionLabel);
-      CustomFields.verifyDisplayInAccordionForFields(getAllCustomFieldLabels(), accordionLabel);
-      CustomFields.verifySaveAndCloseButtonEnabled();
-    };
     const distributeCustomFieldsAcrossAccordions = () => {
-      visitCustomFieldsSettings();
+      CustomFields.visitCustomFieldsSettings();
 
       CustomFields.openEdit();
       CustomFields.setDisplayInAccordion(testData.customFields.checkbox.name, 'Loans');
@@ -287,7 +267,6 @@ describe('Users', () => {
         testData.customFieldsAccordionName,
       );
       CustomFields.verifyDisplayInAccordion(testData.customFields.textField.name, 'Requests');
-      CustomFields.verifySaveAndCloseButtonEnabled();
     };
 
     before('Create test data', () => {
@@ -371,7 +350,6 @@ describe('Users', () => {
           testData.userRecord.email,
           'Patron',
           testData.userRecord.username,
-          { shouldSetExpirationDate: true },
         );
         UserEdit.verifyAccordionsPresent([
           'User information',
@@ -409,7 +387,7 @@ describe('Users', () => {
         });
 
         // Step 4: Move every custom field to the Loans accordion in settings
-        moveAllCustomFieldsToAccordion('Loans');
+        CustomFields.moveAllCustomFieldsToAccordion(getAllCustomFieldLabels(), 'Loans');
 
         // Step 5: Save the custom field settings after moving them to Loans
         CustomFields.saveAndClose();
@@ -469,7 +447,7 @@ describe('Users', () => {
         });
 
         // Step 9: Move every custom field to the Requests accordion in settings
-        moveAllCustomFieldsToAccordion('Requests');
+        CustomFields.moveAllCustomFieldsToAccordion(getAllCustomFieldLabels(), 'Requests');
 
         // Step 10: Save the custom field settings after moving them to Requests
         CustomFields.saveAndClose();

@@ -1,16 +1,17 @@
-import { Permissions } from '../../support/dictionary';
-import { Budgets } from '../../support/fragments/finance';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { NewOrder, Orders, BasicOrderLine, OrderLines } from '../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import { InventoryHoldings } from '../../support/fragments/inventory';
-import { OrderLinesLimit } from '../../support/fragments/settings/orders';
 import {
-  ORDER_STATUSES,
-  POLINE_DETAILS_FIELDS,
   ORDER_LINE_PAYMENT_STATUS,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+  POLINE_DETAILS_FIELDS,
   RECEIPT_STATUS_VIEW,
 } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets } from '../../support/fragments/finance';
+import { InventoryHoldings } from '../../support/fragments/inventory';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import { OrderLinesLimit } from '../../support/fragments/settings/orders';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -60,7 +61,7 @@ describe('Orders', () => {
               const orderLine = BasicOrderLine.getDefaultOrderLine({
                 acquisitionMethod,
                 purchaseOrderId: testData.order.id,
-                createInventory: 'Instance, Holding, Item',
+                createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                 checkinItems: false,
                 specialLocationId: testData.location.id,
                 specialMaterialTypeId: materialTypeId,

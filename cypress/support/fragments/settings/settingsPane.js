@@ -1,23 +1,23 @@
-import { REQUEST_METHOD } from '../../constants';
 import {
   Button,
+  ColumnHeader,
   Pane,
   PaneHeader,
   Section,
   EditableList,
   EditableListRow,
-  ColumnHeader,
-  MultiColumnListHeader,
-  MultiColumnListCell,
-  Modal,
-  TextField,
   HTML,
   including,
-  or,
+  Link,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListHeader,
   NavList,
   NavListItem,
-  Link,
+  or,
+  TextField,
 } from '../../../../interactors';
+import { REQUEST_METHOD } from '../../constants';
 import deleteModal from './tenant/modals/deleteModal';
 
 export const startRowIndex = 2;

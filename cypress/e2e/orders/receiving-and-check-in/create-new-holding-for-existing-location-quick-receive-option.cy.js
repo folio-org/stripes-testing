@@ -1,20 +1,21 @@
-import uuid from 'uuid';
 import { including } from '@interactors/html';
+import uuid from 'uuid';
 
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import {
-  ORDER_STATUSES,
-  LOCATION_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-} from '../../../support/constants';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Receiving from '../../../support/fragments/receiving/receiving';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
@@ -70,7 +71,7 @@ describe('Orders', () => {
                       ],
                       acquisitionMethod: params.body.acquisitionMethods[0].id,
                       physical: {
-                        createInventory: 'Instance, Holding, Item',
+                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
                         materialType: testData.materialType.id,
                         materialSupplier: testData.organization.id,
                         volumes: [],

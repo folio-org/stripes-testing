@@ -154,6 +154,20 @@ module.exports = defineConfig({
           return converter.csv2json(data, options);
         },
 
+        parseExcelCsvFile(filePath) {
+          // eslint-disable-next-line global-require
+          const XLSX = require('xlsx');
+          const fileBuffer = fs.readFileSync(filePath);
+          const hasBom = fileBuffer[0] === 0xef && fileBuffer[1] === 0xbb && fileBuffer[2] === 0xbf;
+          // Strip BOM before parsing: xlsx v0.18.x prepends the BOM character
+          // to the first column header when given a BOM-prefixed buffer
+          const parseBuffer = hasBom ? fileBuffer.slice(3) : fileBuffer;
+          const workbook = XLSX.read(parseBuffer, { type: 'buffer', codepage: 65001 });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          return { hasBom, rows };
+        },
+
         downloadFile,
 
         deleteFolder(folderName) {

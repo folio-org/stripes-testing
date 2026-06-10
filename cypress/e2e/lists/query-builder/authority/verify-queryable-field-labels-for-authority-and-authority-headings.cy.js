@@ -14,6 +14,10 @@ describe('Lists', () => {
         listName: `AT_C1292064_List_${getRandomPostfix()}`,
       };
 
+      const listsAuthorityHeadingTypes = Object.values(AUTHORITY_HEADING_TYPES).filter(
+        (type) => type !== AUTHORITY_HEADING_TYPES.GENRE,
+      );
+
       const capabSetsToAssign = [
         CapabilitySets.moduleListsManage,
         CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
@@ -58,19 +62,19 @@ describe('Lists', () => {
           // Step 3: Select "Authority — Heading type", any operator, and verify value dropdown options
           QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_HEADING_TYPE);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.verifyOptionsInValueSelect(Object.values(AUTHORITY_HEADING_TYPES));
+          QueryModal.verifyOptionsInValueSelect(listsAuthorityHeadingTypes);
 
           // Step 4: Select "Authority — See also from reference — Tracing type", any operator, and verify value dropdown options
           QueryModal.selectField(
             AUTHORITY_QUERY_FIELDS.AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING_TYPE,
           );
           QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
-          QueryModal.verifyOptionsInValueSelect(Object.values(AUTHORITY_HEADING_TYPES));
+          QueryModal.verifyOptionsInValueSelect(listsAuthorityHeadingTypes);
 
           // Step 5: Select "Authority — See from reference — Tracing type", any operator, and verify value dropdown options
           QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_SEE_FROM_REFERENCE_TRACING_TYPE);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.verifyOptionsInValueSelect(Object.values(AUTHORITY_HEADING_TYPES));
+          QueryModal.verifyOptionsInValueSelect(listsAuthorityHeadingTypes);
         },
       );
     });
