@@ -19,6 +19,7 @@ import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
 const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
 const dateCreatedAccordion = Accordion('Date created');
+const dateUpdatedAccordion = Accordion('Date updated');
 const authorityList = MultiColumnList({ id: 'authority-result-list' });
 const collapseButton = Button({ icon: 'caret-left' });
 const expandButton = Button({ icon: 'caret-right' });
@@ -221,6 +222,39 @@ export default {
       dateCreatedAccordion.find(dateFromField).fillIn(fromDate),
       dateCreatedAccordion.find(dateToField).fillIn(toDate),
       dateCreatedAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  filterByDateUpdated(fromDate, toDate) {
+    cy.do([
+      dateUpdatedAccordion.clickHeader(),
+      dateUpdatedAccordion.find(dateFromField).fillIn(fromDate),
+      dateUpdatedAccordion.find(dateToField).fillIn(toDate),
+      dateUpdatedAccordion.find(applyButton).click(),
+    ]);
+  },
+
+  verifyDateCreatedFilterIsCleared() {
+    cy.then(() => dateCreatedAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(dateCreatedAccordion.clickHeader());
+      }
+    });
+    cy.expect([
+      dateCreatedAccordion.find(dateFromField).has({ value: '' }),
+      dateCreatedAccordion.find(dateToField).has({ value: '' }),
+    ]);
+  },
+
+  verifyDateUpdatedFilterIsCleared() {
+    cy.then(() => dateUpdatedAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(dateUpdatedAccordion.clickHeader());
+      }
+    });
+    cy.expect([
+      dateUpdatedAccordion.find(dateFromField).has({ value: '' }),
+      dateUpdatedAccordion.find(dateToField).has({ value: '' }),
     ]);
   },
 };
