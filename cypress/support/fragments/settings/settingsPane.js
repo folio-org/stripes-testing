@@ -1,6 +1,9 @@
 import {
   Button,
   ColumnHeader,
+  Pane,
+  PaneHeader,
+  Section,
   EditableList,
   EditableListRow,
   HTML,
@@ -12,9 +15,6 @@ import {
   NavList,
   NavListItem,
   or,
-  Pane,
-  PaneHeader,
-  Section,
   TextField,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
