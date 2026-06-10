@@ -21,15 +21,15 @@ const selectedStatus = [
   status.Unassigned,
 ];
 const selectedTeams = [
-  // team.Firebird,
-  // team.Folijet,
+  team.Firebird,
+  team.Folijet,
   team.Spitfire,
-  // team.Thunderjet,
-  // team.Vega,
-  // team.Volaris,
-  // team.Corsair,
-  // team.Eureka,
-  // team.Citation,
+  team.Thunderjet,
+  team.Vega,
+  team.Volaris,
+  team.Corsair,
+  team.Eureka,
+  team.Citation,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
