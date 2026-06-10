@@ -114,7 +114,7 @@ export default {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
   setUserLimit(limit) {
-    cy.get('[name="eresource.userLimit"]').type(limit);
+    cy.get('[name="eresource.userLimit"]').clear().type(limit);
   },
   checkExchangeRateError(
     errorMessage = OrderStates.exchangeRateAmountMustBePositive,
