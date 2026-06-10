@@ -1,22 +1,23 @@
-import { REQUEST_METHOD } from '../../constants';
 import {
   Button,
-  Pane,
-  Section,
+  ColumnHeader,
   EditableList,
   EditableListRow,
-  ColumnHeader,
-  MultiColumnListHeader,
-  MultiColumnListCell,
-  Modal,
-  TextField,
   HTML,
   including,
-  or,
+  Link,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListHeader,
   NavList,
   NavListItem,
-  Link,
+  or,
+  Pane,
+  PaneHeader,
+  Section,
+  TextField,
 } from '../../../../interactors';
+import { REQUEST_METHOD } from '../../constants';
 import deleteModal from './tenant/modals/deleteModal';
 
 export const startRowIndex = 2;
@@ -39,6 +40,12 @@ export default {
   },
   waitSettingsPaneLoading() {
     cy.xpath('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
+  },
+  checkSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeadersettings-nav-pane' }).has({ focused: true }));
+  },
+  checkAppSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }).has({ focused: true }));
   },
   clickAddNewBtn() {
     cy.wait(500);
