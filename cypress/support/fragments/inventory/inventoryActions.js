@@ -94,16 +94,17 @@ export default {
   },
 
   // the same steps can be used in Overlay Source Bibliographic Record
-  fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
-    // TODO: remove in the future, now related with differenes in our environments
-    if (Cypress.env('is_kiwi_release')) {
+  fillImportFields(
+    specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id,
+    { isOCLC = true } = {},
+  ) {
+    if (isOCLC) {
       const oclcWorldCat = {
         text: 'OCLC WorldCat',
-        value: '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88',
       };
 
       cy.do(importTypeSelect.choose(oclcWorldCat.text));
-      cy.expect(importTypeSelect.has({ value: oclcWorldCat.value }));
+      cy.expect(importTypeSelect.has({ checkedOptionText: oclcWorldCat.text }));
     }
 
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
@@ -208,7 +209,7 @@ export default {
       }
 
       cy.expect(locIdInputField.exists());
-      this.fillImportFields(specialLOCidentifier);
+      this.fillImportFields(specialLOCidentifier, { isOCLC: false });
       cy.wait(1000);
       this.pressImportInModal(specialLOCidentifier);
       InventoryInstance.checkExpectedMARCSource();
@@ -228,7 +229,7 @@ export default {
         cy.do(importTypeSelect.choose('Library of Congress'));
       }
       cy.expect(locIdInputField.exists());
-      this.fillImportFields(specialLOCidentifier);
+      this.fillImportFields(specialLOCidentifier, { isOCLC: false });
       cy.wait(1000);
       this.pressImportInModal(specialLOCidentifier, true, expandIdentifiers);
       cy.expect(importModal.absent());

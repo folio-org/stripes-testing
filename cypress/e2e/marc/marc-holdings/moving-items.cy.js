@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
@@ -14,7 +14,6 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC', () => {
@@ -26,6 +25,7 @@ describe('MARC', () => {
     let secondHolding = '';
     let ITEM_BARCODE;
     const instanceTitle = `Barcode search test ${Number(new Date())}`;
+    const locations = [];
 
     before(() => {
       cy.getAdminToken().then(() => {
@@ -48,13 +48,16 @@ describe('MARC', () => {
         permissions.converterStorageAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
             cy.getDefaultMaterialType();
-            cy.getLocations({ limit: 2 });
+            cy.getLocations({
+              limit: 2,
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+            }).then(() => {
+              locations.push(...Cypress.env('locations'));
+            });
             cy.getHoldingTypes({ limit: 2 });
             InventoryHoldings.getHoldingSources({ limit: 2 }).then((holdingsSources) => {
               source = holdingsSources;
@@ -67,8 +70,8 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            firstHolding = 'Online';
-            secondHolding = 'Popular Reading Collection';
+            firstHolding = locations[0].name;
+            secondHolding = locations[1].name;
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -77,12 +80,12 @@ describe('MARC', () => {
               holdings: [
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: LOCATION_IDS.ONLINE,
+                  permanentLocationId: locations[0].id,
                   sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
-                  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+                  permanentLocationId: locations[1].id,
                   sourceId: source[1].id,
                 },
               ],
