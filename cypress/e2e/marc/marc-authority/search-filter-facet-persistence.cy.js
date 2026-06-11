@@ -15,6 +15,7 @@ describe('MARC', () => {
     describe('Search', () => {
       const testData = {
         searchQuery: '*',
+        exportSearchQuery: 'authority',
         searchOption: MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD,
         personalNameOption: MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME,
         filters: {
@@ -115,6 +116,11 @@ describe('MARC', () => {
           MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
 
           // Step 16: Export UUIDs and verify file download
+          MarcAuthoritiesSearch.fillSearchInput(testData.exportSearchQuery);
+          MarcAuthoritiesSearch.clickSearchButton();
+          MarcAuthorities.verifyDisabledSearchButton();
+          MarcAuthorities.verifyEnabledSearchButton();
+          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.clickActionsButton();
           MarcAuthorities.clickSaveUuidsButton();
           FileManager.findDownloadedFilesByMask('SearchAuthorityUUIDs*').then((downloadedFiles) => {

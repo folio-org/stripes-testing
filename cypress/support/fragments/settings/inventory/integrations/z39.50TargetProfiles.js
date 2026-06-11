@@ -109,6 +109,8 @@ function verifyJobProfilesForOverlayUpdateAscendingOrder() {
     });
 }
 
+export const oclcAuthorizationCreds = '100481406/PAOLF';
+
 export default {
   edit,
   save,
@@ -308,7 +310,7 @@ export default {
         body: {
           name,
           url: 'zcat.oclc.org/OLUCWorldCat',
-          authentication: '100481406/PAOLF',
+          authentication: oclcAuthorizationCreds,
           externalIdQueryMap: '@attr 1=1211 $identifier',
           internalIdEmbedPath: '999ff$i',
           createJobProfileId: defaultCreateInstanceJobProfileId,
