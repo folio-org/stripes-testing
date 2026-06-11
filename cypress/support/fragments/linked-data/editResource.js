@@ -114,9 +114,9 @@ export default {
 
   clearStatusMessages() {
     // Toasts are stacked in an overlapping way likely obscuring close button; close them all anwyays.
-    // eslint-disable-next-line cypress/no-force
     cy.xpath(
       '//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]',
+      // eslint-disable-next-line cypress/no-force
     ).click({ multiple: true, force: true });
     cy.wait(1000);
   },
@@ -268,12 +268,12 @@ export default {
       .should('be.visible')
       .click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.xpath(
       `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
     )
       .scrollIntoView()
       .should('be.visible')
-      // eslint-disable-next-line cypress/no-force
       .click({ force: true });
     cy.wait(500);
   },
@@ -292,12 +292,12 @@ export default {
         .should('be.visible')
         .click();
       cy.wait(500);
+      // eslint-disable-next-line cypress/no-force
       cy.xpath(
         `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
       )
         .scrollIntoView()
         .should('be.visible')
-        // eslint-disable-next-line cypress/no-force
         .click({ force: true });
       cy.wait(500);
     });
@@ -884,6 +884,76 @@ export default {
     cy.xpath(exportInstanceActionsButton).should('be.visible');
     cy.xpath(instanceChangeProfileActionsButton).should('be.visible');
     cy.do(actionsButton.click());
+    cy.wait(500);
+  },
+
+  setModeOfIssuance(value) {
+    cy.wait(1000);
+    cy.xpath(
+      '//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__control")]',
+    ).click();
+    cy.wait(500);
+    cy.xpath(
+      `//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
+    cy.wait(500);
+  },
+
+  addIsbnIdentifier(value, qualifier) {
+    cy.wait(1000);
+    cy.xpath("(//div[text()='Identifiers'])[1]/following::select[1]").select('ISBN');
+    cy.wait(500);
+    cy.xpath("((//div[text()='Identifiers'])[1]//following::div/div/input)[1]")
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(500);
+    cy.xpath(
+      '(//div[@class="label" and text()="Qualifier"])[1]/../../div[@class="children-container"]/input',
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(500);
+  },
+
+  changeIdentifierQualifier(qualifier, position = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="Qualifier"])[${position}]/../../div[@class="children-container"]/input`,
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(1000);
+  },
+
+  changeIdentifierValue(value, position = 1) {
+    cy.wait(1000);
+    cy.xpath(`((//div[text()='Identifiers'])[${position}]//following::div/div/input)[1]`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(1000);
+  },
+
+  setValueForSearchableSimpleField(value, field) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//input[contains(@class, "simple-lookup__input")]`,
+    )
+      .click()
+      .type(value);
+    cy.wait(1500);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__option")]`,
+    )
+      .first()
+      .click();
     cy.wait(500);
   },
 };
