@@ -886,4 +886,74 @@ export default {
     cy.do(actionsButton.click());
     cy.wait(500);
   },
+
+  setModeOfIssuance(value) {
+    cy.wait(1000);
+    cy.xpath(
+      '//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__control")]',
+    ).click();
+    cy.wait(500);
+    cy.xpath(
+      `//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
+    cy.wait(500);
+  },
+
+  addIsbnIdentifier(value, qualifier) {
+    cy.wait(1000);
+    cy.xpath('(//div[text()=\'Identifiers\'])[1]/following::select[1]').select('ISBN');
+    cy.wait(500);
+    cy.xpath('((//div[text()=\'Identifiers\'])[1]//following::div/div/input)[1]')
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(500);
+    cy.xpath(
+      '(//div[@class="label" and text()="Qualifier"])[1]/../../div[@class="children-container"]/input',
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(500);
+  },
+
+  changeIdentifierQualifier(qualifier, position = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="Qualifier"])[${position}]/../../div[@class="children-container"]/input`,
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(1000);
+  },
+
+  changeIdentifierValue(value, position = 1) {
+    cy.wait(1000);
+    cy.xpath(`((//div[text()='Identifiers'])[${position}]//following::div/div/input)[1]`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(1000);
+  },
+
+  setValueForSearchableSimpleField(value, field) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//input[contains(@class, "simple-lookup__input")]`,
+    )
+      .click()
+      .type(value);
+    cy.wait(1500);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__option")]`,
+    )
+      .first()
+      .click();
+    cy.wait(500);
+  },
 };
