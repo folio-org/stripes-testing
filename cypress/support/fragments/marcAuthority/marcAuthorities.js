@@ -278,7 +278,10 @@ export default {
   },
 
   verifyContentOfExportFile(actual, ...expectedArray) {
-    expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+    expectedArray.forEach((expectedItem) => {
+      if (expectedItem instanceof RegExp) expect(actual).to.match(expectedItem);
+      else expect(actual).to.include(expectedItem);
+    });
   },
 
   verifyContentAbsentInExportFile(actual, ...notExpectedArray) {
