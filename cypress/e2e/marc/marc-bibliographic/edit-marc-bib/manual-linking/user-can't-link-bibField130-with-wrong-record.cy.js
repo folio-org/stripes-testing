@@ -99,7 +99,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380452*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380452 ');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -121,14 +121,10 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -146,7 +142,9 @@ describe('MARC', () => {
           { tags: ['extendedPath', 'spitfire', 'C380452'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdRecordIDs[0]);
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib130FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag130);

@@ -6,6 +6,9 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import Z3950TargetProfiles, {
+  oclcAuthorizationCreds,
+} from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -46,6 +49,8 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(oclcAuthorizationCreds);
 
         cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
           (instanceId) => {

@@ -87,7 +87,6 @@ describe('MARC', () => {
         });
       });
 
-      // KNOWN ISSUE: Steps 5 fail due to UIMARCAUTH-532
       it(
         'C386498 Switching between Search and Browse in "MARC authority" app (advanced search) (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C386498'] },
@@ -113,6 +112,7 @@ describe('MARC', () => {
           // Step 4: Fill browse query and search
           MarcAuthorityBrowse.searchBy(testData.browseOption, testData.browseQuery);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+          MarcAuthorityBrowse.checkResultWithNoValue(testData.browseQuery);
 
           // Step 5: Switch to Search - verify state is same as Step 2
           MarcAuthorities.switchToSearch();
@@ -140,6 +140,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyBrowseTabIsOpened();
           MarcAuthorities.checkSearchInput(testData.browseQuery);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+          MarcAuthorityBrowse.checkResultWithNoValue(testData.browseQuery);
 
           // Step 9: Switch to Search - verify state same as Step 7
           MarcAuthorities.switchToSearch();
