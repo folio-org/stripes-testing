@@ -154,6 +154,11 @@ describe('Lists', () => {
         Lists.verifyRefreshCompleteCallout(1);
         Lists.viewUpdatedList();
         Lists.waitForCompilingToComplete();
+        QueryModal.verifyColumnValueForRow(
+          testData.instanceTitle,
+          itemFieldValues.instanceTitle,
+          testData.instanceTitle,
+        );
 
         // Step 6: Open Actions and check available columns in "Show columns"
         Lists.openActions();
