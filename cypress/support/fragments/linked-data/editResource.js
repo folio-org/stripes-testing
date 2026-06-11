@@ -114,9 +114,9 @@ export default {
 
   clearStatusMessages() {
     // Toasts are stacked in an overlapping way likely obscuring close button; close them all anwyays.
+    // eslint-disable-next-line cypress/no-force
     cy.xpath(
       '//section[@data-testid="common-status"]//button[contains(@class, "status-message-close")]',
-      // eslint-disable-next-line cypress/no-force
     ).click({ multiple: true, force: true });
     cy.wait(1000);
   },
