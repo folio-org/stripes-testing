@@ -51,40 +51,42 @@ describe('Bulk-edit', () => {
           cy.getLoanTypes({ query: 'name=="Selected"' }).then((loanTypes) => {
             selectedLoanTypeId = loanTypes[0].id;
 
-            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
-              annexLocationId = loc.id;
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then(
+              (loc) => {
+                annexLocationId = loc.id;
 
-              InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-              cy.getItems({
-                limit: 1,
-                expandAll: true,
-                query: `"barcode"=="${item.barcode}"`,
-              }).then((res) => {
-                const itemData = res;
-                item.itemId = res.id;
-                item.hrid = res.hrid;
-                itemData.circulationNotes = [
-                  { noteType: 'Check in', note: notes.checkInNote, staffOnly: false },
-                ];
-                itemData.notes = [
-                  {
-                    itemNoteTypeId: noteNoteTypeId,
-                    note: notes.noteNote,
-                    staffOnly: true,
-                  },
-                ];
-                itemData.temporaryLoanType = { id: selectedLoanTypeId };
-                itemData.permanentLocation = { id: annexLocationId };
-                itemData.temporaryLocation = { id: annexLocationId };
-                itemData.discoverySuppress = true;
-                cy.updateItemViaApi(itemData);
-                FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
-              });
-              cy.login(user.username, user.password, {
-                path: TopMenu.bulkEditPath,
-                waiter: BulkEditSearchPane.waitLoading,
-              });
-            });
+                InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+                cy.getItems({
+                  limit: 1,
+                  expandAll: true,
+                  query: `"barcode"=="${item.barcode}"`,
+                }).then((res) => {
+                  const itemData = res;
+                  item.itemId = res.id;
+                  item.hrid = res.hrid;
+                  itemData.circulationNotes = [
+                    { noteType: 'Check in', note: notes.checkInNote, staffOnly: false },
+                  ];
+                  itemData.notes = [
+                    {
+                      itemNoteTypeId: noteNoteTypeId,
+                      note: notes.noteNote,
+                      staffOnly: true,
+                    },
+                  ];
+                  itemData.temporaryLoanType = { id: selectedLoanTypeId };
+                  itemData.permanentLocation = { id: annexLocationId };
+                  itemData.temporaryLocation = { id: annexLocationId };
+                  itemData.discoverySuppress = true;
+                  cy.updateItemViaApi(itemData);
+                  FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
+                });
+                cy.login(user.username, user.password, {
+                  path: TopMenu.bulkEditPath,
+                  waiter: BulkEditSearchPane.waitLoading,
+                });
+              },
+            );
           });
         });
       });

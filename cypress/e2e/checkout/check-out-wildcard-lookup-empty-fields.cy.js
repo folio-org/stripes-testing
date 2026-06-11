@@ -52,7 +52,7 @@ describe('Check out', () => {
 
       testData.instanceTitle = `Instance_C688738_${getRandomPostfix()}`;
 
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
         (loc) => {
           mainLibraryLocationId = loc.id;
 

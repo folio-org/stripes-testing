@@ -76,45 +76,46 @@ describe(
                     query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"`,
                   }).then((loc2) => {
                     mainLibraryLocationId = loc2.id;
-                    cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then(
-                      (loc3) => {
-                        onlineLocationId = loc3.id;
+                    cy.getLocations({
+                      limit: 1,
+                      query: `"name"="${LOCATION_NAMES.ONLINE_UI}"`,
+                    }).then((loc3) => {
+                      onlineLocationId = loc3.id;
 
-                        cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-                          (holdings) => {
-                            instance.holdingUUID = holdings[0].id;
-                            delete holdings[0].temporaryLocationId;
-                            cy.updateHoldingRecord(holdings[0].id, {
-                              ...holdings[0],
-                              permanentLocationId: popularReadingCollectionLocationId,
-                            });
-                          },
-                        );
-                        cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
-                          (holdings) => {
-                            instance2.holdingUUID = holdings[0].id;
-                            cy.updateHoldingRecord(holdings[0].id, {
-                              ...holdings[0],
-                              temporaryLocationId: mainLibraryLocationId,
-                              permanentLocationId: onlineLocationId,
-                            });
-                          },
-                        );
-                        cy.getInstanceById(instance.id).then((res) => {
-                          instance.hrid = res.hrid;
-                        });
-                        cy.getInstanceById(instance2.id)
-                          .then((res) => {
-                            instance2.hrid = res.hrid;
-                          })
-                          .then(() => {
-                            FileManager.createFile(
-                              `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
-                              `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
-                            );
+                      cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                        (holdings) => {
+                          instance.holdingUUID = holdings[0].id;
+                          delete holdings[0].temporaryLocationId;
+                          cy.updateHoldingRecord(holdings[0].id, {
+                            ...holdings[0],
+                            permanentLocationId: popularReadingCollectionLocationId,
                           });
-                      },
-                    );
+                        },
+                      );
+                      cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
+                        (holdings) => {
+                          instance2.holdingUUID = holdings[0].id;
+                          cy.updateHoldingRecord(holdings[0].id, {
+                            ...holdings[0],
+                            temporaryLocationId: mainLibraryLocationId,
+                            permanentLocationId: onlineLocationId,
+                          });
+                        },
+                      );
+                      cy.getInstanceById(instance.id).then((res) => {
+                        instance.hrid = res.hrid;
+                      });
+                      cy.getInstanceById(instance2.id)
+                        .then((res) => {
+                          instance2.hrid = res.hrid;
+                        })
+                        .then(() => {
+                          FileManager.createFile(
+                            `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
+                            `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
+                          );
+                        });
+                    });
                   });
                 });
               });

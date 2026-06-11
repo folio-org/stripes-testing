@@ -38,7 +38,7 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
           annexLocationId = loc.id;
 
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);

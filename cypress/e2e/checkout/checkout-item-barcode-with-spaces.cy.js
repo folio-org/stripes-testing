@@ -39,7 +39,7 @@ describe('Check out', () => {
     cy.getAdminToken();
     ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
       servicePoint = sp;
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
         (loc) => {
           mainLibraryLocationId = loc.id;
 

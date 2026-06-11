@@ -51,7 +51,7 @@ describe('Check in', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
 
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
         (loc) => {
           mainLibraryLocationId = loc.id;
 

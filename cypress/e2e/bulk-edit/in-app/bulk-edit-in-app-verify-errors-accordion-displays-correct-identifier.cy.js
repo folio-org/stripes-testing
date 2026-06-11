@@ -32,7 +32,7 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then((loc) => {
           onlineLocationId = loc.id;
 
           cy.getHoldings({
@@ -73,7 +73,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Modify the record by selecting the **same value** that at least **one** Holdings record has (For example,"TEMPORARY HOLDINGS LOCATION" is "Annex" => Select "Annex" location by clicking on the value from  "Select location" dropdown list )
-        const newLocation = 'Online';
+        const newLocation = LOCATION_NAMES.ONLINE_UI;
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);

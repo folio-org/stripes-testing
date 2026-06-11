@@ -37,11 +37,11 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
           annexLocationId = loc.id;
           cy.getLocations({
             limit: 1,
-            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
           }).then((loc2) => {
             popularReadingCollectionLocationId = loc2.id;
 

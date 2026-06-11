@@ -40,37 +40,39 @@ describe.skip('bulk-edit', () => {
           InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         });
 
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
           annexLocationId = loc.id;
 
-          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc2) => {
-            onlineLocationId = loc2.id;
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
+            (loc2) => {
+              onlineLocationId = loc2.id;
 
-            items.forEach((item) => {
-              cy.getItems({
-                limit: 1,
-                expandAll: true,
-                query: `"barcode"=="${item.secondItemBarcode}"`,
-              }).then((res) => {
-                res.temporaryLocation = { id: annexLocationId };
-                cy.updateItemViaApi(res);
-              });
+              items.forEach((item) => {
+                cy.getItems({
+                  limit: 1,
+                  expandAll: true,
+                  query: `"barcode"=="${item.secondItemBarcode}"`,
+                }).then((res) => {
+                  res.temporaryLocation = { id: annexLocationId };
+                  cy.updateItemViaApi(res);
+                });
 
-              cy.getItems({
-                limit: 1,
-                expandAll: true,
-                query: `"barcode"=="${item.itemBarcode}"`,
-              }).then((res) => {
-                res.temporaryLocation = { id: onlineLocationId };
-                cy.updateItemViaApi(res);
+                cy.getItems({
+                  limit: 1,
+                  expandAll: true,
+                  query: `"barcode"=="${item.itemBarcode}"`,
+                }).then((res) => {
+                  res.temporaryLocation = { id: onlineLocationId };
+                  cy.updateItemViaApi(res);
+                });
               });
-            });
-            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-          });
+              FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+            },
+          );
         });
       });
     });

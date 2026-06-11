@@ -41,53 +41,55 @@ describe('Bulk-edit', () => {
 
         cy.getLocations({
           limit: 1,
-          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
         }).then((loc) => {
           popularReadingCollectionLocationId = loc.id;
-          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc2) => {
-            annexLocationId = loc2.id;
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then(
+            (loc2) => {
+              annexLocationId = loc2.id;
 
-            const instanceId = InventoryInstances.createInstanceViaApi(
-              item.instanceName,
-              item.itemBarcode,
-            );
-            cy.getHoldings({
-              limit: 1,
-              query: `"instanceId"="${instanceId}"`,
-            }).then((holdings) => {
-              item.hrid = holdings[0].hrid;
-              item.holdingId = holdings[0].id;
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                temporaryLocationId: popularReadingCollectionLocationId,
-              });
-            });
-
-            const instanceId2 = InventoryInstances.createInstanceViaApi(
-              item2.instanceName,
-              item2.itemBarcode,
-            );
-            cy.getHoldings({
-              limit: 1,
-              query: `"instanceId"="${instanceId2}"`,
-            }).then((holdings) => {
-              item2.hrid = holdings[0].hrid;
-              item2.holdingId = holdings[0].id;
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                temporaryLocationId: annexLocationId,
-              });
-              FileManager.createFile(
-                `cypress/fixtures/${validHoldingUUIDsFileName}`,
-                `${item.holdingId}\r\n${item2.holdingId}`,
+              const instanceId = InventoryInstances.createInstanceViaApi(
+                item.instanceName,
+                item.itemBarcode,
               );
-            });
-            cy.wait(3000);
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
-          });
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${instanceId}"`,
+              }).then((holdings) => {
+                item.hrid = holdings[0].hrid;
+                item.holdingId = holdings[0].id;
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  temporaryLocationId: popularReadingCollectionLocationId,
+                });
+              });
+
+              const instanceId2 = InventoryInstances.createInstanceViaApi(
+                item2.instanceName,
+                item2.itemBarcode,
+              );
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${instanceId2}"`,
+              }).then((holdings) => {
+                item2.hrid = holdings[0].hrid;
+                item2.holdingId = holdings[0].id;
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  temporaryLocationId: annexLocationId,
+                });
+                FileManager.createFile(
+                  `cypress/fixtures/${validHoldingUUIDsFileName}`,
+                  `${item.holdingId}\r\n${item2.holdingId}`,
+                );
+              });
+              cy.wait(3000);
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+            },
+          );
         });
       });
     });

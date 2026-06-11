@@ -64,9 +64,11 @@ describe('Bulk-edit', () => {
             [instance.defaultLocation, tempLocation].forEach((location) => Location.createViaApi(location));
           })
           .then(() => {
-            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
-              annexLocationId = loc.id;
-            });
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then(
+              (loc) => {
+                annexLocationId = loc.id;
+              },
+            );
           })
           .then(() => {
             // Creating  instance

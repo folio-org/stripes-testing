@@ -42,11 +42,11 @@ describe('Inventory', () => {
 
         cy.getLocations({
           limit: 1,
-          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
         }).then((loc) => {
           popularReadingCollectionLocationId = loc.id;
 
-          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then(
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
             (onlineLoc) => {
               onlineLocationId = onlineLoc.id;
 

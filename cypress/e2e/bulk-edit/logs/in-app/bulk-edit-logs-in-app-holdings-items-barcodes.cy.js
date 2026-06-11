@@ -55,7 +55,7 @@ describe('Bulk-edit', () => {
             cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
               (loc) => {
                 mainLibraryLocationId = loc.id;
-                cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then(
+                cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
                   (loc2) => {
                     onlineLocationId = loc2.id;
 

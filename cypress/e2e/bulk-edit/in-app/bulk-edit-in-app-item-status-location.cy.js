@@ -35,7 +35,7 @@ describe('Bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
 
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
           annexLocationId = loc.id;
 
           cy.getItems({

@@ -29,7 +29,7 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then((loc) => {
           onlineLocationId = loc.id;
 
           cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
