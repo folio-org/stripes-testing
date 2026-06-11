@@ -55,18 +55,18 @@ describe('MARC', () => {
 
       after('Delete users, data', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
-        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(folioAuthorityFile.name);
         ManageAuthorityFiles.updateBaseUrlInAuthorityFileViaApi(
           folioAuthorityFile.name,
           folioAuthorityFile.baseUrl,
         );
+        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(folioAuthorityFile.name);
+        Users.deleteViaApi(user.userId);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
       });
 
       it(
         'C436863 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436863'] },
+        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C436863'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

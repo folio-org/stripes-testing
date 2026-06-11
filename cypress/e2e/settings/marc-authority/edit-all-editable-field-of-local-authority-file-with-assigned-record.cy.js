@@ -57,6 +57,8 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+              cy.wait(70_000); // Wait for the authority file to be processed
+              cy.getAdminToken();
             });
           })
           .then(() => {
