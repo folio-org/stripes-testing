@@ -62,21 +62,21 @@ describe('Bulk-edit', () => {
         QueryModal.selectOperator('not in');
         QueryModal.verifyQueryAreaContent('(items.status_name not in ())');
         QueryModal.verifyValueColumn();
-        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
+        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.IN_PROCESS);
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
         QueryModal.verifyQueryAreaContent(
-          `(items.status_name not in [${ITEM_STATUS_NAMES.ON_ORDER}, ${ITEM_STATUS_NAMES.AGED_TO_LOST}])`,
+          `(items.status_name not in [${ITEM_STATUS_NAMES.IN_PROCESS}, ${ITEM_STATUS_NAMES.AGED_TO_LOST}])`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.removeValueFromMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
+        QueryModal.removeValueFromMultiselect(ITEM_STATUS_NAMES.IN_PROCESS);
         QueryModal.removeValueFromMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
-        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
+        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.IN_PROCESS);
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.MISSING);
         QueryModal.verifyQueryAreaContent(
-          `(items.status_name not in [${ITEM_STATUS_NAMES.AVAILABLE}, ${ITEM_STATUS_NAMES.MISSING}])`,
+          `(items.status_name not in [${ITEM_STATUS_NAMES.IN_PROCESS}, ${ITEM_STATUS_NAMES.MISSING}])`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

@@ -12,7 +12,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { LOCATION_IDS } from '../../../../support/constants';
+import { LOCATION_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
@@ -20,6 +20,7 @@ let user;
 let instanceHRIDFileName;
 let item;
 let fileNames;
+let popularReadingCollectionLocationId;
 
 describe(
   'Bulk-edit',
@@ -51,28 +52,35 @@ describe(
               item.instanceName,
               item.itemBarcode,
             );
-            cy.getHoldings({
+            cy.getLocations({
               limit: 1,
-              expandAll: true,
-              query: `"instanceId"="${item.instanceId}"`,
-            }).then((holdings) => {
-              item.holdingsHRID = holdings[0].hrid;
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                discoverySuppress: true,
-                permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-                temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+              query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+            }).then((loc) => {
+              popularReadingCollectionLocationId = loc.id;
+
+              cy.getHoldings({
+                limit: 1,
+                expandAll: true,
+                query: `"instanceId"="${item.instanceId}"`,
+              }).then((holdings) => {
+                item.holdingsHRID = holdings[0].hrid;
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  discoverySuppress: true,
+                  permanentLocationId: popularReadingCollectionLocationId,
+                  temporaryLocationId: popularReadingCollectionLocationId,
+                });
               });
-            });
-            cy.getInstanceById(item.instanceId).then((body) => {
-              body.discoverySuppress = true;
-              cy.updateInstance(body);
-              item.instanceHRID = body.hrid;
-              FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, body.hrid);
-            });
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
+              cy.getInstanceById(item.instanceId).then((body) => {
+                body.discoverySuppress = true;
+                cy.updateInstance(body);
+                item.instanceHRID = body.hrid;
+                FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, body.hrid);
+              });
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
             });
           });
         });

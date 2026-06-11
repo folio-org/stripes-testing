@@ -8,9 +8,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let user;
+let onlineLocationId;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -30,21 +31,25 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.ONLINE,
-          });
-          item.holdingUUID = holdings[0].id;
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
-        });
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+          onlineLocationId = loc.id;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: onlineLocationId,
+            });
+            item.holdingUUID = holdings[0].id;
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
+          });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

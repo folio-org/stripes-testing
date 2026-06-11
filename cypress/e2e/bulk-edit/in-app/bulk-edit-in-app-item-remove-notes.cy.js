@@ -11,9 +11,10 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
+let copyNoteTypeId;
+let electronicBookplateNoteTypeId;
 const notes = {
   copyNote: 'copy-note-test',
   copyNoteStaffOnly: 'copy-note-test',
@@ -35,42 +36,52 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.hrid = res.hrid;
 
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copyNote,
-                staffOnly: false,
+        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+          copyNoteTypeId = noteTypes[0].id;
+        });
+        InventoryInstances.getItemNoteTypes({ query: 'name="Electronic bookplate"' }).then(
+          (noteTypes) => {
+            electronicBookplateNoteTypeId = noteTypes[0].id;
+
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+              (res) => {
+                const itemData = res;
+                item.hrid = res.hrid;
+
+                itemData.notes = [
+                  {
+                    itemNoteTypeId: copyNoteTypeId,
+                    note: notes.copyNote,
+                    staffOnly: false,
+                  },
+                  {
+                    itemNoteTypeId: copyNoteTypeId,
+                    note: notes.copyNoteStaffOnly,
+                    staffOnly: true,
+                  },
+                  {
+                    itemNoteTypeId: electronicBookplateNoteTypeId,
+                    note: notes.electronicBookplateNote,
+                    staffOnly: false,
+                  },
+                  {
+                    itemNoteTypeId: electronicBookplateNoteTypeId,
+                    note: notes.electronicBookplateNoteStaffOnly,
+                    staffOnly: true,
+                  },
+                ];
+                cy.updateItemViaApi(itemData);
+                FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
               },
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copyNoteStaffOnly,
-                staffOnly: true,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                note: notes.electronicBookplateNote,
-                staffOnly: false,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                note: notes.electronicBookplateNoteStaffOnly,
-                staffOnly: true,
-              },
-            ];
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           },
         );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
     });
 

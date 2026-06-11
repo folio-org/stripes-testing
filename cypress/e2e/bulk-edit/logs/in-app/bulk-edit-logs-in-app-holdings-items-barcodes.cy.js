@@ -12,10 +12,12 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { LOCATION_IDS, LOCATION_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
+import { LOCATION_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
+let mainLibraryLocationId;
+let onlineLocationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
@@ -50,31 +52,42 @@ describe('Bulk-edit', () => {
               instance2.instanceName,
               instance2.barcode,
             );
-            cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-              (holdings) => {
-                instance.holdingUUID = holdings[0].id;
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                  permanentLocationId: LOCATION_IDS.ONLINE,
-                });
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+              (loc) => {
+                mainLibraryLocationId = loc.id;
+                cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then(
+                  (loc2) => {
+                    onlineLocationId = loc2.id;
+
+                    cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                      (holdings) => {
+                        instance.holdingUUID = holdings[0].id;
+                        cy.updateHoldingRecord(holdings[0].id, {
+                          ...holdings[0],
+                          temporaryLocationId: mainLibraryLocationId,
+                          permanentLocationId: onlineLocationId,
+                        });
+                      },
+                    );
+                    cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` })
+                      .then((holdings) => {
+                        instance2.holdingUUID = holdings[0].id;
+                        cy.updateHoldingRecord(holdings[0].id, {
+                          ...holdings[0],
+                          temporaryLocationId: mainLibraryLocationId,
+                          permanentLocationId: onlineLocationId,
+                        });
+                      })
+                      .then(() => {
+                        FileManager.createFile(
+                          `cypress/fixtures/${itemBarcodesFileName}`,
+                          `${instance.barcode}\n${instance2.barcode}`,
+                        );
+                      });
+                  },
+                );
               },
             );
-            cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` })
-              .then((holdings) => {
-                instance2.holdingUUID = holdings[0].id;
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                  permanentLocationId: LOCATION_IDS.ONLINE,
-                });
-              })
-              .then(() => {
-                FileManager.createFile(
-                  `cypress/fixtures/${itemBarcodesFileName}`,
-                  `${instance.barcode}\n${instance2.barcode}`,
-                );
-              });
           });
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,

@@ -1,4 +1,4 @@
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -10,6 +10,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let uuid;
+let popularReadingCollectionLocationId;
 const location = 'Annex';
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
@@ -27,24 +28,31 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getHoldings({
+        cy.getLocations({
           limit: 1,
-          query: `"instanceId"="${instanceId}"`,
-        }).then((holdings) => {
-          uuid = holdings[0].id;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+        }).then((loc) => {
+          popularReadingCollectionLocationId = loc.id;
+
+          const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(
+            item.instanceName,
+            item.itemBarcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instanceId}"`,
+          }).then((holdings) => {
+            uuid = holdings[0].id;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: popularReadingCollectionLocationId,
+            });
+            FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
           });
-          FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

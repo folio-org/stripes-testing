@@ -7,10 +7,11 @@ import QueryModal, {
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { LOCATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
+let onlineLocationId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -28,15 +29,19 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            res.temporaryLocation = { id: LOCATION_IDS.ONLINE };
-            cy.updateItemViaApi(res);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+          onlineLocationId = loc.id;
+
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              res.temporaryLocation = { id: onlineLocationId };
+              cy.updateItemViaApi(res);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

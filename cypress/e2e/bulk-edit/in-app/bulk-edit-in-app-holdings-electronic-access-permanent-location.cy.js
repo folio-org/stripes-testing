@@ -11,17 +11,18 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
-  electronicAccessRelationshipId,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-  LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 
 let user;
+let onlineLocationId;
+let resourceRelationshipId;
 const item = {
   instanceName: `item-instanceName${getRandomPostfix()}`,
   itemBarcode: `item-itemBarcode${getRandomPostfix()}`,
@@ -36,11 +37,7 @@ const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsHRIDFileName);
-const firstElectronicAccess = {
-  linkText: 'firstElectronicAccess-linkText',
-  relationshipId: electronicAccessRelationshipId.RESOURCE,
-  uri: 'firstElectronicAccess.com/uri',
-};
+let firstElectronicAccess;
 const secondElectronicAccess = {
   materialsSpecification: 'secondElectronicAccess-materialsSpecification',
   publicNote: 'secondElectronicAccess-publicNote',
@@ -95,6 +92,24 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
+          (locations) => {
+            onlineLocationId = locations.id;
+          },
+        );
+        UrlRelationship.getViaApi().then((relationships) => {
+          const resourceRelationship = relationships.find(
+            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+          );
+          resourceRelationshipId = resourceRelationship.id;
+
+          firstElectronicAccess = {
+            linkText: 'firstElectronicAccess-linkText',
+            relationshipId: resourceRelationshipId,
+            uri: 'firstElectronicAccess.com/uri',
+          };
+        });
+
         item.instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
           item.itemBarcode,
@@ -110,8 +125,8 @@ describe('Bulk-edit', () => {
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
               electronicAccess: [firstElectronicAccess, secondElectronicAccess],
-              permanentLocationId: LOCATION_IDS.ONLINE,
-              temporaryLocationId: LOCATION_IDS.ONLINE,
+              permanentLocationId: onlineLocationId,
+              temporaryLocationId: onlineLocationId,
             });
           },
         );
@@ -125,8 +140,8 @@ describe('Bulk-edit', () => {
             );
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
-              permanentLocationId: LOCATION_IDS.ONLINE,
-              temporaryLocationId: LOCATION_IDS.ONLINE,
+              permanentLocationId: onlineLocationId,
+              temporaryLocationId: onlineLocationId,
             });
           },
         );

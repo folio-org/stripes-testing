@@ -11,13 +11,11 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import {
-  APPLICATION_NAMES,
-  electronicAccessRelationshipId,
-  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-} from '../../../support/constants';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
+import { APPLICATION_NAMES, ELECTRONIC_ACCESS_RELATIONSHIP_NAME } from '../../../support/constants';
 
 let user;
+let resourceRelationshipId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -42,24 +40,31 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-          (holdings) => {
-            item.holdingsHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              electronicAccess: [
-                {
-                  relationshipId: electronicAccessRelationshipId.RESOURCE,
-                  uri: 'uri.com',
-                },
-              ],
-            });
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        UrlRelationship.getViaApi().then((relationships) => {
+          const resourceRelationship = relationships.find(
+            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+          );
+          resourceRelationshipId = resourceRelationship.id;
+
+          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+            (holdings) => {
+              item.holdingsHRID = holdings[0].hrid;
+              FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                electronicAccess: [
+                  {
+                    relationshipId: resourceRelationshipId,
+                    uri: 'uri.com',
+                  },
+                ],
+              });
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

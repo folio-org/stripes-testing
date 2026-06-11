@@ -8,9 +8,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let user;
+let onlineLocationId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -31,20 +32,24 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.ONLINE,
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+          onlineLocationId = loc.id;
+
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: onlineLocationId,
+            });
           });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
       });
     });
 

@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
 import { Permissions } from '../../support/dictionary';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -17,6 +17,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 describe('Check in', () => {
   let userData;
   let servicePoint;
+  let mainLibraryLocationId;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 3 }),
   };
@@ -50,10 +51,16 @@ describe('Check in', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
 
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
-      });
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+        (loc) => {
+          mainLibraryLocationId = loc.id;
+
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location: { id: mainLibraryLocationId, name: LOCATION_NAMES.MAIN_LIBRARY },
+          });
+        },
+      );
 
       UserEdit.addServicePointViaApi(servicePoint.id, userProperties.userId, servicePoint.id);
 

@@ -1,4 +1,4 @@
-import { LOCATION_IDS } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
@@ -20,17 +20,20 @@ describe('Requests', () => {
   let requestUserData;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-          testData.servicePoint = servicePoint;
-          testData.locationId = LOCATION_IDS.MAIN_LIBRARY;
+    cy.getAdminToken().then(() => {
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+        (loc) => {
+          testData.locationId = loc.id;
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances,
             location: { id: testData.locationId },
           });
-        });
+        },
+      );
+      ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+        testData.servicePoint = servicePoint;
       });
+    });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;

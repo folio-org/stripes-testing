@@ -7,9 +7,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let userId;
+let popularReadingCollectionLocationId;
+let annexLocationId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
@@ -36,27 +38,40 @@ describe('Inventory', () => {
           secondItem.instanceName,
           secondItem.barcode,
         );
-        cy.getHoldings({
+        cy.getLocations({
           limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-          });
-        });
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${secondItem.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.ANNEX,
-          });
-        });
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+        }).then((loc) => {
+          popularReadingCollectionLocationId = loc.id;
+
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then(
+            (annexLoc) => {
+              annexLocationId = annexLoc.id;
+
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${item.instanceId}"`,
+              }).then((holdings) => {
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  permanentLocationId: popularReadingCollectionLocationId,
+                });
+              });
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${secondItem.instanceId}"`,
+              }).then((holdings) => {
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  permanentLocationId: annexLocationId,
+                });
+              });
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventorySearchAndFilter.waitLoading,
+              });
+            },
+          );
         });
       });
     });

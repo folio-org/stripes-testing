@@ -4,7 +4,6 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
@@ -43,11 +42,13 @@ describe('Title Level Request', () => {
       testData.servicePoint2 = servicePoint2;
     });
     TitleLevelRequests.enableTLRViaApi();
-    testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
-    const location = { id: testData.defaultLocationId };
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location,
+    cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then((loc) => {
+      testData.defaultLocationId = loc.id;
+      const location = { id: testData.defaultLocationId };
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location,
+      });
     });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;

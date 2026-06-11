@@ -3,7 +3,6 @@ import {
   FULFILMENT_PREFERENCES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
@@ -46,9 +45,12 @@ describe('Requests', () => {
       requestServicePoint = sp2;
       checkInResultsData.statusForS = [`In transit - ${sp2.name}`];
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then((loc) => {
+      const mainLibraryLocationId = loc.id;
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: mainLibraryLocationId, name: LOCATION_NAMES.MAIN_LIBRARY },
+      });
     });
     cy.createTempUser([
       Permissions.uiRequestsAll.gui,

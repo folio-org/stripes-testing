@@ -1,10 +1,5 @@
 import uuid from 'uuid';
-import {
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  LOCATION_IDS,
-  LOCATION_NAMES,
-} from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES, LOCATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -41,9 +36,13 @@ describe('Title Level Request', () => {
     cy.getAdminToken()
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+          (loc) => {
+            testData.defaultLocationId = loc.id;
+          },
+        );
         ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
-          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
         });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;

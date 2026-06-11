@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -14,6 +14,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 describe('Check in', () => {
   let userData;
   let servicePoint;
+  let mainLibraryLocationId;
   const testData = {};
   const randomPostfix = getRandomPostfix();
   const barcode1 = `11${randomPostfix}`;
@@ -48,34 +49,40 @@ describe('Check in', () => {
 
       testData.instanceTitle = `Instance_C688737_${getRandomPostfix()}`;
 
-      InventoryInstances.createFolioInstanceViaApi({
-        instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: testData.instanceTitle,
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+        (loc) => {
+          mainLibraryLocationId = loc.id;
+
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: testData.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: mainLibraryLocationId,
+              },
+            ],
+            items: [
+              {
+                barcode: barcode1,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+              {
+                barcode: barcode2,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            testData.instanceId = specialInstanceIds.instanceId;
+          });
         },
-        holdings: [
-          {
-            holdingsTypeId: testData.holdingTypeId,
-            permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-          },
-        ],
-        items: [
-          {
-            barcode: barcode1,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-          {
-            barcode: barcode2,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-        ],
-      }).then((specialInstanceIds) => {
-        testData.instanceId = specialInstanceIds.instanceId;
-      });
+      );
     });
 
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {

@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import SelectItemModal from '../../support/fragments/check-out-actions/selectItemModal';
@@ -17,6 +17,7 @@ describe('Check out', () => {
     personal: {},
   };
   let servicePoint;
+  let mainLibraryLocationId;
   const testData = {};
   const randomPostfix = getRandomPostfix();
   const itemBarcode1 = `11${randomPostfix}`;
@@ -51,34 +52,40 @@ describe('Check out', () => {
 
       testData.instanceTitle = `Instance_C688738_${getRandomPostfix()}`;
 
-      InventoryInstances.createFolioInstanceViaApi({
-        instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: testData.instanceTitle,
+      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+        (loc) => {
+          mainLibraryLocationId = loc.id;
+
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: testData.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: mainLibraryLocationId,
+              },
+            ],
+            items: [
+              {
+                barcode: itemBarcode1,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+              {
+                barcode: itemBarcode2,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            testData.instanceId = specialInstanceIds.instanceId;
+          });
         },
-        holdings: [
-          {
-            holdingsTypeId: testData.holdingTypeId,
-            permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-          },
-        ],
-        items: [
-          {
-            barcode: itemBarcode1,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-          {
-            barcode: itemBarcode2,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-        ],
-      }).then((specialInstanceIds) => {
-        testData.instanceId = specialInstanceIds.instanceId;
-      });
+      );
     });
 
     cy.createTempUser([Permissions.checkoutAll.gui]).then((userProperties) => {

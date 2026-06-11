@@ -8,10 +8,11 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
+let annexLocationId;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const item = {
   barcode: getRandomPostfix(),
@@ -30,17 +31,21 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            item.hrid = res.hrid;
-            res.temporaryLocation = { id: LOCATION_IDS.ANNEX };
-            InventoryItems.editItemViaApi(res);
-            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+          annexLocationId = loc.id;
+
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              item.hrid = res.hrid;
+              res.temporaryLocation = { id: annexLocationId };
+              InventoryItems.editItemViaApi(res);
+              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

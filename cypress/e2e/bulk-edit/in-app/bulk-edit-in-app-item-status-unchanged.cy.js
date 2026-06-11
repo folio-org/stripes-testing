@@ -12,10 +12,11 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let user;
 let servicePointId;
+let annexLocationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   barcode: getRandomPostfix(),
@@ -41,18 +42,24 @@ describe('Bulk-edit', () => {
             servicePointId = servicePoint.id;
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-              (res) => {
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+              annexLocationId = loc.id;
+
+              UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+              cy.getItems({
+                limit: 1,
+                expandAll: true,
+                query: `"barcode"=="${item.barcode}"`,
+              }).then((res) => {
                 const itemData = res;
-                itemData.permanentLocation = { id: LOCATION_IDS.ANNEX };
-                itemData.temporaryLocation = { id: LOCATION_IDS.ANNEX };
+                itemData.permanentLocation = { id: annexLocationId };
+                itemData.temporaryLocation = { id: annexLocationId };
                 // Selected loan type
                 itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
                 itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
                 cy.updateItemViaApi(itemData);
-              },
-            );
+              });
+            });
           })
           .then(() => {
             Checkout.checkoutItemViaApi({

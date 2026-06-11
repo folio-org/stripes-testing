@@ -11,7 +11,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { APPLICATION_NAMES, LOCATION_IDS, LOCATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
@@ -20,6 +20,9 @@ let validAndInvalidInstanceHRIDsFileName;
 let fileNames;
 let instance;
 let instance2;
+let popularReadingCollectionLocationId;
+let mainLibraryLocationId;
+let onlineLocationId;
 
 describe(
   'Bulk-edit',
@@ -63,39 +66,57 @@ describe(
                   instance2.instanceName,
                   instance2.barcode,
                 );
-                cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-                  (holdings) => {
-                    instance.holdingUUID = holdings[0].id;
-                    delete holdings[0].temporaryLocationId;
-                    cy.updateHoldingRecord(holdings[0].id, {
-                      ...holdings[0],
-                      permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-                    });
-                  },
-                );
-                cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
-                  (holdings) => {
-                    instance2.holdingUUID = holdings[0].id;
-                    cy.updateHoldingRecord(holdings[0].id, {
-                      ...holdings[0],
-                      temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                      permanentLocationId: LOCATION_IDS.ONLINE,
-                    });
-                  },
-                );
-                cy.getInstanceById(instance.id).then((res) => {
-                  instance.hrid = res.hrid;
-                });
-                cy.getInstanceById(instance2.id)
-                  .then((res) => {
-                    instance2.hrid = res.hrid;
-                  })
-                  .then(() => {
-                    FileManager.createFile(
-                      `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
-                      `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
+                cy.getLocations({
+                  limit: 1,
+                  query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+                }).then((loc) => {
+                  popularReadingCollectionLocationId = loc.id;
+                  cy.getLocations({
+                    limit: 1,
+                    query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"`,
+                  }).then((loc2) => {
+                    mainLibraryLocationId = loc2.id;
+                    cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then(
+                      (loc3) => {
+                        onlineLocationId = loc3.id;
+
+                        cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                          (holdings) => {
+                            instance.holdingUUID = holdings[0].id;
+                            delete holdings[0].temporaryLocationId;
+                            cy.updateHoldingRecord(holdings[0].id, {
+                              ...holdings[0],
+                              permanentLocationId: popularReadingCollectionLocationId,
+                            });
+                          },
+                        );
+                        cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
+                          (holdings) => {
+                            instance2.holdingUUID = holdings[0].id;
+                            cy.updateHoldingRecord(holdings[0].id, {
+                              ...holdings[0],
+                              temporaryLocationId: mainLibraryLocationId,
+                              permanentLocationId: onlineLocationId,
+                            });
+                          },
+                        );
+                        cy.getInstanceById(instance.id).then((res) => {
+                          instance.hrid = res.hrid;
+                        });
+                        cy.getInstanceById(instance2.id)
+                          .then((res) => {
+                            instance2.hrid = res.hrid;
+                          })
+                          .then(() => {
+                            FileManager.createFile(
+                              `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
+                              `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
+                            );
+                          });
+                      },
                     );
                   });
+                });
               });
             })
             .then(() => {

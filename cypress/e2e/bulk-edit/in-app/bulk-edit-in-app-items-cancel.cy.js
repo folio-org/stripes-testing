@@ -11,10 +11,11 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
+let onlineLocationId;
 const invalidItemUUID = getRandomPostfix();
 const item = {
   barcode: getRandomPostfix(),
@@ -35,21 +36,25 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            item.itemId = res.id;
-            res.permanentLocation = { id: LOCATION_IDS.ONLINE };
-            res.temporaryLocation = { id: LOCATION_IDS.ONLINE };
-            cy.updateItemViaApi(res);
-            FileManager.createFile(
-              `cypress/fixtures/${itemUUIDsFileName}`,
-              `${item.itemId}\r\n${invalidItemUUID}`,
-            );
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE}"` }).then((loc) => {
+          onlineLocationId = loc.id;
+
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              item.itemId = res.id;
+              res.permanentLocation = { id: onlineLocationId };
+              res.temporaryLocation = { id: onlineLocationId };
+              cy.updateItemViaApi(res);
+              FileManager.createFile(
+                `cypress/fixtures/${itemUUIDsFileName}`,
+                `${item.itemId}\r\n${invalidItemUUID}`,
+              );
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

@@ -6,7 +6,9 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES, ITEM_NOTES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+
+let actionNoteTypeId;
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -90,6 +92,13 @@ describe('Inventory', () => {
               testData.materialType = materialTypes.name;
             })
             .then(() => {
+              InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then(
+                (noteTypes) => {
+                  actionNoteTypeId = noteTypes[0].id;
+                },
+              );
+            })
+            .then(() => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId: testData.instanceTypeId,
@@ -109,7 +118,7 @@ describe('Inventory', () => {
                     materialType: { id: testData.materialTypeId },
                     notes: [
                       {
-                        itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
+                        itemNoteTypeId: actionNoteTypeId,
                         note: testData.instances[0].note,
                         staffOnly: false,
                       },
@@ -138,7 +147,7 @@ describe('Inventory', () => {
                     materialType: { id: testData.materialTypeId },
                     notes: [
                       {
-                        itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
+                        itemNoteTypeId: actionNoteTypeId,
                         note: testData.instances[1].note,
                         staffOnly: false,
                       },

@@ -14,7 +14,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 // TODO: optimize creation of holdings
@@ -22,12 +22,15 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 let user;
 let tempLocation;
 let instanceHRID;
+let annexLocationId;
 const instanceHRIDFileName = `instanceHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
 
 const item = {
-  annexId: LOCATION_IDS.ANNEX,
+  get annexId() {
+    return annexLocationId;
+  },
   itemBarcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
@@ -61,6 +64,11 @@ describe('Bulk-edit', () => {
             [instance.defaultLocation, tempLocation].forEach((location) => Location.createViaApi(location));
           })
           .then(() => {
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then((loc) => {
+              annexLocationId = loc.id;
+            });
+          })
+          .then(() => {
             // Creating  instance
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
@@ -71,7 +79,7 @@ describe('Bulk-edit', () => {
                 {
                   holdingsTypeId: instance.holdingTypeId,
                   permanentLocationId: instance.defaultLocation.id,
-                  temporaryLocationId: LOCATION_IDS.ANNEX,
+                  temporaryLocationId: annexLocationId,
                 },
               ],
             })

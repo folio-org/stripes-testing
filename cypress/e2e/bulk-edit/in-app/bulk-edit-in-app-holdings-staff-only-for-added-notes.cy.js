@@ -11,29 +11,23 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
-  electronicAccessRelationshipId,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-  LOCATION_IDS,
   LOCATION_NAMES,
-  HOLDING_NOTES,
+  HOLDING_NOTE_TYPES,
 } from '../../../support/constants';
 
 let user;
 let item;
 let holdingUUIDsFileName;
+let mainLibraryLocationId;
+let resourceRelationshipId;
+let electronicBookplateNoteTypeId;
+let electronicAccess;
 let fileNames;
-const electronicAccess = [
-  {
-    linkText: 'test-linkText',
-    materialsSpecification: 'test-materialsSpecification',
-    publicNote: 'test-publicNote',
-    relationshipId: electronicAccessRelationshipId.RESOURCE,
-    uri: 'testuri.com/uri',
-  },
-];
 const electronicBookplateNote = 'electronicBookplateNote';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
@@ -77,29 +71,55 @@ describe(
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-            (holdings) => {
-              item.holdingsUUID = holdings[0].id;
-              item.holdingsHRID = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                notes: [
-                  {
-                    holdingsNoteTypeId: HOLDING_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                    note: electronicBookplateNote,
-                    staffOnly: false,
-                  },
-                ],
-                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                electronicAccess,
-              });
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+            (locations) => {
+              mainLibraryLocationId = locations.id;
             },
           );
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+          cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE).then(
+            (noteTypeId) => {
+              electronicBookplateNoteTypeId = noteTypeId;
+            },
+          );
+          UrlRelationship.getViaApi().then((relationships) => {
+            const resourceRelationship = relationships.find(
+              (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+            );
+            resourceRelationshipId = resourceRelationship.id;
+
+            cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+              (holdings) => {
+                item.holdingsUUID = holdings[0].id;
+                item.holdingsHRID = holdings[0].hrid;
+                FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+                electronicAccess = [
+                  {
+                    linkText: 'test-linkText',
+                    materialsSpecification: 'test-materialsSpecification',
+                    publicNote: 'test-publicNote',
+                    relationshipId: resourceRelationshipId,
+                    uri: 'testuri.com/uri',
+                  },
+                ];
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  notes: [
+                    {
+                      holdingsNoteTypeId: electronicBookplateNoteTypeId,
+                      note: electronicBookplateNote,
+                      staffOnly: false,
+                    },
+                  ],
+                  permanentLocationId: mainLibraryLocationId,
+                  temporaryLocationId: mainLibraryLocationId,
+                  electronicAccess,
+                });
+              },
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
         });
       });

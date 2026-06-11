@@ -12,7 +12,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
   APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
-  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 
 let user;
@@ -21,6 +21,7 @@ let secondValidHoldingHRIDsFileName;
 let inventoryEntity;
 let item;
 let callNumberTypeId;
+let popularReadingCollectionLocationId;
 
 describe(
   'Bulk-edit',
@@ -68,36 +69,43 @@ describe(
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getHoldings({
+          cy.getLocations({
             limit: 1,
-            query: `"instanceId"="${instanceId}"`,
-          }).then((holdings) => {
-            InventoryInstances.getCallNumberTypes({
-              query: `name="${CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL}"`,
-            }).then((res) => {
-              callNumberTypeId = res[0].id;
+            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
+          }).then((loc) => {
+            popularReadingCollectionLocationId = loc.id;
+
+            cy.getHoldings({
+              limit: 1,
+              query: `"instanceId"="${instanceId}"`,
+            }).then((holdings) => {
+              InventoryInstances.getCallNumberTypes({
+                query: `name="${CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL}"`,
+              }).then((res) => {
+                callNumberTypeId = res[0].id;
+              });
+              item.holdingHRID = holdings[0].hrid;
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                permanentLocationId: popularReadingCollectionLocationId,
+                // Updating holdings with special characters
+                callNumber: 'number;special&characters',
+                callNumberPrefix: 'number-prefix;special&characters',
+                callNumberSuffix: 'number-prefix;special&characters',
+                callNumberTypeId,
+                copyNumber: 'copy-number;special&characters',
+                formerIds: ['former-id;special&characters'],
+                numberOfItems: 'number-items;special&characters',
+              });
+              FileManager.createFile(
+                `cypress/fixtures/${secondValidHoldingHRIDsFileName}`,
+                holdings[0].hrid,
+              );
             });
-            item.holdingHRID = holdings[0].hrid;
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-              // Updating holdings with special characters
-              callNumber: 'number;special&characters',
-              callNumberPrefix: 'number-prefix;special&characters',
-              callNumberSuffix: 'number-prefix;special&characters',
-              callNumberTypeId,
-              copyNumber: 'copy-number;special&characters',
-              formerIds: ['former-id;special&characters'],
-              numberOfItems: 'number-items;special&characters',
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
             });
-            FileManager.createFile(
-              `cypress/fixtures/${secondValidHoldingHRIDsFileName}`,
-              holdings[0].hrid,
-            );
-          });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
           });
         });
       });

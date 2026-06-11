@@ -8,11 +8,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let holdingHRID;
+let popularReadingCollectionLocationId;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -34,6 +35,12 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
+        cy.getLocations({
+          limit: 1,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
+        }).then((locations) => {
+          popularReadingCollectionLocationId = locations.id;
+        });
         cy.getHoldings({
           limit: 1,
           query: `"instanceId"="${instanceId}"`,
@@ -41,7 +48,7 @@ describe('Bulk-edit', () => {
           holdingHRID = holdings[0].hrid;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+            permanentLocationId: popularReadingCollectionLocationId,
           });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
         });

@@ -4,7 +4,7 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -63,30 +63,36 @@ describe('Request Detail.TLR', () => {
         });
       })
       .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: instanceData.title,
+        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
+          (loc) => {
+            const mainLibraryLocationId = loc.id;
+
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: testData.instanceTypeId,
+                title: instanceData.title,
+              },
+              holdings: [
+                {
+                  holdingsTypeId: testData.holdingTypeId,
+                  permanentLocationId: mainLibraryLocationId,
+                },
+              ],
+              items: [
+                {
+                  barcode: testData.itemBarcode,
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                  permanentLoanType: { id: testData.loanTypeId },
+                  materialType: { id: testData.materialTypeId },
+                },
+              ],
+            }).then((specialInstanceIds) => {
+              instanceData.instanceId = specialInstanceIds.instanceId;
+              instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
+              instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+            });
           },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-            },
-          ],
-          items: [
-            {
-              barcode: testData.itemBarcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          instanceData.instanceId = specialInstanceIds.instanceId;
-          instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
-          instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-        });
+        );
       })
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);

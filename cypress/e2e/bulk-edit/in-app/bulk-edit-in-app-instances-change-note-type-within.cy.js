@@ -11,12 +11,13 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { INSTANCE_NOTE_IDS } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
+let reproductionNoteTypeId;
 let instanceUUIDsFileName;
 let matchedRecordsFileName;
 let previewFileName;
@@ -76,41 +77,48 @@ describe(
           permissions.uiInventoryViewCreateEditInstances.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          folioItem.instanceId = InventoryInstances.createInstanceViaApi(
-            folioItem.instanceName,
-            folioItem.itemBarcode,
-          );
-          cy.createMarcBibliographicViaAPI(
-            QuickMarcEditor.defaultValidLdr,
-            marcInstanceFields,
-          ).then((instanceId) => {
-            marcInstance.instanceId = instanceId;
 
-            cy.getInstanceById(folioItem.instanceId).then((body) => {
-              body.notes = [
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                  note: notes.reproductionNote,
-                  staffOnly: false,
-                },
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                  note: notes.reproductionNoteStaffOnly,
-                  staffOnly: true,
-                },
-              ];
-              cy.updateInstance(body);
-            });
-            FileManager.createFile(
-              `cypress/fixtures/${instanceUUIDsFileName}`,
-              `${marcInstance.instanceId}\n${folioItem.instanceId}`,
-            );
-          });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          cy.wait(15000);
+          InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Reproduction note"' }).then(
+            ({ instanceNoteTypes }) => {
+              reproductionNoteTypeId = instanceNoteTypes[0].id;
+
+              folioItem.instanceId = InventoryInstances.createInstanceViaApi(
+                folioItem.instanceName,
+                folioItem.itemBarcode,
+              );
+              cy.createMarcBibliographicViaAPI(
+                QuickMarcEditor.defaultValidLdr,
+                marcInstanceFields,
+              ).then((instanceId) => {
+                marcInstance.instanceId = instanceId;
+
+                cy.getInstanceById(folioItem.instanceId).then((body) => {
+                  body.notes = [
+                    {
+                      instanceNoteTypeId: reproductionNoteTypeId,
+                      note: notes.reproductionNote,
+                      staffOnly: false,
+                    },
+                    {
+                      instanceNoteTypeId: reproductionNoteTypeId,
+                      note: notes.reproductionNoteStaffOnly,
+                      staffOnly: true,
+                    },
+                  ];
+                  cy.updateInstance(body);
+                });
+                FileManager.createFile(
+                  `cypress/fixtures/${instanceUUIDsFileName}`,
+                  `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+                );
+              });
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+              cy.wait(15000);
+            },
+          );
         });
       });
 
