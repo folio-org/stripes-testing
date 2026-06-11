@@ -102,7 +102,7 @@ describe('Citation: check place of work MARC codes', () => {
   });
 
   it(
-    'C466293 Marigold - Adding "Place of origin of the work" to the new work through Marigold / Inventory. View MARC.',
+    'C466293 Marigold - Adding "Place of origin of the work" to the new work through Marigold / Inventory. View MARC. (citation)',
     { tags: ['criticalPath', 'citation', 'C466293', 'marigold'] },
     () => {
       // Find and import precondition inventory instance

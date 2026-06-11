@@ -1,5 +1,6 @@
 import Permissions from '../../../support/dictionary/permissions';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -8,7 +9,7 @@ describe('MARC', () => {
     const user = {};
     const searchOption = '*';
 
-    before('Creating user', () => {
+    beforeEach('Creating user', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           user.userProperties = createdUserProperties;
@@ -21,7 +22,7 @@ describe('MARC', () => {
       MarcAuthorities.switchToSearch();
     });
 
-    after('Deleting created user', () => {
+    afterEach('Deleting created user', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userProperties.userId);
     });
@@ -37,6 +38,22 @@ describe('MARC', () => {
         MarcAuthorities.verifySearchResultTabletIsAbsent(true);
         MarcAuthorities.checkResetAllButtonDisabled();
         MarcAuthorities.checkSearchInputInFocus();
+      },
+    );
+
+    it(
+      'C594393 "Reset all" button clears Date filters filled with invalid values (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C594393'] },
+      () => {
+        MarcAuthorities.switchToBrowse();
+        MarcAuthorities.switchToSearch();
+        MarcAuthorities.searchBeats(searchOption);
+        MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+        MarcAuthoritiesSearch.filterByDateCreated('2019', '20');
+        MarcAuthoritiesSearch.filterByDateUpdated('2021', '20');
+        MarcAuthorities.clickResetAndCheck(searchOption);
+        MarcAuthoritiesSearch.verifyDateCreatedFilterIsCleared();
+        MarcAuthoritiesSearch.verifyDateUpdatedFilterIsCleared();
       },
     );
   });

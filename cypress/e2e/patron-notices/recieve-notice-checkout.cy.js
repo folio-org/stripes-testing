@@ -20,12 +20,13 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import settingsMenu from '../../support/fragments/settingsMenu';
-import topMenu from '../../support/fragments/topMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { poll } from '../../support/utils/polling';
 
 describe('Patron notices', () => {
   describe('End to end scenarios for automation (Patron notices)', () => {
@@ -36,6 +37,34 @@ describe('Patron notices', () => {
     let itemsData;
     let testData;
     let searchResultsData;
+
+    const waitForNoticeInCirculationLog = () => {
+      poll(
+        () => cy.getCirculationLogs({
+          searchParams: {
+            limit: 1,
+            query: [
+              `userBarcode=="${searchResultsData.userBarcode}"`,
+              `object=="${searchResultsData.object}"`,
+              `action=="${searchResultsData.circAction}"`,
+              `source=="${searchResultsData.source}"`,
+              `description=="${searchResultsData.desc}"`,
+            ].join(' AND '),
+          },
+          failOnStatusCode: false,
+        }),
+        (response) => response.body.logRecords.length > 0,
+        {
+          timeout: 300000,
+          delay: 2000,
+        },
+      );
+
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.circulationLogPath,
+        waiter: SearchPane.waitLoading,
+      });
+    };
 
     const generateUniqTestData = () => {
       noticePolicyTemplate = {
@@ -256,7 +285,7 @@ describe('Patron notices', () => {
         });
 
         cy.login(userData.username, userData.password, {
-          path: topMenu.checkOutPath,
+          path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
         cy.wait(7000);
@@ -268,7 +297,8 @@ describe('Patron notices', () => {
         });
         CheckOutActions.endCheckOutSession();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        waitForNoticeInCirculationLog();
+
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);
@@ -315,7 +345,7 @@ describe('Patron notices', () => {
         });
 
         cy.login(userData.username, userData.password, {
-          path: topMenu.checkOutPath,
+          path: TopMenu.checkOutPath,
           waiter: Checkout.waitLoading,
         });
         cy.wait(7000);
@@ -328,7 +358,8 @@ describe('Patron notices', () => {
 
         CheckOutActions.endCheckOutSessionAutomatically();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        waitForNoticeInCirculationLog();
+
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);

@@ -282,7 +282,10 @@ export default {
   },
 
   verifyContentOfExportFile(actual, ...expectedArray) {
-    expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+    expectedArray.forEach((expectedItem) => {
+      if (expectedItem instanceof RegExp) expect(actual).to.match(expectedItem);
+      else expect(actual).to.include(expectedItem);
+    });
   },
 
   verifyContentAbsentInExportFile(actual, ...notExpectedArray) {
@@ -1367,6 +1370,17 @@ export default {
   fillInTypeOfHeadingMultiSelectFilter(value) {
     cy.do(typeOfHeadingSelect.fillIn(value));
     cy.expect(typeOfHeadingSelect.has({ filterValue: value }));
+  },
+
+  fillInAuthoritySourceFilter(value) {
+    cy.do(
+      sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).fillIn(value),
+    );
+    cy.expect(
+      sourceFileAccordion
+        .find(MultiSelect({ label: including('Authority source') }))
+        .has({ filterValue: value }),
+    );
   },
 
   checkFilterNoMatchMessage({ isPresent = true } = {}) {
