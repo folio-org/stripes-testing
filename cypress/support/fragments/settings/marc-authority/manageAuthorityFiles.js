@@ -67,6 +67,7 @@ const deleteModal = Modal('Delete authority file');
 const cancelDeletionButton = Button('No, do not delete');
 const deleteAssignedSourceFileErrorText = (sourceFileName) => `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
 const updateAssignedSourceFileErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved. Existing authority records are already assigned to this authority file.`;
+const optimisticLockingErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved because it is not the most recent version.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -497,7 +498,7 @@ export default {
     cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
   },
 
-  checkDefaultSourceFilesExist({ editIconsShown = true, updatedByUser = null }) {
+  checkDefaultSourceFilesExist({ editIconsShown = true, updatedByUser = null } = {}) {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
         MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: false }),
@@ -634,5 +635,14 @@ export default {
     cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).exists());
     InteractorsTools.dismissCallout(updateAssignedSourceFileErrorText(sourceFileName));
     cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).absent());
+  },
+
+  verifyOptimisticLockingError(sourceFileName) {
+    cy.expect(Callout(optimisticLockingErrorText(sourceFileName)).exists());
+  },
+
+  closePane() {
+    cy.do(manageAuthorityFilesPane.find(Button({ icon: 'times' })).click());
+    cy.expect(manageAuthorityFilesPane.absent());
   },
 };

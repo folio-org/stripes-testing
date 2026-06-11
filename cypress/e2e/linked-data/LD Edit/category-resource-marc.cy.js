@@ -111,7 +111,7 @@ describe('Citation: check category resource MARC codes', () => {
   });
 
   it(
-    'C468168 Marigold - Check Government Publication, Carrier type, Media type, Intended Audience, Content type, Geographic coverage, and Date of Work on "View MARC" page',
+    'C468168 Marigold - Check Government Publication, Carrier type, Media type, Intended Audience, Content type, Geographic coverage, and Date of Work on "View MARC" page (citation)',
     { tags: ['criticalPath', 'citation', 'C468168', 'marigold'] },
     () => {
       InventoryInstances.searchByTitle(testData.uniqueGeoDateWorkTitle);

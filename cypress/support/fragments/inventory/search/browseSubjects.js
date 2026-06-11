@@ -344,7 +344,12 @@ export default {
     );
   },
 
-  waitForSubjectToAppear(subjectName, isPresent = true, isLinked = false) {
+  waitForSubjectToAppear(
+    subjectName,
+    isPresent = true,
+    isLinked = false,
+    { allUnlinked = false } = {},
+  ) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
         return item.authorityId && item.authorityId !== '';
@@ -375,6 +380,13 @@ export default {
           if (isLinked) {
             return hasLinkedItem(foundSubjects);
           } else {
+            if (allUnlinked) {
+              return (
+                foundSubjects.length > 0 &&
+                hasNotLinkedItem(foundSubjects) &&
+                !hasLinkedItem(foundSubjects)
+              );
+            }
             return foundSubjects.length > 0 && hasNotLinkedItem(foundSubjects);
           }
         } else {
