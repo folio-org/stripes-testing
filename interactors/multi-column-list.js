@@ -101,6 +101,12 @@ export const MultiColumnList = HTML.extend('multi column list')
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
+    scrollHeaderIntoView: (interactor, headerName) => interactor.perform((el) => {
+      const header = [...el.querySelectorAll('div[class*=mclHeader-]')].find(
+        (h) => h.textContent.trim() === headerName,
+      );
+      if (header) header.scrollIntoView();
+    }),
     scrollBy: (interactor, { direction, value }) => interactor.perform(async (el) => {
       const scrollable = el.querySelector('div[class^=mclScrollable-]');
       const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));

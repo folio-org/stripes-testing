@@ -114,7 +114,7 @@ describe('Lists', () => {
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.verifyRunQueryAndSaveButtonDisabled(false);
+        QueryModal.runQueryAndSaveDisabled(false);
 
         // Step 4: Run query and save - verify list is saved
         QueryModal.clickRunQueryAndSave();
@@ -131,7 +131,7 @@ describe('Lists', () => {
         QueryModal.exists();
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.verifyRunQueryAndSaveButtonDisabled();
+        QueryModal.runQueryAndSaveDisabled();
         QueryModal.xButttonDisabled(false);
         QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.poNumber);
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.NOT_EQUAL);
@@ -150,7 +150,7 @@ describe('Lists', () => {
           `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber}) AND (  )`,
         );
         QueryModal.testQueryDisabled(true);
-        QueryModal.verifyRunQueryAndSaveButtonDisabled(true);
+        QueryModal.runQueryAndSaveDisabled(true);
 
         // Step 8: Select "POL — Title" field with "contains" operator
         QueryModal.selectField(purchaseOrderLinesFieldValues.paymentStatus, 2);
@@ -171,7 +171,7 @@ describe('Lists', () => {
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.verifyRunQueryAndSaveButtonDisabled(false);
+        QueryModal.runQueryAndSaveDisabled(false);
       },
     );
   });
