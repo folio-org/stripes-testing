@@ -89,9 +89,12 @@ export const holdingsFieldValues = {
   tenantId: 'Holdings — Tenant ID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
+  recordVersion: 'Holdings — Record version',
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
+  copyNumber: 'Holdings — Copy number',
+  updatedDate: 'Holdings — Updated date',
   permanentLocation: 'Holdings permanent location — Name',
   temporaryLocation: 'Holdings temporary location — Name',
   effectiveLocationName: 'Holdings effective location — Name',
@@ -122,6 +125,7 @@ export const holdingsFieldValues = {
   receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
+  holdingsStatisticalCodeUuids: 'Holdings — Statistical code UUIDs',
   holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Affiliation name',
@@ -142,6 +146,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical codes',
+  statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
@@ -156,6 +161,7 @@ export const instanceFieldValues = {
   contributorType: 'Instance — Contributors — Type',
   contributorTypeFreeText: 'Instance — Contributors — Type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  contributors: 'Instance — Contributors',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
   natureOfContent: 'Instance — Nature of content',
@@ -230,6 +236,7 @@ export const usersFieldValues = {
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+  userMobilePhone: 'User — Mobile phone',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -910,6 +917,10 @@ export default {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
     cy.wait(3000);
+  },
+
+  runQueryAndSaveDisabled(disabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled }));
   },
 
   clickRunQuery() {
