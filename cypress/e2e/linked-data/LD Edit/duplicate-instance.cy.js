@@ -9,7 +9,6 @@ import EditResource from '../../../support/fragments/linked-data/editResource';
 import InstanceProfileModal from '../../../support/fragments/linked-data/instanceProfileModal';
 import Marigold from '../../../support/fragments/linked-data/marigold';
 import NewInstance from '../../../support/fragments/linked-data/newInstance';
-import PreviewResource from '../../../support/fragments/linked-data/previewResource';
 import SearchAndFilter from '../../../support/fragments/linked-data/searchAndFilter';
 import UnsavedChangesModal from '../../../support/fragments/linked-data/unsavedChangesModal';
 import Work from '../../../support/fragments/linked-data/work';
@@ -97,7 +96,7 @@ describe('Citation: duplicate instance', () => {
       EditResource.setSectionFieldValue(testData.dimensions, 'Dimensions');
       EditResource.setValueForSectionFieldDropdown('LCCN', 'Type', 'Identifiers');
       EditResource.setValueForTheField(testData.lccn, 'LCCN');
-      EditResource.setValueForSectionSimpleField('current (current)', 'Invalid/Canceled?')
+      EditResource.setValueForSectionSimpleField('current (current)', 'Invalid/Canceled?');
       EditResource.saveAndKeepEditingWithId().then(({ resourceId }) => {
         testData.instanceId = resourceId;
       });
@@ -172,7 +171,7 @@ describe('Citation: duplicate instance', () => {
       EditResource.verifyInstancesListSize(2);
       EditResource.checkNewInstanceButtonEnabled();
       EditResource.checkInstanceActionsHidden();
-      
+
       // Check presence of duplicate in search view
       EditResource.clickCloseResourceButton();
       Marigold.waitLoading();

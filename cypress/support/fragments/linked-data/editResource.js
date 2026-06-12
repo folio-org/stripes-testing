@@ -738,7 +738,7 @@ export default {
   },
 
   checkNewInstanceButtonHidden() {
-    cy.expect(newInstanceButton.absent())
+    cy.expect(newInstanceButton.absent());
   },
 
   checkInstanceActionsHidden() {

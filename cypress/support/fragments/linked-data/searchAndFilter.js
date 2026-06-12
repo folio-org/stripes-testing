@@ -194,7 +194,7 @@ export default {
   },
 
   verifyInstanceListSize(index, count) {
-    cy.get(`[class*="instance-list"]`)
+    cy.get('[class*="instance-list"]')
       .eq(index)
       .find('tbody tr')
       .should('have.length', count);
