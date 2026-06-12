@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, KeyValue, Pane, PaneContent, TextField } from '../../../../interactors';
+import { Button, KeyValue, Pane, PaneContent, TextField, HTML } from '../../../../interactors';
 
 const rootSection = PaneContent({ id: 'reading-room-content' });
 const patronBarcodeField = TextField({ id: 'patronBarcode' });
@@ -102,6 +102,12 @@ export default {
     cy.get('[class^="borrowerDetails-"]').should('not.exist');
   },
 
+  verifyInactiveUserWarning() {
+    cy.expect(HTML('Inactive user').exists());
+  },
+  verifyActionButtonsHidden() {
+    cy.expect([allowedButton.absent(), notAllowedButton.absent()]);
+  },
   checkFieldsDisplayed() {
     cy.expect(patronBarcodeField.exists());
     cy.get('[type="submit"]').should('exist');

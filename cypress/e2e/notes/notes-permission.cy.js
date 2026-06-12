@@ -5,7 +5,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Notes', () => {
   const testData = {};
-  const urlToEholdings = '/eholdings/providers/38';
+  const urlToEholdings = '/eholdings/providers/305';
 
   before('Creating data', () => {
     cy.createTempUser([
