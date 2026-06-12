@@ -16,6 +16,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Title Level Request. Request detail', () => {
   let instanceHRID;
@@ -40,11 +41,9 @@ describe('Title Level Request. Request detail', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-          (loc) => {
-            testData.defaultLocationId = loc.id;
-          },
-        );
+        Locations.getViaApiAnyDefault().then((locations) => {
+          testData.defaultLocationId = locations[0].id;
+        });
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
         });

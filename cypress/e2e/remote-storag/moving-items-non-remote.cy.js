@@ -41,7 +41,14 @@ describe('Remote Storage', () => {
       permissions.remoteStorageCRUD.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.getLocations({ limit: 2 });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.ANNEX_UI}` }).then((locations) => {
+        item.firstLocationId = locations.id;
+      });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}` }).then(
+        (locations) => {
+          item.secondLocationId = locations.id;
+        },
+      );
       cy.getHoldingTypes({ limit: 2 });
       InventoryHoldings.getHoldingSources({ limit: 2 })
         .then((holdingsSourcesResponse) => {

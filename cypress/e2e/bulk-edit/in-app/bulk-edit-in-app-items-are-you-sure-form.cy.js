@@ -14,17 +14,15 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let annexLocationId;
+let locationId;
+let locationToReplace;
 
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
-  get locationId() {
-    return annexLocationId;
-  },
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
@@ -38,13 +36,15 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
-          annexLocationId = loc.id;
+
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          locationId = locations[0].id;
+          locationToReplace = locations[1].name;
 
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
           cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
             (res) => {
-              res.permanentLocation = { id: item.locationId };
+              res.permanentLocation = { id: locationId };
               InventoryItems.editItemViaApi(res);
               FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
             },
@@ -76,7 +76,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
 
-        const newLocation = 'Online';
+        const newLocation = locationToReplace;
+
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.replacePermanentLocation(newLocation);

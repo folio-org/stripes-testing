@@ -12,12 +12,13 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { LOCATION_NAMES } from '../../../../support/constants';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
-let popularReadingCollectionLocationId;
+let locationId;
+let locationToReplace;
 const instanceHRIDFileName = `instanceHRIDFileName${getRandomPostfix()}.csv`;
 const item = {
   itemBarcode: getRandomPostfix(),
@@ -43,11 +44,10 @@ describe('Bulk-edit', () => {
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getLocations({
-            limit: 1,
-            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-          }).then((loc) => {
-            popularReadingCollectionLocationId = loc.id;
+
+          Locations.getViaApiAnyDefault(2).then((locations) => {
+            locationId = locations[0].id;
+            locationToReplace = locations[1].name;
 
             cy.getHoldings({
               limit: 1,
@@ -57,8 +57,8 @@ describe('Bulk-edit', () => {
               item.holdingsHRID = holdings[0].hrid;
               cy.updateHoldingRecord(holdings[0].id, {
                 ...holdings[0],
-                permanentLocationId: popularReadingCollectionLocationId,
-                temporaryLocationId: popularReadingCollectionLocationId,
+                permanentLocationId: locationId,
+                temporaryLocationId: locationId,
               });
             });
             cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
@@ -102,7 +102,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
 
           const suppressFromDiscovery = true;
-          const newLocation = 'Main Library';
+          const newLocation = locationToReplace;
           BulkEditActions.openActions();
           BulkEditActions.openStartBulkEditForm();
           BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);

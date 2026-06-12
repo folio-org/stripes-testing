@@ -9,11 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import {
-  APPLICATION_NAMES,
-  CALL_NUMBER_TYPE_NAMES,
-  LOCATION_NAMES,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let validHoldingHRIDsFileName;
@@ -21,7 +18,7 @@ let secondValidHoldingHRIDsFileName;
 let inventoryEntity;
 let item;
 let callNumberTypeId;
-let popularReadingCollectionLocationId;
+let locationId;
 
 describe(
   'Bulk-edit',
@@ -69,11 +66,9 @@ describe(
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getLocations({
-            limit: 1,
-            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-          }).then((loc) => {
-            popularReadingCollectionLocationId = loc.id;
+
+          Locations.getViaApiAnyDefault().then((locations) => {
+            locationId = locations[0].id;
 
             cy.getHoldings({
               limit: 1,
@@ -87,7 +82,7 @@ describe(
               item.holdingHRID = holdings[0].hrid;
               cy.updateHoldingRecord(holdings[0].id, {
                 ...holdings[0],
-                permanentLocationId: popularReadingCollectionLocationId,
+                permanentLocationId: locationId,
                 // Updating holdings with special characters
                 callNumber: 'number;special&characters',
                 callNumberPrefix: 'number-prefix;special&characters',

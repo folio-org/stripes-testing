@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import SelectItemModal from '../../support/fragments/check-out-actions/selectItemModal';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -10,13 +10,14 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Check out', () => {
   const userData = {
     personal: {},
   };
   let servicePoint;
-  let mainLibraryLocationId;
+  let locationId;
   const testData = {};
   let randomPostfix;
   let largeSetPrefix;
@@ -55,65 +56,63 @@ describe('Check out', () => {
         wildcardLookupEnabled: true,
       });
 
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-        (loc) => {
-          mainLibraryLocationId = loc.id;
+      Locations.getViaApiAnyDefault().then((locations) => {
+        locationId = locations[0].id;
 
-          // Create instance for large set (200-300 items)
-          const largeSetItems = [];
-          for (let i = 1; i <= numberOfLargeSetItems; i++) {
-            largeSetItems.push({
-              barcode: `${largeSetPrefix}${i}`,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            });
-          }
-
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: testData.instanceTypeId,
-              title: `Instance_LargeSet_C651501_${randomPostfix}`,
-            },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: mainLibraryLocationId,
-              },
-            ],
-            items: largeSetItems,
-          }).then((specialInstanceIds) => {
-            testData.largeSetInstanceId = specialInstanceIds.instanceId;
+        // Create instance for large set (200-300 items)
+        const largeSetItems = [];
+        for (let i = 1; i <= numberOfLargeSetItems; i++) {
+          largeSetItems.push({
+            barcode: `${largeSetPrefix}${i}`,
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+            permanentLoanType: { id: testData.loanTypeId },
+            materialType: { id: testData.materialTypeId },
           });
+        }
 
-          // Create instance for small set (<100 items)
-          const smallSetItems = [];
-          for (let i = 1; i <= numberOfSmallSetItems; i++) {
-            smallSetItems.push({
-              barcode: `${smallSetPrefix}${i}`,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            });
-          }
-
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: testData.instanceTypeId,
-              title: `Instance_SmallSet_C651501_${randomPostfix}`,
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: `Instance_LargeSet_C651501_${randomPostfix}`,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: locationId,
             },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: mainLibraryLocationId,
-              },
-            ],
-            items: smallSetItems,
-          }).then((specialInstanceIds) => {
-            testData.smallSetInstanceId = specialInstanceIds.instanceId;
+          ],
+          items: largeSetItems,
+        }).then((specialInstanceIds) => {
+          testData.largeSetInstanceId = specialInstanceIds.instanceId;
+        });
+
+        // Create instance for small set (<100 items)
+        const smallSetItems = [];
+        for (let i = 1; i <= numberOfSmallSetItems; i++) {
+          smallSetItems.push({
+            barcode: `${smallSetPrefix}${i}`,
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+            permanentLoanType: { id: testData.loanTypeId },
+            materialType: { id: testData.materialTypeId },
           });
-        },
-      );
+        }
+
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: `Instance_SmallSet_C651501_${randomPostfix}`,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: locationId,
+            },
+          ],
+          items: smallSetItems,
+        }).then((specialInstanceIds) => {
+          testData.smallSetInstanceId = specialInstanceIds.instanceId;
+        });
+      });
     });
 
     cy.createTempUser([Permissions.checkoutAll.gui]).then((userProperties) => {

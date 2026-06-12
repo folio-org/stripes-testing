@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -17,6 +17,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Title Level Request', () => {
   const instanceData = {
@@ -36,11 +37,11 @@ describe('Title Level Request', () => {
     cy.getAdminToken()
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-          (loc) => {
-            testData.defaultLocationId = loc.id;
-          },
-        );
+
+        Locations.getViaApiAnyDefault().then((locations) => {
+          testData.defaultLocationId = locations[0].id;
+          testData.defaultLocationName = locations[0].name;
+        });
         ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
         });
@@ -163,7 +164,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: instanceData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        effectiveLocation: testData.defaultLocationName,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });
@@ -192,7 +193,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: instanceData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        effectiveLocation: testData.defaultLocationName,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });

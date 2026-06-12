@@ -10,22 +10,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let annexLocationId;
-let popularReadingCollectionLocationId;
+const locations = {};
 const barcode = `barcode-${getRandomPostfix()}`;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   firstBarcode: barcode,
   secondBarcode: `secondBarcode_${barcode}`,
-  get annexId() {
-    return annexLocationId;
-  },
-  get popularId() {
-    return popularReadingCollectionLocationId;
-  },
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
@@ -37,41 +30,39 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
-          annexLocationId = loc.id;
-          cy.getLocations({
-            limit: 1,
-            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-          }).then((loc2) => {
-            popularReadingCollectionLocationId = loc2.id;
 
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
-            cy.getItems({
-              limit: 1,
-              expandAll: true,
-              query: `"barcode"=="${item.firstBarcode}"`,
-            }).then((res) => {
-              res.temporaryLocation = { id: item.annexId };
-              res.permanentLocation = { id: item.popularId };
-              InventoryItems.editItemViaApi(res);
-            });
-            cy.getItems({
-              limit: 1,
-              expandAll: true,
-              query: `"barcode"=="${item.secondBarcode}"`,
-            }).then((res) => {
-              res.temporaryLocation = { id: item.annexId };
-              res.permanentLocation = { id: item.annexId };
-              InventoryItems.editItemViaApi(res);
-            });
-            FileManager.createFile(
-              `cypress/fixtures/${itemBarcodesFileName}`,
-              `${item.firstBarcode}\r\n${item.secondBarcode}`,
-            );
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
+        Locations.getViaApiAnyDefault(2).then((fetchedLocations) => {
+          locations.firstLocationId = fetchedLocations[0].id;
+          locations.firstLocationName = fetchedLocations[0].name;
+          locations.secondLocationId = fetchedLocations[1].id;
+          locations.secondLocationName = fetchedLocations[1].name;
+
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.firstBarcode}"`,
+          }).then((res) => {
+            res.temporaryLocation = { id: locations.firstLocationId };
+            res.permanentLocation = { id: locations.secondLocationId };
+            InventoryItems.editItemViaApi(res);
+          });
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.secondBarcode}"`,
+          }).then((res) => {
+            res.temporaryLocation = { id: locations.firstLocationId };
+            res.permanentLocation = { id: locations.firstLocationId };
+            InventoryItems.editItemViaApi(res);
+          });
+          FileManager.createFile(
+            `cypress/fixtures/${itemBarcodesFileName}`,
+            `${item.firstBarcode}\r\n${item.secondBarcode}`,
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
           });
         });
       });
@@ -95,7 +86,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
 
-        const newLocation = 'Annex';
+        const newLocation = locations.firstLocationName;
+
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.replaceTemporaryLocation(newLocation);
         BulkEditActions.addNewBulkEditFilterString();

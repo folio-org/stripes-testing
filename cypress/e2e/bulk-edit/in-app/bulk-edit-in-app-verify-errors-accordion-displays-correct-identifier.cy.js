@@ -8,10 +8,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let onlineLocationId;
+let locationId;
+let locationName;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -32,8 +33,10 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then((loc) => {
-          onlineLocationId = loc.id;
+
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+          locationName = locations[0].name;
 
           cy.getHoldings({
             limit: 1,
@@ -41,7 +44,7 @@ describe('Bulk-edit', () => {
           }).then((holdings) => {
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
-              temporaryLocationId: onlineLocationId,
+              temporaryLocationId: locationId,
             });
           });
           cy.login(user.username, user.password, {
@@ -73,7 +76,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Modify the record by selecting the **same value** that at least **one** Holdings record has (For example,"TEMPORARY HOLDINGS LOCATION" is "Annex" => Select "Annex" location by clicking on the value from  "Select location" dropdown list )
-        const newLocation = LOCATION_NAMES.ONLINE_UI;
+        const newLocation = locationName;
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);

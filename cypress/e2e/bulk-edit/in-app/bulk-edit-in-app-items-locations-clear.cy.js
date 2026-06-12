@@ -11,11 +11,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let annexLocationId;
+let locationId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -34,16 +35,16 @@ describe('Bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
 
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
-          annexLocationId = loc.id;
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
 
           cy.getItems({
             limit: 1,
             expandAll: true,
             query: `"barcode"=="${item.itemBarcode}"`,
           }).then((res) => {
-            res.temporaryLocation = { id: annexLocationId };
-            res.permanentLocation = { id: annexLocationId };
+            res.temporaryLocation = { id: locationId };
+            res.permanentLocation = { id: locationId };
             InventoryItems.editItemViaApi(res);
           });
           cy.login(user.username, user.password, {

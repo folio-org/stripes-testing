@@ -10,14 +10,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { LOCATION_NAMES } from '../../../support/constants';
 
 let userId;
-let popularReadingCollectionLocationId;
-let onlineLocationId;
 const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
   barcode: `a-${getRandomPostfix()}`,
-  get permanentLocationId() {
-    return popularReadingCollectionLocationId;
-  },
+  permanentLocationId: null,
   name: 'Popular Reading Collection',
 };
 
@@ -25,9 +21,7 @@ const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `456${getRandomPostfix()}`,
   name: 'Online',
-  get permanentLocationId() {
-    return onlineLocationId;
-  },
+  permanentLocationId: null,
 };
 
 describe('Inventory', () => {
@@ -44,11 +38,11 @@ describe('Inventory', () => {
           limit: 1,
           query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
         }).then((loc) => {
-          popularReadingCollectionLocationId = loc.id;
+          item.permanentLocationId = loc.id;
 
           cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
             (onlineLoc) => {
-              onlineLocationId = onlineLoc.id;
+              secondItem.permanentLocationId = onlineLoc.id;
 
               [item, secondItem].forEach((el) => {
                 el.instanceId = InventoryInstances.createInstanceViaApi(

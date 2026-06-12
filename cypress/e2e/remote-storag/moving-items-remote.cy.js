@@ -12,20 +12,14 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { LOCATION_NAMES } from '../../support/constants';
 
 let user;
-let annexLocationId;
-let popularReadingCollectionLocationId;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
   // Remote location
-  get firstLocationId() {
-    return annexLocationId;
-  },
+  firstLocationId: null,
   firstLocationName: LOCATION_NAMES.ANNEX_UI,
   // Non-remote location
-  get secondLocationId() {
-    return popularReadingCollectionLocationId;
-  },
+  secondLocationId: null,
   secondLocationName: LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
 };
 const successCalloutMessage =
@@ -40,7 +34,14 @@ describe('Remote Storage', () => {
       permissions.remoteStorageCRUD.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.getLocations({ limit: 2 });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.ANNEX_UI}` }).then((locations) => {
+        item.firstLocationId = locations.id;
+      });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}` }).then(
+        (locations) => {
+          item.secondLocationId = locations.id;
+        },
+      );
       cy.getHoldingTypes({ limit: 2 });
       InventoryHoldings.getHoldingSources({ limit: 2 })
         .then((holdingsSourcesResponse) => {

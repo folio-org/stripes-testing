@@ -10,11 +10,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let popularReadingCollectionLocationId;
+let locationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
@@ -38,11 +39,8 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.getLocations({
-          limit: 1,
-          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-        }).then((loc) => {
-          popularReadingCollectionLocationId = loc.id;
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
 
           item.instanceId = InventoryInstances.createInstanceViaApi(
             item.instanceName,
@@ -66,8 +64,8 @@ describe('Bulk-edit', () => {
           }).then((holdings) => {
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
-              permanentLocationId: popularReadingCollectionLocationId,
-              temporaryLocationId: popularReadingCollectionLocationId,
+              permanentLocationId: locationId,
+              temporaryLocationId: locationId,
             });
           });
           cy.login(user.username, user.password, {

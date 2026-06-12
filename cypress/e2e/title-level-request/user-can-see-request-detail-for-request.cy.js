@@ -4,7 +4,6 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_NAMES,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -21,6 +20,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Title Level Request. Request detail', () => {
   let userData = {};
@@ -43,11 +43,10 @@ describe('Title Level Request. Request detail', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-          (loc) => {
-            testData.defaultLocationId = loc.id;
-          },
-        );
+        Locations.getViaApiAnyDefault().then((locations) => {
+          testData.defaultLocationId = locations[0].id;
+          testData.defaultLocationName = locations[0].name;
+        });
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
         });
@@ -199,7 +198,7 @@ describe('Title Level Request. Request detail', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: testData.itemBarcode,
         title: instanceData.title,
-        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        effectiveLocation: testData.defaultLocationName,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '1',
       });

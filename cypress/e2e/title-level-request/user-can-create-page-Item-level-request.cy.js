@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -14,6 +14,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Create Item or Title level request', () => {
   let userData = {};
@@ -34,11 +35,9 @@ describe('Create Item or Title level request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-          (loc) => {
-            testData.defaultLocationId = loc.id;
-          },
-        );
+        Locations.getViaApiAnyDefault().then((locations) => {
+          testData.defaultLocationId = locations[0].id;
+        });
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
         });

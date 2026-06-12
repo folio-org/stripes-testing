@@ -11,10 +11,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let annexLocationId;
+let locationId;
+let locationName;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const barcode = `barcode-${getRandomPostfix()}`;
@@ -22,9 +23,6 @@ const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   firstBarcode: barcode,
   secondBarcode: `secondBarcode_${barcode}`,
-  get annexId() {
-    return annexLocationId;
-  },
 };
 
 describe('Bulk-edit', () => {
@@ -37,8 +35,10 @@ describe('Bulk-edit', () => {
         Permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
-          annexLocationId = loc.id;
+
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+          locationName = locations[0].name;
 
           InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
           cy.getItems({
@@ -46,7 +46,7 @@ describe('Bulk-edit', () => {
             expandAll: true,
             query: `"barcode"=="${item.firstBarcode}"`,
           }).then((res) => {
-            res.temporaryLocation = { id: item.annexId };
+            res.temporaryLocation = { id: locationId };
             InventoryItems.editItemViaApi(res);
           });
           FileManager.createFile(
@@ -82,11 +82,14 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         // Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Barcode');
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         BulkEditSearchPane.verifyResultColumnTitles('Item temporary location');
 
         BulkEditActions.openStartBulkEditForm();
-        const tempLocation = 'Annex';
+
+        const tempLocation = locationName;
+
         BulkEditActions.replaceTemporaryLocation(tempLocation, 'item', 0);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, tempLocation);
@@ -103,7 +106,7 @@ describe('Bulk-edit', () => {
         );
 
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyLocationChanges(1, 'Annex');
+        BulkEditSearchPane.verifyLocationChanges(1, locationName);
       },
     );
   });

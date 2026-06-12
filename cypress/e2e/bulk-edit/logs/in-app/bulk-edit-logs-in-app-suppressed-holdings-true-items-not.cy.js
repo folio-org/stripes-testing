@@ -12,15 +12,16 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { LOCATION_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let instanceHRIDFileName;
 let item;
 let fileNames;
-let popularReadingCollectionLocationId;
+let locationId;
+let locationToReplace;
 
 describe(
   'Bulk-edit',
@@ -52,11 +53,10 @@ describe(
               item.instanceName,
               item.itemBarcode,
             );
-            cy.getLocations({
-              limit: 1,
-              query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-            }).then((loc) => {
-              popularReadingCollectionLocationId = loc.id;
+
+            Locations.getViaApiAnyDefault(2).then((locations) => {
+              locationId = locations[0].id;
+              locationToReplace = locations[1].name;
 
               cy.getHoldings({
                 limit: 1,
@@ -67,8 +67,8 @@ describe(
                 cy.updateHoldingRecord(holdings[0].id, {
                   ...holdings[0],
                   discoverySuppress: true,
-                  permanentLocationId: popularReadingCollectionLocationId,
-                  temporaryLocationId: popularReadingCollectionLocationId,
+                  permanentLocationId: locationId,
+                  temporaryLocationId: locationId,
                 });
               });
               cy.getInstanceById(item.instanceId).then((body) => {
@@ -105,7 +105,7 @@ describe(
             BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
 
             const suppressFromDiscovery = true;
-            const newLocation = 'Main Library';
+            const newLocation = locationToReplace;
             BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
             BulkEditActions.openStartBulkEditForm();

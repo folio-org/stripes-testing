@@ -12,17 +12,15 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { LOCATION_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let mainLibraryLocationId;
-let onlineLocationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemBarcodesFileName}`;
-
 const instance = {
   barcode: `456-${getRandomPostfix()}`,
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -31,6 +29,7 @@ const instance2 = {
   barcode: `789-${getRandomPostfix()}`,
   instanceName: `testBulkEdit2_${getRandomPostfix()}`,
 };
+const locations = {};
 
 describe('Bulk-edit', () => {
   describe('Logs', () => {
@@ -52,42 +51,41 @@ describe('Bulk-edit', () => {
               instance2.instanceName,
               instance2.barcode,
             );
-            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-              (loc) => {
-                mainLibraryLocationId = loc.id;
-                cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
-                  (loc2) => {
-                    onlineLocationId = loc2.id;
 
-                    cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-                      (holdings) => {
-                        instance.holdingUUID = holdings[0].id;
-                        cy.updateHoldingRecord(holdings[0].id, {
-                          ...holdings[0],
-                          temporaryLocationId: mainLibraryLocationId,
-                          permanentLocationId: onlineLocationId,
-                        });
-                      },
-                    );
-                    cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` })
-                      .then((holdings) => {
-                        instance2.holdingUUID = holdings[0].id;
-                        cy.updateHoldingRecord(holdings[0].id, {
-                          ...holdings[0],
-                          temporaryLocationId: mainLibraryLocationId,
-                          permanentLocationId: onlineLocationId,
-                        });
-                      })
-                      .then(() => {
-                        FileManager.createFile(
-                          `cypress/fixtures/${itemBarcodesFileName}`,
-                          `${instance.barcode}\n${instance2.barcode}`,
-                        );
-                      });
-                  },
-                );
-              },
-            );
+            Locations.getViaApiAnyDefault(3).then((loc) => {
+              locations.first = loc[0].id;
+              locations.firstName = loc[0].name;
+              locations.second = loc[1].id;
+              locations.secondName = loc[1].name;
+              locations.third = loc[2].id;
+              locations.thirdName = loc[2].name;
+
+              cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                (holdings) => {
+                  instance.holdingUUID = holdings[0].id;
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    temporaryLocationId: locations.first,
+                    permanentLocationId: locations.second,
+                  });
+                },
+              );
+              cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` })
+                .then((holdings) => {
+                  instance2.holdingUUID = holdings[0].id;
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    temporaryLocationId: locations.first,
+                    permanentLocationId: locations.second,
+                  });
+                })
+                .then(() => {
+                  FileManager.createFile(
+                    `cypress/fixtures/${itemBarcodesFileName}`,
+                    `${instance.barcode}\n${instance2.barcode}`,
+                  );
+                });
+            });
           });
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
@@ -127,13 +125,9 @@ describe('Bulk-edit', () => {
           );
 
           BulkEditActions.openStartBulkEditForm();
-          BulkEditActions.replaceTemporaryLocation(LOCATION_NAMES.MAIN_LIBRARY, 'holdings', 0);
+          BulkEditActions.replaceTemporaryLocation(locations.firstName, 'holdings', 0);
           BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.replacePermanentLocation(
-            LOCATION_NAMES.POPULAR_READING_COLLECTION,
-            'holdings',
-            1,
-          );
+          BulkEditActions.replacePermanentLocation(locations.thirdName, 'holdings', 1);
 
           BulkEditActions.confirmChanges();
           BulkEditActions.downloadPreview();
@@ -161,16 +155,13 @@ describe('Bulk-edit', () => {
           BulkEditLogs.downloadFileWithProposedChanges();
           BulkEditFiles.verifyMatchedResultFileContent(
             previewOfProposedChangesFileName,
-            [LOCATION_NAMES.MAIN_LIBRARY_UI, LOCATION_NAMES.MAIN_LIBRARY_UI],
+            [locations.firstName, locations.firstName],
             'temporaryLocation',
             true,
           );
           BulkEditFiles.verifyMatchedResultFileContent(
             previewOfProposedChangesFileName,
-            [
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-            ],
+            [locations.thirdName, locations.thirdName],
             'permanentLocation',
             true,
           );
@@ -178,16 +169,13 @@ describe('Bulk-edit', () => {
           BulkEditLogs.downloadFileWithUpdatedRecords();
           BulkEditFiles.verifyMatchedResultFileContent(
             updatedRecordsFileName,
-            [LOCATION_NAMES.MAIN_LIBRARY_UI, LOCATION_NAMES.MAIN_LIBRARY_UI],
+            [locations.firstName, locations.firstName],
             'temporaryLocation',
             true,
           );
           BulkEditFiles.verifyMatchedResultFileContent(
             updatedRecordsFileName,
-            [
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-            ],
+            [locations.thirdName, locations.thirdName],
             'permanentLocation',
             true,
           );
@@ -199,10 +187,8 @@ describe('Bulk-edit', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();
-          InventoryInstance.verifyHoldingsPermanentLocation(
-            LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-          );
-          InventoryInstance.verifyHoldingsTemporaryLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+          InventoryInstance.verifyHoldingsPermanentLocation(locations.thirdName);
+          InventoryInstance.verifyHoldingsTemporaryLocation(locations.firstName);
           InventoryInstance.closeHoldingsView();
 
           InventorySearchAndFilter.resetAll();
@@ -210,10 +196,8 @@ describe('Bulk-edit', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();
-          InventoryInstance.verifyHoldingsPermanentLocation(
-            LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-          );
-          InventoryInstance.verifyHoldingsTemporaryLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+          InventoryInstance.verifyHoldingsPermanentLocation(locations.thirdName);
+          InventoryInstance.verifyHoldingsTemporaryLocation(locations.firstName);
         },
       );
     });

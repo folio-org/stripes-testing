@@ -12,12 +12,12 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { LOCATION_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let popularReadingCollectionLocationId;
+let locationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   itemBarcode: getRandomPostfix(),
@@ -54,11 +54,9 @@ describe('Bulk-edit', () => {
             res.discoverySuppress = true;
             cy.updateItemViaApi(res);
           });
-          cy.getLocations({
-            limit: 1,
-            query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-          }).then((loc) => {
-            popularReadingCollectionLocationId = loc.id;
+
+          Locations.getViaApiAnyDefault().then((locations) => {
+            locationId = locations[0].id;
 
             cy.getHoldings({
               limit: 1,
@@ -69,8 +67,8 @@ describe('Bulk-edit', () => {
               cy.updateHoldingRecord(holdings[0].id, {
                 ...holdings[0],
                 discoverySuppress: true,
-                permanentLocationId: popularReadingCollectionLocationId,
-                temporaryLocationId: popularReadingCollectionLocationId,
+                permanentLocationId: locationId,
+                temporaryLocationId: locationId,
               });
             });
             cy.getInstanceById(item.instanceId).then((instance) => {

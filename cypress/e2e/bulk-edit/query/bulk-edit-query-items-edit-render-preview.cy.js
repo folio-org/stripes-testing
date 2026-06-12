@@ -7,11 +7,12 @@ import QueryModal, {
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { LOCATION_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let onlineLocationId;
+let locationId;
+let locationName;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -29,12 +30,14 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then((loc) => {
-          onlineLocationId = loc.id;
+
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+          locationName = locations[0].name;
 
           cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
             (res) => {
-              res.temporaryLocation = { id: onlineLocationId };
+              res.temporaryLocation = { id: locationId };
               cy.updateItemViaApi(res);
             },
           );
@@ -69,10 +72,8 @@ describe('Bulk-edit', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(temporary_location.name == )');
         QueryModal.verifyValueColumn();
-        QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
-        QueryModal.verifyQueryAreaContent(
-          `(temporary_location.name == ${LOCATION_NAMES.ONLINE_UI})`,
-        );
+        QueryModal.chooseValueSelect(locationName);
+        QueryModal.verifyQueryAreaContent(`(temporary_location.name == ${locationName})`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();

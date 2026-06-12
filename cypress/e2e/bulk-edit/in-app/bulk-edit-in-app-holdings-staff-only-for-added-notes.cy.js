@@ -16,14 +16,15 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-  LOCATION_NAMES,
   HOLDING_NOTE_TYPES,
 } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let item;
 let holdingUUIDsFileName;
-let mainLibraryLocationId;
+let locationId;
+let locationName;
 let resourceRelationshipId;
 let electronicBookplateNoteTypeId;
 let electronicAccess;
@@ -71,11 +72,12 @@ describe(
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-            (locations) => {
-              mainLibraryLocationId = locations.id;
-            },
-          );
+
+          Locations.getViaApiAnyDefault().then((locations) => {
+            locationId = locations[0].id;
+            locationName = locations[0].name;
+          });
+
           cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE).then(
             (noteTypeId) => {
               electronicBookplateNoteTypeId = noteTypeId;
@@ -110,8 +112,8 @@ describe(
                       staffOnly: false,
                     },
                   ],
-                  permanentLocationId: mainLibraryLocationId,
-                  temporaryLocationId: mainLibraryLocationId,
+                  permanentLocationId: locationId,
+                  temporaryLocationId: locationId,
                   electronicAccess,
                 });
               },
@@ -168,7 +170,7 @@ describe(
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.noteRemove('Link text', electronicAccess[0].linkText, 1);
           BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings', 2);
+          BulkEditActions.replacePermanentLocation(locationName, 'holdings', 2);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.selectOption('Action note', 3);
           BulkEditActions.selectSecondAction('Add note', 3);
@@ -315,11 +317,11 @@ describe(
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION]:
-                LOCATION_NAMES.MAIN_LIBRARY_UI,
+                locationName,
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION]:
-                LOCATION_NAMES.MAIN_LIBRARY_UI,
+                locationName,
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY]: true,

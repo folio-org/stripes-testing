@@ -1,4 +1,3 @@
-import { LOCATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -7,10 +6,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let uuid;
-let popularReadingCollectionLocationId;
+let locationId;
 const location = 'Annex';
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
@@ -28,11 +28,8 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.getLocations({
-          limit: 1,
-          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
-        }).then((loc) => {
-          popularReadingCollectionLocationId = loc.id;
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
 
           const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(
             item.instanceName,
@@ -45,7 +42,7 @@ describe('Bulk-edit', () => {
             uuid = holdings[0].id;
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
-              permanentLocationId: popularReadingCollectionLocationId,
+              permanentLocationId: locationId,
             });
             FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
           });

@@ -8,11 +8,11 @@ import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let annexLocationId;
+let locationId;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const item = {
   barcode: getRandomPostfix(),
@@ -31,13 +31,14 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX_UI}"` }).then((loc) => {
-          annexLocationId = loc.id;
+
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
 
           cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
             (res) => {
               item.hrid = res.hrid;
-              res.temporaryLocation = { id: annexLocationId };
+              res.temporaryLocation = { id: locationId };
               InventoryItems.editItemViaApi(res);
               FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
             },

@@ -1,4 +1,3 @@
-import { LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
@@ -10,6 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Requests', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
@@ -21,15 +21,15 @@ describe('Requests', () => {
 
   before(() => {
     cy.getAdminToken().then(() => {
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY}"` }).then(
-        (loc) => {
-          testData.locationId = loc.id;
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances,
-            location: { id: testData.locationId },
-          });
-        },
-      );
+      Locations.getViaApiAnyDefault().then((locations) => {
+        const locationId = locations[0].id;
+
+        testData.locationId = locationId;
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances,
+          location: { id: testData.locationId },
+        });
+      });
       ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
         testData.servicePoint = servicePoint;
       });

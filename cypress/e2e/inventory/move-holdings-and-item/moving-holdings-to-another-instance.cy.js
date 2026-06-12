@@ -7,11 +7,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let userId;
-let popularReadingCollectionLocationId;
-let annexLocationId;
+let firstLocationId;
+let secondLocationId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
@@ -38,40 +38,33 @@ describe('Inventory', () => {
           secondItem.instanceName,
           secondItem.barcode,
         );
-        cy.getLocations({
-          limit: 1,
-          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION}"`,
-        }).then((loc) => {
-          popularReadingCollectionLocationId = loc.id;
 
-          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ANNEX}"` }).then(
-            (annexLoc) => {
-              annexLocationId = annexLoc.id;
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          firstLocationId = locations[0].id;
+          secondLocationId = locations[1].id;
 
-              cy.getHoldings({
-                limit: 1,
-                query: `"instanceId"="${item.instanceId}"`,
-              }).then((holdings) => {
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  permanentLocationId: popularReadingCollectionLocationId,
-                });
-              });
-              cy.getHoldings({
-                limit: 1,
-                query: `"instanceId"="${secondItem.instanceId}"`,
-              }).then((holdings) => {
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  permanentLocationId: annexLocationId,
-                });
-              });
-              cy.login(userProperties.username, userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventorySearchAndFilter.waitLoading,
-              });
-            },
-          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: firstLocationId,
+            });
+          });
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${secondItem.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: secondLocationId,
+            });
+          });
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
     });

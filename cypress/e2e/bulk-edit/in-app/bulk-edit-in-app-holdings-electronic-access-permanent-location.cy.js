@@ -19,9 +19,11 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
-let onlineLocationId;
+let locationId;
+let locationName;
 let resourceRelationshipId;
 const item = {
   instanceName: `item-instanceName${getRandomPostfix()}`,
@@ -92,62 +94,62 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
-          (locations) => {
-            onlineLocationId = locations.id;
-          },
-        );
-        UrlRelationship.getViaApi().then((relationships) => {
-          const resourceRelationship = relationships.find(
-            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
-          );
-          resourceRelationshipId = resourceRelationship.id;
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+          locationName = locations[0].name;
 
-          firstElectronicAccess = {
-            linkText: 'firstElectronicAccess-linkText',
-            relationshipId: resourceRelationshipId,
-            uri: 'firstElectronicAccess.com/uri',
-          };
-        });
-
-        item.instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        secondItem.instanceId = InventoryInstances.createInstanceViaApi(
-          secondItem.instanceName,
-          secondItem.itemBarcode,
-        );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-          (holdings) => {
-            item.holdingsHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              electronicAccess: [firstElectronicAccess, secondElectronicAccess],
-              permanentLocationId: onlineLocationId,
-              temporaryLocationId: onlineLocationId,
-            });
-          },
-        );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${secondItem.instanceId}"` }).then(
-          (holdings) => {
-            secondItem.holdingsHRID = holdings[0].hrid;
-            secondItem.holdingsUUID = holdings[0].id;
-            FileManager.appendFile(
-              `cypress/fixtures/${holdingsHRIDFileName}`,
-              `\n${secondItem.holdingsHRID}`,
+          UrlRelationship.getViaApi().then((relationships) => {
+            const resourceRelationship = relationships.find(
+              (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
             );
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              permanentLocationId: onlineLocationId,
-              temporaryLocationId: onlineLocationId,
-            });
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+            resourceRelationshipId = resourceRelationship.id;
+
+            firstElectronicAccess = {
+              linkText: 'firstElectronicAccess-linkText',
+              relationshipId: resourceRelationshipId,
+              uri: 'firstElectronicAccess.com/uri',
+            };
+          });
+
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.itemBarcode,
+          );
+          secondItem.instanceId = InventoryInstances.createInstanceViaApi(
+            secondItem.instanceName,
+            secondItem.itemBarcode,
+          );
+          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+            (holdings) => {
+              item.holdingsHRID = holdings[0].hrid;
+              FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                electronicAccess: [firstElectronicAccess, secondElectronicAccess],
+                permanentLocationId: locationId,
+                temporaryLocationId: locationId,
+              });
+            },
+          );
+          cy.getHoldings({ limit: 1, query: `"instanceId"="${secondItem.instanceId}"` }).then(
+            (holdings) => {
+              secondItem.holdingsHRID = holdings[0].hrid;
+              secondItem.holdingsUUID = holdings[0].id;
+              FileManager.appendFile(
+                `cypress/fixtures/${holdingsHRIDFileName}`,
+                `\n${secondItem.holdingsHRID}`,
+              );
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                permanentLocationId: locationId,
+                temporaryLocationId: locationId,
+              });
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -205,11 +207,7 @@ describe('Bulk-edit', () => {
 
         const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
 
-        verifyValuesInCsvFile(
-          matchedRecordsFileName,
-          holdingsElectronicAccessInFile,
-          LOCATION_NAMES.ONLINE_UI,
-        );
+        verifyValuesInCsvFile(matchedRecordsFileName, holdingsElectronicAccessInFile, locationName);
 
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID, secondItem.holdingsHRID);
         BulkEditActions.openStartBulkEditForm();
@@ -309,11 +307,7 @@ describe('Bulk-edit', () => {
 
         BulkEditLogs.downloadFileWithMatchingRecords();
 
-        verifyValuesInCsvFile(
-          matchedRecordsFileName,
-          holdingsElectronicAccessInFile,
-          LOCATION_NAMES.ONLINE_UI,
-        );
+        verifyValuesInCsvFile(matchedRecordsFileName, holdingsElectronicAccessInFile, locationName);
 
         BulkEditLogs.downloadFileWithProposedChanges();
 

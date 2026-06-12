@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import SelectItemModal from '../../support/fragments/check-out-actions/selectItemModal';
@@ -11,13 +11,14 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Check out', () => {
   const userData = {
     personal: {},
   };
   let servicePoint;
-  let mainLibraryLocationId;
+  let locationId;
   const testData = {};
   const randomPostfix = getRandomPostfix();
   const itemBarcode1 = `11${randomPostfix}`;
@@ -52,40 +53,38 @@ describe('Check out', () => {
 
       testData.instanceTitle = `Instance_C688738_${getRandomPostfix()}`;
 
-      cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-        (loc) => {
-          mainLibraryLocationId = loc.id;
+      Locations.getViaApiAnyDefault().then((locations) => {
+        locationId = locations[0].id;
 
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: testData.instanceTypeId,
-              title: testData.instanceTitle,
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: locationId,
             },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: mainLibraryLocationId,
-              },
-            ],
-            items: [
-              {
-                barcode: itemBarcode1,
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: testData.loanTypeId },
-                materialType: { id: testData.materialTypeId },
-              },
-              {
-                barcode: itemBarcode2,
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: testData.loanTypeId },
-                materialType: { id: testData.materialTypeId },
-              },
-            ],
-          }).then((specialInstanceIds) => {
-            testData.instanceId = specialInstanceIds.instanceId;
-          });
-        },
-      );
+          ],
+          items: [
+            {
+              barcode: itemBarcode1,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: itemBarcode2,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((specialInstanceIds) => {
+          testData.instanceId = specialInstanceIds.instanceId;
+        });
+      });
     });
 
     cy.createTempUser([Permissions.checkoutAll.gui]).then((userProperties) => {
