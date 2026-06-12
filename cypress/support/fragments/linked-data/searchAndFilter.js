@@ -192,4 +192,11 @@ export default {
   verifyInstanceListCollapsed() {
     cy.get('[class*="instance-list"]').should('not.exist');
   },
+
+  verifyInstanceListSize(index, count) {
+    cy.get('[class*="instance-list"]')
+      .eq(index)
+      .find('tbody tr')
+      .should('have.length', count);
+  },
 };
