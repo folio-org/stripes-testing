@@ -863,8 +863,20 @@ export default {
     );
   },
 
-  verifyItemsListIsEmpty() {
-    cy.expect(HTML(including('The list contains no items')).exists());
+  verifyItemsListIsEmpty(name, shouldOpen = true) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+    cy.expect(holdingsSection.find(HTML(including('The list contains no items'))).exists());
+  },
+
+  verifyItemsListIsEmptyAfterMoving(name, shouldOpen = true) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+    cy.expect(holdingsSection.find(HTML(including('Drop items here'))).exists());
   },
 
   checkNotesByType(
