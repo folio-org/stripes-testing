@@ -1,4 +1,3 @@
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import CheckOutModal from '../../support/fragments/check-out-actions/checkOutModal';
@@ -10,6 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Check out', () => {
   const itemBarcodes = {
@@ -33,14 +33,20 @@ describe('Check out', () => {
     }),
   };
   let servicePoint;
+  let locationId;
 
   before('Create test data', () => {
     cy.getAdminToken();
     ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
       servicePoint = sp;
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+
+      Locations.getViaApiAnyDefault().then((locations) => {
+        locationId = locations[0].id;
+
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location: { id: locationId },
+        });
       });
       cy.createTempUser([Permissions.checkoutAll.gui]).then((userProperties) => {
         testData.user = userProperties;

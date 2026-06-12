@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ITEM_STATUS_NAMES, HOLDING_NOTES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -54,8 +54,13 @@ describe('Inventory', () => {
         userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       };
 
+      let actionNoteTypeId;
+
       before(() => {
         cy.getAdminToken().then(() => {
+          cy.getHoldingNoteTypeIdViaAPI('Action note').then((noteTypeId) => {
+            actionNoteTypeId = noteTypeId;
+          });
           ServicePoints.createViaApi(testData.userServicePoint);
           testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
           Location.createViaApi(testData.defaultLocation);
@@ -87,7 +92,7 @@ describe('Inventory', () => {
                     permanentLocationId: testData.defaultLocation.id,
                     notes: [
                       {
-                        holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
+                        holdingsNoteTypeId: actionNoteTypeId,
                         note: testData.instances[0].note,
                         staffOnly: false,
                       },
@@ -116,7 +121,7 @@ describe('Inventory', () => {
                     permanentLocationId: testData.defaultLocation.id,
                     notes: [
                       {
-                        holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
+                        holdingsNoteTypeId: actionNoteTypeId,
                         note: testData.instances[1].note,
                         staffOnly: false,
                       },

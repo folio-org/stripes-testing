@@ -10,10 +10,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let locationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
@@ -37,32 +39,39 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        cy.getInstanceById(item.instanceId).then((body) => {
-          body.publication = [
-            {
-              publisher: item.publisher,
-              place: item.publisher,
-              role: item.publisher,
-              dateOfPublication: item.dateOfPublication,
-            },
-          ];
-          cy.updateInstance(body);
-        });
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-            temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.barcode,
+          );
+          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+          cy.getInstanceById(item.instanceId).then((body) => {
+            body.publication = [
+              {
+                publisher: item.publisher,
+                place: item.publisher,
+                role: item.publisher,
+                dateOfPublication: item.dateOfPublication,
+              },
+            ];
+            cy.updateInstance(body);
           });
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: locationId,
+              temporaryLocationId: locationId,
+            });
+          });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

@@ -10,9 +10,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let firstLocationId;
+let secondLocationId;
+let secondLocationName;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromCommittingFileName =
   BulkEditFiles.getErrorsFromCommittingFileName(validHoldingUUIDsFileName);
@@ -37,45 +40,51 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        const instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${instanceId}"`,
-        }).then((holdings) => {
-          item.hrid = holdings[0].hrid;
-          item.holdingId = holdings[0].id;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-          });
-        });
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          firstLocationId = locations[0].id;
+          secondLocationId = locations[1].id;
+          secondLocationName = locations[1].name;
 
-        const instanceId2 = InventoryInstances.createInstanceViaApi(
-          item2.instanceName,
-          item2.itemBarcode,
-        );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${instanceId2}"`,
-        }).then((holdings) => {
-          item2.hrid = holdings[0].hrid;
-          item2.holdingId = holdings[0].id;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.ANNEX,
-          });
-          FileManager.createFile(
-            `cypress/fixtures/${validHoldingUUIDsFileName}`,
-            `${item.holdingId}\r\n${item2.holdingId}`,
+          const instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.itemBarcode,
           );
-        });
-        cy.wait(3000);
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instanceId}"`,
+          }).then((holdings) => {
+            item.hrid = holdings[0].hrid;
+            item.holdingId = holdings[0].id;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: secondLocationId,
+            });
+          });
+
+          const instanceId2 = InventoryInstances.createInstanceViaApi(
+            item2.instanceName,
+            item2.itemBarcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instanceId2}"`,
+          }).then((holdings) => {
+            item2.hrid = holdings[0].hrid;
+            item2.holdingId = holdings[0].id;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: firstLocationId,
+            });
+            FileManager.createFile(
+              `cypress/fixtures/${validHoldingUUIDsFileName}`,
+              `${item.holdingId}\r\n${item2.holdingId}`,
+            );
+          });
+          cy.wait(3000);
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -100,7 +109,7 @@ describe('Bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.replaceTemporaryLocation(item.locationName, 'holdings');
+        BulkEditActions.replaceTemporaryLocation(secondLocationName, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();

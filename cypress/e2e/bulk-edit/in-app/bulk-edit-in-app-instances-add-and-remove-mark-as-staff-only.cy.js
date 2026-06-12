@@ -1,10 +1,5 @@
 import uuid from 'uuid';
-import {
-  APPLICATION_NAMES,
-  INSTANCE_NOTE_IDS,
-  INSTANCE_RESOURCE_TYPE_IDS,
-  INSTANCE_STATUS_TERM_IDS,
-} from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
@@ -20,6 +15,8 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
+import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -27,6 +24,10 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
+let actionNoteTypeId;
+let reproductionNoteTypeId;
+let catalogedStatusId;
+let textInstanceTypeId;
 let identifiersQueryFileName;
 let matchedRecordsFileName;
 let previewFileName;
@@ -40,15 +41,21 @@ const folioItem = {
 const marcInstance = {};
 const folioFields = {
   title: `${randomNumberForTitles} Test Instance notes - Staff only FOLIO`,
-  instanceTypeId: INSTANCE_RESOURCE_TYPE_IDS.TEXT,
+  get instanceTypeId() {
+    return textInstanceTypeId;
+  },
   notes: [
     {
-      instanceNoteTypeId: INSTANCE_NOTE_IDS.ACTION_NOTE,
+      get instanceNoteTypeId() {
+        return actionNoteTypeId;
+      },
       note: `Action note FOLIO ${getRandomPostfix()}`,
       staffOnly: false,
     },
     {
-      instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
+      get instanceNoteTypeId() {
+        return reproductionNoteTypeId;
+      },
       note: `Reproduction note FOLIO ${getRandomPostfix()}`,
       staffOnly: true,
     },
@@ -128,34 +135,52 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        folioItem.instanceId = InventoryInstances.createInstanceViaApi(
-          folioItem.instanceName,
-          folioItem.itemBarcode,
-        );
-        InventoryInstances.createMarcBibViaApi(marcInstanceBody);
-        cy.getInstanceById(folioItem.instanceId).then((body) => {
-          body.title = folioFields.title;
-          body.shared = false;
-          body.statusId = INSTANCE_STATUS_TERM_IDS.CATALOGED;
-          body.notes = folioFields.notes;
-          body.instanceTypeId = folioFields.instanceTypeId;
-          cy.updateInstance(body);
-        });
-        cy.wait(2000);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` })
-          .then((instance) => {
-            marcInstance.instanceId = instance.id;
-          })
-          .then(() => {
-            cy.getInstanceById(marcInstance.instanceId).then((body) => {
-              body.statusId = INSTANCE_STATUS_TERM_IDS.CATALOGED;
-              cy.updateInstance(body);
-            });
-          });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Action note"' }).then(
+          ({ instanceNoteTypes }) => {
+            actionNoteTypeId = instanceNoteTypes[0].id;
+          },
+        );
+        InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Reproduction note"' }).then(
+          ({ instanceNoteTypes }) => {
+            reproductionNoteTypeId = instanceNoteTypes[0].id;
+          },
+        );
+        cy.getInstanceTypes({ query: 'name=="text"' }).then((instanceTypes) => {
+          textInstanceTypeId = instanceTypes[0].id;
+        });
+        InstanceStatusTypes.getViaApi({ query: 'name=="Cataloged"' }).then((instanceStatuses) => {
+          catalogedStatusId = instanceStatuses[0].id;
+
+          folioItem.instanceId = InventoryInstances.createInstanceViaApi(
+            folioItem.instanceName,
+            folioItem.itemBarcode,
+          );
+          InventoryInstances.createMarcBibViaApi(marcInstanceBody);
+          cy.getInstanceById(folioItem.instanceId).then((body) => {
+            body.title = folioFields.title;
+            body.shared = false;
+            body.statusId = catalogedStatusId;
+            body.notes = folioFields.notes;
+            body.instanceTypeId = folioFields.instanceTypeId;
+            cy.updateInstance(body);
+          });
+          cy.wait(2000);
+          cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${marcFields[245]}"` })
+            .then((instance) => {
+              marcInstance.instanceId = instance.id;
+            })
+            .then(() => {
+              cy.getInstanceById(marcInstance.instanceId).then((body) => {
+                body.statusId = catalogedStatusId;
+                cy.updateInstance(body);
+              });
+            });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

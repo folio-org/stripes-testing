@@ -178,6 +178,17 @@ export default {
   getViaApi() {
     return TenantPane.getViaApi({ path: 'locations' });
   },
+  getViaApiAnyDefault(limit = 1) {
+    return cy
+      .okapiRequest({
+        path: 'locations',
+        searchParams: { query: '(isActive=true and name<>"AT_*" and name<>"*auto*")', limit },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.locations;
+      });
+  },
   createViaApi: ({
     id,
     code,

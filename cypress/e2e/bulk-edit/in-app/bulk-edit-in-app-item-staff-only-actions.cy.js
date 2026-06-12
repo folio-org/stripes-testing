@@ -11,11 +11,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
 
 // TODO: Update autotest after UIBULKED-329 gets done
 
 let user;
+let actionNoteTypeId;
 const checkInNote = `checkIn-${getRandomPostfix()}`;
 const checkOutNote = `checkOut-${getRandomPostfix()}`;
 const actionNote = `actionNote-${getRandomPostfix()}`;
@@ -37,29 +37,34 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            // Adding check in note, check out note and action note
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: actionNote,
-                staffOnly: false,
-              },
-            ];
-            itemData.circulationNotes = [
-              { noteType: 'Check in', note: checkInNote, staffOnly: false },
-              { noteType: 'Check out', note: checkOutNote, staffOnly: false },
-            ];
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+
+        InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
+          actionNoteTypeId = noteTypes[0].id;
+
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              const itemData = res;
+              // Adding check in note, check out note and action note
+              itemData.notes = [
+                {
+                  itemNoteTypeId: actionNoteTypeId,
+                  note: actionNote,
+                  staffOnly: false,
+                },
+              ];
+              itemData.circulationNotes = [
+                { noteType: 'Check in', note: checkInNote, staffOnly: false },
+                { noteType: 'Check out', note: checkOutNote, staffOnly: false },
+              ];
+              cy.updateItemViaApi(itemData);
+              FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

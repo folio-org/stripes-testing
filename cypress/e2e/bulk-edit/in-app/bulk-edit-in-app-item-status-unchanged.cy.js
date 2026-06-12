@@ -12,10 +12,12 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import { LOAN_TYPE_NAMES } from '../../../support/constants';
 
 let user;
 let servicePointId;
+let locationId;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   barcode: getRandomPostfix(),
@@ -31,28 +33,38 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         ServicePoints.getCircDesk1ServicePointViaApi()
           .then((servicePoint) => {
             servicePointId = servicePoint.id;
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-              (res) => {
+            Locations.getViaApiAnyDefault().then((locations) => {
+              locationId = locations[0].id;
+
+              UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+              cy.getItems({
+                limit: 1,
+                expandAll: true,
+                query: `"barcode"=="${item.barcode}"`,
+              }).then((res) => {
                 const itemData = res;
-                itemData.permanentLocation = { id: LOCATION_IDS.ANNEX };
-                itemData.temporaryLocation = { id: LOCATION_IDS.ANNEX };
-                // Selected loan type
-                itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
-                itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
-                cy.updateItemViaApi(itemData);
-              },
-            );
+
+                cy.getLoanTypes({ query: `name=="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then(
+                  (loanTypes) => {
+                    const loanTypeId = loanTypes[0].id;
+
+                    itemData.permanentLocation = { id: locationId };
+                    itemData.temporaryLocation = { id: locationId };
+                    // Selected loan type
+                    itemData.permanentLoanType = { id: loanTypeId };
+                    itemData.temporaryLoanType = { id: loanTypeId };
+                    cy.updateItemViaApi(itemData);
+                  },
+                );
+              });
+            });
           })
           .then(() => {
             Checkout.checkoutItemViaApi({
@@ -62,6 +74,11 @@ describe('Bulk-edit', () => {
             });
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
