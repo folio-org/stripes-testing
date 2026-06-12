@@ -484,3 +484,14 @@ Cypress.Commands.add('getUserMigrations', () => {
     return response;
   });
 });
+
+Cypress.Commands.add('getPatronGroupsApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'groups',
+      searchParams,
+    })
+    .then(({ body }) => {
+      return body.usergroups;
+    });
+});

@@ -70,6 +70,14 @@ const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
+  recordTypes: {
+    users: 'Users',
+    instances: 'Instances',
+    holdings: 'Holdings',
+    transactions: 'Transactions',
+    items: 'Items',
+    organizations: 'Organizations',
+  },
 };
 
 const UI = {
@@ -678,7 +686,9 @@ const UI = {
   },
 
   verifyRecordTypeFilterDropdownNoMatchingItem() {
-    cy.get('[class^=multiSelectEmptyMessage-]').contains('No matching items found!').should('be.visible');
+    cy.get('[class^=multiSelectEmptyMessage-]')
+      .contains('No matching items found!')
+      .should('be.visible');
   },
 
   verifyCheckboxChecked(name) {
@@ -769,9 +779,7 @@ const UI = {
 
   verifyNoEntityTypePermissionsWarning() {
     cy.expect(
-      HTML(
-        including('You do not have the required permissions to use the Lists app'),
-      ).exists(),
+      HTML(including('You do not have the required permissions to use the Lists app')).exists(),
     );
   },
 
@@ -1127,14 +1135,16 @@ const API = {
 
   createViaApi(list) {
     function createList(listToCreate) {
-      return cy.okapiRequest({
-        method: 'POST',
-        path: 'lists',
-        body: listToCreate,
-        isDefaultSearchParamsRequired: false,
-      }).then((newListResponse) => {
-        return newListResponse.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'POST',
+          path: 'lists',
+          body: listToCreate,
+          isDefaultSearchParamsRequired: false,
+        })
+        .then((newListResponse) => {
+          return newListResponse.body;
+        });
     }
 
     const newList = JSON.parse(JSON.stringify(list));
@@ -1249,7 +1259,7 @@ const API = {
         searchParams: {
           field: `${fieldName}`,
           search: '',
-        }
+        },
       })
       .then((response) => {
         return response.body;
@@ -1264,7 +1274,11 @@ const API = {
     };
   },
 
-  generateCustomEntityTypeBodyWithSources(entityTypeName = '', entityTypeSources, privateEntityType = true) {
+  generateCustomEntityTypeBodyWithSources(
+    entityTypeName = '',
+    entityTypeSources,
+    privateEntityType = true,
+  ) {
     return {
       ...this.generateCustomEntityTypeBodyWithoutSources(entityTypeName, privateEntityType),
       sources: [...entityTypeSources],
@@ -1272,7 +1286,9 @@ const API = {
   },
 
   getSimpleUsersEntityTypeSourceTargetId() {
-    return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
+    return cy.wrap(true).then(() => {
+      return 'f2615ea6-450b-425d-804d-6a495afd9308';
+    });
   },
 
   generateSimpleUsersEntityTypeSource() {
@@ -1283,7 +1299,7 @@ const API = {
         type: 'entity-type',
         targetId: targetSourceId,
         essentialOnly: false,
-        useIdColumns: true
+        useIdColumns: true,
       };
     });
   },

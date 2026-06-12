@@ -218,10 +218,18 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userCreatedDate: 'User — User created date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+};
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
+export const organizationFieldValues = {
+  code: 'Code',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -696,6 +704,10 @@ export default {
     cy.do(runQueryButton.click());
   },
 
+  clickOrganizationLookup() {
+    cy.do(Button('Organization look-up').click());
+  },
+
   verifyClosed() {
     cy.do(buildQueryModal.absent());
   },
@@ -993,6 +1005,12 @@ export default {
       headers.each((_index, header) => {
         cy.expect(DropdownMenu().find(Checkbox(header.innerText)).has({ checked: true }));
       });
+    });
+  },
+
+  verifyQueryAreaDoesNotContain(content) {
+    cy.get('[class^="queryArea"]').should(($queryArea) => {
+      expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
     });
   },
 };
