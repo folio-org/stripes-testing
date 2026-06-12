@@ -12,13 +12,15 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
-  ITEM_NOTES,
-  MATERIAL_TYPE_IDS,
+  ITEM_NOTE_TYPES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
+let dvdMaterialTypeId;
+let electronicBookplateNoteTypeId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -54,18 +56,28 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
+        cy.getMaterialTypes({ limit: 1, query: `"name"="${MATERIAL_TYPE_NAMES.DVD}"` }).then(
+          (materialTypes) => {
+            dvdMaterialTypeId = materialTypes.id;
+          },
+        );
+        InventoryInstances.getItemNoteTypes({
+          query: `name="${ITEM_NOTE_TYPES.ELECTRONIC_BOOKPLATE}"`,
+        }).then((noteTypes) => {
+          electronicBookplateNoteTypeId = noteTypes[0].id;
+        });
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.itemBarcode}"` }).then(
           (res) => {
             item.itemId = res.id;
             item.hrid = res.hrid;
             res.materialType = {
-              id: MATERIAL_TYPE_IDS.DVD,
+              id: dvdMaterialTypeId,
               name: 'dvd',
             };
             FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
             res.notes = [
               {
-                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
+                itemNoteTypeId: electronicBookplateNoteTypeId,
                 note: notes.electronicBookplate,
                 staffOnly: false,
               },

@@ -12,14 +12,16 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { LOCATION_IDS } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let instanceHRIDFileName;
 let item;
 let fileNames;
+let locationId;
+let locationToReplace;
 
 describe(
   'Bulk-edit',
@@ -51,28 +53,34 @@ describe(
               item.instanceName,
               item.itemBarcode,
             );
-            cy.getHoldings({
-              limit: 1,
-              expandAll: true,
-              query: `"instanceId"="${item.instanceId}"`,
-            }).then((holdings) => {
-              item.holdingsHRID = holdings[0].hrid;
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                discoverySuppress: true,
-                permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-                temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+
+            Locations.getViaApiAnyDefault(2).then((locations) => {
+              locationId = locations[0].id;
+              locationToReplace = locations[1].name;
+
+              cy.getHoldings({
+                limit: 1,
+                expandAll: true,
+                query: `"instanceId"="${item.instanceId}"`,
+              }).then((holdings) => {
+                item.holdingsHRID = holdings[0].hrid;
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  discoverySuppress: true,
+                  permanentLocationId: locationId,
+                  temporaryLocationId: locationId,
+                });
               });
-            });
-            cy.getInstanceById(item.instanceId).then((body) => {
-              body.discoverySuppress = true;
-              cy.updateInstance(body);
-              item.instanceHRID = body.hrid;
-              FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, body.hrid);
-            });
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
+              cy.getInstanceById(item.instanceId).then((body) => {
+                body.discoverySuppress = true;
+                cy.updateInstance(body);
+                item.instanceHRID = body.hrid;
+                FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, body.hrid);
+              });
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
             });
           });
         });
@@ -97,7 +105,7 @@ describe(
             BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
 
             const suppressFromDiscovery = true;
-            const newLocation = 'Main Library';
+            const newLocation = locationToReplace;
             BulkEditActions.openActions();
             BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
             BulkEditActions.openStartBulkEditForm();
