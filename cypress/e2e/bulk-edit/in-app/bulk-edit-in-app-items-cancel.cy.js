@@ -11,10 +11,13 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let locationId;
+let locationToReplace;
 const invalidItemUUID = getRandomPostfix();
 const item = {
   barcode: getRandomPostfix(),
@@ -35,21 +38,28 @@ describe('Bulk-edit', () => {
         user = userProperties;
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            item.itemId = res.id;
-            res.permanentLocation = { id: LOCATION_IDS.ONLINE };
-            res.temporaryLocation = { id: LOCATION_IDS.ONLINE };
-            cy.updateItemViaApi(res);
-            FileManager.createFile(
-              `cypress/fixtures/${itemUUIDsFileName}`,
-              `${item.itemId}\r\n${invalidItemUUID}`,
-            );
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          locationId = locations[0].id;
+          locationToReplace = locations[1].name;
+
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              item.itemId = res.id;
+              res.permanentLocation = { id: locationId };
+              res.temporaryLocation = { id: locationId };
+
+              cy.updateItemViaApi(res);
+              FileManager.createFile(
+                `cypress/fixtures/${itemUUIDsFileName}`,
+                `${item.itemId}\r\n${invalidItemUUID}`,
+              );
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -87,7 +97,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
 
-        const location = 'Annex';
+        const location = locationToReplace;
+
         BulkEditActions.replaceTemporaryLocation(location);
 
         BulkEditActions.confirmChanges();

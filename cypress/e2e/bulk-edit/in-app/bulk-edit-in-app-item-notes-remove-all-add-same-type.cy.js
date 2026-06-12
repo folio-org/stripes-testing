@@ -10,13 +10,12 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  BULK_EDIT_TABLE_COLUMN_HEADERS,
-  ITEM_NOTES,
-  MATERIAL_TYPE_IDS,
-} from '../../../support/constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
+let copyNoteTypeId;
+let electronicBookplateNoteTypeId;
+let dvdMaterialTypeId;
 const notes = {
   admin: 'Admin_Note_text',
   copy: 'copy-Note_text',
@@ -44,37 +43,53 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+
+        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+          copyNoteTypeId = noteTypes[0].id;
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            item.hrid = res.hrid;
-            res.administrativeNotes = [notes.admin];
-            res.materialType = {
-              id: MATERIAL_TYPE_IDS.DVD,
-              name: 'dvd',
-            };
-            res.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copy,
-                staffOnly: false,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                note: notes.electronicBookplate,
-                staffOnly: false,
-              },
-            ];
-            res.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkIn, staffOnly: false },
-              { noteType: 'Check out', note: notes.checkOut, staffOnly: false },
-            ];
-            cy.updateItemViaApi(res);
-            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, res.hrid);
+        InventoryInstances.getItemNoteTypes({ query: 'name="Electronic bookplate"' }).then(
+          (noteTypes) => {
+            electronicBookplateNoteTypeId = noteTypes[0].id;
+
+            cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialTypes) => {
+              dvdMaterialTypeId = materialTypes[0].id;
+
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+              InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+              cy.getItems({
+                limit: 1,
+                expandAll: true,
+                query: `"barcode"=="${item.barcode}"`,
+              }).then((res) => {
+                item.hrid = res.hrid;
+                res.administrativeNotes = [notes.admin];
+                res.materialType = {
+                  id: dvdMaterialTypeId,
+                  name: 'dvd',
+                };
+                res.notes = [
+                  {
+                    itemNoteTypeId: copyNoteTypeId,
+                    note: notes.copy,
+                    staffOnly: false,
+                  },
+                  {
+                    itemNoteTypeId: electronicBookplateNoteTypeId,
+                    note: notes.electronicBookplate,
+                    staffOnly: false,
+                  },
+                ];
+                res.circulationNotes = [
+                  { noteType: 'Check in', note: notes.checkIn, staffOnly: false },
+                  { noteType: 'Check out', note: notes.checkOut, staffOnly: false },
+                ];
+                cy.updateItemViaApi(res);
+                FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, res.hrid);
+              });
+            });
           },
         );
       });

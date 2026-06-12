@@ -13,9 +13,12 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
+let bindingNoteTypeId;
+let noteNoteTypeId;
+let copyNoteTypeId;
+let electronicBookplateNoteTypeId;
 const notes = {
   bindingNote: `binding-note-${getRandomPostfix()}`,
   noteNote: `note-note-${getRandomPostfix()}`,
@@ -40,40 +43,56 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.BINDING_NOTE,
-                note: notes.bindingNote,
-                staffOnly: true,
+
+        InventoryInstances.getItemNoteTypes({ query: 'name="Binding"' }).then((noteTypes) => {
+          bindingNoteTypeId = noteTypes[0].id;
+        });
+        InventoryInstances.getItemNoteTypes({ query: 'name="Note"' }).then((noteTypes) => {
+          noteNoteTypeId = noteTypes[0].id;
+        });
+        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+          copyNoteTypeId = noteTypes[0].id;
+        });
+        InventoryInstances.getItemNoteTypes({ query: 'name="Electronic bookplate"' }).then(
+          (noteTypes) => {
+            electronicBookplateNoteTypeId = noteTypes[0].id;
+
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+              (res) => {
+                const itemData = res;
+                itemData.notes = [
+                  {
+                    itemNoteTypeId: bindingNoteTypeId,
+                    note: notes.bindingNote,
+                    staffOnly: true,
+                  },
+                  {
+                    itemNoteTypeId: noteNoteTypeId,
+                    note: notes.noteNote,
+                    staffOnly: true,
+                  },
+                  {
+                    itemNoteTypeId: copyNoteTypeId,
+                    note: notes.copyNote,
+                    staffOnly: false,
+                  },
+                  {
+                    itemNoteTypeId: electronicBookplateNoteTypeId,
+                    note: notes.electronicBookplateNote,
+                    staffOnly: false,
+                  },
+                ];
+                cy.updateItemViaApi(itemData);
               },
-              {
-                itemNoteTypeId: ITEM_NOTES.NOTE_NOTE,
-                note: notes.noteNote,
-                staffOnly: true,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copyNote,
-                staffOnly: false,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                note: notes.electronicBookplateNote,
-                staffOnly: false,
-              },
-            ];
-            cy.updateItemViaApi(itemData);
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           },
         );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
     });
 

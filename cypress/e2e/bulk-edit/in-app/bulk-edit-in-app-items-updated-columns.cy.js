@@ -11,21 +11,19 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  BULK_EDIT_TABLE_COLUMN_HEADERS,
-  ITEM_NOTES,
-  LOAN_TYPE_IDS,
-  LOCATION_IDS,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let noteNoteTypeId;
+let selectedLoanTypeId;
+let locationId;
+let locationToReplace;
 const notes = {
   checkInNote: 'checkInNote',
   noteNote: 'noteNote',
   admin: 'adminNote',
 };
-
 const item = {
   barcode: getRandomPostfix(),
   instanceName: `AT_C430250_FolioInstance_${getRandomPostfix()}`,
@@ -43,33 +41,49 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.itemId = res.id;
-            item.hrid = res.hrid;
-            itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkInNote, staffOnly: false },
-            ];
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.NOTE_NOTE,
-                note: notes.noteNote,
-                staffOnly: true,
-              },
-            ];
-            itemData.temporaryLoanType = { id: LOAN_TYPE_IDS.SELECTED };
-            itemData.permanentLocation = { id: LOCATION_IDS.ANNEX };
-            itemData.temporaryLocation = { id: LOCATION_IDS.ANNEX };
-            itemData.discoverySuppress = true;
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+
+        InventoryInstances.getItemNoteTypes({ query: 'name="Note"' }).then((noteTypes) => {
+          noteNoteTypeId = noteTypes[0].id;
+
+          cy.getLoanTypes({ query: 'name=="Selected"' }).then((loanTypes) => {
+            selectedLoanTypeId = loanTypes[0].id;
+
+            Locations.getViaApiAnyDefault(2).then((locations) => {
+              locationId = locations[0].id;
+              locationToReplace = locations[1].name;
+
+              InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+              cy.getItems({
+                limit: 1,
+                expandAll: true,
+                query: `"barcode"=="${item.barcode}"`,
+              }).then((res) => {
+                const itemData = res;
+                item.itemId = res.id;
+                item.hrid = res.hrid;
+                itemData.circulationNotes = [
+                  { noteType: 'Check in', note: notes.checkInNote, staffOnly: false },
+                ];
+                itemData.notes = [
+                  {
+                    itemNoteTypeId: noteNoteTypeId,
+                    note: notes.noteNote,
+                    staffOnly: true,
+                  },
+                ];
+                itemData.temporaryLoanType = { id: selectedLoanTypeId };
+                itemData.permanentLocation = { id: locationId };
+                itemData.temporaryLocation = { id: locationId };
+                itemData.discoverySuppress = true;
+                cy.updateItemViaApi(itemData);
+                FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.itemId);
+              });
+              cy.login(user.username, user.password, {
+                path: TopMenu.bulkEditPath,
+                waiter: BulkEditSearchPane.waitLoading,
+              });
+            });
+          });
         });
       });
     });
@@ -130,7 +144,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearTemporaryLoanType(5);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.replacePermanentLocation('Online (E)', 'item', 6);
+        BulkEditActions.replacePermanentLocation(locationToReplace, 'item', 6);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearTemporaryLocation('item', 7);
         BulkEditActions.addNewBulkEditFilterString();
@@ -168,7 +182,7 @@ describe('Bulk-edit', () => {
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
-            value: 'Online',
+            value: locationToReplace,
           },
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,
@@ -197,7 +211,10 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Temporary loan type', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Item permanent location', 'Online');
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Item permanent location',
+          locationToReplace,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Item temporary location', '');
 
         BulkEditActions.commitChanges();
@@ -209,7 +226,10 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Temporary loan type', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Item permanent location', 'Online');
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Item permanent location',
+          locationToReplace,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Item temporary location', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
@@ -231,7 +251,7 @@ describe('Bulk-edit', () => {
         ItemRecordView.verifyItemStatus('Available');
         ItemRecordView.verifyPermanentLoanType('Reading room');
         ItemRecordView.verifyTemporaryLoanType('No value set-');
-        ItemRecordView.verifyPermanentLocation('Online');
+        ItemRecordView.verifyPermanentLocation(locationToReplace);
         ItemRecordView.verifyTemporaryLocation('No value set-');
       },
     );

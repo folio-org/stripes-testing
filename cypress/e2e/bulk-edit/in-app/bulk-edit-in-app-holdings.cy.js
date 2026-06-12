@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let hrid;
@@ -85,7 +85,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
 
-        const location = 'Online';
+        const location = LOCATION_NAMES.POPULAR_READING_COLLECTION_UI;
 
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();

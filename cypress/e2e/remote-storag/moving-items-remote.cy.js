@@ -9,18 +9,18 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 
 let user;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
   // Remote location
-  firstLocationId: LOCATION_IDS.ANNEX,
-  firstLocationName: 'Annex',
+  firstLocationId: null,
+  firstLocationName: LOCATION_NAMES.ANNEX_UI,
   // Non-remote location
-  secondLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-  secondLocationName: 'Popular Reading Collection',
+  secondLocationId: null,
+  secondLocationName: LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
 };
 const successCalloutMessage =
   'Item has been successfully moved in FOLIO. To complete removing this item from remote storage, run an exception report or communicate this directly to your remote storage location.';
@@ -34,7 +34,14 @@ describe('Remote Storage', () => {
       permissions.remoteStorageCRUD.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.getLocations({ limit: 2 });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.ANNEX_UI}` }).then((locations) => {
+        item.firstLocationId = locations.id;
+      });
+      cy.getLocations({ query: `name=${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}` }).then(
+        (locations) => {
+          item.secondLocationId = locations.id;
+        },
+      );
       cy.getHoldingTypes({ limit: 2 });
       InventoryHoldings.getHoldingSources({ limit: 2 })
         .then((holdingsSourcesResponse) => {
