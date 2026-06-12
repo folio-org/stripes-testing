@@ -1,11 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import {
-  APPLICATION_NAMES,
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  LOCATION_IDS,
-} from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -29,6 +24,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('TLR: Item renew', () => {
   let instanceHRID;
@@ -87,9 +83,11 @@ describe('TLR: Item renew', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        Locations.getViaApiAnyDefault().then((locations) => {
+          testData.defaultLocationId = locations[0].id;
+        });
         ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
           testData.userServicePoint = servicePoint;
-          testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
         });
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;

@@ -10,19 +10,17 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  BULK_EDIT_TABLE_COLUMN_HEADERS,
-  INSTANCE_NOTE_IDS,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
+let reproductionNoteTypeId;
 const notes = {
   adminNote: 'adminNote',
   reproductionNote: 'Instance reproduction note',
@@ -68,48 +66,56 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        folioItem.instanceId = InventoryInstances.createInstanceViaApi(
-          folioItem.instanceName,
-          folioItem.itemBarcode,
-        );
-        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
-          (instanceId) => {
-            marcInstance.instanceId = instanceId;
 
-            cy.getInstanceById(marcInstance.instanceId).then((body) => {
-              marcInstance.hrid = body.hrid;
-              body.administrativeNotes = [notes.adminNote];
-              cy.updateInstance(body);
-            });
+        InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Reproduction note"' }).then(
+          ({ instanceNoteTypes }) => {
+            reproductionNoteTypeId = instanceNoteTypes[0].id;
 
-            cy.getInstanceById(folioItem.instanceId).then((body) => {
-              folioItem.hrid = body.hrid;
-              body.administrativeNotes = [notes.adminNote];
-              body.notes = [
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                  note: notes.reproductionNote,
-                  staffOnly: false,
-                },
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.REPRODUCTION_NOTE,
-                  note: notes.reproductionNoteStaffOnly,
-                  staffOnly: true,
-                },
-              ];
-              cy.updateInstance(body);
-            });
-
-            FileManager.createFile(
-              `cypress/fixtures/${instanceUUIDsFileName}`,
-              `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+            folioItem.instanceId = InventoryInstances.createInstanceViaApi(
+              folioItem.instanceName,
+              folioItem.itemBarcode,
             );
+            cy.createMarcBibliographicViaAPI(
+              QuickMarcEditor.defaultValidLdr,
+              marcInstanceFields,
+            ).then((instanceId) => {
+              marcInstance.instanceId = instanceId;
+
+              cy.getInstanceById(marcInstance.instanceId).then((body) => {
+                marcInstance.hrid = body.hrid;
+                body.administrativeNotes = [notes.adminNote];
+                cy.updateInstance(body);
+              });
+
+              cy.getInstanceById(folioItem.instanceId).then((body) => {
+                folioItem.hrid = body.hrid;
+                body.administrativeNotes = [notes.adminNote];
+                body.notes = [
+                  {
+                    instanceNoteTypeId: reproductionNoteTypeId,
+                    note: notes.reproductionNote,
+                    staffOnly: false,
+                  },
+                  {
+                    instanceNoteTypeId: reproductionNoteTypeId,
+                    note: notes.reproductionNoteStaffOnly,
+                    staffOnly: true,
+                  },
+                ];
+                cy.updateInstance(body);
+              });
+
+              FileManager.createFile(
+                `cypress/fixtures/${instanceUUIDsFileName}`,
+                `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+              );
+            });
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           },
         );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
     });
 

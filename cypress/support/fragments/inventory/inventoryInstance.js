@@ -904,8 +904,8 @@ export default {
   },
   createHoldingsRecordForTemporaryLocation: (permanentLocation, temporaryLocation) => {
     pressAddHoldingsButton();
-    InventoryNewHoldings.fillRequiredFields(permanentLocation);
-    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(temporaryLocation);
+    InventoryNewHoldings.fillRequiredFields(including(permanentLocation));
+    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(including(temporaryLocation));
     InventoryNewHoldings.saveAndClose();
     waitLoading();
   },

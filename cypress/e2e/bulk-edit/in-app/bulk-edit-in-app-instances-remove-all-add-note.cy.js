@@ -10,18 +10,16 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import {
-  APPLICATION_NAMES,
-  BULK_EDIT_TABLE_COLUMN_HEADERS,
-  INSTANCE_NOTE_IDS,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceNoteTypes from '../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
+let dissertationNoteTypeId;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
@@ -69,45 +67,53 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        folioItem.instanceId = InventoryInstances.createInstanceViaApi(
-          folioItem.instanceName,
-          folioItem.itemBarcode,
-        );
-        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
-          (instanceId) => {
-            marcInstance.instanceId = instanceId;
 
-            cy.getInstanceById(marcInstance.instanceId).then((body) => {
-              marcInstance.hrid = body.hrid;
-            });
+        InstanceNoteTypes.getInstanceNoteTypesViaApi({ query: 'name=="Dissertation note"' }).then(
+          ({ instanceNoteTypes }) => {
+            dissertationNoteTypeId = instanceNoteTypes[0].id;
 
-            cy.getInstanceById(folioItem.instanceId).then((body) => {
-              folioItem.hrid = body.hrid;
-              body.notes = [
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
-                  note: notes.dissertationNote,
-                  staffOnly: false,
-                },
-                {
-                  instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
-                  note: notes.dissertationNoteStaffOnly,
-                  staffOnly: true,
-                },
-              ];
-              cy.updateInstance(body);
-            });
-
-            FileManager.createFile(
-              `cypress/fixtures/${instanceUUIDsFileName}`,
-              `${folioItem.instanceId}\n${marcInstance.instanceId}`,
+            folioItem.instanceId = InventoryInstances.createInstanceViaApi(
+              folioItem.instanceName,
+              folioItem.itemBarcode,
             );
+            cy.createMarcBibliographicViaAPI(
+              QuickMarcEditor.defaultValidLdr,
+              marcInstanceFields,
+            ).then((instanceId) => {
+              marcInstance.instanceId = instanceId;
+
+              cy.getInstanceById(marcInstance.instanceId).then((body) => {
+                marcInstance.hrid = body.hrid;
+              });
+
+              cy.getInstanceById(folioItem.instanceId).then((body) => {
+                folioItem.hrid = body.hrid;
+                body.notes = [
+                  {
+                    instanceNoteTypeId: dissertationNoteTypeId,
+                    note: notes.dissertationNote,
+                    staffOnly: false,
+                  },
+                  {
+                    instanceNoteTypeId: dissertationNoteTypeId,
+                    note: notes.dissertationNoteStaffOnly,
+                    staffOnly: true,
+                  },
+                ];
+                cy.updateInstance(body);
+              });
+
+              FileManager.createFile(
+                `cypress/fixtures/${instanceUUIDsFileName}`,
+                `${folioItem.instanceId}\n${marcInstance.instanceId}`,
+              );
+            });
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           },
         );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
     });
 

@@ -14,14 +14,15 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let locationId;
+let locationToReplace;
 
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
-  locationId: LOCATION_IDS.ANNEX,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
@@ -35,17 +36,23 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            res.permanentLocation = { id: item.locationId };
-            InventoryItems.editItemViaApi(res);
-            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          locationId = locations[0].id;
+          locationToReplace = locations[1].name;
+
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              res.permanentLocation = { id: locationId };
+              InventoryItems.editItemViaApi(res);
+              FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -69,7 +76,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
 
-        const newLocation = 'Online';
+        const newLocation = locationToReplace;
+
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemOptions();
         BulkEditActions.replacePermanentLocation(newLocation);

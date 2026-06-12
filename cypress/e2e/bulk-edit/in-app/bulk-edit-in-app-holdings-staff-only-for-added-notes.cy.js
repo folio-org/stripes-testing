@@ -11,29 +11,24 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
-  electronicAccessRelationshipId,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-  LOCATION_IDS,
-  LOCATION_NAMES,
-  HOLDING_NOTES,
+  HOLDING_NOTE_TYPES,
 } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let item;
 let holdingUUIDsFileName;
+let locationId;
+let locationName;
+let resourceRelationshipId;
+let electronicBookplateNoteTypeId;
+let electronicAccess;
 let fileNames;
-const electronicAccess = [
-  {
-    linkText: 'test-linkText',
-    materialsSpecification: 'test-materialsSpecification',
-    publicNote: 'test-publicNote',
-    relationshipId: electronicAccessRelationshipId.RESOURCE,
-    uri: 'testuri.com/uri',
-  },
-];
 const electronicBookplateNote = 'electronicBookplateNote';
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
@@ -77,29 +72,56 @@ describe(
             item.instanceName,
             item.itemBarcode,
           );
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-            (holdings) => {
-              item.holdingsUUID = holdings[0].id;
-              item.holdingsHRID = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-              cy.updateHoldingRecord(holdings[0].id, {
-                ...holdings[0],
-                notes: [
-                  {
-                    holdingsNoteTypeId: HOLDING_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                    note: electronicBookplateNote,
-                    staffOnly: false,
-                  },
-                ],
-                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                electronicAccess,
-              });
+
+          Locations.getViaApiAnyDefault().then((locations) => {
+            locationId = locations[0].id;
+            locationName = locations[0].name;
+          });
+
+          cy.getHoldingNoteTypeIdViaAPI(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE).then(
+            (noteTypeId) => {
+              electronicBookplateNoteTypeId = noteTypeId;
             },
           );
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+          UrlRelationship.getViaApi().then((relationships) => {
+            const resourceRelationship = relationships.find(
+              (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+            );
+            resourceRelationshipId = resourceRelationship.id;
+
+            cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+              (holdings) => {
+                item.holdingsUUID = holdings[0].id;
+                item.holdingsHRID = holdings[0].hrid;
+                FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+                electronicAccess = [
+                  {
+                    linkText: 'test-linkText',
+                    materialsSpecification: 'test-materialsSpecification',
+                    publicNote: 'test-publicNote',
+                    relationshipId: resourceRelationshipId,
+                    uri: 'testuri.com/uri',
+                  },
+                ];
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  notes: [
+                    {
+                      holdingsNoteTypeId: electronicBookplateNoteTypeId,
+                      note: electronicBookplateNote,
+                      staffOnly: false,
+                    },
+                  ],
+                  permanentLocationId: locationId,
+                  temporaryLocationId: locationId,
+                  electronicAccess,
+                });
+              },
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
         });
       });
@@ -148,7 +170,7 @@ describe(
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.noteRemove('Link text', electronicAccess[0].linkText, 1);
           BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings', 2);
+          BulkEditActions.replacePermanentLocation(locationName, 'holdings', 2);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.selectOption('Action note', 3);
           BulkEditActions.selectSecondAction('Add note', 3);
@@ -295,11 +317,11 @@ describe(
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION]:
-                LOCATION_NAMES.MAIN_LIBRARY_UI,
+                locationName,
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION]:
-                LOCATION_NAMES.MAIN_LIBRARY_UI,
+                locationName,
             },
             {
               [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY]: true,

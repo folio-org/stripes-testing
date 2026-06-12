@@ -4,7 +4,6 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -20,6 +19,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Request Detail.TLR', () => {
   let userData = {};
@@ -63,29 +63,33 @@ describe('Request Detail.TLR', () => {
         });
       })
       .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: instanceData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+        Locations.getViaApiAnyDefault().then((locations) => {
+          const locationId = locations[0].id;
+
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: instanceData.title,
             },
-          ],
-          items: [
-            {
-              barcode: testData.itemBarcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          instanceData.instanceId = specialInstanceIds.instanceId;
-          instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
-          instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: locationId,
+              },
+            ],
+            items: [
+              {
+                barcode: testData.itemBarcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            instanceData.instanceId = specialInstanceIds.instanceId;
+            instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
+            instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+          });
         });
       })
       .then(() => {
