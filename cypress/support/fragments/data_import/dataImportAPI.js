@@ -372,7 +372,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                       sourceRecords.map((record) => {
                         return getCreatedRecordInfoWithSplitFiles(
                           childJobExecutionId,
-                          record.sourceRecordId || record.incomingRecordId,
+                          record.incomingRecordId || record.sourceRecordId,
                         ).then((recordResponse) => {
                           const recordInfo = {
                             instance: {
