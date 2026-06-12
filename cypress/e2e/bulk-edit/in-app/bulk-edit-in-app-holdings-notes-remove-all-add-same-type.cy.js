@@ -10,9 +10,11 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS, HOLDING_NOTES } from '../../../support/constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
+let bindingNoteTypeId;
+let provenanceNoteTypeId;
 const notes = {
   admin: 'Admin_Note_text',
   binding: 'Note_text',
@@ -34,36 +36,44 @@ describe('Bulk-edit', () => {
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryCRUDHoldings.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+
+          cy.getHoldingNoteTypeIdViaAPI('Binding').then((noteTypeId) => {
+            bindingNoteTypeId = noteTypeId;
           });
-          item.instanceId = InventoryInstances.createInstanceViaApi(
-            item.instanceName,
-            item.barcode,
-          );
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${item.instanceId}"`,
-          }).then((holdings) => {
-            item.holdingHRID = holdings[0].hrid;
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              administrativeNotes: [notes.admin],
-              notes: [
-                {
-                  holdingsNoteTypeId: HOLDING_NOTES.BINDING_NOTE,
-                  note: notes.binding,
-                  staffOnly: false,
-                },
-                {
-                  holdingsNoteTypeId: HOLDING_NOTES.PROVENANCE_NOTE,
-                  note: notes.provenance,
-                  staffOnly: false,
-                },
-              ],
+          cy.getHoldingNoteTypeIdViaAPI('Provenance').then((noteTypeId) => {
+            provenanceNoteTypeId = noteTypeId;
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
             });
-            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
+            item.instanceId = InventoryInstances.createInstanceViaApi(
+              item.instanceName,
+              item.barcode,
+            );
+            cy.getHoldings({
+              limit: 1,
+              query: `"instanceId"="${item.instanceId}"`,
+            }).then((holdings) => {
+              item.holdingHRID = holdings[0].hrid;
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                administrativeNotes: [notes.admin],
+                notes: [
+                  {
+                    holdingsNoteTypeId: bindingNoteTypeId,
+                    note: notes.binding,
+                    staffOnly: false,
+                  },
+                  {
+                    holdingsNoteTypeId: provenanceNoteTypeId,
+                    note: notes.provenance,
+                    staffOnly: false,
+                  },
+                ],
+              });
+              FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
+            });
           });
         },
       );

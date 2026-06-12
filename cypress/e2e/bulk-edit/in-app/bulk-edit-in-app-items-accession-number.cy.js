@@ -62,7 +62,7 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
         BulkEditSearchPane.waitFileUploading();
 
-        const newLocation = 'Online';
+        const newLocation = 'Annex';
 
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
