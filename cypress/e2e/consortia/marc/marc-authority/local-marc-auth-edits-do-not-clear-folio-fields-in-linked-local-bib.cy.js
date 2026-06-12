@@ -212,6 +212,7 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
               ]);
 
+              cy.resetTenant();
               cy.login(testData.userProperties.username, testData.userProperties.password);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

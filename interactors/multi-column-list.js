@@ -99,6 +99,10 @@ export const MultiColumnList = HTML.extend('multi column list')
     visible: (el) => isVisible(el),
     ariaRowCount: (el) => el.querySelector('[role=grid]').getAttribute('aria-rowcount'),
     loading: (el) => !!el.querySelector('[class^=mclContentLoadingRow]'),
+    pagingText: (el) => {
+      const container = el.querySelector('[class*=mclPrevNextPageInfoContainer]');
+      return container ? container.textContent : '';
+    },
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),

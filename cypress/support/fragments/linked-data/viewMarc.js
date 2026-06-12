@@ -16,8 +16,10 @@ export default {
   },
 
   checkMarcFieldContainsData(fieldCode, data) {
+    const parts = data.split("'");
+    const xpathData = parts.length === 1 ? `'${data}'` : `concat('${parts.join("', \"'\", '")}')`;
     cy.xpath(
-      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and contains(normalize-space(), '${data}')]`,
+      `//td[@class='field-code' and text()='${fieldCode}']/following-sibling::td[@class='field-contents' and contains(normalize-space(), ${xpathData})]`,
     ).should('be.visible');
   },
 

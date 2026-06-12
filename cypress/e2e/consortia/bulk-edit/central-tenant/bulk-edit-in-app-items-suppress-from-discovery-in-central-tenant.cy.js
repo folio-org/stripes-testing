@@ -237,7 +237,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.discovery_suppress != true) AND (instances.title starts with C496127_${postfix})`,
+              `(items.discovery_suppress != True) AND (instances.title starts with C496127_${postfix})`,
             );
 
             instances.forEach((instance) => {

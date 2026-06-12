@@ -1,4 +1,5 @@
 import { including } from '@interactors/html';
+import { CUSTOM_FIELD_ENTITY_TYPES } from '../../../constants/constants';
 import {
   Accordion,
   Button,
@@ -13,6 +14,8 @@ import {
   Select,
   TextField,
 } from '../../../../../interactors';
+import { APPLICATION_NAMES } from '../../../constants';
+import TopMenuNavigation from '../../topMenuNavigation';
 
 const customFieldsPane = Pane('Custom fields');
 const editCustomFieldsPane = Pane('Edit custom fields');
@@ -70,6 +73,27 @@ export default {
 
   waitLoading() {
     cy.expect(customFieldsPane.exists());
+  },
+
+  visitCustomFieldsSettings() {
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+
+    return cy.location('pathname').then((pathname) => {
+      const alreadyVisited = pathname?.includes('/settings/users/custom-fields');
+
+      if (!alreadyVisited) {
+        this.openTabFromInventorySettingsList();
+      }
+
+      this.waitLoading();
+    });
+  },
+
+  moveAllCustomFieldsToAccordion(fieldLabelTexts, accordionLabel) {
+    this.visitCustomFieldsSettings();
+    this.openEdit();
+    this.setDisplayInAccordionForFields(fieldLabelTexts, accordionLabel);
+    this.verifyDisplayInAccordionForFields(fieldLabelTexts, accordionLabel);
   },
 
   verifyCustomFieldsPaneIsOpen() {
@@ -428,6 +452,22 @@ export default {
   },
 
   // API methods
+
+  getCustomFieldsViaApi(entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.getCustomFieldsViaApi(entityType);
+  },
+
+  createCustomFieldsViaApi(customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.createCustomFieldsViaApi(customFields, entityType);
+  },
+
+  updateCustomFieldsViaApi(customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.updateCustomFieldsViaApi(customFields, entityType);
+  },
+
+  deleteCustomFieldsViaApi({ ids, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER }) {
+    return cy.deleteCustomFieldsViaApi({ ids, entityType });
+  },
 
   getCustomFieldsConfigViaApi() {
     return cy

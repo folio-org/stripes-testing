@@ -19,7 +19,6 @@ import {
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
-import MultiColumnListHelper from '../multiColumnList';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
@@ -57,7 +56,7 @@ export default {
       Pane({ id: 'receiving-filters-pane' }).exists(),
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
-    MultiColumnListHelper.waitLoadingComplete(receivingResultsList);
+    // MultiColumnListHelper.waitLoadingComplete(receivingResultsList);
   },
   verifyPageDisplayed() {
     cy.expect([

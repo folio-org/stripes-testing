@@ -112,7 +112,11 @@ describe('Eureka', () => {
             true,
             true,
           );
-          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationShownInModal(
+            newApplications[0],
+            !!newApplications.length,
+            false,
+          );
           AuthorizationRoles.checkApplicationCountInModal(1 + newApplications.length);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
 
@@ -121,7 +125,11 @@ describe('Eureka', () => {
             true,
           );
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: true });
-          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationShownInModal(
+            newApplications[0],
+            !!newApplications.length,
+            false,
+          );
           AuthorizationRoles.checkApplicationCountInModal(newApplications.length);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
 
@@ -135,7 +143,11 @@ describe('Eureka', () => {
             true,
             true,
           );
-          AuthorizationRoles.checkApplicationShownInModal(newApplications[0], true, false);
+          AuthorizationRoles.checkApplicationShownInModal(
+            newApplications[0],
+            !!newApplications.length,
+            false,
+          );
           AuthorizationRoles.checkApplicationCountInModal(1 + newApplications.length);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
         },

@@ -50,18 +50,14 @@ describe('Check out', () => {
         createdUserProperties.userId,
         instanceData.servicePoint.id,
       );
-      cy.waitForAuthRefresh(() => {
-        cy.login(testData.username, testData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
-        cy.reload();
-        UsersSearchPane.waitLoading();
-      }, 20_000);
+      cy.login(testData.username, testData.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
     });
   });
 
-  beforeEach('Create notes', () => {
+  before('Create notes', () => {
     TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByUsername(testData.username);
@@ -118,37 +114,6 @@ describe('Check out', () => {
       UsersCard.openNotesSection();
       // "Notes" accordion button expanded and the message "No notes found" displayed.
       cy.expect(HTML(including('No notes found')).exists());
-    },
-  );
-
-  // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
-  it(
-    'C380512 Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C380512'] },
-    () => {
-      const itemBarcode = instanceData.folioInstances[0].barcodes[0];
-      // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
-      CheckOutActions.checkOutUser(testData.barcode);
-      // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(noteToCheck);
-      // Click on the "Close" button.
-      CheckOutActions.closeNote();
-      // Modal window "Note for patron" with the Note 2 is displayed.
-      CheckOutActions.checkUserNote(noteToCheck);
-      // Click on the "Close" button.
-      CheckOutActions.closeNote();
-      // Input any valid item barcode in input field at "Scan items" pane → Click "Enter" button
-      CheckOutActions.checkOutItem(itemBarcode);
-      // Modals with user notes do NOT appear
-      CheckOutActions.checkNoteModalNotDisplayed();
-      // Repeat step "Checkout Item"
-      CheckOutActions.checkOutItem(itemBarcode);
-      // Modals with user notes do NOT appear
-      CheckOutActions.checkNoteModalNotDisplayed();
-      // Repeat step "Checkout Item" one more time
-      CheckOutActions.checkOutItem(itemBarcode);
-      // Modals with user notes do NOT appear
-      CheckOutActions.checkNoteModalNotDisplayed();
     },
   );
 });

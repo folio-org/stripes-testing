@@ -11,6 +11,7 @@ export default {
   exportJobStartedSuccessfully: 'Export has been started successfully',
 
   // warnings
+  exchangeRateAmountMustBePositive: 'Amount must be a positive number',
   locationRequired: 'At least one location must be entered',
   percentageAmountShouldBeEqual: 'The percentage or amount(s) should be equal 100% of the total',
   remainingAmountToBeDistributed(remainingAmount) {

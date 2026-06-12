@@ -63,6 +63,12 @@ describe('MARC', () => {
       cy.deleteHoldingRecordViaApi(testData.holdingsID);
       InventoryInstance.deleteInstanceViaApi(testData.recordID);
       Users.deleteViaApi(user.userId);
+      Location.deleteInstitutionCampusLibraryLocationViaApi(
+        defaultLocation.institutionId,
+        defaultLocation.campusId,
+        defaultLocation.libraryId,
+        defaultLocation.id,
+      );
     });
 
     it(

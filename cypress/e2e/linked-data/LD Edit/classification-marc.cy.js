@@ -167,7 +167,7 @@ describe('Citation: check classification number MARC codes', () => {
   });
 
   it(
-    'C490913 Marigold - Verify the Classification numbers section/ Inventory/ Marigold/ View MARC',
+    'C490913 Marigold - Verify the Classification numbers section/ Inventory/ Marigold/ View MARC (citation)',
     { tags: ['criticalPath', 'citation', 'C490913', 'marigold'] },
     () => {
       // Edit instance from Inventory

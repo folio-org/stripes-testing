@@ -233,7 +233,7 @@ describe('Citation: Supplementary content (008/24-27,31) / Illustrative Content 
       EditResource.toggleSingleFieldMarcTooltip(illustrativeContent);
       EditResource.checkMarcTooltipContains(illustrativeContent, '008/18-21');
       EditResource.toggleSingleFieldMarcTooltip(supplementaryContent);
-      EditResource.checkMarcTooltipContains(supplementaryContent, '008/24-27');
+      EditResource.checkMarcTooltipContains(supplementaryContent, '008/24-27, 31');
     },
   );
 });

@@ -1,6 +1,6 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -17,6 +17,7 @@ import {
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const randomPostfix = getRandomPostfix();
 const instanceTitlePrefix = 'AT_C468273_Instance';
@@ -192,15 +193,13 @@ describe('Inventory', () => {
         'C468273 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C468273'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.resetTenant();
-            cy.setTenant(Affiliations.College);
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.resetTenant();
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.slice(0, -1).forEach((row) => {

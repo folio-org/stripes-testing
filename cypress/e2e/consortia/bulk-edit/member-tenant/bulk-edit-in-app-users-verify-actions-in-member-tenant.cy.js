@@ -98,7 +98,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 user');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(users.type == staff) AND (users.last_name == ${user.personal.lastName})`,
+              `(users.type == Staff) AND (users.last_name == ${user.personal.lastName})`,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               user.barcode,
