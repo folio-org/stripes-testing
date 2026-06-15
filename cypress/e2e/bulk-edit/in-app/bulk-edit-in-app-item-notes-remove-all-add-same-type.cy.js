@@ -52,7 +52,7 @@ describe('Bulk-edit', () => {
             electronicBookplateNoteTypeId = noteTypes[0].id;
 
             cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialTypes) => {
-              dvdMaterialTypeId = materialTypes[0].id;
+              dvdMaterialTypeId = materialTypes.id;
 
               cy.login(user.username, user.password, {
                 path: TopMenu.bulkEditPath,

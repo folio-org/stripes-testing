@@ -88,11 +88,16 @@ export const holdingsFieldValues = {
   instanceUuid: 'Holdings — Instance UUID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
+  recordVersion: 'Holdings — Record version',
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
+  copyNumber: 'Holdings — Copy number',
+  updatedDate: 'Holdings — Updated date',
+  effectiveLocationName: 'Effective location — Name',
+  effectiveLibraryName: 'Effective library — Name',
   notes: 'Holdings — Notes — Note',
   notesNoteType: 'Holdings — Notes — Notes type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
@@ -120,6 +125,7 @@ export const holdingsFieldValues = {
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
   holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsStatisticalCodeUuids: 'Holdings — Statistical code UUIDs',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Tenant ID',
 };
@@ -138,6 +144,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
@@ -152,6 +159,7 @@ export const instanceFieldValues = {
   contributorType: 'Instance — Contributors — Contributor type',
   contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  contributors: 'Instance — Contributors',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
   natureOfContent: 'Instance — Nature of content',
@@ -224,6 +232,7 @@ export const usersFieldValues = {
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+  userMobilePhone: 'User — Mobile phone',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -231,6 +240,7 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Code',
+  name: 'Name',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -463,7 +473,7 @@ export default {
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
     cy.expect([
       RepeatableFieldItem({ index: row })
-        .find(Select('input-value-0'))
+        .find(Select(`input-value-${row}`))
         .has({ optionsText: expectedOptions }),
     ]);
   },
@@ -724,8 +734,8 @@ export default {
     cy.wait(3000);
   },
 
-  verifyRunQueryAndSaveButtonDisabled(isDisabled = true) {
-    cy.expect(runQueryAndSave.has({ disabled: isDisabled }));
+  runQueryAndSaveDisabled(disabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled }));
   },
 
   clickRunQuery() {
@@ -1039,6 +1049,32 @@ export default {
   verifyQueryAreaDoesNotContain(content) {
     cy.get('[class^="queryArea"]').should(($queryArea) => {
       expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
+    });
+  },
+
+  selectCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyColumnValueForRow(recordTitle, columnName, expectedValue) {
+    const targetRowFirst = MultiColumnListRow(including(recordTitle), { isContainer: false });
+    cy.expect(
+      targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
+    );
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
+  },
+
+  verifyMatchedRecordsIncludesByIdentifier(identifier, columnName, value) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        buildQueryModal
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: including(value) }))
+          .exists(),
+      );
     });
   },
 };

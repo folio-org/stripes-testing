@@ -46,7 +46,7 @@ describe('Bulk-edit', () => {
           actionNoteTypeId = noteTypes[0].id;
 
           cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialTypes) => {
-            dvdMaterialTypeId = materialTypes[0].id;
+            dvdMaterialTypeId = materialTypes.id;
 
             InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
             cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
