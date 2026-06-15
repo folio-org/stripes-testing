@@ -155,7 +155,7 @@ describe('MARC', () => {
 
           // Step 5: Confirm modal → stay in editor
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
-          QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.waitLoading();
           QuickMarcEditor.checkContentByTag(testData.tag100, testData.auth100FirstUpdate);
 

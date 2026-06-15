@@ -5,6 +5,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
+import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -15,14 +16,12 @@ describe('MARC', () => {
       const newField = {
         previousFieldTag: '008',
         tag: '111',
-        content:
-          '$a C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it',
+        content: `$a AT_C423559_MarcAuthority Record with Local authority file which includes default prefix in it ${randomPostfix}`,
       };
-      const recordTitle =
-        'C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it';
+      const recordTitle = `AT_C423559_MarcAuthority Record with Local authority file which includes default prefix in it ${randomPostfix}`;
       const localAuthFile = {
-        name: `C423559 auth source file active ${randomPostfix}`,
-        prefix: `na${getRandomLetters(6)}`,
+        name: `AT_C423559_AuthoritySourceFile active ${randomPostfix}`,
+        prefix: `na${getRandomLetters(22)}`,
         startWithNumber: '1',
         isActive: true,
       };
@@ -31,6 +30,14 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423559_');
+        cy.getAuthoritySourceFileDataViaAPI('AT_C423559_*').then(() => {
+          Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
+            ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
+            cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
+          });
+        });
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -47,6 +54,8 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+              cy.wait(70_000); // waiting for the file to be processed
+              cy.getAdminToken();
             });
           })
           .then(() => {
@@ -66,7 +75,7 @@ describe('MARC', () => {
 
       it(
         'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C423559'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C423559'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
@@ -94,25 +103,28 @@ describe('MARC', () => {
           MarcAuthorities.verifyViewPaneContentExists();
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
+
+            MarcAuthority.contains(tag001);
+            MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
+            MarcAuthority.contains(newField.tag);
+            MarcAuthority.contains(newField.content);
+
+            MarcAuthorities.closeMarcViewPane();
+            MarcAuthorities.verifyMarcViewPaneIsOpened(false);
+
+            MarcAuthorities.waitLoading();
+            cy.wait(6000); // wait for source file assignment to be registered in the system
+
+            MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
+            MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
+
+            MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
+            MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
+            MarcAuthorities.checkAfterSearch('Authorized', recordTitle);
+            MarcAuthorities.selectAuthorityById(createdAuthorityId);
+            MarcAuthority.waitLoading();
+            MarcAuthority.contains(recordTitle);
           });
-          MarcAuthority.contains(tag001);
-          MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
-          MarcAuthority.contains(newField.tag);
-          MarcAuthority.contains(newField.content);
-
-          MarcAuthorities.closeMarcViewPane();
-          MarcAuthorities.verifyMarcViewPaneIsOpened(false);
-
-          cy.reload();
-          MarcAuthorities.waitLoading();
-
-          MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
-          MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
-
-          MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
-          MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
-          MarcAuthorities.checkAfterSearch('Authorized', recordTitle);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(recordTitle);
         },
       );
     });

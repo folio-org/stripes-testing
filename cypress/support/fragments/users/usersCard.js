@@ -19,6 +19,7 @@ import {
   or,
   Pane,
   ProxyUser,
+  SearchField,
   Section,
   Selection,
   SelectionList,
@@ -223,6 +224,22 @@ export default {
       ...options,
     });
   },
+  filterReadingRoomsByName(name) {
+    cy.do(readingRoomAccessAccordion.find(SearchField({ placeholder: 'Room name' })).fillIn(name));
+  },
+
+  clearReadingRoomFilter() {
+    cy.do(readingRoomAccessAccordion.find(SearchField({ placeholder: 'Room name' })).fillIn(''));
+  },
+
+  verifyReadingRoomCellExists(roomName) {
+    cy.expect(readingRoomAccessAccordion.find(MultiColumnListCell({ content: roomName })).exists());
+  },
+
+  verifyReadingRoomCellAbsent(roomName) {
+    cy.expect(readingRoomAccessAccordion.find(MultiColumnListCell({ content: roomName })).absent());
+  },
+
   verifyReadingRoomAccessRoomsOrder(roomNames) {
     return MultiColumnListHelper.getColumnValues(readingRoomAccessList, 'Name').then(
       (visibleRoomNames) => {

@@ -6,6 +6,7 @@ import {
   ConfirmationModal,
   KeyValue,
   Link,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -751,5 +752,13 @@ export default {
     cy.expect(confirmationModal.has({ message: 'Remove this piece from the bound item?' }));
     cy.do(confirmationModal.confirm(COMMON_BUTTON_LABELS.REMOVE));
     cy.expect(confirmationModal.absent());
+  },
+
+  markItemAsRestricted: () => {
+    cy.do([
+      actionsButton.click(),
+      Button('Restricted').click(),
+      Modal('Confirm item status: Restricted').find(Button('Confirm')).click(),
+    ]);
   },
 };

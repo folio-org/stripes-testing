@@ -10,8 +10,6 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -64,7 +62,6 @@ describe('MARC', () => {
     const instanceIds = [];
     const holdingsIds = [];
     let location;
-    let servicePointId;
 
     before('Create user, data', () => {
       cy.getAdminToken();
@@ -75,18 +72,18 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         user = createdUserProperties;
 
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
+        cy.getLocations({
+          limit: 1,
+          query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+        }).then((res) => {
+          location = res;
 
-            for (let i = 0; i < 3; i++) {
-              cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} ${i}`);
-              QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} ${i}`).then((bib) => {
-                instanceIds.push(bib.id);
-              });
-            }
-          });
+          for (let i = 0; i <= 3; i++) {
+            cy.createSimpleMarcBibViaAPI(`${bibTitlePrefix} ${i}`);
+            QuickMarcEditor.getCreatedMarcBib(`${bibTitlePrefix} ${i}`).then((bib) => {
+              instanceIds.push(bib.id);
+            });
+          }
         });
       });
     });
@@ -123,12 +120,6 @@ describe('MARC', () => {
       instanceIds.forEach((instanceId) => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
-      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id,
-      );
     });
 
     it(
@@ -138,7 +129,8 @@ describe('MARC', () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+        QuickMarcEditor.updateExistingField(testData.tag852, `$b ${location.code}`);
+        QuickMarcEditor.checkContentByTag(testData.tag852, `$b ${location.code}`);
         QuickMarcEditor.updateExistingTagValue(4, '00');
         QuickMarcEditor.checkDeleteButtonExist(4);
         QuickMarcEditor.deleteFieldAndCheck(4, '008');
@@ -183,15 +175,18 @@ describe('MARC', () => {
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C350646'] },
       () => {
-        InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
+        InventoryInstances.selectInstanceById(instanceIds[1]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
         QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
-        QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+        QuickMarcEditor.updateExistingField(testData.tag852, `$b ${location.code}`);
+        QuickMarcEditor.checkContentByTag(testData.tag852, `$b ${location.code}`);
         QuickMarcEditor.verifySaveAndCloseButtonEnabled();
         QuickMarcEditor.addEmptyFields(5);
         QuickMarcEditor.updateExistingTagValue(6, testData.tag866);
@@ -217,7 +212,10 @@ describe('MARC', () => {
       'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C350757'] },
       () => {
-        InventoryInstances.searchByTitle(instanceIds[0]);
+        InventoryInstances.searchByTitle(instanceIds[2]);
+        InventoryInstances.selectInstanceById(instanceIds[2]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.verifyInitialLDRFieldsValuesInMarcHoldingRecord();
@@ -228,7 +226,8 @@ describe('MARC', () => {
         QuickMarcEditor.verifyTagValue(5, testData.tag852);
         QuickMarcEditor.verifyTagValue(6, testData.tag999);
         QuickMarcEditor.checkContent('', 5);
-        QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+        QuickMarcEditor.updateExistingField(testData.tag852, `$b ${location.code}`);
+        QuickMarcEditor.checkContentByTag(testData.tag852, `$b ${location.code}`);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
@@ -267,8 +266,10 @@ describe('MARC', () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
-        InventoryInstances.searchBySource(testData.sourceMARC);
-        InventoryInstances.selectInstance();
+        InventoryInstances.searchByTitle(instanceIds[3]);
+        InventoryInstances.selectInstanceById(instanceIds[3]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();
         MarcAuthority.addNewField(5, '', '');
@@ -292,8 +293,8 @@ describe('MARC', () => {
         QuickMarcEditor.verifyTagValue(5, '85');
         QuickMarcEditor.checkContent('', 5);
         QuickMarcEditor.updateExistingTagName('85', testData.tag852);
-        QuickMarcEditor.selectExistingHoldingsLocation(location);
-        QuickMarcEditor.checkContent(`$b ${location.code} `, 5);
+        QuickMarcEditor.updateExistingField(testData.tag852, `$b ${location.code}`);
+        QuickMarcEditor.checkContentByTag(testData.tag852, `$b ${location.code}`);
         QuickMarcEditor.updateExistingTagName(testData.tag852, '85');
         QuickMarcEditor.deleteFieldAndCheck(5, testData.tag852);
         QuickMarcEditor.afterDeleteNotification('85');

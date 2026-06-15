@@ -100,8 +100,6 @@ export default {
   },
 
   checkDeleteErrorCallout(heading) {
-    cy.expect(
-      Callout(getDeleteErrorCalloutText(heading), { type: calloutTypes.error }).exists(),
-    );
+    cy.expect(Callout(getDeleteErrorCalloutText(heading), { type: calloutTypes.error }).exists());
   },
 };

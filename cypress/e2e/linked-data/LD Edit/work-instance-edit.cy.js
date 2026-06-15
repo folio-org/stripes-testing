@@ -83,7 +83,7 @@ describe('Citation: core work and instance editor features', () => {
   });
 
   it(
-    'C496124 Marigold - Switching between Work Edit <-> Instance Edit pages/ Unsaved changes modal',
+    'C496124 Marigold - Switching between Work Edit <-> Instance Edit pages/ Unsaved changes modal (citation)',
     { tags: ['criticalPath', 'citation', 'C496124', 'marigold'] },
     () => {
       // New work actions with no input
