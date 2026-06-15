@@ -9,10 +9,11 @@ import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
+let locationId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -32,10 +33,15 @@ describe('Data Export', () => {
         );
         cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
           (holdings) => {
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
-            });
+            cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+              (locations) => {
+                locationId = locations.id;
+                cy.updateHoldingRecord(holdings[0].id, {
+                  ...holdings[0],
+                  permanentLocationId: locations.id,
+                });
+              },
+            );
           },
         );
         cy.getInstanceById(item.instanceId).then((body) => {
@@ -106,7 +112,7 @@ describe('Data Export', () => {
           InventoryActions.verifySaveCQLQueryFileName,
           'SearchInstanceCQLQuery*',
           InventoryActions.verifySaveCQLQuery,
-          [LOCATION_IDS.MAIN_LIBRARY, item.instanceName, 'eng'],
+          [locationId, item.instanceName, 'eng'],
         );
       },
     );

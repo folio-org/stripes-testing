@@ -13,9 +13,10 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
 
 let user;
+let actionNoteTypeId;
+let dvdMaterialTypeId;
 const notes = {
   admin: 'adminNote',
   action: 'actionNote',
@@ -40,34 +41,43 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.hrid = res.hrid;
 
-            itemData.administrativeNotes = [notes.admin];
-            res.materialType = {
-              id: MATERIAL_TYPE_IDS.DVD,
-              name: 'dvd',
-            };
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.action,
-                staffOnly: true,
+        InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
+          actionNoteTypeId = noteTypes[0].id;
+
+          cy.getMaterialTypes({ limit: 1, query: 'name=="dvd"' }).then((materialTypes) => {
+            dvdMaterialTypeId = materialTypes.id;
+
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+              (res) => {
+                const itemData = res;
+                item.hrid = res.hrid;
+
+                itemData.administrativeNotes = [notes.admin];
+                res.materialType = {
+                  id: dvdMaterialTypeId,
+                  name: 'dvd',
+                };
+                itemData.notes = [
+                  {
+                    itemNoteTypeId: actionNoteTypeId,
+                    note: notes.action,
+                    staffOnly: true,
+                  },
+                ];
+                itemData.circulationNotes = [
+                  { noteType: 'Check in', note: notes.checkIn, staffOnly: true },
+                ];
+                cy.updateItemViaApi(itemData);
+                FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
               },
-            ];
-            itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkIn, staffOnly: true },
-            ];
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+            );
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
+          });
         });
       });
     });

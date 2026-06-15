@@ -7,9 +7,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let userId;
+let firstLocationId;
+let secondLocationId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
@@ -36,27 +38,33 @@ describe('Inventory', () => {
           secondItem.instanceName,
           secondItem.barcode,
         );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          firstLocationId = locations[0].id;
+          secondLocationId = locations[1].id;
+
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: firstLocationId,
+            });
           });
-        });
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${secondItem.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: LOCATION_IDS.ANNEX,
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${secondItem.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: secondLocationId,
+            });
           });
-        });
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
     });
