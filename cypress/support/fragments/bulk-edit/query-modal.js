@@ -129,6 +129,7 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
@@ -230,6 +231,10 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Code',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -402,6 +407,14 @@ export default {
     cy.get(
       `[data-testid="row-${row}"] [class^="col-sm-4"] [class^="selectionControl"] [class^="singleValue"]`,
     ).should('have.text', selection);
+  },
+
+  verifySelectedOperator(selection, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .has({ checkedOptionText: selection }),
+    );
   },
 
   verifyOperatorColumn() {
@@ -610,7 +623,7 @@ export default {
   },
 
   cancelDisabled(disabled = true) {
-    cy.expect(cancelButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(cancelButton).has({ disabled }));
   },
 
   clickCancel() {
@@ -626,7 +639,7 @@ export default {
   },
 
   xButttonDisabled(disabled = true) {
-    cy.expect(xButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(xButton).has({ disabled }));
   },
 
   clickXButtton() {
@@ -643,6 +656,17 @@ export default {
       .find('option')
       .should('have.length', 1)
       .and('have.text', ...booleanValues);
+  },
+
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
   },
 
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
@@ -698,6 +722,10 @@ export default {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
     cy.wait(3000);
+  },
+
+  verifyRunQueryAndSaveButtonDisabled(isDisabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled: isDisabled }));
   },
 
   clickRunQuery() {
