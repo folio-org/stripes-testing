@@ -16,7 +16,7 @@ describe('MARC', () => {
         forC359232: {
           searchOption: 'Subject',
           typeOfHeading: 'Topical',
-          value: 'Inventors',
+          value: 'C380571 Inventors',
           typeA: 'Authorized',
           typeB: 'Reference',
           typeC: 'Auth/Ref',
@@ -45,7 +45,7 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380571*');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380571 ');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -120,7 +120,7 @@ describe('MARC', () => {
             testData.forC359232.searchOption,
             testData.forC359232.value,
           );
-          MarcAuthorities.selectFirst(testData.forC359232.value);
+          MarcAuthorities.selectTitle(testData.forC359232.value);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
           InventoryInstance.closeDetailsView();
         },

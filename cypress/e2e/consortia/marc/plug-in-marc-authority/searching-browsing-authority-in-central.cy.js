@@ -17,6 +17,7 @@ describe('MARC', () => {
     const createdRecordIDs = [];
     const searchValue = 'C404417 Auth';
     const headLine = 'Shared MARC authority record';
+    const sharedIconText = 'Shared';
     const marcFiles = [
       {
         marc: 'marcBibFileForC404417Central.mrc',
@@ -132,9 +133,8 @@ describe('MARC', () => {
         // 4 Fill search input field with query which will return all "MARC Authority" records from Preconditions
         // (e.g., "C404417 Auth" ) → Click "Search" button.
         MarcAuthorities.searchBeats(searchValue);
-        headingsSharedRecords.forEach((heading, index) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
-          MarcAuthorities.verifySharedIcon(index);
+        headingsSharedRecords.forEach((heading) => {
+          MarcAuthorities.verifyRecordFound(`${sharedIconText}${heading}`);
         });
 
         // 5 Click on the "Heading/Reference" value for any record in the results list.
@@ -147,8 +147,7 @@ describe('MARC', () => {
         MarcAuthorities.clickAccordionByName(accordion.name);
         MarcAuthorities.actionsSelectCheckbox(accordion.option);
         headingsSharedRecords.slice(0, 2).forEach((heading) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(heading, true);
+          MarcAuthorities.verifyRecordFound(`${sharedIconText}${heading}`);
         });
 
         // 7 Select "Browse" toggle at the first pane in modal
@@ -157,9 +156,8 @@ describe('MARC', () => {
 
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchBeats(searchValue);
-        headingsSharedRecords.forEach((heading, index) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
-          MarcAuthorities.verifySharedIcon(index);
+        headingsSharedRecords.forEach((heading) => {
+          MarcAuthorities.verifyRecordFound(`${sharedIconText}${heading}`);
         });
         MarcAuthorities.checkRowAbsentByContent(headingLocalRecord);
 
@@ -167,8 +165,7 @@ describe('MARC', () => {
         MarcAuthorities.clickAccordionByName(accordion.name);
         MarcAuthorities.actionsSelectCheckbox(accordion.option);
         headingsSharedRecords.slice(0, 2).forEach((heading) => {
-          MarcAuthorities.verifyResultsRowContent(heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(heading, true);
+          MarcAuthorities.verifyRecordFound(`${sharedIconText}${heading}`);
         });
         MarcAuthorities.checkRowAbsentByContent(headingLocalRecord);
 

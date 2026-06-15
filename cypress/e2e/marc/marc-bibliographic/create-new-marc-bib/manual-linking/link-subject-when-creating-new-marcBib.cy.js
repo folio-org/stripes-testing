@@ -184,7 +184,7 @@ describe('MARC', () => {
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422128 Mostly Chopin Festival. $e Orchestra $t sonet $0 997404422128 $9`,
             );
-            QuickMarcEditor.closeEditorPane();
+            InventoryViewSource.close();
 
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();

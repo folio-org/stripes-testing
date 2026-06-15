@@ -499,7 +499,7 @@ export default {
     cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
   },
 
-  checkDefaultSourceFilesExist({ editIconsShown = true, updatedByUser = null }) {
+  checkDefaultSourceFilesExist({ editIconsShown = true, updatedByUser = null } = {}) {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
         MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: false }),
