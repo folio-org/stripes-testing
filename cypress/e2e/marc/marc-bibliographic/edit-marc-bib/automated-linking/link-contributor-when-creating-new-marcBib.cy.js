@@ -188,7 +188,7 @@ describe('MARC', () => {
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
             );
-            QuickMarcEditor.closeEditorPane();
+            InventoryViewSource.close();
 
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();

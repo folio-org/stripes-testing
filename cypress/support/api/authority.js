@@ -29,7 +29,7 @@ Cypress.Commands.add('getAuthoritySourceFilesViaAPI', (searchParams = { limit: 1
 
 Cypress.Commands.add('getAuthoritySourceFileIdViaAPI', (authorityFileName) => {
   cy.getAuthoritySourceFilesViaAPI({ query: `name="${authorityFileName}"` }).then(({ body }) => {
-    return body.authoritySourceFiles[0].id;
+    return body.authoritySourceFiles[0]?.id;
   });
 });
 

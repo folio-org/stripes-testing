@@ -24,7 +24,7 @@ describe('MARC', () => {
 
         beforeEach(() => {
           cy.getAdminToken().then(() => {
-            Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, false);
+            Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, true);
           });
 
           cy.createTempUser([

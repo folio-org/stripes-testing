@@ -196,7 +196,7 @@ describe('MARC', () => {
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Roma) $j something $0 http://id.loc.gov/authorities/names/n7908410883C410883 $9',
             );
-            QuickMarcEditor.closeEditorPane();
+            InventoryViewSource.close();
 
             InventoryInstance.editMarcBibliographicRecord();
             newFields.forEach((newField) => {
