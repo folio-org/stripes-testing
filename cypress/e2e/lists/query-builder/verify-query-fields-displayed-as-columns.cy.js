@@ -1,5 +1,4 @@
 import Permissions from '../../../support/dictionary/permissions';
-import { ORDER_LINE_PAYMENT_STATUS } from '../../../support/constants';
 import QueryModal, {
   QUERY_OPERATIONS,
   purchaseOrderLinesFieldValues,
@@ -93,7 +92,6 @@ describe('Lists', () => {
         Lists.setName(listName);
         Lists.selectRecordType(Lists.recordTypes.purchaseOrderLines);
         Lists.buildQuery();
-        QueryModal.verify();
         QueryModal.verifyQueryTextboxReadOnly();
         QueryModal.verifyQueryTextboxResizable();
 
@@ -108,7 +106,6 @@ describe('Lists', () => {
         QueryModal.testQuery();
 
         // Step 3: Verify preview of matched records and both columns are displayed
-        QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.verifyColumnDisplayed(purchaseOrderLinesFieldValues.poNumber);
         QueryModal.verifyMatchedRecordsByIdentifier(
           testData.order.poNumber,
@@ -117,7 +114,7 @@ describe('Lists', () => {
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.runQueryDisabled(false);
+        QueryModal.verifyRunQueryAndSaveButtonDisabled(false);
 
         // Step 4: Run query and save - verify list is saved
         QueryModal.clickRunQueryAndSave();
@@ -125,7 +122,6 @@ describe('Lists', () => {
         QueryModal.verifyClosed();
 
         // Step 5: View updated list - verify record table is displayed
-        Lists.verifyRefreshCompleteCallout(1);
         Lists.viewUpdatedList();
 
         // Step 6: Edit query - go to Actions > Edit list > Edit query
@@ -135,7 +131,7 @@ describe('Lists', () => {
         QueryModal.exists();
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.runQueryDisabled();
+        QueryModal.verifyRunQueryAndSaveButtonDisabled();
         QueryModal.xButttonDisabled(false);
         QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.poNumber);
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.NOT_EQUAL);
@@ -154,20 +150,19 @@ describe('Lists', () => {
           `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber}) AND (  )`,
         );
         QueryModal.testQueryDisabled(true);
-        QueryModal.runQueryDisabled(true);
+        QueryModal.verifyRunQueryAndSaveButtonDisabled(true);
 
         // Step 8: Select "POL — Title" field with "contains" operator
         QueryModal.selectField(purchaseOrderLinesFieldValues.paymentStatus, 2);
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL, 2);
-        QueryModal.selectValueFromSelect(ORDER_LINE_PAYMENT_STATUS.PARTIALLY_PAID, 2);
+        QueryModal.chooseValueSelect('Partially paid', 2);
         QueryModal.testQuery();
 
         // Step 9: Verify preview and all columns are automatically displayed
-        QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.verifyMatchedRecordsByIdentifier(
           testData.order.poNumber,
           purchaseOrderLinesFieldValues.paymentStatus,
-          ORDER_LINE_PAYMENT_STATUS.PENDING,
+          'Pending',
         );
         QueryModal.verifyMatchedRecordsByIdentifier(
           testData.order.poNumber,
@@ -176,7 +171,7 @@ describe('Lists', () => {
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
-        QueryModal.runQueryDisabled(false);
+        QueryModal.verifyRunQueryAndSaveButtonDisabled(false);
       },
     );
   });

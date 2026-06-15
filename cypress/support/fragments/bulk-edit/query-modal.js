@@ -409,6 +409,14 @@ export default {
     ).should('have.text', selection);
   },
 
+  verifySelectedOperator(selection, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .has({ checkedOptionText: selection }),
+    );
+  },
+
   verifyOperatorColumn() {
     cy.get('[class^="col-sm-2"][class*="headerCell"]').should('have.text', 'Operator');
     cy.get(
@@ -615,7 +623,7 @@ export default {
   },
 
   cancelDisabled(disabled = true) {
-    cy.expect(cancelButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(cancelButton).has({ disabled }));
   },
 
   clickCancel() {
@@ -631,7 +639,7 @@ export default {
   },
 
   xButttonDisabled(disabled = true) {
-    cy.expect(xButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(xButton).has({ disabled }));
   },
 
   clickXButtton() {
@@ -714,6 +722,10 @@ export default {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
     cy.wait(3000);
+  },
+
+  verifyRunQueryAndSaveButtonDisabled(isDisabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled: isDisabled }));
   },
 
   clickRunQuery() {

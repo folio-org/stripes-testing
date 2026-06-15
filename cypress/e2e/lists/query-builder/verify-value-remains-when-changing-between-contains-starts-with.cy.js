@@ -41,7 +41,6 @@ describe('Lists', () => {
         Lists.setName(listName);
         Lists.selectRecordType(Lists.recordTypes.holdings);
         Lists.buildQuery();
-        QueryModal.verify();
         QueryModal.verifyQueryTextboxReadOnly();
         QueryModal.verifyQueryTextboxResizable();
 

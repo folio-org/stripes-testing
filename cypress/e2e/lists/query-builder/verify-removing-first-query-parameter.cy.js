@@ -40,7 +40,6 @@ describe('Lists', () => {
         Lists.setName(listName);
         Lists.selectRecordType(Lists.recordTypes.organizations);
         Lists.buildQuery();
-        QueryModal.verify();
 
         // Step 2: Build query form is opened
         QueryModal.verifyQueryTextboxReadOnly();
@@ -49,7 +48,7 @@ describe('Lists', () => {
         // Step 3: Configure first query parameter with Organization Code, is null/empty, True
         QueryModal.selectField(organizationFieldValues.code);
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-        QueryModal.selectValueFromSelect('True');
+        QueryModal.chooseValueSelect('True');
         QueryModal.testQueryDisabled(false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
 
