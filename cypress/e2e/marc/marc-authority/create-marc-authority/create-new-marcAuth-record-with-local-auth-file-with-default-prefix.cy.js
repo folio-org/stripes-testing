@@ -113,6 +113,7 @@ describe('MARC', () => {
             MarcAuthorities.verifyMarcViewPaneIsOpened(false);
 
             MarcAuthorities.waitLoading();
+            cy.wait(6000); // wait for source file assignment to be registered in the system
 
             MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
             MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);

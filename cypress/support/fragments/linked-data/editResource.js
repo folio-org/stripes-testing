@@ -32,6 +32,7 @@ const cancelButton = Button('Cancel');
 const closeResourceButton = Button({ dataTestID: 'nav-close-button' });
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
+const instancesList = '//div[@data-testid="instances-list"]';
 
 export default {
   waitLoading(headingText) {
@@ -373,6 +374,16 @@ export default {
   duplicateInstance() {
     cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.do(duplicateButton.click());
+    cy.wait(1000);
+    cy.expect(Heading('Duplicate instance').exists());
+  },
+
+  duplicateInstanceWhenMultipleActions() {
+    cy.xpath(instanceActionsButton)
+      .should('exist')
+      .click();
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
@@ -726,6 +737,10 @@ export default {
     cy.expect(newInstanceButton.has({ disabled: true }));
   },
 
+  checkNewInstanceButtonHidden() {
+    cy.expect(newInstanceButton.absent());
+  },
+
   checkInstanceActionsHidden() {
     cy.xpath(instanceActionsButton).should('not.exist');
   },
@@ -855,6 +870,21 @@ export default {
       .eq(dropdownIndex)
       .select(type);
     cy.wait(500);
+  },
+
+  verifyInstancesList() {
+    cy.xpath(instancesList).should('be.visible');
+  },
+
+  verifyInstancesListTableColumns() {
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Title"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Publisher"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Year"]').should('exist');
+  },
+
+  verifyInstancesListSize(count) {
+    cy.xpath(instancesList).xpath('//table/tbody/tr').should('have.length', count);
+    cy.xpath(instancesList).xpath('//table/tbody/tr/td/button[text()="Edit"]').should('have.length', count);
   },
 
   verifyWorkInstanceActionOptions() {
