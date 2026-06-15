@@ -12,7 +12,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Modals from '../../support/fragments/modals';
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check in', () => {
   describe('Fee/Fine', () => {
@@ -42,6 +42,10 @@ describe('Check in', () => {
             testData.materialTypeId = res.id;
           });
         })
+        .then(() => cy.getLocations({ limit: 1 }))
+        .then((location) => {
+          testData.locationId = location.id;
+        })
         .then(() => {
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
@@ -51,7 +55,7 @@ describe('Check in', () => {
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+                permanentLocationId: testData.locationId,
               },
             ],
             items: [

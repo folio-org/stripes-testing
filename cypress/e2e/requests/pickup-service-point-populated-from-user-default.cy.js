@@ -1,9 +1,4 @@
-import {
-  FULFILMENT_PREFERENCES,
-  ITEM_STATUS_NAMES,
-  LOCATION_IDS,
-  REQUEST_TYPES,
-} from '../../support/constants';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewRequest from '../../support/fragments/requests/newRequest';
@@ -24,9 +19,12 @@ describe('Requests', () => {
       .then(() => ServicePoints.getCircDesk1ServicePointViaApi())
       .then((servicePoint) => {
         testData.servicePoint = servicePoint;
+      })
+      .then(() => cy.getLocations({ limit: 1 }))
+      .then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
           folioInstances: testData.folioInstances,
-          location: { id: LOCATION_IDS.MAIN_LIBRARY },
+          location,
         });
       })
       .then(() => cy.createTempUser([Permissions.uiRequestsAll.gui]))
