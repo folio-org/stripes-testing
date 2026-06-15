@@ -132,7 +132,7 @@ describe('Settings (Circulation)', () => {
       cy.reload();
       cy.wait(3000);
 
-      cy.get('.react-codemirror2').should('exist');
+      CirculationRules.verifyEditorExists();
 
       CirculationRules.checkCirculationRulesContainTextViaApi(`g ${patronGroupId}`);
       CirculationRules.checkCirculationRulesContainTextViaApi(`o ${defaultOverdueFinePolicy.id}`);
