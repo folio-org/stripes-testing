@@ -44,16 +44,16 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        InventoryInstances.getItemNoteTypes({ query: 'name="Binding"' }).then((noteTypes) => {
+        InventoryInstances.getItemNoteTypes({ query: 'name=="Binding"' }).then((noteTypes) => {
           bindingNoteTypeId = noteTypes[0].id;
         });
-        InventoryInstances.getItemNoteTypes({ query: 'name="Note"' }).then((noteTypes) => {
+        InventoryInstances.getItemNoteTypes({ query: 'name=="Note"' }).then((noteTypes) => {
           noteNoteTypeId = noteTypes[0].id;
         });
-        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+        InventoryInstances.getItemNoteTypes({ query: 'name=="Copy note"' }).then((noteTypes) => {
           copyNoteTypeId = noteTypes[0].id;
         });
-        InventoryInstances.getItemNoteTypes({ query: 'name="Electronic bookplate"' }).then(
+        InventoryInstances.getItemNoteTypes({ query: 'name=="Electronic bookplate"' }).then(
           (noteTypes) => {
             electronicBookplateNoteTypeId = noteTypes[0].id;
 
