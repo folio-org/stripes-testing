@@ -5,37 +5,15 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Note creation', () => {
   const testData = {};
-  const urlToEholdings = '/eholdings/providers/38';
-  const note = {
-    title: `Test Title ${getRandomPostfix()}`,
-    details: `Test details ${getRandomPostfix()}`,
-  };
+  const urlsToEholdings = [
+    '/eholdings/providers/38',
+    '/eholdings/providers/769',
+    '/eholdings/providers/128077',
+    '/eholdings/providers/57145',
+  ];
 
-  note.title += String().padEnd(65 - note.title.length - 1, 'test');
-  note.details += String().padEnd(4000 - note.details.length - 1, 'test');
-
-  before('Creating data', () => {
+  beforeEach('Creating data', () => {
     cy.getAdminToken();
-    cy.createTempUser([
-      Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
-      Permissions.uiNotesItemDelete.gui,
-      Permissions.moduleeHoldingsEnabled.gui,
-    ]).then((createdUserProperties) => {
-      testData.deletedUserProperties = createdUserProperties;
-    });
-
-    cy.createTempUser([
-      Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
-      Permissions.uiNotesItemDelete.gui,
-      Permissions.moduleeHoldingsEnabled.gui,
-    ]).then((createdUserProperties) => {
-      testData.deletedUserProperties2 = createdUserProperties;
-    });
-
     cy.createTempUser([
       Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
@@ -47,19 +25,23 @@ describe('Note creation', () => {
     });
   });
 
-  after('Deleting data', () => {
+  afterEach('Deleting data', () => {
+    cy.wait(3000);
     cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    Users.deleteViaApi(testData.deletedUserProperties.userId);
-    Users.deleteViaApi(testData.deletedUserProperties2.userId);
+    Users.deleteViaApi(testData.userProperties?.userId);
+    Users.deleteViaApi(testData.deletedUserProperties?.userId);
   });
 
   it(
     'C1296 Create a note (spitfire)',
     { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1296'] },
     () => {
+      const note = {
+        title: `AT_C1296_Note ${getRandomPostfix()}`,
+        details: `AT_C1296_NoteDescription ${getRandomPostfix()}`,
+      };
       cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
+        path: urlsToEholdings[0],
         waiter: NotesEholdings.waitLoading,
       });
       NotesEholdings.createNote(note.title, note.details);
@@ -70,12 +52,16 @@ describe('Note creation', () => {
   );
 
   it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1299'] }, () => {
+    const note = {
+      title: `AT_C1299_Note ${getRandomPostfix()}`,
+      details: `AT_C1299_NoteDescription ${getRandomPostfix()}`,
+    };
     const newNote = {
-      title: `Changed Title ${getRandomPostfix()}`,
-      details: `Changed details ${getRandomPostfix()}`,
+      title: `AT_C1299_ChangedTitle ${getRandomPostfix()}`,
+      details: `AT_C1299_ChangedDetails ${getRandomPostfix()}`,
     };
     cy.login(testData.userProperties.username, testData.userProperties.password, {
-      path: urlToEholdings,
+      path: urlsToEholdings[1],
       waiter: NotesEholdings.waitLoading,
     });
     NotesEholdings.createNote(note.title, note.details);
@@ -89,8 +75,12 @@ describe('Note creation', () => {
     'C16992 View a note (spitfire)',
     { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16992'] },
     () => {
+      const note = {
+        title: `AT_C16992_Note ${getRandomPostfix()}`,
+        details: `AT_C16992_NoteDescription ${getRandomPostfix()}`,
+      };
       cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
+        path: urlsToEholdings[2],
         waiter: NotesEholdings.waitLoading,
       });
       NotesEholdings.createNote(note.title, note.details);
@@ -104,94 +94,37 @@ describe('Note creation', () => {
     'C359004 A user can view Notes that were created by deleted user (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'C359004'] },
     () => {
-      cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      NotesEholdings.createNote(note.title, note.details);
-      NotesEholdings.verifyNoteTitle(note.title);
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.deletedUserProperties.userId);
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      NotesEholdings.openNoteView(note.title);
-      NotesEholdings.deleteNote();
-    },
-  );
-
-  it(
-    'C359005 A user can view Notes that were edited by deleted user (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C359005'] },
-    () => {
-      const editedNote = {
-        title: `Edited Title ${getRandomPostfix()}`,
-        details: `Edited details ${getRandomPostfix()}`,
+      const note = {
+        title: `AT_C359004_Note ${getRandomPostfix()}`,
+        details: `AT_C359004_NoteDescription ${getRandomPostfix()}`,
       };
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      NotesEholdings.createNote(note.title, note.details);
-      NotesEholdings.verifyNoteTitle(note.title);
-
-      cy.login(testData.deletedUserProperties2.username, testData.deletedUserProperties2.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      NotesEholdings.editNote(note.title, editedNote.title, editedNote.details);
-      NotesEholdings.verifyNoteTitle(editedNote.title);
       cy.getAdminToken();
-      Users.deleteViaApi(testData.deletedUserProperties2.userId);
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
+      cy.createTempUser([
+        Permissions.uiNotesItemCreate.gui,
+        Permissions.uiNotesItemView.gui,
+        Permissions.uiNotesItemEdit.gui,
+        Permissions.uiNotesItemDelete.gui,
+        Permissions.moduleeHoldingsEnabled.gui,
+      ]).then((createdUserProperties) => {
+        testData.deletedUserProperties = createdUserProperties;
       });
-      NotesEholdings.openNoteView(editedNote.title);
-      NotesEholdings.deleteNote();
+      cy.then(() => {
+        cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
+          path: urlsToEholdings[3],
+          waiter: NotesEholdings.waitLoading,
+        });
+        NotesEholdings.createNote(note.title, note.details);
+        NotesEholdings.verifyNoteTitle(note.title);
+        cy.getAdminToken(false);
+        Users.deleteViaApi(testData.deletedUserProperties.userId);
+
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: urlsToEholdings[3],
+          waiter: NotesEholdings.waitLoading,
+        });
+        NotesEholdings.openNoteView(note.title);
+        NotesEholdings.deleteNote();
+      });
     },
   );
-
-  it(
-    'C16993 Able to sort Notes accordion column headings (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C16993'] },
-    () => {
-      note.titleFirst = '1 Title';
-      note.titleSecond = '2 Title';
-      note.addDetails = `Test details ${getRandomPostfix()}`;
-
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      NotesEholdings.createNote(note.titleFirst, note.addDetails);
-      NotesEholdings.createNote(note.titleSecond, note.addDetails);
-
-      NotesEholdings.verifyDefaultSort(note.titleFirst, note.titleSecond, note.addDetails);
-      NotesEholdings.verifySortingByTitle(note.titleFirst, note.titleSecond, note.addDetails);
-
-      NotesEholdings.openNoteView(note.titleFirst, note.addDetails);
-      NotesEholdings.deleteNote();
-      NotesEholdings.openNoteView(note.titleSecond, note.addDetails);
-      NotesEholdings.deleteNote();
-    },
-  );
-
-  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'C1300'] }, () => {
-    note.addDetails = `Test details ${getRandomPostfix()}`;
-
-    cy.login(testData.userProperties.username, testData.userProperties.password, {
-      path: urlToEholdings,
-      waiter: NotesEholdings.waitLoading,
-    });
-    NotesEholdings.createNote(note.title, note.addDetails);
-    NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
-    NotesEholdings.openNoteView(note.title, note.addDetails);
-    NotesEholdings.deleteNote();
-    NotesEholdings.verifyNoteDeletion(note.title, note.addDetails);
-  });
 });

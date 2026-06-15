@@ -528,6 +528,7 @@ describe('Bulk-edit', () => {
               CapabilitySets.uiBulkEditLogsView,
             ],
           );
+          cy.resetTenant();
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,

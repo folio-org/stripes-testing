@@ -11,6 +11,7 @@ import {
   MultiColumnListRow,
   Pane,
   TextField,
+  Popover,
   including,
   matching,
   or,
@@ -66,6 +67,7 @@ const deleteModal = Modal('Delete authority file');
 const cancelDeletionButton = Button('No, do not delete');
 const deleteAssignedSourceFileErrorText = (sourceFileName) => `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
 const updateAssignedSourceFileErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved. Existing authority records are already assigned to this authority file.`;
+const optimisticLockingErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved because it is not the most recent version.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -301,6 +303,7 @@ export default {
     lastUpdatedBy,
     isDeletable,
     source,
+    isEditable = true,
   ) {
     const targetRow = getTargetRowWithFile(name);
 
@@ -309,7 +312,6 @@ export default {
       targetRow.find(MultiColumnListCell(baseUrl)).exists(),
       targetRow.find(activeCheckbox).has({ checked: isActive, disabled: true }),
       targetRow.find(MultiColumnListCell(including(lastUpdatedBy))).exists(),
-      targetRow.find(editButton).exists(),
     ]);
     prefix.split(',').forEach((prefixValue) => {
       cy.expect(
@@ -318,6 +320,7 @@ export default {
     });
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
     if (source) cy.expect(targetRow.find(sourceCell).has({ content: source }));
+    if (isEditable) cy.expect(targetRow.find(editButton).exists());
   },
 
   checkSourceFileExistsByName(fileName, isExist = true) {
@@ -495,21 +498,30 @@ export default {
     cy.expect(targetRow.find(cancelButton).has({ disabled: !isEnabled }));
   },
 
-  checkDefaultSourceFilesExist() {
+  checkDefaultSourceFilesExist({ editIconsShown = true, updatedByUser = null } = {}) {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
         MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: false }),
       );
       cy.expect([
-        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),
-        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
-        targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
-        targetRow.find(sourceCell).has({ content: AUTHORITY_FILE_SOURCES.FOLIO }),
         targetRow
-          .find(MultiColumnListCell({ content: matching(/\d{1,2}\/\d{1,2}\/\d{4} by */) }))
+          .find(MultiColumnListCell(defaultFolioAuthorityFile.prefix, { columnIndex: 1 }))
           .exists(),
+        targetRow
+          .find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith, { columnIndex: 2 }))
+          .exists(),
+        targetRow
+          .find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl, { columnIndex: 3 }))
+          .exists(),
+        targetRow.find(sourceCell).has({ content: AUTHORITY_FILE_SOURCES.FOLIO }),
         targetRow.find(activeCheckbox).has({ disabled: true }),
-        targetRow.find(editButton).exists(),
+        targetRow
+          .find(
+            MultiColumnListCell(matching(`\\d{1,2}/\\d{1,2}/\\d{4} by ${updatedByUser || '.*'}`)),
+          )
+          .exists(),
+        editIconsShown ? targetRow.find(editButton).exists() : targetRow.find(editButton).absent(),
+        targetRow.find(deleteButton).absent(),
       ]);
     });
   },
@@ -588,6 +600,16 @@ export default {
     cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
   },
 
+  verifyActiveColumnTooltipText() {
+    cy.do(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).click());
+    cy.expect(
+      Popover({
+        content:
+          'Select a file as "Active" if users should be able to create a new authority record for the file',
+      }).exists(),
+    );
+  },
+
   checkNewButtonShown(isShown = true) {
     if (isShown) cy.expect(newButton.exists());
     else cy.expect(newButton.absent());
@@ -613,5 +635,14 @@ export default {
     cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).exists());
     InteractorsTools.dismissCallout(updateAssignedSourceFileErrorText(sourceFileName));
     cy.expect(Callout(updateAssignedSourceFileErrorText(sourceFileName)).absent());
+  },
+
+  verifyOptimisticLockingError(sourceFileName) {
+    cy.expect(Callout(optimisticLockingErrorText(sourceFileName)).exists());
+  },
+
+  closePane() {
+    cy.do(manageAuthorityFilesPane.find(Button({ icon: 'times' })).click());
+    cy.expect(manageAuthorityFilesPane.absent());
   },
 };

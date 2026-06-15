@@ -5,7 +5,12 @@ require('dotenv').config();
 
 const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 
-const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath, testTypes.edgeCases];
+const selectedTestTypes = [
+  testTypes.smoke,
+  testTypes.criticalPath,
+  testTypes.extendedPath,
+  testTypes.edgeCases,
+];
 
 const selectedStatus = [
   // status.Passed,
@@ -56,7 +61,12 @@ function grepTests() {
     })
     .then(() => {
       console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
-      splitTestsOnChunks(numberOfChunks, removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '), envVars, printSpecs);
+      splitTestsOnChunks(
+        numberOfChunks,
+        removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '),
+        envVars,
+        printSpecs,
+      );
     });
 }
 grepTests();

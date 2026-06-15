@@ -19,7 +19,6 @@ describe('Inventory', () => {
       tag610: '610',
       rowIndex: 20,
       subjectName: 'C375163 SuperCorp',
-      instanceTitle: 'C375163 Testfire : a litany for survival',
     };
 
     const marcFiles = [
@@ -42,7 +41,8 @@ describe('Inventory', () => {
 
     before('Creating data', () => {
       cy.getAdminToken();
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375163*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375163');
+      InventoryInstances.deleteInstanceByTitleViaApi('C375163');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -52,6 +52,7 @@ describe('Inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, false);
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -115,6 +116,8 @@ describe('Inventory', () => {
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(6, testData.subjectName);
+        InventorySearchAndFilter.clickResetAllButton();
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.switchToSearchTab();
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
@@ -123,9 +126,11 @@ describe('Inventory', () => {
         QuickMarcEditor.confirmUnlinkingField();
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false, {
+          allUnlinked: true,
+        });
         BrowseSubjects.browse(testData.subjectName);
         BrowseSubjects.checkNoAuthorityIconDisplayedForRow(5, testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);

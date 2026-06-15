@@ -122,7 +122,9 @@ export default {
   // resulting in header elements going off the top of the screen. Suppress this
   // behavior here.
   openSearchResultPreviewByTitle(title) {
-    cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible').click({ scrollBehavior: false });
+    cy.xpath(`//button[contains(text(),"${title}")]`)
+      .should('be.visible')
+      .click({ scrollBehavior: false });
   },
 
   checkPreviewContains(field, value) {
@@ -189,5 +191,12 @@ export default {
 
   verifyInstanceListCollapsed() {
     cy.get('[class*="instance-list"]').should('not.exist');
+  },
+
+  verifyInstanceListSize(index, count) {
+    cy.get('[class*="instance-list"]')
+      .eq(index)
+      .find('tbody tr')
+      .should('have.length', count);
   },
 };

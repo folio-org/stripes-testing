@@ -128,7 +128,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C411617 ListRecords: FOLIO: Verify that bound-with items are retrieved in response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C4116170', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C411617', 'nonParallel'] },
       () => {
         // Step 1: Send ListRecords request with marc21_withholdings
         const fromDate = DateTools.getCurrentDateForOaiPmh(-2);

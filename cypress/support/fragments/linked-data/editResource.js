@@ -32,6 +32,7 @@ const cancelButton = Button('Cancel');
 const closeResourceButton = Button({ dataTestID: 'nav-close-button' });
 const editionStatementInput =
   '//div[@class="label" and text()="Edition Statement"]/following-sibling::div[@class="children-container"]/input';
+const instancesList = '//div[@data-testid="instances-list"]';
 
 export default {
   waitLoading(headingText) {
@@ -268,12 +269,12 @@ export default {
       .should('be.visible')
       .click();
     cy.wait(500);
+    // eslint-disable-next-line cypress/no-force
     cy.xpath(
       `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
     )
       .scrollIntoView()
       .should('be.visible')
-      // eslint-disable-next-line cypress/no-force
       .click({ force: true });
     cy.wait(500);
   },
@@ -292,12 +293,12 @@ export default {
         .should('be.visible')
         .click();
       cy.wait(500);
+      // eslint-disable-next-line cypress/no-force
       cy.xpath(
         `(//div[@class="label" and text()="Note type"])[${position}]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__menu")]//div[contains(@class, "simple-lookup__option") and text()="${noteType}"]`,
       )
         .scrollIntoView()
         .should('be.visible')
-        // eslint-disable-next-line cypress/no-force
         .click({ force: true });
       cy.wait(500);
     });
@@ -373,6 +374,16 @@ export default {
   duplicateInstance() {
     cy.expect(actionsButton.exists());
     cy.do(actionsButton.click());
+    cy.expect(duplicateButton.exists());
+    cy.do(duplicateButton.click());
+    cy.wait(1000);
+    cy.expect(Heading('Duplicate instance').exists());
+  },
+
+  duplicateInstanceWhenMultipleActions() {
+    cy.xpath(instanceActionsButton)
+      .should('exist')
+      .click();
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
@@ -726,6 +737,10 @@ export default {
     cy.expect(newInstanceButton.has({ disabled: true }));
   },
 
+  checkNewInstanceButtonHidden() {
+    cy.expect(newInstanceButton.absent());
+  },
+
   checkInstanceActionsHidden() {
     cy.xpath(instanceActionsButton).should('not.exist');
   },
@@ -857,6 +872,21 @@ export default {
     cy.wait(500);
   },
 
+  verifyInstancesList() {
+    cy.xpath(instancesList).should('be.visible');
+  },
+
+  verifyInstancesListTableColumns() {
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Title"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Publisher"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Year"]').should('exist');
+  },
+
+  verifyInstancesListSize(count) {
+    cy.xpath(instancesList).xpath('//table/tbody/tr').should('have.length', count);
+    cy.xpath(instancesList).xpath('//table/tbody/tr/td/button[text()="Edit"]').should('have.length', count);
+  },
+
   verifyWorkInstanceActionOptions() {
     cy.xpath(instanceActionsButton).should('be.visible').click();
     cy.expect(duplicateButton.exists());
@@ -884,6 +914,76 @@ export default {
     cy.xpath(exportInstanceActionsButton).should('be.visible');
     cy.xpath(instanceChangeProfileActionsButton).should('be.visible');
     cy.do(actionsButton.click());
+    cy.wait(500);
+  },
+
+  setModeOfIssuance(value) {
+    cy.wait(1000);
+    cy.xpath(
+      '//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__control")]',
+    ).click();
+    cy.wait(500);
+    cy.xpath(
+      `//div[@class="label" and text()="Mode of Issuance"]/following-sibling::div//div[contains(@class, "simple-lookup__menu")]/div/div[text()="${value}"]`,
+    ).click();
+    cy.wait(500);
+  },
+
+  addIsbnIdentifier(value, qualifier) {
+    cy.wait(1000);
+    cy.xpath("(//div[text()='Identifiers'])[1]/following::select[1]").select('ISBN');
+    cy.wait(500);
+    cy.xpath("((//div[text()='Identifiers'])[1]//following::div/div/input)[1]")
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(500);
+    cy.xpath(
+      '(//div[@class="label" and text()="Qualifier"])[1]/../../div[@class="children-container"]/input',
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(500);
+  },
+
+  changeIdentifierQualifier(qualifier, position = 1) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="Qualifier"])[${position}]/../../div[@class="children-container"]/input`,
+    )
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(qualifier);
+    cy.wait(1000);
+  },
+
+  changeIdentifierValue(value, position = 1) {
+    cy.wait(1000);
+    cy.xpath(`((//div[text()='Identifiers'])[${position}]//following::div/div/input)[1]`)
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(value);
+    cy.wait(1000);
+  },
+
+  setValueForSearchableSimpleField(value, field) {
+    cy.wait(1000);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//input[contains(@class, "simple-lookup__input")]`,
+    )
+      .click()
+      .type(value);
+    cy.wait(1500);
+    cy.xpath(
+      `(//div[@class="label" and text()="${field}"])[1]/../../div[@class="children-container"]//div[contains(@class, "simple-lookup__option")]`,
+    )
+      .first()
+      .click();
     cy.wait(500);
   },
 };

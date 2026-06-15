@@ -5,15 +5,12 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
-    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = {
       tag851: '851',
       tag852: '852',
@@ -26,35 +23,35 @@ describe('MARC', () => {
       propertyName: 'instance',
     };
 
-    let defaultLocation;
+    let locationData;
     let user;
 
     before(() => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-      ]).then((createdUserProperties) => {
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        testData.tag852_B_value = `$b ${defaultLocation.code}`;
-        testData.tag852_B_E_values = `$b ${defaultLocation.code} $e Test`;
-        Location.createViaApi(defaultLocation);
-        user = createdUserProperties;
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                testData.recordID = record[marcFile.propertyName].id;
-              });
+      cy.getLocations({
+        limit: 1,
+        query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+      }).then((location) => {
+        locationData = location;
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+          Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.tag852_B_value = `$b ${locationData.code}`;
+          testData.tag852_B_E_values = `$b ${locationData.code} $e Test`;
+          user = createdUserProperties;
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.recordID = record[marcFile.propertyName].id;
             });
-          },
-        );
+          });
+        });
       });
     });
 
@@ -74,7 +71,9 @@ describe('MARC', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventoryInstances.searchByTitle(testData.recordID);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(testData.recordID);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.updateExistingField(testData.tag852, testData.tag852_B_value);
         QuickMarcEditor.checkContent(testData.tag852_B_value, 5);
@@ -89,7 +88,7 @@ describe('MARC', () => {
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
         HoldingsRecordView.waitLoading();
-        HoldingsRecordView.checkPermanentLocation(defaultLocation.name);
+        HoldingsRecordView.checkPermanentLocation(locationData.name);
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
           testData.holdingsID = holdingsID;
         });

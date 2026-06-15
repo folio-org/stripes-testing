@@ -12,7 +12,6 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      packageName: 'Wiley',
       package: 'Wiley Online Library Originated From Wiley',
     };
 
@@ -44,11 +43,11 @@ describe('eHoldings', () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackages.waitLoading();
 
-        EHoldingsPackagesSearch.byName(testData.packageName);
+        EHoldingsPackagesSearch.byName(testData.package);
         EHoldingsPackages.waitLoading();
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
 
-        EHoldingsPackages.openPackage();
+        EHoldingsPackages.openPackageWithExpectedName(testData.package);
         EHoldingsPackage.waitLoading(testData.package);
         EHoldingsPackage.addToHoldings();
         EHoldingsPackage.verifySelectedPackage();
