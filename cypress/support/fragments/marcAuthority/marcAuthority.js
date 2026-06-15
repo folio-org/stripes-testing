@@ -607,4 +607,8 @@ export default {
     cy.do(rootSection.find(closeButton).click());
     cy.expect(rootSection.absent());
   },
+
+  checkViewPaneInFocus({ isFocused = true } = {}) {
+    cy.expect(rootHeader.has({ focused: isFocused }));
+  },
 };
