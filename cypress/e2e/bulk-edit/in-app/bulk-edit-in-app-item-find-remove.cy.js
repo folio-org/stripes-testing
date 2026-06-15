@@ -10,9 +10,11 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS, ITEM_NOTES } from '../../../support/constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
+let actionNoteTypeId;
+let copyNoteTypeId;
 const notes = {
   admin: 'Te;st: [sample] no*te',
   action: 'Te;st: [sample] no*te',
@@ -45,37 +47,45 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.hrid = res.hrid;
 
-            itemData.administrativeNotes = [notes.admin];
+        InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
+          actionNoteTypeId = noteTypes[0].id;
+        });
+        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+          copyNoteTypeId = noteTypes[0].id;
 
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.action,
-                staffOnly: false,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copy,
-                staffOnly: false,
-              },
-            ];
-            itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkIn, staffOnly: false },
-              { noteType: 'Check out', note: notes.checkOut, staffOnly: false },
-            ];
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              const itemData = res;
+              item.hrid = res.hrid;
+
+              itemData.administrativeNotes = [notes.admin];
+
+              itemData.notes = [
+                {
+                  itemNoteTypeId: actionNoteTypeId,
+                  note: notes.action,
+                  staffOnly: false,
+                },
+                {
+                  itemNoteTypeId: copyNoteTypeId,
+                  note: notes.copy,
+                  staffOnly: false,
+                },
+              ];
+              itemData.circulationNotes = [
+                { noteType: 'Check in', note: notes.checkIn, staffOnly: false },
+                { noteType: 'Check out', note: notes.checkOut, staffOnly: false },
+              ];
+              cy.updateItemViaApi(itemData);
+              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

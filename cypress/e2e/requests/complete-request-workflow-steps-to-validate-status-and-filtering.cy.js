@@ -3,8 +3,6 @@ import {
   FULFILMENT_PREFERENCES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
-  LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -24,6 +22,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Modals from '../../support/fragments/modals';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Requests', () => {
   let itemData;
@@ -46,9 +45,14 @@ describe('Requests', () => {
       requestServicePoint = sp2;
       checkInResultsData.statusForS = [`In transit - ${sp2.name}`];
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+
+    Locations.getViaApiAnyDefault().then((locations) => {
+      const locationId = locations[0].id;
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: locationId },
+      });
     });
     cy.createTempUser([
       Permissions.uiRequestsAll.gui,

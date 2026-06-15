@@ -7,13 +7,13 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let userId;
 const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
   barcode: `a-${getRandomPostfix()}`,
-  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+  permanentLocationId: null,
   name: 'Popular Reading Collection',
 };
 
@@ -21,7 +21,7 @@ const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `456${getRandomPostfix()}`,
   name: 'Online',
-  permanentLocationId: LOCATION_IDS.ONLINE,
+  permanentLocationId: null,
 };
 
 describe('Inventory', () => {
@@ -34,22 +34,38 @@ describe('Inventory', () => {
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
-        [item, secondItem].forEach((el) => {
-          el.instanceId = InventoryInstances.createInstanceViaApi(el.instanceName, el.barcode);
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${el.instanceId}"`,
-          }).then((holdings) => {
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              permanentLocationId: el.permanentLocationId,
-            });
-          });
-        });
+        cy.getLocations({
+          limit: 1,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
+        }).then((loc) => {
+          item.permanentLocationId = loc.id;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+          cy.getLocations({ limit: 1, query: `"name"="${LOCATION_NAMES.ONLINE_UI}"` }).then(
+            (onlineLoc) => {
+              secondItem.permanentLocationId = onlineLoc.id;
+
+              [item, secondItem].forEach((el) => {
+                el.instanceId = InventoryInstances.createInstanceViaApi(
+                  el.instanceName,
+                  el.barcode,
+                );
+                cy.getHoldings({
+                  limit: 1,
+                  query: `"instanceId"="${el.instanceId}"`,
+                }).then((holdings) => {
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    permanentLocationId: el.permanentLocationId,
+                  });
+                });
+              });
+
+              cy.login(userProperties.username, userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventorySearchAndFilter.waitLoading,
+              });
+            },
+          );
         });
       });
     });

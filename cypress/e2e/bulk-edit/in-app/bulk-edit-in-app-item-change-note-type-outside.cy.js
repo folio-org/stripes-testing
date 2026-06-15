@@ -13,9 +13,9 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
+let copyNoteTypeId;
 const notes = {
   copyOne: 'copyNote',
   copyTwo: 'copyNote',
@@ -42,36 +42,41 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.hrid = res.hrid;
 
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copyOne,
-                staffOnly: true,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
-                note: notes.copyTwo,
-                staffOnly: false,
-              },
-            ];
-            itemData.circulationNotes = [
-              { noteType: 'Check out', note: notes.checkOutOne, staffOnly: true },
-              { noteType: 'Check out', note: notes.checkOutTwo, staffOnly: false },
-            ];
-            cy.updateItemViaApi(itemData);
-          },
-        );
+        InventoryInstances.getItemNoteTypes({ query: 'name="Copy note"' }).then((noteTypes) => {
+          copyNoteTypeId = noteTypes[0].id;
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              const itemData = res;
+              item.hrid = res.hrid;
+
+              itemData.notes = [
+                {
+                  itemNoteTypeId: copyNoteTypeId,
+                  note: notes.copyOne,
+                  staffOnly: true,
+                },
+                {
+                  itemNoteTypeId: copyNoteTypeId,
+                  note: notes.copyTwo,
+                  staffOnly: false,
+                },
+              ];
+              itemData.circulationNotes = [
+                { noteType: 'Check out', note: notes.checkOutOne, staffOnly: true },
+                { noteType: 'Check out', note: notes.checkOutTwo, staffOnly: false },
+              ];
+              cy.updateItemViaApi(itemData);
+            },
+          );
+        });
       });
     });
 
