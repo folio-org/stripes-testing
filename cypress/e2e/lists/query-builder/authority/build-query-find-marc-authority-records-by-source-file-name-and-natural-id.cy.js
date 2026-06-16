@@ -12,6 +12,7 @@ import {
   AUTHORITY_QUERY_FIELDS,
   DEFAULT_FOLIO_AUTHORITY_FILES,
 } from '../../../../support/constants';
+import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
@@ -79,6 +80,12 @@ describe('Lists', () => {
       before('Create test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1322608_');
+        cy.getAuthoritySourceFileDataViaAPI('AT_C1322608_').then(() => {
+          Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
+            ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
+            cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
+          });
+        });
 
         // Create local authority source file; record 20 will use its code as the naturalId prefix
         cy.createAuthoritySourceFileViaAPI({
@@ -86,132 +93,135 @@ describe('Lists', () => {
           code: testData.localSourceFileCode,
         }).then((body) => {
           localSourceFileId = body.id;
-        });
+          cy.wait(70_000); // Wait for the source file to be processed
+          cy.getAdminToken();
 
-        // Records 1–5: LCNAF (prefix 'n'; record 1 uses 'nr' for step 17)
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'nr',
-          `1322608${randomDigits}`,
-          makeFields(headings[0]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'n',
-          `1322608${randomDigits}`,
-          makeFields(headings[1]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'nb',
-          `1322608${randomDigits}`,
-          makeFields(headings[2]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'no',
-          `1322608${randomDigits}`,
-          makeFields(headings[3]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'ns',
-          `1322608${randomDigits}`,
-          makeFields(headings[4]),
-        );
-        // Record 6: LCSH (prefix 'sh')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'sh',
-          `1322608${randomDigits}`,
-          makeFields(headings[5]),
-        );
-        // Record 7: LC Children's Subject Headings (prefix 'sj')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'sj',
-          `1322608${randomDigits}`,
-          makeFields(headings[6]),
-        );
-        // Record 8: LCDGT (prefix 'dg')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'dg',
-          `1322608${randomDigits}`,
-          makeFields(headings[7]),
-        );
-        // Record 9: LCGFT (prefix 'gf')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'gf',
-          `1322608${randomDigits}`,
-          makeFields(headings[8]),
-        );
-        // Record 10: LCMPT (prefix 'mp')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'mp',
-          `1322608${randomDigits}`,
-          makeFields(headings[9]),
-        );
-        // Record 11: FAST (prefix 'fst')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'fst',
-          `1322608${randomDigits}`,
-          makeFields(headings[10]),
-        );
-        // Records 12–13: MeSH (prefix 'D')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'D',
-          `1322608${randomDigits}1`,
-          makeFields(headings[11]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'D',
-          `1322608${randomDigits}2`,
-          makeFields(headings[12]),
-        );
-        // Record 14: RBMS (prefix 'rbmscv')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'rbmscv',
-          `1322608${randomDigits}`,
-          makeFields(headings[13]),
-        );
-        // Record 15: TGM (prefix 'tgm')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'tgm',
-          `1322608${randomDigits}`,
-          makeFields(headings[14]),
-        );
-        // Records 16–17: AAT (prefix 'aat')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'aat',
-          `1322608${randomDigits}1`,
-          makeFields(headings[15]),
-        );
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'aat',
-          `1322608${randomDigits}2`,
-          makeFields(headings[16]),
-        );
-        // Record 18: GSAFD (prefix 'gsafd')
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'gsafd',
-          `1322608${randomDigits}`,
-          makeFields(headings[17]),
-        );
-        // Record 19: no source file ('zz' doesn't match any known source file code)
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          'zz',
-          `1322608${randomDigits}`,
-          makeFields(headings[18]),
-        );
-        // Record 20: local source file (prefix = localSourceFileCode)
-        MarcAuthorities.createMarcAuthorityViaAPI(
-          localSourceFileCode,
-          `1322608${randomDigits}`,
-          makeFields(headings[19]),
-        );
+          // Records 1–5: LCNAF (prefix 'n'; record 1 uses 'nr' for step 17)
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'nr',
+            `1322608${randomDigits}`,
+            makeFields(headings[0]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'n',
+            `1322608${randomDigits}`,
+            makeFields(headings[1]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'nb',
+            `1322608${randomDigits}`,
+            makeFields(headings[2]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'no',
+            `1322608${randomDigits}`,
+            makeFields(headings[3]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'ns',
+            `1322608${randomDigits}`,
+            makeFields(headings[4]),
+          );
+          // Record 6: LCSH (prefix 'sh')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'sh',
+            `1322608${randomDigits}`,
+            makeFields(headings[5]),
+          );
+          // Record 7: LC Children's Subject Headings (prefix 'sj')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'sj',
+            `1322608${randomDigits}`,
+            makeFields(headings[6]),
+          );
+          // Record 8: LCDGT (prefix 'dg')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'dg',
+            `1322608${randomDigits}`,
+            makeFields(headings[7]),
+          );
+          // Record 9: LCGFT (prefix 'gf')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'gf',
+            `1322608${randomDigits}`,
+            makeFields(headings[8]),
+          );
+          // Record 10: LCMPT (prefix 'mp')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'mp',
+            `1322608${randomDigits}`,
+            makeFields(headings[9]),
+          );
+          // Record 11: FAST (prefix 'fst')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'fst',
+            `1322608${randomDigits}`,
+            makeFields(headings[10]),
+          );
+          // Records 12–13: MeSH (prefix 'D')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'D',
+            `1322608${randomDigits}1`,
+            makeFields(headings[11]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'D',
+            `1322608${randomDigits}2`,
+            makeFields(headings[12]),
+          );
+          // Record 14: RBMS (prefix 'rbmscv')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'rbmscv',
+            `1322608${randomDigits}`,
+            makeFields(headings[13]),
+          );
+          // Record 15: TGM (prefix 'tgm')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'tgm',
+            `1322608${randomDigits}`,
+            makeFields(headings[14]),
+          );
+          // Records 16–17: AAT (prefix 'aat')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'aat',
+            `1322608${randomDigits}1`,
+            makeFields(headings[15]),
+          );
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'aat',
+            `1322608${randomDigits}2`,
+            makeFields(headings[16]),
+          );
+          // Record 18: GSAFD (prefix 'gsafd')
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'gsafd',
+            `1322608${randomDigits}`,
+            makeFields(headings[17]),
+          );
+          // Record 19: no source file ('zz' doesn't match any known source file code)
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            'zz',
+            `1322608${randomDigits}`,
+            makeFields(headings[18]),
+          );
+          // Record 20: local source file (prefix = localSourceFileCode)
+          MarcAuthorities.createMarcAuthorityViaAPI(
+            localSourceFileCode,
+            `1322608${randomDigits}`,
+            makeFields(headings[19]),
+          );
 
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
+          cy.createTempUser([]).then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
+          });
         });
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1322608_');
+        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(localSourceFileName);
         cy.deleteAuthoritySourceFileViaAPI(localSourceFileId, true);
         Users.deleteViaApi(userData.userId);
       });
