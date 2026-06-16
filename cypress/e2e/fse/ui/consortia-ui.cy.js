@@ -22,8 +22,6 @@ describe('fse-consortia - UI (no data manipulation)', () => {
         cy.getUserTenants().then((userTenants) => {
           // get primary tenant
           const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
-          cy.reload();
-          cy.wait(3000);
           ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
         });
         cy.getUserAffiliationsCount().then((count) => {
@@ -54,6 +52,7 @@ describe('fse-consortia - UI (no data manipulation)', () => {
                 primaryTenant.tenantName,
                 userTenants[tenantNumber].tenantName,
               );
+              cy.wait(2000);
               // switch back
               ConsortiumMgr.switchActiveAffiliation(
                 userTenants[tenantNumber].tenantName,
