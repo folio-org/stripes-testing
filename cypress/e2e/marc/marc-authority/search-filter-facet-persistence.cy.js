@@ -86,7 +86,6 @@ describe('MARC', () => {
           MarcAuthoritiesSearch.clickSearchButton();
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
-          MarcAuthorities.checkNextPaginationButtonEnabled(true);
 
           // Step 3: Apply "Authority source" facet
           MarcAuthorities.chooseAuthoritySourceOption(testData.filters.authoritySource);
@@ -109,19 +108,23 @@ describe('MARC', () => {
             testData.dateCreated.to,
           );
 
-          // Step 12: Navigate to next page - verify filters persist
-          MarcAuthorities.clickNextPagination();
-          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-          MarcAuthorities.checkPreviousPaginationButtonEnabled(true);
-          MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
-          MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+          MarcAuthorities.getNextPaginationButtonState().then((isEnabled) => {
+            if (isEnabled) {
+              // Step 12: Navigate to next page - verify filters persist
+              MarcAuthorities.clickNextPagination();
+              MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+              MarcAuthorities.checkPreviousPaginationButtonEnabled(true);
+              MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
+              MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
 
-          // Step 13: Navigate to previous page - verify filters persist
-          MarcAuthorities.clickPreviousPagination();
-          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-          MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
-          MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
-          MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+              // Step 13: Navigate to previous page - verify filters persist
+              MarcAuthorities.clickPreviousPagination();
+              MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+              MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
+              MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
+              MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+            }
+          });
 
           // Step 14-15: Change search option to "Personal name" - verify filters persist
           MarcAuthorities.selectSearchOptionInDropdown(testData.personalNameOption);

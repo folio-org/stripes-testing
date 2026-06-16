@@ -1,6 +1,6 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
-  RECORD_STATUSES,
+  JOB_STATUS_NAMES,
   AUTHORITY_LDR_FIELD_STATUS_DROPDOWN,
   AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
   AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
@@ -31,6 +31,7 @@ describe('MARC', () => {
           title: 'C350902Congress and foreign policy series',
           nonExactTitle: 'C350902Congress',
           searchOption: 'Uniform title',
+          searchOptionC350667: 'Personal name',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
             tag: '901',
@@ -46,16 +47,17 @@ describe('MARC', () => {
           type: 'Authorized',
         },
       };
-      const querySearch = ['C350902*', 'C350667*'];
+      const querySearch = ['C350902*', 'C350667'];
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const createdJobProfile = {
         profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
         acceptedType: 'MARC',
       };
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-      const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
+      const updatedfileName = `c350667testMarcFileUpd.${getRandomPostfix()}.mrc`;
       const propertyName = 'authority';
       let createdAuthorityID;
+      let createdAuthorityID350667;
 
       before('Creating data', () => {
         cy.getAdminToken();
@@ -92,6 +94,13 @@ describe('MARC', () => {
               });
             },
           );
+          DataImport.uploadFileViaApi('marcAuthFileForC350667.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.forEach((record) => {
+                createdAuthorityID350667 = record[propertyName].id;
+              });
+            },
+          );
         });
       });
 
@@ -105,7 +114,8 @@ describe('MARC', () => {
       after('Deleting data', () => {
         cy.getAdminToken();
         SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
-        if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
+        if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID, true);
+        if (createdAuthorityID350667) MarcAuthority.deleteViaAPI(createdAuthorityID350667, true);
         if (testData?.userProperties?.userId) {
           Users.deleteViaApi(testData.userProperties.userId);
         }
@@ -115,17 +125,21 @@ describe('MARC', () => {
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
         { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350667'] },
         () => {
+          const updatedHeading = 'AT_C350667_MarcAuthority UPD';
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
+          DataImport.uploadFile('marcAuthFileForC350667updated.mrc', updatedfileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search(createdJobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(updatedfileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(updatedfileName);
-          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
-          MarcAuthority.contains('MARC');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+          MarcAuthorities.waitLoading();
+          MarcAuthorities.searchBy(testData.authority.searchOptionC350667, updatedHeading);
+          MarcAuthorities.selectIncludingTitle(updatedHeading);
+          MarcAuthority.waitLoading();
+          MarcAuthority.contains(updatedHeading);
         },
       );
 
