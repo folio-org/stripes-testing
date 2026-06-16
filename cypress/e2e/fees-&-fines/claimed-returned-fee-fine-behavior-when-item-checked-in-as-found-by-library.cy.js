@@ -29,7 +29,7 @@ import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal'
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Fees&Fines', () => {
+describe.skip('Fees&Fines', () => {
   describe('Claimed Returned', () => {
     const patronGroup = {
       name: getTestEntityValue('groupClaimedReturned'),

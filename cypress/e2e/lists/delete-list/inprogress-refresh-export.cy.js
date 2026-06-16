@@ -8,7 +8,7 @@ describe('Lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('list'),
+      name: getTestEntityValue('list_C411770'),
       recordType: 'Users',
       status: 'Active',
       visibility: 'Shared',

@@ -217,7 +217,7 @@ describe('Fees&Fines', () => {
       },
     );
     after(() => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       CheckInActions.checkinItemViaApi({
         itemBarcode: testData.barcode,
         servicePointId: testData.userServicePoint,
