@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
@@ -25,6 +25,8 @@ describe('MARC', () => {
     let firstHolding = '';
     let secondHolding = '';
     let ITEM_BARCODE;
+    let onlineLocationId;
+    let popularReadingCollectionLocationId;
     const instanceTitle = `Barcode search test ${Number(new Date())}`;
 
     before(() => {
@@ -58,6 +60,14 @@ describe('MARC', () => {
             InventoryHoldings.getHoldingSources({ limit: 2 }).then((holdingsSources) => {
               source = holdingsSources;
             });
+            cy.getLocations({ query: `name="${LOCATION_NAMES.ONLINE_UI}"` }).then((res) => {
+              onlineLocationId = res.id;
+            });
+            cy.getLocations({
+              query: `name="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
+            }).then((res) => {
+              popularReadingCollectionLocationId = res.id;
+            });
             cy.getInstanceTypes({ limit: 1 });
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -76,12 +86,12 @@ describe('MARC', () => {
               holdings: [
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: LOCATION_IDS.ONLINE,
+                  permanentLocationId: onlineLocationId,
                   sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
-                  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+                  permanentLocationId: popularReadingCollectionLocationId,
                   sourceId: source[1].id,
                 },
               ],
