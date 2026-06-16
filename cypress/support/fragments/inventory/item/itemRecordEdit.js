@@ -67,9 +67,15 @@ export default {
       saveAndCloseBtn.has({ disabled: true }),
     ]);
   },
+  cancel: () => {
+    cy.do(cancelBtn.click());
+  },
   addBarcode: (barcode) => {
     cy.do(adminDataFields.barcode.fillIn(barcode));
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+  verifyBarcodeFieldFocusedByDefault: () => {
+    cy.get('input[name="barcode"]').should('be.focused');
   },
   addAdministrativeNote: (note) => {
     cy.do([
