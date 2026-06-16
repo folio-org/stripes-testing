@@ -82,6 +82,7 @@ describe('MARC', () => {
           testData.localSourceId = source.id;
           testData.localSourceCode = source.codes[0];
           testData.localSourceName = source.name;
+          cy.wait(70_000); // wait for source file to be processed
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
