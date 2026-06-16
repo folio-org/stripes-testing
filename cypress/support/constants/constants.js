@@ -181,13 +181,6 @@ export const LOCATION_NAMES = {
   DCB_UI: 'DCB',
 };
 
-export const LOCATION_IDS = {
-  ANNEX: '53cf956f-c1df-410b-8bea-27f712cca7c0',
-  MAIN_LIBRARY: 'fcd64ce1-6995-48f0-840e-89ffa2288371',
-  ONLINE: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
-  POPULAR_READING_COLLECTION: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-};
-
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
@@ -963,16 +956,6 @@ export const patronGroupNames = {
   UNDERGRAD: 'undergrad',
 };
 
-export const patronGroupUuids = {
-  STAFF: '3684a786-6671-4268-8ed0-9db82ebca60b',
-  FACULTY: '503a81cd-6c26-400f-b620-14c08943697c',
-  UNDERGRAD: 'bdc2b6d4-5ceb-4a12-ab46-249b9a68473e',
-};
-
-export const electronicAccessRelationshipId = {
-  RESOURCE: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-};
-
 export const ELECTRONIC_ACCESS_RELATIONSHIP_NAME = {
   RESOURCE: 'Resource',
   VERSION_OF_RESOURCE: 'Version of resource',
@@ -988,43 +971,6 @@ export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
   PREFIX: 'Prefix',
   HRID_STARTS_WITH: 'HRID starts with',
   BASE_URL: 'Base URL',
-};
-
-export const HOLDING_NOTES = {
-  ACTION_NOTE: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
-  ELECTRONIC_BOOKPLATE_NOTE: '88914775-f677-4759-b57b-1a33b90b24e0',
-  BINDING_NOTE: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
-  PROVENANCE_NOTE: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
-};
-
-export const ITEM_NOTES = {
-  ACTION_NOTE: '0e40884c-3523-4c6d-8187-d578e3d2794e',
-  BINDING_NOTE: '87c450be-2033-41fb-80ba-dd2409883681',
-  NOTE_NOTE: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
-  COPY_NOTE: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
-  ELECTRONIC_BOOKPLATE_NOTE: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
-};
-
-export const INSTANCE_NOTE_IDS = {
-  ACTION_NOTE: '1c017b8d-c783-4f63-b620-079f7a5b9c07',
-  REPRODUCTION_NOTE: 'd548fdff-b71c-4359-8055-f1c008c30f01',
-  DISSERTATION_NOTE: 'b73cc9c2-c9fa-49aa-964f-5ae1aa754ecd',
-};
-
-export const INSTANCE_STATUS_TERM_IDS = {
-  CATALOGED: '9634a5ab-9228-4703-baf2-4d12ebc77d56',
-};
-
-export const INSTANCE_RESOURCE_TYPE_IDS = {
-  TEXT: '6312d172-f0cf-40f6-b27d-9fa8feaf332f',
-};
-
-export const LOAN_TYPE_IDS = {
-  SELECTED: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845',
-};
-
-export const MATERIAL_TYPE_IDS = {
-  DVD: '5ee11d91-f7e8-481d-b079-65d708582ccc',
 };
 
 export const EHOLDINGS_PACKAGE_HEADERS = [

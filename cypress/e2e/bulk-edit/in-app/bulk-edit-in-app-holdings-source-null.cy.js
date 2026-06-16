@@ -9,9 +9,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let user;
+let popularReadingCollectionLocationId;
 const holdingHRIDsFileName = `holdingHRIDs-${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -29,25 +30,32 @@ describe('Bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        item.instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getHoldings({
+        cy.getLocations({
           limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          item.holdingHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-            sourceId: null,
+          query: `"name"="${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}"`,
+        }).then((location) => {
+          popularReadingCollectionLocationId = location.id;
+
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.itemBarcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            item.holdingHRID = holdings[0].hrid;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: popularReadingCollectionLocationId,
+              sourceId: null,
+            });
+            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
           });
-          FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
         });
       });
     });

@@ -11,8 +11,9 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { APPLICATION_NAMES, LOCATION_IDS, LOCATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
 let invalidInstanceHRID;
@@ -20,6 +21,7 @@ let validAndInvalidInstanceHRIDsFileName;
 let fileNames;
 let instance;
 let instance2;
+const locations = {};
 
 describe(
   'Bulk-edit',
@@ -63,39 +65,47 @@ describe(
                   instance2.instanceName,
                   instance2.barcode,
                 );
-                cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-                  (holdings) => {
-                    instance.holdingUUID = holdings[0].id;
-                    delete holdings[0].temporaryLocationId;
-                    cy.updateHoldingRecord(holdings[0].id, {
-                      ...holdings[0],
-                      permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-                    });
-                  },
-                );
-                cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
-                  (holdings) => {
-                    instance2.holdingUUID = holdings[0].id;
-                    cy.updateHoldingRecord(holdings[0].id, {
-                      ...holdings[0],
-                      temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                      permanentLocationId: LOCATION_IDS.ONLINE,
-                    });
-                  },
-                );
-                cy.getInstanceById(instance.id).then((res) => {
-                  instance.hrid = res.hrid;
-                });
-                cy.getInstanceById(instance2.id)
-                  .then((res) => {
-                    instance2.hrid = res.hrid;
-                  })
-                  .then(() => {
-                    FileManager.createFile(
-                      `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
-                      `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
-                    );
+
+                Locations.getViaApiAnyDefault(3).then((loc) => {
+                  locations.first = loc[0].id;
+                  locations.firstName = loc[0].name;
+                  locations.second = loc[1].id;
+                  locations.third = loc[2].id;
+
+                  cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                    (holdings) => {
+                      instance.holdingUUID = holdings[0].id;
+                      delete holdings[0].temporaryLocationId;
+                      cy.updateHoldingRecord(holdings[0].id, {
+                        ...holdings[0],
+                        permanentLocationId: locations.first,
+                      });
+                    },
+                  );
+                  cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
+                    (holdings) => {
+                      instance2.holdingUUID = holdings[0].id;
+                      cy.updateHoldingRecord(holdings[0].id, {
+                        ...holdings[0],
+                        temporaryLocationId: locations.second,
+                        permanentLocationId: locations.third,
+                      });
+                    },
+                  );
+                  cy.getInstanceById(instance.id).then((res) => {
+                    instance.hrid = res.hrid;
                   });
+                  cy.getInstanceById(instance2.id)
+                    .then((res) => {
+                      instance2.hrid = res.hrid;
+                    })
+                    .then(() => {
+                      FileManager.createFile(
+                        `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
+                        `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
+                      );
+                    });
+                });
               });
             })
             .then(() => {
@@ -131,11 +141,7 @@ describe(
             BulkEditActions.openStartBulkEditForm();
             BulkEditActions.clearTemporaryLocation('holdings', 0);
             BulkEditActions.addNewBulkEditFilterString();
-            BulkEditActions.replacePermanentLocation(
-              LOCATION_NAMES.POPULAR_READING_COLLECTION,
-              'holdings',
-              1,
-            );
+            BulkEditActions.replacePermanentLocation(locations.firstName, 'holdings', 1);
 
             BulkEditActions.confirmChanges();
             BulkEditActions.downloadPreview();
@@ -175,10 +181,7 @@ describe(
             );
             BulkEditFiles.verifyMatchedResultFileContent(
               fileNames.previewRecordsCSV,
-              [
-                LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-                LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-              ],
+              [locations.firstName, locations.firstName],
               'permanentLocation',
               true,
             );
@@ -192,7 +195,7 @@ describe(
             );
             BulkEditFiles.verifyMatchedResultFileContent(
               fileNames.changedRecordsCSV,
-              [LOCATION_NAMES.POPULAR_READING_COLLECTION_UI],
+              [locations.firstName],
               'permanentLocation',
               true,
             );
@@ -205,9 +208,7 @@ describe(
             InventorySearchAndFilter.searchByParameter('Instance HRID', instance.hrid);
             InventorySearchAndFilter.selectSearchResultItem();
             InventorySearchAndFilter.selectViewHoldings();
-            InventoryInstance.verifyHoldingsPermanentLocation(
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-            );
+            InventoryInstance.verifyHoldingsPermanentLocation(locations.firstName);
             InventoryInstance.verifyHoldingsTemporaryLocation('-');
             InventoryInstance.closeHoldingsView();
 
@@ -215,9 +216,7 @@ describe(
             InventorySearchAndFilter.searchByParameter('Instance HRID', instance2.hrid);
             InventorySearchAndFilter.selectSearchResultItem();
             InventorySearchAndFilter.selectViewHoldings();
-            InventoryInstance.verifyHoldingsPermanentLocation(
-              LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
-            );
+            InventoryInstance.verifyHoldingsPermanentLocation(locations.firstName);
             InventoryInstance.verifyHoldingsTemporaryLocation('-');
           },
         );

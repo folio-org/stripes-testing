@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  FieldSet,
   HTML,
   including,
   matching,
@@ -19,7 +20,7 @@ import InstanceStates from '../instanceStates';
 
 const itemEditForm = HTML({ className: including('paneset-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
-
+const statisticalCodeFieldSet = administrativeDataSection.find(FieldSet('Statistical code'));
 const cancelBtn = Button({ id: 'cancel-item-edit' });
 const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
 
@@ -57,6 +58,8 @@ function chooseStatisticalCode(code, index = 0) {
 }
 
 export default {
+  clickAddStatisticalCodeButton,
+  chooseStatisticalCode,
   waitLoading: (itemTitle) => {
     cy.expect([
       Pane(including(itemTitle)).exists(),
@@ -239,5 +242,18 @@ export default {
 
   addChronology(value) {
     cy.do(TextArea('Chronology').fillIn(value));
+  },
+
+  checkErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
 };

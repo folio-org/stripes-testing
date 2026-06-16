@@ -11,13 +11,13 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import {
-  APPLICATION_NAMES,
-  electronicAccessRelationshipId,
-  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
-} from '../../../support/constants';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
+import { APPLICATION_NAMES, ELECTRONIC_ACCESS_RELATIONSHIP_NAME } from '../../../support/constants';
 
 let user;
+let resourceRelationshipId;
+let firstElectronicAccess;
+let secondElectronicAccess;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -26,19 +26,6 @@ const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
-const firstElectronicAccess = {
-  linkText: 'test-linkText',
-  materialsSpecification: 'test-materialsSpecification',
-  relationshipId: electronicAccessRelationshipId.RESOURCE,
-  uri: 'testuri.com/uri',
-};
-
-const secondElectronicAccess = {
-  linkText: 'test-linkText',
-  materialsSpecification: 'Test-materialsSpecification',
-  relationshipId: electronicAccessRelationshipId.RESOURCE,
-  uri: 'testuri.com/uri',
-};
 const newElectronicAccessFields = {
   publicNote: 'Test URL public note',
   materialsSpecification: 'Test lower case: !,@,#,$,%,^,&,*,(,), {.[,]<},>,ø, Æ, §',
@@ -58,19 +45,38 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
-          (holdings) => {
-            item.holdingsHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              electronicAccess: [firstElectronicAccess, secondElectronicAccess],
-            });
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        UrlRelationship.getViaApi().then((relationships) => {
+          const resourceRelationship = relationships.find(
+            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+          );
+          resourceRelationshipId = resourceRelationship.id;
+          firstElectronicAccess = {
+            linkText: 'test-linkText',
+            materialsSpecification: 'test-materialsSpecification',
+            relationshipId: resourceRelationshipId,
+            uri: 'testuri.com/uri',
+          };
+          secondElectronicAccess = {
+            linkText: 'test-linkText',
+            materialsSpecification: 'Test-materialsSpecification',
+            relationshipId: resourceRelationshipId,
+            uri: 'testuri.com/uri',
+          };
+
+          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+            (holdings) => {
+              item.holdingsHRID = holdings[0].hrid;
+              FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                electronicAccess: [firstElectronicAccess, secondElectronicAccess],
+              });
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

@@ -4,8 +4,6 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
-  LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -22,6 +20,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Title Level Request', () => {
   let userData = {};
@@ -43,11 +42,15 @@ describe('Title Level Request', () => {
       testData.servicePoint2 = servicePoint2;
     });
     TitleLevelRequests.enableTLRViaApi();
-    testData.defaultLocationId = LOCATION_IDS.MAIN_LIBRARY;
-    const location = { id: testData.defaultLocationId };
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location,
+
+    Locations.getViaApiAnyDefault().then((locations) => {
+      testData.locationName = locations[0].name;
+      const location = { id: locations[0].id };
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location,
+      });
     });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
@@ -116,7 +119,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: testData.folioInstances[0].barcodes[0],
         title: testData.folioInstances[0].instanceTitle,
-        effectiveLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        effectiveLocation: testData.locationName,
         itemStatus: ITEM_STATUS_NAMES.IN_TRANSIT,
         requestsOnItem: '1',
       });
