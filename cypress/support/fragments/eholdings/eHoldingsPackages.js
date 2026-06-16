@@ -301,6 +301,10 @@ export default {
       this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
         data.attributes.isSelected = false;
         data.attributes.visibilityData.isHidden = isHidden;
+        data.attributes.customCoverage = {
+          beginCoverage: '',
+          endCoverage: '',
+        };
         this.updatePackageViaApi(data);
       });
     });

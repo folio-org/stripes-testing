@@ -8,6 +8,8 @@ const sourceLocalOption = "//input[@id='search-source-option-local']";
 const sourceLoCOption = "//input[@id='search-source-option-libraryOfCongress']";
 const hubsSearchInput = TextInput({ id: 'id-search-input' });
 const advancedSearchButton = Button('Advanced');
+const previewCloseButton = "//button[@data-testid='preview-remove']";
+const previewEditButton = "//button[@data-testid='preview-fetch']";
 
 export default {
   waitLoading: () => {
@@ -116,14 +118,32 @@ export default {
     cy.xpath(`//button[contains(text(),"${title}")]`).should('be.visible');
   },
 
+  // cy.click may call scrollIntoView, which can upset the current overflow layout,
+  // resulting in header elements going off the top of the screen. Suppress this
+  // behavior here.
   openSearchResultPreviewByTitle(title) {
-    cy.xpath(`//button[contains(text(),"${title}")]`).scrollIntoView().should('be.visible').click();
+    cy.xpath(`//button[contains(text(),"${title}")]`)
+      .should('be.visible')
+      .click({ scrollBehavior: false });
   },
 
   checkPreviewContains(field, value) {
     cy.xpath(
       `//strong[@class="value-heading" and text()="${field}"]/following-sibling::div[normalize-space()="${value}"]`,
     ).should('exist');
+  },
+
+  verifyPreviewCloseButton() {
+    cy.xpath(previewCloseButton).should('be.visible');
+  },
+
+  verifyPreviewEditButton() {
+    cy.xpath(previewEditButton).should('be.visible');
+  },
+
+  clickClosePreviewButton() {
+    cy.xpath(previewCloseButton).click();
+    cy.wait(500);
   },
 
   waitPreviewLoading() {
@@ -171,5 +191,12 @@ export default {
 
   verifyInstanceListCollapsed() {
     cy.get('[class*="instance-list"]').should('not.exist');
+  },
+
+  verifyInstanceListSize(index, count) {
+    cy.get('[class*="instance-list"]')
+      .eq(index)
+      .find('tbody tr')
+      .should('have.length', count);
   },
 };

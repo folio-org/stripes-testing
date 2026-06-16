@@ -225,6 +225,16 @@ const openItemByBarcode = (itemBarcode) => {
   ItemRecordView.waitLoading();
 };
 
+const visitedLinkColor = 'rgb(128, 0, 128)';
+
+const verifyItemBarcodeVisitedLinkColor = (itemBarcode) => {
+  cy.get('div[class^="mclCell-"]')
+    .contains(itemBarcode)
+    .closest('div[class^="mclCell-"]')
+    .find('a')
+    .should('have.css', 'color', visitedLinkColor);
+};
+
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
   cy.wait(3000);
@@ -918,8 +928,8 @@ export default {
   },
   createHoldingsRecordForTemporaryLocation: (permanentLocation, temporaryLocation) => {
     pressAddHoldingsButton();
-    InventoryNewHoldings.fillRequiredFields(permanentLocation);
-    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(temporaryLocation);
+    InventoryNewHoldings.fillRequiredFields(including(permanentLocation));
+    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(including(temporaryLocation));
     InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
@@ -1568,15 +1578,20 @@ export default {
 
   overlayWithOclc: (oclc, externalTarget = 'OCLC WorldCat') => {
     cy.wait(1500);
-    cy.do(singleRecordImportModal.find(importTypeSelect).choose(externalTarget));
-    cy.wait(1500);
-    cy.do(
-      singleRecordImportModal
-        .find(Select({ name: 'selectedJobProfileId' }))
-        .choose('Inventory Single Record - Default Update Instance (Default)'),
-    );
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
-    cy.do(singleRecordImportModal.find(Button('Import')).click());
+    cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose(externalTarget));
+        cy.do(singleRecordImportModal.find(importTypeSelect).choose(externalTarget));
+        cy.wait(1500);
+      }
+      cy.do(
+        singleRecordImportModal
+          .find(Select({ name: 'selectedJobProfileId' }))
+          .choose('Inventory Single Record - Default Update Instance (Default)'),
+      );
+      cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+      cy.do(singleRecordImportModal.find(Button('Import')).click());
+    });
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
@@ -1640,6 +1655,8 @@ export default {
       cy.expect(MultiColumnListCell({ content: barcode }).absent());
     }
   },
+
+  verifyItemBarcodeVisitedLinkColor,
 
   openItemByBarcodeAndIndex: (barcode) => {
     cy.get('div[class^="mclCell-"]')

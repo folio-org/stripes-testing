@@ -89,9 +89,12 @@ export const holdingsFieldValues = {
   tenantId: 'Holdings — Tenant ID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
+  recordVersion: 'Holdings — Record version',
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
+  copyNumber: 'Holdings — Copy number',
+  updatedDate: 'Holdings — Updated date',
   permanentLocation: 'Holdings permanent location — Name',
   temporaryLocation: 'Holdings temporary location — Name',
   effectiveLocationName: 'Holdings effective location — Name',
@@ -122,6 +125,7 @@ export const holdingsFieldValues = {
   receivingHistoryChronology: 'Holdings — Receiving history — Chronology',
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
+  holdingsStatisticalCodeUuids: 'Holdings — Statistical code UUIDs',
   holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Affiliation name',
@@ -132,6 +136,7 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
@@ -141,6 +146,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical codes',
+  statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
@@ -155,6 +161,7 @@ export const instanceFieldValues = {
   contributorType: 'Instance — Contributors — Type',
   contributorTypeFreeText: 'Instance — Contributors — Type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  contributors: 'Instance — Contributors',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
   natureOfContent: 'Instance — Nature of content',
@@ -224,10 +231,24 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userCreatedDate: 'User — User created date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+  userMobilePhone: 'User — Mobile phone',
+};
+export const transactionFieldValues = {
+  encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
+  fromFundName: 'From fund — Name',
+};
+export const organizationFieldValues = {
+  code: 'Organization — Code',
+  name: 'Organization — Name',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -485,6 +506,17 @@ export default {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyValueSelectContainsOptions(expectedOptions, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+    cy.then(() => SelectionList().optionList()).then((actualOptions) => {
+      expectedOptions.forEach((option) => {
+        expect(actualOptions, `Value dropdown options for row ${row}`).to.include(option);
+      });
+    });
     this.closeOpenedSelection();
   },
 
@@ -756,6 +788,17 @@ export default {
       .and('have.text', ...booleanValues);
   },
 
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
+  },
+
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
     cy.expect([
       RepeatableFieldItem({ index: row }).find(plusButton).has({ disabled: plusDisabled }),
@@ -876,8 +919,16 @@ export default {
     cy.wait(3000);
   },
 
+  runQueryAndSaveDisabled(disabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled }));
+  },
+
   clickRunQuery() {
     cy.do(runQueryButton.click());
+  },
+
+  clickOrganizationLookup(row = 0) {
+    cy.do(RepeatableFieldItem({ index: row }).find(Button('Organization look-up')).click());
   },
 
   verifyClosed() {

@@ -553,6 +553,7 @@ export default {
 
   verifyVersionHistoryButtonShown(isShown = true) {
     const targetButton = rootHeader.find(versionHistoryButton);
+    cy.wait(1000);
     if (isShown) {
       cy.expect(targetButton.exists());
       cy.do(targetButton.hoverMouse());
@@ -605,5 +606,9 @@ export default {
   closeAuthorityViewPane() {
     cy.do(rootSection.find(closeButton).click());
     cy.expect(rootSection.absent());
+  },
+
+  checkViewPaneInFocus({ isFocused = true } = {}) {
+    cy.expect(rootHeader.has({ focused: isFocused }));
   },
 };

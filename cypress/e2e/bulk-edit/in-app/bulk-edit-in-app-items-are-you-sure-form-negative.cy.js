@@ -10,16 +10,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+const locations = {};
 const barcode = `barcode-${getRandomPostfix()}`;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   firstBarcode: barcode,
   secondBarcode: `secondBarcode_${barcode}`,
-  annexId: LOCATION_IDS.ANNEX,
-  popularId: LOCATION_IDS.POPULAR_READING_COLLECTION,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
@@ -31,30 +30,40 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.firstBarcode}"` }).then(
-          (res) => {
-            res.temporaryLocation = { id: item.annexId };
-            res.permanentLocation = { id: item.popularId };
+
+        Locations.getViaApiAnyDefault(2).then((fetchedLocations) => {
+          locations.firstLocationId = fetchedLocations[0].id;
+          locations.firstLocationName = fetchedLocations[0].name;
+          locations.secondLocationId = fetchedLocations[1].id;
+          locations.secondLocationName = fetchedLocations[1].name;
+
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.firstBarcode}"`,
+          }).then((res) => {
+            res.temporaryLocation = { id: locations.firstLocationId };
+            res.permanentLocation = { id: locations.secondLocationId };
             InventoryItems.editItemViaApi(res);
-          },
-        );
-        cy.getItems({
-          limit: 1,
-          expandAll: true,
-          query: `"barcode"=="${item.secondBarcode}"`,
-        }).then((res) => {
-          res.temporaryLocation = { id: item.annexId };
-          res.permanentLocation = { id: item.annexId };
-          InventoryItems.editItemViaApi(res);
-        });
-        FileManager.createFile(
-          `cypress/fixtures/${itemBarcodesFileName}`,
-          `${item.firstBarcode}\r\n${item.secondBarcode}`,
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          });
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.secondBarcode}"`,
+          }).then((res) => {
+            res.temporaryLocation = { id: locations.firstLocationId };
+            res.permanentLocation = { id: locations.firstLocationId };
+            InventoryItems.editItemViaApi(res);
+          });
+          FileManager.createFile(
+            `cypress/fixtures/${itemBarcodesFileName}`,
+            `${item.firstBarcode}\r\n${item.secondBarcode}`,
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -77,7 +86,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
 
-        const newLocation = 'Annex';
+        const newLocation = locations.firstLocationName;
+
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.replaceTemporaryLocation(newLocation);
         BulkEditActions.addNewBulkEditFilterString();

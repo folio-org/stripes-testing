@@ -10,7 +10,6 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import {
   APPLICATION_NAMES,
-  HOLDING_NOTES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   HOLDING_NOTE_TYPES,
 } from '../../../support/constants';
@@ -18,6 +17,9 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
+let electronicBookplateNoteTypeId;
+let actionNoteTypeId;
+let bindingNoteTypeId;
 const notes = {
   electronicBookplate: 'C422033 test electronic bookplate note',
   additionalElectronicBookplate: 'Electronic note 2',
@@ -57,43 +59,53 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        cy.getHoldingNoteTypeIdViaAPI('Electronic bookplate').then((noteTypeId) => {
+          electronicBookplateNoteTypeId = noteTypeId;
         });
+        cy.getHoldingNoteTypeIdViaAPI('Action note').then((noteTypeId) => {
+          actionNoteTypeId = noteTypeId;
+        });
+        cy.getHoldingNoteTypeIdViaAPI('Binding').then((noteTypeId) => {
+          bindingNoteTypeId = noteTypeId;
 
-        instance.instanceId = InventoryInstances.createInstanceViaApi(
-          instance.instanceName,
-          instance.itemBarcode,
-        );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${instance.instanceId}"`,
-        }).then((holdings) => {
-          instance.holdingHRID = holdings[0].hrid;
-          instance.holdingsUUID = holdings[0].id;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
 
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+          instance.instanceId = InventoryInstances.createInstanceViaApi(
+            instance.instanceName,
+            instance.itemBarcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instance.instanceId}"`,
+          }).then((holdings) => {
+            instance.holdingHRID = holdings[0].hrid;
+            instance.holdingsUUID = holdings[0].id;
 
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            notes: [
-              {
-                holdingsNoteTypeId: HOLDING_NOTES.ELECTRONIC_BOOKPLATE_NOTE,
-                note: notes.electronicBookplate,
-                staffOnly: true,
-              },
-              {
-                holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
-                note: notes.action,
-                staffOnly: true,
-              },
-              {
-                holdingsNoteTypeId: HOLDING_NOTES.BINDING_NOTE,
-                note: notes.binding,
-                staffOnly: false,
-              },
-            ],
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              notes: [
+                {
+                  holdingsNoteTypeId: electronicBookplateNoteTypeId,
+                  note: notes.electronicBookplate,
+                  staffOnly: true,
+                },
+                {
+                  holdingsNoteTypeId: actionNoteTypeId,
+                  note: notes.action,
+                  staffOnly: true,
+                },
+                {
+                  holdingsNoteTypeId: bindingNoteTypeId,
+                  note: notes.binding,
+                  staffOnly: false,
+                },
+              ],
+            });
           });
         });
       });

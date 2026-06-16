@@ -491,4 +491,12 @@ export default {
   openRequesterLookup: () => {
     cy.do(Button('Requester look-up').click());
   },
+
+  verifyPickupServicePointPrePopulated(servicePointName) {
+    cy.get('select[name="pickupServicePointId"]').should('exist');
+    cy.get('select[name="pickupServicePointId"] option:selected').should(
+      'have.text',
+      servicePointName,
+    );
+  },
 };

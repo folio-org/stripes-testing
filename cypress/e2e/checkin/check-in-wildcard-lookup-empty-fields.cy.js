@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -10,10 +10,12 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Check in', () => {
   let userData;
   let servicePoint;
+  let locationId;
   const testData = {};
   const randomPostfix = getRandomPostfix();
   const barcode1 = `11${randomPostfix}`;
@@ -48,33 +50,37 @@ describe('Check in', () => {
 
       testData.instanceTitle = `Instance_C688737_${getRandomPostfix()}`;
 
-      InventoryInstances.createFolioInstanceViaApi({
-        instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: testData.instanceTitle,
-        },
-        holdings: [
-          {
-            holdingsTypeId: testData.holdingTypeId,
-            permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+      Locations.getViaApiAnyDefault().then((locations) => {
+        locationId = locations[0].id;
+
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instanceTitle,
           },
-        ],
-        items: [
-          {
-            barcode: barcode1,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-          {
-            barcode: barcode2,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
-          },
-        ],
-      }).then((specialInstanceIds) => {
-        testData.instanceId = specialInstanceIds.instanceId;
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: locationId,
+            },
+          ],
+          items: [
+            {
+              barcode: barcode1,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: barcode2,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((specialInstanceIds) => {
+          testData.instanceId = specialInstanceIds.instanceId;
+        });
       });
     });
 

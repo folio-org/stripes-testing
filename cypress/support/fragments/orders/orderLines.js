@@ -2728,10 +2728,11 @@ export default {
     cy.wait(2000);
   },
 
-  setExchangeRate(exchangeRate) {
-    cy.do(Checkbox({ id: 'use-set-exchange-rate' }).click());
+  setExchangeRate(exchangeRate, { clickCheckbox = true } = {}) {
+    if (clickCheckbox) cy.do(Checkbox({ id: 'use-set-exchange-rate' }).click());
     cy.get('[name="cost.exchangeRate"]').type('{selectall}{backspace}', { delay: 50 });
     cy.get('[name="cost.exchangeRate"]').type(exchangeRate, { delay: 100 });
+    cy.get('[name="cost.exchangeRate"]').blur();
   },
 
   selectCurrency(currency) {

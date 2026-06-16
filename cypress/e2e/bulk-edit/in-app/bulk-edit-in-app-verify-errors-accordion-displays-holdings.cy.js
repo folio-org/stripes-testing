@@ -8,9 +8,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 let user;
+let locationId;
+let locationName;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -30,21 +32,27 @@ describe('Bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            temporaryLocationId: LOCATION_IDS.ONLINE,
-          });
-          item.holdingUUID = holdings[0].id;
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
-        });
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        Locations.getViaApiAnyDefault().then((locations) => {
+          locationId = locations[0].id;
+          locationName = locations[0].name;
+
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              temporaryLocationId: locationId,
+            });
+            item.holdingUUID = holdings[0].id;
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
+          });
+
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });
@@ -69,7 +77,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openStartBulkEditForm();
         BulkEditActions.verifyRowIcons();
         // Modify the record by selecting the **same value** that at least **one** Holdings record has (For example,"TEMPORARY HOLDINGS LOCATION" is "Annex" => Select "Annex" location by clicking on the value from  "Select location" dropdown list )
-        const newLocation = 'Online';
+        const newLocation = locationName;
         BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, newLocation);

@@ -55,8 +55,9 @@ describe('Lists', () => {
         Lists.queryBuilderActions();
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
-        Lists.waitForCompilingToComplete();
+        Lists.waitForCompilingToComplete(5000);
         Lists.closeListDetailsPane();
+        cy.wait(5000); // wait for the list to appear on the landing page after refreshing
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -79,7 +80,7 @@ describe('Lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.waitForCompilingToComplete();
+        Lists.waitForCompilingToComplete(7000);
         Lists.openActions();
         Lists.exportList();
         Lists.openActions();

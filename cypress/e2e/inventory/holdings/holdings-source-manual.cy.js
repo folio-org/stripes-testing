@@ -10,7 +10,8 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { INSTANCE_RESOURCE_TYPE_IDS } from '../../../support/constants';
+
+let textInstanceTypeId;
 
 const testData = {
   user: {},
@@ -28,16 +29,19 @@ describe('Inventory', () => {
         Permissions.uiInventoryViewCreateEditHoldings.gui,
       ]).then((createdUserProperties) => {
         testData.user = createdUserProperties;
-        cy.createInstance({
-          instance: {
-            instanceId: testData.instanceId,
-            instanceTypeId: INSTANCE_RESOURCE_TYPE_IDS.TEXT,
-            title: testData.instanceTitle,
-          },
-        });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.getInstanceTypes({ query: 'name=="text"' }).then((instanceTypes) => {
+          textInstanceTypeId = instanceTypes[0].id;
+          cy.createInstance({
+            instance: {
+              instanceId: testData.instanceId,
+              instanceTypeId: textInstanceTypeId,
+              title: testData.instanceTitle,
+            },
+          });
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
     });

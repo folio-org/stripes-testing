@@ -5,12 +5,12 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { randomNDigitNumber } from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
-    const randomDigits = `C368006${randomFourDigitNumber()}`;
+    const randomDigits = `368006${randomNDigitNumber(10)}`;
     const keywordOption = searchInstancesOptions[0];
 
     const titles = [

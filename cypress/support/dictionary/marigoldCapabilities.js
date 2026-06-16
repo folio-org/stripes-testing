@@ -460,8 +460,72 @@ const marigoldCatalogerCapabilitySets = [
   },
 ];
 
+// Capabilities from the "Marigold Administrator" role.
+// Used in addition to Cataloger + Cataloger - Marigold capabilities.
+const marigoldAdminCapabilities = [
+  // Data
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data Admin Caches',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data Batch Status',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data-Import Files Collection',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data-Import Jobs Failed-Lines Collection',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data-Import Jobs Item',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Linked-Data-Import Jobs Item Stop',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  // Procedural
+  {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Linked-Data Batch Graph Cleaning',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Linked-Data Batch Reindex Full',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Linked-Data Batch Reindex Incremental',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Linked-Data-Import Start',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+];
+
 // Combined: all capabilities from both "Cataloger" + "Cataloger - Marigold" roles
 export const MARIGOLD_CAPABILITIES = [...catalogerCapabilities, ...marigoldCatalogerCapabilities];
+
+// Combined: all capabilities from "Cataloger" + "Cataloger - Marigold" + "Marigold Administrator" roles
+export const MARIGOLD_ADMIN_CAPABILITIES = [
+  ...catalogerCapabilities,
+  ...marigoldCatalogerCapabilities,
+  ...marigoldAdminCapabilities,
+];
 
 export const MARIGOLD_CAPABILITY_SETS = [
   ...catalogerCapabilitySets,
