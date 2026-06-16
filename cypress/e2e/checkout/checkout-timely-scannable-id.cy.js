@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -43,6 +43,9 @@ describe('Check out', () => {
         PatronGroups.createViaApi(patronGroup).then((id) => {
           patronGroupId = id;
         });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          itemData.mainLibraryLocationId = res.id;
+        });
       })
       .then(() => {
         InventoryInstances.createFolioInstanceViaApi({
@@ -53,7 +56,7 @@ describe('Check out', () => {
           holdings: [
             {
               holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+              permanentLocationId: itemData.mainLibraryLocationId,
             },
           ],
           items: [

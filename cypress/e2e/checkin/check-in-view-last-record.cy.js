@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { Permissions } from '../../support/dictionary';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -40,9 +40,13 @@ describe('Check in', () => {
         };
         ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
 
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          testData.mainLibraryLocationId = res.id;
+
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location: { id: testData.mainLibraryLocationId, name: LOCATION_NAMES.MAIN_LIBRARY },
+          });
         });
       })
       .then(() => {

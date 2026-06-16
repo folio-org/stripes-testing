@@ -5,7 +5,7 @@ import {
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -75,6 +75,9 @@ describe('Check in', () => {
           testData.materialTypeId = materialTypes.id;
           itemData.materialType = materialTypes.name[0].toUpperCase() + materialTypes.name.slice(1);
         });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          testData.mainLibraryLocationId = res.id;
+        });
       })
       .then(() => {
         InventoryInstances.createFolioInstanceViaApi({
@@ -85,7 +88,7 @@ describe('Check in', () => {
           holdings: [
             {
               holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+              permanentLocationId: testData.mainLibraryLocationId,
             },
           ],
           items: [
