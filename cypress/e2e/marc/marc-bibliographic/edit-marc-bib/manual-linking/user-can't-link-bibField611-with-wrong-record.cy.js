@@ -94,7 +94,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380456*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380456');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -116,12 +116,10 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 

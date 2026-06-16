@@ -73,14 +73,14 @@ describe('MARC', () => {
         const marcFiles = [
           {
             marc: 'marcBibFileForC380455.mrc',
-            fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+            fileName: `testMarcFileC380455.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthFileForC380455.mrc',
-            fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+            fileName: `testMarcFileC380455.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 10,
             propertyName: 'authority',
@@ -100,7 +100,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380455*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380455');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -122,14 +122,10 @@ describe('MARC', () => {
                 });
               });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 

@@ -96,8 +96,14 @@ const newAuthorityButton = Button({ id: 'dropdown-clickable-create-authority' })
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
-const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
-const previousButton = Button({ id: 'authority-result-list-prev-paging-button' });
+const nextButton = Button({
+  id: 'authority-result-list-next-paging-button',
+  disabled: or(true, false),
+});
+const previousButton = Button({
+  id: 'authority-result-list-prev-paging-button',
+  disabled: or(true, false),
+});
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
 const linkIconButton = Button({ ariaLabel: 'Link' });
@@ -2217,5 +2223,10 @@ export default {
   verifyReportsSectionShownInActionsMenu(isShown = true) {
     if (isShown) cy.expect(actionsMenuReportsSection.exists());
     else cy.expect(actionsMenuReportsSection.absent());
+  },
+
+  getNextPaginationButtonState() {
+    cy.wait(1000);
+    return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
 };
