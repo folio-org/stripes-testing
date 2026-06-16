@@ -11,7 +11,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import { ITEM_STATUS_NAMES, LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 
 describe('Check in', () => {
   describe(
@@ -62,6 +62,9 @@ describe('Check in', () => {
               itemData.materialTypeName = res.name;
               checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
             });
+            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+              itemData.mainLibraryLocationId = res.id;
+            });
           })
           .then(() => {
             InventoryInstances.createFolioInstanceViaApi({
@@ -72,7 +75,7 @@ describe('Check in', () => {
               holdings: [
                 {
                   holdingsTypeId: itemData.holdingTypeId,
-                  permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+                  permanentLocationId: itemData.mainLibraryLocationId,
                 },
               ],
               items: [
