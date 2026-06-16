@@ -9,7 +9,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 
 describe('Check out', () => {
   const testData = {
@@ -30,9 +30,13 @@ describe('Check out', () => {
       note1.source = record;
       note2.source = record;
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+      testData.mainLibraryLocationId = res.id;
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: testData.mainLibraryLocationId, name: LOCATION_NAMES.MAIN_LIBRARY },
+      });
     });
     cy.createTempUser([Permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
       testData.user = userProperties;
