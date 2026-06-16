@@ -72,43 +72,43 @@ describe('fse-consortia - UI (no data manipulation)', () => {
   );
 });
 
-// describe('fse-consortia - UI (data manipulation)', () => {
-//   beforeEach(() => {
-//     // hide sensitive data from the report
-//     cy.allure().logCommandSteps(false);
-//     cy.loginAsAdmin({
-//       path: SettingsMenu.consortiumManagerPath,
-//       waiter: ConsortiumMgr.waitLoading,
-//     });
-//     cy.allure().logCommandSteps();
-//   });
+describe('fse-consortia - UI (data manipulation)', () => {
+  beforeEach(() => {
+    // hide sensitive data from the report
+    cy.allure().logCommandSteps(false);
+    cy.loginAsAdmin({
+      path: SettingsMenu.consortiumManagerPath,
+      waiter: ConsortiumMgr.waitLoading,
+    });
+    cy.allure().logCommandSteps();
+  });
 
-//   it(
-//     `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.env('OKAPI_HOST')}`,
-//     { tags: ['consortia', 'fse', 'ui', 'nonProd', 'TC195700'] },
-//     () => {
-//       cy.getUserTenants().then((userTenants) => {
-//         // get non-primary tenants
-//         const filteredTenants = userTenants.filter((element) => element.isPrimary === false);
-//         ConsortiumMgr.selectMembership();
-//         ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}`);
-//         // change tenant name
-//         ConsortiumMgr.editTenantName(
-//           `${filteredTenants[0].tenantName}`,
-//           `${filteredTenants[0].tenantName}_Edited`,
-//         );
-//         ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
-//         ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}_Edited`);
+  it(
+    `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['consortia', 'fse', 'ui', 'nonProd', 'TC195700'] },
+    () => {
+      cy.getUserTenants().then((userTenants) => {
+        // get non-primary tenants
+        const filteredTenants = userTenants.filter((element) => element.isPrimary === false);
+        ConsortiumMgr.selectMembership();
+        ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}`);
+        // change tenant name
+        ConsortiumMgr.editTenantName(
+          `${filteredTenants[0].tenantName}`,
+          `${filteredTenants[0].tenantName}_Edited`,
+        );
+        ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
+        ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}_Edited`);
 
-//         // change name back to the original value
-//         ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}_Edited`);
-//         ConsortiumMgr.editTenantName(
-//           `${filteredTenants[0].tenantName}_Edited`,
-//           `${filteredTenants[0].tenantName}`,
-//         );
-//         ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
-//         ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}`);
-//       });
-//     },
-//   );
-// });
+        // change name back to the original value
+        ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}_Edited`);
+        ConsortiumMgr.editTenantName(
+          `${filteredTenants[0].tenantName}_Edited`,
+          `${filteredTenants[0].tenantName}`,
+        );
+        ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
+        ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}`);
+      });
+    },
+  );
+});
