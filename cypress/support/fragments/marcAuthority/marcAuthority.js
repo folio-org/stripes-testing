@@ -600,4 +600,13 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  closeAuthorityViewPane() {
+    cy.do(rootSection.find(closeButton).click());
+    cy.expect(rootSection.absent());
+  },
+
+  checkCloseButtonInFocus({ isFocused = true } = {}) {
+    cy.expect(rootHeader.find(closeButton).has({ focused: isFocused }));
+  },
 };
