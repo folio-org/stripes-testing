@@ -2,7 +2,6 @@ import {
   FULFILMENT_PREFERENCES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -33,9 +32,13 @@ describe('Circulation log', () => {
     cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
       testData.holdingTypeId = holdingTypes[0].id;
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+      testData.mainLibraryLocationId = res.id;
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: testData.mainLibraryLocationId },
+      });
     });
     cy.createTempUser([
       Permissions.circulationLogAll.gui,

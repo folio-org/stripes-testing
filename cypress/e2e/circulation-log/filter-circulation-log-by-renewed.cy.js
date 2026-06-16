@@ -1,9 +1,4 @@
-import {
-  APPLICATION_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_IDS,
-  LOCATION_NAMES,
-} from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -33,9 +28,13 @@ describe('Circulation log', () => {
     ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
       servicePoint = sp;
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+      testData.mainLibraryLocationId = res.id;
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: testData.mainLibraryLocationId },
+      });
     });
     cy.createTempUser([
       Permissions.circulationLogAll.gui,

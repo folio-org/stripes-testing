@@ -11,13 +11,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { BULK_EDIT_ACTIONS, ITEM_STATUS_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { BULK_EDIT_ACTIONS, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
 let user;
 let instanceId;
 let holdingId;
 let instanceTypeId;
 let permanentLocationId;
+let mainLibraryLocationId;
 let loanTypeId;
 let materialTypeId;
 let sourceId;
@@ -43,8 +44,11 @@ describe('Bulk-edit', () => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
           instanceTypeId = instanceTypeData[0].id;
         });
-        cy.getLocations({ limit: 1 }).then((res) => {
+        cy.getLocations({ query: `name="${LOCATION_NAMES.ANNEX_UI}"` }).then((res) => {
           permanentLocationId = res.id;
+        });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          mainLibraryLocationId = res.id;
         });
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           loanTypeId = res[0].id;
@@ -74,7 +78,7 @@ describe('Bulk-edit', () => {
                 barcode: `barcode_${i + 1}_${getRandomPostfix()}`,
                 // First "itemsToChangeCount" items go to ANNEX, the rest go to MAIN_LIBRARY
                 temporaryLocationId:
-                  i < itemsToChangeCount ? LOCATION_IDS.ANNEX : LOCATION_IDS.MAIN_LIBRARY,
+                  i < itemsToChangeCount ? permanentLocationId : mainLibraryLocationId,
               }));
 
               cy.wrap(itemsToCreate)
