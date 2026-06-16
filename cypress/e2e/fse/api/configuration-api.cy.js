@@ -32,23 +32,19 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
     `TC196440 - OAI-PMH general configuration verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'sanity', 'oai-pmh', 'configurations', 'TC196440'] },
     () => {
-      cy.getOaiPmhGeneralConfigViaApi().then((response) => {
-        cy.expect(response.status).to.eq(200);
+      cy.getOaiPmhConfigurations('general').then((body) => {
         // check that OAI-PMH configuration exists
-        cy.expect(response.body.totalRecords).to.be.greaterThan(0);
-        cy.expect(response.body).to.have.property('configs').that.is.an('array');
-
-        // verify the configuration has the expected edge URL
-        const config = response.body.configs[0];
-        const configValue = JSON.parse(config.value);
+        cy.expect(body.totalRecords).to.be.greaterThan(0);
+        cy.expect(body).to.have.property('configurationSettings').that.is.an('array');
+        // Find the configuration entry where configName is "general"
+        const config = body.configurationSettings.find((c) => c.configName === 'general');
+        // Check baseUrl from configValue
         const expectedUrl = Cypress.config().baseUrl.replace('https://', 'https://edge-') + '/oai';
-        cy.expect(config.module).to.eq('OAIPMH');
-        cy.expect(config.configName).to.eq('general');
         // Special case: if baseUrl is http://folio.org/oai, skip the verification
-        if (configValue.baseUrl === 'http://folio.org/oai') {
+        if (config.configValue.baseUrl === 'http://folio.org/oai') {
           cy.log('OAI-PMH baseUrl is set to default: http://folio.org/oai');
         } else {
-          cy.expect(configValue.baseUrl).to.eq(expectedUrl);
+          cy.expect(config.configValue.baseUrl).to.eq(expectedUrl);
         }
       });
     },
