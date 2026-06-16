@@ -339,4 +339,7 @@ export default {
       cy.do(targetRow.find(TextArea({ ariaLabel: 'URL public note' })).fillIn(urlPublicNote));
     }
   },
+  verifyBarcodeFieldFocusedByDefault: () => {
+    cy.get('input[name="barcode"]').should('be.focused');
+  },
 };
