@@ -88,11 +88,16 @@ export const holdingsFieldValues = {
   instanceUuid: 'Holdings — Instance UUID',
   holdingsHrid: 'Holdings — HRID',
   holdingsUuid: 'Holdings — UUID',
+  recordVersion: 'Holdings — Record version',
   formerIds: 'Holdings — Former identifiers',
   callNumber: 'Holdings — Call number',
   callNumberPrefix: 'Holdings — Call number prefix',
   permanentLocation: 'Permanent location — Name',
   temporaryLocation: 'Temporary location — Name',
+  copyNumber: 'Holdings — Copy number',
+  updatedDate: 'Holdings — Updated date',
+  effectiveLocationName: 'Effective location — Name',
+  effectiveLibraryName: 'Effective library — Name',
   notes: 'Holdings — Notes — Note',
   notesNoteType: 'Holdings — Notes — Notes type',
   notesStaffOnly: 'Holdings — Notes — Staff only',
@@ -120,6 +125,7 @@ export const holdingsFieldValues = {
   receivingHistoryEnumeration: 'Holdings — Receiving history — Enumeration',
   receivingHistoryPublicDisplay: 'Holdings — Receiving history — Public display',
   holdingsStatisticalCodeNames: 'Holdings — Statistical code names',
+  holdingsStatisticalCodeUuids: 'Holdings — Statistical code UUIDs',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Tenant ID',
 };
@@ -129,6 +135,7 @@ export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
+  instanceStatusCode: 'Instance status — Code',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
@@ -137,6 +144,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
   noteType: 'Instance — Notes — Note type',
@@ -151,6 +159,7 @@ export const instanceFieldValues = {
   contributorType: 'Instance — Contributors — Contributor type',
   contributorTypeFreeText: 'Instance — Contributors — Contributor type, free text',
   contributorPrimary: 'Instance — Contributors — Primary',
+  contributors: 'Instance — Contributors',
   publicationRange: 'Instance — Publication range',
   publicationFrequency: 'Instance — Publication frequency',
   natureOfContent: 'Instance — Nature of content',
@@ -223,6 +232,7 @@ export const usersFieldValues = {
   userName: 'User — Username',
   userType: 'User — Type',
   userEmail: 'User — Email',
+  userMobilePhone: 'User — Mobile phone',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -230,6 +240,11 @@ export const transactionFieldValues = {
 };
 export const organizationFieldValues = {
   code: 'Code',
+  name: 'Name',
+};
+export const purchaseOrderLinesFieldValues = {
+  poNumber: 'PO — PO number',
+  paymentStatus: 'POL — Payment status',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -404,6 +419,14 @@ export default {
     ).should('have.text', selection);
   },
 
+  verifySelectedOperator(selection, row = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: row })
+        .find(Select({ dataTestID: including('operator-option') }))
+        .has({ checkedOptionText: selection }),
+    );
+  },
+
   verifyOperatorColumn() {
     cy.get('[class^="col-sm-2"][class*="headerCell"]').should('have.text', 'Operator');
     cy.get(
@@ -450,7 +473,7 @@ export default {
   verifyOptionsInValueSelect(expectedOptions, row = 0) {
     cy.expect([
       RepeatableFieldItem({ index: row })
-        .find(Select('input-value-0'))
+        .find(Select(`input-value-${row}`))
         .has({ optionsText: expectedOptions }),
     ]);
   },
@@ -610,7 +633,7 @@ export default {
   },
 
   cancelDisabled(disabled = true) {
-    cy.expect(cancelButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(cancelButton).has({ disabled }));
   },
 
   clickCancel() {
@@ -626,7 +649,7 @@ export default {
   },
 
   xButttonDisabled(disabled = true) {
-    cy.expect(xButton.has({ disabled }));
+    cy.expect(buildQueryModal.find(xButton).has({ disabled }));
   },
 
   clickXButtton() {
@@ -643,6 +666,17 @@ export default {
       .find('option')
       .should('have.length', 1)
       .and('have.text', ...booleanValues);
+  },
+
+  verifyBooleanColumnAbsent() {
+    cy.get('[class^="col-sm-1"][class*="headerCell"]').should('not.contain.text', 'Boolean');
+  },
+
+  verifyValueInBooleanColumn(value, row = 1) {
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-1"] [class^="selectControl"]`).should(
+      'contain.text',
+      value,
+    );
   },
 
   verifyPlusAndTrashButtonsDisabled(row = 0, plusDisabled = true, trashDisabled = true) {
@@ -698,6 +732,10 @@ export default {
     cy.wait(1000);
     cy.do(runQueryAndSave.click());
     cy.wait(3000);
+  },
+
+  runQueryAndSaveDisabled(disabled = true) {
+    cy.expect(runQueryAndSave.has({ disabled }));
   },
 
   clickRunQuery() {
@@ -1011,6 +1049,32 @@ export default {
   verifyQueryAreaDoesNotContain(content) {
     cy.get('[class^="queryArea"]').should(($queryArea) => {
       expect($queryArea.text().toLowerCase()).not.to.include(content.toLowerCase());
+    });
+  },
+
+  selectCheckboxInShowColumns(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  verifyColumnValueForRow(recordTitle, columnName, expectedValue) {
+    const targetRowFirst = MultiColumnListRow(including(recordTitle), { isContainer: false });
+    cy.expect(
+      targetRowFirst.find(MultiColumnListCell(expectedValue, { column: columnName })).exists(),
+    );
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
+  },
+
+  verifyMatchedRecordsIncludesByIdentifier(identifier, columnName, value) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        buildQueryModal
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: including(value) }))
+          .exists(),
+      );
     });
   },
 };

@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
@@ -1004,6 +1005,11 @@ export default {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
+    recurse(
+      () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
+      (count) => count === 0,
+      { timeout: 120000, delay: 3000 },
+    );
     cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
     this.checkRoleCentrallyManaged(roleName, true);
   },

@@ -15,6 +15,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiColumnList,
   MultiSelect,
   MultiSelectOption,
   not,
@@ -65,7 +66,7 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 const deleteConfirmationModal = Modal('Delete list');
 const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
-
+const resultViewerTable = MultiColumnList();
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
 const constants = {
@@ -77,6 +78,7 @@ const constants = {
     transactions: 'Transactions',
     items: 'Items',
     organizations: 'Organizations',
+    purchaseOrderLines: 'Purchase order lines',
   },
 };
 
@@ -575,6 +577,15 @@ const UI = {
       .invoke('attr', 'data-row-inner');
   },
 
+  verifyResultColumnDisplayed(columnName) {
+    cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
+    cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  getQueryText() {
+    return cy.get('#results-viewer-accordion').contains('Query:').invoke('text');
+  },
+
   checkResultSearch(searchResults, rowIndex = 0) {
     cy.wrap(true)
       .then(() => {
@@ -591,6 +602,10 @@ const UI = {
           );
         });
       });
+  },
+
+  selectResultColumn(columnName) {
+    cy.do(Checkbox(columnName).checkIfNotSelected());
   },
 
   clickOnAccordionInFilter(accordionName) {
@@ -627,6 +642,12 @@ const UI = {
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Purchase order lines')).has({ checked: false }),
     ]);
+  },
+
+  verifyRefreshCompleteCallout(recordsCount) {
+    cy.contains(`Refresh complete with ${recordsCount} records: View updated list`, {
+      timeout: 90000,
+    }).should('be.visible');
   },
 
   collapseFilterPane() {

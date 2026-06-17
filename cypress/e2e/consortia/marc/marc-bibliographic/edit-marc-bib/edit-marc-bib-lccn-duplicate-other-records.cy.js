@@ -121,13 +121,17 @@ describe('MARC', () => {
               // Attempt to update "010 $a" with various LCCN values
               testData.lccnValues.forEach((lccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${lccnValue}`);
+                QuickMarcEditor.checkContentByTag('010', `$a ${lccnValue}`);
                 QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.verifyValidationCallout();
+                QuickMarcEditor.closeAllCallouts();
                 QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
               });
 
               // Attempt to update "010 $a" with various Canceled LCCN values
               testData.canceledLccnValues.forEach((canceledLccnValue) => {
                 QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnValue}`);
+                QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnValue}`);
                 QuickMarcEditor.clickSaveAndKeepEditing();
               });
             });

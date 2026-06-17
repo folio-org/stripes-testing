@@ -153,7 +153,7 @@ describe('Inventory', () => {
               // Step 12: Edit Shared MARC record
               InventoryViewSource.editMarcBibRecord();
               QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
 
               // Step 13: Open view source pane of Local MARC record
@@ -167,7 +167,7 @@ describe('Inventory', () => {
               // Step 14: Edit Local MARC record
               InventoryViewSource.editMarcBibRecord();
               QuickMarcEditor.addValuesToExistingField(18, '300', `$a ${getRandomLetters(5)}`);
-              QuickMarcEditor.saveAndCloseWithValidationWarnings();
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
 
               // Step 15: Enable "Version history" for Member tenant via API
