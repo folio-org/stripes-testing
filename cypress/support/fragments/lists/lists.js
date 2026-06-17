@@ -80,6 +80,36 @@ const constants = {
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
   },
+  userColumns: [
+    'User — Active',
+    'User — Address',
+    'User — Barcode',
+    'User — Created by user UUID',
+    'User — Date of birth',
+    'User — Department names',
+    'User — Department UUIDs',
+    'User — Email',
+    'User — Enrollment date',
+    'User — Expiration date',
+    'User — External system ID',
+    'User — First name',
+    'User — Last name',
+    'User — Last name, first name',
+    'User — Middle name',
+    'User — Mobile phone',
+    'User — Phone',
+    'User — Preferred contact type',
+    'User — Preferred first name',
+    'User — Pronouns',
+    'User — Tags tag list',
+    'User — Type',
+    'User — Updated by user UUID',
+    'User — User created date',
+    'User — User updated date',
+    'User — User UUID',
+    'User — Username',
+    'Patron group — Name',
+  ],
 };
 
 const UI = {
@@ -145,6 +175,10 @@ const UI = {
 
   verifyActionsButtonDoesNotExist() {
     cy.expect(actions.absent());
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
   },
 
   refreshList() {
@@ -934,6 +968,10 @@ const QueryBuilder = {
   runQueryAndSave() {
     cy.do(runQueryAndSave.click());
     cy.wait(2000);
+  },
+
+  waitForCompilingAnimationToDisappear() {
+    cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
   },
 
   changeQueryBoolValue(value) {
