@@ -170,10 +170,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectTenantIfDropdown', () => {
-  if (!Cypress.env('ecsEnabled')) {
-    return cy.wrap(null, { log: false });
-  }
-
   return cy.get('img').then(() => {
     cy.wait(1000).then(() => {
       cy.get('body').then(($body) => {
