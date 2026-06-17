@@ -3752,4 +3752,16 @@ export default {
     cy.expect(targetRow.find(firstIndicatorBox).absent());
     cy.expect(targetRow.find(secondIndicatorBox).absent());
   },
+
+  checkErrorMessageAndHelpLinkForField({ errorMessage, tag, helpLinkUrl, rowIndex }) {
+    const targetRow = rowIndex
+      ? getRowInteractorByRowNumber(rowIndex)
+      : getRowInteractorByTagName(tag);
+    cy.expect(
+      targetRow
+        .find(HTML(including(errorMessage), { className: including('feedbackErrorIcon') }))
+        .find(Link('Help', { href: including(helpLinkUrl) }))
+        .exists(),
+    );
+  },
 };
