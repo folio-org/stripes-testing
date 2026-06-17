@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -36,6 +36,7 @@ describe('Check out', () => {
         });
         cy.getHoldingTypes({ limit: 2 });
         cy.getInstanceTypes({ limit: 1 });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
       })
       .then(() => {
         const getTestItem = (numberOfPieces, hasDescription, hasMissingPieces) => {
@@ -69,7 +70,7 @@ describe('Check out', () => {
           holdings: [
             {
               holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+              permanentLocationId: Cypress.env('locations')[0].id,
             },
           ],
           items: testItems,

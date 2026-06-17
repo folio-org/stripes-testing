@@ -2,7 +2,7 @@ import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
 import permissions from '../../support/dictionary/permissions';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
@@ -34,12 +34,14 @@ describe('Service Points Switching for Check In', () => {
       ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
         servicePointB = sp2;
       });
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+        testData.mainLibraryLocationId = res.id;
 
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location: { id: testData.mainLibraryLocationId },
+        });
       });
-
       PatronGroups.createViaApi(testData.userGroup).then((patronGroupResponse) => {
         patronGroupId = patronGroupResponse;
 

@@ -6,6 +6,7 @@ import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -98,7 +99,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           QuickMarcEditor.pressSaveAndClose();
-          MarcAuthority.verifyAfterSaveAndClose();
+          MarcAuthority.verifyCreatedRecordSuccess();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
           MarcAuthorities.verifyViewPaneContentExists();
           MarcAuthority.getId().then((id) => {
@@ -113,8 +114,10 @@ describe('MARC', () => {
             MarcAuthorities.verifyMarcViewPaneIsOpened(false);
 
             MarcAuthorities.waitLoading();
-            cy.wait(6000); // wait for source file assignment to be registered in the system
 
+            InventorySearchAndFilter.verifyAccordionByNameExpanded('Authority source');
+            InventorySearchAndFilter.toggleAccordionByName('Authority source', false);
+            InventorySearchAndFilter.toggleAccordionByName('Authority source');
             MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
             MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
 
