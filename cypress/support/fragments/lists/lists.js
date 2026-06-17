@@ -477,6 +477,18 @@ const UI = {
     cy.expect(KeyValue(label, { value }).exists());
   },
 
+  verifyListNameLabel(value) {
+    this.checkKeyValue('List name', value);
+  },
+
+  verifyListDescriptionLabel(value) {
+    this.checkKeyValue('Description', value);
+  },
+
+  verifyVisibilityLabel(value) {
+    this.checkKeyValue('Visibility', value);
+  },
+
   verifyRecordType(recordType) {
     this.checkKeyValue('Record type', recordType);
   },
