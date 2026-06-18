@@ -16,10 +16,7 @@ describe('Data Import', () => {
       profileName: '',
       user: {},
     };
-    // for Trillium env with cyrillic 'c'
-    // const suppressFromDiscoveryValue = 'Select сheckbox field mapping';
-    // for Cyrpress env
-    const suppressFromDiscoveryValue = 'Select checkbox field mapping';
+    const suppressFromDiscoveryValue = 'Select сheckbox field mapping';
 
     before('Create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
