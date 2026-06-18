@@ -17,7 +17,7 @@ let user;
 let actionNoteTypeId;
 let electronicBookplateNoteTypeId;
 const notes = {
-  action: 'Test [sample] no*te',
+  action: 'Test [sample] no*te action',
   elbook: 'elbook Test [sample] no*te',
   note: 'test note',
 };
@@ -132,7 +132,7 @@ describe('Bulk-edit', () => {
         ExportFile.verifyFileIncludes(previewFileName, [`,${notes.elbook},${notes.note},`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', 'null');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', notes.note);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
@@ -142,9 +142,10 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(item.holdingHRID);
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.checkHoldingsNote('-', 0);
-        HoldingsRecordView.checkHoldingsNote(notes.elbook, 1);
-        HoldingsRecordView.checkHoldingsNote(notes.note, 2);
+        HoldingsRecordView.checkHoldingsNote(notes.elbook, 0);
+        HoldingsRecordView.checkHoldingsNote(notes.note, 1);
+        HoldingsRecordView.verifyTextAbsent('Action note');
+        HoldingsRecordView.verifyTextAbsent(notes.action);
       },
     );
   });

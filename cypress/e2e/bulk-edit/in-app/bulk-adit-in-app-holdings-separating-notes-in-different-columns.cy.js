@@ -43,7 +43,7 @@ const initialValueSets = [
   ],
 ];
 const editedValueSets = [
-  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, 'null (staff only) | null'],
+  [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -220,9 +220,10 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();
 
-        initialValueSets.forEach((initialValueSet) => {
-          HoldingsRecordView.checkHoldingNoteTypeAbsent(...initialValueSet);
-        });
+        HoldingsRecordView.verifyTextAbsent(HOLDING_NOTE_TYPES.COPY_NOTE);
+        HoldingsRecordView.verifyTextAbsent(notesText.copyNote);
+        HoldingsRecordView.verifyTextAbsent(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE);
+        HoldingsRecordView.verifyTextAbsent(notesText.electronicBookplate);
       },
     );
   });

@@ -436,6 +436,10 @@ export default {
     InteractorsTools.checkCalloutMessage(matching(/Successfully copied ".*" to clipboard./));
   },
 
+  verifyTextAbsent(text) {
+    cy.expect(HTML(including(text)).absent());
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
   },
