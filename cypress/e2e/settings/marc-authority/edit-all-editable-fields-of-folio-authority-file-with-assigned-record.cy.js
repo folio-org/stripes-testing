@@ -23,7 +23,7 @@ describe('MARC', () => {
         hridStartsWith: '',
         baseUrl: 'https://vocabularyserver.com/gsafd/',
       };
-      const newBaseUrl = `http://testing/field/baseurl/positivetest7${getRandomLetters(4)}/`;
+      const newBaseUrl = `http://testing/c436863/${getRandomLetters(15)}/`;
       const controlNumber = `${randomFourDigitNumber()}`;
       const fields = [{ tag: '100', content: `$a ${title}`, indicators: ['\\', '\\'] }];
       let createdAuthorityId;

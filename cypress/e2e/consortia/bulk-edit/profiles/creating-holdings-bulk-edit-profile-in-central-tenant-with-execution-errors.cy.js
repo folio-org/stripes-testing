@@ -27,7 +27,6 @@ import {
   BULK_EDIT_FORMS,
   ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
   LOCATION_NAMES,
-  electronicAccessRelationshipId,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -43,6 +42,7 @@ let localUrlRelationshipData;
 let localHoldingNoteTypeData;
 let holdingId;
 let holdingHrid;
+let resourceRelationshipId;
 const folioInstance = {
   title: `AT_C825328_FolioInstance_${getRandomPostfix()}`,
 };
@@ -76,6 +76,13 @@ describe('Bulk-edit', () => {
         cy.getAdminToken();
         cy.getHoldingNoteTypeIdViaAPI('Action note').then((noteTypeId) => {
           actionNoteTypeId = noteTypeId;
+        });
+
+        UrlRelationship.getViaApi().then((relationships) => {
+          const resourceRelationship = relationships.find(
+            (rel) => rel.name === ELECTRONIC_ACCESS_RELATIONSHIP_NAME.RESOURCE,
+          );
+          resourceRelationshipId = resourceRelationship.id;
         });
 
         // Create local URL relationship
@@ -127,7 +134,7 @@ describe('Bulk-edit', () => {
                       electronicAccess: [
                         {
                           ...electronicAccessFields,
-                          relationshipId: electronicAccessRelationshipId.RESOURCE,
+                          relationshipId: resourceRelationshipId,
                         },
                       ],
                       notes: [

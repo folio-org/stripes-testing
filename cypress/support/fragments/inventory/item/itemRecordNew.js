@@ -231,6 +231,15 @@ export default {
     }));
   },
 
+  deleteStatisticalCodeByName(statisticalCode) {
+    cy.contains(statisticalCode)
+      .should('be.visible')
+      .closest('[data-test-repeatable-field-list-item="true"]')
+      .find('button[data-test-repeatable-field-remove-item-button="true"]')
+      .click();
+    cy.contains(statisticalCode).should('not.exist');
+  },
+
   filterStatisticalCodeByName(name) {
     cy.do(statisticalCodeSelectionList.filter(name));
     cy.wait(1000);
@@ -338,5 +347,8 @@ export default {
     if (urlPublicNote) {
       cy.do(targetRow.find(TextArea({ ariaLabel: 'URL public note' })).fillIn(urlPublicNote));
     }
+  },
+  verifyBarcodeFieldFocusedByDefault: () => {
+    cy.get('input[name="barcode"]').should('be.focused');
   },
 };

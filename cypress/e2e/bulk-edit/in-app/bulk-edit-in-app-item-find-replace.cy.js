@@ -11,9 +11,9 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES } from '../../../support/constants';
 
 let user;
+let actionNoteTypeId;
 const notes = {
   adminOne: 'adminNote',
   adminTwo: 'AdminNote',
@@ -45,37 +45,42 @@ describe('Bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-          (res) => {
-            const itemData = res;
-            item.hrid = res.hrid;
 
-            itemData.administrativeNotes = [notes.adminOne, notes.adminTwo];
+        InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
+          actionNoteTypeId = noteTypes[0].id;
 
-            itemData.notes = [
-              {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.actionOne,
-                staffOnly: true,
-              },
-              {
-                itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
-                note: notes.actionTwo,
-                staffOnly: true,
-              },
-            ];
-            itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkInOne, staffOnly: true },
-              { noteType: 'Check in', note: notes.checkInTwo, staffOnly: true },
-            ];
-            cy.updateItemViaApi(itemData);
-            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+            (res) => {
+              const itemData = res;
+              item.hrid = res.hrid;
+
+              itemData.administrativeNotes = [notes.adminOne, notes.adminTwo];
+
+              itemData.notes = [
+                {
+                  itemNoteTypeId: actionNoteTypeId,
+                  note: notes.actionOne,
+                  staffOnly: true,
+                },
+                {
+                  itemNoteTypeId: actionNoteTypeId,
+                  note: notes.actionTwo,
+                  staffOnly: true,
+                },
+              ];
+              itemData.circulationNotes = [
+                { noteType: 'Check in', note: notes.checkInOne, staffOnly: true },
+                { noteType: 'Check in', note: notes.checkInTwo, staffOnly: true },
+              ];
+              cy.updateItemViaApi(itemData);
+              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
         });
       });
     });

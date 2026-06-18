@@ -9,14 +9,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  BULK_EDIT_TABLE_COLUMN_HEADERS,
-  HOLDING_NOTES,
-} from '../../../support/constants';
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 let user;
+let actionNoteTypeId;
 const notes = {
   adminOne: 'admin test no;te',
   adminOneReplaced: 'admin test note',
@@ -42,36 +39,41 @@ describe('Bulk-edit', () => {
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryCRUDHoldings.gui]).then(
         (userProperties) => {
           user = userProperties;
-          item.instanceId = InventoryInstances.createInstanceViaApi(
-            item.instanceName,
-            item.barcode,
-          );
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${item.instanceId}"`,
-          }).then((holdings) => {
-            item.holdingHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingHRID);
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              administrativeNotes: [notes.adminOne, notes.adminTwo],
-              notes: [
-                {
-                  holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
-                  note: notes.actionOne,
-                  staffOnly: false,
-                },
-                {
-                  holdingsNoteTypeId: HOLDING_NOTES.ACTION_NOTE,
-                  note: notes.actionTwo,
-                  staffOnly: false,
-                },
-              ],
+
+          cy.getHoldingNoteTypeIdViaAPI('Action note').then((noteTypeId) => {
+            actionNoteTypeId = noteTypeId;
+
+            item.instanceId = InventoryInstances.createInstanceViaApi(
+              item.instanceName,
+              item.barcode,
+            );
+            cy.getHoldings({
+              limit: 1,
+              query: `"instanceId"="${item.instanceId}"`,
+            }).then((holdings) => {
+              item.holdingHRID = holdings[0].hrid;
+              FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingHRID);
+              cy.updateHoldingRecord(holdings[0].id, {
+                ...holdings[0],
+                administrativeNotes: [notes.adminOne, notes.adminTwo],
+                notes: [
+                  {
+                    holdingsNoteTypeId: actionNoteTypeId,
+                    note: notes.actionOne,
+                    staffOnly: false,
+                  },
+                  {
+                    holdingsNoteTypeId: actionNoteTypeId,
+                    note: notes.actionTwo,
+                    staffOnly: false,
+                  },
+                ],
+              });
             });
-          });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
         },
       );
