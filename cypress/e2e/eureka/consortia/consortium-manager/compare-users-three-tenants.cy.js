@@ -1,5 +1,6 @@
 import Users from '../../../../support/fragments/users/users';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -181,6 +182,7 @@ describe('Eureka', () => {
 
         cy.resetTenant();
         cy.login(tempUser.username, tempUser.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
 
@@ -189,11 +191,11 @@ describe('Eureka', () => {
       cy.getAdminToken();
       Users.deleteViaApi(tempUser.userId);
       Users.deleteViaApi(userA.userId);
-      cy.deleteAuthorizationRoleApi(roleCentralId);
+      cy.deleteAuthorizationRoleApi(roleCentralId, true);
       cy.setTenant(Affiliations.College);
-      cy.deleteAuthorizationRoleApi(roleCollegeId);
+      cy.deleteAuthorizationRoleApi(roleCollegeId, true);
       cy.setTenant(Affiliations.University);
-      cy.deleteAuthorizationRoleApi(roleUniversityId);
+      cy.deleteAuthorizationRoleApi(roleUniversityId, true);
     });
 
     it(

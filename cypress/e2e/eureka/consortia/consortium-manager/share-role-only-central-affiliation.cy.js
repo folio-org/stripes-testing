@@ -61,6 +61,7 @@ describe('Eureka', () => {
           path: TopMenu.consortiumManagerPath,
           waiter: ConsortiumManagerApp.waitLoading,
         });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         AuthorizationRoles.waitContentLoading();
