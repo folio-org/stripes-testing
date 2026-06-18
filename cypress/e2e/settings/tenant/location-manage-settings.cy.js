@@ -101,6 +101,7 @@ describe('Settings: Tenant', () => {
 
       // UPDATE: Edit the created location
       LocationDetails.openEditLocationForm();
+      cy.wait(3000); // need to wait for form to be loaded
       CreateLocations.fillFolioName(locationData.editedFolioName);
       CreateLocations.fillCode(locationData.editedCode);
       CreateLocations.saveAndClose();
