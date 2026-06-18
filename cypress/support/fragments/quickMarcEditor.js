@@ -1044,7 +1044,7 @@ export default {
     );
   },
 
-  clickSaveAndKeepEditing() {
+  clickSaveAndKeepEditing({ checkCallout = true } = {}) {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
@@ -1058,7 +1058,8 @@ export default {
     cy.wait('@getSavedRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('eq', 200);
-    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.exists()]);
+    if (checkCallout) cy.expect(calloutAfterSaveAndClose.exists());
+    cy.expect(rootSection.exists());
   },
 
   deleteFieldAndCheck(rowIndex, tag) {
@@ -3750,5 +3751,17 @@ export default {
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(targetRow.find(firstIndicatorBox).absent());
     cy.expect(targetRow.find(secondIndicatorBox).absent());
+  },
+
+  checkErrorMessageAndHelpLinkForField({ errorMessage, tag, helpLinkUrl, rowIndex }) {
+    const targetRow = rowIndex
+      ? getRowInteractorByRowNumber(rowIndex)
+      : getRowInteractorByTagName(tag);
+    cy.expect(
+      targetRow
+        .find(HTML(including(errorMessage), { className: including('feedbackErrorIcon') }))
+        .find(Link('Help', { href: including(helpLinkUrl) }))
+        .exists(),
+    );
   },
 };
