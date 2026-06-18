@@ -16,7 +16,7 @@ describe('fse-users - UI (no data manipulation)', () => {
 
   it(
     `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'users'] },
+    { tags: ['sanity', 'fse', 'ui', 'users', 'TC195391'] },
     () => {
       Users.waitLoading();
       cy.getAdminUserId().then((id) => {

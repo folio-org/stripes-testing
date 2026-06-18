@@ -22,7 +22,7 @@ describe('fse-agreements - UI (no data manipulation)', () => {
 
   it(
     `TC195280 - verify that agreements module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'agreements'] },
+    { tags: ['sanity', 'fse', 'ui', 'agreements', 'TC195280'] },
     () => {
       SearchAgreements.verifyAgreementsFilterPane();
       Agreements.checkSwitchToLocalKbDisplayed();
@@ -58,7 +58,7 @@ describe('fse-agreements - UI (data manipulation)', () => {
 
   it(
     `TC195629 - create new agreement, create new license - assign and delete ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'agreements', 'fse-user-journey'] },
+    { tags: ['nonProd', 'fse', 'ui', 'agreements', 'fse-user-journey', 'TC195629'] },
     () => {
       defaultAgreement.name += 'FSE_TEST_TC195629';
       defaultLicense.name += 'FSE_TEST_TC195629';

@@ -18,7 +18,7 @@ describe('fse-data-export - UI (no data manipulation)', () => {
 
   it(
     `TC195288 - verify that data-export module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'data-export'] },
+    { tags: ['sanity', 'fse', 'ui', 'data-export', 'TC195288'] },
     () => {
       ExportFileHelper.waitLoading();
     },

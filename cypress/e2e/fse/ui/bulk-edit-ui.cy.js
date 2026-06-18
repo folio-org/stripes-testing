@@ -15,7 +15,7 @@ describe('fse-bulk-edit - UI (no data manipulation)', () => {
 
   it(
     `TC195812 - verify that bulk edit page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'bulk-edit'] },
+    { tags: ['sanity', 'fse', 'ui', 'bulk-edit', 'TC195812'] },
     () => {
       BulkEditSearch.verifyBulkEditImage();
       // verify logs items

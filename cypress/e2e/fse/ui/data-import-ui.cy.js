@@ -27,7 +27,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
 
   it(
     `TC195289 - verify that data-import module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'data-import'] },
+    { tags: ['sanity', 'fse', 'ui', 'data-import', 'TC195289'] },
     () => {
       DataImport.waitLoadingNoInteractors();
     },

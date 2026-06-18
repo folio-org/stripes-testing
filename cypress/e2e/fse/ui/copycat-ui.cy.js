@@ -16,7 +16,7 @@ describe('fse-copycat - UI (no data manipulation)', () => {
 
   it(
     `TC195639 - verify that profiles are displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'copycat'] },
+    { tags: ['sanity', 'fse', 'ui', 'copycat', 'TC195639'] },
     () => {
       cy.wait(3000);
       SettingsInventory.goToSettingsInventoryNoInteractors();
