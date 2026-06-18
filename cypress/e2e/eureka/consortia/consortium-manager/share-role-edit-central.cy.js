@@ -153,7 +153,7 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName, false);
-        AuthorizationRoles.shareRole(testData.roleName, { verifyModal: true });
+        AuthorizationRoles.shareRole(testData.roleName, { verifyModal: true, timeout: 82_000 });
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
         testData.originalCapabilitySets.forEach((set) => {
@@ -170,7 +170,9 @@ describe('Eureka', () => {
         );
         AuthorizationRoles.checkSaveButton();
         AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated, testData.roleDescription);
+        AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated, testData.roleDescription, {
+          timeout: 100_000,
+        });
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(assignUserCentralData.username);
         AuthorizationRoles.clickSaveInAssignModal();

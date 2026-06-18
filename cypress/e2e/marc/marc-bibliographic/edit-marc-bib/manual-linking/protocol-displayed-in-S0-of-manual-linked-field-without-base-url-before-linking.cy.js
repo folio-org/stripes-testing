@@ -172,6 +172,7 @@ describe('MARC', () => {
                 true,
               ).then((sourceId) => {
                 createdAuthSources.push(sourceId);
+                cy.wait(70_000); // wait for source file to be processed by a scheduled job
               });
             });
 
@@ -191,6 +192,7 @@ describe('MARC', () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
             });
           });
         });
