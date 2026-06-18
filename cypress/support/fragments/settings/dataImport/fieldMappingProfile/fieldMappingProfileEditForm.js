@@ -186,10 +186,7 @@ const existingRecordTypes = {
 };
 
 const suppressFromDiscoveryOptions = {
-  // for Trillium env with cyrillic 'c'
-  // 'Select сheckbox field mapping': '',
-  // for Cyrpress env
-  'Select checkbox field mapping': '',
+  'Select сheckbox field mapping': '',
   'Mark for all affected records': 'ALL_TRUE',
   'Unmark for all affected records': 'ALL_FALSE',
   'Keep the existing value for all affected records': 'AS_IS',
