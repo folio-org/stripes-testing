@@ -268,10 +268,12 @@ export default {
 
   deleteSubjectSourceByName(name) {
     getRowIndexesByColumnValue(columnIndex.name, (text) => text.includes(name)).then((rowIndex) => {
+      cy.wait(1000);
       cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex[0]}"]`)
         .find(`[class*="mclCell-"]:nth-child(${columnIndex.actions + 1}) button[icon="trash"]`)
         .click();
     });
+    cy.wait(1000);
   },
 
   cancelDelitionOfSubjectSource(name) {
