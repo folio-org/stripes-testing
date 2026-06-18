@@ -4,10 +4,10 @@ import {
   ActionProfiles as SettingsActionProfiles,
   SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
-import ActionProfileEditForm from '../../../support/fragments/settings/dataImport/actionProfiles/actionProfileEditForm';
-// import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -41,11 +41,10 @@ describe('Data Import', () => {
       });
     });
 
-    // after('Delete user', () => {
-    //   cy.getAdminToken().then(() => {
-    //     Users.deleteViaApi(testData.user.userId);
-    //   });
-    // });
+    after('Delete user', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+    });
 
     it(
       'C358979 Checking "Action" option when create a new action profile (folijet) (TaaS)',
@@ -53,35 +52,30 @@ describe('Data Import', () => {
       () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         SettingsActionProfiles.openNewActionProfileForm();
-        testData.actionOptions.forEach((actionOption) => {
-          ActionProfileEditForm.fillDetailsProfileFields({ action: actionOption });
+        NewActionProfile.verifyActionOptions(testData.actionOptions);
+
+        NewActionProfile.chooseAction(ACTION_NAMES_IN_ACTION_PROFILE.CREATE);
+        NewActionProfile.verifyFolioRecordTypeOptions(testData.createRecordTypes);
+        testData.createRecordTypes.forEach((recordType) => {
+          NewActionProfile.chooseRecordType(recordType);
+          NewActionProfile.verifySelectedFolioRecordType(recordType);
         });
 
-        // ActionProfileEditForm.fillDetailsProfileFields({
-        //   action: ACTION_NAMES_IN_ACTION_PROFILE.CREATE,
-        // });
-        // NewActionProfile.verifyFolioRecordTypeOptions(testData.createRecordTypes);
-        // testData.createRecordTypes.forEach((recordType) => {
-        //   ActionProfileEditForm.fillDetailsProfileFields({ recordType });
-        // });
+        NewActionProfile.chooseAction(ACTION_NAMES_IN_ACTION_PROFILE.MODIFY);
+        NewActionProfile.verifyFolioRecordTypeOptions(testData.modifyRecordTypes);
+        testData.modifyRecordTypes.forEach((recordType) => {
+          NewActionProfile.chooseRecordType(recordType);
+          NewActionProfile.verifySelectedFolioRecordType(recordType);
+        });
 
-        // ActionProfileEditForm.fillDetailsProfileFields({
-        //   action: ACTION_NAMES_IN_ACTION_PROFILE.MODIFY,
-        // });
-        // NewActionProfile.verifyFolioRecordTypeOptions(testData.modifyRecordTypes);
-        // testData.modifyRecordTypes.forEach((recordType) => {
-        //   ActionProfileEditForm.fillDetailsProfileFields({ recordType });
-        // });
+        NewActionProfile.chooseAction(ACTION_NAMES_IN_ACTION_PROFILE.UPDATE);
+        NewActionProfile.verifyFolioRecordTypeOptions(testData.updateRecordTypes);
+        testData.updateRecordTypes.forEach((recordType) => {
+          NewActionProfile.chooseRecordType(recordType);
+          NewActionProfile.verifySelectedFolioRecordType(recordType);
+        });
 
-        // ActionProfileEditForm.fillDetailsProfileFields({
-        //   action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-        // });
-        // NewActionProfile.verifyFolioRecordTypeOptions(testData.updateRecordTypes);
-        // testData.updateRecordTypes.forEach((recordType) => {
-        //   ActionProfileEditForm.fillDetailsProfileFields({ recordType });
-        // });
-
-        // ActionProfileEditForm.clickCloseButton();
+        NewActionProfile.closeProfileWithoutSaving();
       },
     );
   });
