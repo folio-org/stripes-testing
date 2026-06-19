@@ -12,30 +12,30 @@ import SettingsInventory, {
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import SubjectTypes from '../../../../../support/fragments/settings/inventory/instances/subjectTypes';
+import SubjectSources from '../../../../../support/fragments/settings/inventory/instances/subjectSources';
 import SelectMembersModal from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManagerSettings from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import ConsortiumSubjectTypes from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectTypesConsortiumManager';
+import ConsortiumSubjectSources from '../../../../../support/fragments/consortium-manager/inventory/instances/subjectSourcesConsortiumManager';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
-      describe('Manage shared Subject types', () => {
+      describe('Manage shared Subject sources', () => {
         let userA;
         let userB;
 
-        const firstSubjectType = {
-          name: `C594407 autotestSubjectTypeName${getRandomPostfix()}`,
+        const firstSubjectSource = {
+          name: `C594430 autotestSubjectSourceName${getRandomPostfix()}`,
           source: 'consortium',
           consortiaUser: 'System, System user - mod-consortia-keycloak',
           memberLbraries: 'All',
           id: uuid(),
         };
-        const secondSubjectType = {
-          name: `C594407 autotestSubjectTypeName${getRandomPostfix()}`,
+        const secondSubjectSource = {
+          name: `C594430 autotestSubjectSourceName${getRandomPostfix()}`,
           source: 'consortium',
           consortiaUser: 'System, System user - mod-consortia-keycloak',
           memberLbraries: 'All',
@@ -60,14 +60,14 @@ describe('Consortia', () => {
           },
           {
             type: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Inventory Settings Subject-Types',
+            resource: 'UI-Inventory Settings Subject-Sources',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ];
         const capabSetsUserACollege = [
           {
             type: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Inventory Settings Subject-Types',
+            resource: 'UI-Inventory Settings Subject-Sources',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ];
@@ -81,36 +81,40 @@ describe('Consortia', () => {
         const capabSetsUserB = [
           {
             type: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Inventory Settings Subject-Types',
+            resource: 'UI-Inventory Settings Subject-Sources',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ];
 
-        function openSubjectTypesSettings() {
+        function openSubjectSourceSettings() {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
           SettingsPane.waitLoading();
           SettingsInventory.goToSettingsInventory();
-          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_TYPES);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
         }
 
-        function verifySubjectTypeExistsInSettings(subjectType) {
-          openSubjectTypesSettings();
-          SubjectTypes.verifySubjectTypeExists(subjectType);
+        function verifySubjectSourceExistsInSettings(subjectSource) {
+          openSubjectSourceSettings();
+          SubjectSources.verifySubjectSourceExists(
+            subjectSource.name,
+            subjectSource.source,
+            subjectSource.user,
+          );
         }
 
-        function verifySubjectTypeAbsentInSettings(subjectTypeName) {
-          openSubjectTypesSettings();
-          SubjectTypes.verifySubjectTypeAbsent(subjectTypeName);
+        function verifySubjectSourceAbsentInSettings(subjectSourceName) {
+          openSubjectSourceSettings();
+          SubjectSources.verifySubjectSourceAbsent(subjectSourceName);
         }
 
-        function switchAffiliationAndVerifySubjectTypeExists(from, to, subjectType) {
+        function switchAffiliationAndVerifySubjectSourceExists(from, to, subjectSource) {
           ConsortiumManagerSettings.switchActiveAffiliation(from, to);
-          verifySubjectTypeExistsInSettings(subjectType);
+          verifySubjectSourceExistsInSettings(subjectSource);
         }
 
-        function switchAffiliationAndVerifySubjectTypeAbsent(from, to, subjectTypeName) {
+        function switchAffiliationAndVerifySubjectSourceAbsent(from, to, subjectSourceName) {
           ConsortiumManagerSettings.switchActiveAffiliation(from, to);
-          verifySubjectTypeAbsentInSettings(subjectTypeName);
+          verifySubjectSourceAbsentInSettings(subjectSourceName);
         }
 
         before('Create user and login', () => {
@@ -173,8 +177,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594407 User with all Consortium manager permission (view, create, share) is able to create shared subject type via "Consortium manager" app (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594407'] },
+          'C594430 User with all Consortium manager permission (view, create, share) is able to create shared subject source via "Consortium manager" app (folijet)',
+          { tags: ['criticalPathECS', 'folijet', 'C594430'] },
           () => {
             // Step 1: Navigate to Consortium manager app and select all members
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
@@ -182,47 +186,48 @@ describe('Consortia', () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
-            // Step 2: Naviagate to Inventory -> Subject types settings
+            // Step 2: Naviagate to Inventory -> Subject sources settings
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            ConsortiumSubjectTypes.choose();
+            ConsortiumSubjectSources.choose();
 
-            // Step 3-4: Create subject type shared with all members and verify it is created and shared with all members
-            ConsortiumSubjectTypes.createSubjectTypeSharedWithAllMembers(firstSubjectType.name);
-            ConsortiumSubjectTypes.confirmShareWithAllMembers(firstSubjectType.name);
-            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
-              firstSubjectType.name,
-              firstSubjectType.source,
-              firstSubjectType.consortiaUser,
-              firstSubjectType.memberLbraries,
-              { actions: ['edit', 'trash'] },
+            // Step 3-4: Create subject source shared with all members and verify it is created and shared with all members
+            ConsortiumSubjectSources.createSharedWithAllMembersSubjectSource(
+              firstSubjectSource.name,
+            );
+            ConsortiumSubjectSources.confirmShareWithAllMembers(firstSubjectSource.name);
+            ConsortiumSubjectSources.verifySharedSubjectSourceExists({
+              name: firstSubjectSource.name,
+              source: firstSubjectSource.source,
+              actions: ['edit', 'trash'],
+            });
+
+            // Step 5-6: Log in as user B and subject source is visible in settings
+            cy.login(userB.username, userB.password);
+            verifySubjectSourceExistsInSettings({
+              name: firstSubjectSource.name,
+              source: firstSubjectSource.source,
+              user: firstSubjectSource.consortiaUser,
+            });
+
+            // Step 7: Switch affiliation of user B (College) and verify subject source is visible in settings
+            switchAffiliationAndVerifySubjectSourceExists(
+              tenantNames.central,
+              tenantNames.college,
+              {
+                name: firstSubjectSource.name,
+                source: firstSubjectSource.source,
+                user: firstSubjectSource.consortiaUser,
+              },
             );
 
-            // Step 5-6: Log in as user B and subject type is visible in settings
-            cy.login(userB.username, userB.password);
-            verifySubjectTypeExistsInSettings({
-              name: firstSubjectType.name,
-              source: firstSubjectType.source,
-              user: firstSubjectType.consortiaUser,
-              memberLbraries: firstSubjectType.memberLbraries,
-            });
-
-            // Step 7: Switch affiliation of user B (College) and verify subject type is visible in settings
-            switchAffiliationAndVerifySubjectTypeExists(tenantNames.central, tenantNames.college, {
-              name: firstSubjectType.name,
-              source: firstSubjectType.source,
-              user: firstSubjectType.consortiaUser,
-              memberLbraries: firstSubjectType.memberLbraries,
-            });
-
-            // Step 8: Switch affiliation of user B (University) and verify subject type is visible in settings
-            switchAffiliationAndVerifySubjectTypeExists(
+            // Step 8: Switch affiliation of user B (University) and verify subject source is visible in settings
+            switchAffiliationAndVerifySubjectSourceExists(
               tenantNames.college,
               tenantNames.university,
               {
-                name: firstSubjectType.name,
-                source: firstSubjectType.source,
-                user: firstSubjectType.consortiaUser,
-                memberLbraries: firstSubjectType.memberLbraries,
+                name: firstSubjectSource.name,
+                source: firstSubjectSource.source,
+                user: firstSubjectSource.consortiaUser,
               },
             );
 
@@ -233,48 +238,50 @@ describe('Consortia', () => {
               tenantNames.central,
             );
 
-            // Step 10: Naviagate to Consortium manager -> Inventory -> Subject types settings
+            // Step 10: Naviagate to Consortium manager -> Inventory -> Subject sources settings
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManagerApp.waitLoading();
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            ConsortiumSubjectTypes.choose();
+            ConsortiumSubjectSources.choose();
 
             // Step 11-13: Clear name field and verify error message, then fill in new name and save changes
-            ConsortiumSubjectTypes.clearAndVerifyErrorMessageAndEditName(
-              firstSubjectType.name,
-              secondSubjectType.name,
+            ConsortiumSubjectSources.clearAndVerifyErrorMessageAndEditName(
+              firstSubjectSource.name,
+              secondSubjectSource.name,
             );
 
-            // Step 14: Verify subject type is updated with new name and shared with all members
-            ConsortiumSubjectTypes.confirmShareWithAllMembers(secondSubjectType.name, 'updated');
-            ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
-              secondSubjectType.name,
-              secondSubjectType.source,
-              secondSubjectType.consortiaUser,
-              secondSubjectType.memberLbraries,
-              { actions: ['edit', 'trash'] },
+            // Step 14: Verify subject source is updated with new name and shared with all members
+            ConsortiumSubjectSources.confirmShareWithAllMembers(
+              secondSubjectSource.name,
+              'updated',
             );
+            ConsortiumSubjectSources.verifySharedSubjectSourceExists({
+              name: secondSubjectSource.name,
+              source: secondSubjectSource.source,
+              actions: ['edit', 'trash'],
+            });
 
-            // Step 15-16: Delete subject type and verify it is deleted
-            ConsortiumSubjectTypes.deleteBySubjectTypeName(secondSubjectType.name);
-            ConsortiumSubjectTypes.verifySubjectTypeAbsent(secondSubjectType.name);
+            // Step 15-16: Delete subject source and verify it is deleted
+            ConsortiumSubjectSources.deleteSubjectSourceByName(secondSubjectSource.name);
+            ConsortiumSubjectSources.confirmDeletionOfSubjectSource(secondSubjectSource.name);
+            ConsortiumSubjectSources.verifySubjectSourceAbsent(secondSubjectSource.name);
 
-            // Step 17-18: Log in as user B and verify subject type is deleted in settings
+            // Step 17-18: Log in as user B and verify subject source is deleted in settings
             cy.login(userB.username, userB.password);
-            verifySubjectTypeAbsentInSettings(secondSubjectType.name);
+            verifySubjectSourceAbsentInSettings(secondSubjectSource.name);
 
-            // Step 19: Switch affiliation of user B (College) and verify subject type is deleted in settings
-            switchAffiliationAndVerifySubjectTypeAbsent(
+            // Step 19: Switch affiliation of user B (College) and verify subject source is deleted in settings
+            switchAffiliationAndVerifySubjectSourceAbsent(
               tenantNames.central,
               tenantNames.college,
-              secondSubjectType.name,
+              secondSubjectSource.name,
             );
 
-            // Step 20: Switch affiliation of user B (University) and verify subject type is deleted in settings
-            switchAffiliationAndVerifySubjectTypeAbsent(
+            // Step 20: Switch affiliation of user B (University) and verify subject source is deleted in settings
+            switchAffiliationAndVerifySubjectSourceAbsent(
               tenantNames.college,
               tenantNames.university,
-              secondSubjectType.name,
+              secondSubjectSource.name,
             );
           },
         );

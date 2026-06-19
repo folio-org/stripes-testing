@@ -145,7 +145,7 @@ const waitFirstRowChanged = (listInteractor) => {
  * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
  * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
- * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>, filterValues?: Function } assertColumnValuesSorted
+ * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function, filterValues?: Function }) => Cypress.Chainable<void> } assertColumnValuesSorted
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function, getSortableValue?: Function, comparator?: Function}) => Cypress.Chainable<void>} assertColumnValuesNotSorted
  * @property {(listInteractor: ListInteractor, rowsConfig?: RowsConfig) => void} assertRowsCellsContent
  * @property {(listInteractor: ListInteractor, isEnabled: boolean) => void} assertNextPageButtonEnabled
