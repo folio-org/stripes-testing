@@ -42,6 +42,7 @@ import QuickMarcEditorWindow from '../quickMarcEditor';
 import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
+import { calloutTypes } from '../../../../interactors/callout';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -60,6 +61,7 @@ const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' })
 const authorityActionsDropDown = Dropdown('Actions');
 const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
+const recordNotFoundMessage = 'Record cannot be found or loaded.';
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -219,10 +221,7 @@ export default {
     ]);
   },
   checkNoValidationErrors() {
-    cy.expect([
-      // authReportModal.find(TextField({ name })).has({ error }),
-      exportButton.has({ disabled: false }),
-    ]);
+    cy.expect([exportButton.has({ disabled: false })]);
   },
   closeAuthReportModalUsingESC() {
     cy.get('#authorities-report-modal').type('{esc}');
@@ -248,8 +247,9 @@ export default {
     );
   },
 
-  checkCallout: (text) => {
-    cy.expect(Callout(including(text)).exists());
+  checkCallout: (text, type) => {
+    if (type) cy.expect(Callout(including(text), { type }).exists());
+    else cy.expect(Callout(including(text)).exists());
   },
 
   checkResultsExistance: (type) => {
@@ -1866,7 +1866,10 @@ export default {
 
   checkButtonNewExistsInActionDropdown(buttonShown = true) {
     if (buttonShown) cy.expect(buttonNew.exists());
-    else cy.expect(buttonNew.absent());
+    else {
+      cy.wait(1000); // button may not load immediately
+      cy.expect(buttonNew.absent());
+    }
   },
 
   checkAuthorityActionsDropDownExpanded() {
@@ -2206,5 +2209,19 @@ export default {
   verifyReportsSectionShownInActionsMenu(isShown = true) {
     if (isShown) cy.expect(actionsMenuReportsSection.exists());
     else cy.expect(actionsMenuReportsSection.absent());
+  },
+
+  getNextPaginationButtonState() {
+    cy.wait(1000);
+    return cy.wrap(nextButton.perform((el) => !el.disabled));
+  },
+
+  checkAfterDelete(heading) {
+    cy.expect(marcViewSection.absent());
+    this.verifyRecordFound(heading, false);
+  },
+
+  verifyRecordNotFoundCallout() {
+    this.checkCallout(recordNotFoundMessage, calloutTypes.error);
   },
 };
