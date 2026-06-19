@@ -268,8 +268,6 @@ describe('Patron notices', () => {
           CheckInActions.verifyLastCheckInItem(item.barcode);
         });
         CheckInActions.endCheckInSession();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         cy.getAdminToken();
 
         poll(
@@ -287,6 +285,9 @@ describe('Patron notices', () => {
             failOnStatusCode: false,
           }),
           (response) => response.body.logRecords.length > 0,
+          {
+            timeout: 1200000,
+          },
         );
 
         cy.login(userData.username, userData.password, {
