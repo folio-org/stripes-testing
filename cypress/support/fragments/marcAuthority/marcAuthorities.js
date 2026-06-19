@@ -2229,4 +2229,9 @@ export default {
     cy.wait(1000);
     return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
+
+  checkAfterDelete(heading) {
+    cy.expect(marcViewSection.absent());
+    this.verifyRecordFound(heading, false);
+  },
 };
