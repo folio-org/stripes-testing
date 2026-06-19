@@ -1,5 +1,5 @@
 import { Permissions } from '../../support/dictionary';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { LOCATION_NAMES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -39,9 +39,14 @@ describe('Check in', () => {
             };
             testItems = testData.folioInstances;
             itemBarcodes = testItems.map((item) => item.barcodes[0]);
-            InventoryInstances.createFolioInstancesViaApi({
-              folioInstances: testItems,
-              location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+
+            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+              testData.mainLibraryLocationId = res.id;
+
+              InventoryInstances.createFolioInstancesViaApi({
+                folioInstances: testItems,
+                location: { id: testData.mainLibraryLocationId },
+              });
             });
           })
           .then(() => {

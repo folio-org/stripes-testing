@@ -85,7 +85,7 @@ describe('Users', () => {
 
     it(
       'C15699 - Set custom fields to required',
-      { tags: ['extendedPath', 'volaris', 'C15699'] },
+      { tags: ['extendedPath', 'volaris', 'nonParallel', 'C15699'] },
       () => {
         // Step 1: Open the custom fields settings pane
         CustomFields.verifyCustomFieldsPaneIsOpen();

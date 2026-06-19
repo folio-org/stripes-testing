@@ -84,6 +84,10 @@ export default {
     cy.get('.CodeMirror-hints .CodeMirror-hint').first().click();
   },
 
+  verifyEditorExists() {
+    cy.get('.react-codemirror2').should('exist');
+  },
+
   verifyEditorContainsText(text) {
     cy.get('.react-codemirror2').should('contain.text', text);
   },

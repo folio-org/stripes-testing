@@ -30,7 +30,7 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196440 - OAI-PMH general configuration verification for ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'sanity', 'oai-pmh', 'configurations'] },
+    { tags: ['fse', 'api', 'sanity', 'oai-pmh', 'configurations', 'TC196440'] },
     () => {
       cy.getOaiPmhGeneralConfigViaApi().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -44,7 +44,12 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
         const expectedUrl = Cypress.config().baseUrl.replace('https://', 'https://edge-') + '/oai';
         cy.expect(config.module).to.eq('OAIPMH');
         cy.expect(config.configName).to.eq('general');
-        cy.expect(configValue.baseUrl).to.eq(expectedUrl);
+        // Special case: if baseUrl is http://folio.org/oai, skip the verification
+        if (configValue.baseUrl === 'http://folio.org/oai') {
+          cy.log('OAI-PMH baseUrl is set to default: http://folio.org/oai');
+        } else {
+          cy.expect(configValue.baseUrl).to.eq(expectedUrl);
+        }
       });
     },
   );

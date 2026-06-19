@@ -107,7 +107,7 @@ describe('Inventory', () => {
             testData.collegeHolding.id,
           );
           InstanceRecordView.openHoldingsAccordion(testData.collegeLocation.name);
-          InstanceRecordView.verifyItemsListIsEmpty();
+          InstanceRecordView.verifyItemsListIsEmpty(testData.collegeLocation.name);
         },
       );
     });

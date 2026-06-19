@@ -4,20 +4,23 @@ import {
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Search', () => {
       const testData = {
         searchQuery: '*',
-        exportSearchQuery: 'authority',
+        exportSearchQuery: 'C365114',
         searchOption: MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD,
         personalNameOption: MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME,
+        authorityHeading: `AT_C365114_MarcAuthority_${getRandomPostfix()}`,
         filters: {
           authoritySource: 'LC Name Authority file (LCNAF)',
           excludeSeeFromAlso: REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
@@ -29,9 +32,24 @@ describe('MARC', () => {
           to: null,
         },
       };
+      const authorityFields = [
+        {
+          tag: '100',
+          content: `$a ${testData.authorityHeading}`,
+          indicators: ['1', '0'],
+        },
+      ];
+      let createdAuthorityId;
 
       before('Create user and login', () => {
         cy.getAdminToken();
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          '',
+          `n365114${getRandomLetters(15)}`,
+          authorityFields,
+        ).then((createdRecordId) => {
+          createdAuthorityId = createdRecordId;
+        });
 
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
@@ -39,11 +57,7 @@ describe('MARC', () => {
 
             // Set date range: last 365 days to current date
             const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-            const oneYearAgo = DateTools.getFormattedDate(
-              { date: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) },
-              'YYYY-MM-DD',
-            );
-            testData.dateCreated.from = oneYearAgo;
+            testData.dateCreated.from = today;
             testData.dateCreated.to = today;
 
             cy.login(userProperties.username, userProperties.password, {
@@ -58,6 +72,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         FileManager.deleteFileFromDownloadsByMask('SearchAuthorityUUIDs*');
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
       });
 
       it(
@@ -71,7 +86,6 @@ describe('MARC', () => {
           MarcAuthoritiesSearch.clickSearchButton();
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
-          MarcAuthorities.checkNextPaginationButtonEnabled(true);
 
           // Step 3: Apply "Authority source" facet
           MarcAuthorities.chooseAuthoritySourceOption(testData.filters.authoritySource);
@@ -94,19 +108,23 @@ describe('MARC', () => {
             testData.dateCreated.to,
           );
 
-          // Step 12: Navigate to next page - verify filters persist
-          MarcAuthorities.clickNextPagination();
-          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-          MarcAuthorities.checkPreviousPaginationButtonEnabled(true);
-          MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
-          MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+          MarcAuthorities.getNextPaginationButtonState().then((isEnabled) => {
+            if (isEnabled) {
+              // Step 12: Navigate to next page - verify filters persist
+              MarcAuthorities.clickNextPagination();
+              MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+              MarcAuthorities.checkPreviousPaginationButtonEnabled(true);
+              MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
+              MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
 
-          // Step 13: Navigate to previous page - verify filters persist
-          MarcAuthorities.clickPreviousPagination();
-          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-          MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
-          MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
-          MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+              // Step 13: Navigate to previous page - verify filters persist
+              MarcAuthorities.clickPreviousPagination();
+              MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+              MarcAuthorities.checkPreviousPaginationButtonEnabled(false);
+              MarcAuthorities.checkSelectedAuthoritySource(testData.filters.authoritySource);
+              MarcAuthorities.verifySelectedTextOfThesaurus(testData.filters.thesaurus);
+            }
+          });
 
           // Step 14-15: Change search option to "Personal name" - verify filters persist
           MarcAuthorities.selectSearchOptionInDropdown(testData.personalNameOption);

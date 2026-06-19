@@ -66,6 +66,24 @@ const embeddedTableHeadersMap = {
   subjects: ['Subject headings', 'Subject source', 'Subject type'],
   identifiers: ['Type', 'Identifier'],
   classifications: ['Classification identifier type', 'Classification'],
+  polFundDistribution: [
+    'Code',
+    'Encumbrance UUID',
+    'Fund',
+    'Expense class',
+    'Distribution type',
+    'Value',
+  ],
+  userAddress: [
+    'City',
+    'Region',
+    'Country',
+    'Postal code',
+    'Line 1',
+    'Type',
+    'Primary address',
+    'Line 2',
+  ],
 };
 
 export const embeddedFields = {
@@ -117,6 +135,8 @@ export const holdingsFieldValues = {
   statementsForIndexesStaffNote:
     'Holdings — Statements for indexes — Statement for indexes staff note',
   suppressFromDiscovery: 'Holdings — Suppress from discovery',
+  statisticalCodeNames: 'Holdings — Statistical codes',
+  statisticalCodeUuids: 'Holdings — Statistical code UUIDs',
   electronicAccessLinkText: 'Holdings — Electronic access — Link text',
   electronicAccessMaterialSpecified: 'Holdings — Electronic access — Material specified',
   electronicAccessURI: 'Holdings — Electronic access — URI',
@@ -221,12 +241,14 @@ export const itemFieldValues = {
   itemFormerIdentifiers: 'Item — Former identifiers',
   affiliationName: 'Item — Affiliation name',
   instanceShared: 'Instance — Shared',
+  statisticalCodeNames: 'Item — Statistical codes',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
   externalSystemId: 'User — External system ID',
   firstName: 'User — First name',
   lastName: 'User — Last name',
+  middleName: 'User — Middle name',
   patronGroup: 'Patron group — Name',
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
@@ -237,6 +259,13 @@ export const usersFieldValues = {
   userType: 'User — Type',
   userEmail: 'User — Email',
   userMobilePhone: 'User — Mobile phone',
+  userAddress: 'User — Address',
+  userAddressRegion: 'User — Address — Region',
+  userAddressType: 'User — Address — Type',
+  userAddressPostalCode: 'User — Address — Postal code',
+  userAddressCity: 'User — Address — City',
+  userAddressLine1: 'User — Address — Line 1',
+  userAddressLine2: 'User — Address — Line 2',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -249,6 +278,8 @@ export const organizationFieldValues = {
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
   paymentStatus: 'POL — Payment status',
+  createdAt: 'POL — Created at',
+  title: 'POL — Title or package',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -420,6 +451,17 @@ export default {
       RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
+  },
+
+  filterFieldSelectionList(string, row = 0) {
+    const targetField = RepeatableFieldItem({ index: row });
+
+    cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
+  },
+
+  verifyFieldOptionAbsentInTheList() {
+    cy.expect(SelectionList().has({ optionList: ['-List is empty-'] }));
+    this.closeOpenedSelection();
   },
 
   verifySelectedField(selection, row = 0) {
@@ -1104,6 +1146,26 @@ export default {
         return [dataObj.identifierType, dataObj.identifier];
       case 'classifications':
         return [dataObj.classificationIdentifierType, dataObj.classification];
+      case 'polFundDistribution':
+        return [
+          dataObj.code,
+          dataObj.encumbranceUUID,
+          dataObj.fund,
+          dataObj.expenseClass,
+          dataObj.distributionType,
+          dataObj.value,
+        ];
+      case 'userAddress':
+        return [
+          dataObj.city,
+          dataObj.region,
+          dataObj.country,
+          dataObj.postalCode,
+          dataObj.line1,
+          dataObj.type,
+          dataObj.primaryAddress,
+          dataObj.line2,
+        ];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1197,6 +1259,14 @@ export default {
       instanceIdentifier,
       expectedClassifications,
     );
+  },
+
+  verifyPOLFundDistributionEmbeddedTableInQueryModal(identifier, expectedFundValues) {
+    this.verifyEmbeddedTableInQueryModal('polFundDistribution', identifier, expectedFundValues);
+  },
+
+  verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
+    this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
   },
 
   clickShowColumnsButton() {
