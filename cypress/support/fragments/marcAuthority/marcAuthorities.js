@@ -43,6 +43,7 @@ import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
 import { formatNumber } from '../../utils/numberTools';
+import { calloutTypes } from '../../../../interactors/callout';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -61,6 +62,7 @@ const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' })
 const authorityActionsDropDown = Dropdown('Actions');
 const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
+const recordNotFoundMessage = 'Record cannot be found or loaded.';
 
 // actions dropdown window
 const authorityActionsDropDownMenu = DropdownMenu();
@@ -258,8 +260,9 @@ export default {
     );
   },
 
-  checkCallout: (text) => {
-    cy.expect(Callout(including(text)).exists());
+  checkCallout: (text, type) => {
+    if (type) cy.expect(Callout(including(text), { type }).exists());
+    else cy.expect(Callout(including(text)).exists());
   },
 
   checkResultsExistance: (type) => {
@@ -1874,7 +1877,10 @@ export default {
 
   checkButtonNewExistsInActionDropdown(buttonShown = true) {
     if (buttonShown) cy.expect(buttonNew.exists());
-    else cy.expect(buttonNew.absent());
+    else {
+      cy.wait(1000); // button may not load immediately
+      cy.expect(buttonNew.absent());
+    }
   },
 
   checkAuthorityActionsDropDownExpanded() {
@@ -2233,5 +2239,9 @@ export default {
   checkAfterDelete(heading) {
     cy.expect(marcViewSection.absent());
     this.verifyRecordFound(heading, false);
+  },
+
+  verifyRecordNotFoundCallout() {
+    this.checkCallout(recordNotFoundMessage, calloutTypes.error);
   },
 };
