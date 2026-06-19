@@ -323,7 +323,7 @@ describe('Data Export', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Users.deleteViaApi(user.userId);
     additionalUsers.forEach((additionalUser) => {
       Users.deleteViaApi(additionalUser.userId);
