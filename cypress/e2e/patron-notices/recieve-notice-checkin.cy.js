@@ -285,9 +285,6 @@ describe('Patron notices', () => {
             failOnStatusCode: false,
           }),
           (response) => response.body.logRecords.length > 0,
-          {
-            timeout: 1200000,
-          },
         );
 
         cy.login(userData.username, userData.password, {

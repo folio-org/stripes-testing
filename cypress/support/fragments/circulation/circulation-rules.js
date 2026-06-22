@@ -220,14 +220,26 @@ export default {
     });
   },
 
-  addRuleViaApi(priorities, ruleProps) {
+  addRuleViaApi(priorities, ruleProps, retries = 5) {
     return this.getViaApi().then(({ rulesAsText }) => {
       const newProps = { ...this.getRuleProps(rulesAsText), ...ruleProps };
       const rulePriority = Object.entries(priorities)
         .map((priority) => priority.join(' '))
         .join(' + ');
       const newRule = `\n${rulePriority}: l ${newProps.l} r ${newProps.r} n ${newProps.n} o ${newProps.o} i ${newProps.i}`;
-      return this.updateCirculationRules(rulesAsText + newRule);
+      return this.updateCirculationRules(rulesAsText + newRule).then((savedRule) => {
+        return this.getViaApi().then(({ rulesAsText: currentRules }) => {
+          if (!currentRules.includes(newRule.trim())) {
+            if (retries <= 0) {
+              throw new Error(
+                'Failed to persist circulation rule: concurrent overwrites exceeded retry limit',
+              );
+            }
+            return this.addRuleViaApi(priorities, ruleProps, retries - 1);
+          }
+          return savedRule;
+        });
+      });
     });
   },
 
