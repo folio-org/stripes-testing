@@ -12,9 +12,9 @@ describe('MARC', () => {
     describe('Advanced Search', () => {
       const testData = {
         titles: {
-          titlePersonalName: 'TestPersonalName',
-          titleCorporateName: 'TestCorporate/ConferenceName',
-          titleUniform: 'TestUniformTitle',
+          titlePersonalName: 'C350684TestPersonalName',
+          titleCorporateName: 'C350684TestCorporate/ConferenceName',
+          titleUniform: 'C350684TestUniformTitle',
           titleDefault: '',
         },
         searchOptions: {
@@ -30,7 +30,7 @@ describe('MARC', () => {
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const marcFile = {
-        marc: 'MarcAuthorities(Personal,Uniform,Corporate).mrc',
+        marc: 'marcAuthFileForC350684.mrc',
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         propertyName: 'authority',
       };
@@ -38,6 +38,8 @@ describe('MARC', () => {
       const createdAuthorityID = [];
 
       before(() => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350684*');
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;

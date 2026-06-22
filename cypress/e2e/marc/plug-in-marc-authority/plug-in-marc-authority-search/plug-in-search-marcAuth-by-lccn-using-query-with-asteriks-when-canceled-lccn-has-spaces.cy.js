@@ -17,7 +17,7 @@ describe('MARC', () => {
         AUTHORIZED: 'Authorized',
       };
 
-      const searchQueries = ['sh  766*', '*6384', '*638*'];
+      const searchQueries = ['sh  766440123*', '*440123384', '*440123638*'];
 
       const searchResults = [
         'C440123 Test LCCN subfield z record 1 (two leading spaces, one trailing space, two internal spaces)',
@@ -77,6 +77,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });

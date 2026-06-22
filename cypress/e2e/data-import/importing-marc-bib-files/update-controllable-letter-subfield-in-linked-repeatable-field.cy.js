@@ -43,7 +43,7 @@ describe('Data Import', () => {
       instanceTitle:
         "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       updated700Field: [
-        78,
+        74,
         '700',
         '1',
         '\\',

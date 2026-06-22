@@ -15,8 +15,8 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'LCCN',
         AUTHORIZED: 'Authorized',
-        searchQueryWithoutAsteriks: '766384',
-        searchQueryWithAsteriks: '*766384',
+        searchQueryWithoutAsteriks: '440122766384',
+        searchQueryWithAsteriks: '*440122766384',
       };
 
       const searchResultWithoutAsteriks = 'C440122 Test LCCN subfield z record 10 (digits only)';
@@ -78,6 +78,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });

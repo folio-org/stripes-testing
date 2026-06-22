@@ -68,6 +68,9 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375256');
+        Object.values(testData.searchResults).forEach((record) => {
+          InventoryInstances.deleteInstanceByTitleViaApi(record);
+        });
 
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
@@ -135,7 +138,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       createdRecordIDs.forEach((id, index) => {
-        if (index > 3) MarcAuthority.deleteViaAPI(id);
+        if (index > 3) MarcAuthority.deleteViaAPI(id, true);
         else InventoryInstance.deleteInstanceViaApi(id);
       });
     });
