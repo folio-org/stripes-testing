@@ -270,7 +270,7 @@ describe(
                 (record) => {
                   marcInstanceWith525Field.field005Value = record.get('005')[0].value;
                 },
-                (record) => expect(record.get('525')[0].subf).to.be.undefined,
+                (record) => expect(record.get('525')[0]).to.be.undefined,
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => {
                   expect(record.get('999')[0].subf[0][1]).to.eq(marcInstanceWith525Field.uuid);
@@ -329,7 +329,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstanceWith525Field.hrid,
             'Notes',
-            'Supplement note;;false',
+            '',
           );
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 3);
 
@@ -370,7 +370,7 @@ describe(
             {
               uuid: marcInstanceWith525Field.uuid,
               assertions: [
-                (record) => expect(record.get('525')[0].subf).to.be.undefined,
+                (record) => expect(record.get('525')[0]).to.be.undefined,
 
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => {
@@ -393,7 +393,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstanceWith525Field.hrid,
             'Notes',
-            'Supplement note;;false',
+            '',
           );
 
           // Step 17: Download errors (CSV)
@@ -445,7 +445,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstanceWith525Field.hrid,
             'Notes',
-            'Supplement note;;false',
+            '',
           );
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 3);
 
@@ -465,7 +465,7 @@ describe(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstanceWith525Field.hrid,
             'Notes',
-            'Supplement note;;false',
+            '',
           );
 
           // Step 27: Download and verify file with errors encountered when committing the changes
@@ -484,7 +484,7 @@ describe(
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion('Supplement note');
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
           InstanceRecordView.viewSource();
-          InventoryViewSource.verifyFieldInMARCBibSource('525', '\t525\t   \t');
+          InventoryViewSource.verifyAbsenceOfValue('525\t');
           InventoryViewSource.close();
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchInstanceByTitle(marcInstanceWith925Field.uuid);

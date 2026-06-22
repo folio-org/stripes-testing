@@ -258,6 +258,7 @@ describe('Bulk-edit', () => {
         BulkEditLogs.fillLogsDate('Started', 'From', yesterday);
         BulkEditLogs.fillLogsDate('Started', 'To', currentDate);
         BulkEditLogs.applyStartDateFilters();
+        cy.wait(3000);
         BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
         BulkEditLogs.verifyClearSelectedFiltersButton('Started');
 
@@ -290,6 +291,7 @@ describe('Bulk-edit', () => {
         // Step 22: Pick date in "To" field and apply
         BulkEditLogs.fillLogsDate('Ended', 'To', currentDate);
         BulkEditLogs.applyEndDateFilters();
+        cy.wait(3000);
         BulkEditLogs.verifyDateCellsValues(7, yesterday, currentDate);
         BulkEditLogs.verifyClearSelectedFiltersButton('Ended');
 

@@ -634,7 +634,6 @@ export default {
 
   applyStartDateFilters() {
     cy.do(logsStartDateAccordion.find(applyBtn).click());
-    cy.wait(2000);
   },
 
   applyEndDateFilters() {

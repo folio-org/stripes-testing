@@ -65,9 +65,11 @@ describe('Bulk-edit', () => {
               cy.getInstanceById(instanceId).then((instanceData) => {
                 instance.hrid = instanceData.hrid;
 
-                instanceData.administrativeNotes = [instance.noteText];
+                if (instance.noteText) {
+                  instanceData.administrativeNotes = [instance.noteText];
 
-                cy.updateInstance(instanceData);
+                  cy.updateInstance(instanceData);
+                }
               });
             });
           });

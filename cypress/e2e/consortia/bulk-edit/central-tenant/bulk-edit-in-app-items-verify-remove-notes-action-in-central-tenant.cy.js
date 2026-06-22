@@ -95,9 +95,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
-          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -129,6 +126,9 @@ describe('Bulk-edit', () => {
               cy.setTenant(Affiliations.College);
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
+              });
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
               });
               // create local item note type in College
               ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
@@ -185,17 +185,23 @@ describe('Bulk-edit', () => {
               cy.getMaterialTypes({ limit: 1 }).then((res) => {
                 materialTypeId = res.id;
               });
-              // create holdings in University tenant
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIds.push(holding.id);
+              cy.getLocations({ limit: 1 })
+                .then((res) => {
+                  locationId = res.id;
+                })
+                .then(() => {
+                  // create holdings in University tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingIds.push(holding.id);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               // create items in University tenant
@@ -426,7 +432,7 @@ describe('Bulk-edit', () => {
             },
             {
               header: centralSharedItemNoteType.payload.name,
-              value: 'null (staff only)',
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
@@ -449,7 +455,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: 'null',
+                  value: '',
                 },
               ],
             );
@@ -473,7 +479,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: null,
+                  value: '',
                 },
               ],
             );
@@ -494,7 +500,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: 'null',
+                  value: '',
                 },
               ],
             );
@@ -528,7 +534,7 @@ describe('Bulk-edit', () => {
               [
                 {
                   header: collegeItemNoteTypeNameWithAffiliation,
-                  value: null,
+                  value: '',
                 },
               ],
             );
@@ -551,19 +557,9 @@ describe('Bulk-edit', () => {
             InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'No',
-              collegeItemNoteType.name,
-              '-',
-            );
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              1,
-              'Yes',
-              centralSharedItemNoteType.payload.name,
-              '-',
-            );
-            ItemRecordView.checkCheckOutNote('-', 'No');
+            ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
+            ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
+            ItemRecordView.verifyTextAbsent('Check out note');
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -575,14 +571,9 @@ describe('Bulk-edit', () => {
             InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
-            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'Yes',
-              centralSharedItemNoteType.payload.name,
-              '-',
-            );
+            ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
             ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
-            ItemRecordView.checkCheckOutNote('-', 'No');
+            ItemRecordView.verifyTextAbsent('Check out note');
           });
         },
       );
