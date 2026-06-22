@@ -67,6 +67,7 @@ describe('Users', () => {
 
         UsersSearchPane.searchByUsername(testData.userC.username);
         UsersCard.waitLoading();
+        UsersCard.waitLoading({ headline: testData.userC.username });
         UserEdit.openEdit();
         UserEdit.verifyPlaceholderProfilePictureIsPresent();
         UserEdit.verifyButtonsStateForProfilePicture([

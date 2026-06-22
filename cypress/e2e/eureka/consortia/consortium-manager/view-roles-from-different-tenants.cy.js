@@ -9,6 +9,7 @@ import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
+import ConsortiummanagerSettings from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -56,11 +57,11 @@ describe('Eureka', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
-      cy.deleteAuthorizationRoleApi(testData.roleCentralId);
+      cy.deleteAuthorizationRoleApi(testData.roleCentralId, true);
       cy.setTenant(Affiliations.College);
-      cy.deleteAuthorizationRoleApi(testData.roleCollegeId);
+      cy.deleteAuthorizationRoleApi(testData.roleCollegeId, true);
       cy.setTenant(Affiliations.University);
-      cy.deleteAuthorizationRoleApi(testData.roleUniversityId);
+      cy.deleteAuthorizationRoleApi(testData.roleUniversityId, true);
     });
 
     it(
@@ -69,6 +70,7 @@ describe('Eureka', () => {
       () => {
         cy.resetTenant();
         cy.login(userData.username, userData.password);
+        ConsortiummanagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.clickSelectMembers();
