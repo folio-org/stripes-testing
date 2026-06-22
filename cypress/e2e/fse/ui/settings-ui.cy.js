@@ -43,9 +43,9 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 });
 
-describe('fse-settings - UI (data manipulation)', () => {
+describe('fse-settings - UI (data manipulation part of sanity AQA suite - works with Support role only)', () => {
   const ebscoSupportRoleName = 'EBSCOSupportRole';
-  // First capability set in the Data table: Acquisition Units Memberships - Manage
+  // This capability set is chosen for the test as it is not assigned to EBSCOSupport role by default and its assignment does not cause any side effects.
   const acquisitionUnitsMembershipsManage = {
     table: CAPABILITY_TYPES.DATA,
     resource: 'Acquisitions-Units Memberships',
@@ -87,8 +87,6 @@ describe('fse-settings - UI (data manipulation)', () => {
       // Step 5: Revert - open edit mode again and unassign the same capability set
       AuthorizationRoles.openForEdit(ebscoSupportRoleName);
       AuthorizationRoles.selectCapabilitySetCheckbox(acquisitionUnitsMembershipsManage, false);
-
-      // Step 6: Save and verify the role was reverted successfully
       AuthorizationRoles.clickSaveButton();
       AuthorizationRoles.checkAfterSaveEdit(ebscoSupportRoleName);
     },
