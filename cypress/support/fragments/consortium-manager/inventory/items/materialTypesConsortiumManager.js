@@ -3,8 +3,6 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
-const id = uuid();
-
 export const typeActions = {
   edit: 'edit',
   trash: 'trash',
@@ -12,6 +10,7 @@ export const typeActions = {
 
 export default {
   createViaApi(type) {
+    const id = uuid();
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
         method: REQUEST_METHOD.POST,
