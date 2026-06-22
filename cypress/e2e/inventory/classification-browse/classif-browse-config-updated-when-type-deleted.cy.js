@@ -63,6 +63,11 @@ describe('Inventory', () => {
                 expect(response.status).to.eq(204);
               },
             );
+            cy.recurse(
+              () => ClassificationIdentifierTypes.getViaApi(),
+              (foundTypes) => foundTypes.every((type) => type.id !== localClassificationTypeId),
+              { limit: 20, timeout: 22000, delay: 1000 },
+            );
           })
           .then(() => {
             // Step 7: Verify the config no longer contains the deleted type ID

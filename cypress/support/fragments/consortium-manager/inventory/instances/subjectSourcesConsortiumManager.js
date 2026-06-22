@@ -22,7 +22,7 @@ const subjectSourcesList = MultiColumnList({ id: 'editList-subjectsources' });
 const newButton = Button('+ New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
-const nameField = TextField({ name: 'items[0].name' });
+const nameField = TextField({ placeholder: 'name' });
 const rootPane = Pane({ id: 'consortia-controlled-vocabulary-pane' });
 const shareCheckbox = Checkbox('Share');
 const selectMembersButton = Button('Select members');
@@ -133,6 +133,27 @@ export default {
     } else {
       cy.wait(1000);
     }
+  },
+
+  clearAndVerifyErrorMessageAndEditName(name, newName) {
+    getRowIndexesByColumnValue(columnIndex.name, (text) => text === name).then((rowIndexes) => {
+      this.verifyColumnAndClickEdit(rowIndexes, name, columnIndex.name);
+      this.clearSubjectSourceName();
+      clickSaveButton();
+      this.validateNameFieldWithError('Please fill this in to continue');
+      fillNameField(newName, rowIndexes[0]);
+    });
+    cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
+    clickSaveButton();
+  },
+
+  clearSubjectSourceName() {
+    cy.do(nameField.clear());
+    cy.expect([
+      nameField.has({ placeholder: 'name', disabled: false, value: '' }),
+      cancelButton.has({ disabled: false }),
+      saveButton.has({ disabled: false }),
+    ]);
   },
 
   createSharedWithAllMembersSubjectSourceAndCancel(name) {
@@ -324,10 +345,12 @@ export default {
   editSubjectSourceByTenantName(name, newName, source, userName, tenantName) {
     getRowIndexesByColumnValue(columnIndex.lastUpdated, (text) => text.includes(userName)).then(
       (rowIndexes) => {
-        this.verifyColumnAndClickEdit(rowIndexes, tenantName).then((index) => {
-          this.verifyEditedSubjectSourceRow(name, source, userName, index);
-          fillNameField(newName, index);
-        });
+        this.verifyColumnAndClickEdit(rowIndexes, tenantName, columnIndex.memberLibraries).then(
+          (index) => {
+            this.verifyEditedSubjectSourceRow(name, source, userName, index);
+            fillNameField(newName, index);
+          },
+        );
       },
     );
     cy.expect([cancelButton.has({ disabled: false }), saveButton.has({ disabled: false })]);
@@ -362,14 +385,14 @@ export default {
     );
   },
 
-  verifyColumnAndClickEdit(rowIndexes, searchValue) {
+  verifyColumnAndClickEdit(rowIndexes, searchValue, columnIdx) {
     let foundRowIndex;
 
     return cy
       .wrap(rowIndexes)
       .each((rowIndex) => {
         cy.get(`#editList-subjectsources [data-row-index="row-${rowIndex}"]`)
-          .find('[class*="mclCell-"]:nth-child(5)')
+          .find(`[class*="mclCell-"]:nth-child(${columnIdx + 1})`)
           .invoke('text')
           .then((text) => {
             const trimmedText = text.trim();

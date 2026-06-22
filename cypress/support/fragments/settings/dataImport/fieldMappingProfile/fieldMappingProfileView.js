@@ -9,6 +9,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   Pane,
   PaneHeader,
@@ -354,5 +355,25 @@ export default {
         .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
         .has({ content: value }),
     );
+  },
+  verifyAssociatedActionProfileShownColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(associatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .exists(),
+      );
+    });
+  },
+  verifyAssociatedActionProfileHiddenColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(associatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .absent(),
+      );
+    });
   },
 };
