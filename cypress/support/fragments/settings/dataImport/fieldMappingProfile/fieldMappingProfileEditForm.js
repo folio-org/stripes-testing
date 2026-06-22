@@ -8,6 +8,8 @@ import {
   DecoratorWrapper,
   Form,
   KeyValue,
+  MultiColumnList,
+  MultiColumnListHeader,
   Section,
   Select,
   Option,
@@ -26,6 +28,7 @@ const adminDataSection = detailsSection.find(Section({ id: 'administrative-data'
 const actionProfilesSection = mappingProfileForm.find(
   Section({ id: 'mappingProfileFormAssociatedActionProfileAccordion' }),
 );
+const editAssociatedList = MultiColumnList({ id: 'edit-associated-actionProfiles-list' });
 
 const itemDetails = {
   administrativeData: adminDataSection,
@@ -727,6 +730,28 @@ export default {
   verifyFolioRecordTypeOptions: (options) => {
     options.forEach((option) => {
       cy.expect(summaryFields.existingRecordType.has({ allOptionsText: including(option) }));
+    });
+  },
+
+  verifyAssociatedActionProfileShownColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(editAssociatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyAssociatedActionProfileHiddenColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(editAssociatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .absent(),
+      );
     });
   },
 };
