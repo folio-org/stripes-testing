@@ -54,6 +54,7 @@ export default HTML.extend('pane')
     },
     id: (el) => el.getAttribute('id'),
     isFullScreenView: (el) => el.getAttribute('style') === 'flex: 0 0 100%; left: 0px;',
+    headline: (el) => el.querySelector('[data-test-headline]')?.textContent || '',
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Close ' })).click(),
