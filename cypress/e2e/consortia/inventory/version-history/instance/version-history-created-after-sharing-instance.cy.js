@@ -111,7 +111,7 @@ describe('Inventory', () => {
               testData.instanceId = id;
             });
             InstanceRecordView.clickVersionHistoryButton();
-            VersionHistorySection.verifyOriginalVersionCard({
+            VersionHistorySection.verifySharedVersionCard({
               index: 0,
               firstName: testData.user.firstName,
               lastName: testData.user.lastName,
