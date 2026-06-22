@@ -41,7 +41,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C376971 GetRecords: FOLIO instances are harvested (oai_dc) (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C376971', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C376971', 'nonParallel'] },
       () => {
         // Send OAI-PMH GetRecord request with oai_dc and verify response
         OaiPmh.getRecordRequest(folioInstanceId, 'oai_dc').then((response) => {

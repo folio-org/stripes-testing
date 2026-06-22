@@ -28,6 +28,8 @@ import QueryModal, {
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
+const folioInstanceTitle = `AT_C566499_FolioInstance_${getRandomPostfix()}`;
+const marcInstanceTitle = `AT_C566499_MarcInstance_${getRandomPostfix()}`;
 const testData = {};
 const itemInFolioInstance = {
   collegeItemId: null,
@@ -98,14 +100,13 @@ describe('Bulk-edit', () => {
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: testData.instanceTypeId,
-                title: `AT_C566499_FolioInstance_${getRandomPostfix()}`,
+                title: folioInstanceTitle,
               },
             }).then((createdInstanceData) => {
               testData.sharedFolioInstance = createdInstanceData.instanceId;
             });
 
             // Create shared MARC Instance in Central tenant
-            const marcInstanceTitle = `AT_C566499_MarcInstance_${getRandomPostfix()}`;
             cy.createSimpleMarcBibViaAPI(marcInstanceTitle).then((instanceId) => {
               testData.sharedMarcInstance = instanceId;
             });
@@ -436,9 +437,10 @@ describe('Bulk-edit', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            testData.collegeItemBarcodes.forEach((barcode) => {
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            [folioInstanceTitle, marcInstanceTitle].forEach((instanceTitle, index) => {
+              InventorySearchAndFilter.byKeywords(instanceTitle);
+              InventoryInstance.openHoldings(['']);
+              InventoryInstance.openItemByBarcode(testData.collegeItemBarcodes[index]);
               ItemRecordView.waitLoading();
               ItemRecordView.checkItemAdministrativeNote('-');
               ItemRecordView.closeDetailView();
@@ -449,9 +451,10 @@ describe('Bulk-edit', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
-            testData.universityItemBarcodes.forEach((barcode) => {
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            [folioInstanceTitle, marcInstanceTitle].forEach((instanceTitle, index) => {
+              InventorySearchAndFilter.byKeywords(instanceTitle);
+              InventoryInstance.openHoldings(['']);
+              InventoryInstance.openItemByBarcode(testData.universityItemBarcodes[index]);
               ItemRecordView.waitLoading();
               ItemRecordView.checkItemAdministrativeNote('-');
               ItemRecordView.closeDetailView();
