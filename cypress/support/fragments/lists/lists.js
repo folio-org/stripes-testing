@@ -995,7 +995,7 @@ const QueryBuilder = {
   cancelQueryBuilder() {
     cy.wait(500);
     cy.xpath(
-      './/*[contains(@class, "LayerRoot") and @aria-label="Build query"]//button[.="Cancel"]',
+      './/*[contains(@class, "modal---")]//button[.="Cancel"]',
     ).click();
     cy.wait(500);
   },

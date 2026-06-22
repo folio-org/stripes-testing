@@ -120,7 +120,7 @@ describe('Lists', () => {
 
         // Scenario 2: Active private list with query but 0 records
         Lists.openList(listWithZeroRecordsData.name);
-        Lists.verifyRecordsNumber('No');
+        Lists.verifyRecordsNumber('0');
         Lists.openActions();
         Lists.verifyRefreshListButtonIsActive();
         Lists.verifyEditListButtonIsActive();
@@ -139,7 +139,7 @@ describe('Lists', () => {
 
         // Scenario 3: Active private list without query
         Lists.openList(listWithoutQueryData.name);
-        Lists.verifyRecordsNumber('No');
+        Lists.verifyRecordsNumber('0');
         Lists.openActions();
         Lists.verifyRefreshListButtonIsDisabled();
         Lists.verifyEditListButtonIsActive();

@@ -71,7 +71,7 @@ describe('Lists', () => {
 
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
-        Lists.verifyRecordsNumber('No');
+        Lists.verifyRecordsNumber('0');
         Lists.closeListDetailsPane();
 
         Lists.verifyListIsPresent(listData.name);
