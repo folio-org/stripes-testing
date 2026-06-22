@@ -171,7 +171,7 @@ describe('Inventory', () => {
             resourceTypes[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             resourceTypeAccordionName,
             resourceTypes[1].name,
           );

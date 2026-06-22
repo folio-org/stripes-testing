@@ -125,7 +125,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}*" and authRefType=="Authorized"`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });
@@ -169,7 +169,7 @@ describe('MARC', () => {
               if (index === 0) {
                 InventoryInstance.deleteInstanceViaApi(id);
               } else {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               }
             });
           });
@@ -257,8 +257,6 @@ describe('MARC', () => {
               field700.thirdBox,
             );
             // #10 Click on the "Save & keep editing" button
-            QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             newFields.forEach((field) => {
               QuickMarcEditor.verifyRowLinked(field.rowIndex, field.isLinked);

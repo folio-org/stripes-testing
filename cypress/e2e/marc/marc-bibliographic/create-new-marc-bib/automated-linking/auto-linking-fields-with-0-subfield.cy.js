@@ -137,14 +137,11 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
@@ -152,7 +149,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
+            MarcAuthority.deleteViaAPI(id, true);
           });
           InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         });
@@ -218,7 +215,7 @@ describe('MARC', () => {
                 InventoryViewSource.verifyLinkedToAuthorityIcon(newField.rowIndex + 1, false);
               }
             });
-            QuickMarcEditor.closeEditorPane();
+            InventoryViewSource.close();
             InventoryInstance.waitLoading();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();

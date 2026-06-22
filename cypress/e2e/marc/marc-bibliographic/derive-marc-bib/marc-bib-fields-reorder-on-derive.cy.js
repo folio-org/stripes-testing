@@ -41,10 +41,12 @@ describe('MARC', () => {
           '999',
         ],
       };
+      const expectedOrderAfterMoveSource = [...testData.expectedOrderAfterMove];
+      expectedOrderAfterMoveSource[0] = '';
 
       before('Create test data', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('C407736*');
+        InventoryInstances.deleteInstanceByTitleViaApi('C407736');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -67,6 +69,7 @@ describe('MARC', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
@@ -158,26 +161,7 @@ describe('MARC', () => {
           QuickMarcEditor.closeEditorPane();
           InventoryInstance.viewSource();
 
-          const expectedSourceOrder = [
-            'LDR',
-            '001',
-            '005',
-            '800',
-            '700',
-            '650',
-            '600',
-            '245',
-            '240',
-            '110',
-            '009',
-            '008',
-            '007',
-            '006',
-            '004',
-            '002',
-            '999',
-          ];
-          InventoryViewSource.verifyFieldsOrder(expectedSourceOrder);
+          InventoryViewSource.verifyFieldsOrder(expectedOrderAfterMoveSource);
         },
       );
     });
