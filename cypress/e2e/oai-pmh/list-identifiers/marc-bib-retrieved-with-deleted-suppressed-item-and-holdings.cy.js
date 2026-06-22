@@ -102,7 +102,7 @@ describe('OAI-PMH', () => {
 
     it(
       'C385649 verb=ListIdentifiers: SRS & Inventory - Verify that Instance MARC is retrieved in case its suppressed from discovery Item and Holdings are deleted (firebird)',
-      { tags: ['extendedPathFlaky', 'firebird', 'C385649', 'nonParallel'] },
+      { tags: ['extendedPath', 'firebird', 'C385649', 'nonParallel'] },
       () => {
         afterItemCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 
