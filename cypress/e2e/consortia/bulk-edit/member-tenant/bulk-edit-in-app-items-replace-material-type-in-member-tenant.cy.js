@@ -234,20 +234,14 @@ describe('Bulk-edit', () => {
           );
 
           // Step 2: Uncheck "Material type" checkbox in the list of "Show columns"
+          // Leave the checkbox unchecked to also verify the column is shown automatically
+          // in bulk edit forms once changes are applied.
           BulkEditSearchPane.uncheckShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
           );
           BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
             false,
-          );
-          // re-enable the column to verify the changes on the screen later
-          BulkEditSearchPane.changeShowColumnCheckbox(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
-          );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
-            true,
           );
 
           // Step 3: Start bulk edit
