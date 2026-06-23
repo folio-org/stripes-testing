@@ -17,7 +17,12 @@ import SelectBulkEditProfileModal from '../../../support/fragments/bulk-edit/sel
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  MATERIAL_TYPE_NAMES,
+  ITEM_NOTE_TYPES,
+} from '../../../support/constants';
 import {
   createBulkEditProfileBody,
   createAdminNoteRule,
@@ -31,6 +36,7 @@ const {
   createCheckInNoteRule,
   createCheckOutNoteRule,
   createPermanentLoanTypeRule,
+  createMaterialTypeRule,
 } = ItemsRules;
 
 // Profile factory functions
@@ -55,6 +61,7 @@ const createMainProfileBody = () => {
       createPermanentLoanTypeRule(
         ActionCreators.replaceWith(null), // Will be set to loan type ID
       ),
+      createMaterialTypeRule(ActionCreators.replaceWith(null)), // Will be set to material type ID
     ],
   });
 };
@@ -96,67 +103,75 @@ describe('Bulk-edit', () => {
           testData.adminSourceRecord = record;
         });
 
-        InventoryInstances.getItemNoteTypes({ query: 'name="Action note"' }).then((noteTypes) => {
-          InventoryInstances.getItemNoteTypes({ query: 'name=="Note"' }).then(
+        InventoryInstances.getItemNoteTypes({
+          query: `name=="${ITEM_NOTE_TYPES.ACTION_NOTE}"`,
+        }).then((noteTypes) => {
+          InventoryInstances.getItemNoteTypes({ query: `name=="${ITEM_NOTE_TYPES.NOTE}"` }).then(
             (generalNoteTypes) => {
-              cy.getLoanTypes({ query: `name="${testData.permanentLoanType}"` }).then(
+              cy.getLoanTypes({ query: `name=="${testData.permanentLoanType}"` }).then(
                 (loanTypes) => {
-                  // Create main profile with factory
-                  const mainProfile = createMainProfileBody();
-
-                  // Set dynamic IDs for main profile
-                  mainProfile.ruleDetails[2].actions[0].parameters[0].value = noteTypes[0].id;
-                  mainProfile.ruleDetails[3].actions[0].updated = generalNoteTypes[0].id;
-                  mainProfile.ruleDetails[5].actions[0].updated = loanTypes[0].id;
-
-                  // Create bulk edit profile
-                  cy.createBulkEditProfile(mainProfile).then((profile) => {
-                    testData.profileName = profile.name;
-                    testData.profileDescription = profile.description;
-                    testData.profileIds.push(profile.id);
-                  });
-
-                  // Create second bulk edit profile to verify search and sorting
-                  const secondProfile = createSecondProfileBody();
-                  cy.createBulkEditProfile(secondProfile).then((profile) => {
-                    testData.secondProfileName = profile.name;
-                    testData.profileIds.push(profile.id);
-                  });
-
-                  testData.instanceId = InventoryInstances.createInstanceViaApi(
-                    testData.folioInstanceTitle,
-                    testData.itemBarcode,
-                  );
-
-                  cy.getItems({
+                  cy.getMaterialTypes({
                     limit: 1,
-                    expandAll: true,
-                    query: `"barcode"=="${testData.itemBarcode}"`,
-                  }).then((item) => {
-                    testData.itemId = item.id;
-                    item.administrativeNotes = ['admin note for testing'];
-                    item.discoverySuppress = true;
-                    item.notes = [
-                      {
-                        itemNoteTypeId: noteTypes[0].id,
-                        note: testData.actionNote,
-                        staffOnly: false,
-                      },
-                    ];
-                    item.circulationNotes = [
-                      {
-                        noteType: 'Check in',
-                        note: testData.checkInNote,
-                        staffOnly: false,
-                      },
-                      {
-                        noteType: 'Check out',
-                        note: testData.checkOutNote,
-                        staffOnly: true,
-                      },
-                    ];
+                    query: `name=="${MATERIAL_TYPE_NAMES.DVD}"`,
+                  }).then((materialType) => {
+                    // Create main profile with factory
+                    const mainProfile = createMainProfileBody();
 
-                    cy.updateItemViaApi(item);
+                    // Set dynamic IDs for main profile
+                    mainProfile.ruleDetails[2].actions[0].parameters[0].value = noteTypes[0].id;
+                    mainProfile.ruleDetails[3].actions[0].updated = generalNoteTypes[0].id;
+                    mainProfile.ruleDetails[5].actions[0].updated = loanTypes[0].id;
+                    mainProfile.ruleDetails[6].actions[0].updated = materialType.id;
+
+                    // Create bulk edit profile
+                    cy.createBulkEditProfile(mainProfile).then((profile) => {
+                      testData.profileName = profile.name;
+                      testData.profileDescription = profile.description;
+                      testData.profileIds.push(profile.id);
+                    });
+
+                    // Create second bulk edit profile to verify search and sorting
+                    const secondProfile = createSecondProfileBody();
+                    cy.createBulkEditProfile(secondProfile).then((profile) => {
+                      testData.secondProfileName = profile.name;
+                      testData.profileIds.push(profile.id);
+                    });
+
+                    testData.instanceId = InventoryInstances.createInstanceViaApi(
+                      testData.folioInstanceTitle,
+                      testData.itemBarcode,
+                    );
+
+                    cy.getItems({
+                      limit: 1,
+                      expandAll: true,
+                      query: `"barcode"=="${testData.itemBarcode}"`,
+                    }).then((item) => {
+                      testData.itemId = item.id;
+                      item.administrativeNotes = ['admin note for testing'];
+                      item.discoverySuppress = true;
+                      item.notes = [
+                        {
+                          itemNoteTypeId: noteTypes[0].id,
+                          note: testData.actionNote,
+                          staffOnly: false,
+                        },
+                      ];
+                      item.circulationNotes = [
+                        {
+                          noteType: 'Check in',
+                          note: testData.checkInNote,
+                          staffOnly: false,
+                        },
+                        {
+                          noteType: 'Check out',
+                          note: testData.checkOutNote,
+                          staffOnly: true,
+                        },
+                      ];
+
+                      cy.updateItemViaApi(item);
+                    });
                   });
                 },
               );
@@ -220,6 +235,7 @@ describe('Bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
         );
 
         // Step 3: Click "Select items bulk edit profile"
@@ -280,6 +296,10 @@ describe('Bulk-edit', () => {
           {
             header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
             value: testData.permanentLoanType,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+            value: MATERIAL_TYPE_NAMES.DVD,
           },
         ];
 
@@ -452,6 +472,7 @@ describe('Bulk-edit', () => {
         ItemRecordView.checkMultipleItemNotesWithStaffOnly(1, 'No', 'Note', testData.checkInNote);
         ItemRecordView.checkCheckOutNote(testData.checkOutNote, 'No');
         ItemRecordView.verifyPermanentLoanType(testData.permanentLoanType);
+        ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.DVD);
       },
     );
   });

@@ -1,4 +1,4 @@
-import { including, matching } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -8,9 +8,11 @@ import {
   DecoratorWrapper,
   Form,
   KeyValue,
+  MultiColumnList,
+  MultiColumnListHeader,
+  Option,
   Section,
   Select,
-  Option,
   TextArea,
   TextField,
 } from '../../../../../../interactors';
@@ -26,6 +28,7 @@ const adminDataSection = detailsSection.find(Section({ id: 'administrative-data'
 const actionProfilesSection = mappingProfileForm.find(
   Section({ id: 'mappingProfileFormAssociatedActionProfileAccordion' }),
 );
+const editAssociatedList = MultiColumnList({ id: 'edit-associated-actionProfiles-list' });
 
 const itemDetails = {
   administrativeData: adminDataSection,
@@ -186,9 +189,6 @@ const existingRecordTypes = {
 };
 
 const suppressFromDiscoveryOptions = {
-  // for Trillium env with cyrillic 'c'
-  // 'Select сheckbox field mapping': '',
-  // for Cyrpress env
   'Select checkbox field mapping': '',
   'Mark for all affected records': 'ALL_TRUE',
   'Unmark for all affected records': 'ALL_FALSE',
@@ -727,6 +727,53 @@ export default {
   verifyFolioRecordTypeOptions: (options) => {
     options.forEach((option) => {
       cy.expect(summaryFields.existingRecordType.has({ allOptionsText: including(option) }));
+    });
+  },
+
+  verifyAssociatedActionProfileShownColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(editAssociatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyAssociatedActionProfileHiddenColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(
+        actionProfilesSection
+          .find(editAssociatedList)
+          .find(MultiColumnListHeader({ content: column }))
+          .absent(),
+      );
+    });
+  },
+
+  verifySectionOverrideProtectedFields() {
+    cy.expect([
+      Accordion({ id: 'mapping-profile-details' }).exists(),
+      Accordion({ id: 'edit-override-protected-section' }).has({ open: true }),
+      Accordion({ id: 'edit-override-protected-section' }).has({
+        label: including('Override protected fields'),
+      }),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(
+          HTML(
+            including(
+              'If any protected field should be updated by this profile, check the appropriate box here',
+            ),
+          ),
+        )
+        .exists(),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(MultiColumnList())
+        .has({ columns: ['Field', 'In.1', 'In.2', 'Subfield', 'Data', 'Override'] }),
+    ]);
+    cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
+      cy.wrap($checkbox).should('not.be.disabled');
     });
   },
 };

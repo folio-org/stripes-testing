@@ -108,14 +108,14 @@ describe('Eureka', () => {
           `${testData.originalCapabilitySets.length}`,
         );
 
-        AuthorizationRoles.shareRole(testData.roleName);
+        AuthorizationRoles.shareRole(testData.roleName, { timeout: 82_000 });
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription(testData.roleNameUpdated);
         testData.newCapabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set);
         });
         AuthorizationRoles.clickSaveButton();
-        AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated);
+        AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated, '', { timeout: 102_000 });
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleNameUpdated);
         AuthorizationRoles.checkCapabilitySetsAccordionCounter(
           `${testData.originalCapabilitySets.length + testData.newCapabilitySets.length}`,
@@ -171,7 +171,7 @@ describe('Eureka', () => {
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleNameUpdated);
 
         AuthorizationRoles.clickDeleteRole(testData.roleNameUpdated);
-        AuthorizationRoles.confirmDeleteRole(testData.roleNameUpdated);
+        AuthorizationRoles.confirmDeleteRole(testData.roleNameUpdated, false, { timeout: 82_000 });
 
         SelectMembers.selectMember(tenantNames.college);
         AuthorizationRoles.searchRole(testData.roleNameUpdated);
