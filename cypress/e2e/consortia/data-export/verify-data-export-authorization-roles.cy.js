@@ -146,6 +146,8 @@ describe('Data Export', () => {
         AuthorizationRoles.selectUserInModal(user.username);
         AuthorizationRoles.clickSaveInAssignModal();
         AuthorizationRoles.verifyAssignedUser(user.lastName, user.firstName);
+        cy.logout();
+        cy.reload();
 
         // Step 7: Re-login with current User to central tenant
         cy.login(user.username, user.password);

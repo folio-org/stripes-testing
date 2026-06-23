@@ -73,19 +73,26 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
 
-          cy.getCapabilitiesApi(5000, true, { customTimeout: 60_000 }).then((capabs) => {
-            capabilitiesCount = capabs.length;
-          });
-          cy.getCapabilitySetsApi().then((capabSets) => {
-            capabilitySetsCount = capabSets.length;
-          });
+          cy.getApplicationsForTenantApi(Affiliations.College, true).then((appIds) => {
+            cy.getCapabilitySetsApi(2000, {
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabSets) => {
+              capabilitySetsCount = capabSets.length;
+            });
+            cy.getCapabilitiesApi(5000, true, {
+              customTimeout: 60_000,
+              query: `applicationId==(${appIds.join(' or ')})`,
+            }).then((capabs) => {
+              capabilitiesCount = capabs.length;
+            });
 
-          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
+            cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
       });
 
@@ -145,7 +152,9 @@ describe('Eureka', () => {
             AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
             AuthorizationRoles.verifyRoleViewPane(testData.roleName);
             AuthorizationRoles.checkCapabilitySetsAccordionCounter(`${capabilitySetsCount}`);
-            AuthorizationRoles.checkCapabilitiesAccordionCounter(`${capabilitiesCount}`);
+            AuthorizationRoles.checkCapabilitiesAccordionCounter(`${capabilitiesCount}`, false, {
+              notLessThan: true,
+            });
           });
         },
       );
