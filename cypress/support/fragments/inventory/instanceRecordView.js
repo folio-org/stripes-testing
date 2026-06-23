@@ -1001,6 +1001,7 @@ export default {
   },
 
   clickVersionHistoryButton() {
+    cy.wait(1000);
     cy.do(versionHistoryButton.click());
   },
 

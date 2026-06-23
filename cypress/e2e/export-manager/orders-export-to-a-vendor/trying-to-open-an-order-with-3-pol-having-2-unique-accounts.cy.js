@@ -153,7 +153,7 @@ describe('Export Manager', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderDetails.openOrder({ orderNumber, confirm: false });
-        OpenConfirmationModal.confirm();
+        OpenConfirmationModal.confirm(false);
         Orders.checkModalDifferentAccountNumbers(2);
         Orders.checkOrderStatus('Pending');
       },
