@@ -10,7 +10,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
 import UserCharge from '../../support/fragments/users/userCharge';
-import { ITEM_STATUS_NAMES, LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 
@@ -37,6 +37,7 @@ describe('Check in', () => {
       };
       let itemData;
       let servicePoint;
+      let mainLibraryLocationId;
       let checkInResultsData;
 
       beforeEach('Create New Item, New User and Check out item', () => {
@@ -61,6 +62,9 @@ describe('Check in', () => {
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               itemData.loanTypeId = res[0].id;
             });
+            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+              mainLibraryLocationId = res.id;
+            });
             cy.getDefaultMaterialType().then((res) => {
               itemData.materialTypeId = res.id;
               itemData.materialTypeName = res.name;
@@ -76,7 +80,7 @@ describe('Check in', () => {
               holdings: [
                 {
                   holdingsTypeId: itemData.holdingTypeId,
-                  permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+                  permanentLocationId: mainLibraryLocationId,
                 },
               ],
               items: [

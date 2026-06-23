@@ -1,5 +1,4 @@
 import { Permissions } from '../../support/dictionary';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -8,6 +7,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import Users from '../../support/fragments/users/users';
+import { LOCATION_NAMES } from '../../support/constants';
 
 describe('Check in', () => {
   let userData;
@@ -41,9 +41,13 @@ describe('Check in', () => {
           };
           ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
 
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances: testData.folioInstances,
-            location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+            testData.mainLibraryLocationId = res.id;
+
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances: testData.folioInstances,
+              location: { id: testData.mainLibraryLocationId },
+            });
           });
         })
         .then(() => {

@@ -190,10 +190,12 @@ export default {
   defaultAuthority,
   defaultUpdateJobProfile,
   waitLoading: () => cy.expect(rootSection.exists()),
-  edit: () => {
+  edit: ({ verifyQuickMarcOpened = true } = {}) => {
     cy.do(actionsButton.click());
     cy.do(Button('Edit').click());
-    QuickMarcEditorWindow.waitLoading();
+    if (verifyQuickMarcOpened) {
+      QuickMarcEditorWindow.waitLoading();
+    }
   },
   delete: () => {
     cy.do(actionsButton.click());
