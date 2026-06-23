@@ -8,10 +8,10 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { DateTools } from '../../support/utils';
 import AppPaths from '../../support/fragments/app-paths';
+import { LOCATION_NAMES } from '../../support/constants';
 
 describe('Check in', () => {
   const testData = {
@@ -25,9 +25,14 @@ describe('Check in', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
         servicePoint = sp;
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((locations) => {
+          const locationId = locations.id;
+
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location: { id: locationId },
+          });
         });
       });
     });

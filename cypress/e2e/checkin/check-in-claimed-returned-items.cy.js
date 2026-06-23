@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
@@ -58,6 +58,9 @@ describe('Check in', () => {
           testData.materialTypeId = materialTypes.id;
           testData.materialType = materialTypes.name;
         });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          testData.mainLibraryLocationId = res.id;
+        });
       })
       .then(() => {
         itemsData.itemsWithSeparateInstance.forEach((item, index) => {
@@ -69,7 +72,7 @@ describe('Check in', () => {
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+                permanentLocationId: testData.mainLibraryLocationId,
               },
             ],
             items: [

@@ -2,7 +2,6 @@ import {
   FULFILMENT_PREFERENCES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  LOCATION_IDS,
   LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
@@ -48,9 +47,13 @@ describe('Circulation log', () => {
     ServicePoints.getCircDesk1ServicePointViaApi().then((sp) => {
       servicePoint = sp;
     });
-    InventoryInstances.createFolioInstancesViaApi({
-      folioInstances: testData.folioInstances,
-      location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+      testData.mainLibraryLocationId = res.id;
+
+      InventoryInstances.createFolioInstancesViaApi({
+        folioInstances: testData.folioInstances,
+        location: { id: testData.mainLibraryLocationId },
+      });
     });
     FIRST_ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
     SECOND_ITEM = testData.folioInstances[1];

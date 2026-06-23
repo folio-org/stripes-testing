@@ -169,8 +169,10 @@ Cypress.Commands.add(
   },
 );
 
+const isLocalhostBaseUrl = () => new URL(Cypress.config('baseUrl')).hostname === 'localhost';
+
 Cypress.Commands.add('selectTenantIfDropdown', () => {
-  if (!Cypress.env('ecsEnabled')) {
+  if (isLocalhostBaseUrl()) {
     return cy.wrap(null, { log: false });
   }
 
@@ -253,9 +255,7 @@ const loginViaKeycloakOnLocalhost = (username, password) => {
 
 Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
   if (Cypress.env('eureka')) {
-    const isLocalhostBaseUrl = new URL(Cypress.config('baseUrl')).hostname === 'localhost';
-
-    if (isLocalhostBaseUrl) {
+    if (isLocalhostBaseUrl()) {
       loginViaKeycloakOnLocalhost(username, password);
       return;
     }

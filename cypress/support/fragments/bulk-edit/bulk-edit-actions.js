@@ -1841,6 +1841,7 @@ export default {
       case 'item':
         expectedOptions = [
           ['Administrative note', 'Suppress from discovery'],
+          ['Material type'],
           [
             'Action note',
             'Binding',
@@ -1861,6 +1862,7 @@ export default {
         ];
         expectedGroupLabels = [
           'Administrative data',
+          'Item data',
           'Item notes',
           'Loan and availability',
           'Location',

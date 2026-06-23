@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
@@ -437,7 +438,16 @@ export default {
     ]);
   },
 
-  checkAfterSaveEdit: (roleName, roleDescription = '') => {
+  checkAfterSaveEdit: (roleName, roleDescription = '', { timeout = 72_000 } = {}) => {
+    recurse(
+      () => cy.get('body').then(
+        ($body) => $body.find('[class^="paneTitleLabel"]').filter((_, el) => {
+          return el.textContent.trim() === 'Edit role';
+        }).length,
+      ),
+      (count) => count === 0,
+      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+    );
     cy.expect([
       editRolePane.absent(),
       Callout(successUpdateText).exists(),
@@ -482,9 +492,19 @@ export default {
     cy.wait(1000);
   },
 
-  checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
+  checkCapabilitiesAccordionCounter: (
+    expectedCount,
+    regExp = false,
+    { notLessThan = false } = {},
+  ) => {
     if (regExp) cy.expect(capabilitiesAccordion.has({ counter: matching(expectedCount) }));
-    else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+    else if (notLessThan) {
+      cy.recurse(
+        () => cy.then(() => capabilitiesAccordion.counter()),
+        (counterText) => parseInt(counterText, 10) >= parseInt(expectedCount, 10),
+        { limit: 50, timeout: 52000, delay: 1000 },
+      );
+    } else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
   },
 
   checkCapabilitySetsAccordionCounter: (expectedCount, regExp = false) => {
@@ -512,9 +532,14 @@ export default {
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
-  confirmDeleteRole: (roleName, errorExpected = false) => {
+  confirmDeleteRole: (roleName, errorExpected = false, { timeout = 72_000 } = {}) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
     if (!errorExpected) {
+      recurse(
+        () => cy.get('body').then(($body) => $body.find('[class^="modal"][id^="confirmation"]').length),
+        (count) => count === 0,
+        { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+      );
       cy.expect([
         Callout(successDeleteText).exists(),
         deleteRoleModal.absent(),
@@ -1059,14 +1084,17 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false, notShared = false } = {}) {
+  shareRole(roleName, { verifyModal = false, timeout = 72_000 } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    if (!notShared) {
-      cy.expect([Callout(successShareText).exists(), shareToAllModal.absent()]);
-      this.checkRoleCentrallyManaged(roleName, true);
-    }
+    recurse(
+      () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
+      (count) => count === 0,
+      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+    );
+    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+    this.checkRoleCentrallyManaged(roleName, true);
   },
 
   verifyConfirmShareModal(roleName) {
