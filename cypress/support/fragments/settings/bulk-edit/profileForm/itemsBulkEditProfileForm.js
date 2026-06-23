@@ -35,6 +35,10 @@ export default {
         option: 'Suppress from discovery',
         actions: [BULK_EDIT_ACTIONS.SET_FALSE, BULK_EDIT_ACTIONS.SET_TRUE],
       },
+      {
+        option: 'Material type',
+        actions: [BULK_EDIT_ACTIONS.REPLACE_WITH],
+      },
       // Item notes
       {
         option: 'Action note',
