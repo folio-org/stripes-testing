@@ -152,6 +152,7 @@ describe('Inventory', () => {
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
           NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
+          cy.wait(1500);
           NewFieldMappingProfile.save();
           FieldMappingProfileView.closeViewMode(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
