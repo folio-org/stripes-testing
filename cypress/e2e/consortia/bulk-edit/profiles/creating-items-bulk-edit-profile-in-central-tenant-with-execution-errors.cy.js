@@ -8,7 +8,10 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  randomFourDigitNumber,
+  getTestEntityValue,
+} from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
@@ -27,11 +30,13 @@ import {
   LOCATION_NAMES,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SelectBulkEditProfileModal from '../../../../support/fragments/bulk-edit/select-bulk-edit-profile-modal';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 
 let user;
 let instanceTypeId;
@@ -43,6 +48,10 @@ let defaultLoanTypeId;
 let localItemNoteTypeData;
 let localLoanTypeData;
 let itemId;
+const centralLocalMaterialType = {
+  name: getTestEntityValue('AT_C825312_centralLocalMaterialType'),
+  source: 'local',
+};
 const folioInstance = {
   title: `AT_C825312_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `barcode${randomFourDigitNumber()}`,
@@ -78,6 +87,9 @@ describe('Bulk-edit', () => {
         });
         ItemNoteTypes.createItemNoteTypeViaApi(localItemNoteType.name).then((noteTypeId) => {
           localItemNoteTypeData = { id: noteTypeId, name: localItemNoteType.name };
+        });
+        MaterialTypes.createMaterialTypeViaApi(centralLocalMaterialType).then(({ body }) => {
+          centralLocalMaterialType.id = body.id;
         });
         LoanTypes.createLoanTypesViaApi({
           name: localLoanType.name,
@@ -157,6 +169,7 @@ describe('Bulk-edit', () => {
         Users.deleteViaApi(user.userId);
         ItemNoteTypes.deleteItemNoteTypeViaApi(localItemNoteTypeData.id);
         LoanTypes.deleteLoanTypesViaApi(localLoanTypeData.id);
+        MaterialTypes.deleteViaApi(centralLocalMaterialType.id);
         cy.withinTenant(Affiliations.College, () => {
           InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.id);
         });
@@ -225,21 +238,39 @@ describe('Bulk-edit', () => {
           ItemsBulkEditProfileForm.selectLoanTypeWhenChangingIt(LOAN_TYPE_NAMES.SELECTED, 1);
           ItemsBulkEditProfileForm.verifySaveButtonDisabled(true);
 
-          // Step 7: Add permanent item location and verify only central tenant locations
+          // Step 7: Click "Plus" icon in "Actions" column, Select "Material type" option
           ItemsBulkEditProfileForm.clickPlusButton(1);
-          ItemsBulkEditProfileForm.selectOption('Permanent item location', 2);
-          ItemsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.REPLACE_WITH, 2);
-          ItemsBulkEditProfileForm.clickLocationLookup(2);
+          ItemsBulkEditProfileForm.selectOption('Material type', 2);
+          ItemsBulkEditProfileForm.openSelectMaterialTypeDropdown(2);
+          ItemsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
+            MATERIAL_TYPE_NAMES.BOOK,
+            true,
+          );
+          ItemsBulkEditProfileForm.verifyOptionExistsInSelectOptionDropdown(
+            centralLocalMaterialType.name,
+            false,
+          );
+          ItemsBulkEditProfileForm.openSelectMaterialTypeDropdown(2);
+
+          // Step 8: Select any shared material type option, e.g. text
+          ItemsBulkEditProfileForm.selectMaterialType(MATERIAL_TYPE_NAMES.TEXT);
+          ItemsBulkEditProfileForm.verifySaveButtonDisabled(true);
+
+          // Step 9: Add permanent item location and verify only central tenant locations
+          ItemsBulkEditProfileForm.clickPlusButton(2);
+          ItemsBulkEditProfileForm.selectOption('Permanent item location', 3);
+          ItemsBulkEditProfileForm.selectAction(BULK_EDIT_ACTIONS.REPLACE_WITH, 3);
+          ItemsBulkEditProfileForm.clickLocationLookup(3);
           SelectLocationsModal.verifyTenantsInAffiliationDropdown(
             `${tenantNames.central} (Primary)`,
           );
 
-          // Step 8: Select location from central tenant
+          // Step 10: Select location from central tenant
           SelectLocationsModal.selectLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
           SelectLocationsModal.verifySelectLocationModalExists(false);
           ItemsBulkEditProfileForm.verifySaveButtonDisabled(true);
 
-          // Step 9: Fill profile name and save
+          // Step 11: Fill profile name and save
           ItemsBulkEditProfileForm.fillProfileName(profileName);
           ItemsBulkEditProfileForm.verifySaveButtonDisabled(false);
           ItemsBulkEditProfileForm.clickSaveAndClose();
@@ -247,7 +278,7 @@ describe('Bulk-edit', () => {
           ItemsBulkEditProfilesPane.waitLoading();
           ItemsBulkEditProfilesPane.verifyProfileInTable(profileName, 'No value set-', user);
 
-          // Step 10: Navigate to Bulk edit app and upload file
+          // Step 12: Navigate to Bulk edit app and upload file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
@@ -260,7 +291,7 @@ describe('Bulk-edit', () => {
             folioInstance.itemBarcode,
           );
 
-          // Step 11: Select bulk edit profile
+          // Step 13: Select bulk edit profile
           BulkEditActions.openActions();
           BulkEditActions.clickSelectBulkEditProfile('items');
           SelectBulkEditProfileModal.waitLoading('items');
@@ -281,6 +312,10 @@ describe('Bulk-edit', () => {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
               value: LOCATION_NAMES.MAIN_LIBRARY_UI,
             },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+              value: MATERIAL_TYPE_NAMES.TEXT,
+            },
           ];
 
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
@@ -288,7 +323,7 @@ describe('Bulk-edit', () => {
             editedHeaderValues,
           );
 
-          // Step 12: Download preview
+          // Step 14: Download preview
           BulkEditActions.downloadPreview();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
             fileNames.previewRecordsCSV,
@@ -297,7 +332,7 @@ describe('Bulk-edit', () => {
             editedHeaderValues,
           );
 
-          // Step 13: Commit changes
+          // Step 15: Commit changes
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(1);
           BulkEditSearchPane.verifyErrorLabel(1);
@@ -314,6 +349,10 @@ describe('Bulk-edit', () => {
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
               value: memberLocationData.name,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MATERIAL_TYPE,
+              value: MATERIAL_TYPE_NAMES.TEXT,
             },
           ];
 
@@ -356,6 +395,7 @@ describe('Bulk-edit', () => {
           ItemRecordView.checkItemNote(noteText, 'No', 'Binding');
           ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.SELECTED);
           ItemRecordView.verifyPermanentLocation(memberLocationData.name);
+          ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.TEXT);
         },
       );
     });

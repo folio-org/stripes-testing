@@ -1,8 +1,18 @@
-import { Pane, Select, some, SelectionList, Button } from '../../../../../../interactors';
+import {
+  Pane,
+  Select,
+  some,
+  SelectionList,
+  Button,
+  Selection,
+  RepeatableFieldItem,
+  including,
+} from '../../../../../../interactors';
 import { BULK_EDIT_ACTIONS } from '../../../../constants';
 import BulkEditProfileForm from './bulkEditProfileForm';
 
 const newProfilePane = Pane('New items bulk edit profile');
+const selectMaterialTypeDropdown = Selection({ value: including('Select material type') });
 
 export default {
   ...BulkEditProfileForm,
@@ -137,5 +147,13 @@ export default {
 
   selectLoanTypeWhenChangingIt(loanTypeName) {
     cy.do(SelectionList({ id: 'sl-container-loanType' }).select(loanTypeName));
+  },
+
+  openSelectMaterialTypeDropdown(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(selectMaterialTypeDropdown).open());
+  },
+
+  selectMaterialType(materialType) {
+    cy.do(selectMaterialTypeDropdown.choose(materialType));
   },
 };
