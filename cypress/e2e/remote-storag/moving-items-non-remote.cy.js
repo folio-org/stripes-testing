@@ -13,20 +13,10 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { LOCATION_NAMES } from '../../support/constants';
 
 let user;
-let annexLocationId;
-let popularReadingCollectionLocationId;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
-  // Remote location
-  get firstLocationId() {
-    return annexLocationId;
-  },
   firstLocationName: LOCATION_NAMES.ANNEX_UI,
-  // Non-remote location
-  get secondLocationId() {
-    return popularReadingCollectionLocationId;
-  },
   secondLocationName: LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
 };
 const successCalloutMessage =

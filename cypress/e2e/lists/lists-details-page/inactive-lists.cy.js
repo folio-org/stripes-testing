@@ -65,7 +65,7 @@ describe('Lists', () => {
       Lists.openList(listData.name);
 
       // Step 2: Check the structure of the lists details page
-      Lists.verifyRecordsNumber('No');
+      Lists.verifyRecordsNumber('0');
       Lists.closeListDetailsPane();
       Lists.openList(listData.name);
 
@@ -93,7 +93,7 @@ describe('Lists', () => {
 
       // Step 8: Click on "Query: x" dropdown again - expand it
       Lists.clickOnQueryAccordion();
-      Lists.verifyRecordsNumber('No');
+      Lists.verifyRecordsNumber('0');
       Lists.verifyQuery(listUiQuery);
       Lists.verifyListsPaneIsEmpty();
 

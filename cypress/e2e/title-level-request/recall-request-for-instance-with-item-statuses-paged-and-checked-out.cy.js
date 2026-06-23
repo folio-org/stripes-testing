@@ -227,7 +227,7 @@ describe('Create Item or Title level request', () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
       createTLR(users[2], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
       createTLR(users[3], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.PAGED);
-      RequestDetail.openItemByBarcode();
+      RequestDetail.openItemByBarcode(instanceData.item2Barcode);
       ItemRecordView.createNewRequest();
       NewRequest.enterRequesterBarcode(users[4].barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
