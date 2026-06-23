@@ -7,6 +7,7 @@ import {
   Section,
   Select,
   TextField,
+  Modal,
 } from '../../../../../../interactors';
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
@@ -46,7 +47,7 @@ export default {
   },
 
   fillName: (profileName = defaultActionProfile.name) => cy.do(nameField.fillIn(profileName)),
-
+  chooseRecordType: (profileRecordType = defaultActionProfile.typeValue) => cy.do(recordTypeselect.choose(profileRecordType)),
   chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
 
   saveProfile: () => {
@@ -132,4 +133,26 @@ export default {
   },
 
   clickClose: () => cy.do(closeButton.click()),
+
+  verifyActionOptions(options) {
+    cy.do(actionSelect.click());
+    options.forEach((option) => {
+      cy.expect(actionSelect.has({ allOptionsText: including(option) }));
+    });
+  },
+
+  verifySelectedFolioRecordType(option) {
+    cy.expect(recordTypeselect.has({ content: including(option) }));
+  },
+
+  closeProfileWithoutSaving: () => {
+    cy.do(closeButton.click());
+    cy.expect(
+      Modal('Are you sure?')
+        .find(Button('Close without saving'))
+        .has({ visible: true, disabled: false }),
+    );
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+    cy.expect(newActionProfile.absent());
+  },
 };

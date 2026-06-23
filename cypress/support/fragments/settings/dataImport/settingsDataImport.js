@@ -1,4 +1,4 @@
-import { Pane, NavListItem } from '../../../../../interactors';
+import { Pane, NavListItem, PaneHeader } from '../../../../../interactors';
 import JobProfiles from './jobProfiles/jobProfiles';
 import MatchProfiles from './matchProfiles/matchProfiles';
 import ActionProfiles from './actionProfiles/actionProfiles';
@@ -41,5 +41,9 @@ export default {
   goToSettingsDataImport() {
     cy.do(NavListItem('Data import').click());
     cy.expect(dataImportPane.exists());
+  },
+
+  checkDataImportNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }).has({ focused: true }));
   },
 };

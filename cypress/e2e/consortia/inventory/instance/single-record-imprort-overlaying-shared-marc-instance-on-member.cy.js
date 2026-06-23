@@ -82,6 +82,7 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
+          cy.getAdminToken();
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();

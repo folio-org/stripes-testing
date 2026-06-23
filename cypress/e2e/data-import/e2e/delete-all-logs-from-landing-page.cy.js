@@ -63,7 +63,6 @@ describe('Data Import', () => {
       });
     });
 
-    // bug report https://folio-org.atlassian.net/browse/MODSOURMAN-1218
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
       { tags: ['smokeFlaky', 'folijet', 'nonParallel'] },

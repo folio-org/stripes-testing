@@ -1,4 +1,4 @@
-import { including, matching } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -8,9 +8,10 @@ import {
   DecoratorWrapper,
   Form,
   KeyValue,
+  MultiColumnList,
+  Option,
   Section,
   Select,
-  Option,
   TextArea,
   TextField,
 } from '../../../../../../interactors';
@@ -724,6 +725,31 @@ export default {
   verifyFolioRecordTypeOptions: (options) => {
     options.forEach((option) => {
       cy.expect(summaryFields.existingRecordType.has({ allOptionsText: including(option) }));
+    });
+  },
+
+  verifySectionOverrideProtectedFields() {
+    cy.expect([
+      Accordion({ id: 'mapping-profile-details' }).exists(),
+      Accordion({ id: 'edit-override-protected-section' }).has({ open: true }),
+      Accordion({ id: 'edit-override-protected-section' }).has({
+        label: including('Override protected fields'),
+      }),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(
+          HTML(
+            including(
+              'If any protected field should be updated by this profile, check the appropriate box here',
+            ),
+          ),
+        )
+        .exists(),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(MultiColumnList())
+        .has({ columns: ['Field', 'In.1', 'In.2', 'Subfield', 'Data', 'Override'] }),
+    ]);
+    cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
+      cy.wrap($checkbox).should('not.be.disabled');
     });
   },
 };

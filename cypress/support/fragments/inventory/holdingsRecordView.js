@@ -18,6 +18,7 @@ import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
+import Affiliations from '../../dictionary/affiliations';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -368,11 +369,11 @@ export default {
     const accordionConfigs = {
       member: {
         sectionId: 'receiving-history-accordion',
-        listId: 'college-receiving-history-list',
+        listId: `${Affiliations.College}-receiving-history-list`,
       },
       central: {
         sectionId: 'central-receivings-accordion',
-        listId: 'consortium-receiving-history-list',
+        listId: `${Affiliations.Consortia}-receiving-history-list`,
       },
     };
 

@@ -34,6 +34,7 @@ describe('Data Import', () => {
       Users.deleteViaApi(user.userId);
     });
 
+    // bug report https://folio-org.atlassian.net/browse/MODSOURMAN-1218
     it(
       'C358546 Data Import log: Check that data in the "View all" page User filter is updated after deleting the logs for particular users. (folijet) (TaaS)',
       { tags: ['extendedPathFlaky', 'folijet'] },
