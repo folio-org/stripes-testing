@@ -220,6 +220,7 @@ export const itemFieldValues = {
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
   itemEffectiveLibraryCode: 'Item effective library — Code',
+  itemCreatedDate: 'Item — Created date',
   itemEffectiveLibraryName: 'Item effective library — Name',
   holdingsId: 'Holdings — UUID',
   holdingsHrid: 'Holdings — HRID',
