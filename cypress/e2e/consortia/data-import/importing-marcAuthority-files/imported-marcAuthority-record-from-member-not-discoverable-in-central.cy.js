@@ -35,6 +35,7 @@ describe('Data Import', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405519');
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -44,6 +45,7 @@ describe('Data Import', () => {
 
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405519');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
