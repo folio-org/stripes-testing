@@ -69,6 +69,7 @@ export default {
   },
 
   moveComponentToUnused(componentTestId) {
+    // eslint-disable-next-line cypress/no-force
     cy.get(`[data-testid="${componentTestId}"] [data-testid="activate-menu"]`)
       .scrollIntoView()
       .should('be.visible')
@@ -95,6 +96,7 @@ export default {
   },
 
   reorderComponentToFirstPosition(componentTestId) {
+    // eslint-disable-next-line cypress/no-force
     cy.get(
       `${selectedComponentList} [data-testid="${componentTestId}"] [data-testid="nudge-up"]`,
     ).click({ force: true });
