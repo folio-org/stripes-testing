@@ -2064,7 +2064,7 @@ export default {
         .find(HTML({ className: including('headerCell'), text: 'In.2\n*' }))
         .exists(),
       bulkEditsMarcInstancesAccordion
-        .find(HTML({ className: including('headerCell'), text: 'Subfield\n*' }))
+        .find(HTML({ className: including('headerCell'), text: 'Subfield' }))
         .exists(),
       bulkEditsMarcInstancesAccordion
         .find(HTML({ className: including('headerCell'), text: 'Actions\n*' }))
