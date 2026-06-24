@@ -169,6 +169,7 @@ describe('OAI-PMH', () => {
             // Get FOLIO instance UUID
             InventoryInstance.getId().then((instanceId) => {
               testData.folioInstance.id = instanceId;
+              cy.wait(3000);
 
               // Step 12: Send single tenant harvest requests
               cy.resetTenant();
