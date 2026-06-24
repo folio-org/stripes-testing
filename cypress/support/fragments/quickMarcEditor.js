@@ -1638,6 +1638,16 @@ export default {
     );
   },
 
+  verifyFieldsDropdownOptionCount(tag, dropdownLabel, count, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
+        .has({ optionsCount: count }),
+    );
+  },
+
   verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
@@ -3742,5 +3752,13 @@ export default {
         .find(Link('Help', { href: including(helpLinkUrl) }))
         .exists(),
     );
+  },
+
+  verifyDropdownsPresent(tag, dropdownLabels, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    dropdownLabels.forEach((label) => {
+      cy.expect(targetRow.find(Select({ label: including(label) })).exists());
+    });
   },
 };
