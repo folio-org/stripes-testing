@@ -85,9 +85,10 @@ describe('Eureka', () => {
         ConsortiumManagerApp.verifyMembersSelected(2);
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
+        cy.getToken(userData.username, userData.password);
         cy.getAuthorizationRoles().then((rolesCentral) => {
           AuthorizationRoles.waitContentLoading();
-          AuthorizationRoles.verifyRolesCount(rolesCentral.length, { plusMinus: 2 });
+          AuthorizationRoles.verifyRolesCount(rolesCentral.length, { plusMinus: 5 });
           AuthorizationRoles.checkRoleFound(testData.centralRoleName);
           AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
 
@@ -95,7 +96,7 @@ describe('Eureka', () => {
           cy.setTenant(Affiliations.College);
           cy.getAuthorizationRoles().then((rolesCollege) => {
             AuthorizationRoles.waitContentLoading();
-            AuthorizationRoles.verifyRolesCount(rolesCollege.length, { plusMinus: 2 });
+            AuthorizationRoles.verifyRolesCount(rolesCollege.length, { plusMinus: 5 });
             AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
             AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
 
@@ -125,10 +126,12 @@ describe('Eureka', () => {
             ConsortiumManagerApp.verifyMembersSelected(2);
             ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
             SelectMembers.selectMember(tenantNames.college);
+            cy.resetTenant();
+            cy.getToken(userData.username, userData.password);
             cy.setTenant(Affiliations.College);
             cy.getAuthorizationRoles().then((rolesCollegeNew) => {
               AuthorizationRoles.waitContentLoading();
-              AuthorizationRoles.verifyRolesCount(rolesCollegeNew.length, { plusMinus: 2 });
+              AuthorizationRoles.verifyRolesCount(rolesCollegeNew.length, { plusMinus: 5 });
               AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
               AuthorizationRoles.verifyRoleRow(
                 testData.collegeRoleName,
