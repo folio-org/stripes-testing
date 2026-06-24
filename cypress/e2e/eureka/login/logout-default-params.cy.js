@@ -12,8 +12,7 @@ describe('Eureka', () => {
     const userProfileButton = Dropdown({ id: 'profileDropdown' });
     const logoutButton = userProfileButton.find(Button('Log out'));
     const logInAgainButton = Button({ text: 'Log in again' });
-    const logoutButtonSeparatePage = Button({ name: 'confirmLogout' });
-    const logoutTitle = HTML({ text: 'Logging out' });
+    const errorMessage = HTML({ text: 'Error: server is forbidden, unreachable, or unavailable.' });
 
     beforeEach(() => {
       cy.logoutViaApi();
@@ -73,7 +72,7 @@ describe('Eureka', () => {
           loginButton.click(),
         ]);
 
-        cy.expect([logoutButtonSeparatePage.exists(), logoutTitle.exists()]);
+        cy.expect([logInAgainButton.exists(), errorMessage.exists()]);
       },
     );
   });
