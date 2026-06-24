@@ -849,6 +849,58 @@ export default {
     );
   },
 
+  selectItemMaterialType(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Material type'),
+    );
+    cy.wait(1000);
+  },
+
+  verifyMaterialTypeSelectDropdownExists(rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'materialType' }))
+        .exists(),
+    );
+  },
+
+  openSelectMaterialTypeDropdown(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'materialType' }))
+        .click(),
+    );
+    cy.wait(500);
+  },
+
+  fillMaterialType(materialType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Material type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'materialType' }))
+        .click(),
+      SelectionOption(materialType).click(),
+    ]);
+  },
+
+  verifyMaterialTypeOptionInItemDataGroup() {
+    this.clickOptionsSelection();
+    cy.expect(SelectionOption('Material type').exists());
+    cy.get('li[class*="groupLabel"]').then(($labels) => {
+      const labels = [...$labels].map((el) => el.textContent);
+      const administrativeDataIndex = labels.indexOf('Administrative data');
+      const itemDataIndex = labels.indexOf('Item data');
+      const itemNotesIndex = labels.indexOf('Item notes');
+      expect(itemDataIndex).to.be.greaterThan(administrativeDataIndex);
+      expect(itemDataIndex).to.be.lessThan(itemNotesIndex);
+    });
+    this.clickOptionsSelection();
+  },
+
   editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -2064,7 +2116,7 @@ export default {
         .find(HTML({ className: including('headerCell'), text: 'In.2\n*' }))
         .exists(),
       bulkEditsMarcInstancesAccordion
-        .find(HTML({ className: including('headerCell'), text: 'Subfield\n*' }))
+        .find(HTML({ className: including('headerCell'), text: 'Subfield' }))
         .exists(),
       bulkEditsMarcInstancesAccordion
         .find(HTML({ className: including('headerCell'), text: 'Actions\n*' }))

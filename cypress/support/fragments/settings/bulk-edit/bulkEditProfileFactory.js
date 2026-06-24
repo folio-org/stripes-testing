@@ -557,6 +557,16 @@ export const ItemsRules = {
       },
     ],
   }),
+
+  createMaterialTypeRule: (action, materialTypeName = null) => ({
+    option: 'MATERIAL_TYPE',
+    actions: [
+      {
+        ...action,
+        updated: materialTypeName !== null ? materialTypeName : action.updated,
+      },
+    ],
+  }),
 };
 
 // Users-specific rule creators
