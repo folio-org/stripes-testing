@@ -1358,6 +1358,15 @@ const API = {
     });
   },
 
+  getAllEntityTypesIncludeAllViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types',
+      isDefaultSearchParamsRequired: false,
+      searchParams: { includeAll: true },
+    });
+  },
+
   getEntityTypeIdByNameViaApi(type) {
     return this.getAllEntityTypesViaApi().then((response) => {
       return response.body.entityTypes.find((entityType) => entityType.label === type).id;
@@ -1370,6 +1379,15 @@ const API = {
       path: `entity-types/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
+    });
+  },
+
+  getEntityTypeByIdIncludeAllViaApi(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: { includeAll: true },
     });
   },
 

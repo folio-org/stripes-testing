@@ -143,3 +143,9 @@ Example searches:
 
 
 TestRail MCP - to get details of a test case, use get_case tool with the test case ID, e.g. `C627455`
+
+Every time when you implement a new test case, add comments before test code that corresponds to the test case steps in the TestRail. For example, if the test case has step 1 like: Click on the "New" button, add a comment under the JS code like this:
+```javascript
+  // #1 Click on the "New" button
+  Lists.openNewListPane();
+```
