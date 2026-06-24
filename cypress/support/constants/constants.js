@@ -1343,6 +1343,7 @@ export const INSTANCE_NOTE_TYPES = {
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
   SUMMARY: 'Summary',
+  ACCUMULATION_AND_FREQUENCY_OF_USE_NOTE: 'Accumulation and Frequency of Use note',
 };
 
 export const BULK_EDIT_ACTIONS = {
