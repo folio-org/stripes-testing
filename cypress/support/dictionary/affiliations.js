@@ -20,6 +20,11 @@ export default {
     University: 'university',
     College: 'college',
   },
+  trillium: {
+    Consortia: 'consortium',
+    University: 'university',
+    College: 'college',
+  },
 }[currentEnv];
 
 export const tenantNames = {
@@ -38,6 +43,12 @@ export const tenantNames = {
     special: 'Special tenant',
   },
   snapshot: {
+    central: 'Consortium',
+    college: 'College',
+    university: 'University',
+    professional: 'Professional',
+  },
+  trillium: {
     central: 'Consortium',
     college: 'College',
     university: 'University',
@@ -63,6 +74,12 @@ export const tenantCodes = {
     special: 'SPE,',
   },
   snapshot: {
+    central: 'MCO',
+    college: 'COL',
+    university: 'UNI',
+    professional: 'UNI',
+  },
+  trillium: {
     central: 'MCO',
     college: 'COL',
     university: 'UNI',
