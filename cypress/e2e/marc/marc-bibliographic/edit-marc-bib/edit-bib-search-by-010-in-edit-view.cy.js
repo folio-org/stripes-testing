@@ -162,6 +162,7 @@ describe('MARC', () => {
       });
 
       after('Deleting created user', () => {
+        cy.wait(3000);
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         createdInstanceIds.forEach((id) => {
