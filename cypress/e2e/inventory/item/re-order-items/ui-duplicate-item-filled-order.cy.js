@@ -38,7 +38,7 @@ describe('Inventory', () => {
           // Get required reference data
           cy.getLocations({
             limit: 1,
-            query: '(isActive=true and name<>"AT_*") and name<>"autotest*"',
+            query: '(isActive=true and name<>"AT_*") and name<>"*auto*"',
           }).then((res) => {
             location = res;
           });
@@ -89,14 +89,10 @@ describe('Inventory', () => {
         'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C808499'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
-          InventoryInstances.waitContentLoading();
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
 
           // Navigate to instance that has holdings with multiple items with order fields 1, 2, 3
           InventoryInstances.searchByTitle(testData.folioInstances[0].instanceId);
@@ -117,6 +113,7 @@ describe('Inventory', () => {
             ItemRecordView.duplicateItem();
             ItemRecordNew.waitLoading(testData.folioInstances[0].instanceTitle);
 
+            cy.wait(3000);
             // Update the barcode of the duplicated item
             const duplicatedItemBarcode = `AT_C808499_Item_${uuid()}`;
             ItemRecordNew.addBarcode(duplicatedItemBarcode);
@@ -133,7 +130,6 @@ describe('Inventory', () => {
             InventoryInstance.openHoldingsAccordion(location.name);
 
             // Verify all items have correct order values via API
-            // Will fail until fixed in UIIN-3486
             InventoryItems.getItemsInHoldingsViaApi(holdingsRecordId).then((items) => {
               const orderValues = items.map((it) => it.order);
               expect(orderValues).to.deep.equal([1, 2, 3, 4]);
