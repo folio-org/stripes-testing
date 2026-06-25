@@ -77,6 +77,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             cy.wait(1000); // need to wait for choose Type of Heading
             MarcAuthorities.chooseTypeOfHeading('Conference Name');
+            cy.wait(3000);
             InventoryInstance.searchResults(testData.marcAuthTitle);
             MarcAuthority.waitLoading();
             MarcAuthorities.clickLinkButton();

@@ -201,7 +201,7 @@ describe('MARC', () => {
 
         it(
           'C388646 Unlink auto-linked fields, manually link, edit and auto-link fields again when deriving new "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C388646'] },
+          { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C388646'] },
           () => {
             // Step 1: Find and open detail view of imported record
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
