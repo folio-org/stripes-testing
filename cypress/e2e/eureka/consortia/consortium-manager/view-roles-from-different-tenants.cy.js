@@ -85,6 +85,7 @@ describe('Eureka', () => {
         ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
+        cy.getToken(userData.username, userData.password);
         cy.getAuthorizationRoles().then((rolesCentral) => {
           AuthorizationRoles.verifyRolesCount(rolesCentral.length, { plusMinus: 5 });
           AuthorizationRoles.checkRoleFound(testData.centralRoleName);

@@ -16,7 +16,7 @@ const newResourceButton = Button({
 const compareSelectedButton = Button({
   dataTestID: 'resources-actions-dropdown__option-ld.compareSelected',
 });
-const searchSelect = "//select[@id='id-search-select']";
+const searchSelect = "//h2[@id='search-pane-header-title']";
 const searchButton = Button({ dataTestID: 'id-search-button' });
 const workPreviewPanel = "//div[@class='preview-panel']";
 const actionsHubButton = Button({ dataTestID: 'hubs-actions-dropdown' });

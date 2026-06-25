@@ -34,6 +34,7 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { poll } from '../../support/utils/polling';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Patron notices', () => {
@@ -343,8 +344,29 @@ describe('Patron notices', () => {
           CheckInActions.endCheckInSession();
 
           // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(200000);
+          const descriptions = noticeTemplates.map((template) => {
+            return searchResultsData(template.name).desc;
+          });
+
+          poll(
+            () => cy.getCirculationLogs({
+              searchParams: {
+                query: [
+                  `userBarcode=="${userData.barcode}"`,
+                  descriptions.map((desc) => `description=="${desc}"`).join(' OR '),
+                ].join(' AND '),
+              },
+              failOnStatusCode: false,
+            }),
+            (response) => {
+              return descriptions.every((desc) => {
+                return response.body.logRecords.some((record) => record.description === desc);
+              });
+            },
+            {
+              timeout: 200000,
+            },
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
           SearchPane.waitLoading();
@@ -365,8 +387,18 @@ describe('Patron notices', () => {
           PayFeeFine.submitAndConfirm();
 
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(100000);
+          poll(
+            () => cy.getCirculationLogs({
+              searchParams: {
+                query: `userBarcode=="${userData.barcode}" AND action=="Paid fully" AND object=="Fee/fine"`,
+              },
+              failOnStatusCode: false,
+            }),
+            (response) => response.body.logRecords.length > 0,
+            {
+              timeout: 100000,
+            },
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
           SearchPane.waitLoading();
