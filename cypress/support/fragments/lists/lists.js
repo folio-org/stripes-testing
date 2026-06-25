@@ -52,6 +52,7 @@ const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
+const listsPane = Pane('Lists');
 const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
@@ -123,7 +124,7 @@ const constants = {
 
 const UI = {
   waitLoading() {
-    cy.expect(HTML(including('Lists')).exists());
+    cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(3000);
     // have to duplicate code because cannot use this.waitForSpinnerToDisappear() for some reason...
     cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
