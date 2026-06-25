@@ -613,4 +613,8 @@ export default {
   checkViewPaneInFocus({ isFocused = true } = {}) {
     cy.expect(rootHeader.has({ focused: isFocused }));
   },
+
+  saveWithShortcut() {
+    cy.get('input[name="records[2].tag"]').should('not.be.disabled').focus().type('{ctrl}s');
+  },
 };
