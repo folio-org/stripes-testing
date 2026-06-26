@@ -357,11 +357,17 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
 const selectActionForStatisticalCode = (number, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+  const statisticalCodeSelect = `select[name="${statisticalCodeFieldName}"]`;
 
-  cy.do([
-    Select({ name: statisticalCodeFieldName }).focus(),
-    Select({ name: statisticalCodeFieldName }).choose(action),
-  ]);
+  cy.get(statisticalCodeSelect).should('be.visible').select(action);
+  cy.get(statisticalCodeSelect)
+    .find('option:selected')
+    .should(($selectedOption) => {
+      const selectedText = $selectedOption.text().trim();
+      const selectedValue = $selectedOption.val();
+
+      expect(selectedText === action || selectedValue === action).to.equal(true);
+    });
 };
 const addStatisticalCode = (name, number, action) => {
   selectActionForStatisticalCode(number, action);
