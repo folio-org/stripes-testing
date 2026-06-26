@@ -4,30 +4,33 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
+import getRandomPostfix, {
+  getRandomLetters,
+  randomNDigitNumber,
+} from '../../../../support/utils/stringTools';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC authority', () => {
     describe('Create', () => {
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
+      const tag008 = '008';
+      const tag010 = '010';
+      const defaultFileNaturalId = `n423533${randomNDigitNumber(18)}`;
       const headerText = /New .*MARC authority record/;
-      const authorityHeading = `AT_C423531_MarcAuthority_${randomPostfix}`;
-      const field110 = {
-        previousFieldTag: '008',
-        tag: '110',
+      const sourceAccordionName = 'Authority source';
+      const authorityHeading = `AT_C423533_MarcAuthority_${randomPostfix}`;
+      const folioAuthFile = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
+      const field111 = {
+        previousFieldTag: '010',
+        tag: '111',
         content: `$a ${authorityHeading}`,
       };
-      const localAuthFile1 = {
-        name: `AT_C423531_AuthoritySourceFile1_${randomPostfix}`,
-        prefix: `${getRandomLetters(22)}a`,
-        startWithNumber: '1',
-        isActive: true,
-      };
-      const localAuthFile2 = {
-        name: `AT_C423531_AuthoritySourceFile2_${randomPostfix}`,
-        prefix: `${getRandomLetters(22)}b`,
+      const localAuthFile = {
+        name: `AT_C423533_AuthoritySourceFile_${randomPostfix}`,
+        prefix: `${getRandomLetters(22)}c`,
         startWithNumber: '1',
         isActive: true,
       };
@@ -36,8 +39,8 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423531_');
-        cy.getAuthoritySourceFileDataViaAPI('AT_C423531_*').then(() => {
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423533_');
+        cy.getAuthoritySourceFileDataViaAPI('AT_C423533_*').then(() => {
           Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
             ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
             cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
@@ -54,24 +57,17 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.createAuthoritySourceFileUsingAPI(
-              localAuthFile1.prefix,
-              localAuthFile1.startWithNumber,
-              localAuthFile1.name,
-              localAuthFile1.isActive,
+              localAuthFile.prefix,
+              localAuthFile.startWithNumber,
+              localAuthFile.name,
+              localAuthFile.isActive,
             ).then((sourceId) => {
-              localAuthFile1.id = sourceId;
+              localAuthFile.id = sourceId;
             });
-            cy.createAuthoritySourceFileUsingAPI(
-              localAuthFile2.prefix,
-              localAuthFile2.startWithNumber,
-              localAuthFile2.name,
-              localAuthFile2.isActive,
-            ).then((sourceId) => {
-              localAuthFile2.id = sourceId;
-            });
+            ManageAuthorityFiles.setAuthorityFileToActiveViaApi(folioAuthFile);
           })
           .then(() => {
-            cy.wait(70_000); // wait for new source files to be processed
+            cy.wait(70_000); // wait for new source file to be processed
             cy.getAdminToken();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
@@ -84,13 +80,13 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId, true);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile1.id, true);
-        cy.deleteAuthoritySourceFileViaAPI(localAuthFile2.id, true);
+        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(folioAuthFile);
+        cy.deleteAuthoritySourceFileViaAPI(localAuthFile.id, true);
       });
 
       it(
-        'C423531 Create a new MARC authority record with "Local" authority file selected and added "010" field with prefix of different "Local" authority file (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423531'] },
+        'C423533 Create a new MARC authority record with "Local" authority file selected and added "010" field with prefix of different "FOLIO" authority file (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C423533'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -98,32 +94,27 @@ describe('MARC', () => {
           MarcAuthority.checkSourceFileSelectShown();
           MarcAuthority.setValid008DropdownValues();
 
-          // Step 2: Select first local authority file; verify 001 updated
-          MarcAuthority.verifySourceFileOptionPresent(localAuthFile1.name);
-          MarcAuthority.verifySourceFileOptionPresent(localAuthFile2.name);
-          MarcAuthority.selectSourceFile(localAuthFile1.name);
+          // Step 2: Select local authority file; verify 001 updated
+          MarcAuthority.verifySourceFileOptionPresent(localAuthFile.name);
+          MarcAuthority.selectSourceFile(localAuthFile.name);
 
           QuickMarcEditor.checkFourthBoxEditable(1, false);
           QuickMarcEditor.checkContentByTag(
             tag001,
-            `${localAuthFile1.prefix}${localAuthFile1.startWithNumber}`,
+            `${localAuthFile.prefix}${localAuthFile.startWithNumber}`,
           );
 
-          // Step 4: Add 110 field
-          MarcAuthority.addNewFieldAfterExistingByTag(
-            field110.previousFieldTag,
-            field110.tag,
-            field110.content,
-          );
-          QuickMarcEditor.checkContentByTag(field110.tag, field110.content);
+          // Step 4: Add 010 field with FOLIO authority file prefix
+          MarcAuthority.addNewFieldAfterExistingByTag(tag008, tag010, `$a ${defaultFileNaturalId}`);
+          QuickMarcEditor.checkContentByTag(tag010, `$a ${defaultFileNaturalId}`);
 
-          // Step 5: Add 010 field with second auth file prefix
+          // Step 5: Add 111 field
           MarcAuthority.addNewFieldAfterExistingByTag(
-            field110.tag,
-            '010',
-            `$a ${localAuthFile2.prefix}00001`,
+            field111.previousFieldTag,
+            field111.tag,
+            field111.content,
           );
-          QuickMarcEditor.checkContentByTag('010', `$a ${localAuthFile2.prefix}00001`);
+          QuickMarcEditor.checkContentByTag(field111.tag, field111.content);
 
           // Step 6: Save & close; verify detail view with correct 001 value
           QuickMarcEditor.pressSaveAndClose();
@@ -134,7 +125,7 @@ describe('MARC', () => {
             createdAuthorityId = id;
 
             MarcAuthority.contains(tag001);
-            MarcAuthority.contains(`${localAuthFile1.prefix}${localAuthFile1.startWithNumber}`);
+            MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
 
             // Step 7: Close detail view pane
             MarcAuthorities.closeMarcViewPane();
@@ -142,17 +133,21 @@ describe('MARC', () => {
             MarcAuthorities.waitLoading();
             MarcAuthorities.checkRecordsResultListIsAbsent();
 
-            // Step 8: Open Authority source dropdown; second file present, first absent
-            MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
-            MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile2.name);
-            MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile1.name, false);
-
-            // Step 9: Filter by second auth file; verify created record found
-            MarcAuthorities.chooseAuthoritySourceOption(localAuthFile2.name);
-            MarcAuthorities.checkSelectedAuthoritySource(localAuthFile2.name);
+            // Step 8: Search by 111 heading; verify record found
+            MarcAuthorities.searchBeats(authorityHeading);
             MarcAuthorities.verifyRecordFound(authorityHeading);
             MarcAuthorities.selectAuthorityById(createdAuthorityId);
             MarcAuthority.waitLoading();
+            MarcAuthority.contains(authorityHeading);
+
+            // Step 9: Filter by FOLIO authority file; verify record found
+            MarcAuthorities.clickMultiSelectToggleButtonInAccordion(sourceAccordionName);
+            MarcAuthorities.checkAuthoritySourceDropdownHasOption(folioAuthFile);
+            MarcAuthorities.chooseAuthoritySourceOption(folioAuthFile);
+            MarcAuthorities.checkSelectedAuthoritySource(folioAuthFile);
+            MarcAuthorities.verifyRecordFound(authorityHeading);
+            MarcAuthority.waitLoading();
+            MarcAuthority.contains(authorityHeading);
           });
         },
       );

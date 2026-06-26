@@ -1068,8 +1068,10 @@ export default {
     ]);
   },
 
-  checkAuthoritySourceDropdownHasOption(optionName) {
-    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(optionName))).exists());
+  checkAuthoritySourceDropdownHasOption(optionName, isShown = true) {
+    const targetOption = sourceFileAccordion.find(MultiSelectOption(including(optionName)));
+    if (isShown) cy.expect(targetOption.exists());
+    else cy.expect(targetOption.absent());
   },
 
   checkAuthoritySourceOptions() {
