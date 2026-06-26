@@ -26,7 +26,7 @@ describe('MARC', () => {
         tag010: '010',
         tag100: '100',
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
-        newTimezone: 'America/Toronto',
+        newTimezone: 'America/Phoenix',
         initialTimestamp: null,
         createdRecordId: null,
         userProperties: null,

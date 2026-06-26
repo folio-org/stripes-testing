@@ -47,7 +47,7 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C648460 Verify "Administrative data", "Item notes", "Loan and availability" and "Location" dividers are present in a list of options for Items Bulk edit (firebird)',
+      'C648460 Verify "Administrative data", "Item data", "Item notes", "Loan and availability" and "Location" dividers are present in a list of options for Items Bulk edit (firebird)',
       { tags: ['extendedPath', 'firebird', 'C648460'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();

@@ -12,6 +12,7 @@ import DateTools from '../../../support/utils/dateTools';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
+let testUser;
 let fileNames;
 const currentDate = DateTools.getCurrentDate();
 const pastExpirationDate = DateTools.getTwoPreviousDaysDateForFiscalYear();
@@ -27,13 +28,16 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
-          cy.updateUser({
-            ...users[0],
-            expirationDate: pastExpirationDate,
+        cy.createTempUser().then((testUserProperties) => {
+          testUser = testUserProperties;
+
+          cy.getUsers({ limit: 1, query: `username=${testUser.username}` }).then((users) => {
+            cy.updateUser({
+              ...users[0],
+              expirationDate: pastExpirationDate,
+            });
           });
         });
-
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -44,6 +48,7 @@ describe('Bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(testUser.userId);
       BulkEditFiles.deleteAllDownloadedFiles(fileNames);
     });
 
@@ -65,9 +70,9 @@ describe('Bulk-edit', () => {
         QueryModal.addNewRow();
         QueryModal.selectField(usersFieldValues.userBarcode, 1);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-        QueryModal.fillInValueTextfield(user.barcode, 1);
+        QueryModal.fillInValueTextfield(testUser.barcode, 1);
         QueryModal.verifyQueryAreaContent(
-          `(users.expiration_date < ${currentDate}) AND (users.barcode == ${user.barcode})`,
+          `(users.expiration_date < ${currentDate}) AND (users.barcode == ${testUser.barcode})`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
@@ -98,9 +103,9 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyBulkEditQueryPaneExists();
           BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            user.barcode,
+            testUser.barcode,
             BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.BARCODE,
-            user.barcode,
+            testUser.barcode,
           );
 
           // Step 7: Click "Actions" menu and verify available options (View only)
@@ -114,7 +119,7 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyValueInRowByUUID(
             fileNames.matchedRecordsCSV,
             BULK_EDIT_TABLE_COLUMN_HEADERS.USERS.BARCODE,
-            user.barcode,
+            testUser.barcode,
           );
 
           // Step 9: Click "Actions" menu and verify "Show columns" section
