@@ -1,4 +1,4 @@
-import { BATCH_GROUP, PAYMENT_METHOD } from '../../../support/constants';
+import { BATCH_GROUP, PAYMENT_METHOD, VENDOR_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEditForm';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
@@ -18,7 +18,7 @@ describe('Data Import', () => {
       batchGroup: BATCH_GROUP.FOLIO,
       paymentMethod: PAYMENT_METHOD.CASH,
       organization: 'Amazon.com',
-      organizationForChanging: 'Alexander Street Press',
+      organizationForChanging: VENDOR_NAMES.GOBI,
     };
 
     before('Create test user and login', () => {
