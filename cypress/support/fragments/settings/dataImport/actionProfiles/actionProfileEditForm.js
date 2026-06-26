@@ -5,6 +5,7 @@ import {
   ConfirmationModal,
   Form,
   MultiColumnListCell,
+  MultiColumnListHeader,
   Section,
   Select,
   TextArea,
@@ -134,6 +135,16 @@ export default {
   verifyFolioRecordType(options) {
     options.forEach((option) => {
       cy.expect(detailsSectionFields.recordType.has({ allOptionsText: including(option) }));
+    });
+  },
+  verifyAssociatedMappingProfileShownColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(mappingProfileSection.find(MultiColumnListHeader({ content: column })).exists());
+    });
+  },
+  verifyAssociatedMappingProfileHiddenColumns: (columns) => {
+    columns.forEach((column) => {
+      cy.expect(mappingProfileSection.find(MultiColumnListHeader({ content: column })).absent());
     });
   },
 };
