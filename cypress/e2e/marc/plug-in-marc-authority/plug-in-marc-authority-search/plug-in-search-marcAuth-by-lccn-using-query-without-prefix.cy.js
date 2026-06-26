@@ -15,8 +15,8 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'LCCN',
         AUTHORIZED: 'Authorized',
-        searchQueryWithoutAsteriks: '85057895',
-        searchQueryWithAsteriks: '*85057895',
+        searchQueryWithoutAsteriks: '85057895440115',
+        searchQueryWithAsteriks: '*85057895440115',
       };
 
       const searchResultWithoutAsteriks = 'C440115 Test LCCN subfield a record 10 (digits only)';
@@ -62,7 +62,7 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440115*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440115 ');
 
           cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
@@ -81,8 +81,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
           }, 20_000);
         });
       });

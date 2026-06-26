@@ -42,6 +42,9 @@ describe('MARC', () => {
       const createdRecordsIDs = [];
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C375954');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375954');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -65,7 +68,9 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdRecordsIDs[0]);
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickLinkIconInTagField(testData.rowIndex);
             MarcAuthorities.switchToSearch();
@@ -75,6 +80,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
           });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -88,15 +95,17 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
-        MarcAuthority.deleteViaAPI(createdRecordsIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordsIDs[1], true);
       });
 
       it(
         'C375954 Add controllable subfield to a linked field in "MARC bib" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire', 'C375954'] },
         () => {
-          InventoryInstances.searchByTitle(testData.instanceValue);
-          InventoryInstances.selectInstance();
+          InventoryInstances.searchByTitle(createdRecordsIDs[0]);
+          InventoryInstances.selectInstanceById(createdRecordsIDs[0]);
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillEmptyTextAreaOfField(
             15,

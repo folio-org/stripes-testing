@@ -22,7 +22,7 @@ describe('MARC', () => {
 
       const searchDataFirstRow = {
         row: 0,
-        query: 'sh85057895',
+        query: 'sh85057895451456',
         matchOption: 'Exact phrase',
         operator: false,
       };
@@ -30,31 +30,31 @@ describe('MARC', () => {
       const searchData = [
         {
           row: 1,
-          query: '  SH  85057895  ',
+          query: '  SH  85057895451456  ',
           matchOption: 'Exact phrase',
           operator: 'AND',
         },
         {
           row: 2,
-          query: '85057895',
+          query: '85057895451456',
           matchOption: 'Contains all',
           operator: 'AND',
         },
         {
           row: 3,
-          query: 'SH7663',
+          query: 'SH7663451456',
           matchOption: 'Starts with',
           operator: 'OR',
         },
         {
           row: 4,
-          query: '76638',
+          query: '76634514568',
           matchOption: 'Contains all',
           operator: 'OR',
         },
         {
           row: 5,
-          query: '766384',
+          query: '766345145684',
           matchOption: 'Exact phrase',
           operator: 'OR',
         },
@@ -84,6 +84,8 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before(() => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C451456 ');
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
@@ -109,7 +111,7 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
         Users.deleteViaApi(testData.user.userId);
       });

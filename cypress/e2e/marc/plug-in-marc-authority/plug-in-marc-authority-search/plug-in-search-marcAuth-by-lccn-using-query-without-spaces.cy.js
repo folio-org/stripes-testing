@@ -18,15 +18,15 @@ describe('MARC', () => {
       };
 
       const searchQueries = [
-        'sh85057895',
-        '  sh  85057895 ',
-        'sh 85057895',
-        'sh  85057895',
-        'sh85057895 ',
-        'sh85057895  ',
-        ' sh85057895',
-        '  sh85057895',
-        '  sh  85057895  ',
+        'sh85057895440114',
+        '  sh  85057895440114 ',
+        'sh 85057895440114',
+        'sh  85057895440114',
+        'sh85057895440114 ',
+        'sh85057895440114  ',
+        ' sh85057895440114',
+        '  sh85057895440114',
+        '  sh  85057895440114  ',
       ];
 
       const searchResults = [
@@ -63,7 +63,7 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440114*');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440114 ');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -91,6 +91,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });

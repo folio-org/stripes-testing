@@ -226,7 +226,6 @@ describe('MARC', () => {
               BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
             );
             cy.setTenant(Affiliations.University);
-            BrowseCallNumber.waitForCallNumberToAppear(testData.callNumberValue);
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
             BrowseCallNumber.checkNonExactSearchResult(testData.callNumberValue);
           },

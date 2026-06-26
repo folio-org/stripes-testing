@@ -13,25 +13,30 @@ const testData = {
   instanceIDs: [],
   contributorSearchOption: 'Contributor',
   allSearchOption: 'All',
-  searchQueriesKeyword: ['MALOTT, DEANES', 'malott, deanes', 'Malott, Deanes', 'Malott, McDeanes'],
+  searchQueriesKeyword: [
+    'MALOTTAUTO, DEANES',
+    'malottauto, deanes',
+    'Malottauto, Deanes',
+    'Malottauto, McDeanes',
+  ],
   searchQueriesContributor: [
-    'MALOTT, DEANES',
-    'malott, deanes',
-    'Malott, Deanes',
-    'Malott, McDeanes',
+    'MALOTTAUTO, DEANES',
+    'malottauto, deanes',
+    'Malottauto, Deanes',
+    'Malottauto, McDeanes',
   ],
   searchQueriesAll: [
-    'MALOTT, DEANES 1898-1997',
-    'malott, deanes 1898-1997',
-    'Malott, Deanes 1898-1997',
-    'Malott, McDeanes 1898-1997',
+    'MALOTTAUTO, DEANES 1898-1997',
+    'malottauto, deanes 1898-1997',
+    'Malottauto, Deanes 1898-1997',
+    'Malottauto, McDeanes 1898-1997',
   ],
   searchResultsThreeContributors: [
-    'Malott, Deanes 1898-1997',
-    'MALOTT, DEANES 1898-1997',
-    'malott, deanes 1898-1997',
+    'Malottauto, Deanes 1898-1997',
+    'MALOTTAUTO, DEANES 1898-1997',
+    'malottauto, deanes 1898-1997',
   ],
-  searchResultsOneContributor: 'Malott, McDeanes 1898-1997',
+  searchResultsOneContributor: 'Malottauto, McDeanes 1898-1997',
   searchResulsAllInstances: [
     'C464068 MSEARCH-696 Instance 1 regular case',
     'C464068 MSEARCH-696 Instance 2 UPPER case',
@@ -94,6 +99,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
