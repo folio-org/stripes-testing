@@ -69,11 +69,6 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            });
           });
 
           ConsortiumManager.checkCurrentTenantInTopMenu(centralTenant.name);
@@ -94,7 +89,7 @@ describe('Inventory', () => {
 
       it(
         'C663251 Disable "Audit log" feature from Member tenant and check "View source" panes of Shared and Local "MARC bibliographic" record (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C663251'] },
+        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C663251'] },
         () => {
           // Step 1: Open view source pane of Shared MARC record
           InventoryInstances.searchByTitle(testData.sharedMarcTitle);

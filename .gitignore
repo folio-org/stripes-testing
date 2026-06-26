@@ -33,3 +33,4 @@ cypress/e2e/failed.cy.js
 environments.js
 CLAUDE.md
 .claude
+.codemie

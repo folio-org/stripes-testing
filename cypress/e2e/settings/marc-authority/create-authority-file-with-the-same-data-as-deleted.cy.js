@@ -23,6 +23,7 @@ describe('MARC', () => {
 
       before('Create user, login', () => {
         cy.getAdminToken();
+        ManageAuthorityFiles.deleteAuthoritySourceFileByNameViaApi('C442901*');
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
           .then((userProperties) => {
             user.userProperties = userProperties;
@@ -42,6 +43,7 @@ describe('MARC', () => {
             cy.login(user.userProperties.username, user.userProperties.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
+              authRefresh: true,
             });
           });
       });

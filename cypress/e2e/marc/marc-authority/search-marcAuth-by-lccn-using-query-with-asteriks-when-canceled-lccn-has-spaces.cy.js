@@ -14,7 +14,7 @@ describe('MARC', () => {
       AUTHORIZED: 'Authorized',
     };
 
-    const searchQueries = ['sh 766*', '*6384', '*6638*'];
+    const searchQueries = ['sh 766440119*', '*6440119384', '*6644011938*'];
 
     const searchResults = [
       'C440119 Test LCCN subfield z record 1 (two leading spaces, one trailing space, two internal spaces)',
@@ -40,6 +40,8 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440119 ');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

@@ -18,15 +18,15 @@ describe('MARC', () => {
       };
 
       const searchQueries = [
-        'sh766384',
-        '  sh  766384 ',
-        'sh 766384',
-        'sh  766384',
-        'sh766384 ',
-        'sh766384  ',
-        ' sh766384',
-        ' sh766384',
-        '   sh 766384  ',
+        'sh766384440121',
+        '  sh  766384440121 ',
+        'sh 766384440121',
+        'sh  766384440121',
+        'sh766384440121 ',
+        'sh766384440121  ',
+        ' sh766384440121',
+        ' sh766384440121',
+        '   sh 766384440121  ',
       ];
 
       const searchResults = [
@@ -61,6 +61,8 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440121 ');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -83,11 +85,6 @@ describe('MARC', () => {
               });
             });
           });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
         });
       });
 
@@ -104,6 +101,12 @@ describe('MARC', () => {
         'C440121 MARC Authority plug-in | Search by "LCCN" option using a query without spaces when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces. (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C440121'], retries: 1 },
         () => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
+          });
+
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

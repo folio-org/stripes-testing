@@ -15,15 +15,15 @@ describe('MARC', () => {
     };
 
     const searchQueries = [
-      'sh766384',
-      '  sh  766384 ',
-      'sh 766384',
-      'sh  766384',
-      'sh766384',
-      'sh766384  ',
-      'sh766384',
-      '  sh766384',
-      '   sh 766384  ',
+      'sh766384440101',
+      '  sh  766384440101 ',
+      'sh 766384440101',
+      'sh  766384440101',
+      'sh766384440101',
+      'sh766384440101  ',
+      'sh766384440101',
+      '  sh766384440101',
+      '   sh 766384440101',
     ];
 
     const searchResults = [
@@ -50,6 +50,8 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440101 ');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -73,8 +75,6 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
-          cy.reload();
-          MarcAuthorities.waitLoading();
         }, 20_000);
       });
     });

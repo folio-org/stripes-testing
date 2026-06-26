@@ -17,7 +17,7 @@ describe('MARC', () => {
         AUTHORIZED: 'Authorized',
       };
 
-      const searchQueries = ['sh  85057*', '*5057895', '*0578*'];
+      const searchQueries = ['sh  84401165057*', '*4401165057895', '*44011650578*'];
 
       const searchResults = [
         'C440116 Test LCCN subfield a record 1 (two leading spaces, one trailing space, two internal spaces)',
@@ -51,6 +51,8 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440116 ');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -77,6 +79,7 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+            authRefresh: true,
           });
         });
       });
