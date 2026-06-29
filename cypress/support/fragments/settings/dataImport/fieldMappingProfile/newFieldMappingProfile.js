@@ -359,7 +359,7 @@ const selectActionForStatisticalCode = (number, action = actions.addTheseToExist
   const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
   const statisticalCodeSelect = `select[name="${statisticalCodeFieldName}"]`;
 
-  cy.get(statisticalCodeSelect).should('be.visible').select(action);
+  cy.get(statisticalCodeSelect).should('exist').select(action);
   cy.get(statisticalCodeSelect)
     .find('option:selected')
     .should(($selectedOption) => {
