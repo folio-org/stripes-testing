@@ -150,8 +150,8 @@ describe('Data Import', () => {
           name: `C430253 update holdings mapping profile ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
-          permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
           callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           callNumber: '050$a " " 050$b',
           relationship: 'Resource',
@@ -513,7 +513,7 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType,
         );
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkElectronicBookplateNote(
           collectionOfMappingAndActionProfiles[2].mappingProfile.noteUI,
