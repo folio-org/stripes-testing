@@ -189,6 +189,7 @@ const langOptions = {
 export default {
   defaultAuthority,
   defaultUpdateJobProfile,
+  createAuthorityPaneTitleRegExp: /New .*MARC authority record/,
   waitLoading: () => cy.expect(rootSection.exists()),
   edit: ({ verifyQuickMarcOpened = true } = {}) => {
     cy.do(actionsButton.click());
