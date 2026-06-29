@@ -53,7 +53,6 @@ export default {
   openAddNewNoteForm() {
     cy.do(notesSection.find(newNoteButton).click());
     NoteEditForm.waitLoading();
-
     return NoteEditForm;
   },
 
