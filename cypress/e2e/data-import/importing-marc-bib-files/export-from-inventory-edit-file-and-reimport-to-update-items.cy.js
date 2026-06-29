@@ -75,7 +75,7 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`,
-      permanentLocation: 'Main Library (KU/CC/DI/M)',
+      permanentLocation: LOCATION_NAMES.MAIN_LIBRARY,
     };
     const itemMappingProfileForCreate = {
       name: `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`,

@@ -25,6 +25,8 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -149,6 +151,17 @@ describe('Data Import', () => {
           profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${getRandomPostfix()}`,
           acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
         };
+
+        cy.getAdminToken();
+        ['9980415571210', '9980924304637'].forEach((productId) => {
+          InventorySearchAndFilter.getInstancesByIdentifierViaApi(productId).then((response) => {
+            if (response.totalRecords) {
+              response.instances.forEach(({ id }) => {
+                InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+              });
+            }
+          });
+        });
 
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
