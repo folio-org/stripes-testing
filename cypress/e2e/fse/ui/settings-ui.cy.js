@@ -86,7 +86,10 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
 
       // Step 5: Revert - open edit mode again and unassign the same capability set
       AuthorizationRoles.openForEdit(ebscoSupportRoleName);
-      AuthorizationRoles.selectCapabilitySetCheckbox(acquisitionUnitsMembershipsManage, false);
+      AuthorizationRoles.selectCapabilitySetCheckbox(acquisitionUnitsMembershipsManage, {
+        isSelected: false,
+        confirmModal: true,
+      });
       AuthorizationRoles.clickSaveButton();
       AuthorizationRoles.checkAfterSaveEdit(ebscoSupportRoleName);
     },
