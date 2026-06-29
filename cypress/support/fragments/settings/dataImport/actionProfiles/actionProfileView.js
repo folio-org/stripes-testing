@@ -76,6 +76,11 @@ export default {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
   verifyAssociatedMappingProfileShownColumns: (columns) => {
+    cy.get('#associated-mappingProfiles-list')
+      .find('div[class*="mclScrollable"]')
+      .scrollTo('right');
+    cy.wait(300);
+
     columns.forEach((column) => {
       cy.expect(
         associatedMappingProfilesList.find(MultiColumnListHeader({ content: column })).exists(),
@@ -83,6 +88,9 @@ export default {
     });
   },
   verifyAssociatedMappingProfileHiddenColumns: (columns) => {
+    cy.get('#associated-mappingProfiles-list').find('div[class*="mclScrollable"]').scrollTo('left');
+    cy.wait(300);
+
     columns.forEach((column) => {
       cy.expect(
         associatedMappingProfilesList.find(MultiColumnListHeader({ content: column })).absent(),

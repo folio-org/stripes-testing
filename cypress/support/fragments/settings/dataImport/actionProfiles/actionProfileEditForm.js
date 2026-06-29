@@ -138,11 +138,21 @@ export default {
     });
   },
   verifyAssociatedMappingProfileShownColumns: (columns) => {
+    cy.get('#edit-associated-mappingProfiles-list')
+      .find('div[class*="mclScrollable"]')
+      .scrollTo('right');
+    cy.wait(300);
+
     columns.forEach((column) => {
       cy.expect(mappingProfileSection.find(MultiColumnListHeader({ content: column })).exists());
     });
   },
   verifyAssociatedMappingProfileHiddenColumns: (columns) => {
+    cy.get('#edit-associated-mappingProfiles-list')
+      .find('div[class*="mclScrollable"]')
+      .scrollTo('left');
+    cy.wait(300);
+
     columns.forEach((column) => {
       cy.expect(mappingProfileSection.find(MultiColumnListHeader({ content: column })).absent());
     });

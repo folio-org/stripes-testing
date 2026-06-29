@@ -45,7 +45,7 @@ describe('Data Import', () => {
         // Step 2-3: Verify that "Select" column is not overlaps "Name" column in associated field mapping profiles list
         ActionProfileView.verifyAssociatedMappingProfileShownColumns([
           'Name',
-          'Action',
+          'FOLIO record type',
           'Tags',
           'Updated',
           'Updated by',
@@ -58,13 +58,13 @@ describe('Data Import', () => {
         // Step 5-6: Verify that "Select" column is not overlaps "Name" column in associated field mapping profiles list on edit form
         ActionProfileEditForm.verifyAssociatedMappingProfileShownColumns([
           'Name',
-          'Action',
+          'FOLIO record type',
           'Tags',
           'Updated',
           'Updated by',
           'Unlink',
         ]);
-        ActionProfileEditForm.verifyAssociatedActionProfileHiddenColumns(['Select']);
+        ActionProfileEditForm.verifyAssociatedMappingProfileHiddenColumns(['Select']);
       },
     );
   });
