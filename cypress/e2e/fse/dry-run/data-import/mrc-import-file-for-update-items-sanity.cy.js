@@ -35,6 +35,7 @@ import NewFieldMappingProfile from '../../../../support/fragments/settings/dataI
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import { SETTINGS_TABS } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
@@ -46,243 +47,242 @@ const { user, memberTenant } = parseSanityParameters();
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
-    let instanceHRID = null;
-    const location = {};
-    const locationForUpdate = {};
-    const materialType = {};
-    const materialTypeForUpdate = {};
-    const loanType = {};
-    const loanTypeForUpdate = {};
-    const mappingProfileIds = [];
-    const actionProfileIds = [];
-    // file names
-    const nameMarcFileForImportCreate = `C343335 autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForImportUpdate = `C343335 autotestFile${getRandomPostfix()}.mrc`;
-    const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
-    // profile for creating
-    const marcBibMappingProfileForCreate = {
-      name: `C343335 create marcBib mapping profile ${getRandomPostfix()}`,
-      updatingText: `Test update ${getRandomPostfix()}`,
-      subfield: 'a',
-      fieldNumber: '650',
-      indicator2: '4',
-    };
-    const instanceMappingProfileForCreate = {
-      name: `C343335 create instance mapping profile ${getRandomPostfix()}`,
-    };
-    const holdingsMappingProfileForCreate = {
-      name: `C343335 create holdings mapping profile ${getRandomPostfix()}`,
-      permanentLocation: '',
-    };
-    const itemMappingProfileForCreate = {
-      name: `C343335 create item mapping profile ${getRandomPostfix()}`,
-      materialType: '',
-      permanentLoanType: '',
-      status: ITEM_STATUS_NAMES.AVAILABLE,
-    };
-    const actionProfilesForCreate = [
-      {
-        actionProfile: {
-          name: `C343335 create marcBib action profile ${getRandomPostfix()}`,
-          action: 'MODIFY',
-          folioRecordType: 'MARC_BIBLIOGRAPHIC',
-        },
+    const testData = {
+      mappingProfileIds: [],
+      actionProfileIds: [],
+      // file names
+      nameMarcFileForImportCreate: `C343335 autotestFile${getRandomPostfix()}.mrc`,
+      nameForCSVFile: `autotestFile${getRandomPostfix()}.csv`,
+      nameMarcFileForImportUpdate: `C343335 autotestFile${getRandomPostfix()}.mrc`,
+      jobProfileNameForExport: `autoTestJobProf.${getRandomPostfix()}`,
+      // profiles for creating
+      marcBibMappingProfileForCreate: {
+        name: `C343335 create marcBib mapping profile ${getRandomPostfix()}`,
+        updatingText: `Test update ${getRandomPostfix()}`,
+        subfield: 'a',
+        fieldNumber: '650',
+        indicator2: '4',
       },
-      {
-        actionProfile: {
-          name: `C343335 create instance action profile ${getRandomPostfix()}`,
-          action: 'CREATE',
-          folioRecordType: 'INSTANCE',
-        },
+      instanceMappingProfileForCreate: {
+        name: `C343335 create instance mapping profile ${getRandomPostfix()}`,
       },
-      {
-        actionProfile: {
-          name: `C343335 create holdings action profile ${getRandomPostfix()}`,
-          action: 'CREATE',
-          folioRecordType: 'HOLDINGS',
-        },
+      holdingsMappingProfileForCreate: {
+        name: `C343335 create holdings mapping profile ${getRandomPostfix()}`,
+        permanentLocation: '',
       },
-      {
-        actionProfile: {
-          name: `C343335 create item action profile ${getRandomPostfix()}`,
-          action: 'CREATE',
-          folioRecordType: 'ITEM',
-        },
+      itemMappingProfileForCreate: {
+        name: `C343335 create item mapping profile ${getRandomPostfix()}`,
+        materialType: '',
+        permanentLoanType: '',
+        status: ITEM_STATUS_NAMES.AVAILABLE,
       },
-    ];
-    const jobProfileForCreate = {
-      name: `C343335 create job profile ${getRandomPostfix()}`,
-    };
-    // profiles for updating
-    const collectionOfMappingAndActionProfiles = [
-      {
-        mappingProfile: {
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `C343335 autotestMappingInstance${getRandomPostfix()}`,
-        },
-        actionProfile: {
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `C343335 autotestActionInstance${getRandomPostfix()}`,
-          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-        },
-      },
-      {
-        mappingProfile: {
-          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C343335 autotestMappingHoldings${getRandomPostfix()}`,
-          callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-        },
-        actionProfile: {
-          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C343335 autotestActionHoldings${getRandomPostfix()}`,
-          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-        },
-      },
-      {
-        mappingProfile: {
-          typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C343335 autotestMappingItem${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
-        },
-        actionProfile: {
-          typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C343335 autotestActionItem${getRandomPostfix()}`,
-          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-        },
-      },
-    ];
-
-    const collectionOfMatchProfiles = [
-      {
-        matchProfile: {
-          profileName: `C343335 autotestMatchInstance${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '001',
+      actionProfilesForCreate: [
+        {
+          actionProfile: {
+            name: `C343335 create marcBib action profile ${getRandomPostfix()}`,
+            action: 'MODIFY',
+            folioRecordType: 'MARC_BIBLIOGRAPHIC',
           },
-          existingRecordFields: {
-            field: '001',
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
         },
-      },
-      {
-        matchProfile: {
-          profileName: `C343335 autotestMatchHoldings${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '901',
-            subfield: 'a',
+        {
+          actionProfile: {
+            name: `C343335 create instance action profile ${getRandomPostfix()}`,
+            action: 'CREATE',
+            folioRecordType: 'INSTANCE',
           },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
-          holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
         },
-      },
-      {
-        matchProfile: {
-          profileName: `C343335 autotestMatchItem${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '902',
-            subfield: 'a',
+        {
+          actionProfile: {
+            name: `C343335 create holdings action profile ${getRandomPostfix()}`,
+            action: 'CREATE',
+            folioRecordType: 'HOLDINGS',
           },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORD_NAMES.ITEM,
-          itemOption: NewMatchProfile.optionsList.itemHrid,
         },
+        {
+          actionProfile: {
+            name: `C343335 create item action profile ${getRandomPostfix()}`,
+            action: 'CREATE',
+            folioRecordType: 'ITEM',
+          },
+        },
+      ],
+      jobProfileForCreate: {
+        name: `C343335 create job profile ${getRandomPostfix()}`,
       },
-    ];
-    const jobProfileForUpdate = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C343335 autotestJobProf${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-    };
-    // create Field mapping profile for export
-    const exportMappingProfile = {
-      name: `C343335 autoTestMappingProf.${getRandomPostfix()}`,
-      holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
-      holdingsMarcField: '901',
-      subfieldForHoldings: 'a',
-      itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
-      itemMarcField: '902',
-      subfieldForItem: 'a',
+      // profiles for updating
+      collectionOfMappingAndActionProfiles: [
+        {
+          mappingProfile: {
+            typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C343335 autotestMappingInstance${getRandomPostfix()}`,
+          },
+          actionProfile: {
+            typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C343335 autotestActionInstance${getRandomPostfix()}`,
+            action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+          },
+        },
+        {
+          mappingProfile: {
+            typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C343335 autotestMappingHoldings${getRandomPostfix()}`,
+            callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
+          },
+          actionProfile: {
+            typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C343335 autotestActionHoldings${getRandomPostfix()}`,
+            action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+          },
+        },
+        {
+          mappingProfile: {
+            typeValue: FOLIO_RECORD_TYPE.ITEM,
+            name: `C343335 autotestMappingItem${getRandomPostfix()}`,
+            status: ITEM_STATUS_NAMES.AVAILABLE,
+          },
+          actionProfile: {
+            typeValue: FOLIO_RECORD_TYPE.ITEM,
+            name: `C343335 autotestActionItem${getRandomPostfix()}`,
+            action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+          },
+        },
+      ],
+      collectionOfMatchProfiles: [
+        {
+          matchProfile: {
+            profileName: `C343335 autotestMatchInstance${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '001',
+            },
+            existingRecordFields: {
+              field: '001',
+            },
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          },
+        },
+        {
+          matchProfile: {
+            profileName: `C343335 autotestMatchHoldings${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '901',
+              subfield: 'a',
+            },
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
+            holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+          },
+        },
+        {
+          matchProfile: {
+            profileName: `C343335 autotestMatchItem${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '902',
+              subfield: 'a',
+            },
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORD_NAMES.ITEM,
+            itemOption: NewMatchProfile.optionsList.itemHrid,
+          },
+        },
+      ],
+      jobProfileForUpdate: {
+        ...NewJobProfile.defaultJobProfile,
+        profileName: `C343335 autotestJobProf${getRandomPostfix()}`,
+        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+      },
+      // field mapping profile for export
+      exportMappingProfile: {
+        name: `C343335 autoTestMappingProf.${getRandomPostfix()}`,
+        holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
+        holdingsMarcField: '901',
+        subfieldForHoldings: 'a',
+        itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
+        itemMarcField: '902',
+        subfieldForItem: 'a',
+      },
     };
 
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password);
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
-        marcBibMappingProfileForCreate,
+        testData.marcBibMappingProfileForCreate,
       ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+        testData.mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[0].actionProfile,
+          testData.actionProfilesForCreate[0].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
+          testData.actionProfileIds.push(actionProfileResponse.body.id);
         });
       });
       NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        instanceMappingProfileForCreate,
+        testData.instanceMappingProfileForCreate,
       ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+        testData.mappingProfileIds.push(mappingProfileResponse.body.id);
 
         NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[1].actionProfile,
+          testData.actionProfilesForCreate[1].actionProfile,
           mappingProfileResponse.body.id,
         ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
+          testData.actionProfileIds.push(actionProfileResponse.body.id);
         });
       });
       cy.getLocations({ limit: 2 }).then((locationResp) => {
-        Object.assign(location, locationResp);
-        Object.assign(locationForUpdate, Cypress.env('locations')[1]);
-        holdingsMappingProfileForCreate.permanentLocation = `${locationResp.name} (${locationResp.code})`;
+        testData.location = locationResp;
+        testData.locationForUpdate = Cypress.env('locations')[1];
+        testData.holdingsMappingProfileForCreate.permanentLocation = `${locationResp.name} (${locationResp.code})`;
 
         NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
-          holdingsMappingProfileForCreate,
+          testData.holdingsMappingProfileForCreate,
         ).then((mappingProfileResponse) => {
-          mappingProfileIds.push(mappingProfileResponse.body.id);
+          testData.mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[2].actionProfile,
+            testData.actionProfilesForCreate[2].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
-            actionProfileIds.push(actionProfileResponse.body.id);
+            testData.actionProfileIds.push(actionProfileResponse.body.id);
           });
         });
       });
       cy.getMaterialTypes({ limit: 2 }).then((materialTypeResponse) => {
-        Object.assign(materialType, materialTypeResponse);
-        Object.assign(materialTypeForUpdate, Cypress.env('materialTypes')[1]);
-        itemMappingProfileForCreate.materialType = materialTypeResponse.name;
+        testData.materialType = materialTypeResponse;
+        testData.materialTypeForUpdate = Cypress.env('materialTypes')[1];
+        testData.itemMappingProfileForCreate.materialType = materialTypeResponse.name;
 
         cy.getLoanTypes({ limit: 2 }).then((loanTypeResponse) => {
-          Object.assign(loanType, loanTypeResponse[0]);
-          Object.assign(loanTypeForUpdate, loanTypeResponse[1]);
-          itemMappingProfileForCreate.permanentLoanType = loanTypeResponse[0].name;
+          testData.loanType = loanTypeResponse[0];
+          testData.loanTypeForUpdate = loanTypeResponse[1];
+          testData.itemMappingProfileForCreate.permanentLoanType = loanTypeResponse[0].name;
 
-          NewFieldMappingProfile.createItemMappingProfileViaApi(itemMappingProfileForCreate)
+          NewFieldMappingProfile.createItemMappingProfileViaApi(
+            testData.itemMappingProfileForCreate,
+          )
             .then((mappingProfileResponse) => {
-              mappingProfileIds.push(mappingProfileResponse.body.id);
+              testData.mappingProfileIds.push(mappingProfileResponse.body.id);
 
               NewActionProfile.createActionProfileViaApi(
-                actionProfilesForCreate[3].actionProfile,
+                testData.actionProfilesForCreate[3].actionProfile,
                 mappingProfileResponse.body.id,
               ).then((actionProfileResponse) => {
-                actionProfileIds.push(actionProfileResponse.body.id);
+                testData.actionProfileIds.push(actionProfileResponse.body.id);
               });
             })
             .then(() => {
               NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
-                jobProfileForCreate,
-                actionProfileIds[0],
-                actionProfileIds[1],
-                actionProfileIds[2],
-                actionProfileIds[3],
+                testData.jobProfileForCreate,
+                testData.actionProfileIds[0],
+                testData.actionProfileIds[1],
+                testData.actionProfileIds[2],
+                testData.actionProfileIds[3],
               );
             });
+        });
+        ItemNoteTypes.getItemNoteTypesViaApi().then((resp) => {
+          testData.itemNoteType = resp.itemNoteTypes[0].name;
         });
       });
 
@@ -296,38 +296,40 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.nameMarcFileForImportUpdate}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
       FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
-      FileManager.deleteFileFromDownloadsByMask(`*${nameMarcFileForImportUpdate}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${nameForCSVFile}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${testData.nameMarcFileForImportUpdate}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${testData.nameForCSVFile}`);
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false }).then(() => {
         // delete generated profiles
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
-        collectionOfMatchProfiles.forEach((profile) => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(testData.jobProfileForUpdate.profileName);
+        testData.collectionOfMatchProfiles.forEach((profile) => {
           SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
+        testData.collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
           SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
             profile.mappingProfile.name,
           );
         });
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
-        actionProfileIds.forEach((id) => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(testData.jobProfileForCreate.name);
+        testData.actionProfileIds.forEach((id) => {
           SettingsActionProfiles.deleteActionProfileViaApi(id);
         });
-        mappingProfileIds.forEach((id) => {
+        testData.mappingProfileIds.forEach((id) => {
           SettingsFieldMappingProfiles.deleteMappingProfileViaApi(id);
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${testData.instanceHRID}"`,
+        }).then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
@@ -345,7 +347,7 @@ describe('Data Import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.ELECTRONIC);
       NewFieldMappingProfile.fillPermanentLocation(
-        `"${locationForUpdate.name} (${locationForUpdate.code})"`,
+        `"${testData.locationForUpdate.name} (${testData.locationForUpdate.code})"`,
       );
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
@@ -357,13 +359,13 @@ describe('Data Import', () => {
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-      NewFieldMappingProfile.fillMaterialType(`"${materialTypeForUpdate.name}"`);
+      NewFieldMappingProfile.fillMaterialType(`"${testData.materialTypeForUpdate.name}"`);
       NewFieldMappingProfile.addItemNotes(
-        '"Nota"',
+        `"${testData.itemNoteType}"`,
         '"Smith Family Foundation"',
         'Mark for all affected records',
       );
-      NewFieldMappingProfile.fillPermanentLoanType(loanTypeForUpdate.name);
+      NewFieldMappingProfile.fillPermanentLoanType(testData.loanTypeForUpdate.name);
       NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
@@ -376,13 +378,13 @@ describe('Data Import', () => {
         cy.getUserToken(user.username, user.password);
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
-        DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
+        DataImport.uploadFile('oneMarcBib.mrc', testData.nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForCreate.name);
+        JobProfiles.search(testData.jobProfileForCreate.name);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameMarcFileForImportCreate);
-        Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameMarcFileForImportCreate);
+        Logs.waitFileIsImported(testData.nameMarcFileForImportCreate);
+        Logs.checkJobStatus(testData.nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.nameMarcFileForImportCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -397,36 +399,42 @@ describe('Data Import', () => {
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
+          testData.instanceHRID = initialInstanceHrId;
 
           // download .csv file
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           cy.intercept('/inventory/instances/*').as('getId');
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);
           cy.wait('@getId', getLongDelay()).then((req) => {
             InventorySearchAndFilter.saveUUIDs();
             // need to create a new file with instance UUID because tests are runing in multiple threads
             const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
 
-            FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
+            FileManager.createFile(`cypress/fixtures/${testData.nameForCSVFile}`, expectedUUID);
           });
         });
 
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-        ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
-        ExportFieldMappingProfiles.verifyProfileNameOnTheList(exportMappingProfile.name);
+        ExportFieldMappingProfiles.createMappingProfile(testData.exportMappingProfile);
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(testData.exportMappingProfile.name);
 
         ExportJobProfiles.goToJobProfilesTab();
         cy.wait(1500);
-        ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
-        ExportJobProfiles.verifyJobProfileInTheTable(jobProfileNameForExport);
+        ExportJobProfiles.createJobProfile(
+          testData.jobProfileNameForExport,
+          testData.exportMappingProfile.name,
+        );
+        ExportJobProfiles.verifyJobProfileInTheTable(testData.jobProfileNameForExport);
 
         // download exported marc file
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+        ExportFile.uploadFile(testData.nameForCSVFile);
+        ExportFile.exportWithCreatedJobProfile(
+          testData.nameForCSVFile,
+          testData.jobProfileNameForExport,
+        );
+        ExportFile.downloadExportedMarcFile(testData.nameMarcFileForImportUpdate);
 
         // create mapping and action profiles
         TopMenuNavigation.openAppFromDropdown(
@@ -434,28 +442,32 @@ describe('Data Import', () => {
           APPLICATION_NAMES.DATA_IMPORT,
         );
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
-        createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        createInstanceMappingProfile(
+          testData.collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+          testData.collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
-        createItemMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+        createHoldingsMappingProfile(
+          testData.collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+          testData.collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        createItemMappingProfile(testData.collectionOfMappingAndActionProfiles[2].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          testData.collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
+        testData.collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create Match profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-        collectionOfMatchProfiles.forEach((profile) => {
+        testData.collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
           cy.wait(3000);
@@ -463,19 +475,19 @@ describe('Data Import', () => {
 
         // create Job profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-        JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
+        JobProfiles.createJobProfileWithLinkingProfilesForUpdate(testData.jobProfileForUpdate);
         NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[0].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          testData.collectionOfMatchProfiles[0].matchProfile.profileName,
+          testData.collectionOfMappingAndActionProfiles[0].actionProfile.name,
         );
         NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[1].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          testData.collectionOfMatchProfiles[1].matchProfile.profileName,
+          testData.collectionOfMappingAndActionProfiles[1].actionProfile.name,
           2,
         );
         NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[2].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[2].actionProfile.name,
+          testData.collectionOfMatchProfiles[2].matchProfile.profileName,
+          testData.collectionOfMappingAndActionProfiles[2].actionProfile.name,
           4,
         );
         NewJobProfile.saveAndClose();
@@ -484,12 +496,12 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
-        DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
-        JobProfiles.search(jobProfileForUpdate.profileName);
+        DataImport.uploadExportedFile(testData.nameMarcFileForImportUpdate);
+        JobProfiles.search(testData.jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameMarcFileForImportUpdate);
-        Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameMarcFileForImportUpdate);
+        Logs.waitFileIsImported(testData.nameMarcFileForImportUpdate);
+        Logs.checkJobStatus(testData.nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.nameMarcFileForImportUpdate);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

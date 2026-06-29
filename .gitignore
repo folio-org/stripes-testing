@@ -31,3 +31,4 @@ mcp.json
 cypress/e2e/failed.cy.js
 
 CLAUDE.md
+environments.js
