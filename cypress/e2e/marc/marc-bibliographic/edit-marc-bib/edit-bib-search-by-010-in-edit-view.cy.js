@@ -205,6 +205,7 @@ describe('MARC', () => {
                 );
               });
             }
+            cy.wait(2000);
             if (index > 2) {
               InventoryInstances.clickAdvSearchButton();
               const lccnNumbers = search.fieldContent
