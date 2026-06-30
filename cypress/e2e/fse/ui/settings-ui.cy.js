@@ -84,6 +84,11 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
       AuthorizationRoles.clickOnCapabilitySetsAccordion();
       AuthorizationRoles.verifyCapabilitySetCheckboxChecked(acquisitionUnitsMembershipsManage);
 
+      // Reload the page before reverting to work around a UI timing issue where
+      // capability set checkboxes may not appear selected in edit mode without a refresh
+      cy.reload();
+      cy.wait(1000);
+
       // Step 5: Revert - open edit mode again and unassign the same capability set
       AuthorizationRoles.openForEdit(ebscoSupportRoleName);
       AuthorizationRoles.selectCapabilitySetCheckbox(acquisitionUnitsMembershipsManage, {
