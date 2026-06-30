@@ -152,6 +152,7 @@ const expectedCapabilityTableActions = {
   ],
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
+const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -284,7 +285,10 @@ export default {
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
-  selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilitySetCheckbox: (
+    { table, resource, action },
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
     let targetRowIndex;
     cy.do(
       capabilitySetsAccordion
@@ -301,7 +305,17 @@ export default {
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
       cy.do(targetCheckbox.click());
-      cy.expect(targetCheckbox.has({ checked: isSelected }));
+      if (!isSelected && confirmModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(continueButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: isSelected }));
+      } else if (!isSelected && dismissModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(cancelButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: !isSelected }));
+      } else cy.expect(targetCheckbox.has({ checked: isSelected }));
       // wait for capabilities selection to be updated
       cy.wait(1000);
     });
@@ -944,13 +958,27 @@ export default {
       });
   },
 
-  selectCapabilitySetColumn: (table, action, isSelected = true) => {
+  selectCapabilitySetColumn: (
+    table,
+    action,
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListHeader(including(action)))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (!isSelected && confirmModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(continueButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    } else if (!isSelected && dismissModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(cancelButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: !isSelected }));
+    } else cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   getCapabilitySetCheckboxCountInColumn: (table, action) => {

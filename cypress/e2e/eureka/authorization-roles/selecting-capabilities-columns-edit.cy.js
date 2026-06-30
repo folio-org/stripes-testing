@@ -89,14 +89,10 @@ describe('Eureka', () => {
       before('Assign capabilities and login', () => {
         cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
         cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.settingsAuthorizationRoles,
-            waiter: AuthorizationRoles.waitContentLoading,
-          });
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.settingsAuthorizationRoles,
+          waiter: AuthorizationRoles.waitContentLoading,
+        });
       });
 
       afterEach(() => {
@@ -181,7 +177,7 @@ describe('Eureka', () => {
               AuthorizationRoles.selectCapabilitySetColumn(
                 testData.capabilitySetsColumnToSelect.type,
                 testData.capabilitySetsColumnToSelect.action,
-                false,
+                { isSelected: false, confirmModal: true },
               );
               AuthorizationRoles.clickSaveButton();
               AuthorizationRoles.checkAfterSaveEdit(testData.roleName);

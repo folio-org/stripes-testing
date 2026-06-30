@@ -162,6 +162,7 @@ describe('MARC', () => {
       });
 
       after('Deleting created user', () => {
+        cy.wait(3000);
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         createdInstanceIds.forEach((id) => {
@@ -175,9 +176,13 @@ describe('MARC', () => {
         () => {
           function goToEditBib(field010Content) {
             InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);
+            InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
+              testData.keywordSearchOption,
+            );
             InventoryInstances.searchByTitle(testInstanceId);
             InventoryInstances.selectInstanceById(testInstanceId);
             InventoryInstance.waitInventoryLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag010, field010Content);
           }
