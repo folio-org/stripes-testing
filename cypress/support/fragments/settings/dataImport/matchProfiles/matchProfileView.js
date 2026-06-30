@@ -1,11 +1,18 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import moment from 'moment';
 import { HTML, including } from '@interactors/html';
-import { Button, Pane, Accordion } from '../../../../../../interactors';
+import {
+  Button,
+  MultiColumnList,
+  MultiColumnListHeader,
+  Pane,
+  Accordion,
+} from '../../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
 const accordionProfileDetails = Accordion({ id: 'view-match-profile-details' });
+const associatedJobProfilesList = MultiColumnList({ id: 'associated-jobProfiles-list' });
 
 export default {
   edit: () => {
@@ -125,5 +132,27 @@ export default {
 
   verifyExistingDetails: (recordItem) => {
     cy.expect(accordionProfileDetails.find(Button({ dataId: recordItem })).exists());
+  },
+
+  verifyAssociatedJobProfileShownColumns: (columns) => {
+    cy.get('#associated-jobProfiles-list').find('div[class*="mclScrollable"]').scrollTo('right');
+    cy.wait(300);
+
+    columns.forEach((column) => {
+      cy.expect(
+        associatedJobProfilesList.find(MultiColumnListHeader({ content: column })).exists(),
+      );
+    });
+  },
+
+  verifyAssociatedJobProfileHiddenColumns: (columns) => {
+    cy.get('#associated-jobProfiles-list').find('div[class*="mclScrollable"]').scrollTo('left');
+    cy.wait(300);
+
+    columns.forEach((column) => {
+      cy.expect(
+        associatedJobProfilesList.find(MultiColumnListHeader({ content: column })).absent(),
+      );
+    });
   },
 };
