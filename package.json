@@ -39,7 +39,7 @@
     "eslint-visitor-keys": "4.2.1"
   },
   "dependencies": {
-    "@babel/core": "^7.19.3",
+    "@babel/core": "^7.29.6",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.25.4",
     "@cypress/grep": "^4.0.1",
