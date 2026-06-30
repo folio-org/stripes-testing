@@ -262,6 +262,7 @@ describe('Data Import', () => {
           instance.holdingsLocation,
           instance.itemStatus,
         );
+        InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.getAssignedHRID().then((initialItemHrId) => {
           const itemHrid = initialItemHrId;
