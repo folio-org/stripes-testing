@@ -39,7 +39,6 @@ import SettingsDataImport, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -75,7 +74,7 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`,
-      permanentLocation: 'Main Library (KU/CC/DI/M)',
+      permanentLocation: LOCATION_NAMES.MAIN_LIBRARY,
     };
     const itemMappingProfileForCreate = {
       name: `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`,
@@ -270,13 +269,12 @@ describe('Data Import', () => {
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
-          cy.intercept('/inventory/instances/*').as('getId');
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
           InventorySearchAndFilter.selectResultCheckboxes(1);
-          cy.wait('@getId', getLongDelay()).then((req) => {
+          InventoryInstance.getId().then((expectedUUID) => {
             InventorySearchAndFilter.saveUUIDs();
             // need to create a new file with instance UUID because tests are runing in multiple threads
-            const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
-
             FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
           });
 
