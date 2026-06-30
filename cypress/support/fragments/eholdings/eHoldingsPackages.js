@@ -160,6 +160,13 @@ export default {
     return cy.get('@selectedPackage');
   },
 
+  openPackageByName: (packageName) => {
+    const targetRow = resultSection.find(
+      ListItem({ className: including('list-item-'), h3Value: packageName }),
+    );
+    cy.do(targetRow.find(Button()).click());
+  },
+
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -230,6 +237,14 @@ export default {
       resultSection
         .find(ListItem({ className: including('list-item-'), index: rowNumber }))
         .has({ h3Value: packageName }),
+    );
+  },
+
+  verifyPackageExistsInResults(packageName) {
+    cy.expect(
+      resultSection
+        .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
+        .exists(),
     );
   },
 
