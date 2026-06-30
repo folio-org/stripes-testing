@@ -56,8 +56,8 @@ describe('Data Import', () => {
       OCLCAuthentication: '100481406/PAOLF',
       oclcNumber: '2773391',
       holdings: {
-        holdingsPermanentLocation: `${LOCATION_NAMES.ONLINE} `,
-        holdingsPermanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+        holdingsPermanentLocation: `${LOCATION_NAMES.ANNEX} `,
+        holdingsPermanentLocationUI: LOCATION_NAMES.ANNEX_UI,
       },
       item: {
         permanentLoanType: 'Can circulate',

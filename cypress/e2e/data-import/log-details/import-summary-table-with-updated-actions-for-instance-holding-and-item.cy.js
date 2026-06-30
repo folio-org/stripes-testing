@@ -136,8 +136,8 @@ describe('Data Import', () => {
           catalogedDate: '###TODAY###',
           catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
           instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-          statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-          statisticalCodeUI: 'Book, print (books)',
+          statisticalCode: 'Actions: Delete - Delete',
+          statisticalCodeUI: 'Delete',
         },
         actionProfile: {
           name: `C430253 update instance action profile ${getRandomPostfix()}`,
