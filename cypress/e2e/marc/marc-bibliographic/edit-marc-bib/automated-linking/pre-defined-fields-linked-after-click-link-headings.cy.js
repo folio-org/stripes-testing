@@ -286,6 +286,8 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(fields[11].tag, '$a Delaware $0 n84745425C389486');
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
+            // need to wait until message appear
+            cy.wait(2000);
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.clickSaveAndKeepEditing();
             rowIndexOfLinkedFields.forEach((linkedField) => {

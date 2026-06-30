@@ -15,6 +15,8 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -252,6 +254,10 @@ describe('Inventory', () => {
           addItemRecordInCollege(instance.instanceId);
         });
         cy.resetTenant();
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+          name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+          callNumberTypes: [],
+        });
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

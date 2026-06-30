@@ -153,11 +153,11 @@ describe('eHoldings', () => {
           EHoldingsPackage.toggleTitlesAccordion();
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
           EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
-          EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
+          EHoldingsPackage.searchTitles('Renewable Energy', testData.subjectOption);
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.subjectOption);
           EHoldingsPackage.verifyTitleFound('Advanced Energy and Sustainability Research');
           EHoldingsPackageView.selectTitleRecord();
-          EHoldingsTitle.verifySubjectIncludesValue('Engineering');
+          EHoldingsTitle.verifySubjectIncludesValue('Renewable Energy');
         });
       },
     );

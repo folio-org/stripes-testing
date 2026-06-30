@@ -577,10 +577,11 @@ export default {
   },
 
   deleteAuthoritySourceFileByNameViaApi(fileName) {
-    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
-      if (body.totalRecords !== 0) {
-        cy.deleteAuthoritySourceFileViaAPI(body.id, true);
-      }
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then(() => {
+      const sourceFiles = Cypress.env('authoritySourceFiles');
+      sourceFiles.forEach((sourceFile) => {
+        cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
+      });
     });
   },
 
