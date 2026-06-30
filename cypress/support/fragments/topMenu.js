@@ -50,6 +50,7 @@ const readingRoom = '/reading-room';
 const serials = '/serials-management/serials';
 const linkedDataEditor = '/linked-data-editor/search';
 const sudocPath = '/sudoc';
+const inventoryImportPath = '/invimp';
 const settingsBankingInformationPath = '/settings/organizations/banking-information';
 const settingsFinanceExpenseClassesPath = '/settings/finance/expense-classes';
 const settingsFinanceFundTypePath = '/settings/finance/fund-types';
@@ -114,6 +115,7 @@ export default {
   serials,
   linkedDataEditor,
   sudocPath,
+  inventoryImportPath,
   settingsBankingInformationPath,
   settingsFinanceExpenseClassesPath,
   settingsInvoiveApprovalPath,
