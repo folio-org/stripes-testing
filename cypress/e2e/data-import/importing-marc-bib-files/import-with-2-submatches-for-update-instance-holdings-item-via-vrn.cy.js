@@ -202,73 +202,75 @@ describe('Data Import', () => {
         [`c9999424${randomFourDigitNumber()}`],
       );
 
-      cy.getAdminToken();
-      InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
-        if (type.length === 0) {
-          NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
-            testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+      cy.getAdminToken().then(() => {
+        InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
+          if (type.length === 0) {
+            NewInstanceStatusType.createViaApi().then((initialInstanceStatusType) => {
+              testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+            });
+          }
+        });
+        cy.createTempUser([
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.settingsDataImportEnabled.gui,
+        ]).then((userProperties) => {
+          preconditionUserId = userProperties.userId;
+
+          cy.login(userProperties.username, userProperties.password, {
+            path: SettingsMenu.mappingProfilePath,
+            waiter: FieldMappingProfiles.waitLoading,
           });
-        }
-      });
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-      ]).then((userProperties) => {
-        preconditionUserId = userProperties.userId;
+          // create mapping profiles
+          FieldMappingProfiles.createOrderMappingProfile(
+            collectionOfProfilesForCreate[0].mappingProfile,
+          );
+          FieldMappingProfiles.checkMappingProfilePresented(
+            collectionOfProfilesForCreate[0].mappingProfile.name,
+          );
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
-        // create mapping profiles
-        FieldMappingProfiles.createOrderMappingProfile(
-          collectionOfProfilesForCreate[0].mappingProfile,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfProfilesForCreate[0].mappingProfile.name,
-        );
+          FieldMappingProfiles.createHoldingsMappingProfile(
+            collectionOfProfilesForCreate[1].mappingProfile,
+          );
+          FieldMappingProfiles.checkMappingProfilePresented(
+            collectionOfProfilesForCreate[1].mappingProfile.name,
+          );
 
-        FieldMappingProfiles.createHoldingsMappingProfile(
-          collectionOfProfilesForCreate[1].mappingProfile,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfProfilesForCreate[1].mappingProfile.name,
-        );
+          FieldMappingProfiles.createItemMappingProfile(
+            collectionOfProfilesForCreate[2].mappingProfile,
+          );
+          FieldMappingProfiles.checkMappingProfilePresented(
+            collectionOfProfilesForCreate[2].mappingProfile.name,
+          );
 
-        FieldMappingProfiles.createItemMappingProfile(
-          collectionOfProfilesForCreate[2].mappingProfile,
-        );
-        FieldMappingProfiles.checkMappingProfilePresented(
-          collectionOfProfilesForCreate[2].mappingProfile.name,
-        );
+          // create action profiles
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+          collectionOfProfilesForCreate.forEach((profile) => {
+            SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+            SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+            cy.wait(3000);
+          });
 
-        // create action profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        collectionOfProfilesForCreate.forEach((profile) => {
-          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-          cy.wait(3000);
-        });
+          // create job profile
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+          JobProfiles.createJobProfile(jobProfileForCreate);
+          NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[0].actionProfile);
+          NewJobProfile.linkActionProfileByName('Default - Create instance');
+          NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[1].actionProfile);
+          NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[2].actionProfile);
+          NewJobProfile.saveAndClose();
+          JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
-        // create job profile
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-        JobProfiles.createJobProfile(jobProfileForCreate);
-        NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[0].actionProfile);
-        NewJobProfile.linkActionProfileByName('Default - Create instance');
-        NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[1].actionProfile);
-        NewJobProfile.linkActionProfile(collectionOfProfilesForCreate[2].actionProfile);
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
-
-        DataImport.uploadFileViaApi(
-          testData.editedMarcFileName,
-          testData.marcFileNameForCreate,
-          jobProfileForCreate.profileName,
-        ).then((response) => {
-          instanceId = response[0].instance.id;
+          DataImport.uploadFileViaApi(
+            testData.editedMarcFileName,
+            testData.marcFileNameForCreate,
+            jobProfileForCreate.profileName,
+          ).then((response) => {
+            instanceId = response[0].instance.id;
+          });
         });
       });
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -285,13 +287,14 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(preconditionUserId);
         InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
           if (type.length !== 0) {
             InstanceStatusTypes.deleteViaApi(type[0].id);
           }
         });
+        cy.wait(2000);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {

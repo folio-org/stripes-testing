@@ -363,8 +363,6 @@ export const AUTHORITY_QUERY_FIELDS = {
   AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING: 'Authority — See also from reference — Tracing',
   AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING_TYPE:
     'Authority — See also from reference — Tracing type',
-  AUTHORITY_SEE_FROM_REFERENCE_RELATIONSHIP_TYPE:
-    'Authority — See from reference — Relationship type',
   AUTHORITY_SEE_FROM_REFERENCE_TRACING: 'Authority — See from reference — Tracing',
   AUTHORITY_SEE_FROM_REFERENCE_TRACING_TYPE: 'Authority — See from reference — Tracing type',
   AUTHORITY_SOURCE: 'Authority — Source',
@@ -1343,6 +1341,7 @@ export const INSTANCE_NOTE_TYPES = {
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
   SUMMARY: 'Summary',
+  ACCUMULATION_AND_FREQUENCY_OF_USE_NOTE: 'Accumulation and Frequency of Use note',
 };
 
 export const BULK_EDIT_ACTIONS = {

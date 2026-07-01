@@ -114,7 +114,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
       waiter: InventorySearchAndFilter.waitLoading,
       authRefresh: true,
     });
-    // ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+    ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
     // create test data based on uploaded marc file
     Marigold.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });

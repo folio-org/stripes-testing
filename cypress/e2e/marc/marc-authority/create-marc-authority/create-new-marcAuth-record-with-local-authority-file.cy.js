@@ -6,6 +6,7 @@ import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -14,6 +15,7 @@ describe('MARC', () => {
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
       const headerText = /New .*MARC authority record/;
+      const authSourceAccordionName = 'Authority source';
       let createdAuthorityId;
       const newField = {
         previousFieldTag: '008',
@@ -30,6 +32,13 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423528 ');
+        cy.getAuthoritySourceFileDataViaAPI('C423528 *').then(() => {
+          Cypress.env('authoritySourceFiles').forEach((sourceFile) => {
+            ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(sourceFile.name);
+            cy.deleteAuthoritySourceFileViaAPI(sourceFile.id, true);
+          });
+        });
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -46,6 +55,7 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
+              cy.wait(70_000);
 
               ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
             });
@@ -90,32 +100,35 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1000);
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
           MarcAuthorities.verifyViewPaneContentExists();
           MarcAuthority.getId().then((id) => {
             createdAuthorityId = id;
+
+            MarcAuthority.contains(tag001);
+            MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
+            MarcAuthority.contains(newField.tag);
+            MarcAuthority.contains(newField.content);
+
+            MarcAuthorities.closeMarcViewPane();
+            MarcAuthorities.verifyMarcViewPaneIsOpened(false);
+
+            InventorySearchAndFilter.verifyAccordionByNameExpanded(authSourceAccordionName);
+            MarcAuthorities.clickAuthoritySourceAccordion();
+            InventorySearchAndFilter.verifyAccordionByNameExpanded(authSourceAccordionName, false);
+            MarcAuthorities.clickAuthoritySourceAccordion();
+            InventorySearchAndFilter.verifyAccordionByNameExpanded(authSourceAccordionName);
+
+            MarcAuthorities.clickMultiSelectToggleButtonInAccordion(authSourceAccordionName);
+            MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
+
+            MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
+            MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
+            MarcAuthorities.checkAfterSearch('Authorized', recordTitle);
+            MarcAuthorities.selectAuthorityById(createdAuthorityId);
+            MarcAuthorities.checkRecordDetailPageMarkedValue(recordTitle);
           });
-
-          MarcAuthority.contains(tag001);
-          MarcAuthority.contains(`${localAuthFile.prefix}${localAuthFile.startWithNumber}`);
-          MarcAuthority.contains(newField.tag);
-          MarcAuthority.contains(newField.content);
-
-          MarcAuthorities.closeMarcViewPane();
-          MarcAuthorities.verifyMarcViewPaneIsOpened(false);
-
-          cy.reload();
-          MarcAuthorities.waitLoading();
-
-          MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
-          MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
-
-          MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
-          MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
-          MarcAuthorities.checkAfterSearch('Authorized', recordTitle);
-          MarcAuthorities.checkRecordDetailPageMarkedValue(recordTitle);
         },
       );
     });

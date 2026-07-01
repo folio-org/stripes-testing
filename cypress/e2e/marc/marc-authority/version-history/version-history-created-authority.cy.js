@@ -1,14 +1,10 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import VersionHistorySection from '../../../../support/fragments/inventory/versionHistorySection';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES, DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import getRandomPostfix, { randomNDigitNumber } from '../../../../support/utils/stringTools';
 import DateTools from '../../../../support/utils/dateTools';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import TopMenu from '../../../../support/fragments/topMenu';
 
@@ -16,7 +12,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Version history', () => {
       const randomPostfix = getRandomPostfix();
-      const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
+      const randomDigits = randomNDigitNumber(15);
       const testData = {
         authorityHeading: `AT_C651478_MarcAuthority_${randomPostfix}`,
         tag001: '001',
@@ -24,20 +20,8 @@ describe('MARC', () => {
         tag010: '010',
         tag100: '100',
         date: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
-        sourceName: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
       };
-      const newFields = [
-        {
-          previousFieldTag: testData.tag008,
-          tag: testData.tag010,
-          content: `$a n651478${randomDigits}`,
-        },
-        {
-          previousFieldTag: testData.tag010,
-          tag: testData.tag100,
-          content: `$a ${testData.authorityHeading}`,
-        },
-      ];
+      const naturalId = `n651478${randomDigits}`;
       const permissions = [
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiUsersView.gui,
@@ -47,55 +31,42 @@ describe('MARC', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C651478');
 
-        cy.createTempUser(permissions).then((userProperties) => {
-          testData.userProperties = userProperties;
+        cy.then(() => {
+          cy.createTempUser(permissions).then((userProperties) => {
+            testData.userProperties = userProperties;
+          });
 
           cy.getAdminUserDetails().then((user) => {
             testData.lastName = user.personal.lastName;
             testData.firstName = user.personal.firstName;
           });
 
-          cy.then(() => {
-            cy.getAdminToken();
-            ManageAuthorityFiles.setAuthorityFileToActiveViaApi(testData.sourceName);
-          }).then(() => {
-            cy.loginAsAdmin();
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
-            MarcAuthorities.waitLoading();
-            MarcAuthorities.clickActionsAndNewAuthorityButton();
-            MarcAuthority.checkSourceFileSelectShown();
-            MarcAuthority.setValid008DropdownValues();
-            MarcAuthority.selectSourceFile(testData.sourceName);
-            newFields.forEach((newField) => {
-              MarcAuthority.addNewFieldAfterExistingByTag(
-                newField.previousFieldTag,
-                newField.tag,
-                newField.content,
-              );
-            });
-            QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
-            QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
-            QuickMarcEditor.pressSaveAndClose();
-            MarcAuthority.verifyCreatedRecordSuccess();
-            MarcAuthority.contains(testData.authorityHeading);
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              waiter: MarcAuthorities.waitLoading,
-              path: TopMenu.marcAuthorities,
-            });
-            MarcAuthorities.searchBeats(testData.authorityHeading);
-            MarcAuthorities.selectTitle(testData.authorityHeading);
-            MarcAuthority.waitLoading();
-            MarcAuthority.contains(testData.authorityHeading);
+          MarcAuthorities.createMarcAuthorityViaAPI(naturalId, '', [
+            { tag: testData.tag010, content: `$a ${naturalId}` },
+            {
+              tag: testData.tag100,
+              content: `$a ${testData.authorityHeading}`,
+              indicators: ['1', '\\'],
+            },
+          ]).then((id) => {
+            testData.authorityId = id;
           });
+        }).then(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            waiter: MarcAuthorities.waitLoading,
+            path: TopMenu.marcAuthorities,
+          });
+          MarcAuthorities.searchBeats(testData.authorityHeading);
+          MarcAuthorities.selectTitle(testData.authorityHeading);
+          MarcAuthority.waitLoading();
+          MarcAuthority.contains(testData.authorityHeading);
         });
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.instanceTitle);
+        MarcAuthority.deleteViaAPI(testData.authorityId, true);
         Users.deleteViaApi(testData.userProperties.userId);
-        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(testData.sourceName);
       });
 
       it(

@@ -381,9 +381,7 @@ export default {
   },
 
   duplicateInstanceWhenMultipleActions() {
-    cy.xpath(instanceActionsButton)
-      .should('exist')
-      .click();
+    cy.xpath(instanceActionsButton).should('exist').click();
     cy.expect(duplicateButton.exists());
     cy.do(duplicateButton.click());
     cy.wait(1000);
@@ -884,7 +882,9 @@ export default {
 
   verifyInstancesListSize(count) {
     cy.xpath(instancesList).xpath('//table/tbody/tr').should('have.length', count);
-    cy.xpath(instancesList).xpath('//table/tbody/tr/td/button[text()="Edit"]').should('have.length', count);
+    cy.xpath(instancesList)
+      .xpath('//table/tbody/tr/td/button[text()="Edit"]')
+      .should('have.length', count);
   },
 
   verifyWorkInstanceActionOptions() {
@@ -985,5 +985,21 @@ export default {
       .first()
       .click();
     cy.wait(500);
+  },
+
+  checkSectionPresentInEditForm(sectionName) {
+    cy.xpath(`(//div[@class="label" and text()="${sectionName}"])[1]`).should('be.visible');
+  },
+
+  checkSectionAtPositionInEditForm(sectionName, position) {
+    cy.xpath(`(//div[@class="label"])[${position}]`).should('have.text', sectionName);
+  },
+
+  checkSectionAbsentInEditForm(sectionName) {
+    cy.xpath(`(//div[@class="label" and text()="${sectionName}"])[1]`).should('not.be.visible');
+  },
+
+  checkSectionPresentInPreviewPanel(sectionName) {
+    cy.xpath(`//strong[@class='sub-heading' and text()='${sectionName}']`).should('be.visible');
   },
 };

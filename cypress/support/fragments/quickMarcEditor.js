@@ -1044,7 +1044,7 @@ export default {
     );
   },
 
-  clickSaveAndKeepEditing() {
+  clickSaveAndKeepEditing({ checkCallout = true } = {}) {
     cy.intercept({ method: /PUT|POST/, url: /\/records-editor\/records(\/.*)?$/ }).as(
       'saveRecordRequest',
     );
@@ -1058,7 +1058,8 @@ export default {
     cy.wait('@getSavedRecordRequest', { timeout: 10_000 })
       .its('response.statusCode')
       .should('eq', 200);
-    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.exists()]);
+    if (checkCallout) cy.expect(calloutAfterSaveAndClose.exists());
+    cy.expect(rootSection.exists());
   },
 
   deleteFieldAndCheck(rowIndex, tag) {
@@ -1659,6 +1660,16 @@ export default {
       targetRow
         .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
         .has({ content: including(option) }),
+    );
+  },
+
+  verifyFieldsDropdownOptionCount(tag, dropdownLabel, count, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    cy.expect(
+      targetRow
+        .find(Select({ label: matching(new RegExp(`^${dropdownLabel}\\**$`)) }))
+        .has({ optionsCount: count }),
     );
   },
 
@@ -3750,5 +3761,25 @@ export default {
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
     cy.expect(targetRow.find(firstIndicatorBox).absent());
     cy.expect(targetRow.find(secondIndicatorBox).absent());
+  },
+
+  checkErrorMessageAndHelpLinkForField({ errorMessage, tag, helpLinkUrl, rowIndex }) {
+    const targetRow = rowIndex
+      ? getRowInteractorByRowNumber(rowIndex)
+      : getRowInteractorByTagName(tag);
+    cy.expect(
+      targetRow
+        .find(HTML(including(errorMessage), { className: including('feedbackErrorIcon') }))
+        .find(Link('Help', { href: including(helpLinkUrl) }))
+        .exists(),
+    );
+  },
+
+  verifyDropdownsPresent(tag, dropdownLabels, row = null) {
+    const targetRow =
+      row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
+    dropdownLabels.forEach((label) => {
+      cy.expect(targetRow.find(Select({ label: including(label) })).exists());
+    });
   },
 };

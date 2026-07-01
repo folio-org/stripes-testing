@@ -14,7 +14,11 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_ACTIONS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -282,7 +286,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('362', '0', '\\', 'a', 2);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 2);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureFormWhenSourceNotSupportedByMarc(2, 1);

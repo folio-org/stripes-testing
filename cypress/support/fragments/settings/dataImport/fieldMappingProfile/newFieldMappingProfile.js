@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -6,11 +7,11 @@ import {
   Dropdown,
   DropdownMenu,
   Form,
-  HTML,
   IconButton,
   Label,
   ListItem,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   Option,
@@ -20,7 +21,6 @@ import {
   Select,
   TextArea,
   TextField,
-  including,
 } from '../../../../../../interactors';
 import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
@@ -357,11 +357,17 @@ const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseT
 const selectActionForStatisticalCode = (number, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+  const statisticalCodeSelect = `select[name="${statisticalCodeFieldName}"]`;
 
-  cy.do([
-    Select({ name: statisticalCodeFieldName }).focus(),
-    Select({ name: statisticalCodeFieldName }).choose(action),
-  ]);
+  cy.get(statisticalCodeSelect).should('exist').select(action);
+  cy.get(statisticalCodeSelect)
+    .find('option:selected')
+    .should(($selectedOption) => {
+      const selectedText = $selectedOption.text().trim();
+      const selectedValue = $selectedOption.val();
+
+      expect(selectedText === action || selectedValue === action).to.equal(true);
+    });
 };
 const addStatisticalCode = (name, number, action) => {
   selectActionForStatisticalCode(number, action);
@@ -1817,5 +1823,30 @@ export default {
       .then(({ response }) => {
         return response;
       });
+  },
+
+  verifySectionOverrideProtectedFields() {
+    cy.expect([
+      Accordion({ id: 'mapping-profile-details' }).exists(),
+      Accordion({ id: 'edit-override-protected-section' }).has({ open: true }),
+      Accordion({ id: 'edit-override-protected-section' }).has({
+        label: including('Override protected fields'),
+      }),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(
+          HTML(
+            including(
+              'If any protected field should be updated by this profile, check the appropriate box here',
+            ),
+          ),
+        )
+        .exists(),
+      Accordion({ id: 'edit-override-protected-section' })
+        .find(MultiColumnList())
+        .has({ columns: ['Field', 'In.1', 'In.2', 'Subfield', 'Data', 'Override'] }),
+    ]);
+    cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
+      cy.wrap($checkbox).should('not.be.disabled');
+    });
   },
 };

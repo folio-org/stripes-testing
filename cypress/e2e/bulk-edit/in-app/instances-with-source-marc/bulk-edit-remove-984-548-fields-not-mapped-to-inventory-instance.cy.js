@@ -11,10 +11,16 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  BULK_EDIT_ACTIONS,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import parseMrcFileContentAndVerify, {
+  verifyMarcFieldByTag,
+} from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
@@ -134,7 +140,7 @@ describe('Bulk-edit', () => {
 
         // Step 3: Remove 984 $b
         BulkEditActions.fillInTagAndIndicatorsAndSubfield('984', '\\', '\\', 'b');
-        BulkEditActions.selectActionForMarcInstance('Remove all');
+        BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 4: Add new row
@@ -143,7 +149,7 @@ describe('Bulk-edit', () => {
 
         // Step 5: Remove 548 0\ $3
         BulkEditActions.fillInTagAndIndicatorsAndSubfield('548', '0', '\\', '3', 1);
-        BulkEditActions.selectActionForMarcInstance('Remove all', 1);
+        BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 6: Confirm changes
@@ -177,7 +183,19 @@ describe('Bulk-edit', () => {
                 ).to.be.true;
               },
 
-              (record) => expect(record.get('984')).to.be.empty,
+              (record) => {
+                verifyMarcFieldByTag(record, '984', {
+                  ind1: ' ',
+                  ind2: ' ',
+                  subfields: [
+                    ['a', note984a],
+                    ['3', note9843],
+                    ['5', note9845],
+                    ['6', note9846],
+                    ['8', note9848],
+                  ],
+                });
+              },
 
               (record) => expect(record.get('548')).to.be.empty,
 
@@ -234,7 +252,10 @@ describe('Bulk-edit', () => {
 
         // Step 13: Verify changes in MARC source
         InstanceRecordView.viewSource();
-        InventoryViewSource.notContains('984\t');
+        InventoryViewSource.verifyFieldInMARCBibSource(
+          '984',
+          `\t984\t   \t$a ${note984a} $3 ${note9843} $5 ${note9845} $6 ${note9846} $8 ${note9848}`,
+        );
         InventoryViewSource.notContains(note984b);
         InventoryViewSource.notContains('548\t');
         InventoryViewSource.notContains(note5483);

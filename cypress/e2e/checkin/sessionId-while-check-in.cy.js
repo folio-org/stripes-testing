@@ -9,7 +9,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
 
 describe('Check in', () => {
@@ -46,6 +46,9 @@ describe('Check in', () => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
+        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          itemData.mainLibraryLocationId = res.id;
+        });
       })
       .then(() => {
         InventoryInstances.createFolioInstanceViaApi({
@@ -56,7 +59,7 @@ describe('Check in', () => {
           holdings: [
             {
               holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: LOCATION_IDS.MAIN_LIBRARY,
+              permanentLocationId: itemData.mainLibraryLocationId,
             },
           ],
           items: [

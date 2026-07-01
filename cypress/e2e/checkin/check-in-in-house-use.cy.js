@@ -1,10 +1,9 @@
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
-  LOCATION_IDS,
-  LOCATION_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
+  LOCATION_NAMES,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -28,6 +27,7 @@ describe('Check in', () => {
   let itemBData;
   let servicePointX;
   let servicePointY;
+  let mainLibraryLocationId;
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
@@ -37,9 +37,13 @@ describe('Check in', () => {
       ServicePoints.getCircDesk2ServicePointViaApi().then((sp2) => {
         servicePointY = sp2;
       });
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location: { id: LOCATION_IDS.MAIN_LIBRARY, name: LOCATION_NAMES.MAIN_LIBRARY },
+      cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+        mainLibraryLocationId = res.id;
+
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location: { id: mainLibraryLocationId },
+        });
       });
     });
     itemAData = testData.folioInstances[0].items[0];
