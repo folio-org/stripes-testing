@@ -53,6 +53,9 @@ const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 const resetAllButton = Button('Reset all');
 const recordsList = MultiColumnList();
+const columnManagerSection = Section({
+  id: 'column-manager-requests-results-list-column-manager-columns-menu-section',
+});
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -844,13 +847,15 @@ export default {
   },
 
   selectColumnInActions(columnName, select = true) {
+    const columnCheckbox = columnManagerSection.find(Checkbox(columnName));
+
     cy.expect(actionsButtonInResultsPane.exists());
     cy.do(actionsButtonInResultsPane.click());
-    cy.expect(Checkbox(columnName).exists());
+    cy.expect(columnCheckbox.exists());
     if (select) {
-      cy.do(Checkbox(columnName).checkIfNotSelected());
+      cy.do(columnCheckbox.checkIfNotSelected());
     } else {
-      cy.do(Checkbox(columnName).uncheckIfSelected());
+      cy.do(columnCheckbox.uncheckIfSelected());
     }
     cy.do(actionsButtonInResultsPane.click());
   },
@@ -958,5 +963,45 @@ export default {
 
   navigateToFirstPage() {
     MultiColumnListHelper.navigateToFirstPage(recordsList);
+  },
+
+  selectCopiesColumnInActions(select = true) {
+    this.selectColumnInActions('# Copies', select);
+  },
+
+  selectPrintedColumnInActions(select = true) {
+    this.selectColumnInActions('Printed', select);
+  },
+
+  clickCopiesColumnHeader() {
+    this.clickColumnHeader('# Copies');
+  },
+
+  clickPrintedColumnHeader() {
+    this.clickColumnHeader('Printed');
+  },
+
+  verifyCopiesColumnSortOrder(expectedOrder) {
+    MultiColumnListHelper.assertColumnValuesSorted(recordsList, '# Copies', {
+      direction: expectedOrder,
+      getSortableValue: (v) => parseInt(v, 10),
+      // NaN (unprinted, empty cell) sorts last ascending; reversed → first descending
+      comparator: (a, b) => {
+        if (Number.isNaN(a)) return 1;
+        if (Number.isNaN(b)) return -1;
+        return a - b;
+      },
+    });
+  },
+
+  verifyPrintedColumnSortOrder(expectedOrder) {
+    MultiColumnListHelper.assertColumnValuesSorted(recordsList, 'Printed', {
+      direction: expectedOrder,
+      comparator: (a, b) => {
+        if (!a) return 1;
+        if (!b) return -1;
+        return a.localeCompare(b);
+      },
+    });
   },
 };

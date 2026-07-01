@@ -1002,7 +1002,7 @@ export default {
   },
 
   verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
-    cy.wait(3000);
+    cy.wait(4000);
     cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')

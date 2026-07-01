@@ -100,6 +100,7 @@ Cypress.Commands.add(
           method: 'DELETE',
           isDefaultSearchParamsRequired: false,
           additionalHeaders: { 'x-okapi-module-id': modVersion },
+          failOnStatusCode: false,
         });
       });
     });

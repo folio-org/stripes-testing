@@ -654,7 +654,14 @@ export default {
     });
   },
 
-  waitLoading: () => cy.expect(rootSection.exists()),
+  waitLoading: ({ headline } = {}) => {
+    cy.expect(rootSection.exists());
+    // Wait for the headline to appear, as a cached version of another user's data may appear for a moment,
+    // which is enough to trigger Actions -> Edit for the wrong user.
+    if (headline) {
+      cy.expect(rootSection.find(HTML(including(headline))).exists());
+    }
+  },
 
   startFeeFine: () => {
     cy.wait(500);

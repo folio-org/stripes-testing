@@ -32,6 +32,6 @@ export default class ExistingNoteEdit {
 
   static waitLoading() {
     cy.get(this.#rootCss).should('be.visible');
-    cy.get(this.#detailsCss).should('be.visible');
+    cy.get(this.#detailsCss).scrollIntoView().should('be.visible');
   }
 }

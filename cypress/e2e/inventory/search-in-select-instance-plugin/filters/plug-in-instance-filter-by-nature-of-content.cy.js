@@ -174,10 +174,6 @@ describe('Inventory', () => {
             customNaturesOfContent[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
-            natureOfContentAccordionName,
-            customNaturesOfContent[1].name,
-          );
           SelectInstanceModal.verifyMultiSelectFilterOptionCount(
             natureOfContentAccordionName,
             customNaturesOfContent[1].name,

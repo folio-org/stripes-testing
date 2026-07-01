@@ -79,9 +79,6 @@ describe('Consortia', () => {
               subjectType.name,
               tenantNames.college,
               tenantNames.central,
-              // for Trillium env uncomment
-              // tenantNames.central,
-              // tenantNames.college,
               tenantNames.university,
             );
             ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();

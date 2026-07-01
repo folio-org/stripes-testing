@@ -17,4 +17,11 @@ export default {
     cy.do(submitButton.click());
     cy.wait(1000);
   },
+  verifyModalIsAbsent() {
+    cy.get(instanceProfileModal).should('not.exist');
+  },
+  closeProfileModal() {
+    cy.do(Button({ ariaLabel: 'Close Basic modal' }).click());
+    cy.wait(500);
+  },
 };

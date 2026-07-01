@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   Checkbox,
@@ -151,6 +152,7 @@ const expectedCapabilityTableActions = {
   ],
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
+const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -283,7 +285,10 @@ export default {
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
-  selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilitySetCheckbox: (
+    { table, resource, action },
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
     let targetRowIndex;
     cy.do(
       capabilitySetsAccordion
@@ -300,7 +305,17 @@ export default {
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
       cy.do(targetCheckbox.click());
-      cy.expect(targetCheckbox.has({ checked: isSelected }));
+      if (!isSelected && confirmModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(continueButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: isSelected }));
+      } else if (!isSelected && dismissModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(cancelButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: !isSelected }));
+      } else cy.expect(targetCheckbox.has({ checked: isSelected }));
       // wait for capabilities selection to be updated
       cy.wait(1000);
     });
@@ -437,7 +452,16 @@ export default {
     ]);
   },
 
-  checkAfterSaveEdit: (roleName, roleDescription = '') => {
+  checkAfterSaveEdit: (roleName, roleDescription = '', { timeout = 72_000 } = {}) => {
+    recurse(
+      () => cy.get('body').then(
+        ($body) => $body.find('[class^="paneTitleLabel"]').filter((_, el) => {
+          return el.textContent.trim() === 'Edit role';
+        }).length,
+      ),
+      (count) => count === 0,
+      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+    );
     cy.expect([
       editRolePane.absent(),
       Callout(successUpdateText).exists(),
@@ -482,9 +506,19 @@ export default {
     cy.wait(1000);
   },
 
-  checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
+  checkCapabilitiesAccordionCounter: (
+    expectedCount,
+    regExp = false,
+    { notLessThan = false } = {},
+  ) => {
     if (regExp) cy.expect(capabilitiesAccordion.has({ counter: matching(expectedCount) }));
-    else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
+    else if (notLessThan) {
+      cy.recurse(
+        () => cy.then(() => capabilitiesAccordion.counter()),
+        (counterText) => parseInt(counterText, 10) >= parseInt(expectedCount, 10),
+        { limit: 50, timeout: 52000, delay: 1000 },
+      );
+    } else cy.expect(capabilitiesAccordion.has({ counter: expectedCount }));
   },
 
   checkCapabilitySetsAccordionCounter: (expectedCount, regExp = false) => {
@@ -512,9 +546,14 @@ export default {
     cy.expect([deleteRoleModal.absent(), Pane(roleName).exists()]);
   },
 
-  confirmDeleteRole: (roleName, errorExpected = false) => {
+  confirmDeleteRole: (roleName, errorExpected = false, { timeout = 72_000 } = {}) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
     if (!errorExpected) {
+      recurse(
+        () => cy.get('body').then(($body) => $body.find('[class^="modal"][id^="confirmation"]').length),
+        (count) => count === 0,
+        { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+      );
       cy.expect([
         Callout(successDeleteText).exists(),
         deleteRoleModal.absent(),
@@ -919,13 +958,27 @@ export default {
       });
   },
 
-  selectCapabilitySetColumn: (table, action, isSelected = true) => {
+  selectCapabilitySetColumn: (
+    table,
+    action,
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListHeader(including(action)))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (!isSelected && confirmModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(continueButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    } else if (!isSelected && dismissModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(cancelButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: !isSelected }));
+    } else cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   getCapabilitySetCheckboxCountInColumn: (table, action) => {
@@ -1059,14 +1112,17 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false, notShared = false } = {}) {
+  shareRole(roleName, { verifyModal = false, timeout = 72_000 } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    if (!notShared) {
-      cy.expect([Callout(successShareText).exists(), shareToAllModal.absent()]);
-      this.checkRoleCentrallyManaged(roleName, true);
-    }
+    recurse(
+      () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
+      (count) => count === 0,
+      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+    );
+    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+    this.checkRoleCentrallyManaged(roleName, true);
   },
 
   verifyConfirmShareModal(roleName) {

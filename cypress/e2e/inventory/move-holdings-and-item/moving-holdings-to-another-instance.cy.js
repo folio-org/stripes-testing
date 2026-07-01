@@ -15,7 +15,6 @@ let secondLocationId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
-  firstHoldingName: 'Popular Reading Collection',
 };
 
 const secondItem = {
@@ -41,6 +40,7 @@ describe('Inventory', () => {
 
         Locations.getViaApiAnyDefault(2).then((locations) => {
           firstLocationId = locations[0].id;
+          item.firstHoldingName = locations[0].name;
           secondLocationId = locations[1].id;
 
           cy.getHoldings({
