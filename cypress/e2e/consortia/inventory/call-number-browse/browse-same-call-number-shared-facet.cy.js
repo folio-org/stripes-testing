@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  BROWSE_CALL_NUMBER_OPTIONS,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -15,6 +19,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -281,6 +286,11 @@ describe('Inventory', () => {
                 addHoldingsAndItem(createdInstanceIds.university[index], universityInstance);
               });
 
+            cy.setTenant(Affiliations.College);
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+              callNumberTypes: [],
+            });
             cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password).then(
               () => {

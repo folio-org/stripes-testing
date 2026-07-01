@@ -99,6 +99,7 @@ describe('Inventory', () => {
                 )[0];
                 expect(matchedDateTypeMember.name).to.eq(testData.newName);
 
+                cy.wait(3000);
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,

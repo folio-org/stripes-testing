@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import Users from '../../../../../support/fragments/users/users';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -106,12 +107,11 @@ describe('MARC', () => {
         after('Delete users, data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          // Users.deleteViaApi(userA.userId);
-          // Users.deleteViaApi(userB.userId);
+          Users.deleteViaApi(userA.userId);
+          Users.deleteViaApi(userB.userId);
           cy.setTenant(Affiliations.College);
           InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
           cy.resetTenant();
-          cy.getAdminToken();
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         });
 
@@ -147,14 +147,15 @@ describe('MARC', () => {
               cy.getMarcRecordDataViaAPI(createdRecordIDs[0]).then((marcData) => {
                 const field245 = marcData.fields.find((f) => f.tag === marcFieldTags.tag245);
                 field245.content = `$a ${testData.instanceTitleUpdatedByB}`;
-                cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData).then(
-                  ({ status }) => {
+                cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData)
+                  .then(({ status }) => {
                     expect(status).to.eq(202);
                     // Switch back to User A's token
                     cy.setTenant(Affiliations.College);
                     cy.clearCookies({ domain: null });
                     cy.getToken(userA.username, userA.password);
-
+                  })
+                  .then(() => {
                     // Step 6: User A makes changes to 245 field, tries to save (will trigger conflict because record was updated by User B)
                     QuickMarcEditor.updateExistingField(
                       marcFieldTags.tag245,
@@ -179,8 +180,7 @@ describe('MARC', () => {
                       `$a ${testData.instanceTitleUpdatedByB}`,
                     );
                     QuickMarcEditor.checkUserNameInHeader(userB.firstName, userB.lastName);
-                  },
-                );
+                  });
               });
             });
           },
