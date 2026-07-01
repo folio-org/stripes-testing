@@ -57,21 +57,18 @@ describe('Orders', () => {
   let orderLineNumber;
   const searchers = [
     { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
-    {
-      nameOfSearch: 'Contributor',
-      valueOfLine: orderLine.contributors[0].contributor.split('.')[0],
-    },
-    { nameOfSearch: 'Requester', valueOfLine: orderLine.requester.split('.')[0] },
+    { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
+    { nameOfSearch: 'Requester', valueOfLine: orderLine.requester },
     { nameOfSearch: 'Title or package name', valueOfLine: orderLine.titleOrPackage },
-    { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher.split('.')[0] },
+    { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher },
     { nameOfSearch: 'Vendor account', valueOfLine: orderLine.vendorDetail.vendorAccount },
     {
       nameOfSearch: 'Vendor reference number',
       valueOfLine: orderLine.vendorDetail.referenceNumbers[0].refNumber,
     },
-    { nameOfSearch: 'Donor (Deprecated)', valueOfLine: orderLine.donor.split('.')[0] },
-    { nameOfSearch: 'Selector', valueOfLine: orderLine.selector.split('.')[0] },
-    { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes[0].split('.')[0] },
+    { nameOfSearch: 'Donor (Deprecated)', valueOfLine: orderLine.donor },
+    { nameOfSearch: 'Selector', valueOfLine: orderLine.selector },
+    { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes[0] },
     { nameOfSearch: 'Product ID', valueOfLine: orderLine.details.productIds[0].productId },
     { nameOfSearch: 'Product ID ISBN', valueOfLine: orderLine.details.productIds[0].productId },
   ];
@@ -114,11 +111,15 @@ describe('Orders', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches (thunderjet)', { tags: ['smoke', 'C6719'] }, () => {
-      Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
-      Orders.checkOrderlineSearchResults(orderLineNumber);
-      Orders.resetFilters();
-    });
+    it(
+      `C6719 Test the POL searches - ${searcher.nameOfSearch} (thunderjet)`,
+      { tags: ['smoke', 'C6719'] },
+      () => {
+        Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
+        Orders.checkOrderlineSearchResults(orderLineNumber);
+        Orders.resetFilters();
+      },
+    );
   });
 
   // TODO: add extra TC in testrail about it
