@@ -485,6 +485,19 @@ export default {
     cy.do(queryToggle.click());
   },
 
+  verifyQueryPaneInitialState() {
+    cy.expect([
+      bulkEditPane.has({ title: 'Bulk edit' }),
+      bulkEditPane.has({ subtitle: 'Set criteria to start bulk edit' }),
+      bulkEditPane
+        .find(HTML('Select a record type and then click the Build query button.'))
+        .exists(),
+      setCriteriaPane.find(buildQueryButton).has({ disabled: true }),
+      this.verifyResetAllButtonDisabled(true),
+      this.recordTypesAccordionExpanded(true),
+    ]);
+  },
+
   openLogsSearch() {
     cy.do(logsToggle.click());
     cy.wait(2000);

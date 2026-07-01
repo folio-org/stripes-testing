@@ -53,6 +53,7 @@ const downloadErrorsButton = Button('Download errors (CSV)');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
+const startBulkDeleteButton = Button('Start bulk delete');
 const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
@@ -106,8 +107,16 @@ export default {
     cy.wait(2000);
   },
 
+  clickStartBulkDeleteButton() {
+    cy.do(startBulkDeleteButton.click());
+  },
+
   clickSelectBulkEditProfile(recordType) {
     cy.do(Button(`Select ${recordType} bulk edit profile`).click());
+  },
+
+  verifySelectBulkEditProfileButtonExists(recordType) {
+    cy.expect(Button(`Select ${recordType} bulk edit profile`).exists());
   },
 
   verifyStartBulkEditOptions() {
