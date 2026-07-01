@@ -257,7 +257,7 @@ describe('Consortia', () => {
 
             // Step 15-16: Delete subject type and verify it is deleted
             ConsortiumSubjectTypes.deleteBySubjectTypeName(secondSubjectType.name);
-            ConsortiumSubjectTypes.verifySubjectTypeAbsent(firstSubjectType.name);
+            ConsortiumSubjectTypes.verifySubjectTypeAbsent(secondSubjectType.name);
 
             // Step 17-18: Log in as user B and verify subject type is deleted in settings
             cy.login(userB.username, userB.password);

@@ -62,7 +62,7 @@ export default {
         .find(HTML({ className: including('headerCell'), text: 'In.2\n*' }))
         .exists(),
       bulkEditForMarcInstancesAccordion
-        .find(HTML({ className: including('headerCell'), text: 'Subfield\n*' }))
+        .find(HTML({ className: including('headerCell'), text: 'Subfield' }))
         .exists(),
       bulkEditForMarcInstancesAccordion
         .find(HTML({ className: including('headerCell'), text: 'Actions\n*' }))
@@ -385,7 +385,8 @@ export default {
     const availableMarcActions = [
       BULK_EDIT_ACTIONS.ADD,
       BULK_EDIT_ACTIONS.FIND,
-      BULK_EDIT_ACTIONS.REMOVE_ALL,
+      BULK_EDIT_ACTIONS.REMOVE_FIELD,
+      BULK_EDIT_ACTIONS.REMOVE_SUBFIELD,
     ];
 
     cy.expect(

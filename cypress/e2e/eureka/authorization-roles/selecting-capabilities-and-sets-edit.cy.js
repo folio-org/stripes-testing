@@ -166,7 +166,10 @@ describe('Eureka', () => {
             AuthorizationRoles.clickOnCheckedDisabledCheckbox(capability);
           });
 
-          AuthorizationRoles.selectCapabilitySetCheckbox(testData.capabilitySet, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(testData.capabilitySet, {
+            isSelected: false,
+            confirmModal: true,
+          });
           capabilitiesInSetSelected.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, true, true);
           });

@@ -15,8 +15,14 @@ describe('Users', () => {
     selectedExpirationDate: '',
     selectedExpirationDatePlusOne: '',
     selectedExpirationDatePlusOneInDetailPaneFormat: '',
+    // FOLIO stores expiration dates as end-of-day (23:59:59) in the tenant timezone.
+    // westernTimezone (UTC-11, no DST): 23:59:59 UTC-11 = next-day T10:59:59Z
+    // easternTimezone must be exactly UTC+13: 10:59:59Z + 13h = 23:59:59 → date displays as +1 day.
+    // Timezones above UTC+13 (e.g. Pacific/Kiritimati UTC+14, or Pacific/Chatham
+    // during CHADT = UTC+13:45) push the result past midnight and display as +2 days.
+    // Pacific/Tongatapu (UTC+13, no DST) is the only safe UTC+13 option in the FOLIO timezone list.
     westernTimezone: 'Pacific/Pago_Pago',
-    easternTimezone: 'Pacific/Apia',
+    easternTimezone: 'Pacific/Tongatapu',
     utcTimezone: 'UTC',
   };
 
@@ -48,11 +54,9 @@ describe('Users', () => {
           'M/D/YYYY',
         );
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: SettingsMenu.tenantPath,
-            waiter: TenantPane.waitLoading,
-          });
+        cy.login(testData.user.username, testData.user.password, {
+          path: SettingsMenu.tenantPath,
+          waiter: TenantPane.waitLoading,
         });
       });
     });
@@ -99,7 +103,7 @@ describe('Users', () => {
       TenantPane.waitLoading();
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
 
-      // Change Time zone to a more Eastern one (Pacific/Apia)
+      // Change Time zone to a more Eastern one (Pacific/Tongatapu)
       Localization.changeTimezone(testData.easternTimezone);
       Localization.clickSaveButton();
 

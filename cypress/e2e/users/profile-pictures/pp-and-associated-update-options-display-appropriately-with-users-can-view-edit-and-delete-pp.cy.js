@@ -64,9 +64,10 @@ describe('Users', () => {
         ]);
         UserEdit.clickCloseWithoutSavingIfModalExists();
         UsersCard.waitLoading();
+        UsersSearchPane.resetAllFilters();
 
         UsersSearchPane.searchByUsername(testData.userC.username);
-        UsersCard.waitLoading();
+        UsersCard.waitLoading({ headline: testData.userC.username });
         UserEdit.openEdit();
         UserEdit.verifyPlaceholderProfilePictureIsPresent();
         UserEdit.verifyButtonsStateForProfilePicture([

@@ -254,7 +254,10 @@ describe(
               testData.updatedRoleDescription,
             );
             AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
-            AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySetToRemove, false);
+            AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySetToRemove, {
+              isSelected: false,
+              confirmModal: true,
+            });
             testData.newCapabilities.forEach((capability) => {
               AuthorizationRoles.selectCapabilityCheckbox(capability);
             });

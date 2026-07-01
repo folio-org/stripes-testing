@@ -52,6 +52,7 @@ const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
+const listsPane = Pane('Lists');
 const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
@@ -83,11 +84,47 @@ const constants = {
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
   },
+  userColumns: [
+    'User — Active',
+    'User — Address',
+    'User — Barcode',
+    'User — Created by user UUID',
+    'User — Date of birth',
+    'User — Department names',
+    'User — Department UUIDs',
+    'User — Email',
+    'User — Enrollment date',
+    'User — Expiration date',
+    'User — External system ID',
+    'User — First name',
+    'User — Last name',
+    'User — Last name, first name',
+    'User — Middle name',
+    'User — Mobile phone',
+    'User — Phone',
+    'User — Preferred contact type',
+    'User — Preferred first name',
+    'User — Pronouns',
+    'User — Tags',
+    'User — Type',
+    'User — Updated by user UUID',
+    'User — User created date',
+    'User — User updated date',
+    'User — User UUID',
+    'User — Username',
+    'Patron group — Name',
+    'User created by — Email',
+    'User created by — Last name, first name',
+    'User created by — Username',
+    'User updated by — Email',
+    'User updated by — Last name, first name',
+    'User updated by — Username',
+  ],
 };
 
 const UI = {
   waitLoading() {
-    cy.expect(HTML(including('Lists')).exists());
+    cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(3000);
     // have to duplicate code because cannot use this.waitForSpinnerToDisappear() for some reason...
     cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
@@ -149,6 +186,10 @@ const UI = {
 
   verifyActionsButtonDoesNotExist() {
     cy.expect(actions.absent());
+  },
+
+  verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
+    cy.do(Checkbox(columnName).has({ checked: isChecked }));
   },
 
   refreshList() {

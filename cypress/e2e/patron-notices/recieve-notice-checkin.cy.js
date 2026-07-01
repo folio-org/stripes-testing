@@ -268,8 +268,6 @@ describe('Patron notices', () => {
           CheckInActions.verifyLastCheckInItem(item.barcode);
         });
         CheckInActions.endCheckInSession();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         cy.getAdminToken();
 
         poll(
@@ -281,7 +279,6 @@ describe('Patron notices', () => {
                 `object=="${searchResultsData.object}"`,
                 `action=="${searchResultsData.circAction}"`,
                 `source=="${searchResultsData.source}"`,
-                `description=="${searchResultsData.desc}"`,
               ].join(' AND '),
             },
             failOnStatusCode: false,

@@ -118,9 +118,9 @@ describe('MG Hubs: Create and edit local hub', () => {
 
       NewHub.fillVariantTitle(
         hubData.variantTitle,
+        hubData.variantOtherTitle,
         hubData.variantPartNumber,
         hubData.variantPartName,
-        hubData.variantOtherTitle,
         hubData.variantDate,
         hubData.variantTitleType,
         hubData.variantNote,
@@ -128,9 +128,9 @@ describe('MG Hubs: Create and edit local hub', () => {
 
       NewHub.fillPreferredTitle(
         hubData.preferredTitle,
+        hubData.otherTitle,
         hubData.partNumber,
         hubData.partName,
-        hubData.otherTitle,
       );
 
       NewHub.fillLanguage(hubData.languageCode);
@@ -158,9 +158,9 @@ describe('MG Hubs: Create and edit local hub', () => {
       EditHubPage.verifyTitleInformation({
         type1: hubData.variantType,
         varTitle: hubData.variantTitle,
+        varOtherTitle: hubData.variantOtherTitle,
         varPartNumber: hubData.variantPartNumber,
         varPartName: hubData.variantPartName,
-        varOtherTitle: hubData.variantOtherTitle,
         varDate: hubData.variantDate,
         varType: hubData.variantTitleType,
         varNote: hubData.variantNote,

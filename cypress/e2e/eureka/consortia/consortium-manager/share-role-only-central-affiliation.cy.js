@@ -2,7 +2,6 @@ import Users from '../../../../support/fragments/users/users';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import TopMenu from '../../../../support/fragments/topMenu';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { APPLICATION_NAMES, AUTHORIZATION_ROLE_TYPES } from '../../../../support/constants';
@@ -29,6 +28,7 @@ describe('Eureka', () => {
     const testUser = {};
 
     before('Create user, data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       cy.then(() => {
         cy.createTempUser([]).then((userProperties) => {
@@ -57,10 +57,10 @@ describe('Eureka', () => {
       'C523612 ECS | Eureka | Share authorization role when only central tenant is selected in "Select members" (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523612'] },
       () => {
-        cy.login(testUser.username, testUser.password, {
-          path: TopMenu.consortiumManagerPath,
-          waiter: ConsortiumManagerApp.waitLoading,
-        });
+        cy.login(testUser.username, testUser.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.waitLoading();
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         AuthorizationRoles.waitContentLoading();
@@ -81,11 +81,11 @@ describe('Eureka', () => {
           .its('response.body.type')
           .should('eq', AUTHORIZATION_ROLE_TYPES.CONSORTIUM.toUpperCase());
         AuthorizationRoles.verifyRoleType(testData.roleName, AUTHORIZATION_ROLE_TYPES.CONSORTIUM);
-        cy.logout();
 
         // for unclear reasons, tenant name may not load for an admin without waiting
         cy.wait(15_000);
         cy.loginAsAdmin();
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.openAppFromDropdown(
           APPLICATION_NAMES.SETTINGS,

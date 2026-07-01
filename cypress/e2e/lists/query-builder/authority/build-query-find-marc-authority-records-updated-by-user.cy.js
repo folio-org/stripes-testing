@@ -114,7 +114,7 @@ describe('Lists', () => {
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
-            waiter: Lists.waitLoading,
+            waiter: Lists.filtersWaitLoading,
           });
 
           // Step 1: Create new list, select Authority record type, open Build query
