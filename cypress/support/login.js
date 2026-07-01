@@ -10,7 +10,15 @@ import {
   Select,
   TextField,
   TextInput,
+  HTML,
+  Spinner,
 } from '../../interactors';
+
+const invalidCredentialsMessage = 'Invalid username or password.';
+const accountDisabledMessage = invalidCredentialsMessage;
+const loginAgainButton = Button({ text: 'Log in again' });
+const userProfileDropdown = Dropdown({ id: 'profileDropdown' });
+const restartLoginLink = Link({ id: 'reset-login' });
 
 Cypress.Commands.add(
   'login',
@@ -67,9 +75,9 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('logout', () => {
-  cy.do([Dropdown({ id: 'profileDropdown' }).open(), Button('Log out').click()]);
+  cy.do([userProfileDropdown.open(), Button('Log out').click()]);
 
-  cy.expect(Button({ text: 'Log in again' }).exists());
+  cy.expect(loginAgainButton.exists());
 });
 
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
@@ -272,4 +280,59 @@ Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
       Button('Log in').click(),
     ]);
   }
+});
+
+Cypress.Commands.add('verifyUserNameInProfile', (lastName, firstName) => {
+  cy.do(userProfileDropdown.open());
+  cy.expect([
+    userProfileDropdown
+      .find(HTML(including(`${firstName ? `${firstName} ` : ''}${lastName}`)))
+      .exists(),
+  ]);
+  cy.do(userProfileDropdown.close());
+});
+
+Cypress.Commands.add('verifyInvalidCredentialsMessage', (isShown = true) => {
+  const errorMessage = HTML(including(invalidCredentialsMessage), { id: 'input-error' });
+  if (isShown) cy.expect(errorMessage.exists());
+  else {
+    cy.wait(1000); // wait in case message appears with delay
+    cy.expect(errorMessage.absent());
+  }
+});
+
+Cypress.Commands.add('verifyAccountDisabledMessage', (isShown = true) => {
+  const errorMessage = HTML(accountDisabledMessage, { className: including('alert-error') });
+  if (isShown) cy.expect(errorMessage.exists());
+  else {
+    cy.wait(1000); // wait in case message appears with delay
+    cy.expect(errorMessage.absent());
+  }
+});
+
+Cypress.Commands.add('clickLoginAgainButton', () => {
+  cy.do(loginAgainButton.click());
+  cy.wait(1000);
+  cy.expect(Spinner().absent());
+
+  cy.selectTenantIfDropdown();
+
+  if (Cypress.env('eureka')) {
+    cy.expect([
+      TextInput('Username').exists(),
+      TextInput('Password').exists(),
+      Button({ name: 'login' }).exists(),
+    ]);
+  } else {
+    cy.expect([
+      TextField('Username').exists(),
+      TextField('Password').exists(),
+      Button('Log in').exists(),
+    ]);
+  }
+});
+
+Cypress.Commands.add('verifyRestartLoginLinkAbsent', () => {
+  cy.wait(1000); // wait in case message appears with delay
+  cy.expect(restartLoginLink.absent());
 });
