@@ -12,11 +12,18 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_ACTIONS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import parseMrcFileContentAndVerify, {
+  verifyMarcFieldByTag,
+  verifyMarcFieldAbsence,
+} from '../../../../support/utils/parseMrcFileContent';
 
 let user;
 const marcInstance = {
@@ -33,6 +40,7 @@ const notes = {
   appendedLocal: 'Ludwig-Maximilians-Universität, Munich',
   addedLocal: 'Local note nine hundred one',
   field570: '"Selected bibliography": v. 1, p. 351-358, v. 2, p. 234-236.',
+  field990: 'v.1-49(1927-1975) Master and use copy.',
 };
 const marcInstanceFields = [
   {
@@ -69,6 +77,17 @@ const marcInstanceFields = [
     tag: '584',
     content:
       '$a 5.4 cu. ft. average monthly accumulation, $b Total reference requests for 1984: 179. $3 Employee records $5 DLC $6 100-01/Cyrl $8 1.5\\a',
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '584',
+    content:
+      '$b An average of 15 reference requests per month, with peak demand during June and December. $b Total reference requests for 1984: 179.',
+    indicators: ['\\', '\\'],
+  },
+  {
+    tag: '990',
+    content: '$3 v.1-49(1927-1975) $a Master and use copy.',
     indicators: ['\\', '\\'],
   },
 ];
@@ -180,7 +199,7 @@ describe('Bulk-edit', () => {
                   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES
                     .ACCUMULATION_FREQUENCY_USE_NOTE,
                 value:
-                  '5.4 cu. ft. average monthly accumulation, Total reference requests for 1984: 179. Employee records DLC',
+                  '5.4 cu. ft. average monthly accumulation, Total reference requests for 1984: 179. Employee records DLC | An average of 15 reference requests per month, with peak demand during June and December. Total reference requests for 1984: 179',
               },
             ],
           );
@@ -232,8 +251,14 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(4);
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('584', '\\', '\\', 'b', 5);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 5);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 5);
           BulkEditActions.verifyConfirmButtonDisabled(false);
+
+          BulkEditActions.addNewBulkEditFilterStringForMarcInstance(5);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('990', '\\', '\\', 'b', 6);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_FIELD, 6);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
+
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
 
@@ -250,7 +275,7 @@ describe('Bulk-edit', () => {
             {
               header:
                 BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
-              value: '',
+              value: '5.4 cu. ft. average monthly accumulation, Employee records DLC',
             },
           ];
 
@@ -258,7 +283,11 @@ describe('Bulk-edit', () => {
             marcInstance.hrid,
             editedHeaderValues,
           );
-          BulkEditActions.verifyCellWithContentAbsentsInAreYouSureForm(notes.field570, notes.local);
+          BulkEditActions.verifyCellWithContentAbsentsInAreYouSureForm(
+            notes.field570,
+            notes.local,
+            notes.field990,
+          );
           BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
             true,
@@ -310,7 +339,21 @@ describe('Bulk-edit', () => {
                   expect(record.get('545')[0].subf[2][1]).to.eq('http://www.braudubon.com/');
                 },
 
-                (record) => expect(record.get('584')).to.be.empty,
+                (record) => {
+                  verifyMarcFieldByTag(record, '584', {
+                    ind1: ' ',
+                    ind2: ' ',
+                    subfields: [
+                      ['a', '5.4 cu. ft. average monthly accumulation,'],
+                      ['3', 'Employee records'],
+                      ['5', 'DLC'],
+                      ['6', '100-01/Cyrl'],
+                      ['8', '1.5\\a'],
+                    ],
+                  });
+                },
+
+                (record) => verifyMarcFieldAbsence(record, '990'),
 
                 (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
                 (record) => expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.uuid),
@@ -326,7 +369,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA};${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE};5.4 cu. ft. average monthly accumulation, Employee records DLC;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA};${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/;false`,
           );
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(1);
@@ -354,7 +397,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID,
             marcInstance.hrid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA};${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/;false`,
+            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE};5.4 cu. ft. average monthly accumulation, Employee records DLC;false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA};${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/;false`,
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -366,19 +409,22 @@ describe('Bulk-edit', () => {
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.local);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.fundingInformation);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(
-            '5.4 cu. ft. average monthly accumulation, Total reference requests for 1984: 179. Employee records DLC 100-01/Cyrl 1.5\\a',
+            'Total reference requests for 1984: 179.',
           );
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FUNDING_INFORMATION_NOTE,
           );
-          InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+            1,
+            'No',
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA,
+            `${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/`,
           );
           InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             0,
             'No',
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA,
-            `${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/`,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ACCUMULATION_FREQUENCY_USE_NOTE,
+            '5.4 cu. ft. average monthly accumulation, Employee records DLC',
           );
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource('901', `$a ${notes.addedLocal} $3 v.5`);
@@ -392,7 +438,15 @@ describe('Bulk-edit', () => {
             '545',
             `$a ${notes.biographicalOrHistoricalReplaced} $u http://www.braudubon.org/ $u http://www.braudubon.com/`,
           );
-          InventoryViewSource.notContains('584\t');
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            '584',
+            '$a 5.4 cu. ft. average monthly accumulation, $3 Employee records $5 DLC $6 100-01/Cyrl $8 1.5\\a',
+          );
+          InventoryViewSource.notContains(
+            'An average of 15 reference requests per month, with peak demand during June and December.',
+          );
+          InventoryViewSource.notContains('Total reference requests for 1984: 179.');
+          InventoryViewSource.notContains('990\t');
         },
       );
     });
