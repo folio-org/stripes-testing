@@ -78,10 +78,11 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('deleteLoanType', (loanId) => {
+Cypress.Commands.add('deleteLoanType', (loanId, ignoreErrors = false) => {
   return cy.okapiRequest({
     path: `loan-types/${loanId}`,
     method: 'DELETE',
+    failOnStatusCode: !ignoreErrors,
   });
 });
 

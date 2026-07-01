@@ -159,6 +159,12 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          cy.setTenant(Affiliations.College);
+          BrowseContributors.waitForContributorToAppear(
+            linkingTagAndValues.authorityHeading,
+            true,
+            true,
+          );
           InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
           BrowseContributors.checkAuthorityIconAndValueDisplayed(
             linkingTagAndValues.authorityHeading,
