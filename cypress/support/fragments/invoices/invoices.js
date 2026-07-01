@@ -157,6 +157,14 @@ const getDefaultInvoiceLine = ({
 export default {
   getDefaultInvoice,
   getDefaultInvoiceLine,
+  getInvoiceByIdViaApi(id) {
+    return cy
+      .okapiRequest({
+        path: `invoice/invoices/${id}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
   getInvoiceViaApi(searchParams) {
     return cy
       .okapiRequest({
