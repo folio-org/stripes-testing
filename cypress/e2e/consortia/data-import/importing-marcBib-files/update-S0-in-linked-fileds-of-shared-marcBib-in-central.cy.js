@@ -216,6 +216,7 @@ describe('Data Import', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
           })
           .then(() => {
+            cy.getAdminToken(false);
             NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
               (mappingProfileResponse) => {
                 NewActionProfile.createActionProfileViaApi(

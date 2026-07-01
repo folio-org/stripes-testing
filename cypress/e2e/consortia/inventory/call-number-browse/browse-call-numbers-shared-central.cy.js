@@ -16,6 +16,8 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -254,19 +256,22 @@ describe('Inventory', () => {
           addItemRecordInCollege(instance.instanceId);
         });
         cy.resetTenant();
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+          name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+          callNumberTypes: [],
+        });
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         InventorySearchAndFilter.selectBrowseCallNumbers();
       });
 
       after('Delete user, data', () => {
+        cy.wait(3000);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
@@ -279,7 +284,7 @@ describe('Inventory', () => {
           InventoryHoldings.deleteHoldingRecordViaApi(id);
         });
         Locations.deleteViaApi(location);
-        cy.deleteLoanType(loanTypeId);
+        cy.deleteLoanType(loanTypeId, true);
 
         cy.setTenant(Affiliations.College);
         createdInstanceIds.college.forEach((id) => {
