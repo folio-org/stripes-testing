@@ -789,7 +789,7 @@ export default {
     cy.do([
       Modal('Select order lines')
         .find(SearchField({ id: searchInputId }))
-        .fillIn(orderNumber),
+        .fillIn(`${orderNumber}*`),
       Modal('Select order lines').find(searchButton).click(),
     ]);
     cy.wait(4000);
