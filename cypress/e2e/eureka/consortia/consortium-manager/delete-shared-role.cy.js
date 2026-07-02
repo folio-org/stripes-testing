@@ -68,7 +68,6 @@ describe('Eureka', () => {
                 capabSetsToAssignMembers,
               );
               cy.setTenant(Affiliations.University);
-              cy.wait(10_000);
               cy.assignCapabilitiesToExistingUser(
                 testUser.userId,
                 capabsToAssign,
@@ -106,6 +105,7 @@ describe('Eureka', () => {
       () => {
         cy.resetTenant();
         cy.login(testUser.username, testUser.password);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
@@ -148,10 +148,7 @@ describe('Eureka', () => {
         UsersSearchPane.selectUserFromList(including(`${assignUserCentral.username}, `));
         UsersCard.verifyUserRolesCounter('0');
 
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
-        }, 20_000);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);

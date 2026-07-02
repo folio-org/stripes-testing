@@ -57,6 +57,7 @@ describe('Eureka', () => {
       'C523612 ECS | Eureka | Share authorization role when only central tenant is selected in "Select members" (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523612'] },
       () => {
+        cy.wait(3000);
         cy.login(testUser.username, testUser.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
