@@ -104,6 +104,7 @@ describe('MARC', () => {
               );
               cy.setTenant(Affiliations.College);
               cy.getToken(userB.username, userB.password);
+              cy.wait(2000);
             }).then(() => {
               // Steps 9-10: User B searches again → deleted record cannot be found in Member tenant
               MarcAuthorities.searchBeats(testData.authorityHeading);

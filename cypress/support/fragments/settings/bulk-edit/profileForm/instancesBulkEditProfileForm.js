@@ -385,7 +385,8 @@ export default {
     const availableMarcActions = [
       BULK_EDIT_ACTIONS.ADD,
       BULK_EDIT_ACTIONS.FIND,
-      BULK_EDIT_ACTIONS.REMOVE_ALL,
+      BULK_EDIT_ACTIONS.REMOVE_FIELD,
+      BULK_EDIT_ACTIONS.REMOVE_SUBFIELD,
     ];
 
     cy.expect(

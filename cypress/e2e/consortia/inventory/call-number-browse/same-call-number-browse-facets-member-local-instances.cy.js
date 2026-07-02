@@ -162,6 +162,7 @@ describe('Inventory', () => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumbersFromShared.college);
             BrowseCallNumber.waitForCallNumberToAppear(callNumbersFromShared.university);
 
+            cy.wait(3000);
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -176,6 +177,7 @@ describe('Inventory', () => {
       });
 
       after('Delete user, data', () => {
+        cy.wait(3000);
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
