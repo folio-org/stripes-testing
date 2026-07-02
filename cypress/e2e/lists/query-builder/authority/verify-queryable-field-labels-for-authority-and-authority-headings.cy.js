@@ -11,7 +11,7 @@ describe('Lists', () => {
     describe('Authority', () => {
       const testData = {
         recordType: 'Authority',
-        listName: `AT_C1292064_List_${getRandomPostfix()}`,
+        listName: `AT_C1405035_List_${getRandomPostfix()}`,
       };
 
       const listsAuthorityHeadingTypes = Object.values(AUTHORITY_HEADING_TYPES).filter(
@@ -39,8 +39,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1292064 Verify the available queryable field labels for "Authority" record type and "Authority headings" in the "Build query" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1292064'] },
+        'C1405035 Verify the available queryable field labels for "Authority" record type and "Authority headings" in the "Build query" pane (spitfire)',
+        { tags: ['extendedPath', 'spitfire', 'C1405035'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
