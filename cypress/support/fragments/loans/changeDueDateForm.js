@@ -19,6 +19,11 @@ export default {
     // wait is necessary because TextField fills very quickly
     cy.wait(1000);
   },
+  fillTime(timeString) {
+    // timeString format h:mm AM/PM, e.g. "08:45 PM"
+    cy.do(changeDueDateModal.find(TextField({ name: 'time' })).fillIn(timeString));
+    cy.wait(500);
+  },
   verifyWarning(textString) {
     cy.expect(HTML(textString).exists());
   },

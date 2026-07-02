@@ -62,7 +62,9 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
+            cy.wait(70_000); // source file should be processed by scheduled job before assigning
             // Create a Local MARC authority record assigned to the file
+            cy.getAdminToken(false);
             cy.setTenant(Affiliations.College);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
@@ -72,7 +74,6 @@ describe('MARC', () => {
               createdAuthorityRecordId = createdRecordId;
 
               cy.resetTenant();
-              cy.getAdminToken();
               cy.createTempUser(permsCentral).then((userProps) => {
                 user = userProps;
                 cy.assignAffiliationToUser(Affiliations.College, user.userId);
@@ -120,12 +121,8 @@ describe('MARC', () => {
             ManageAuthorityFiles.verifyDeleteAssignedSourceFileError(testData.name);
             ManageAuthorityFiles.checkSourceFileExistsByName(testData.name);
             // Step 4: Switch to Member tenant
-            cy.waitForAuthRefresh(() => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              SettingsPane.waitLoading();
-              cy.reload();
-              SettingsPane.waitLoading();
-            }, 20_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            SettingsPane.waitLoading();
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();

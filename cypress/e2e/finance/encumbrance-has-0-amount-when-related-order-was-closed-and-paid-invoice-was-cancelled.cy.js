@@ -1,11 +1,18 @@
 import uuid from 'uuid';
+
 import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ENCUMBRANCE_STATUSES,
+  FUND_DISTRIBUTION_TYPES,
   INVOICE_STATUSES,
   ORDER_LINE_PAYMENT_STATUS,
+  ORDER_SEARCH_OPTIONS,
   ORDER_STATUSES,
+  ORDER_SYSTEM_CLOSING_REASONS,
+  ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
   RECEIPT_STATUS_VIEW,
+  TRANSACTION_DETAIL_FIELDS,
+  TRANSACTION_TYPES,
 } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -20,179 +27,266 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import DateTools from '../../support/utils/dateTools';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { ExecutionFlowManager, NumberTools } from '../../support/utils';
+import { TransactionDetails } from '../../support/fragments/finance';
+
+const R = {
+  ACQ_METHOD: 'acquisitionMethod',
+  BUDGET: 'budget',
+  FISCAL_YEAR: 'fiscalYear',
+  FUND: 'fund',
+  INVOICE: 'invoice',
+  LEDGER: 'ledger',
+  LOCALE: 'locale',
+  LOCATION: 'location',
+  MATERIAL_TYPE: 'materialType',
+  ORDER: 'order',
+  ORDER_LINE: 'orderLine',
+  ORGANIZATION: 'organization',
+  USER: 'user',
+};
+
+const toNormalizedMoney = (value, locale) => {
+  return NumberTools.formatCurrency(Number(value), locale).replaceAll(/[^0-9.-]/g, '');
+};
 
 describe('Finance', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
-  };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
-  const firstOrder = {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
-    approved: true,
-    reEncumber: true,
-  };
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 100,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  let firstInvoice;
-  let user;
-  let firstOrderNumber;
-  let location;
+  const flow = new ExecutionFlowManager();
 
-  before(() => {
+  before('Create C494339 preconditions', () => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
+    cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          firstBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(firstBudget);
+    const steps = getPreconditionSteps(); // eslint-disable-line no-use-before-define
 
-          cy.getLocations({ limit: 1 }).then((res) => {
-            location = res;
-
-            cy.getDefaultMaterialType().then((mtype) => {
-              cy.getAcquisitionMethodsApi({
-                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-              }).then((params) => {
-                // Prepare 2 Open Orders for Rollover
-                Organizations.createOrganizationViaApi(organization).then(
-                  (responseOrganizations) => {
-                    organization.id = responseOrganizations;
-                    firstOrder.vendor = organization.id;
-                    const firstOrderLine = {
-                      ...BasicOrderLine.defaultOrderLine,
-                      cost: {
-                        listUnitPrice: 1.0,
-                        currency: 'USD',
-                        discountType: 'percentage',
-                        quantityPhysical: 1,
-                        poLineEstimatedPrice: 1.0,
-                      },
-                      fundDistribution: [
-                        { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                      ],
-                      locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
-                      acquisitionMethod: params.body.acquisitionMethods[0].id,
-                      physical: {
-                        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-                        materialType: mtype.id,
-                        materialSupplier: responseOrganizations,
-                        volumes: [],
-                      },
-                    };
-                    Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                      firstOrder.id = firstOrderResponse.id;
-                      firstOrderNumber = firstOrderResponse.poNumber;
-                      firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-
-                      OrderLines.createOrderLineViaApi(firstOrderLine);
-                      Orders.updateOrderViaApi({
-                        ...firstOrderResponse,
-                        workflowStatus: ORDER_STATUSES.OPEN,
-                      });
-                      Invoices.createInvoiceWithInvoiceLineViaApi({
-                        vendorId: organization.id,
-                        fiscalYearId: firstFiscalYear.id,
-                        poLineId: firstOrderLine.id,
-                        fundDistributions: firstOrderLine.fundDistribution,
-                        accountingCode: organization.erpCode,
-                        releaseEncumbrance: true,
-                        subTotal: 1,
-                      }).then((invoiceRescponse) => {
-                        firstInvoice = invoiceRescponse;
-
-                        Invoices.changeInvoiceStatusViaApi({
-                          invoice: firstInvoice,
-                          status: INVOICE_STATUSES.PAID,
-                        }).then(() => {
-                          cy.wait(4000);
-                          Orders.updateOrderViaApi({
-                            ...firstOrderResponse,
-                            workflowStatus: ORDER_STATUSES.CLOSED,
-                            closeReason: { reason: 'Cancelled', note: '' },
-                          });
-                          cy.wait(4000);
-
-                          Invoices.changeInvoiceStatusViaApi({
-                            invoice: firstInvoice,
-                            status: INVOICE_STATUSES.CANCELLED,
-                          });
-                        });
-                      });
-                    });
-                  },
-                );
-              });
-            });
-          });
-        });
-      });
-    });
-    cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
+    flow
+      .step(steps.createFiscalYearAndLedger)
+      .step(steps.createFundAndBudget)
+      .step(steps.fetchReferenceData)
+      .step(steps.createOrganization)
+      .step(steps.createOrderAndLine)
+      .step(steps.createAndProcessInvoice)
+      .step(steps.refreshContext)
+      .step(steps.cancelOrderAndInvoice)
+      .step(steps.createAndLoginUser);
   });
 
-  after(() => {
+  after('Delete C494339 test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    flow.cleanup();
   });
 
   it(
     'C494339 Encumbrance has "0" amount when related order was closed and paid invoice was cancelled (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C494339'] },
     () => {
-      Orders.searchByParameter('PO number', firstOrderNumber);
-      Orders.selectFromResultsList(firstOrderNumber);
+      const {
+        fiscalYear,
+        fund: { fund },
+        locale,
+        order,
+        orderLine,
+      } = flow.ctx();
+
+      const orderNumber = order.poNumber;
+      const encumbranceValue = toNormalizedMoney(1, locale);
+
+      cy.log('<----- STEP 1 ----->');
+      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, orderNumber);
+      Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
-      OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.CANCELLED);
+      OrderLines.checkPOLReceiptStatus(RECEIPT_STATUS_VIEW.AWAITING_RECEIPT);
       OrderLines.checkPaymentStatusInPOL(ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT);
-      OrderLines.openPageCurrentEncumbrance('$0.00');
-      Funds.verifyDetailsInTransaction(
-        firstFiscalYear.code,
-        '$0.00',
-        `${firstOrderNumber}-1`,
-        'Encumbrance',
-        `${firstFund.name} (${firstFund.code})`,
-      );
-      Funds.checkStatusInTransactionDetails('Released');
+
+      cy.log('<----- STEP 2 ----->');
+      OrderLines.openPageCurrentEncumbrance(encumbranceValue);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: fiscalYear.code },
+          { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: encumbranceValue },
+          { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: orderLine.poLineNumber },
+          { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
+          { key: TRANSACTION_DETAIL_FIELDS.FROM, value: `${fund.name} (${fund.code})` },
+          { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: encumbranceValue },
+          { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: toNormalizedMoney(0, locale) },
+          { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: toNormalizedMoney(0, locale) },
+          { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
+        ],
+      });
+      Funds.checkStatusInTransactionDetails(ENCUMBRANCE_STATUSES.UNRELEASED);
     },
   );
 });
+
+function getPreconditionSteps() {
+  const createFiscalYearAndLedger = (flow) => {
+    FiscalYears.createViaApi({ ...FiscalYears.defaultUiFiscalYear })
+      .then((fiscalYearResponse) => {
+        flow.set(R.FISCAL_YEAR, fiscalYearResponse);
+
+        return Ledgers.createViaApi({
+          ...Ledgers.defaultUiLedger,
+          fiscalYearOneId: fiscalYearResponse.id,
+        });
+      })
+      .then((ledgerResponse) => {
+        flow.set(R.LEDGER, ledgerResponse);
+      });
+  };
+
+  const createFundAndBudget = (flow) => {
+    Funds.createViaApi({ ...Funds.defaultUiFund, ledgerId: flow.get(R.LEDGER).id })
+      .then((fundResponse) => {
+        flow.set(R.FUND, fundResponse);
+
+        return Budgets.createViaApi({
+          ...Budgets.getDefaultBudget(),
+          allocated: 100,
+          fiscalYearId: flow.get(R.FISCAL_YEAR).id,
+          fundId: fundResponse.fund.id,
+        });
+      })
+      .then((budgetResponse) => {
+        flow.set(R.BUDGET, budgetResponse);
+      });
+  };
+
+  const fetchReferenceData = (flow) => {
+    cy.getLocations({ limit: 1 }).then((res) => flow.set(R.LOCATION, res));
+    cy.getDefaultMaterialType().then((mt) => flow.set(R.MATERIAL_TYPE, mt));
+    cy.getAcquisitionMethodsApi().then(({ body }) => flow.set(R.ACQ_METHOD, body.acquisitionMethods[0]));
+  };
+
+  const createOrganization = (flow) => {
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+
+    Organizations.createOrganizationViaApi(organization).then((orgId) => {
+      flow.set(R.ORGANIZATION, { ...organization, id: orgId });
+    });
+  };
+
+  const createOrderAndLine = (flow) => {
+    const fund = flow.get(R.FUND).fund;
+    const location = flow.get(R.LOCATION);
+    const materialType = flow.get(R.MATERIAL_TYPE);
+    const acquisitionMethod = flow.get(R.ACQ_METHOD);
+    const organization = flow.get(R.ORGANIZATION);
+
+    Orders.createOrderViaApi({
+      id: uuid(),
+      vendor: organization.id,
+      orderType: ORDER_TYPES.ONE_TIME_API,
+      approved: true,
+      reEncumber: true,
+    })
+      .then((orderResponse) => {
+        flow.set(R.ORDER, orderResponse);
+
+        return OrderLines.createOrderLineViaApi({
+          ...BasicOrderLine.defaultOrderLine,
+          purchaseOrderId: orderResponse.id,
+          cost: {
+            listUnitPrice: 1,
+            currency: 'USD',
+            discountType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+            quantityPhysical: 1,
+            poLineEstimatedPrice: 1,
+          },
+          fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
+          locations: [{ locationId: location.id, quantity: 1, quantityPhysical: 1 }],
+          acquisitionMethod: acquisitionMethod.id,
+          physical: {
+            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
+            materialType: materialType.id,
+            materialSupplier: organization.id,
+            volumes: [],
+          },
+        });
+      })
+      .then((orderLineResponse) => {
+        flow.set(R.ORDER_LINE, orderLineResponse);
+      })
+      .then(() => {
+        Orders.updateOrderViaApi({
+          ...flow.get(R.ORDER),
+          workflowStatus: ORDER_STATUSES.OPEN,
+        });
+      });
+  };
+
+  const createAndProcessInvoice = (flow) => {
+    const organization = flow.get(R.ORGANIZATION);
+    const fiscalYear = flow.get(R.FISCAL_YEAR);
+    const orderLine = flow.get(R.ORDER_LINE);
+
+    Invoices.createInvoiceWithInvoiceLineViaApi({
+      vendorId: organization.id,
+      fiscalYearId: fiscalYear.id,
+      poLineId: orderLine.id,
+      fundDistributions: orderLine.fundDistribution,
+      accountingCode: organization.erpCode,
+      releaseEncumbrance: true,
+      subTotal: 1,
+    }).then((invoice) => {
+      flow.set(R.INVOICE, invoice);
+
+      return Invoices.changeInvoiceStatusViaApi({
+        invoice,
+        status: INVOICE_STATUSES.PAID,
+      });
+    });
+  };
+
+  const cancelOrderAndInvoice = (flow) => {
+    const order = flow.get(R.ORDER);
+    const invoice = flow.get(R.INVOICE);
+
+    Orders.updateOrderViaApi({
+      ...order,
+      workflowStatus: ORDER_STATUSES.CLOSED,
+      closeReason: {
+        reason: ORDER_SYSTEM_CLOSING_REASONS.CANCELLED,
+        note: 'Test',
+      },
+    });
+
+    Invoices.changeInvoiceStatusViaApi({
+      invoice,
+      status: INVOICE_STATUSES.CANCELLED,
+    });
+  };
+
+  const createAndLoginUser = (flow) => {
+    cy.createTempUser([
+      permissions.uiOrdersView.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,
+    ]).then((userProperties) => {
+      flow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
+
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
+  };
+
+  const refreshContext = (flow) => {
+    const order = flow.get(R.ORDER);
+    const invoice = flow.get(R.INVOICE);
+
+    Orders.getOrderByIdViaApi(order.id).then((orderResponse) => flow.set(R.ORDER, orderResponse));
+    Invoices.getInvoiceByIdViaApi(invoice.id).then((invoiceResponse) => flow.set(R.INVOICE, invoiceResponse));
+  };
+
+  return {
+    cancelOrderAndInvoice,
+    createAndLoginUser,
+    createAndProcessInvoice,
+    createFiscalYearAndLedger,
+    createFundAndBudget,
+    createOrderAndLine,
+    createOrganization,
+    fetchReferenceData,
+    refreshContext,
+  };
+}

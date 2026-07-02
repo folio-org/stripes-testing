@@ -69,13 +69,12 @@ const invoiceLinesAccordionId = 'invoiceLines';
 const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
-const searchForm = SearchField({ id: 'input-record-search' });
+const searchForm = SearchField({ id: searchInputId });
 const invoiceLineDetailsPane = PaneHeader({
   id: 'paneHeaderpane-invoiceLineDetails',
 });
 const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
-const searhInputId = 'input-record-search';
 const invoiceDateField = TextField('Invoice date*');
 const vendorInvoiceNumberField = TextField('Vendor invoice number*');
 const batchGroupSelection = Selection('Batch group*');
@@ -158,6 +157,14 @@ const getDefaultInvoiceLine = ({
 export default {
   getDefaultInvoice,
   getDefaultInvoiceLine,
+  getInvoiceByIdViaApi(id) {
+    return cy
+      .okapiRequest({
+        path: `invoice/invoices/${id}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
   getInvoiceViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -377,7 +384,7 @@ export default {
     ]);
     cy.do([
       polLookUpButton.click(),
-      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      selectOrderLinesModal.find(SearchField({ id: searchInputId })).fillIn(`${orderNumber}*`),
       searchButton.click(),
     ]);
     FinanceHelper.selectFromResultsList();
@@ -771,7 +778,7 @@ export default {
       Button('POL look-up').click(),
       Modal('Select order lines')
         .find(SearchField({ id: searchInputId }))
-        .fillIn(orderNumber),
+        .fillIn(`${orderNumber}*`),
       searchButton.click(),
     ]);
     FinanceHelper.selectFromResultsList();
@@ -789,7 +796,7 @@ export default {
     cy.do([
       Modal('Select order lines')
         .find(SearchField({ id: searchInputId }))
-        .fillIn(orderNumber),
+        .fillIn(`${orderNumber}*`),
       Modal('Select order lines').find(searchButton).click(),
     ]);
     cy.wait(4000);

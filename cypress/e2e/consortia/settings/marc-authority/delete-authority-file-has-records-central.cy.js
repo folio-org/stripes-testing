@@ -63,7 +63,9 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
+            cy.wait(70_000); // source file should be processed by scheduled job before assigning
 
+            cy.getAdminToken(false);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
               testData.startsWith,
@@ -71,7 +73,6 @@ describe('MARC', () => {
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
 
-              cy.getAdminToken();
               cy.createTempUser(permsCentral).then((userProps) => {
                 user = userProps;
                 cy.assignAffiliationToUser(Affiliations.College, user.userId);

@@ -1112,17 +1112,19 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false, timeout = 72_000 } = {}) {
+  shareRole(roleName, { notShared = false, verifyModal = false, timeout = 72_000 } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    recurse(
-      () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
-      (count) => count === 0,
-      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
-    );
-    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
-    this.checkRoleCentrallyManaged(roleName, true);
+    if (!notShared) {
+      recurse(
+        () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
+        (count) => count === 0,
+        { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+      );
+      cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+      this.checkRoleCentrallyManaged(roleName, true);
+    }
   },
 
   verifyConfirmShareModal(roleName) {
