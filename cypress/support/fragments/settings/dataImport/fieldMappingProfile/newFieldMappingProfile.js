@@ -47,6 +47,7 @@ const locationAccordion = Accordion('Location');
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const electronicResourceDetailsAccordion = Accordion({ id: 'e-resources-details' });
 const eResourcesDetailsAccordion = Accordion('E-resources details');
+const donorInformationAccordion = Accordion('Donor information');
 const nameField = TextField({ name: 'profile.name' });
 const searchField = TextField({ id: 'input-record-search' });
 const permanentLocationField = TextField('Permanent');
@@ -138,6 +139,12 @@ const defaultMappingProfile = {
   loan: permanentLoanType,
   statusField: status,
   fillProfile: '',
+};
+
+const getDonorField = (subfieldIndex) => {
+  const donorInputName = `profile.mappingDetails.mappingFields[44].subfields.${subfieldIndex}.fields.0.value`;
+
+  return TextField({ name: donorInputName });
 };
 
 const save = () => {
@@ -235,34 +242,40 @@ const addLocation = (profile) => {
   }
 };
 
+const addDonorWithExistingStatus = (value, index) => {
+  cy.do(addDonorButton.click());
+  cy.expect(Button('Donor look-up').exists());
+  cy.do(
+    Button({
+      id: `profile.mappingDetails.mappingFields[44].subfields.${index}.fields.0.value-plugin`,
+    }).click(),
+  );
+  cy.expect(addDonorsModal.exists());
+  cy.do(addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(value));
+  cy.wait(1000);
+  cy.do(addDonorsModal.find(searchButton).click());
+  cy.expect(addDonorsModal.find(HTML(including('1 record found'))).exists());
+  cy.do(MultiColumnListCell(value).click({ row: 0, columnIndex: 0 }));
+};
+
+const addDonorWithNewStatus = (value, index) => {
+  cy.do([
+    addDonorButton.click(),
+    TextField({
+      name: `profile.mappingDetails.mappingFields[44].subfields.${index}.fields.0.value`,
+    }).fillIn(value),
+  ]);
+};
+
 const addDonor = (profile) => {
   if (profile.donor) {
     for (let i = 0; i < profile.donor.length; i++) {
+      const donorFieldIndex = profile.donor[i].index ?? i;
+
       if (profile.donor[i].existingStatus === true) {
-        cy.do(addDonorButton.click());
-        cy.expect(Button('Donor look-up').exists());
-        cy.do(
-          Button({
-            id: `profile.mappingDetails.mappingFields[44].subfields.${i}.fields.0.value-plugin`,
-          }).click(),
-        );
-        cy.expect(addDonorsModal.exists());
-        cy.do(
-          addDonorsModal
-            .find(TextField({ id: 'input-record-search' }))
-            .fillIn(profile.donor[i].value),
-        );
-        cy.wait(1000);
-        cy.do(addDonorsModal.find(searchButton).click());
-        cy.expect(addDonorsModal.find(HTML(including('1 record found'))).exists());
-        cy.do(MultiColumnListCell(profile.donor[i].value).click({ row: 0, columnIndex: 0 }));
+        addDonorWithExistingStatus(profile.donor[i].value, donorFieldIndex);
       } else {
-        cy.do([
-          addDonorButton.click(),
-          TextField({
-            name: `profile.mappingDetails.mappingFields[44].subfields.${i}.fields.0.value`,
-          }).fillIn(profile.donor[i].value),
-        ]);
+        addDonorWithNewStatus(profile.donor[i].value, donorFieldIndex);
       }
     }
   }
@@ -1848,5 +1861,34 @@ export default {
     cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
       cy.wrap($checkbox).should('not.be.disabled');
     });
+  },
+
+  verifyDonorInformationAccordionVisibility() {
+    cy.expect([
+      donorInformationAccordion.exists(),
+      donorInformationAccordion.has({ open: true }),
+      addDonorButton.exists(),
+      addDonorButton.has({ disabled: false }),
+    ]);
+  },
+
+  changeDonorInformationField: (subfieldIndex, value) => {
+    const donorField = getDonorField(subfieldIndex);
+
+    cy.do(donorField.fillIn(value));
+  },
+
+  verifyDonorInformationFieldError: (subfieldIndex, shouldBeFocused) => {
+    const donorField = getDonorField(subfieldIndex);
+
+    cy.expect(
+      donorField.has({
+        error: 'Non-MARC value must use quotation marks',
+      }),
+    );
+
+    if (shouldBeFocused) {
+      cy.expect(donorField.has({ focused: true }));
+    }
   },
 };
