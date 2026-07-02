@@ -1,4 +1,4 @@
-import Affiliations from '../../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import CapabilitySets from '../../../../../support/dictionary/capabilitySets';
 import QueryModal, {
   QUERY_OPERATIONS,
@@ -12,7 +12,11 @@ import getRandomPostfix, {
   getRandomLetters,
   randomNDigitNumber,
 } from '../../../../../support/utils/stringTools';
-import { AUTHORITY_QUERY_FIELDS } from '../../../../../support/constants';
+import {
+  AUTHORITY_QUERY_FIELDS_ECS,
+  AUTHORITY_LISTS_COLUMNS_ECS,
+} from '../../../../../support/constants';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
@@ -21,16 +25,48 @@ describe('Lists', () => {
         const randomPostfix = getRandomPostfix();
         const testData = {
           recordType: 'Authority',
-          listName: `AT_C1312669_List_${randomPostfix}`,
+          listName: `AT_C1348277_List_${randomPostfix}`,
           // Common prefix for starts-with query — both records share it
-          headingQueryPrefix: `AT_C1312669_MarcAuthority_${randomPostfix}`,
-          headingShared: `AT_C1312669_MarcAuthority_${randomPostfix}_1_Shared`,
-          headingLocal: `AT_C1312669_MarcAuthority_${randomPostfix}_2_Local`,
+          headingQueryPrefix: `AT_C1348277_MarcAuthority_${randomPostfix}`,
+          headingShared: `AT_C1348277_MarcAuthority_${randomPostfix}_1_Shared`,
+          headingLocalCollege: `AT_C1348277_MarcAuthority_${randomPostfix}_2_Local`,
+          headingLocalUniversity: `AT_C1348277_MarcAuthority_${randomPostfix}_3_Local`,
         };
+
+        const defaultCheckedColumns = [
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_HEADING,
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_HEADING_TYPE,
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_NATURAL_ID,
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_UUID,
+          AUTHORITY_LISTS_COLUMNS_ECS.SOURCE_FILE_NAME,
+          AUTHORITY_LISTS_COLUMNS_ECS.MARC_AUTHORITY_EXTERNAL_HRID,
+          AUTHORITY_LISTS_COLUMNS_ECS.MARC_AUTHORITY_STATE,
+        ];
+
+        const columnsToSelect = [
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_AFFILIATION_NAME,
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_SHARED,
+          AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_TENANT_ID,
+        ];
+
+        const resultsData = [
+          {
+            heading: testData.headingShared,
+            affiliationName: tenantNames.central,
+            shared: 'Shared',
+            tenantId: Affiliations.Consortia,
+          },
+          {
+            heading: testData.headingLocalCollege,
+            affiliationName: tenantNames.college,
+            shared: 'Local',
+            tenantId: Affiliations.College,
+          },
+        ];
 
         const authData = {
           prefix: getRandomLetters(10),
-          startWithNumber: `1312669${randomNDigitNumber(6)}`,
+          startWithNumber: `1348277${randomNDigitNumber(6)}`,
         };
 
         const capabSetsToAssign = [
@@ -40,16 +76,19 @@ describe('Lists', () => {
 
         let userData = {};
         let authorityIdShared;
-        let authorityIdLocal;
+        let authorityIdLocalCollege;
+        let authorityIdLocalUniversity;
 
         before('Create test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
 
           // Cleanup from previous runs
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1312669_');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C1348277_');
           cy.setTenant(Affiliations.College);
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1312669_');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C1348277_');
+          cy.setTenant(Affiliations.University);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C1348277_');
 
           // Create user in College — primary affiliation = College, logs into College automatically
           cy.setTenant(Affiliations.College);
@@ -57,12 +96,15 @@ describe('Lists', () => {
             .then((userProperties) => {
               userData = userProperties;
 
-              // Assign Central capabilities (Central affiliation is automatic)
-              cy.resetTenant();
+              // Assign College capabilities
               cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
 
-              // Assign College capabilities
-              cy.setTenant(Affiliations.College);
+              // Affiliate user to University, assign capabilitiwes in Central, University
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, userData.userId);
+              cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
+
+              cy.setTenant(Affiliations.University);
               cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
             })
             .then(() => {
@@ -75,14 +117,37 @@ describe('Lists', () => {
               });
             })
             .then(() => {
-              // Create Local authority record in College (member) tenant
+              // Create Local authority record in College (member 1) tenant
               cy.setTenant(Affiliations.College);
               MarcAuthorities.createMarcAuthorityViaAPI(
                 authData.prefix,
-                Number(authData.startWithNumber) + 1,
-                [{ tag: '100', content: `$a ${testData.headingLocal}`, indicators: ['\\', '\\'] }],
+                String(Number(authData.startWithNumber) + 1),
+                [
+                  {
+                    tag: '100',
+                    content: `$a ${testData.headingLocalCollege}`,
+                    indicators: ['\\', '\\'],
+                  },
+                ],
               ).then((id) => {
-                authorityIdLocal = id;
+                authorityIdLocalCollege = id;
+              });
+            })
+            .then(() => {
+              // Create Local authority record in University (member 2) tenant
+              cy.setTenant(Affiliations.University);
+              MarcAuthorities.createMarcAuthorityViaAPI(
+                authData.prefix,
+                String(Number(authData.startWithNumber) + 2),
+                [
+                  {
+                    tag: '100',
+                    content: `$a ${testData.headingLocalUniversity}`,
+                    indicators: ['\\', '\\'],
+                  },
+                ],
+              ).then((id) => {
+                authorityIdLocalUniversity = id;
               });
             });
         });
@@ -92,13 +157,15 @@ describe('Lists', () => {
           cy.getAdminToken();
           MarcAuthority.deleteViaAPI(authorityIdShared, true);
           cy.setTenant(Affiliations.College);
-          MarcAuthority.deleteViaAPI(authorityIdLocal, true);
+          MarcAuthority.deleteViaAPI(authorityIdLocalCollege, true);
           Users.deleteViaApi(userData.userId);
+          cy.setTenant(Affiliations.University);
+          MarcAuthority.deleteViaAPI(authorityIdLocalUniversity, true);
         });
 
         it(
-          'C1312669 Verify that only Local MARC authority records are found by query from Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C1312669'] },
+          'C1348277 Verify that Shared and Local MARC authority records are found by query from Member tenant (consortia) (spitfire)',
+          { tags: ['criticalPathECS', 'spitfire', 'C1348277'] },
           () => {
             // Login to College tenant (user's primary affiliation)
             cy.setTenant(Affiliations.College);
@@ -106,6 +173,7 @@ describe('Lists', () => {
               path: TopMenu.listsPath,
               waiter: Lists.waitLoading,
             });
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
             // Step 1: Create new list, select Authority record type, open Build query
             Lists.openNewListPane();
@@ -114,22 +182,80 @@ describe('Lists', () => {
             Lists.buildQuery();
             QueryModal.verify();
 
-            // Step 2: Heading starts with common prefix → only Local record found (Shared is not
-            // visible from Member tenant)
-            QueryModal.selectField(AUTHORITY_QUERY_FIELDS.AUTHORITY_HEADING);
+            // Step 2: Check available queriable fields in "Field" dropdown
+            QueryModal.verifyAllAvailableFieldOptions(Object.values(AUTHORITY_QUERY_FIELDS_ECS));
+
+            // Step 3: Heading starts with common prefix → shared and local from member 1 found
+            QueryModal.selectField(AUTHORITY_QUERY_FIELDS_ECS.AUTHORITY_HEADING);
             QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
             QueryModal.fillInValueTextfield(testData.headingQueryPrefix);
             QueryModal.runQueryDisabled();
             QueryModal.testQuery();
             QueryModal.runQueryDisabled(false);
-            QueryModal.verifyResultFound(testData.headingLocal);
+            QueryModal.verifyResultFound(testData.headingShared);
+            QueryModal.verifyResultFound(testData.headingLocalCollege);
+            QueryModal.verifyResultFound(testData.headingLocalUniversity, { isFound: false });
+            QueryModal.verifyNumberOfRowsInPreviewTable(2);
+
+            // Step 4: Check available checkboxes in "Show columns" dropdown and their state
+            QueryModal.clickShowColumnsButton();
+            QueryModal.verifyShowColumnsMenuDisplayed();
+            Object.values(AUTHORITY_LISTS_COLUMNS_ECS).forEach((column) => {
+              const isChecked = defaultCheckedColumns.includes(column);
+              QueryModal.verifyCheckboxInShowColumnsChecked(column, isChecked);
+            });
+
+            // Step 5: check necessary columns
+            columnsToSelect.forEach((column) => {
+              QueryModal.selectCheckboxInShowColumns(column);
+              QueryModal.verifyCheckboxInShowColumnsChecked(column);
+            });
+            QueryModal.verifyCheckedCheckboxesPresentInTheTable();
+
+            // Step 6: Check results table
+            resultsData.forEach((record) => {
+              QueryModal.verifyColumnValueForRow(
+                record.heading,
+                AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_AFFILIATION_NAME,
+                record.affiliationName,
+              );
+              QueryModal.verifyColumnValueForRow(
+                record.heading,
+                AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_SHARED,
+                record.shared,
+              );
+              QueryModal.verifyColumnValueForRow(
+                record.heading,
+                AUTHORITY_LISTS_COLUMNS_ECS.AUTHORITY_TENANT_ID,
+                record.tenantId,
+              );
+            });
+
+            // Step 7: Heading equals Shared record heading → record found
+            QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+            QueryModal.fillInValueTextfield(testData.headingShared);
+            QueryModal.runQueryDisabled();
+            QueryModal.testQuery();
+            QueryModal.runQueryDisabled(false);
+            QueryModal.verifyResultFound(testData.headingLocalCollege, { isFound: false });
+            QueryModal.verifyResultFound(testData.headingLocalUniversity, { isFound: false });
+            QueryModal.verifyResultFound(testData.headingShared);
+            QueryModal.verifyNumberOfRowsInPreviewTable(1);
+
+            // Step 8: Heading equals Local member 1 record heading → record found
+            QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+            QueryModal.fillInValueTextfield(testData.headingLocalCollege);
+            QueryModal.runQueryDisabled();
+            QueryModal.testQuery();
+            QueryModal.runQueryDisabled(false);
+            QueryModal.verifyResultFound(testData.headingLocalCollege);
+            QueryModal.verifyResultFound(testData.headingLocalUniversity, { isFound: false });
             QueryModal.verifyResultFound(testData.headingShared, { isFound: false });
             QueryModal.verifyNumberOfRowsInPreviewTable(1);
 
-            // Step 3: Heading equals Shared record heading → no records found (Shared not visible
-            // from Member tenant)
+            // Step 9: Heading equals Local member 2 record heading → no records found
             QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-            QueryModal.fillInValueTextfield(testData.headingShared);
+            QueryModal.fillInValueTextfield(testData.headingLocalUniversity);
             QueryModal.runQueryDisabled();
             QueryModal.testQuery();
             QueryModal.runQueryDisabled(false);

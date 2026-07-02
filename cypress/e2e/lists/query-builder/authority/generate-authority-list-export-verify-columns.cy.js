@@ -13,39 +13,13 @@ import {
   DEFAULT_FOLIO_AUTHORITY_FILES,
   MARC_AUTHORITY_SEARCH_OPTIONS,
   AUTHORITY_HEADING_TYPES,
+  AUTHORITY_LISTS_COLUMNS,
 } from '../../../../support/constants';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import { including } from '../../../../../interactors';
 import DateTools from '../../../../support/utils/dateTools';
 
-const COLUMNS = {
-  AUTHORITY_CREATED_DATE: 'Authority — Created date',
-  AUTHORITY_HEADING: 'Authority — Heading',
-  AUTHORITY_HEADING_TYPE: 'Authority — Heading type',
-  AUTHORITY_IDENTIFIERS: 'Authority — Identifiers',
-  AUTHORITY_NATURAL_ID: 'Authority — Natural ID',
-  AUTHORITY_NOTES: 'Authority — Notes',
-  AUTHORITY_SEE_ALSO_FROM_REFERENCES: 'Authority — See also from references',
-  AUTHORITY_SEE_FROM_REFERENCES: 'Authority — See from references',
-  AUTHORITY_SOURCE: 'Authority — Source',
-  AUTHORITY_SUBJECT_HEADING_CODE: 'Authority — Subject heading code',
-  AUTHORITY_UPDATED_DATE: 'Authority — Updated date',
-  AUTHORITY_UUID: 'Authority — UUID',
-  SOURCE_FILE_NAME: 'Source file — Name',
-  CREATED_BY_USER_EMAIL: 'Created by user — Email',
-  CREATED_BY_USER_LAST_NAME_FIRST_NAME: 'Created by user — Last name, first name',
-  CREATED_BY_USER_USERNAME: 'Created by user — Username',
-  UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
-  UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
-  UPDATED_BY_USER_USERNAME: 'Updated by user — Username',
-  MARC_AUTHORITY_EXTERNAL_HRID: 'MARC Authority — External HRID',
-  MARC_AUTHORITY_GENERATION: 'MARC Authority — Generation',
-  MARC_AUTHORITY_LEADER_RECORD_STATUS: 'MARC Authority — Leader record status',
-  MARC_AUTHORITY_MARC_JSONB: 'MARC Authority — MARC jsonb',
-  MARC_AUTHORITY_MATCHED_UUID: 'MARC Authority — Matched UUID',
-  MARC_AUTHORITY_ORDER: 'MARC Authority — Order',
-  MARC_AUTHORITY_STATE: 'MARC Authority — State',
-};
+const COLUMNS = AUTHORITY_LISTS_COLUMNS;
 
 describe('Lists', () => {
   describe('Query Builder', () => {

@@ -78,7 +78,7 @@ describe('Inventory', () => {
             BrowseContributors.getContributorNameTypes({ searchParams: { limit: 100 } }).then(
               (contributorNameTypes) => {
                 BrowseContributors.getContributorTypes({
-                  searchParams: { limit: 200, query: 'source<>local' },
+                  searchParams: { limit: 500, query: 'source<>local' },
                 }).then((contributorTypes) => {
                   // Instance with "Corporate name" contributor name type to check non-exact match
                   InventoryInstances.createFolioInstanceViaApi({
@@ -167,7 +167,7 @@ describe('Inventory', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
+        if (user?.userId) Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceByTitleViaApi('AT_C402366');
         cy.setTenant(Affiliations.College);
         InventoryInstances.deleteInstanceByTitleViaApi('AT_C402366');

@@ -63,6 +63,7 @@ describe('MARC', () => {
             authorityFileId = sourceId;
             cy.wait(70_000); // source file should be processed by scheduled job before assigning
             // Create a Shared MARC authority record assigned to the file in Central tenant
+            cy.getAdminToken(false);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
               testData.startsWith,
@@ -70,7 +71,6 @@ describe('MARC', () => {
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
 
-              cy.getAdminToken();
               cy.createTempUser(perms).then((userProps) => {
                 user = userProps;
                 cy.assignAffiliationToUser(Affiliations.College, user.userId);
@@ -104,7 +104,6 @@ describe('MARC', () => {
             cy.waitForAuthRefresh(() => {
               cy.login(user.username, user.password);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              cy.reload();
             }, 20_000);
             // Step 2: Switch to Member tenant and check the source file
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
