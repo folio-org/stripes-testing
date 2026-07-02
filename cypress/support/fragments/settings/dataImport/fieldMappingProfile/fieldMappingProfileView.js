@@ -72,6 +72,7 @@ const orderDetailsViews = {
   // order line info sub sections
   itemDetails: detailsSection.find(Section({ id: 'view-item-details' })),
   poLineDetails: detailsSection.find(Section({ id: 'view-po-line-details' })),
+  donorDetails: detailsSection.find(Section({ id: 'view-order-donors' })),
   vendorDetails: detailsSection.find(Section({ id: 'view-vendor' })),
   costDetails: detailsSection.find(Section({ id: 'view-cost-details' })),
   fundDistributionDetails: detailsSection.find(Section({ id: 'view-fund-distribution' })),
@@ -373,6 +374,14 @@ export default {
           .find(associatedList)
           .find(MultiColumnListHeader({ content: column }))
           .absent(),
+      );
+    });
+  },
+
+  verifyDonorsInformationDisplayed: (donors) => {
+    donors.forEach((donor) => {
+      cy.expect(
+        orderDetailsViews.donorDetails.find(MultiColumnListCell({ content: donor })).exists(),
       );
     });
   },
