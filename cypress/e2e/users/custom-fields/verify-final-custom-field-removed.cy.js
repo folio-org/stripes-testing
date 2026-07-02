@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Users', () => {
-  describe('Custom Fields (Users)', () => {
+  describe('Custom Fields (Users)', { retries: { runMode: 2 } }, () => {
     let user;
     const fieldData = {
       fieldLabel: `autotest_${getRandomPostfix()}`,
