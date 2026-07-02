@@ -84,6 +84,11 @@ export default {
     resource: 'Fqm EntityTypes Custom Item',
     action: CAPABILITY_ACTIONS.DELETE,
   },
+  acquisitionUnitsMembershipsItemView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Acquisitions-Units Memberships Item',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {

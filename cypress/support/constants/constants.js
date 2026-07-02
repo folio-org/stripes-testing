@@ -358,6 +358,7 @@ export const AUTHORITY_QUERY_FIELDS = {
   AUTHORITY_NATURAL_ID: 'Authority — Natural ID',
   AUTHORITY_NOTES_NOTE: 'Authority — Notes — Note',
   AUTHORITY_NOTES_NOTE_TYPE: 'Authority — Notes — Note type',
+  AUTHORITY_NUMBER_LINKED_RECORDS: 'Authority — Number of linked bibliographic records',
   AUTHORITY_SEE_ALSO_FROM_REFERENCE_RELATIONSHIP_TYPE:
     'Authority — See also from reference — Relationship type',
   AUTHORITY_SEE_ALSO_FROM_REFERENCE_TRACING: 'Authority — See also from reference — Tracing',
@@ -382,6 +383,49 @@ export const AUTHORITY_QUERY_FIELDS = {
   UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
   UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
   UPDATED_BY_USER_USERNAME: 'Updated by user — Username',
+};
+
+export const AUTHORITY_QUERY_FIELDS_ECS = {
+  ...AUTHORITY_QUERY_FIELDS,
+  AUTHORITY_AFFILIATION_NAME: 'Authority — Affiliation name',
+  AUTHORITY_SHARED: 'Authority — Shared',
+};
+
+export const AUTHORITY_LISTS_COLUMNS = {
+  AUTHORITY_CREATED_DATE: 'Authority — Created date',
+  AUTHORITY_HEADING: 'Authority — Heading',
+  AUTHORITY_HEADING_TYPE: 'Authority — Heading type',
+  AUTHORITY_IDENTIFIERS: 'Authority — Identifiers',
+  AUTHORITY_NATURAL_ID: 'Authority — Natural ID',
+  AUTHORITY_NOTES: 'Authority — Notes',
+  AUTHORITY_NUMBER_LINKED_RECORDS: 'Authority — Number of linked bibliographic records',
+  AUTHORITY_SEE_ALSO_FROM_REFERENCES: 'Authority — See also from references',
+  AUTHORITY_SEE_FROM_REFERENCES: 'Authority — See from references',
+  AUTHORITY_SOURCE: 'Authority — Source',
+  AUTHORITY_SUBJECT_HEADING_CODE: 'Authority — Subject heading code',
+  AUTHORITY_UPDATED_DATE: 'Authority — Updated date',
+  AUTHORITY_UUID: 'Authority — UUID',
+  SOURCE_FILE_NAME: 'Source file — Name',
+  CREATED_BY_USER_EMAIL: 'Created by user — Email',
+  CREATED_BY_USER_LAST_NAME_FIRST_NAME: 'Created by user — Last name, first name',
+  CREATED_BY_USER_USERNAME: 'Created by user — Username',
+  UPDATED_BY_USER_EMAIL: 'Updated by user — Email',
+  UPDATED_BY_USER_LAST_NAME_FIRST_NAME: 'Updated by user — Last name, first name',
+  UPDATED_BY_USER_USERNAME: 'Updated by user — Username',
+  MARC_AUTHORITY_EXTERNAL_HRID: 'MARC Authority — External HRID',
+  MARC_AUTHORITY_GENERATION: 'MARC Authority — Generation',
+  MARC_AUTHORITY_LEADER_RECORD_STATUS: 'MARC Authority — Leader record status',
+  MARC_AUTHORITY_MARC_JSONB: 'MARC Authority — MARC jsonb',
+  MARC_AUTHORITY_MATCHED_UUID: 'MARC Authority — Matched UUID',
+  MARC_AUTHORITY_ORDER: 'MARC Authority — Order',
+  MARC_AUTHORITY_STATE: 'MARC Authority — State',
+};
+
+export const AUTHORITY_LISTS_COLUMNS_ECS = {
+  ...AUTHORITY_LISTS_COLUMNS,
+  AUTHORITY_AFFILIATION_NAME: 'Authority — Affiliation name',
+  AUTHORITY_SHARED: 'Authority — Shared',
+  AUTHORITY_TENANT_ID: 'Authority — Tenant ID',
 };
 
 export const AUTHORITY_HEADING_TYPES = {
@@ -1341,6 +1385,7 @@ export const INSTANCE_NOTE_TYPES = {
   LOCAL_NOTES: 'Local notes',
   WITH_NOTE: 'With note',
   SUMMARY: 'Summary',
+  ACCUMULATION_AND_FREQUENCY_OF_USE_NOTE: 'Accumulation and Frequency of Use note',
 };
 
 export const BULK_EDIT_ACTIONS = {
