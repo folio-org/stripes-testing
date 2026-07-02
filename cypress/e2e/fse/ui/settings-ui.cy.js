@@ -74,7 +74,7 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
     { tags: ['fse', 'ui', 'authorization-roles', 'sanity', 'FDOPS-5214'] },
     () => {
       // Navigate to the roles list
-      cy.visit(TopMenu.settingsAuthorizationRoles);
+      SettingsMenu.selectRoles();
       AuthorizationRoles.waitContentLoading();
 
       // Step 1: Find and open EBSCOSupport role
@@ -94,7 +94,7 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
       AuthorizationRoles.verifyCapabilitySetCheckboxChecked(acquisitionUnitsMembershipsManage);
 
       // Navigate back to the roles list and re-open the role to ensure fresh data is loaded
-      cy.visit(TopMenu.settingsAuthorizationRoles);
+      SettingsMenu.selectRoles();
       AuthorizationRoles.waitContentLoading();
       AuthorizationRoles.searchRole(ebscoSupportRoleName);
       AuthorizationRoles.clickOnRoleName(ebscoSupportRoleName);

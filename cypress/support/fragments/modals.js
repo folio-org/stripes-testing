@@ -31,7 +31,7 @@ export default {
     cy.wait(5000);
     cy.get('body').then(($body) => {
       if ($body.find('[class^=modal---]').length > 0) {
-        cy.get('[class^="modal---"]').type('{esc}');
+        cy.get('body').type('{esc}');
         cy.expect(Modal().absent());
       } else {
         cy.log("Modal didn't appear");
