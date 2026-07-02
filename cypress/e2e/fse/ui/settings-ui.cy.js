@@ -6,6 +6,7 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import Modals from '../../../support/fragments/modals';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
 
 describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -56,11 +57,15 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.settingsAuthorizationRoles,
-      waiter: AuthorizationRoles.waitContentLoading,
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
     // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
     Modals.closeModalWithEscapeIfAny();
   });
 
@@ -68,6 +73,10 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
     `FDOPS-5214 - verify EBSCOSupport role can be updated via UI for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'authorization-roles', 'sanity', 'FDOPS-5214'] },
     () => {
+      // Navigate to the roles list
+      cy.visit(TopMenu.settingsAuthorizationRoles);
+      AuthorizationRoles.waitContentLoading();
+
       // Step 1: Find and open EBSCOSupport role
       AuthorizationRoles.searchRole(ebscoSupportRoleName);
       AuthorizationRoles.clickOnRoleName(ebscoSupportRoleName);
