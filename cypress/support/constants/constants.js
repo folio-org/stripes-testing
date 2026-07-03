@@ -26,6 +26,7 @@ export const APPLICATION_NAMES = {
   COURSES: 'Courses',
   RECEIVING: 'Receiving',
   DEVELOPER: 'Developer',
+  LISTS: 'Lists',
 };
 
 export const REQUEST_METHOD = {

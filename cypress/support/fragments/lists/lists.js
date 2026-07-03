@@ -11,6 +11,7 @@ import {
   KeyValue,
   Link,
   ListRow,
+  MessageBanner,
   Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
@@ -559,8 +560,30 @@ const UI = {
     cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
+  verifyListSavedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(`List ${listName} saved.`);
+  },
+
+  verifyListExportGeneratedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(
+      `Export of ${listName} is being generated. This may take some time for larger lists.`,
+    );
+  },
+
+  verifyListExportedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(`List ${listName} was successfully exported to CSV.`);
+  },
+
   verifyCalloutMessage(message) {
     cy.expect(Callout(including(message)).exists());
+  },
+
+  verifyMultipleTenantsMessageBanner() {
+    cy.expect(
+      MessageBanner({
+        textContent: 'This list may contain records from multiple tenants.',
+      }).exists(),
+    );
   },
 
   closeListDetailsPane() {
@@ -994,9 +1017,7 @@ const QueryBuilder = {
 
   cancelQueryBuilder() {
     cy.wait(500);
-    cy.xpath(
-      './/*[contains(@class, "modal---")]//button[.="Cancel"]',
-    ).click();
+    cy.xpath('.//*[contains(@class, "modal---")]//button[.="Cancel"]').click();
     cy.wait(500);
   },
 
