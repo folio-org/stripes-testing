@@ -1000,6 +1000,7 @@ export default {
     .okapiRequest({
       path: 'organizations/organizations',
       searchParams,
+      isDefaultSearchParamsRequired: false,
     })
     .then((response) => {
       return response.body.organizations[0];

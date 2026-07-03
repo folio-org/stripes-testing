@@ -85,13 +85,10 @@ describe('Eureka', () => {
 
       before('Login', () => {
         cy.resetTenant();
-        cy.waitForAuthRefresh(() => {
-          cy.login(testUser.username, testUser.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-          Users.waitLoading();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
-        }, 20_000);
+        cy.login(testUser.username, testUser.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         Users.waitLoading();
       });
 
@@ -99,17 +96,17 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         centralRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
         Users.deleteViaApi(testUser.userId);
         Users.deleteViaApi(assignUser.userId);
         cy.setTenant(Affiliations.College);
         collegeRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
         cy.setTenant(Affiliations.University);
         universityRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
       });
 

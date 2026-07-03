@@ -98,6 +98,8 @@ describe('Inventory', () => {
             acquisitionMethodId,
           );
 
+          cy.resetTenant();
+          cy.getAdminToken(false);
           return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
             centralData.orderLine = orderLineResponse;
 
@@ -160,6 +162,9 @@ describe('Inventory', () => {
             testData.holdings.location.id,
           );
 
+          cy.resetTenant();
+          cy.getAdminToken(false);
+          cy.setTenant(Affiliations.College);
           return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
             memberData.orderLine = orderLineResponse;
 
@@ -172,6 +177,7 @@ describe('Inventory', () => {
       };
 
       before('Create test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         ConsortiumManager.enableCentralOrderingViaApi();
         // create instance on central tenant
@@ -192,7 +198,10 @@ describe('Inventory', () => {
             }).then((params) => {
               memberData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
+            Organizations.getOrganizationViaApi({
+              limit: 1,
+              query: 'status="Active" and isVendor=true',
+            }).then((organization) => {
               memberData.vendorId = organization.id;
             });
           })
@@ -236,7 +245,10 @@ describe('Inventory', () => {
             }).then((params) => {
               centralData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
+            Organizations.getOrganizationViaApi({
+              limit: 1,
+              query: 'status="Active" and isVendor=true',
+            }).then((organization) => {
               centralData.vendorId = organization.id;
             });
           })
@@ -286,6 +298,7 @@ describe('Inventory', () => {
       });
 
       after('Delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         cy.deleteHoldingRecordViaApi(testData.holdings.holdingId);

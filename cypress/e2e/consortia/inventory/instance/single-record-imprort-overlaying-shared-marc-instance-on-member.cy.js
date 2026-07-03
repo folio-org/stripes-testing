@@ -63,6 +63,7 @@ describe('Inventory', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          cy.setTenant(Affiliations.College);
         });
       });
 

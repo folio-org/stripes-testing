@@ -119,6 +119,7 @@ describe('MARC', () => {
               });
             })
             .then(() => {
+              cy.wait(3000);
               cy.resetTenant();
               cy.loginAsAdmin({
                 path: TopMenu.inventoryPath,
@@ -229,6 +230,9 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+
+            cy.wait(3000);
+            cy.getToken(users.userProperties.username, users.userProperties.password);
             BrowseContributors.waitForContributorToAppear(
               linkingTagAndValues.authorityHeading,
               true,

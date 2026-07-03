@@ -25,6 +25,26 @@ describe('Inventory', () => {
         jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       };
 
+      const subjectsFromImportedRecord = [
+        'AT_C584535 600a subject',
+        'AT_C584535 600f subject',
+        'AT_C584535 610 subject',
+        'AT_C584535 611 subject',
+        'AT_C584535 630 subject',
+        'AT_C584535 647 subject',
+        'AT_C584535 648 subject',
+        'AT_C584535 650 subject',
+        'AT_C584535 651 subject',
+        'AT_C584535 653 subject',
+        'AT_C584535 654 subject',
+        'AT_C584535 655 subject',
+        'AT_C584535 656 subject',
+        'AT_C584535 657 subject',
+        'AT_C584535 658 subject',
+        'AT_C584535 662 subject',
+        'AT_C584535 688 subject',
+      ];
+
       before('Create user, data', () => {
         cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -63,6 +83,9 @@ describe('Inventory', () => {
         'C584535 (CONSORTIA) Check "Subject type" facet on "Browse" page (consortia) (folijet)',
         { tags: ['criticalPathECS', 'folijet', 'C584535'] },
         () => {
+          subjectsFromImportedRecord.forEach((subject) => {
+            BrowseSubjects.waitForSubjectToAppear(subject);
+          });
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyBrowseOptions();

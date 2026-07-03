@@ -251,6 +251,7 @@ describe('Inventory', () => {
             locations[Affiliations.University][2].name,
           ];
 
+          cy.getToken(user.username, user.password);
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue, undefined, undefined, 2);
           // wait to make sure same call number is indexed for all items in 2 instances:
           cy.wait(5000);

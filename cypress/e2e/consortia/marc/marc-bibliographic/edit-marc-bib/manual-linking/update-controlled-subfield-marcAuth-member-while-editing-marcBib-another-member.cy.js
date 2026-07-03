@@ -144,6 +144,7 @@ describe('MARC', () => {
               })
               .then(() => {
                 cy.setTenant(Affiliations.College);
+                cy.wait(3000);
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
