@@ -212,7 +212,7 @@ describe('Data Export', () => {
             adminSourceRecord.username,
             unlockedJobProfileBaseName,
           );
-
+          cy.getUserToken(user.username, user.password);
           // Verify failed export with locked profile (0 exported, 1 failed - all invalid UUIDs, run by admin via API)
           DataExportResults.verifyFailedExportResultCells(
             exportedFileNameErrors,

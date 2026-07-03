@@ -148,6 +148,7 @@ describe('Data Export', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken(false);
       cy.withinTenant(Affiliations.College, () => {
         instances.forEach((instance) => {
           if (instance.holdingId) {
@@ -163,7 +164,7 @@ describe('Data Export', () => {
           InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
       });
-
+      cy.getAdminToken();
       const sharedInstances = instances.filter(
         (instance) => instance.affiliation === Affiliations.Consortia,
       );
@@ -201,6 +202,7 @@ describe('Data Export', () => {
             jobId,
             user.username,
           );
+          cy.getUserToken(user.username, user.password);
           DataExportLogs.clickButtonWithText(exportedFileName);
 
           const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
