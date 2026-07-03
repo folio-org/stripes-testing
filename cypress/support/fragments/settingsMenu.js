@@ -141,6 +141,10 @@ export default {
     cy.do(NavListItem('Orders').click());
   },
 
+  selectRoles() {
+    cy.do(NavListItem('Authorization roles').click());
+  },
+
   verifyConsortiumManagerOptionAbsent() {
     cy.expect(NavListItem('Acquisition units').exists());
     cy.expect(NavListItem('Consortium manager').absent());
