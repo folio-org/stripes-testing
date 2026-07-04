@@ -112,12 +112,12 @@ function parseArgs() {
 
       if (booleanFlags.includes(key)) {
         args[key] = true;
-      } else if (i + 1 < argv.length && !argv[i + 1].startsWith('--')) {
-        // Next argument should be the value
-        const value = argv[i + 1];
-        
-        // Parse numeric values for threads
-        if (key === 'threads') {
+       } else if (i + 1 < argv.length && !argv[i + 1].startsWith('--')) {
+         // Next argument should be the value
+         const value = argv[i + 1];
+
+         // Parse numeric values for threads
+         if (key === 'threads') {
           args[key] = parseInt(value, 10);
           if (isNaN(args[key]) || args[key] < 1) {
             throw new Error('--threads must be a positive integer');
@@ -181,10 +181,10 @@ async function main() {
 
     // If parallel execution requested, generate worker batches and exit
     if (threads > 1) {
-      console.log(`Generating ${threads} parallel worker batches...\n`);
-      const workerCommands = distributeTestsToWorkers(uniqTestPaths, threads);
-      
-      const workersData = {
+       console.log(`Generating ${threads} parallel worker batches...\n`);
+       const workerCommands = distributeTestsToWorkers(uniqTestPaths, threads);
+
+       const workersData = {
         workers: workerCommands,
         testCount: uniqTestPaths.length,
         workerCount: workerCommands.length,
