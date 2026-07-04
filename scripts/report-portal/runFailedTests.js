@@ -118,10 +118,10 @@ function parseArgs() {
 
          // Parse numeric values for threads
          if (key === 'threads') {
-          args[key] = parseInt(value, 10);
-          if (isNaN(args[key]) || args[key] < 1) {
-            throw new Error('--threads must be a positive integer');
-          }
+           args[key] = parseInt(value, 10);
+           if (Number.isNaN(args[key]) || args[key] < 1) {
+             throw new Error('--threads must be a positive integer');
+           }
         } else {
           args[key] = value;
         }
