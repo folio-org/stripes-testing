@@ -153,6 +153,7 @@ export const holdingsFieldValues = {
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
+  instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
@@ -165,6 +166,7 @@ export const instanceFieldValues = {
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
   statisticalCodeNames: 'Instance — Statistical code names',
+  instanceDateTypeName: 'Instance date type — Name',
   statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
@@ -524,6 +526,22 @@ export default {
         .find(Select(`input-value-${row}`))
         .has({ optionsText: expectedOptions }),
     ]);
+  },
+
+  verifyOptionsInValueSelectWhenUnsorted(expectedOption, row = 0) {
+    cy.then(() => {
+      cy.do(
+        RepeatableFieldItem({ index: row })
+          .find(Select(`input-value-${row}`))
+          .optionsText()
+          .then((options) => {
+            const sortedOptions = options.sort();
+            const sortedExpectedOptions = expectedOption.sort();
+
+            expect(sortedOptions).to.deep.equal(sortedExpectedOptions);
+          }),
+      );
+    });
   },
 
   pickDate(date, row = 0) {
