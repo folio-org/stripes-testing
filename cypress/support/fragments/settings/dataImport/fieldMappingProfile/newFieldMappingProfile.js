@@ -424,6 +424,7 @@ export default {
   addItemNotes,
   waitLoading: () => {
     cy.expect(mappingProfilesForm.exists());
+    cy.wait(2000);
   },
 
   fillInstanceMappingProfile: (profile) => {

@@ -16,6 +16,7 @@ import {
   NavList,
   NavListItem,
   Link,
+  PaneHeader,
 } from '../../../../interactors';
 import deleteModal from './tenant/modals/deleteModal';
 
@@ -196,5 +197,13 @@ export default {
 
   verifyTabsCountInSection: (sectionName, expectedCount) => {
     cy.expect(NavList({ title: sectionName }).has({ count: expectedCount }));
+  },
+
+  checkAppSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }).has({ focused: true }));
+  },
+
+  checkSettingsNavPaneFocused() {
+    cy.expect(PaneHeader({ id: 'paneHeadersettings-nav-pane' }).has({ focused: true }));
   },
 };

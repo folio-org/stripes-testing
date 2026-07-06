@@ -1,4 +1,4 @@
-import { Button, Checkbox, Heading } from '../../../../../interactors';
+import { Button, Checkbox, NavListItem, Pane } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const successCalloutMessage = 'Setting was successfully updated.';
@@ -7,7 +7,7 @@ const enableTagsCheckbox = Checkbox({ name: 'tags_enabled' });
 
 export default {
   waitLoading() {
-    cy.expect(Heading('General').exists());
+    cy.expect([Pane('Tags').exists(), NavListItem('General').exists()]);
   },
 
   checkEnableTagsNotAvailable() {
