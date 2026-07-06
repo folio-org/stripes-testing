@@ -153,6 +153,7 @@ export const holdingsFieldValues = {
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
+  instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
@@ -165,6 +166,7 @@ export const instanceFieldValues = {
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
+  instanceDateTypeName: 'Instance date type — Name',
   statisticalCodeNames: 'Instance — Statistical codes',
   statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
