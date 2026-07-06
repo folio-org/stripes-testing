@@ -13,6 +13,7 @@ import {
   TextField,
   including,
   matching,
+  Accordion,
 } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import Notifications from '../notifications';
@@ -20,6 +21,8 @@ import Notifications from '../notifications';
 const matchProfileForm = Form({ id: 'match-profiles-form' });
 const summarySection = matchProfileForm.find(Section({ id: 'summary' }));
 const detailsSection = matchProfileForm.find(Section({ id: 'match-profile-details' }));
+const matchCriterionSelect = Select('Match criterion');
+const matchCriteriaAccordion = Accordion({ id: 'match-criteria' });
 
 const closeButton = matchProfileForm.find(Button('Close'));
 const saveAndCloseButton = matchProfileForm.find(Button('Save as profile & Close'));
@@ -155,5 +158,15 @@ export default {
     options.forEach((option) => {
       cy.get(`#panel-existing-edit [data-id=${option}]`).should('exist');
     });
+  },
+
+  verifyMatchCriterionOnlyExactlyMatches() {
+    cy.wait(1000);
+    cy.expect([
+      matchCriterionSelect.absent(),
+      matchCriteriaAccordion
+        .find(HTML('Exactly matches', { className: including('headline-') }))
+        .exists(),
+    ]);
   },
 };
