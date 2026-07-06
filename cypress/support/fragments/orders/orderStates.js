@@ -1,9 +1,11 @@
 export default {
   orderSavedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully saved',
   orderOpenedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully opened',
+  orderDeletedSuccessfully: 'The purchase order (?:\\d+) was successfully deleted',
   orderClosedSuccessfully: 'Order was closed',
   orderLineCreatedSuccessfully: 'The purchase order line was successfully created',
   orderLineUpdatedSuccessfully: 'The purchase order line (?:\\d+\\-\\d+) was successfully updated',
+  orderLineDeletedSuccessfully: 'The purchase order line (?:\\d+\\-\\d+) was successfully deleted',
   orderLineCanceledSuccessfully:
     'The purchase order line (?:\\d+\\-\\d+) was successfully cancelled',
   orderInstanceConnectionUpdatedSuccessfully:
