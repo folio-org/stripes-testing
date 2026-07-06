@@ -28,7 +28,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -47,7 +46,6 @@ import SettingsDataImport, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -229,70 +227,80 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
-        collectionOfProfilesForCreate[0].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[0].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[0].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        collectionOfProfilesForCreate[1].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[1].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[1].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
-        collectionOfProfilesForCreate[2].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[2].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[2].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createItemMappingProfileViaApi(
-        collectionOfProfilesForCreate[3].mappingProfile,
-      )
-        .then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            collectionOfProfilesForCreate[3].actionProfile,
-            mappingProfileResponse.body.id,
-          ).then((actionProfileResponse) => {
-            collectionOfProfilesForCreate[3].actionProfile.id = actionProfileResponse.body.id;
+      cy.getStatisticalCodes({ limit: 11, query: 'source<>local' }).then((codes) => {
+        const code = codes.at(-1);
+
+        cy.getStatisticalCodeTypes({ limit: 200 }).then((codeTypes) => {
+          const codeType = codeTypes.find((type) => type.id === code.statisticalCodeTypeId);
+          collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode = `${codeType.name}: ${code.code} - ${code.name}`;
+          collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI = code.name;
+
+          NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
+            collectionOfProfilesForCreate[0].mappingProfile,
+          ).then((mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              collectionOfProfilesForCreate[0].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              collectionOfProfilesForCreate[0].actionProfile.id = actionProfileResponse.body.id;
+            });
           });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
-            jobProfileForCreate,
-            collectionOfProfilesForCreate[0].actionProfile.id,
-            collectionOfProfilesForCreate[1].actionProfile.id,
-            collectionOfProfilesForCreate[2].actionProfile.id,
-            collectionOfProfilesForCreate[3].actionProfile.id,
-          );
-        });
+          NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+            collectionOfProfilesForCreate[1].mappingProfile,
+          ).then((mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              collectionOfProfilesForCreate[1].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              collectionOfProfilesForCreate[1].actionProfile.id = actionProfileResponse.body.id;
+            });
+          });
+          NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
+            collectionOfProfilesForCreate[2].mappingProfile,
+          ).then((mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              collectionOfProfilesForCreate[2].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              collectionOfProfilesForCreate[2].actionProfile.id = actionProfileResponse.body.id;
+            });
+          });
+          NewFieldMappingProfile.createItemMappingProfileViaApi(
+            collectionOfProfilesForCreate[3].mappingProfile,
+          )
+            .then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(
+                collectionOfProfilesForCreate[3].actionProfile,
+                mappingProfileResponse.body.id,
+              ).then((actionProfileResponse) => {
+                collectionOfProfilesForCreate[3].actionProfile.id = actionProfileResponse.body.id;
+              });
+            })
+            .then(() => {
+              NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
+                jobProfileForCreate,
+                collectionOfProfilesForCreate[0].actionProfile.id,
+                collectionOfProfilesForCreate[1].actionProfile.id,
+                collectionOfProfilesForCreate[2].actionProfile.id,
+                collectionOfProfilesForCreate[3].actionProfile.id,
+              );
+            });
 
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportViewAddUpdateProfiles.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.settingsDataImportEnabled.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+            Permissions.dataExportViewAddUpdateProfiles.gui,
+          ]).then((userProperties) => {
+            user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+            cy.login(user.username, user.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          });
         });
       });
     });
@@ -361,163 +369,160 @@ describe('Data Import', () => {
         InventoryInstance.getAssignedHRID().then((hrid) => {
           instanceHrid = hrid;
         });
-        InstanceRecordView.verifyInstanceSource('MARC');
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.waitLoading();
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
-        InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.closeDetailView();
+        InventoryInstance.getId().then((instanceId) => {
+          InstanceRecordView.verifyInstanceSource('MARC');
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
+          InventoryInstance.openItemByBarcode('No barcode');
+          ItemRecordView.closeDetailView();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-        ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
-        cy.wait(10000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+          ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+          cy.wait(10000);
 
-        ExportJobProfiles.goToJobProfilesTab();
-        ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+          ExportJobProfiles.goToJobProfilesTab();
+          ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
-        // download .csv file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchByParameter('Subject', subject);
-        cy.intercept('/inventory/instances/*').as('getId');
-        cy.wait('@getId', getLongDelay()).then((req) => {
-          InstanceRecordView.verifyInstancePaneExists();
-          InventorySearchAndFilter.saveUUIDs();
-          // need to create a new file with instance UUID because tests are runing in multiple threads
-          const expectedUUID = InventorySearchAndFilter.getInstanceUUIDFromRequest(req);
+          // need to create a new file with instance UUID because tests are running in multiple threads
+          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, instanceId);
 
-          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
-        });
+          // download exported marc file
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          cy.getAdminToken().then(() => {
+            ExportFile.uploadFile(nameForCSVFile);
+            ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+            ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+          });
 
-        // download exported marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        cy.getAdminToken().then(() => {
-          ExportFile.uploadFile(nameForCSVFile);
-          ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-          ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
-        });
+          // create mapping profiles
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+          FieldMappingProfiles.createInstanceMappingProfile(
+            collectionOfMappingAndActionProfiles[0].mappingProfile,
+          );
 
-        // create mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
-        FieldMappingProfiles.createInstanceMappingProfile(
-          collectionOfMappingAndActionProfiles[0].mappingProfile,
-        );
+          FieldMappingProfiles.createHoldingsMappingProfile(
+            collectionOfMappingAndActionProfiles[1].mappingProfile,
+          );
 
-        FieldMappingProfiles.createHoldingsMappingProfile(
-          collectionOfMappingAndActionProfiles[1].mappingProfile,
-        );
+          FieldMappingProfiles.createItemMappingProfile(
+            collectionOfMappingAndActionProfiles[2].mappingProfile,
+          );
 
-        FieldMappingProfiles.createItemMappingProfile(
-          collectionOfMappingAndActionProfiles[2].mappingProfile,
-        );
+          // create action profiles
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+          collectionOfMappingAndActionProfiles.forEach((profile) => {
+            SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+            SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          });
 
-        // create action profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
-          SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-          SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-        });
+          // create match profiles
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+          collectionOfMatchProfiles.forEach((profile) => {
+            MatchProfiles.createMatchProfile(profile.matchProfile);
+            MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+            cy.wait(3000);
+          });
 
-        // create match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-        collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.createMatchProfile(profile.matchProfile);
-          MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
-          cy.wait(3000);
-        });
+          // create job profile
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+          JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
+          NewJobProfile.linkMatchAndActionProfiles(
+            collectionOfMatchProfiles[0].matchProfile.profileName,
+            collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          );
+          NewJobProfile.linkMatchAndActionProfiles(
+            collectionOfMatchProfiles[1].matchProfile.profileName,
+            collectionOfMappingAndActionProfiles[1].actionProfile.name,
+            2,
+          );
+          NewJobProfile.linkMatchAndActionProfiles(
+            collectionOfMatchProfiles[2].matchProfile.profileName,
+            collectionOfMappingAndActionProfiles[2].actionProfile.name,
+            4,
+          );
+          NewJobProfile.saveAndClose();
 
-        // create job profile
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-        JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-        NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[0].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[0].actionProfile.name,
-        );
-        NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[1].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[1].actionProfile.name,
-          2,
-        );
-        NewJobProfile.linkMatchAndActionProfiles(
-          collectionOfMatchProfiles[2].matchProfile.profileName,
-          collectionOfMappingAndActionProfiles[2].actionProfile.name,
-          4,
-        );
-        NewJobProfile.saveAndClose();
-
-        // upload the exported marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        DataImport.verifyUploadState();
-        DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
-        JobProfiles.search(jobProfileForUpdate.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameMarcFileForImportUpdate);
-        Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(nameMarcFileForImportUpdate);
-        FileDetails.checkItemsStatusesInResultList(0, [
-          RECORD_STATUSES.UPDATED,
-          RECORD_STATUSES.UPDATED,
-          RECORD_STATUSES.UPDATED,
-          RECORD_STATUSES.UPDATED,
-        ]);
-        [
-          columnNumbers.srs,
-          columnNumbers.instance,
-          columnNumbers.holdings,
-          columnNumbers.item,
-        ].forEach((column) => {
-          FileDetails.verifyColumnValuesInSummaryTable(column, ['0', '1', '0', '0']);
-        });
-        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
-          RECORD_STATUSES.DASH,
-          RECORD_STATUSES.DASH,
-          RECORD_STATUSES.DASH,
-          '0',
-        ]);
-        [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach((column) => {
-          FileDetails.verifyColumnValuesInSummaryTable(column, [
-            RECORD_STATUSES.DASH,
-            RECORD_STATUSES.DASH,
-            RECORD_STATUSES.DASH,
-            RECORD_STATUSES.DASH,
+          // upload the exported marc file
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
+          JobProfiles.search(jobProfileForUpdate.profileName);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(nameMarcFileForImportUpdate);
+          Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(nameMarcFileForImportUpdate);
+          FileDetails.checkItemsStatusesInResultList(0, [
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
           ]);
-        });
-        FileDetails.openJsonScreen(instanceTitle);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.verifyTabsPresented();
-        JsonScreenView.verifyContentInTab(instanceTitle);
-        JsonScreenView.openMarcSrsTab();
-        JsonScreenView.verifyContentInTab('"999"');
+          [
+            columnNumbers.srs,
+            columnNumbers.instance,
+            columnNumbers.holdings,
+            columnNumbers.item,
+          ].forEach((column) => {
+            FileDetails.verifyColumnValuesInSummaryTable(column, ['0', '1', '0', '0']);
+          });
+          FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            RECORD_STATUSES.DASH,
+            '0',
+          ]);
+          [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach(
+            (column) => {
+              FileDetails.verifyColumnValuesInSummaryTable(column, [
+                RECORD_STATUSES.DASH,
+                RECORD_STATUSES.DASH,
+                RECORD_STATUSES.DASH,
+                RECORD_STATUSES.DASH,
+              ]);
+            },
+          );
+          FileDetails.openJsonScreen(instanceTitle);
+          JsonScreenView.verifyJsonScreenIsOpened();
+          JsonScreenView.verifyTabsPresented();
+          JsonScreenView.verifyContentInTab(instanceTitle);
+          JsonScreenView.openMarcSrsTab();
+          JsonScreenView.verifyContentInTab('"999"');
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        Logs.openFileDetails(nameMarcFileForImportUpdate);
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        InstanceRecordView.verifyCatalogedDate(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi,
-        );
-        InstanceRecordView.verifyInstanceStatusTerm(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
-        );
-        InstanceRecordView.verifyStatisticalCode(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
-        );
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.waitLoading();
-        HoldingsRecordView.checkPermanentLocation(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
-        );
-        HoldingsRecordView.checkCallNumberType(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType,
-        );
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
-        InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.checkElectronicBookplateNote(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.noteUI,
-        );
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          Logs.openFileDetails(nameMarcFileForImportUpdate);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+          InstanceRecordView.verifyCatalogedDate(
+            collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi,
+          );
+          InstanceRecordView.verifyInstanceStatusTerm(
+            collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
+          );
+          InstanceRecordView.verifyStatisticalCode(
+            collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
+          );
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.checkPermanentLocation(
+            collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
+          );
+          HoldingsRecordView.checkCallNumberType(
+            collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType,
+          );
+          HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
+          InventoryInstance.openItemByBarcode('No barcode');
+          ItemRecordView.checkElectronicBookplateNote(
+            collectionOfMappingAndActionProfiles[2].mappingProfile.noteUI,
+          );
+        });
       },
     );
   });

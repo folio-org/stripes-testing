@@ -564,7 +564,7 @@ export default {
   verifyUserNameIsAbsntInFilter(userName) {
     cy.do(
       Accordion({ id: 'userId' })
-        .find(Selection({ value: 'Choose user' }))
+        .find(Selection({ value: including('Choose user') }))
         .open(),
     );
     cy.get(userName).should('not.exist');

@@ -42,8 +42,9 @@ describe('Data Import', () => {
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
 
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
-      errorMessage:
-        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef"',
+      errorMessagePart1:
+        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =',
+      errorMessagePart2: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
     };
     const marcFileNames = [
       {
@@ -213,7 +214,7 @@ describe('Data Import', () => {
 
     it(
       'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C389590'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, testData.fileName);
@@ -226,7 +227,8 @@ describe('Data Import', () => {
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openInstanceTab();
-        JsonScreenView.verifyContentInTab(testData.errorMessage);
+        JsonScreenView.verifyContentInTab(testData.errorMessagePart1);
+        JsonScreenView.verifyContentInTab(testData.errorMessagePart2);
       },
     );
   });

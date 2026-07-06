@@ -78,7 +78,7 @@ describe('Data Import', () => {
 
     it(
       'C358534 Check the values in the Job profile filter after deleting the logs on the View all page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C358534'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.filterJobsByJobProfile(jobProfile.name);
