@@ -143,6 +143,9 @@ describe('MARC', () => {
             MarcAuthorities.checkRecordsResultListIsAbsent();
 
             // Step 8: Open Authority source dropdown; second file present, first absent
+            MarcAuthorities.clickAuthoritySourceAccordion();
+            MarcAuthorities.verifyAuthoritySourceAccordionCollapsed();
+            MarcAuthorities.clickAuthoritySourceAccordion();
             MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
             MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile2.name);
             MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile1.name, false);

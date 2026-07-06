@@ -8,6 +8,7 @@ import BrowseCallNumber from '../../../support/fragments/inventory/search/browse
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../support/utils/stringTools';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -99,6 +100,11 @@ describe('Inventory', () => {
         .then(() => {
           cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
             testData.userId = userProperties.userId;
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+              callNumberTypes: [],
+            });
+
             cy.login(userProperties.username, userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -128,7 +134,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(expectedResult);
         BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, 1);
-        BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, callNumberData.instanceTitle);
+        BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, callNumberData.instanceTitle, 1);
 
         // Step 2: Select "Library of Congress classification" browse option and run the same search
         InventorySearchAndFilter.clickResetAllButton();
@@ -139,7 +145,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(expectedResult);
         BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, 1);
-        BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, callNumberData.instanceTitle);
+        BrowseCallNumber.checkNumberOfTitlesForRow(expectedResult, callNumberData.instanceTitle, 1);
       },
     );
   });
