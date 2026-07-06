@@ -63,7 +63,7 @@ describe('MARC', () => {
             authorityFileId = sourceId;
             cy.wait(70_000); // source file should be processed by scheduled job before assigning
             // Create a Local MARC authority record assigned to the file in Member tenant
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             cy.setTenant(Affiliations.College);
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
@@ -72,7 +72,6 @@ describe('MARC', () => {
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
               cy.resetTenant();
-              cy.getAdminToken();
               cy.createTempUser(perms).then((userProps) => {
                 user = userProps;
                 cy.assignAffiliationToUser(Affiliations.College, user.userId);

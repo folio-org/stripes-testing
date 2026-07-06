@@ -45,7 +45,8 @@ const createMainProfileBody = () => {
         MarcActionCreators.find('821.113.1'),
         MarcActionCreators.append('2', '[edition information]'),
       ]),
-      createMarcFieldRule('919', '\\', '\\', 'a', [MarcActionCreators.removeAll()]),
+      createMarcFieldRule('919', '\\', '\\', 'a', [MarcActionCreators.removeSubfield()]),
+      createMarcFieldRule('247', '1', '0', 'a', [MarcActionCreators.removeField()]),
     ],
   });
 };
@@ -72,6 +73,8 @@ const testData = {
   marcInstanceTitle: `AT_C788738_MarcInstance_${getRandomPostfix()}`,
   marcField080: '821.113.1',
   marcField919: 'Test 919 field content',
+  marcField247A: "Everywoman's magazine",
+  marcField247F: 'v. 1-24, Jan. 1948-57.',
   subfield2: '[edition information]',
   editedClassification: '821.113.1',
 };
@@ -129,6 +132,11 @@ describe('Bulk-edit', () => {
             tag: '919',
             content: `$a${testData.marcField919}`,
             indicators: ['\\', '\\'],
+          },
+          {
+            tag: '247',
+            content: `$a${testData.marcField247A} $f${testData.marcField247F}`,
+            indicators: ['1', '0'],
           },
         ];
 
@@ -277,6 +285,7 @@ describe('Bulk-edit', () => {
               },
 
               (record) => expect(record.get('919')).to.be.empty,
+              (record) => expect(record.get('247')).to.be.empty,
             ],
           },
         ];
@@ -389,6 +398,7 @@ describe('Bulk-edit', () => {
         InventorySearchAndFilter.searchInstanceByHRID(testData.marcInstanceHrid);
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyClassification('UDC', testData.marcField080);
+        InstanceRecordView.verifyAlternativeTitle(0, 'No value set-');
 
         // Step 21: Click "Actions" menu, Select "View source" option, Verify that made changes
         // have been applied to MARC bibliographic record
@@ -398,6 +408,7 @@ describe('Bulk-edit', () => {
           `\t080\t   \t$a ${testData.marcField080} $2 ${testData.subfield2}`,
         );
         InventoryViewSource.verifyAbsenceOfValue('919\t');
+        InventoryViewSource.verifyAbsenceOfValue('247\t');
         InventoryViewSource.verifyFieldContent(
           3,
           DateTools.getFormattedEndDateWithTimUTC(new Date()),

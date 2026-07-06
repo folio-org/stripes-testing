@@ -12,7 +12,11 @@ import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  BULK_EDIT_ACTIONS,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
@@ -246,8 +250,8 @@ describe('Bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 6: Remove all 041 0\ $a fields
-        BulkEditActions.fillInTagAndIndicatorsAndSubfield('041', '0', '\\', 'a');
-        BulkEditActions.selectActionForMarcInstance('Remove all');
+        BulkEditActions.fillInTagAndIndicatorsAndSubfield('041', '0', '\\', '');
+        BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_FIELD);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 7: Find and append 041 1\ $a field

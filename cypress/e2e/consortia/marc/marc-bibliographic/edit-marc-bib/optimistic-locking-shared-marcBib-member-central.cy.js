@@ -128,14 +128,15 @@ describe('MARC', () => {
               cy.getMarcRecordDataViaAPI(createdRecordIDs[0]).then((marcData) => {
                 const field245 = marcData.fields.find((f) => f.tag === marcFieldTags.tag245);
                 field245.content = `$a ${testData.instanceTitleUpdatedByB}`;
-                cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData).then(
-                  ({ status }) => {
+                cy.updateMarcRecordDataViaAPI(marcData.parsedRecordId, marcData)
+                  .then(({ status }) => {
                     expect(status).to.eq(202);
                     // Switch back to User A's token
                     cy.setTenant(Affiliations.College);
                     cy.clearCookies({ domain: null });
                     cy.getToken(userA.username, userA.password);
-
+                  })
+                  .then(() => {
                     // Step 6: User A makes changes to 245 field, tries to save (will trigger conflict because record was updated by User B)
                     QuickMarcEditor.updateExistingField(
                       marcFieldTags.tag245,
@@ -162,8 +163,7 @@ describe('MARC', () => {
                       `$a ${testData.instanceTitleUpdatedByB}`,
                     );
                     QuickMarcEditor.checkUserNameInHeader(userB.firstName, userB.lastName);
-                  },
-                );
+                  });
               });
             });
           },

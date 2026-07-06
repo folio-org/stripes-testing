@@ -380,6 +380,7 @@ Cypress.Commands.add('getCapabilitiesForRoleApi', (roleId, searchParams = { limi
     path: `roles/${roleId}/capabilities`,
     isDefaultSearchParamsRequired: false,
     searchParams,
+    failOnStatusCode: false,
   });
 });
 
