@@ -73,7 +73,11 @@ describe('Inventory', () => {
         BrowseSubjects.checkValueIsBold(testData.subjectValue);
 
         // Step 3: Note "Number of titles" value and click the highlighted subject
-        BrowseCallNumber.checkNumberOfTitlesForRow(testData.subjectValue, testData.numberOfTitles);
+        BrowseCallNumber.checkNumberOfTitlesForRow(
+          testData.subjectValue,
+          testData.numberOfTitles,
+          3,
+        );
         BrowseSubjects.openInstance({ name: testData.subjectValue });
 
         // Verify "Records found" counter matches the noted "Number of titles" value
