@@ -1,8 +1,17 @@
-import { Button, MultiColumnList, MultiColumnListCell, Section } from '../../../../interactors';
+import { including } from '@interactors/html';
+import {
+  Accordion,
+  Button,
+  KeyValue,
+  MultiColumnList,
+  MultiColumnListCell,
+  Section,
+} from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import IntegrationViewForm from './integrations/integrationViewForm';
 
 const organizationDetailsSection = Section({ id: 'pane-organization-details' });
+const summarySection = Accordion({ id: 'summarySection' });
 
 // Integration details section
 const integrationDetailsSection = Button({
@@ -33,5 +42,11 @@ export default {
     IntegrationViewForm.waitLoading();
 
     return IntegrationViewForm;
+  },
+
+  checkOrganizationDetails(information = []) {
+    information.forEach(({ key, value }) => {
+      cy.expect(summarySection.find(KeyValue(key)).has({ value: including(String(value)) }));
+    });
   },
 };

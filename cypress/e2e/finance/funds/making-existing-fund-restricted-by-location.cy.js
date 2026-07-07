@@ -63,7 +63,7 @@ describe('Funds', () => {
       Funds.varifyLocationSectionExist();
       Funds.addLocationToFund(location.name);
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
     },
   );
