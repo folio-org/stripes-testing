@@ -48,6 +48,7 @@ describe('Eureka', () => {
                   if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.userA.userId);
                   if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
                   else cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
+                  cy.setDefaultLocaleApi();
                   cy.login(testData.tempUser.username, testData.tempUser.password, {
                     path: TopMenu.settingsAuthorizationRoles,
                     waiter: AuthorizationRoles.waitContentLoading,
