@@ -7,16 +7,20 @@ describe('Lists', () => {
   describe('Query Builder', () => {
     describe('Custom Entity Types', () => {
       let userData = {};
-      const newCustomEntityType = Lists.generateCustomEntityTypeBodyWithoutSources('Custom entity type C825336');
+      const newCustomEntityType = Lists.generateCustomEntityTypeBodyWithoutSources(
+        'Custom entity type C825336',
+      );
       let newCustomEntityTypeWithSources;
 
       const expectedError = {
         code: 'entity.type.invalid',
         message: 'Entity types must have at least one source defined',
-        parameters: [{
-          key: 'id',
-          value: newCustomEntityType.id
-        }]
+        parameters: [
+          {
+            key: 'id',
+            value: newCustomEntityType.id,
+          },
+        ],
       };
 
       before('Create test data', () => {
@@ -24,20 +28,22 @@ describe('Lists', () => {
         const capabsToAssign = [
           Capabilities.fqmEntityTypesCustomItemView,
           Capabilities.fqmEntityTypesCustomItemEdit,
-          Capabilities.fqmEntityTypesCustomCollectionCreate
+          Capabilities.fqmEntityTypesCustomCollectionCreate,
         ];
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
-        }).then(() => {
-          Lists.generateSimpleUsersEntityTypeSource().then((source) => {
-            newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
-              'Custom entity type with sources C825336',
-              [source],
-              false
-            );
+        cy.createTempUser([])
+          .then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
+          })
+          .then(() => {
+            Lists.generateSimpleUsersEntityTypeSource().then((source) => {
+              newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
+                'Custom entity type with sources C825336',
+                [source],
+                false,
+              );
+            });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -47,9 +53,10 @@ describe('Lists', () => {
         Users.deleteViaApi(userData.userId);
       });
 
-      it(
-        'C825336 Verify that it\'s possible to create a new custom entity type when the permission is assigned (eureka)',
-        { tags: ['extendedPath', 'eureka', 'C825336'] },
+      // Trillium
+      it.skip(
+        "C825336 Verify that it's possible to create a new custom entity type when the permission is assigned (corsair)",
+        { tags: [] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
@@ -66,9 +73,10 @@ describe('Lists', () => {
         },
       );
 
-      it(
-        'C825338 Verify that it\'s possible to get the newly created custom entity type when the permission is assigned (eureka)',
-        { tags: ['extendedPath', 'eureka', 'C825338'] },
+      // Trillium
+      it.skip(
+        "C825338 Verify that it's possible to get the newly created custom entity type when the permission is assigned (corsair)",
+        { tags: [] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
@@ -80,9 +88,10 @@ describe('Lists', () => {
         },
       );
 
-      it(
-        'C825340 Verify that it\'s possible to update the existing custom entity type when the permission is assigned (eureka)',
-        { tags: ['extendedPath', 'eureka', 'C825340'] },
+      // Trillium
+      it.skip(
+        "C825340 Verify that it's possible to update the existing custom entity type when the permission is assigned (corsair)",
+        { tags: [] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
@@ -91,7 +100,10 @@ describe('Lists', () => {
             name: 'Custom entity type name with changes C825340',
           };
 
-          Lists.updateCustomEntityTypeById(newCustomEntityTypeWithSources.id, updatedEntityType).then((response) => {
+          Lists.updateCustomEntityTypeById(
+            newCustomEntityTypeWithSources.id,
+            updatedEntityType,
+          ).then((response) => {
             expect(response.status).to.equal(200);
             expect(response.body).to.have.property('id', newCustomEntityTypeWithSources.id);
             expect(response.body).to.have.property('name', updatedEntityType.name);
