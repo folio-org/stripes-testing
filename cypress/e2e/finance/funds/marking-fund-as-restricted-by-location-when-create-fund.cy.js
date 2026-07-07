@@ -57,7 +57,7 @@ describe('Funds', () => {
       Funds.clickRestrictByLocationsCheckbox();
       Funds.varifyLocationSectionAbsent();
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
     },
   );
