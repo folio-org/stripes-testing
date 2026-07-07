@@ -67,7 +67,7 @@ describe('Finance', () => {
         Funds.editFund();
         Funds.selectFundType(fundTypeName);
         Funds.save();
-        Funds.varifyFundIsSaved();
+        Funds.verifyFundIsSaved();
         Funds.verifyFundType(fundTypeName);
       },
     );
