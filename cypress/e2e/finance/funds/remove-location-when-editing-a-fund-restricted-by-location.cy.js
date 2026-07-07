@@ -70,7 +70,7 @@ describe('Funds', () => {
       Funds.varifyLocationInSection(secondLocation.name);
       Funds.varifyLocationIsAbsentInSection(firstLocation.name);
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
       Funds.verifyCheckboxState('Restrict use by location', true);
     },
