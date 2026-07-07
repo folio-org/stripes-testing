@@ -72,11 +72,7 @@ describe('Requests', () => {
       NewRequest.waitLoadingNewRequestPage();
 
       // Step 2: If "Create title level request" option exists, ensure it is not checked
-      cy.get('body').then(($body) => {
-        if ($body.find('[name="createTitleLevelRequest"]').length > 0) {
-          NewRequest.unselectTitleLevelRequest();
-        }
-      });
+      NewRequest.unselectTitleLevelRequest();
 
       // Step 3: Fill in Item barcode and verify item is scanned
       NewRequest.enterItemInfo(testData.folioInstances[0].barcodes[0]);
