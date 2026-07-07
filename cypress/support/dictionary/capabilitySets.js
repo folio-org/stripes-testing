@@ -334,6 +334,11 @@ export default {
     resource: 'Base-Url Item',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  acquisitionUnitsMembershipsManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Acquisitions-Units Memberships',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {

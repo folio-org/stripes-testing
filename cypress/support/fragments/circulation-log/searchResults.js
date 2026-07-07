@@ -97,6 +97,14 @@ export default {
     );
   },
 
+  verifyDescriptionContains(rowIndex, ...substrings) {
+    cy.wrap(MultiColumnListCell({ row: Number(rowIndex), columnIndex: 7 }).text()).then(
+      (description) => {
+        substrings.forEach((s) => expect(description).to.include(s));
+      },
+    );
+  },
+
   getBilledDate(rowIndex) {
     const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
     // Locate the cell with matching content

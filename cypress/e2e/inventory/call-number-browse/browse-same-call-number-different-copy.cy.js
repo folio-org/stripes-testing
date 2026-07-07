@@ -130,7 +130,7 @@ describe('Inventory', () => {
           records: [{ callNumber: expectedBrowseRow }],
         });
         BrowseCallNumber.checkNumberOfTitlesForRow(expectedBrowseRow, '1');
-        BrowseCallNumber.checkNumberOfTitlesForRow(expectedBrowseRow, instanceTitle);
+        BrowseCallNumber.checkNumberOfTitlesForRow(expectedBrowseRow, instanceTitle, 1);
       },
     );
   });

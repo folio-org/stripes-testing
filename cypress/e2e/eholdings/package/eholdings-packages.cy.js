@@ -279,7 +279,7 @@ describe('eHoldings', () => {
                 EHoldingsPackage.waitForTitlesState({
                   packageId: id,
                   titleName,
-                  isHidden: true,
+                  isHidden: false,
                 });
                 cy.waitForAuthRefresh(() => {
                   cy.reload();

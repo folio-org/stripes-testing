@@ -160,12 +160,19 @@ export default {
     }
   },
 
-  checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
-    cy.do(
-      MultiColumnListCell(callNumber).perform((element) => {
-        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
-        cy.expect(MultiColumnListCell(String(numberOfTitles), { row: rowNumber }).exists());
-      }),
+  checkNumberOfTitlesForRow(callNumber, numberOfTitles, columnIndex = 2) {
+    cy.log(`Checking number of titles for call number ${callNumber} is ${numberOfTitles}`);
+    cy.recurse(
+      () => {
+        return cy
+          .contains('[class*="mclCell"]', callNumber)
+          .parents('[data-row-inner]')
+          .find('[class*="mclCell"]')
+          .eq(columnIndex)
+          .invoke('text');
+      },
+      (titlesText) => titlesText === String(numberOfTitles),
+      { limit: 25, timeout: 56000, delay: 2000 },
     );
   },
 

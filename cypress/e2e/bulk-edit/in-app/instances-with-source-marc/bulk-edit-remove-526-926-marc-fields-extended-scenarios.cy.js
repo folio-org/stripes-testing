@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ERROR_MESSAGES,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -14,10 +16,16 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
+import parseMrcFileContentAndVerify, {
+  verifyMarcFieldByFindingSubfield,
+} from '../../../../support/utils/parseMrcFileContent';
 import DateTools from '../../../../support/utils/dateTools';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  BULK_EDIT_ACTIONS,
+} from '../../../../support/constants';
 
 const studyProgramNote1 = 'Happy Valley Reading Club';
 const studyProgramNote2 = 'Accelerated Reader AR';
@@ -31,7 +39,7 @@ const localStudyProgramNote2AdditionalX = 'January 1999 selection';
 const localStudyProgramNote3 = 'Accelerated Reader/Advantage Learning Systems';
 const localStudyProgramNote3AdditionalX = 'Nonpublic note';
 const localStudyProgramNote3AdditionalZ = 'Public note';
-const warningMessage = 'No change in MARC fields required';
+const warningMessage = ERROR_MESSAGES.NO_CHANGE_IN_MARC_FIELDS_REQUIRED;
 let user;
 let marcInstanceWith526And926Fields;
 let marcInstanceWithout526And926Fields;
@@ -218,35 +226,43 @@ describe(
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('526', '0', '\\', 'x');
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
-          // Step 4: Select "Remove all" action
-          BulkEditActions.selectActionForMarcInstance('Remove all');
+          // Step 4: Select "Remove subfield" action
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD);
           BulkEditActions.verifyDataColumnAbsent();
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 5: Add second row for 526 0\ $z
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('526', '0', '\\', 'z', 1);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 1);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('526', '0', '\\', 'x', 1);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.FIND, 1);
+          BulkEditActions.fillInDataTextAreaForMarcInstance(studyProgramNote2AdditionalX, 1);
+          BulkEditActions.selectSecondActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 7: Add third row for 926 0\ $x
+          // Step 6-7: Add third row for 526 0\ $z
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('926', '0', '\\', 'x', 2);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 2);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('526', '0', '\\', 'z', 2);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 8: Add fourth row for 926 0\ $z
+          // Step 8: Add third row for 926 0\ $x
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(2);
-          BulkEditActions.fillInTagAndIndicatorsAndSubfield('926', '0', '\\', 'z', 3);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 3);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('926', '0', '\\', 'x', 3);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 3);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          // Step 9: Confirm changes
+          // Step 9: Add fourth row for 926 0\ $z
+          BulkEditActions.addNewBulkEditFilterStringForMarcInstance(3);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('926', '0', '\\', 'z', 4);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 4);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
+
+          // Step 10: Confirm changes
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
           // Verify preview shows the expected Study Program Information note column with removed subfields
-          const expectedNoteAfterRemoval = studyProgramNote1;
+          const expectedNoteAfterRemoval = `${studyProgramNote1} | ${studyProgramNote2} | ${studyProgramNote3}`;
 
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
             marcInstanceWith526And926Fields.hrid,
@@ -262,7 +278,7 @@ describe(
           BulkEditSearchPane.verifyPaginatorInAreYouSureForm(2);
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
 
-          // Step 10: Download preview in MARC format
+          // Step 11: Download preview in MARC format
           BulkEditActions.downloadPreviewInMarcFormat();
 
           // Verify MARC file content for both instances
@@ -272,31 +288,84 @@ describe(
               assertions: [
                 // Verify that 526 field only contains $a subfield (x and z subfields removed)
                 (record) => {
-                  const fields526 = record.get('526');
-
-                  expect(fields526).to.have.length(1);
-
-                  const field526 = fields526[0];
-
-                  expect(field526.ind1).to.eq('0');
-                  expect(field526.ind2).to.eq(' ');
-                  expect(field526.subf).to.have.length(1);
-                  expect(field526.subf[0][0]).to.eq('a');
-                  expect(field526.subf[0][1]).to.eq(studyProgramNote1);
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '526',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: studyProgramNote1,
+                    },
+                    ['a', studyProgramNote1],
+                  );
                 },
+                (record) => {
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '526',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: studyProgramNote2,
+                    },
+                    ['a', studyProgramNote2],
+                  );
+                },
+                (record) => {
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '526',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: studyProgramNote3,
+                    },
+                    ['a', studyProgramNote3],
+                  );
+                },
+
                 // Verify that 926 field only contains $a subfield (x and z subfields removed)
                 (record) => {
-                  const fields926 = record.get('926');
-
-                  expect(fields926).to.have.length(1);
-
-                  const field926 = fields926[0];
-
-                  expect(field926.ind1).to.eq('0');
-                  expect(field926.ind2).to.eq(' ');
-                  expect(field926.subf).to.have.length(1);
-                  expect(field926.subf[0][0]).to.eq('a');
-                  expect(field926.subf[0][1]).to.eq(localStudyProgramNote1);
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '926',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: localStudyProgramNote1,
+                    },
+                    ['a', localStudyProgramNote1],
+                  );
+                },
+                (record) => {
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '926',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: localStudyProgramNote2,
+                    },
+                    ['a', localStudyProgramNote2],
+                  );
+                },
+                (record) => {
+                  verifyMarcFieldByFindingSubfield(
+                    record,
+                    '926',
+                    {
+                      ind1: '0',
+                      ind2: ' ',
+                      findBySubfield: 'a',
+                      findByValue: localStudyProgramNote3,
+                    },
+                    ['a', localStudyProgramNote3],
+                  );
                 },
                 // Verify 005 field is updated
                 (record) => {
@@ -328,11 +397,25 @@ describe(
             2,
           );
 
-          // Step 11: Download preview in CSV format
+          // Step 12: Download preview in CSV format
           BulkEditActions.downloadPreview();
+          BulkEditFiles.verifyValueInRowByUUID(
+            fileNames.previewRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+            marcInstanceWith526And926Fields.uuid,
+            'Notes',
+            `Study Program Information note;${studyProgramNote1};false | Study Program Information note;${studyProgramNote2};false | Study Program Information note;${studyProgramNote3};false`,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            fileNames.previewRecordsCSV,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+            marcInstanceWithout526And926Fields.uuid,
+            'Notes',
+            '',
+          );
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.previewRecordsCSV, 2);
 
-          // Step 12: Commit changes
+          // Step 13: Commit changes
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(1);
 
@@ -345,7 +428,7 @@ describe(
           BulkEditSearchPane.verifyPaginatorInChangedRecords(1);
           BulkEditSearchPane.verifyErrorLabel(0, 1);
 
-          // Step 13: Check warning message
+          // Step 14: Check warning message
           BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
           BulkEditSearchPane.verifyError(
             marcInstanceWithout526And926Fields.uuid,
@@ -353,7 +436,7 @@ describe(
             'Warning',
           );
 
-          // Step 14: Download changed records in MARC format
+          // Step 15: Download changed records in MARC format
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedMarc();
 
@@ -368,17 +451,17 @@ describe(
             1,
           );
 
-          // Step 15: Download changed records in CSV format
+          // Step 16: Download changed records in CSV format
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyCSVFileRowsRecordsNumber(fileNames.changedRecordsCSV, 1);
 
-          // Step 16: Download errors (CSV)
+          // Step 17: Download errors (CSV)
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(fileNames.errorsFromCommitting, [
             `WARNING,${marcInstanceWithout526And926Fields.uuid},${warningMessage}`,
           ]);
 
-          // Step 17: Navigate to Inventory and verify changes in instance record
+          // Step 18: Navigate to Inventory and verify changes in instance record
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByTitle(marcInstanceWith526And926Fields.title);
@@ -392,9 +475,23 @@ describe(
             'Study Program Information note',
             studyProgramNote1,
           );
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+            0,
+            'No',
+            'Study Program Information note',
+            studyProgramNote2,
+            1,
+          );
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+            0,
+            'No',
+            'Study Program Information note',
+            studyProgramNote3,
+            2,
+          );
           InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
-          // Step 18: View source and verify MARC fields
+          // Step 19: View source and verify MARC fields
           InstanceRecordView.viewSource();
 
           // Verify that only 526 and 926 fields with $a subfields remain
@@ -403,8 +500,24 @@ describe(
             `\t526\t0  \t$a ${studyProgramNote1}`,
           );
           InventoryViewSource.verifyFieldInMARCBibSource(
+            '526',
+            `\t526\t0  \t$a ${studyProgramNote2}`,
+          );
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            '526',
+            `\t526\t0  \t$a ${studyProgramNote3}`,
+          );
+          InventoryViewSource.verifyFieldInMARCBibSource(
             '926',
             `\t926\t0  \t$a ${localStudyProgramNote1}`,
+          );
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            '926',
+            `\t926\t0  \t$a ${localStudyProgramNote2}`,
+          );
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            '926',
+            `\t926\t0  \t$a ${localStudyProgramNote3}`,
           );
 
           // Verify that fields with x and z subfields are no longer present

@@ -13,7 +13,11 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_ACTIONS,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import parseMrcFileContentAndVerify from '../../../../support/utils/parseMrcFileContent';
@@ -158,13 +162,13 @@ describe(
 
           // Step 3: 533 $a Remove all
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('533', '\\', '\\', 'a');
-          BulkEditActions.selectActionForMarcInstance('Remove all');
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 4: Add new row for 999 $f $f $i Remove all
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('999', 'f', 'f', 'i', 1);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 1);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD, 1);
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 5: Click info icon
