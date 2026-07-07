@@ -182,6 +182,31 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  updateViaApi(servicePointData) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `service-points/${servicePointData.id}`,
+      body: servicePointData,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  disablePickupLocationViaApi(servicePointId) {
+    // When setting pickupLocation=false, holdShelfExpiryPeriod must be removed (API constraint)
+    return this.getViaApi({ limit: 1, query: `id=="${servicePointId}"` }).then((servicePoints) => {
+      const servicePoint = { ...servicePoints[0] };
+      servicePoint.pickupLocation = false;
+      delete servicePoint.holdShelfExpiryPeriod;
+      delete servicePoint.holdShelfClosedLibraryDateManagement;
+      return cy.okapiRequest({
+        method: 'PUT',
+        path: `service-points/${servicePointId}`,
+        body: servicePoint,
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
+
   deleteViaApi: (servicePointId) => cy.okapiRequest({
     path: `service-points/${servicePointId}`,
     method: 'DELETE',

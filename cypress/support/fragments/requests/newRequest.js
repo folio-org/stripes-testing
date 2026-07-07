@@ -88,7 +88,12 @@ export default {
 
   unselectTitleLevelRequest() {
     cy.wait(1000);
-    cy.do(titleLevelRequest.uncheckIfSelected());
+    // Check if TLR checkbox exists before attempting to unselect it
+    cy.get('body').then(($body) => {
+      if ($body.find('[name="createTitleLevelRequest"]').length > 0) {
+        cy.do(titleLevelRequest.uncheckIfSelected());
+      }
+    });
     cy.wait(1000);
   },
 
@@ -411,6 +416,23 @@ export default {
       }),
     );
   },
+
+  checkServicePointNotPickupLocationModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: including('Service point is not a Pickup location'),
+      }),
+    );
+  },
+
+  verifyPickupLocationValidationError() {
+    cy.wait('@createRequest').then(({ response }) => {
+      expect(response.statusCode).to.equal(422);
+      expect(response.body.errors[0].message).to.include('Service point is not a pickup location');
+      expect(response.body.errors[0].code).to.equal('SERVICE_POINT_IS_NOT_PICKUP_LOCATION');
+    });
+  },
+
   verifyRequestSuccessfullyCreated(username) {
     InteractorsTools.checkCalloutMessage(
       including(`Request has been successfully created for ${username}`),
