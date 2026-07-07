@@ -1,11 +1,15 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
+  matching,
 } from '../../../../../../interactors';
+
+const rootPane = Pane('Alternative title types');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -90,5 +94,43 @@ export default {
       NavListItem('Alternative title types').click(),
       Pane('Alternative title types').exists(),
     ]);
+  },
+
+  getViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'alternative-title-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.alternativeTitleTypes);
+  },
+
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyAlternativeTitleTypeShown({ name, source, actions = [] }) {
+    const row = MultiColumnListRow({
+      innerText: matching(new RegExp(`^${name}\n`)),
+      isContainer: false,
+    });
+    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+    cy.expect(row.exists());
+    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists());
+    if (actions.length === 0) {
+      cy.expect(row.find(actionsCell).has({ content: '' }));
+    } else {
+      Object.values(reasonsActions).forEach((action) => {
+        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        if (actions.includes(action)) {
+          cy.expect(buttonSelector.exists());
+        } else {
+          cy.expect(buttonSelector.absent());
+        }
+      });
+    }
   },
 };
