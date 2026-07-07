@@ -38,6 +38,7 @@ import {
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import FiltersPaneHelper from '../filtersPane';
+import OrderStates from './orderStates';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
 import SelectInstanceModal from './modals/selectInstanceModal';
@@ -391,12 +392,21 @@ export default {
     ]);
   },
 
-  deleteOrderLine: () => {
-    cy.do([
-      paneHeaderOrderLinesDetailes.find(actionsButton).click(),
-      Button('Delete').click(),
-      Button({ id: 'clickable-delete-line-confirmation-confirm' }).click(),
-    ]);
+  deleteOrderLine: ({ poLineNumber, checkDeleteSuccessMessage = false } = {}) => {
+    cy.do(paneHeaderOrderLinesDetailes.find(actionsButton).click());
+    cy.do(Button('Delete').click());
+
+    if (poLineNumber) {
+      cy.expect(Modal(`Delete ${poLineNumber}?`).exists());
+    }
+    cy.expect(Modal().has({ content: including('Delete purchase order line?') }));
+    cy.do(Button({ id: 'clickable-delete-line-confirmation-confirm' }).click());
+
+    if (checkDeleteSuccessMessage) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderLineDeletedSuccessfully)),
+      );
+    }
   },
 
   POLineInfodorPhysicalMaterial: (orderLineTitleName) => {

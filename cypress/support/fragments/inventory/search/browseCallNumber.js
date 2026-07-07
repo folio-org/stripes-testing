@@ -160,7 +160,7 @@ export default {
     }
   },
 
-  checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
+  checkNumberOfTitlesForRow(callNumber, numberOfTitles, columnIndex = 2) {
     cy.log(`Checking number of titles for call number ${callNumber} is ${numberOfTitles}`);
     cy.recurse(
       () => {
@@ -168,7 +168,7 @@ export default {
           .contains('[class*="mclCell"]', callNumber)
           .parents('[data-row-inner]')
           .find('[class*="mclCell"]')
-          .eq(2)
+          .eq(columnIndex)
           .invoke('text');
       },
       (titlesText) => titlesText === String(numberOfTitles),

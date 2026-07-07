@@ -23,6 +23,7 @@ import {
   SelectionOption,
   Spinner,
   TextField,
+  matching,
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
@@ -42,6 +43,7 @@ import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
+import OrderStates from './orderStates';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const actionsButton = Button('Actions');
@@ -449,13 +451,22 @@ export default {
     cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
   },
 
-  deleteOrderViaActions: () => {
+  deleteOrderViaActions: ({ poNumber, checkDeleteSuccessMessage = false } = {}) => {
     cy.wait(4000);
     expandActionsDropdown();
-    cy.do([
-      Button('Delete').click(),
-      Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
-    ]);
+    cy.do(Button('Delete').click());
+
+    if (poNumber) {
+      cy.expect(Modal(`Delete ${poNumber}?`).exists());
+    }
+    cy.expect(Modal().has({ content: including('Delete purchase order?') }));
+    cy.do(Button({ id: 'clickable-delete-order-confirmation-confirm' }).click());
+
+    if (checkDeleteSuccessMessage) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderDeletedSuccessfully)),
+      );
+    }
   },
 
   deleteButtonInOrderIsAbsent: () => {
