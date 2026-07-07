@@ -67,8 +67,11 @@ describe('Bulk-edit', () => {
         );
 
         BulkEditActions.clickStartBulkDeleteButton();
-
-        // TODO: Implement Steps 9-10 after the bulk edit delete form is implemented
+        BulkEditActions.verifyDeleteUserRecordsModalButtons();
+        BulkEditActions.clickCancelButtonInDeleteUserRecordsModal();
+        BulkEditActions.verifyDeleteUserRecordsModalAbsent();
+        BulkEditSearchPane.verifySpecificItemsMatched(user.barcode);
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();

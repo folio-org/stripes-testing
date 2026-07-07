@@ -78,6 +78,8 @@ const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: tru
 const selectActionForMarcInstanceDropdownFirst = Select({ name: 'name', dataActionIndex: '0' });
 const noteTypeSelection = Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
+const deleteUserRecordsModal = Modal('Delete user records?');
+const deleteButton = Button('Delete');
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -2816,5 +2818,26 @@ export default {
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).hoverMouse());
     cy.expect(Tooltip({ text }).exists());
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).unhoverMouse());
+  },
+
+  verifyDeleteUserRecordsModalButtons(
+    isCancelButtonDisabled = false,
+    isDeleteButtonDisabled = false,
+  ) {
+    cy.expect([
+      deleteUserRecordsModal.exists(),
+      deleteUserRecordsModal.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      deleteUserRecordsModal
+        .find(deleteButton)
+        .has({ disabled: isDeleteButtonDisabled, focused: true }),
+    ]);
+  },
+
+  verifyDeleteUserRecordsModalAbsent() {
+    cy.expect(deleteUserRecordsModal.absent());
+  },
+
+  clickCancelButtonInDeleteUserRecordsModal() {
+    cy.do(deleteUserRecordsModal.find(cancelButton).click());
   },
 };
