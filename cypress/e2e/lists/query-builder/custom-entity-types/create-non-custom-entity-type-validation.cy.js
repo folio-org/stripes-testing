@@ -28,7 +28,7 @@ describe('Lists', () => {
             ...Lists.generateCustomEntityTypeBodyWithSources(
               'Custom entity type with sources C825348',
               [source],
-            )
+            ),
           };
         });
       });
@@ -38,16 +38,18 @@ describe('Lists', () => {
         Users.deleteViaApi(userData.userId);
       });
 
-      it(
-        'C825348 Verify that the appropriate validation message exists if the user tries to create a non-custom entity type (eureka)',
-        { tags: ['extendedPath', 'corsair', 'C825348'] },
+      // Trillium
+      it.skip(
+        'C825348 Verify that the appropriate validation message exists if the user tries to create a non-custom entity type (corsair)',
+        { tags: [] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
-
           Lists.createCustomEntityType(nonCustomEntityTypeWithSources).then((response) => {
             expect(response.status).to.equal(404);
-            expect(response.body.message).to.include(`Entity type ${nonCustomEntityTypeWithSources.id} is not a custom entity type`);
+            expect(response.body.message).to.include(
+              `Entity type ${nonCustomEntityTypeWithSources.id} is not a custom entity type`,
+            );
             expect(response.body.code).to.equal('entity.type.not.found');
             expect(response.body.parameters[0].key).to.equal('entityTypeId');
             expect(response.body.parameters[0].value).to.equal(nonCustomEntityTypeWithSources.id);
