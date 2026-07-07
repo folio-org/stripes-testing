@@ -1787,3 +1787,9 @@ export const CUSTOM_FIELD_TYPES = {
   TEXTBOX_LONG: 'TEXTBOX_LONG',
   TEXTBOX_SHORT: 'TEXTBOX_SHORT',
 };
+
+export const INSTANCE_RELATIONSHIP_TYPES = {
+  BOUND_WITH: 'bound-with',
+  MONOGRAPHIC_SERIES: 'monographic series',
+  MULTIPART_MONOGRAPH: 'multipart monograph',
+};
