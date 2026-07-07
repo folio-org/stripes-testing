@@ -316,6 +316,8 @@ export default {
   },
 
   cancelRequest() {
+    cy.do(requestDetailsSection.find(Button('Actions')).click());
+    cy.wait(3000);
     cy.do([
       requestDetailsSection.find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),

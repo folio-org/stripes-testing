@@ -655,6 +655,10 @@ export default {
     cy.expect(tagsAccordion.has({ counter: `${count}` }));
   },
 
+  verifyRequestsCount: (count) => {
+    cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
+  },
+
   verifyHrid: (hrid) => cy.expect(hridKeyValue.has({ value: hrid })),
 
   verifyVolume: (volume) => cy.expect(KeyValue('Volume').has({ value: volume })),

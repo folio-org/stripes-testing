@@ -59,6 +59,7 @@ export default {
   },
 
   deleteInstanceNoteTypeByNameAndTenant(name, tenantId) {
+    cy.wait(1000);
     this.getInstanceNoteTypeByNameAndTenant(name, tenantId).then((instanceNoteType) => {
       cy.setTenant(tenantId);
       cy.okapiRequest({
