@@ -12,6 +12,7 @@ import {
   MultiSelectOption,
   HTML,
   ValueChipRoot,
+  DropdownMenu,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -19,12 +20,11 @@ import getRandomPostfix from '../../utils/stringTools';
 
 // eslint-disable-next-line import/no-cycle
 const resultSection = Section({ id: 'search-results' });
-const selectionStatusSection = Section({ id: 'filter-packages-selected' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',
 });
-const searchIcon = Button({ icon: 'search' });
 const packagesSection = Section({ id: 'providerShowProviderList' });
+const packagesActionsButton = packagesSection.find(Button('Actions'));
 const packagesAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
@@ -57,16 +57,17 @@ export default {
     eHoldingsProviderView.waitLoading();
   },
 
-  clickSearchIcon() {
-    cy.expect(searchIcon.exists());
+  clickActionsButtonInPackagesSection() {
+    cy.expect(packagesActionsButton.exists());
     // wait for titles section to be loaded
     cy.wait(2000);
-    cy.do(searchIcon.click());
+    cy.do(packagesActionsButton.click());
+    cy.expect(DropdownMenu().exists());
   },
 
   searchPackageByName(packageName) {
-    cy.expect(searchIcon.exists());
-    cy.do(searchIcon.click());
+    cy.expect(packagesActionsButton.exists());
+    cy.do(packagesActionsButton.click());
     cy.do(TextField({ name: 'search' }).fillIn(packageName));
     cy.do(Button('Search').click());
     cy.expect(Spinner().absent());
@@ -89,9 +90,7 @@ export default {
   },
 
   bySelectionStatusOpen(selectionStatus) {
-    cy.do(selectionStatusSection.find(Button('Selection status')).click());
-    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
+    cy.do(DropdownMenu().find(RadioButton(selectionStatus)).click());
   },
 
   verifyOnlySelectedPackagesInResults() {

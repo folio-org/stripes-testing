@@ -6,6 +6,7 @@ import {
   MultiColumnListCell,
   NavListItem,
   Pane,
+  matching,
 } from '../../../../../../interactors';
 
 const rootPane = Pane('Contributor types');
@@ -75,6 +76,29 @@ export default {
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists(),
     ]);
+    if (actions.length === 0) {
+      cy.expect(row.find(actionsCell).has({ content: '' }));
+    } else {
+      Object.values(reasonsActions).forEach((action) => {
+        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        if (actions.includes(action)) {
+          cy.expect(buttonSelector.exists());
+        } else {
+          cy.expect(buttonSelector.absent());
+        }
+      });
+    }
+  },
+
+  verifyContributorTypeShown({ name, code, source, actions = [] }) {
+    const row = MultiColumnListRow({
+      innerText: matching(new RegExp(`^${name}\n`)),
+      isContainer: false,
+    });
+    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    cy.expect(row.exists());
+    if (code) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: code })).exists());
+    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
