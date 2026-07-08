@@ -73,8 +73,8 @@ describe('Lists', () => {
       );
 
       it(
-        "C825338 Verify that it's possible to get the newly created custom entity type when the permission is assigned (eureka)",
-        { tags: ['extendedPath', 'eureka', 'C825338'] },
+        "C825338 Verify that it's possible to get the newly created custom entity type when the permission is assigned (corsair)",
+        { tags: ['extendedPath', 'corsair', 'C825338'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
@@ -87,8 +87,8 @@ describe('Lists', () => {
       );
 
       it(
-        "C825340 Verify that it's possible to update the existing custom entity type when the permission is assigned (eureka)",
-        { tags: ['extendedPath', 'eureka', 'C825340'] },
+        "C825340 Verify that it's possible to update the existing custom entity type when the permission is assigned (corsair)",
+        { tags: ['extendedPath', 'corsair', 'C825340'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 
