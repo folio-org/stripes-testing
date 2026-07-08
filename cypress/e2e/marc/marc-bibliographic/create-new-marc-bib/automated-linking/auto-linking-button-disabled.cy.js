@@ -113,14 +113,10 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, false);
             });
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
 
@@ -138,7 +134,7 @@ describe('MARC', () => {
 
         it(
           'C389484 "Link headings" button is NOT displayed in create "MARC bib" window when auto-link for all heading types is disabled (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C389484'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C389484'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

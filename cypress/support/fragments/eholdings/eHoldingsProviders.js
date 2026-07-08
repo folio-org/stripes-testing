@@ -37,6 +37,7 @@ const providerInfAccordion = Button({
 });
 const tagsSection = Section({ id: 'providerShowTags' });
 const closeButton = Button({ icon: 'times' });
+const packagesSearchField = packagesSection.find(TextField({ name: 'search' }));
 
 export default {
   waitLoading: () => {
@@ -67,10 +68,16 @@ export default {
 
   searchPackageByName(packageName) {
     cy.expect(packagesActionsButton.exists());
-    cy.do(packagesActionsButton.click());
-    cy.do(TextField({ name: 'search' }).fillIn(packageName));
-    cy.do(Button('Search').click());
-    cy.expect(Spinner().absent());
+    cy.do(packagesSearchField.fillIn(packageName));
+    cy.intercept('GET', '**/eholdings/providers/*/packages?**').as('getPackages');
+    cy.get('input[type="search"]').type('{enter}');
+    cy.wait('@getPackages').its('response.statusCode').should('eq', 200);
+    this.verifyPackagesSearchQuery(packageName);
+    cy.expect(packagesSection.find(Spinner()).absent());
+  },
+
+  verifyPackagesSearchQuery(query) {
+    cy.expect(packagesSearchField.has({ value: query }));
   },
 
   bySelectionStatus(selectionStatus) {

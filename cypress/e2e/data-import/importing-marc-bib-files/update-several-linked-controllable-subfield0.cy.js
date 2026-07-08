@@ -105,7 +105,7 @@ describe('Data Import', () => {
     before('Creating user and test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385667*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385667');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -135,7 +135,9 @@ describe('Data Import', () => {
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
@@ -147,8 +149,19 @@ describe('Data Import', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.clickArrowDownButton(75);
+            QuickMarcEditor.verifyTagFieldAfterLinking(
+              76,
+              '700',
+              '1',
+              '\\',
+              '$a C385667 Lee, Stan, $d 1922-2018',
+              '$e creator',
+              '$0 http://id.loc.gov/authorities/names/n83169267',
+              '',
+            );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
           });
         })
         .then(() => {
@@ -213,11 +226,14 @@ describe('Data Import', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C385667'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
@@ -261,9 +277,11 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           74,
