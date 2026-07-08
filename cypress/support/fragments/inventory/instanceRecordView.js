@@ -1176,12 +1176,26 @@ export default {
     cy.do(Accordion(name).clickHeader());
   },
 
-  verifyParentInstanceTitle(title) {
-    cy.expect(instanceRelationshipAccordion.find(HTML(including(title))).exists());
+  verifyParentInstanceTitle(title, relationshipType) {
+    cy.expect(
+      MultiColumnList(including('parentInstances')).find(MultiColumnListCell(title)).exists(),
+    );
+    if (relationshipType) {
+      cy.expect(
+        instanceRelationshipAccordion.find(HTML(`Type of relation: ${relationshipType}`)).exists(),
+      );
+    }
   },
 
-  verifyChildInstanceTitle(title) {
-    cy.expect(instanceRelationshipAccordion.find(HTML(including(title))).exists());
+  verifyChildInstanceTitle(title, relationshipType) {
+    cy.expect(
+      MultiColumnList(including('childInstances')).find(MultiColumnListCell(title)).exists(),
+    );
+    if (relationshipType) {
+      cy.expect(
+        instanceRelationshipAccordion.find(HTML(`Type of relation: ${relationshipType}`)).exists(),
+      );
+    }
   },
 
   verifyMemberHoldingsAccordionExpanded(memberName, isOpen = true) {

@@ -59,6 +59,9 @@ const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
 const saveAndKeepEditing = Button('Save & keep editing');
 const cancelButton = Button('Cancel');
+const addAlternativeTitleButton = Button('Add alternative title');
+const resourceTypeSelect = Select({ name: 'instanceTypeId' });
+const addElectronicAccessButton = Button('Add electronic access');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -286,7 +289,9 @@ export default {
       parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
-    InventoryInstanceModal.clearDefaultHeldbyFilter();
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -296,7 +301,9 @@ export default {
       childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).click(),
     ]);
     InventoryInstanceModal.waitLoading();
-    InventoryInstanceModal.clearDefaultHeldbyFilter();
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -359,6 +366,63 @@ export default {
     }
   },
 
+  verifyAvailableContributorTypes(expectedTypes, rowIndex = 0) {
+    const types = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
+    types.forEach((type) => {
+      cy.expect(
+        Select({ name: `contributors[${rowIndex}].contributorTypeId` }).has({
+          optionsText: including(type),
+        }),
+      );
+    });
+  },
+
+  clickAddAlternativeTitle() {
+    cy.do(addAlternativeTitleButton.click());
+  },
+
+  verifyAvailableAlternativeTitleTypes(expectedTypes, rowIndex = 0) {
+    const types = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
+    types.forEach((type) => {
+      cy.expect(
+        Select({ name: `alternativeTitles[${rowIndex}].alternativeTitleTypeId` }).has({
+          optionsText: including(type),
+        }),
+      );
+    });
+  },
+
+  verifyAvailableResourceTypes(expectedTypes) {
+    const types = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
+    types.forEach((type) => {
+      cy.expect(resourceTypeSelect.has({ optionsText: including(type) }));
+    });
+  },
+  verifyAvailableFormats(expectedFormats, rowIndex = 0) {
+    const formats = Array.isArray(expectedFormats) ? expectedFormats : [expectedFormats];
+    formats.forEach((format) => {
+      cy.expect(
+        Select({ name: `instanceFormatIds[${rowIndex}]` }).has({ optionsText: including(format) }),
+      );
+    });
+  },
+
+  clickAddElectronicAccess() {
+    cy.do(addElectronicAccessButton.click());
+  },
+
+  verifyAvailableElectronicAccessRelationships(expectedRelationships, rowIndex = 0) {
+    const relationships = Array.isArray(expectedRelationships)
+      ? expectedRelationships
+      : [expectedRelationships];
+    relationships.forEach((relationship) => {
+      cy.expect(
+        Select({ name: `electronicAccess[${rowIndex}].relationshipId` }).has({
+          optionsText: including(relationship),
+        }),
+      );
+    });
+  },
   fillResourceTitle(title) {
     cy.do(TextArea({ id: 'input_instance_title' }).fillIn(title));
   },

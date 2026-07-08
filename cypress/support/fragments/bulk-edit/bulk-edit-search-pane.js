@@ -294,8 +294,17 @@ export default {
   },
 
   checkForUploading(fileName) {
-    cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
-    cy.expect(HTML(including('Retrieving...')));
+    // For small files, UI shows spinner without text
+    // For larger files, UI shows progress message with filename
+    cy.get('body').then(($body) => {
+      if ($body.text().includes(`Uploading ${fileName}`)) {
+        cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
+        cy.expect(HTML(including('Retrieving...')));
+      } else {
+        // Verify spinner is present for small files
+        cy.expect(Spinner().exists());
+      }
+    });
   },
 
   progresBarIsAbsent() {
@@ -483,6 +492,19 @@ export default {
 
   openQuerySearch() {
     cy.do(queryToggle.click());
+  },
+
+  verifyQueryPaneInitialState() {
+    cy.expect([
+      bulkEditPane.has({ title: 'Bulk edit' }),
+      bulkEditPane.has({ subtitle: 'Set criteria to start bulk edit' }),
+      bulkEditPane
+        .find(HTML('Select a record type and then click the Build query button.'))
+        .exists(),
+      setCriteriaPane.find(buildQueryButton).has({ disabled: true }),
+      this.verifyResetAllButtonDisabled(true),
+      this.recordTypesAccordionExpanded(true),
+    ]);
   },
 
   openLogsSearch() {

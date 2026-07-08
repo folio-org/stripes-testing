@@ -169,6 +169,7 @@ export default {
   },
 
   save() {
+    cy.wait(2000);
     cy.do(saveAndCloseButton.click());
   },
 
@@ -1194,7 +1195,7 @@ export default {
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
   },
 
-  varifyFundIsSaved: () => {
+  verifyFundIsSaved: () => {
     InteractorsTools.checkCalloutMessage('Fund has been saved');
   },
 
@@ -1424,6 +1425,18 @@ export default {
     cy.wait(2000);
     cy.do(saveAndCloseButton.click());
     cy.wait(3000);
+  },
+
+  verifyAcqUnitSelectionDisabled(isDisabled = true) {
+    cy.expect(
+      fundAcqUnitsSelection
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .has({ disabled: isDisabled }),
+    );
+  },
+
+  verifyAcqUnitSelected(auName) {
+    cy.expect(fundAcqUnitsSelection.find(ValueChipRoot(auName)).exists());
   },
 
   verifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {

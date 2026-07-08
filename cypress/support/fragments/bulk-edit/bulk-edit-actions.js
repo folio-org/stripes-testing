@@ -53,6 +53,7 @@ const downloadErrorsButton = Button('Download errors (CSV)');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
+const startBulkDeleteButton = Button('Start bulk delete');
 const startBulkEditFolioInstanceButton = Button('FOLIO Instances');
 const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
@@ -77,6 +78,8 @@ const selectActionForMarcInstanceDropdown = Select({ name: 'name', required: tru
 const selectActionForMarcInstanceDropdownFirst = Select({ name: 'name', dataActionIndex: '0' });
 const noteTypeSelection = Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') });
 const statisticalCodeSelection = MultiSelect({ id: 'statisticalCodes' });
+const deleteUserRecordsModal = Modal('Delete user records?');
+const deleteButton = Button('Delete');
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -106,8 +109,16 @@ export default {
     cy.wait(2000);
   },
 
+  clickStartBulkDeleteButton() {
+    cy.do(startBulkDeleteButton.click());
+  },
+
   clickSelectBulkEditProfile(recordType) {
     cy.do(Button(`Select ${recordType} bulk edit profile`).click());
+  },
+
+  verifySelectBulkEditProfileButtonExists(recordType) {
+    cy.expect(Button(`Select ${recordType} bulk edit profile`).exists());
   },
 
   verifyStartBulkEditOptions() {
@@ -2807,5 +2818,26 @@ export default {
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).hoverMouse());
     cy.expect(Tooltip({ text }).exists());
     cy.do(bulkEditsMarcInstancesAccordion.find(Icon({ info: true })).unhoverMouse());
+  },
+
+  verifyDeleteUserRecordsModalButtons(
+    isCancelButtonDisabled = false,
+    isDeleteButtonDisabled = false,
+  ) {
+    cy.expect([
+      deleteUserRecordsModal.exists(),
+      deleteUserRecordsModal.find(cancelButton).has({ disabled: isCancelButtonDisabled }),
+      deleteUserRecordsModal
+        .find(deleteButton)
+        .has({ disabled: isDeleteButtonDisabled, focused: true }),
+    ]);
+  },
+
+  verifyDeleteUserRecordsModalAbsent() {
+    cy.expect(deleteUserRecordsModal.absent());
+  },
+
+  clickCancelButtonInDeleteUserRecordsModal() {
+    cy.do(deleteUserRecordsModal.find(cancelButton).click());
   },
 };

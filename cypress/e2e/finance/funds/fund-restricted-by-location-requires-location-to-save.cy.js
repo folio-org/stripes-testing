@@ -102,7 +102,7 @@ describe('Funds', () => {
       Funds.verifyUnassignAllLocationsButtonState(false);
 
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
       Funds.verifyCheckboxState('Restrict use by location', true);
     },

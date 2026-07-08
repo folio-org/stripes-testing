@@ -67,7 +67,7 @@ describe('Funds', () => {
       Funds.varifyLocationInSection(secondLocation.name);
       Funds.varifyLocationInSection(thirdLocation.name);
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
       Funds.verifyCheckboxState('Restrict use by location', true);
     },

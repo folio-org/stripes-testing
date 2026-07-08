@@ -21,3 +21,17 @@ export const FUND_STATUSES = {
   FROZEN: 'Frozen',
   INACTIVE: 'Inactive',
 };
+
+export const FUND_DETAILS_FIELDS = {
+  NAME: 'Name',
+  CODE: 'Code',
+  LEDGER: 'Ledger',
+  STATUS: 'Status',
+  TYPE: 'Type',
+  GROUPS: 'Groups',
+  ACQUISITION_UNITS: 'Acquisition units',
+  TRANSFER_FROM: 'Transfer from',
+  TRANSFER_TO: 'Transfer to',
+  EXTERNAL_ACCOUNT_NO: 'External account',
+  DESCRIPTION: 'Description',
+};
