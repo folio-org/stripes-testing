@@ -41,10 +41,12 @@ const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
-const uploadFile = (filePathName, fileName) => {
+const uploadFile = (filePathName, fileName, shouldWaitFullUpload = true) => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
-  cy.wait(15000);
+  if (shouldWaitFullUpload) {
+    cy.wait(15000);
+  }
 };
 
 // used for production tenants
