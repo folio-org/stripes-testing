@@ -84,18 +84,22 @@ describe('MARC', () => {
           //   Step 4: Edit the authority record
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
+          cy.wait(2000);
           QuickMarcEditor.checkTagExists(testData.tag100);
 
           // Step 5: Delete $t subfield and Save & Keep Editing
           QuickMarcEditor.updateExistingField(testData.tag100, '$a Twain, Mark, $d 1835-1910.');
+          QuickMarcEditor.checkContentByTag(testData.tag100, '$a Twain, Mark, $d 1835-1910.');
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.checkButtonsDisabled();
 
           // Step 6: Change tag from 100 to 110 and Save & Close
-          cy.wait(1000);
+          cy.wait(2000);
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
+          QuickMarcEditor.checkTagAbsent(testData.tag100);
+          QuickMarcEditor.checkContentByTag(testData.tag110, '$a Twain, Mark, $d 1835-1910.');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           QuickMarcEditor.closeAllCallouts();
@@ -151,10 +155,11 @@ describe('MARC', () => {
           ];
 
           tagSequence.forEach(({ from, to }) => {
-            cy.wait(1000);
+            cy.wait(2000);
+            QuickMarcEditor.checkContentByTag(from, '$a Twain, Mark, $d 1835-1910.');
             QuickMarcEditor.updateExistingTagName(from, to);
             QuickMarcEditor.checkTagAbsent(from);
-            QuickMarcEditor.checkTagExists(to);
+            QuickMarcEditor.checkContentByTag(to, '$a Twain, Mark, $d 1835-1910.');
             QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
@@ -163,14 +168,21 @@ describe('MARC', () => {
           });
 
           // Step 16-17: Change 155 to 101
-          cy.wait(1000);
+          cy.wait(2000);
           QuickMarcEditor.updateExistingTagName(testData.tag101, testData.tag155);
+          QuickMarcEditor.checkTagAbsent(testData.tag101);
+          QuickMarcEditor.checkContentByTag(testData.tag155, '$a Twain, Mark, $d 1835-1910.');
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkAfterSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
 
           // Step 18: Add $t subfield back
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(
+            testData.tag155,
+            '$a Twain, Mark, $d 1835-1910. $t test',
+          );
+          QuickMarcEditor.checkContentByTag(
             testData.tag155,
             '$a Twain, Mark, $d 1835-1910. $t test',
           );
