@@ -728,12 +728,29 @@ Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
 });
 
 Cypress.Commands.add('getSingleImportProfilesViaAPI', () => {
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'copycat/profiles',
-  }).then(({ body }) => {
-    return body.profiles;
-  });
+  const maxRetries = 3;
+
+  const attempt = (retriesLeft) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'copycat/profiles',
+      // do not fail the test immediately on non-2xx to allow retry logic
+      failOnStatusCode: false,
+    })
+    .then((resp) => {
+      if (resp.status === 401 && retriesLeft > 0) {
+        cy.wait(1000);
+        return attempt(retriesLeft - 1);
+      }
+
+      if (resp.status >= 200 && resp.status < 400) {
+        return resp.body.profiles;
+      }
+
+      throw new Error(`getSingleImportProfilesViaAPI failed with status ${resp.status}`);
+    });
+
+  return attempt(maxRetries);
 });
 
 Cypress.Commands.add('getSubjectTypesViaApi', (searchParams) => {
