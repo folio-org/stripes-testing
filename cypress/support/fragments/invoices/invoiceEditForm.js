@@ -16,6 +16,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
+  ValueChipRoot,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME, INVOICE_VIEW_FIELDS } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -25,6 +26,9 @@ import InvoiceStates from './invoiceStates';
 import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
+const invoiceAcqUnitsMultiSelect = invoiceEditFormRoot.find(
+  MultiSelect({ id: 'invoice-acq-units' }),
+);
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
 const vendorInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-vendorDetails' }),
@@ -153,13 +157,12 @@ export default {
       cy.expect(infoFields.note.has({ value: invoice.note }));
     }
     if (invoice.acqUnits) {
+      cy.wait(4000);
       cy.do([
-        MultiSelect({ id: 'invoice-acq-units' })
-          .find(Button({ ariaLabel: 'open menu' }))
-          .click(),
-        cy.wait(4000),
+        invoiceAcqUnitsMultiSelect.find(Button({ ariaLabel: 'open menu' })).click(),
         MultiSelectOption(...invoice.acqUnits).click(),
       ]);
+      cy.wait(2000);
     }
   },
   uploadFile(fileName) {
@@ -253,6 +256,18 @@ export default {
           .has({ error: 'Required!' }),
       );
     });
+  },
+
+  verifyAcqUnitSelectionDisabled(isDisabled = true) {
+    cy.expect(
+      invoiceAcqUnitsMultiSelect
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .has({ disabled: isDisabled }),
+    );
+  },
+
+  verifyAcqUnitSelected(auName) {
+    cy.expect(invoiceAcqUnitsMultiSelect.find(ValueChipRoot(auName)).exists());
   },
 
   clearField(fieldName) {
