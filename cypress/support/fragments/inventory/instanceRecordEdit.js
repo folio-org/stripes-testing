@@ -62,6 +62,8 @@ const cancelButton = Button('Cancel');
 const addAlternativeTitleButton = Button('Add alternative title');
 const resourceTypeSelect = Select({ name: 'instanceTypeId' });
 const addElectronicAccessButton = Button('Add electronic access');
+const addSucceedingTitleButton = Button({ id: 'clickable-add-succeedingTitle-add-button' });
+const succeedingTitleFieldSet = FieldSet({ id: 'clickable-add-succeedingTitle' });
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -251,6 +253,9 @@ export default {
   },
   addExistingPrecedingTitle: (precedingTitle) => {
     cy.do(Button({ id: 'find-instance-trigger' }).click());
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -261,6 +266,34 @@ export default {
         .click(),
       findInstanceButton.click(),
     ]);
+  },
+  addSucceedingTitle: (succeedingTitle, fieldIndex = 0, isbn = '', issn = '') => {
+    const fieldNamePref = `succeedingTitles[${fieldIndex}]`;
+    cy.do([
+      addSucceedingTitleButton.click(),
+      TextArea({ name: `${fieldNamePref}.title` }).fillIn(succeedingTitle),
+    ]);
+    if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
+    if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
+  },
+  addExistingSucceedingTitle: (succeedingTitle, fieldIndex = 0, isbn = '', issn = '') => {
+    const fieldNamePref = `succeedingTitles[${fieldIndex}]`;
+    cy.do([
+      addSucceedingTitleButton.click(),
+      succeedingTitleFieldSet
+        .find(RepeatableFieldItem({ index: fieldIndex }))
+        .find(findInstanceButton)
+        .click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
+    InventoryInstanceModal.searchByTitle(succeedingTitle);
+    InventoryInstanceModal.selectInstance();
+    InventoryInstanceModal.verifyModalAbsent();
+    if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
+    if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
   },
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
