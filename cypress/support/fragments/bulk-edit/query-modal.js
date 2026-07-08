@@ -553,6 +553,20 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyOptionsInValueSelectWhenUnsorted(expectedOption, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+
+    cy.then(() => {
+      return SelectionList({ placeholder: 'Filter options list' }).optionList();
+    }).then((options) => {
+      const sortedExpectedOptions = expectedOption.sort();
+
+      expect(options).to.deep.equal(sortedExpectedOptions);
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyValueSelectContainsOptions(expectedOptions, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());

@@ -121,7 +121,7 @@ describe('Lists', () => {
 
           // Step 5: Select "equals" operator and verify dropdown values include consortium + tenant affiliations
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.verifyOptionsInValueSelect([
+          QueryModal.verifyOptionsInValueSelectWhenUnsorted([
             Affiliations.College,
             Affiliations.Consortia,
             Affiliations.University,
