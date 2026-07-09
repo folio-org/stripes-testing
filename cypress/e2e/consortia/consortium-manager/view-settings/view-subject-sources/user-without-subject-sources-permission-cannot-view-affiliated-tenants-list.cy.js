@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -12,7 +11,6 @@ import ConsortiumManagerSettings from '../../../../../support/fragments/settings
 import SubjectSources from '../../../../../support/fragments/settings/inventory/instances/subjectSources';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -44,7 +42,6 @@ describe('Consortia', () => {
           memberLibraries: 'University',
         };
         const settingsList = Object.values(settingsItems);
-        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create test data and login', () => {
           cy.getAdminToken();
@@ -136,7 +133,6 @@ describe('Consortia', () => {
             ConsortiumManager.verifyChooseSettingsIsDisplayed();
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: sharedSubjectSource.name,
             });
@@ -146,7 +142,11 @@ describe('Consortia', () => {
               localSubjectSourceOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnCollege.name);
+            ConsortiumSubjectSources.verifyLocalSubjectSourceExists(
+              localSubjectSourceOnCollege.name,
+              localSubjectSourceOnCollege.memberLibraries,
+              localSubjectSourceOnCollege.source,
+            );
             ConsortiumSubjectSources.verifySubjectSourceAbsent(localSubjectSourceOnUniversity.name);
 
             ConsortiumManager.clickSelectMembers();
