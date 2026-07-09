@@ -49,7 +49,7 @@ export default {
   },
 
   searchResourceByTitle: (title) => {
-    cy.do(hubsSearchInput.fillIn(title));
+    cy.get('#id-search-input').clear().type(title);
     cy.wait(2000);
     cy.do(searchButton.click());
     cy.wait(2000);
@@ -194,9 +194,6 @@ export default {
   },
 
   verifyInstanceListSize(index, count) {
-    cy.get('[class*="instance-list"]')
-      .eq(index)
-      .find('tbody tr')
-      .should('have.length', count);
+    cy.get('[class*="instance-list"]').eq(index).find('tbody tr').should('have.length', count);
   },
 };
