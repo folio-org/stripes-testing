@@ -282,6 +282,8 @@ export const purchaseOrderLinesFieldValues = {
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
+  vendorOrgEdiType: 'Vendor org — EDI vendor type',
+  vendorOrgName: 'Vendor org — Name',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -1036,6 +1038,18 @@ export default {
             cy.get('[class^="emptyMessage--"]').should('have.text', 'The list contains no items');
           }
         });
+    });
+  },
+
+  getNumberOfMatchedRecords() {
+    return cy.contains('h3', /^Query returns/).then(($element) => {
+      const text = $element.text();
+      const numberMatches = text.match(/[\d,]+/g);
+      if (numberMatches && numberMatches.length > 0) {
+        const count = Number(numberMatches[0].replace(/,/g, ''));
+        return cy.wrap(count);
+      }
+      return cy.wrap(0);
     });
   },
 
