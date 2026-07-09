@@ -64,6 +64,8 @@ const resourceTypeSelect = Select({ name: 'instanceTypeId' });
 const addElectronicAccessButton = Button('Add electronic access');
 const addSucceedingTitleButton = Button({ id: 'clickable-add-succeedingTitle-add-button' });
 const succeedingTitleFieldSet = FieldSet({ id: 'clickable-add-succeedingTitle' });
+const savingFailedModal = Modal('Saving instance failed');
+const titleField = TextArea({ name: 'title' });
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -511,9 +513,12 @@ export default {
   markAsStaffSuppress() {
     cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
-  editResourceTitle: (newTitle) => {
-    cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
-    cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
+  editResourceTitle(newTitle) {
+    cy.do(titleField.fillIn(newTitle));
+    this.verifyTitle(newTitle);
+  },
+  verifyTitle(title) {
+    cy.expect(titleField.has({ value: title }));
   },
   addStatisticalCode: (code, index = 0) => {
     clickAddStatisticalCodeButton();
@@ -819,7 +824,7 @@ export default {
 
   verifyShareParentLinkingError() {
     cy.expect(
-      Modal('Saving instance failed')
+      savingFailedModal
         .find(
           HTML(
             including(
@@ -832,11 +837,18 @@ export default {
   },
 
   verifyErrorMessage(message) {
-    cy.expect(
-      Modal('Saving instance failed')
-        .find(HTML(including(message)))
-        .exists(),
+    cy.expect(savingFailedModal.find(HTML(including(message))).exists());
+  },
+
+  verifyMarcControlledErrorMessage() {
+    this.verifyErrorMessage(
+      '422: Instance is controlled by MARC record, these fields are blocked and can not be updated:',
     );
+  },
+
+  closeSavingFailedModal() {
+    cy.do(savingFailedModal.find(Button('Close')).click());
+    cy.expect(savingFailedModal.absent());
   },
 
   checkButtonsEnabled: ({ saveAndClose = true, saveKeepEditing = true, cancel = true } = {}) => {
@@ -845,6 +857,10 @@ export default {
       saveAndKeepEditing.has({ disabled: !saveKeepEditing }),
       saveAndCloseButton.has({ disabled: !saveAndClose }),
     ]);
+  },
+
+  checkSaveAndCloseButtonDisabledOrNotShown: () => {
+    cy.expect(Button('Save & close', { disabled: false }).absent());
   },
 
   openAddChildInstanceModal() {
