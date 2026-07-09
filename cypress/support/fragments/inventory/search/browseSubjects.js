@@ -253,8 +253,8 @@ export default {
     cy.expect(MultiColumnListCell({ innerHTML: including(`<strong>${value}</strong>`) }).exists());
   },
 
-  browse(subjectName, { clearHeldby = true } = {}) {
-    if (clearHeldby) InventorySearchAndFilter.clearDefaultHeldbyFilter();
+  browse(subjectName) {
+    if (!Cypress.env('ecs_enabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do(recordSearch.fillIn(subjectName));
     cy.expect([recordSearch.has({ value: subjectName }), searchButton.has({ disabled: false })]);
     cy.do(searchButton.click());

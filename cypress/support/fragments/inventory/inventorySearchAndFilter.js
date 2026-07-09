@@ -115,16 +115,6 @@ const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
 const defaultBrowseOptionText = 'Select a browse option';
 
-const searchInstanceByHRID = (id, { clearHeldBy = true } = {}) => {
-  if (clearHeldBy) this.clearDefaultHeldbyFilter();
-  cy.do([
-    Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextArea({ id: 'input-inventory-search' }).fillIn(id),
-    searchButton.click(),
-  ]);
-  cy.wait(2000);
-};
-
 const searchHoldingsByHRID = (hrid) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
@@ -198,7 +188,6 @@ const checkInstanceDetails = () => {
 };
 
 export default {
-  searchInstanceByHRID,
   searchHoldingsByHRID,
   getInstanceHRID,
   checkInstanceDetails,
@@ -222,13 +211,23 @@ export default {
     eng: { id: 'clickable-filter-language-english' },
   },
 
-  searchInstanceByTitle(title, { clearHeldby = true } = {}) {
-    if (clearHeldby) this.clearDefaultHeldbyFilter();
+  searchInstanceByTitle(title) {
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
     cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
     cy.wait(500);
     cy.do(searchButton.click());
     cy.wait(500);
     InventoryInstance.waitInventoryLoading();
+  },
+
+  searchInstanceByHRID(id) {
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    cy.do([
+      Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
+      TextArea({ id: 'input-inventory-search' }).fillIn(id),
+      searchButton.click(),
+    ]);
+    cy.wait(2000);
   },
 
   selectResultCheckboxes(count) {
@@ -289,8 +288,8 @@ export default {
     cy.wait(1000);
   },
 
-  byKeywords(kw = '*', { clearHeldBy = true } = {}) {
-    if (clearHeldBy) this.clearDefaultHeldbyFilter();
+  byKeywords(kw = '*') {
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
     cy.do([keywordInput.fillIn(kw), searchButton.click()]);
     cy.expect(MultiColumnListRow().exists());
   },
@@ -517,8 +516,8 @@ export default {
     }
   },
 
-  searchByParameter(parameter, value, { clearHeldBy = true } = {}) {
-    if (clearHeldBy) this.clearDefaultHeldbyFilter();
+  searchByParameter(parameter, value) {
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
@@ -645,8 +644,8 @@ export default {
     cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
-  clickSearch({ clearHeldBy = true } = {}) {
-    if (clearHeldBy) this.clearDefaultHeldbyFilter();
+  clickSearch() {
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
     cy.do(searchButton.click());
   },
 
