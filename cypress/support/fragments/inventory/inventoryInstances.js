@@ -73,6 +73,7 @@ const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qinde
 const advSearchOperatorSelect = Select({ id: including('advanced-search-bool-') });
 const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
+const heldbyAccordionName = 'Held by';
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
@@ -427,8 +428,9 @@ export default {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
-  searchByTitle(title, result = true) {
+  searchByTitle(title, result = true, { clearHeldby = true } = {}) {
     cy.wait(2000);
+    if (clearHeldby) this.clearDefaultHeldbyFilter();
     cy.do([
       filterSection.find(inventorySearchInput).fillIn(title),
       filterSection.find(searchButton).click(),
@@ -1769,6 +1771,38 @@ export default {
     cy.get('a[id^="record-title-"]').each(($instanceLink) => {
       const instanceId = $instanceLink.attr('id').replace('record-title-', '');
       this.checkIfInstanceHasHoldingsApi(instanceId, haveHoldings);
+    });
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
+  },
+
+  clearDefaultHeldbyFilter() {
+    cy.wait(1000);
+
+    cy.get('body').then(($body) => {
+      const clearBtn = $body.find(
+        `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
+      );
+      if (clearBtn.length > 0) {
+        this.clearDefaultFilter(heldbyAccordionName);
+        cy.expect(
+          Button({
+            ariaLabel: or(
+              `Clear selected filters for "${heldbyAccordionName}"`,
+              `Clear selected ${heldbyAccordionName} filters`,
+            ),
+          }).absent(),
+        );
+      }
     });
   },
 };

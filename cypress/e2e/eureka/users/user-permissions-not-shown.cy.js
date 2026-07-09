@@ -22,13 +22,10 @@ describe('Eureka', () => {
         cy.createUserGroupApi().then((group) => {
           testData.userGroup = group;
         });
-        cy.waitForAuthRefresh(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.usersPath,
-            waiter: Users.waitLoading,
-          });
-          cy.reload();
-        }, 20_000);
+        cy.loginAsAdmin({
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+        });
         Users.waitLoading();
       });
     });
@@ -59,7 +56,14 @@ describe('Eureka', () => {
           testData.userName,
         );
         UserEdit.verifyUserPermissionsAccordion(false);
-        Users.saveCreatedUser();
+        cy.intercept('POST', /\/users|\/users-keycloak\/users/).as('createUser');
+        UserEdit.saveUserEditForm();
+        if (!Cypress.env('ecs_enabled')) {
+          cy.ifConsortia(true, () => {
+            UserEdit.checkPromoteUserModal(testData.lastName, '');
+            UserEdit.clickConfirmInPromoteUserModal();
+          });
+        }
         Users.checkCreateUserPaneOpened(false);
 
         Users.verifyLastNameOnUserDetailsPane(testData.lastName);
