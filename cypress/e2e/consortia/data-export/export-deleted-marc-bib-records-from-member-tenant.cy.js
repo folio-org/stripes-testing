@@ -279,7 +279,7 @@ describe('Data Export', () => {
         ];
 
         // Step 1: Initiate export of deleted MARC bib records from member tenant from today's date
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.College);
         cy.runDataExportMarcBibDeleted({ from: currentDate }).then((response) => {
           expect(response.status).to.equal(200);
@@ -336,7 +336,7 @@ describe('Data Export', () => {
 
         // Step 6: Initiate export of deleted MARC bib records for all dates until today
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.College);
         cy.runDataExportMarcBibDeleted({ to: currentDate }).then((response) => {
           expect(response.status).to.equal(200);
@@ -395,7 +395,7 @@ describe('Data Export', () => {
 
         // Step 11: Initiate export for tomorrow date (should fail)
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.College);
         cy.runDataExportMarcBibDeleted({
           from: tomorrowDate,

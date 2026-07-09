@@ -7,26 +7,30 @@ describe('Lists', () => {
   describe('Query Builder', () => {
     describe('Custom Entity Types', () => {
       let userData = {};
-      const newCustomEntityType = Lists.generateCustomEntityTypeBodyWithoutSources('Custom entity type C825335');
+      const newCustomEntityType = Lists.generateCustomEntityTypeBodyWithoutSources(
+        'Custom entity type C825335',
+      );
       const expectedError = {
         errors: [
           {
             type: 'ForbiddenException',
             code: 'authorization_error',
-            message: 'Access Denied'
-          }
+            message: 'Access Denied',
+          },
         ],
-        total_records: 1
+        total_records: 1,
       };
 
       before('Create test data', () => {
         const capabSetsToAssign = [CapabilitySets.moduleListsManage];
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
-        }).then(() => {
-          cy.getUserToken(userData.username, userData.password);
-        });
+        cy.createTempUser([])
+          .then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssign);
+          })
+          .then(() => {
+            cy.getUserToken(userData.username, userData.password);
+          });
       });
 
       after('Delete test data', () => {
@@ -42,8 +46,8 @@ describe('Lists', () => {
       }
 
       it(
-        'C825335 Verify the CRUD operations for Custom Entity Types without the appropriate permissions (eureka)',
-        { tags: ['extendedPath', 'eureka', 'C825335'] },
+        'C825335 Verify the CRUD operations for Custom Entity Types without the appropriate permissions (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C825335'] },
         () => {
           Lists.createCustomEntityType(newCustomEntityType).then((response) => {
             verifyResponse(response);
@@ -53,9 +57,11 @@ describe('Lists', () => {
             verifyResponse(response);
           });
 
-          Lists.updateCustomEntityTypeById(newCustomEntityType.id, newCustomEntityType).then((response) => {
-            verifyResponse(response);
-          });
+          Lists.updateCustomEntityTypeById(newCustomEntityType.id, newCustomEntityType).then(
+            (response) => {
+              verifyResponse(response);
+            },
+          );
 
           Lists.deleteCustomEntityTypeById(newCustomEntityType.id).then((response) => {
             verifyResponse(response);
