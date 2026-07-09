@@ -195,8 +195,8 @@ export default {
   browse(contributorName) {
     this.searchRecordByName(contributorName);
   },
-  searchRecordByName(recordName, { clearHeldBy = true } = {}) {
-    if (clearHeldBy) InventorySearchAndFilter.clearDefaultHeldbyFilter();
+  searchRecordByName(recordName) {
+    if (!Cypress.env('ecs_enabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do(recordSearch.fillIn(recordName));
     cy.expect(recordSearch.has({ value: recordName }));
     cy.do(searchButton.click());

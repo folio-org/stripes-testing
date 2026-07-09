@@ -428,9 +428,9 @@ export default {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
-  searchByTitle(title, result = true, { clearHeldby = true } = {}) {
+  searchByTitle(title, result = true) {
     cy.wait(2000);
-    if (clearHeldby) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       filterSection.find(inventorySearchInput).fillIn(title),
       filterSection.find(searchButton).click(),
