@@ -47,7 +47,7 @@ describe('Data Import', () => {
         amount: '$19.95',
       },
       {
-        fund: 'European History(EUROHIST)',
+        fund: 'African History(AFRICAHIST)',
         expenseClass: 'Electronic',
         value: '100%',
         amount: '$19.95',
@@ -65,7 +65,7 @@ describe('Data Import', () => {
         value: '100',
       },
       {
-        fundId: '"European History (EUROHIST)"',
+        fundId: '"African History (AFRICAHIST)"',
         expenseClass: '982$c; else "Electronic (Elec)"',
         value: '100',
       },
@@ -232,6 +232,7 @@ describe('Data Import', () => {
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[1]);
         FieldMappingProfileEdit.save();
+        cy.wait(3000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
@@ -258,6 +259,7 @@ describe('Data Import', () => {
           cy.wait(1000);
           const orderNumber = initialNumber.replace(/-\d+$/, '');
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
+          cy.wait(3000);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();
           Logs.openFileDetails(thirdMarcFileName);
@@ -279,6 +281,7 @@ describe('Data Import', () => {
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[2]);
         FieldMappingProfileEdit.save();
+        cy.wait(3000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
@@ -306,6 +309,7 @@ describe('Data Import', () => {
           const orderNumber = initialNumber.replace(/-\d+$/, '');
 
           OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
+          cy.wait(3000);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();
           Logs.openFileDetails(forthMarcFileName);

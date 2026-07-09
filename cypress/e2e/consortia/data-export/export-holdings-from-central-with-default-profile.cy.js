@@ -500,7 +500,7 @@ describe('Data Export', () => {
         // Step 7: Remove College affiliation from user, Remove inventory permissions for University tenant
         cy.logout();
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.removeAffiliationFromUser(Affiliations.College, user.userId);
         cy.withinTenant(Affiliations.University, () => {
           cy.updateCapabilitiesForUserApi(user.userId, []);
@@ -540,7 +540,7 @@ describe('Data Export', () => {
         ExportFile.uploadFile(duplicatedCsvFileName);
         SelectJobProfile.verifySelectJobPane();
         ExportFile.exportWithDefaultJobProfile(duplicatedCsvFileName, 'Default holdings');
-
+        cy.wait(3000);
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
           'getFailedJobInfo',
         );

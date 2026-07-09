@@ -185,10 +185,6 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              cy.waitForAuthRefresh(() => {
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -210,16 +206,12 @@ describe('MARC', () => {
               cy.wait(1000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-            });
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
           });
         });
 
@@ -234,7 +226,7 @@ describe('MARC', () => {
 
         it(
           'C389486 Pre-defined fields are linked after clicking on the "Link headings" button in edit "MARC bib" when only default fields enabled for autolinking (spitfire)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C389486'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C389486'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

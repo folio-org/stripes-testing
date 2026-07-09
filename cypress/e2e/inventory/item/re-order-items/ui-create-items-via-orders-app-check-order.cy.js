@@ -118,7 +118,6 @@ describe('Inventory', () => {
         ServicePoints.deleteViaApi(testData.servicePoint.id);
       });
 
-      // May FAIL due to https://folio-org.atlassian.net/MODINV-1362
       it(
         'C808506 Create "Item" record via "Orders" app and check "order" field (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C808506'] },

@@ -183,6 +183,7 @@ describe('Inventory', () => {
             RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
+          cy.wait(3000);
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
 
           InstanceRecordView.verifyInstanceRecordViewOpened();

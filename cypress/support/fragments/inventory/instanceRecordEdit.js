@@ -130,6 +130,7 @@ export default {
         Pane({ titleLabel: including('Edit shared instance') }).exists(),
       ),
     ]);
+    cy.wait(3000);
   },
   // related with Actions->Overlay
   checkReadOnlyFields() {
@@ -326,6 +327,7 @@ export default {
   },
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(including(statusTerm)));
+    cy.expect(Select('Instance status term').has({ checkedOptionText: including(statusTerm) }));
   },
   clearInstanceStatusTerm() {
     cy.do(instanceStatusTerm.choose('Select instance status'));

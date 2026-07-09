@@ -89,13 +89,10 @@ describe('Inventory', () => {
         'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C808499'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.waitContentLoading();
 
           // Navigate to instance that has holdings with multiple items with order fields 1, 2, 3
@@ -116,6 +113,7 @@ describe('Inventory', () => {
             // Duplicate the item
             ItemRecordView.duplicateItem();
             ItemRecordNew.waitLoading(testData.folioInstances[0].instanceTitle);
+            ItemRecordNew.verifyBarcode('');
 
             // Update the barcode of the duplicated item
             const duplicatedItemBarcode = `AT_C808499_Item_${uuid()}`;
@@ -126,6 +124,7 @@ describe('Inventory', () => {
 
             // Step 5: Verify the duplicated item has order field value 4 (continues the sequence)
             ItemRecordView.waitLoading();
+            ItemRecordView.checkBarcode(duplicatedItemBarcode);
 
             // Navigate back to instance and open holdings
             ItemRecordView.closeDetailView();
