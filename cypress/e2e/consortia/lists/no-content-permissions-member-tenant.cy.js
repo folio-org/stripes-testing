@@ -50,7 +50,6 @@ describe('Lists', () => {
       () => {
         // Step 1: Switch affiliation to member tenant
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        Lists.waitLoading();
         Lists.verifyNoEntityTypePermissionsWarning();
       },
     );
