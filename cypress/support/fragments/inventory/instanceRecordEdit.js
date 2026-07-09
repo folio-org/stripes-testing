@@ -540,6 +540,15 @@ export default {
   verifyCatalogDateInputIsDisabled(isDisabled = true) {
     cy.get('input[name=catalogedDate]').should(`be.${isDisabled ? 'disabled' : 'enabled'}`);
   },
+  fillCatalogedDate(date) {
+    cy.do(TextField({ name: 'catalogedDate' }).fillIn(date));
+  },
+  verifyInstanceHridAndSourceAreNotEditable() {
+    cy.expect([
+      rootSection.find(TextField('Instance HRID')).has({ disabled: true }),
+      rootSection.find(TextField('Source*')).has({ disabled: true }),
+    ]);
+  },
   verifyInstanceStatusTermConditionIsDisabled(status) {
     cy.expect(instanceStatusTerm.has({ disabled: status }));
   },
