@@ -115,7 +115,8 @@ const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
 const defaultBrowseOptionText = 'Select a browse option';
 
-const searchInstanceByHRID = (id) => {
+const searchInstanceByHRID = (id, { clearHeldBy = true } = {}) => {
+  if (clearHeldBy) this.clearDefaultHeldbyFilter();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextArea({ id: 'input-inventory-search' }).fillIn(id),
@@ -131,14 +132,6 @@ const searchHoldingsByHRID = (hrid) => {
     searchButton.click(),
   ]);
   InventoryInstances.waitLoading();
-};
-
-const searchInstanceByTitle = (title) => {
-  cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
-  cy.wait(500);
-  cy.do(searchButton.click());
-  cy.wait(500);
-  InventoryInstance.waitInventoryLoading();
 };
 
 const getInstanceHRID = () => {
@@ -207,7 +200,6 @@ const checkInstanceDetails = () => {
 export default {
   searchInstanceByHRID,
   searchHoldingsByHRID,
-  searchInstanceByTitle,
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
@@ -228,6 +220,15 @@ export default {
 
   language: {
     eng: { id: 'clickable-filter-language-english' },
+  },
+
+  searchInstanceByTitle(title, { clearHeldby = true } = {}) {
+    if (clearHeldby) this.clearDefaultHeldbyFilter();
+    cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
+    cy.wait(500);
+    cy.do(searchButton.click());
+    cy.wait(500);
+    InventoryInstance.waitInventoryLoading();
   },
 
   selectResultCheckboxes(count) {
@@ -288,7 +289,8 @@ export default {
     cy.wait(1000);
   },
 
-  byKeywords(kw = '*') {
+  byKeywords(kw = '*', { clearHeldBy = true } = {}) {
+    if (clearHeldBy) this.clearDefaultHeldbyFilter();
     cy.do([keywordInput.fillIn(kw), searchButton.click()]);
     cy.expect(MultiColumnListRow().exists());
   },
@@ -515,7 +517,8 @@ export default {
     }
   },
 
-  searchByParameter: (parameter, value) => {
+  searchByParameter(parameter, value, { clearHeldBy = true } = {}) {
+    if (clearHeldBy) this.clearDefaultHeldbyFilter();
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
@@ -642,7 +645,8 @@ export default {
     cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
-  clickSearch() {
+  clickSearch({ clearHeldBy = true } = {}) {
+    if (clearHeldBy) this.clearDefaultHeldbyFilter();
     cy.do(searchButton.click());
   },
 
@@ -1831,15 +1835,23 @@ export default {
   },
 
   clearDefaultHeldbyFilter() {
-    cy.wait(2000);
-    this.clearDefaultFilter(heldbyAccordionName);
-    cy.expect(
-      Button({
-        ariaLabel: or(
-          `Clear selected filters for "${heldbyAccordionName}"`,
-          `Clear selected ${heldbyAccordionName} filters`,
-        ),
-      }).absent(),
-    );
+    cy.wait(3000);
+
+    cy.get('body').then(($body) => {
+      const clearBtn = $body.find(
+        `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
+      );
+      if (clearBtn.length > 0) {
+        this.clearDefaultFilter(heldbyAccordionName);
+        cy.expect(
+          Button({
+            ariaLabel: or(
+              `Clear selected filters for "${heldbyAccordionName}"`,
+              `Clear selected ${heldbyAccordionName} filters`,
+            ),
+          }).absent(),
+        );
+      }
+    });
   },
 };

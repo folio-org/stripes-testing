@@ -23,6 +23,7 @@ import {
   Image,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const defaultInstanceAWithContributor = {
   source: 'FOLIO',
@@ -194,7 +195,8 @@ export default {
   browse(contributorName) {
     this.searchRecordByName(contributorName);
   },
-  searchRecordByName(recordName) {
+  searchRecordByName(recordName, { clearHeldBy = true } = {}) {
+    if (clearHeldBy) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do(recordSearch.fillIn(recordName));
     cy.expect(recordSearch.has({ value: recordName }));
     cy.do(searchButton.click());

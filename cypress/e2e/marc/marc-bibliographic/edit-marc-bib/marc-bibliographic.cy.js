@@ -50,6 +50,8 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               });
               InventoryInstances.searchByTitle(testData.instanceID);
+              InventoryInstance.waitLoading();
+              InventoryInstance.waitInstanceRecordViewOpened();
             });
         });
 

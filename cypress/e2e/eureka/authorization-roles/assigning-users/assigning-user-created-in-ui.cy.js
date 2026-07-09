@@ -50,12 +50,10 @@ describe('Eureka', () => {
                 capabsToAssign,
                 capabSetsToAssign,
               );
-              cy.waitForAuthRefresh(() => {
-                cy.login(testData.tempUser.username, testData.tempUser.password, {
-                  path: TopMenu.usersPath,
-                  waiter: Users.waitLoading,
-                });
-              }, 20_000);
+              cy.login(testData.tempUser.username, testData.tempUser.password, {
+                path: TopMenu.usersPath,
+                waiter: Users.waitLoading,
+              });
               Users.waitLoading();
             });
           });
@@ -83,7 +81,15 @@ describe('Eureka', () => {
               testData.userType,
               testData.username,
             );
-            Users.saveCreatedUser();
+            cy.intercept('POST', /\/users|\/users-keycloak\/users/).as('createUser');
+            UserEdit.saveUserEditForm();
+            if (!Cypress.env('ecs_enabled')) {
+              cy.ifConsortia(true, () => {
+                UserEdit.checkPromoteUserModal(testData.lastName, '');
+                UserEdit.clickConfirmInPromoteUserModal();
+              });
+            }
+            cy.wait('@createUser', { timeout: 130000 });
             Users.checkCreateUserPaneOpened(false);
             Users.verifyLastNameOnUserDetailsPane(testData.lastName);
             cy.getUserWithBlUsersByUsername(testData.username).then(({ body }) => {
