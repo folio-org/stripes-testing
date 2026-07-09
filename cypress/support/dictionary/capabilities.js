@@ -101,4 +101,9 @@ export default {
     resource: 'Users-keycloak Password-Reset-Link Generate',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiConsortiaSettingsConsortiumManagerShare: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Consortia-Settings Consortium-Manager Share',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
 };
