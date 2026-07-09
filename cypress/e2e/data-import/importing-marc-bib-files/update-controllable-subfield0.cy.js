@@ -117,7 +117,7 @@ describe('Data Import', () => {
     before('Creating user', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385665');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385665*');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -206,7 +206,7 @@ describe('Data Import', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C385665'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
           QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
@@ -214,14 +214,24 @@ describe('Data Import', () => {
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.verifySearchOptions();
           InventoryInstance.searchResults(linking.value);
+          MarcAuthority.waitLoading();
           InventoryInstance.clickLinkButton();
-          InventoryInstance.closeDetailsView();
-          InventoryInstance.closeFindAuthorityModal();
+          QuickMarcEditor.verifyTagFieldAfterLinking(
+            74,
+            '700',
+            '1',
+            '\\',
+            '$a C385665Chin, Staceyann',
+            '$e letterer.',
+            '$0 http://id.loc.gov/authorities/names/n2008052404',
+            '',
+          );
           // waiter needed for the fileds to be linked.
           cy.wait(1000);
         });
         QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
 
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -258,7 +268,9 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           74,
@@ -289,6 +301,8 @@ describe('Data Import', () => {
         );
 
         QuickMarcEditor.closeEditorPane();
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.viewSource();
         InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues[0].rowIndex);
         InventoryViewSource.verifyExistanceOfValueInRow(subfield, linkingTagAndValues[0].rowIndex);

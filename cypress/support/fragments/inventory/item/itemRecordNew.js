@@ -54,7 +54,10 @@ function addBarcode(barcode) {
       .find(TextField({ name: 'barcode' }))
       .fillIn(barcode),
   );
-  cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  cy.expect([
+    saveAndCloseBtn.has({ disabled: false }),
+    TextField({ name: 'barcode' }).has({ value: barcode }),
+  ]);
 }
 function addMaterialType(materialType) {
   cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
@@ -70,6 +73,10 @@ export default {
   waitLoading: (itemTitle) => {
     cy.expect(Pane(including(itemTitle)).exists());
     cy.expect(cancelBtn.has({ disabled: false }));
+    cy.wait(2000);
+  },
+  verifyBarcode(barcode) {
+    cy.expect(TextField({ name: 'barcode' }).has({ value: barcode }));
   },
   fillItemRecordFields({ barcode, materialType, loanType } = {}) {
     if (barcode) {

@@ -194,6 +194,10 @@ describe('MARC', () => {
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

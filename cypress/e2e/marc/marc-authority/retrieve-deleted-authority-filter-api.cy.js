@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
+  DEFAULT_FOLIO_AUTHORITY_FILES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -33,18 +37,18 @@ describe('MARC', () => {
         'Chin, Staceyann (with local auth file) 1972- C432317Auto',
       ],
       sourceFileNames: [
-        'LC Name Authority file (LCNAF)',
-        'LC Subject Headings (LCSH)',
-        "LC Children's Subject Headings",
-        'LC Genre/Form Terms (LCGFT)',
-        'LC Demographic Group Terms (LCDGT)',
-        'LC Medium of Performance Thesaurus for Music (LCMPT)',
-        'Faceted Application of Subject Terminology (FAST)',
-        'Medical Subject Headings (MeSH)',
-        'Thesaurus for Graphic Materials (TGM)',
-        'Rare Books and Manuscripts Section (RBMS)',
-        'Art & architecture thesaurus (AAT)',
-        'GSAFD Genre Terms (GSAFD)',
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_MEDIUM_OF_PERFORMANCE_THESAURUS_FOR_MUSIC,
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_CHILDREN_SUBJECT_HEADINGS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_GENRE_FORM_TERMS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.LC_DEMOGRAPHIC_GROUP_TERMS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY,
+        DEFAULT_FOLIO_AUTHORITY_FILES.MEDICAL_SUBJECT_HEADINGS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.THESAURUS_FOR_GRAPHIC_MATERIALS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.RARE_BOOKS_AND_MANUSCRIPTS_SECTION,
+        DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
+        DEFAULT_FOLIO_AUTHORITY_FILES.GSAFD_GENRE_TERMS,
       ],
     };
 
@@ -65,6 +69,7 @@ describe('MARC', () => {
       },
     ];
 
+    const importedRecordIDs = [];
     const createdRecordIDs = [];
 
     before('Creating user and data', () => {
@@ -91,32 +96,45 @@ describe('MARC', () => {
               marcFile.jobProfileToRun,
             ).then((response) => {
               response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+                importedRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
 
-          // update authority record with naturalId with code for created local source file
-          cy.loginAsAdmin().then(() => {
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
-            MarcAuthorities.waitLoading();
-            MarcAuthoritiesSearch.searchBy(
-              testData.searchOption,
-              testData.authorityHeadings[createdRecordIDs.length - 1],
-            );
-            MarcAuthorities.selectTitle(testData.authorityHeadings[createdRecordIDs.length - 1]);
-            MarcAuthority.edit();
-            QuickMarcEditor.updateExistingField(
-              testData.tag010,
-              `$a ${testData.localSourceCode}432317`,
-            );
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
-          });
+          cy.then(() => {
+            // creating records ID list with order the same as in headings array
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: 'keyword all C432317',
+            }).then((records) => {
+              testData.authorityHeadings.forEach((heading) => {
+                const record = records.find((rec) => rec.headingRef === heading);
+                createdRecordIDs.push(record.id);
+              });
+            });
+          }).then(() => {
+            // update authority record with naturalId with code for created local source file
+            cy.loginAsAdmin().then(() => {
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+              MarcAuthorities.waitLoading();
+              MarcAuthoritiesSearch.searchBy(
+                testData.searchOption,
+                testData.authorityHeadings[createdRecordIDs.length - 1],
+              );
+              MarcAuthorities.selectTitle(testData.authorityHeadings[createdRecordIDs.length - 1]);
+              MarcAuthority.edit();
+              QuickMarcEditor.updateExistingField(
+                testData.tag010,
+                `$a ${testData.localSourceCode}432317`,
+              );
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
+            });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
       });
@@ -126,10 +144,9 @@ describe('MARC', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       // attept to delete all authorities just in case deletion failed in test
-      createdRecordIDs.forEach((id) => {
+      importedRecordIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id, true);
       });
-      // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done
       cy.deleteAuthoritySourceFileViaAPI(testData.localSourceId, true);
     });
 
@@ -151,7 +168,7 @@ describe('MARC', () => {
             true,
             true,
             'text/plain',
-            `authoritySourceFile.name="${sourceFileName}"`,
+            `authoritySourceFile.name="${sourceFileName}" sortBy createdDate/sort.descending`,
           ).then((body) => {
             const records = body.split('\n');
             createdRecordIDs.forEach((id, idx) => {
@@ -165,7 +182,7 @@ describe('MARC', () => {
           true,
           true,
           null,
-          'cql.allRecords=1 NOT authoritySourceFile.name=""',
+          'cql.allRecords=1 NOT authoritySourceFile.name="" sortBy createdDate/sort.descending',
         ).then((body) => {
           createdRecordIDs.forEach((id, index) => {
             if (index === createdRecordIDs.length - 2) expect(body.authorities.filter((record) => record.id === id).length).to.equal(1);
@@ -177,7 +194,7 @@ describe('MARC', () => {
           true,
           true,
           'text/plain',
-          `authoritySourceFile.name="${testData.localSourceName}"`,
+          `authoritySourceFile.name="${testData.localSourceName}" sortBy createdDate/sort.descending`,
         ).then((body) => {
           const records = body.split('\n');
           createdRecordIDs.forEach((id, index) => {
@@ -190,7 +207,7 @@ describe('MARC', () => {
           true,
           true,
           'text/plain',
-          `(authoritySourceFile.name="${testData.sourceFileNames[0]}") or (authoritySourceFile.name="${testData.sourceFileNames[1]}") or (authoritySourceFile.name="${testData.sourceFileNames[3]}")`,
+          `(authoritySourceFile.name="${testData.sourceFileNames[0]}") or (authoritySourceFile.name="${testData.sourceFileNames[1]}") or (authoritySourceFile.name="${testData.sourceFileNames[3]}") sortBy createdDate/sort.descending`,
         ).then((body) => {
           const records = body.split('\n');
           createdRecordIDs.forEach((id, index) => {

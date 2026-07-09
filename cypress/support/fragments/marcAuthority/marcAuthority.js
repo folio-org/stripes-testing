@@ -521,7 +521,7 @@ export default {
       isDefaultSearchParamsRequired: false,
       path: 'authority-storage/authorities',
       searchParams: {
-        limit: 1000,
+        limit: 2000,
         deleted,
         idOnly,
         query: query || '',
