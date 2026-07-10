@@ -106,4 +106,9 @@ export default {
     resource: 'UI-Consortia-Settings Consortium-Manager Share',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  consortiaInventoryLocalSharingInstances: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Consortia Inventory Local Sharing-Instances',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
 };

@@ -4,18 +4,14 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import Capabilities from '../../../../support/dictionary/capabilities';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 const testData = {
-  roleName: `AT_C404509_UserRole_${getRandomPostfix()}`,
-  appNames: ['app-consortia-manager', 'app-consortia'],
-  capabilities: [
-    Capabilities.uiConsortiaSettingsConsortiumManagerShare,
-    Capabilities.consortiaInventoryLocalSharingInstances,
-  ],
-  capabilitySets: [
-    CapabilitySets.uiConsortiaSettingsConsortiumManagerShare,
-    CapabilitySets.consortiaInventoryLocalSharingInstances,
-  ],
+  roleName: `AT_C404510_UserRole_${getRandomPostfix()}`,
+  appName: 'app-consortia',
+  capability: Capabilities.consortiaInventoryLocalSharingInstances,
+  capabilitySet: CapabilitySets.consortiaInventoryLocalSharingInstances,
 };
 
 const capabSetsToAssign = [
@@ -29,6 +25,7 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       before('Create user', () => {
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
         cy.createTempUser([]).then((userProperties) => {
           testData.user = userProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
@@ -36,38 +33,35 @@ describe('Inventory', () => {
       });
 
       after('Delete user', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
         Users.deleteViaApi(testData.user?.userId);
       });
 
       it(
-        'C404509 (CONSORTIA) Verify the capability for sharing local instances on Central tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C404509'] },
+        'C404510 (CONSORTIA) Verify the capability for sharing local instances on Member tenant (folijet)',
+        { tags: ['extendedPathECS', 'folijet', 'C404510'] },
         () => {
           // Step 1-2: Navigate to Settings → Authorization roles (done via login path)
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
           });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
 
           // Step 3: Create new role, select app-consortia-manager, save modal
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);
           AuthorizationRoles.checkSaveButton();
           AuthorizationRoles.clickSelectApplication();
-          testData.appNames.forEach((appName) => {
-            AuthorizationRoles.selectApplicationInModal(appName);
-          });
+          AuthorizationRoles.selectApplicationInModal(testData.appName);
           AuthorizationRoles.clickSaveInModal();
           AuthorizationRoles.waitCapabilitiesShown();
 
-          // Step 4: Verify expected capabilities and sets are present
-          testData.capabilities.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxUncheckedAndEnabled(capability);
-          });
-          testData.capabilitySets.forEach((capabilitySet) => {
-            AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(capabilitySet);
-          });
+          // Step 4: Verify expected capability and set are present
+          AuthorizationRoles.verifyCapabilityCheckboxUncheckedAndEnabled(testData.capability);
+          AuthorizationRoles.verifyCapabilitySetCheckboxEnabled(testData.capabilitySet);
         },
       );
     });

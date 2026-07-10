@@ -45,7 +45,7 @@ describe('Inventory', () => {
             [],
             [
               CapabilitySets.uiInventoryInstanceEdit,
-              CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.consortiaInventoryLocalSharingInstances,
               CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
             ],
           );
@@ -57,7 +57,7 @@ describe('Inventory', () => {
             [
               CapabilitySets.uiInventoryInstanceEdit,
               CapabilitySets.uiInventoryInstanceSetRecordsForDeletion,
-              CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.consortiaInventoryLocalSharingInstances,
             ],
           );
           cy.resetTenant();

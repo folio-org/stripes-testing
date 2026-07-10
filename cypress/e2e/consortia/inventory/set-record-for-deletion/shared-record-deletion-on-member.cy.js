@@ -45,7 +45,7 @@ describe('Inventory', () => {
             [
               CapabilitySets.uiInventoryInstanceEdit,
               CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
-              CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.consortiaInventoryLocalSharingInstances,
               CapabilitySets.uiInventoryInstanceSetRecordsForDeletion,
             ],
           );
@@ -58,7 +58,7 @@ describe('Inventory', () => {
             [
               CapabilitySets.uiInventoryInstanceEdit,
               CapabilitySets.uiInventoryInstanceStaffSuppressedRecordsView,
-              CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.consortiaInventoryLocalSharingInstances,
               CapabilitySets.uiInventoryInstanceSetRecordsForDeletion,
             ],
           );
