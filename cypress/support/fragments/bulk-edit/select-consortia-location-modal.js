@@ -75,13 +75,18 @@ export default {
       selectLocationsModal.find(MultiColumnListHeader('Name')).exists(),
       selectLocationsModal.find(MultiColumnListHeader('Code')).exists(),
     ]);
-
-    // need to scroll to the right to verify the rest of the columns in case long location names
-    this.scrollListOfResults('right');
-
+    this.scrollListOfResults('center');
+    cy.wait(1000);
     cy.expect([
       selectLocationsModal.find(MultiColumnListHeader('Institution')).exists(),
       selectLocationsModal.find(MultiColumnListHeader('Campus')).exists(),
+    ]);
+
+    // need to scroll to the right to verify the rest of the columns in case long location names
+    this.scrollListOfResults('right');
+    cy.wait(1000);
+
+    cy.expect([
       selectLocationsModal.find(MultiColumnListHeader('Library')).exists(),
       selectLocationsModal.find(MultiColumnListHeader('Location status')).exists(),
     ]);
