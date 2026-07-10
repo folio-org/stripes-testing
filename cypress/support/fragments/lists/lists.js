@@ -1346,15 +1346,30 @@ const API = {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: `entity-types/${id}/field-values`,
+        path: `entity-types/${id}`,
         isDefaultSearchParamsRequired: false,
-        searchParams: {
-          field: `${fieldName}`,
-          search: '',
-        },
       })
       .then((response) => {
-        return response.body;
+        const entityTypeDetails = response.body;
+        // Find the column definition for the requested field
+        const column = entityTypeDetails.columns.find((col) => col.name === fieldName);
+
+        // Extract column name and source entity type ID from the field definition
+        const columnName = column.source.columnName;
+        const sourceEntityTypeId = column.source.entityTypeId;
+
+        return cy
+          .okapiRequest({
+            method: 'GET',
+            path: `entity-types/${sourceEntityTypeId}/columns/${columnName}/values`,
+            isDefaultSearchParamsRequired: false,
+            searchParams: {
+              search: '',
+            },
+          })
+          .then((valuesResponse) => {
+            return valuesResponse.body;
+          });
       });
   },
 

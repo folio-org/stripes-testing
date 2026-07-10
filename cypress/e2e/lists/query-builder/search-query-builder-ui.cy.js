@@ -38,7 +38,7 @@ describe('Lists', () => {
       cy.wait(2000); // wait for query to process
       Lists.verifyQueryHeader(field);
       Lists.verifyQueryValue(value, operator, locator, valueInColumn);
-      Lists.verifyPreviewOfRecordsMatched();
+      QueryModal.verifyPreviewOfRecordsMatched();
       QueryModal.clickRunQueryAndSave();
       QueryModal.verifyClosed();
       Lists.waitForCompilingToComplete(3000);
@@ -77,12 +77,12 @@ describe('Lists', () => {
           listName = getTestEntityValue('C451507_List');
           openQueryBuilder(recordType);
           verifyQueryBuilder(
-            'Organization — Status',
+            'Status',
             QUERY_OPERATIONS.EQUAL,
             'select',
             'Active',
-            'organization.status == Active',
-            'list-column-organization.status',
+            'status == Active',
+            'list-column-status',
           );
         },
       );
@@ -99,7 +99,7 @@ describe('Lists', () => {
           Permissions.uiOrdersCreate.gui,
           // Permissions.inventoryAll.gui,
           // Permissions.loansAll.gui,
-          // Permissions.uiOrganizationsViewEditCreate.gui,
+          Permissions.uiOrganizationsViewEditCreate.gui,
         ]).then((userProperties) => {
           userData = userProperties;
         });

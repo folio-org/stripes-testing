@@ -17,13 +17,14 @@ import {
   TextField,
   Checkbox,
   Calendar,
+  or,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
 const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
-const runQueryButton = Button('Run query');
+const runQueryButton = Button(or('Run query', 'Run query & save'));
 const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
