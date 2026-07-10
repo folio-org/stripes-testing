@@ -62,6 +62,10 @@ const cancelButton = Button('Cancel');
 const addAlternativeTitleButton = Button('Add alternative title');
 const resourceTypeSelect = Select({ name: 'instanceTypeId' });
 const addElectronicAccessButton = Button('Add electronic access');
+const addSucceedingTitleButton = Button({ id: 'clickable-add-succeedingTitle-add-button' });
+const succeedingTitleFieldSet = FieldSet({ id: 'clickable-add-succeedingTitle' });
+const savingFailedModal = Modal('Saving instance failed');
+const titleField = TextArea({ name: 'title' });
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -250,6 +254,9 @@ export default {
   },
   addExistingPrecedingTitle: (precedingTitle) => {
     cy.do(Button({ id: 'find-instance-trigger' }).click());
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
@@ -260,6 +267,34 @@ export default {
         .click(),
       findInstanceButton.click(),
     ]);
+  },
+  addSucceedingTitle: (succeedingTitle, fieldIndex = 0, isbn = '', issn = '') => {
+    const fieldNamePref = `succeedingTitles[${fieldIndex}]`;
+    cy.do([
+      addSucceedingTitleButton.click(),
+      TextArea({ name: `${fieldNamePref}.title` }).fillIn(succeedingTitle),
+    ]);
+    if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
+    if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
+  },
+  addExistingSucceedingTitle: (succeedingTitle, fieldIndex = 0, isbn = '', issn = '') => {
+    const fieldNamePref = `succeedingTitles[${fieldIndex}]`;
+    cy.do([
+      addSucceedingTitleButton.click(),
+      succeedingTitleFieldSet
+        .find(RepeatableFieldItem({ index: fieldIndex }))
+        .find(findInstanceButton)
+        .click(),
+    ]);
+    InventoryInstanceModal.waitLoading();
+    cy.ifConsortia(true, () => {
+      InventoryInstanceModal.clearDefaultHeldbyFilter();
+    });
+    InventoryInstanceModal.searchByTitle(succeedingTitle);
+    InventoryInstanceModal.selectInstance();
+    InventoryInstanceModal.verifyModalAbsent();
+    if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
+    if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
   },
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
@@ -307,8 +342,9 @@ export default {
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
-  selectNatureOfContent(value) {
-    cy.do(Select('Nature of content term').choose(including(value)));
+  selectNatureOfContent(value, { exactMatch = false } = {}) {
+    const matcher = exactMatch ? value : including(value);
+    cy.do(Select('Nature of content term').choose(matcher));
     cy.wait(1500);
   },
   choosePermanentLocation(locationName) {
@@ -476,9 +512,12 @@ export default {
   markAsStaffSuppress() {
     cy.do(rootSection.find(staffSuppressCheckbox).click());
   },
-  editResourceTitle: (newTitle) => {
-    cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
-    cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
+  editResourceTitle(newTitle) {
+    cy.do(titleField.fillIn(newTitle));
+    this.verifyTitle(newTitle);
+  },
+  verifyTitle(title) {
+    cy.expect(titleField.has({ value: title }));
   },
   addStatisticalCode: (code, index = 0) => {
     clickAddStatisticalCodeButton();
@@ -504,6 +543,15 @@ export default {
   },
   verifyCatalogDateInputIsDisabled(isDisabled = true) {
     cy.get('input[name=catalogedDate]').should(`be.${isDisabled ? 'disabled' : 'enabled'}`);
+  },
+  fillCatalogedDate(date) {
+    cy.do(TextField({ name: 'catalogedDate' }).fillIn(date));
+  },
+  verifyInstanceHridAndSourceAreNotEditable() {
+    cy.expect([
+      rootSection.find(TextField('Instance HRID')).has({ disabled: true }),
+      rootSection.find(TextField('Source*')).has({ disabled: true }),
+    ]);
   },
   verifyInstanceStatusTermConditionIsDisabled(status) {
     cy.expect(instanceStatusTerm.has({ disabled: status }));
@@ -775,7 +823,7 @@ export default {
 
   verifyShareParentLinkingError() {
     cy.expect(
-      Modal('Saving instance failed')
+      savingFailedModal
         .find(
           HTML(
             including(
@@ -788,11 +836,18 @@ export default {
   },
 
   verifyErrorMessage(message) {
-    cy.expect(
-      Modal('Saving instance failed')
-        .find(HTML(including(message)))
-        .exists(),
+    cy.expect(savingFailedModal.find(HTML(including(message))).exists());
+  },
+
+  verifyMarcControlledErrorMessage() {
+    this.verifyErrorMessage(
+      '422: Instance is controlled by MARC record, these fields are blocked and can not be updated:',
     );
+  },
+
+  closeSavingFailedModal() {
+    cy.do(savingFailedModal.find(Button('Close')).click());
+    cy.expect(savingFailedModal.absent());
   },
 
   checkButtonsEnabled: ({ saveAndClose = true, saveKeepEditing = true, cancel = true } = {}) => {
@@ -801,6 +856,10 @@ export default {
       saveAndKeepEditing.has({ disabled: !saveKeepEditing }),
       saveAndCloseButton.has({ disabled: !saveAndClose }),
     ]);
+  },
+
+  checkSaveAndCloseButtonDisabledOrNotShown: () => {
+    cy.expect(Button('Save & close', { disabled: false }).absent());
   },
 
   openAddChildInstanceModal() {

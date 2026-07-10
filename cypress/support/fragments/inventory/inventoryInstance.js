@@ -2065,4 +2065,12 @@ export default {
       cy.updateInstance(body);
     });
   },
+
+  removePrecedingSucceedingTitlesViaApi(instanceId) {
+    cy.getInstanceById(instanceId).then((body) => {
+      body.precedingTitles = [];
+      body.succeedingTitles = [];
+      cy.updateInstance(body);
+    });
+  },
 };

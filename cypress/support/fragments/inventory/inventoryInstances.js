@@ -1216,6 +1216,20 @@ export default {
     });
   },
 
+  overlayWithOclcViaApi: (oclcNumber, existingInstanceId) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'copycat/imports',
+      body: {
+        externalIdentifier: oclcNumber,
+        internalIdentifier: existingInstanceId,
+        profileId: 'f26df83c-aa25-40b6-876e-96852c3d4fd4',
+        selectedJobProfileId: '91f9b8d6-d80e-4727-9783-73fb53e3c786',
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   importWithOclc: (
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',

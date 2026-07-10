@@ -62,6 +62,10 @@ export default {
 
   close() {
     cy.do(rootModal.dismiss());
+    this.verifyModalAbsent();
+  },
+
+  verifyModalAbsent() {
     cy.expect(rootModal.absent());
   },
 

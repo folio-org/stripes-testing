@@ -71,6 +71,7 @@ export default {
     open();
     cy.do(importButtonInActions.click());
     cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      cy.get('#import-record-modal', { timeout: 70000 }).should('exist');
       if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
         cy.do(importTypeSelect.choose('OCLC WorldCat'));
       }
