@@ -23,7 +23,7 @@ describe('fse-receiving - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195378 - verify that receiving page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195378 - verify that receiving page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'receiving', 'TC195378'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.RECEIVING);

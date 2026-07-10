@@ -1,6 +1,6 @@
 describe('fse-favicon', { retries: { runMode: 1 } }, () => {
   it(
-    `TC196415 - Verify favicon is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196415 - Verify favicon is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'favicon', 'TC196415'] },
     () => {
       // Visit the page

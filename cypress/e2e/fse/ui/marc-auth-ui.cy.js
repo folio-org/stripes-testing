@@ -28,7 +28,7 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195332 - verify that marc authority page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'marc-authorities', 'TC195332'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);

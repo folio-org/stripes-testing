@@ -42,7 +42,7 @@ describe('fse-checkin - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195282 - verify that checkin module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195282 - verify that checkin module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'checkin', 'fse-user-journey', 'nonProd', 'TC195282'] },
     () => {
       Checkin.waitLoading();

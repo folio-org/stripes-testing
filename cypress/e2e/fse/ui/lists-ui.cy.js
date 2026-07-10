@@ -25,7 +25,7 @@ describe('fse-lists - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195764 - verify that lists page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195764 - verify that lists page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'lists', 'TC195764'] },
     () => {
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.LISTS);

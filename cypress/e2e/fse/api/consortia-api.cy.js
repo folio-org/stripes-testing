@@ -7,7 +7,7 @@ describe('fse-consortia-api', () => {
   });
 
   it(
-    `TC195510 - Get consortia id for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195510 - Get consortia id for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'api', 'TC195510'] },
     () => {
       cy.getConsortiaId().then((consortiaId) => {

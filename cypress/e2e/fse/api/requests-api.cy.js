@@ -7,7 +7,7 @@ describe('fse-requests', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195388 - Get request by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195388 - Get request by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'requests', 'loc', 'TC195388'] },
     () => {
       cy.getItemRequestsApi({
