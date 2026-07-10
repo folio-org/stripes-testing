@@ -103,10 +103,13 @@ describe('MARC', () => {
           MarcAuthorities.verifySearchTabIsOpened();
 
           // Step 4: Set up Search with filters
+          cy.intercept('search/authorities/facets?*').as('getFacets');
           MarcAuthorities.searchByParameter(
             testData.searchOptions.corporateConferenceName,
             testData.searchQuery,
           );
+          MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+          cy.wait('@getFacets').its('response.statusCode').should('eq', 200);
           MarcAuthoritiesSearch.selectExcludeReferencesFilter(
             REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
           );
