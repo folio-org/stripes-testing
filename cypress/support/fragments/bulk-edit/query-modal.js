@@ -282,6 +282,8 @@ export const purchaseOrderLinesFieldValues = {
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
+  uuid: 'POL — UUID',
+  costPOLEstimatedPrice: 'POL — Cost PO line estimated price',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
 };
