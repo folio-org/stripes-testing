@@ -2358,6 +2358,24 @@ export default {
     );
   },
 
+  verifySubfieldDisabled(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: true, required: false, value: '' }),
+    );
+  },
+
+  verifySubfieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: false, required: true }),
+    );
+  },
+
   fillInTagAndIndicatorsAndSubfield(tag, ind1, ind2, subfield, rowIndex = 0) {
     this.fillInTagFieldAndVerify(tag, rowIndex);
     this.fillInInd1FieldAndVerify(ind1, rowIndex);
