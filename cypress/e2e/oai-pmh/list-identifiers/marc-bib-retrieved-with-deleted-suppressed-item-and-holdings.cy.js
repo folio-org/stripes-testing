@@ -132,6 +132,7 @@ describe('OAI-PMH', () => {
         // Verify item deletion and return to instance view
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceTitle(marcInstance.title);
+        cy.wait(3000);
 
         // Step 8: Verify that response contains the MARC Instance with associated Holdings and recently deleted Item
         cy.getAdminToken();

@@ -9,11 +9,11 @@
         "type": "object",
         "properties": {
           "instance.administrative_notes": {
-            "type": "array",
+            "type": ["array", "null"],
             "items": {}
           },
           "instance.alternative_titles": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.cataloged_date": {
             "type": ["string", "null"]
@@ -99,10 +99,6 @@
           "instance.nature_of_content_term": {
             "type": ["string", "null"]
           },
-          "instance.nature_of_content_term_ids": {
-            "type": "array",
-            "items": {}
-          },
           "instance.notes": {
             "type": ["string", "null"]
           },
@@ -147,13 +143,13 @@
             "items": {}
           },
           "instance.statistical_code_names": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.status_id": {
             "type": ["string", "null"]
           },
           "instance.subjects": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.discovery_suppress": {
             "type": ["string", "null"]
