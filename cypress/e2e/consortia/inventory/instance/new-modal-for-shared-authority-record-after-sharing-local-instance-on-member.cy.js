@@ -100,7 +100,7 @@ describe('Inventory', () => {
             [
               CapabilitySets.uiInventory,
               CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
-              CapabilitySets.uiConsortiaInventoryLocalSharingInstances,
+              CapabilitySets.consortiaInventoryLocalSharingInstances,
             ],
           );
           cy.resetTenant();
