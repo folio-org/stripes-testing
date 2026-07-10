@@ -18,6 +18,7 @@ const newPane = Pane('New');
 const newButton = Button('+ New');
 const editButton = Button('Edit');
 
+const validOclcAuthentication = '100481406/PAOLF';
 const defaultCreateInstanceJobProfileName =
   'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
 const defaultUpdateInstanceJobProfileName =
@@ -138,7 +139,7 @@ export default {
     });
   },
 
-  changeOclcWorldCatValueViaApi: (value, locEnabled = true) => {
+  changeOclcWorldCatValueViaApi: (value = validOclcAuthentication, locEnabled = true) => {
     cy.okapiRequest({
       method: 'PUT',
       path: `copycat/profiles/${defaultCopyCatProfileId}`,
