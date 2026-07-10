@@ -95,6 +95,9 @@ describe('Inventory', () => {
         HoldingsRecordView.delete();
         cy.wait(3000);
         InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
+        InventorySearchAndFilter.closeInstanceDetailPane();
+        InventoryInstances.selectInstance();
         InventoryInstance.verifyHoldingsAbsent(testData.locationName);
 
         InventorySearchAndFilter.switchToHoldings();

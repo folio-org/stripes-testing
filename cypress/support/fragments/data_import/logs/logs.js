@@ -222,7 +222,7 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
-
+    cy.get('[role="gridcell"]').contains(newFileName, { timeout: 80_000 }).should('exist');
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

@@ -147,7 +147,7 @@ describe('Data Import', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[1], true);
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

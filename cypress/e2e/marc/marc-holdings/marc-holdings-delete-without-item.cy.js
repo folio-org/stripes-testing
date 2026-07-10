@@ -5,6 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -65,6 +66,11 @@ describe('MARC', () => {
         InventoryInstance.openHoldingView();
 
         HoldingsRecordView.delete();
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
+        InventoryInstance.waitLoading();
+        InventorySearchAndFilter.closeInstanceDetailPane();
+        InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.verifyHoldingsAbsent(location.name);
