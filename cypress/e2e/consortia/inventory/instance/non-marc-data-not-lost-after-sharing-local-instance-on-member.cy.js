@@ -120,7 +120,9 @@ describe('Inventory', () => {
           InstanceRecordEdit.addStatisticalCode(testData.statisticalCodeOptionName);
           InstanceRecordEdit.addAdministrativeNote(testData.adminNote);
           InstanceRecordEdit.addNatureOfContent();
-          InstanceRecordEdit.selectNatureOfContent(testData.natureOfContentTerm.name);
+          InstanceRecordEdit.selectNatureOfContent(testData.natureOfContentTerm.name, {
+            exactMatch: true,
+          });
           InstanceRecordEdit.saveAndClose();
           InventoryInstance.waitLoading();
           InventoryInstance.waitInstanceRecordViewOpened();
