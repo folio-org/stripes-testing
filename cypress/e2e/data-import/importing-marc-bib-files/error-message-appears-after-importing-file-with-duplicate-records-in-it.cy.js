@@ -118,6 +118,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(firstFileName);
         Logs.checkJobStatus(firstFileName, JOB_STATUS_NAMES.COMPLETED);
+        cy.wait(3000);
         Logs.openFileDetails(firstFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -168,6 +169,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondFileName);
         Logs.checkJobStatus(secondFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        cy.wait(3000);
         Logs.openFileDetails(secondFileName);
         FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceRecordViewOpened();
