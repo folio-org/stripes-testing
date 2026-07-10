@@ -12,8 +12,6 @@ import SubjectTypes from '../../../../../support/fragments/settings/inventory/in
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import { calloutTypes } from '../../../../../../interactors';
-import InteractorsTools from '../../../../../support/utils/interactorsTools';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -25,7 +23,7 @@ describe('Consortia', () => {
           name: `C594399 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'consortium',
           memberLibraries: 'All',
-          user: 'No value set-',
+          user: 'System, System user - mod-consortia-keycloak',
           id: uuid(),
         };
         const localSubjectTypeOnCentral = {
@@ -44,7 +42,6 @@ describe('Consortia', () => {
           memberLibraries: 'University',
         };
         const settingsList = Object.values(settingsItems);
-        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create test data and login', () => {
           cy.getAdminToken();
@@ -137,7 +134,6 @@ describe('Consortia', () => {
             ConsortiumManager.verifyChooseSettingsIsDisplayed();
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               sharedSubjectType.name,
               sharedSubjectType.source,
@@ -150,7 +146,11 @@ describe('Consortia', () => {
               localSubjectTypeOnCentral.source,
               { actions: ['edit', 'trash'] },
             );
-            ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnCollege.name);
+            ConsortiumSubjectTypes.verifyLocalSubjectTypeExists(
+              localSubjectTypeOnCollege.name,
+              localSubjectTypeOnCollege.memberLibraries,
+              localSubjectTypeOnCollege.source,
+            );
             ConsortiumSubjectTypes.verifySubjectTypeAbsent(localSubjectTypeOnUniversity.name);
 
             ConsortiumManager.clickSelectMembers();

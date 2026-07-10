@@ -1,4 +1,3 @@
-import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -14,7 +13,6 @@ import SettingsInventory, {
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -28,7 +26,6 @@ describe('Consortia', () => {
         };
         const editedSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()} edited`;
         const canceledSubjectSourceName = `C594434 subjectSource_${getRandomPostfix()}`;
-        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create test data', () => {
           cy.getAdminToken();
@@ -74,7 +71,6 @@ describe('Consortia', () => {
             ConsortiumManager.verifyStatusOfConsortiumManager(3);
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
 
             ConsortiumSubjectSources.createLocalSubjectSourceSavedForMemberLibraries(
               subjectSource.name,
