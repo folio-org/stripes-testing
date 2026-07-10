@@ -62,7 +62,16 @@ describe('fse-invoices - UI (no data manipulation)', () => {
     `TC195320 - verify that invoices page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'invoice', 'TC195320'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.INVOICES}"):visible`)
+            .length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+        }
+      });
       Invoices.waitLoading();
     },
   );

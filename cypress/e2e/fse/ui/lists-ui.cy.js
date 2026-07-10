@@ -28,7 +28,15 @@ describe('fse-lists - UI (no data manipulation)', () => {
     `TC195764 - verify that lists page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'lists', 'TC195764'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.LISTS);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.LISTS}"):visible`).length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.LISTS);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.LISTS);
+        }
+      });
       Lists.waitLoading();
       // check filters displayed
       Lists.waitForSpinnerToDisappear();

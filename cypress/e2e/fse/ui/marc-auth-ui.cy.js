@@ -31,7 +31,17 @@ describe('fse-marc-authority - UI (no data manipulation)', () => {
     `TC195332 - verify that marc authority page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'marc-authorities', 'TC195332'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(
+            `[data-test-app-list] a:contains("${APPLICATION_NAMES.MARC_AUTHORITY}"):visible`,
+          ).length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+        }
+      });
       MarcAuthorities.waitLoading();
     },
   );
