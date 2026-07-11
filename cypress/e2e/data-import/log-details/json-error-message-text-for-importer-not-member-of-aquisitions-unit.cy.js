@@ -69,18 +69,20 @@ describe('Data Import', () => {
       AcquisitionUnits.createAcquisitionUnitViaApi(assignedAcqUnit);
       AcquisitionUnits.createAcquisitionUnitViaApi(notAssignedAcqUnit);
 
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+      cy.then(() => {
+        cy.createTempUser([
+          Permissions.moduleDataImportEnabled.gui,
+          Permissions.settingsDataImportEnabled.gui,
+          Permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
 
-        AcquisitionUnits.assignUserViaApi(user.userId, assignedAcqUnit.id);
-
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+          AcquisitionUnits.assignUserViaApi(user.userId, assignedAcqUnit.id).then(() => {
+            cy.login(user.username, user.password, {
+              path: SettingsMenu.mappingProfilePath,
+              waiter: FieldMappingProfiles.waitLoading,
+            });
+          });
         });
       });
     });

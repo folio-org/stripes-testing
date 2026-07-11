@@ -279,11 +279,10 @@ describe('eHoldings', () => {
                 EHoldingsPackage.waitForTitlesState({
                   packageId: id,
                   titleName,
-                  isHidden: false,
+                  isHidden: true,
                 });
-                cy.waitForAuthRefresh(() => {
-                  cy.reload();
-                });
+                cy.reload();
+                EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.verifyTitleFound(titleName);
                 EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
                 EHoldingsPackageView.verifyAlternativeRadio('No');
