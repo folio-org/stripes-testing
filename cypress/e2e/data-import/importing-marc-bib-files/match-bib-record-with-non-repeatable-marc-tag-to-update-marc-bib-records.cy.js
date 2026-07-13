@@ -80,14 +80,18 @@ describe('Data Import', () => {
     const collectionOfMatchProfiles = [
       {
         matchProfile: {
-          profileName: `C350694 010$a to 010$a match${getRandomPostfix()}`,
+          profileName: `C350694 999$s to 999$s match${getRandomPostfix()}`,
           incomingRecordFields: {
-            field: '010',
-            subfield: 'a',
+            field: '999',
+            in1: 'f',
+            in2: 'f',
+            subfield: 's',
           },
           existingRecordFields: {
-            field: '010',
-            subfield: 'a',
+            field: '999',
+            in1: 'f',
+            in2: 'f',
+            subfield: 's',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
@@ -172,10 +176,13 @@ describe('Data Import', () => {
       InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
         if (instances.length !== 0) {
           instances.forEach(({ id }) => {
-            InstanceRecordView.markAsDeletedViaApi(id);
+            InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
           });
         }
       });
+      InventoryInstances.deleteFullInstancesByTitleViaApi(
+        'In Acadia. : The Acadians in story and song.',
+      );
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -208,22 +215,16 @@ describe('Data Import', () => {
           );
         });
         Users.deleteViaApi(testData.userId);
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.instanceHRID}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        });
         InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
           if (instances.length !== 0) {
             instances.forEach(({ id }) => {
-              InstanceRecordView.markAsDeletedViaApi(id);
-              InventoryInstance.deleteInstanceViaApi(id);
+              InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
             });
           }
         });
+        InventoryInstances.deleteFullInstancesByTitleViaApi(
+          'In Acadia. : The Acadians in story and song.',
+        );
       });
     });
 
