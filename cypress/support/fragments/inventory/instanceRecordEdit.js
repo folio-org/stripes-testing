@@ -343,8 +343,9 @@ export default {
     InventoryInstanceModal.searchByTitle(instanceTitle);
     InventoryInstanceModal.selectInstance();
   },
-  selectNatureOfContent(value) {
-    cy.do(Select('Nature of content term').choose(including(value)));
+  selectNatureOfContent(value, { exactMatch = false } = {}) {
+    const matcher = exactMatch ? value : including(value);
+    cy.do(Select('Nature of content term').choose(matcher));
     cy.wait(1500);
   },
   choosePermanentLocation(locationName) {

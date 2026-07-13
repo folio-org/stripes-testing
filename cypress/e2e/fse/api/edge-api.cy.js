@@ -83,7 +83,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195633 - edge-orders gobi integration check for ${Cypress.env('EDGE_HOST')}`,
+    `TC195633 - edge-orders gobi integration check for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-orders', 'nonProd', 'app-edge-complete', 'TC195633'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
@@ -167,7 +167,7 @@ describe('fse-edge', () => {
 
   // TODO: add back 'edge-rtac', 'app-edge-complete' tags after fixing the test stability issue
   it(
-    `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195415 - edge-rtac verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'TC195415'] },
     () => {
       cy.allure().logCommandSteps(false);
@@ -194,7 +194,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC195958 - edge-dematic EMS integration verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC195958 - edge-dematic EMS integration verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-dematic', 'app-edge-complete', 'TC195958'] },
     () => {
       // skip this test for bugfest env as it contains incorrect data causing test failures
@@ -238,7 +238,7 @@ describe('fse-edge', () => {
   );
 
   it(
-    `TC196413 - edge-orders mosaic integration verification for ${Cypress.env('EDGE_HOST')}`,
+    `TC196413 - edge-orders mosaic integration verification for ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'edge-orders', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);

@@ -25,10 +25,19 @@ describe('fse-finance - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195278 - verify that finance-fiscal year is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195278 - verify that finance-fiscal year is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'finance', 'TC195278'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.FINANCE}"):visible`)
+            .length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.FINANCE);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.FINANCE);
+        }
+      });
       FinanceHelp.selectFiscalYearsNavigation();
       FiscalYears.waitLoading();
       // run basic search

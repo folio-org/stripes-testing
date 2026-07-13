@@ -262,13 +262,9 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.userId = userProperties.userId;
 
-        cy.waitForAuthRefresh(() => {
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
     });

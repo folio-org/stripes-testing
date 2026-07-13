@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
+      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contains a 999ff$s or 999ff$i field';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test user and login', () => {

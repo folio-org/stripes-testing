@@ -30,7 +30,7 @@ describe('fse-eholdings - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195279 - verify that eholdings module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195279 - verify that eholdings module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'eholdings', 'TC195279'] },
     () => {
       EHoldingsTitlesSearch.byTitle('time');
@@ -72,7 +72,7 @@ describe('fse-eholdings - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195624 - eholdings: search by provider, add tags for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195624 - eholdings: search by provider, add tags for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey', 'TC195624'] },
     () => {
       const expanded = 'true';
@@ -94,7 +94,7 @@ describe('fse-eholdings - UI (data manipulation)', () => {
   );
 
   it(
-    `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195626 - eholdings: search by package, add notes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'toBeFixed', 'TC195626'] },
     () => {
       const testNote = {
@@ -138,7 +138,7 @@ describe('fse-eholdings - UI (data manipulation)', () => {
   );
 
   it(
-    `TC195671 - eholdings: add an agreement ${Cypress.env('OKAPI_HOST')}`,
+    `TC195671 - eholdings: add an agreement ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey', 'TC195671'] },
     () => {
       // search by package
