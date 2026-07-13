@@ -49,7 +49,8 @@ export default {
   },
 
   searchResourceByTitle: (title) => {
-    cy.get('#id-search-input').clear().type(title);
+    cy.wait(4000);
+    cy.do(hubsSearchInput.fillIn(title));
     cy.wait(2000);
     cy.do(searchButton.click());
     cy.wait(2000);
