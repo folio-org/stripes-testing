@@ -9,7 +9,7 @@ describe('fse-inventory', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195317 - Get instances by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195317 - Get instances by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'inventory', 'loc', 'TC195317'] },
     () => {
       cy.getInventoryInstanceByStatus('Available').then((response) => {
@@ -19,7 +19,7 @@ describe('fse-inventory', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `TC196250 - Check mod-inventory API for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196250 - Check mod-inventory API for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'inventory', 'TC196250'] },
     () => {
       InventoryInstances.getInstanceIdApi({

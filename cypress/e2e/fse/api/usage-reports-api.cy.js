@@ -9,7 +9,7 @@ describe('fse-usage-reports - API for production tenants', () => {
   });
 
   it(
-    `TC195661 - send basic usage report get requests for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195661 - send basic usage report get requests for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'usage-reports', 'TC195661'] },
     () => {
       cy.getUsageReportTitles().then((response) => {
@@ -51,7 +51,7 @@ describe('fse-usage-reports - API for non-production tenants', () => {
   });
 
   it(
-    `TC195662 - create agreement and send related get usage-reports for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195662 - create agreement and send related get usage-reports for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'usage-reports', 'nonProd', 'TC195662'] },
     () => {
       const currentDate = new Date();

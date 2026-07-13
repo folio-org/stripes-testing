@@ -18,7 +18,7 @@ describe('fse-copycat - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195639 - verify that profiles are displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195639 - verify that profiles are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'copycat', 'TC195639'] },
     () => {
       cy.wait(3000);

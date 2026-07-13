@@ -7,7 +7,7 @@ describe('fse-data-import', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195291 - Get data import job by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195291 - Get data import job by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'data-import', 'loc', 'TC195291'] },
     () => {
       cy.dataImportGetJobByStatus('COMMITTED').then((response) => {

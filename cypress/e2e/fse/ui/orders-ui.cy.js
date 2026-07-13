@@ -13,7 +13,7 @@ describe('fse-orders - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195334 - verify that orders page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195334 - verify that orders page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'orders', 'TC195334'] },
     () => {
       Orders.waitLoading();
