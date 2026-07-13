@@ -2317,6 +2317,12 @@ export default {
   },
 
   fillInSubfieldAndVerify(value, rowIndex = 0) {
+    // When the value is empty there is nothing to type in.
+    // In some states (e.g. after "Remove field" action is selected) the subfield
+    // textbox becomes disabled, so attempting to fillIn/verify would fail.
+    if (value === '') {
+      return;
+    }
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
@@ -2355,6 +2361,24 @@ export default {
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(subField)
         .has({ value, focused: true }),
+    );
+  },
+
+  verifySubfieldDisabled(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: true, required: false, value: '' }),
+    );
+  },
+
+  verifySubfieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: false, required: true }),
     );
   },
 
