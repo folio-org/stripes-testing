@@ -317,6 +317,7 @@ export default {
   patronRadioButton: (yesOrNo) => {
     cy.expect(patronRadioButton.exists());
     cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
+    cy.expect(patronRadioButton.find(RadioButton(including(yesOrNo))).is({ checked: true }));
   },
 
   verifyAlternativeRadio(yesOrNo) {

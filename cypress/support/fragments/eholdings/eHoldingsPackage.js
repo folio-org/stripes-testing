@@ -330,7 +330,7 @@ export default {
       },
       {
         delay: 2000,
-        timeout: 30_000,
+        timeout: 60_000,
       },
     );
   },

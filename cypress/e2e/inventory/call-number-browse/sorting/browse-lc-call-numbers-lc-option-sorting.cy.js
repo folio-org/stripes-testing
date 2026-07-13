@@ -220,6 +220,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.fillInBrowseSearch(expectedOrder[0]);
           InventorySearchAndFilter.clickSearch();
           BrowseCallNumber.valueInResultTableIsHighlighted(expectedOrder[0]);
+          expectedOrder.forEach((callNumber) => {
+            BrowseCallNumber.checkValuePresentInResults(callNumber);
+          });
           BrowseCallNumber.resultRowsIsInRequiredOder(expectedOrder);
         },
       );

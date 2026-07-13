@@ -257,7 +257,7 @@ describe('Data Import', () => {
         // in case in Settings - Data import - MARC field protection we have these fields as protected
         // for this test case purpose they should be removed
         fields.forEach((field) => {
-          cy.getAdminToken().then(() => {
+          cy.getAdminToken(false).then(() => {
             MarcFieldProtection.getListViaApi({
               query: `"field"=="${field}"`,
             }).then((list) => {
@@ -268,6 +268,7 @@ describe('Data Import', () => {
           });
         });
 
+        cy.getToken(testData.userProperties.username, testData.userProperties.password);
         // upload the exported marc file with 999.f.f.s fields
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
