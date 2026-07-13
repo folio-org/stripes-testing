@@ -13,7 +13,7 @@ describe('fse-export-manager - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195312 - verify that export-manager module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195312 - verify that export-manager module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'export-manager', 'TC195312'] },
     () => {
       ExportManager.waitFiltersLoading();

@@ -7,7 +7,7 @@ describe('fse-orders', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195335 - Get order by workflow status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195335 - Get order by workflow status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'orders', 'loc', 'TC195335'] },
     () => {
       cy.getOrderByWorkflowStatus('Closed').then((response) => {
