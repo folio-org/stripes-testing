@@ -13,7 +13,7 @@ describe('fse-inventory-import - UI (no data manipulation)', () => {
   });
 
   it(
-    `FDOPS-5291 - verify that inventory import module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `FDOPS-5291 - verify that inventory import module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'inventory-import', 'FDOPS-5291'] },
     () => {
       InventoryImport.verifyJobsLinkDisplayed();

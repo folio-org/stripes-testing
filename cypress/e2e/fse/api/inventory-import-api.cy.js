@@ -7,8 +7,8 @@ describe('fse-inventory-import', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `FDOPS-5292 - Get running inventory import jobs for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'api', 'inventory-import', 'FDOPS-5292'] },
+    `FDOPS-5292 - Get running inventory import jobs for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'sanity', 'inventory-import', 'FDOPS-5292'] },
     () => {
       cy.okapiRequest({
         method: 'GET',

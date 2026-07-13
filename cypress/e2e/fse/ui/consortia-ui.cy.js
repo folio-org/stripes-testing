@@ -13,9 +13,7 @@ describe('fse-consortia - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.env(
-      'OKAPI_HOST',
-    )}`,
+    `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195511'] },
     () => {
       cy.getAdminToken().then(() => {
@@ -36,7 +34,7 @@ describe('fse-consortia - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195512 - switch active affiliation ${Cypress.env('OKAPI_HOST')}`,
+    `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195512'] },
     () => {
       cy.getAdminToken().then(() => {
@@ -84,7 +82,7 @@ describe('fse-consortia - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.env('OKAPI_HOST')}`,
+    `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia', 'fse', 'ui', 'nonProd', 'TC195700'] },
     () => {
       cy.getUserTenants().then((userTenants) => {

@@ -7,7 +7,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195518 - check users-keycloak API for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195518 - check users-keycloak API for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['eureka-sanity', 'fse', 'api', 'users', 'loc', 'TC195518'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
@@ -20,7 +20,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `TC195517 - get user capabilities for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195517 - get user capabilities for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['eureka-sanity', 'fse', 'api', 'users', 'capabilities', 'loc', 'TC195517'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
@@ -33,7 +33,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `TC195521 - get user policies for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195521 - get user policies for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['eureka-sanity', 'fse', 'api', 'users', 'policies', 'loc', 'TC195521'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
@@ -48,7 +48,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `TC195522 - get user migrations for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195522 - get user migrations for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['eureka-sanity', 'fse', 'api', 'users', 'migrations', 'loc', 'TC195522'] },
     () => {
       cy.getUserMigrations().then((migrationsResponse) => {

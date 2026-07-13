@@ -21,7 +21,7 @@ describe('fse-locate-integration - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195870 - Verify LOCATE search via instance received from related folio tenant for ${Cypress.env('LOCATE_HOST')}`,
+    `TC195870 - Verify LOCATE search via instance received from related folio tenant for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['locate', 'fse', 'ui', 'TC195870'] },
     () => {
       cy.getItems({ limit: 1, expandAll: true, query: 'status.name=Available' }).then((item) => {

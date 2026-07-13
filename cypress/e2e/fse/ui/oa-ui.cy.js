@@ -14,7 +14,7 @@ describe('fse-oa - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC196024 - verify that Open access page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196024 - verify that Open access page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'oa', 'mod-oa', 'TC196024'] },
     () => {
       // check that new publication request page can be opened
