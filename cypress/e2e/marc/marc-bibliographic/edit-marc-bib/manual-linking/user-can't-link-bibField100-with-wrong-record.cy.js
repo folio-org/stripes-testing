@@ -78,19 +78,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          [
-            'C380557',
-            'C380449',
-            'C440112',
-            'C409449',
-            'C380452',
-            'C380455',
-            'C380462',
-            'Montessori method of education',
-            'Piano music',
-          ].forEach((id) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(id);
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380449');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -115,10 +103,6 @@ describe('MARC', () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.waitForAuthRefresh(() => {
-              cy.reload();
-              InventoryInstances.waitContentLoading();
             });
           });
         });
@@ -215,6 +199,7 @@ describe('MARC', () => {
               testData.authorityFieldValue.field150,
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
+            cy.wait(3000);
             MarcAuthoritiesSearch.selectExcludeReferencesFilter();
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
@@ -226,7 +211,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
-            cy.wait(2000);
+            cy.wait(3000);
             MarcAuthorities.selectTitle(testData.authorityFieldValue.field151);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
@@ -238,7 +223,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
-            cy.wait(2000);
+            cy.wait(3000);
             MarcAuthorities.selectTitle(testData.authorityFieldValue.field155);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);

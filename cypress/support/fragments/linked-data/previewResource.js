@@ -11,8 +11,14 @@ export default {
     cy.wait(2000);
   },
 
-  clickContinue() {
+  clickContinue(retries = 2) {
+    cy.intercept('POST', '**/linked-data/inventory-instance/**/import').as('importRequest');
     cy.do(continueButton.click());
-    cy.wait(4000);
+    cy.wait('@importRequest').then((interception) => {
+      if (interception.response.statusCode === 400 && retries > 0) {
+        cy.wait(3000);
+        this.clickContinue(retries - 1);
+      }
+    });
   },
 };

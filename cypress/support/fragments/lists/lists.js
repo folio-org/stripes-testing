@@ -12,6 +12,7 @@ import {
   KeyValue,
   Link,
   ListRow,
+  MessageBanner,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -52,6 +53,7 @@ const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
+const listsPane = Pane('Lists');
 const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
@@ -123,7 +125,7 @@ const constants = {
 
 const UI = {
   waitLoading() {
-    cy.expect(HTML(including('Lists')).exists());
+    cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
     cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
@@ -567,8 +569,30 @@ const UI = {
     cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
+  verifyListSavedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(`List ${listName} saved.`);
+  },
+
+  verifyListExportGeneratedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(
+      `Export of ${listName} is being generated. This may take some time for larger lists.`,
+    );
+  },
+
+  verifyListExportedCalloutMessage(listName) {
+    this.verifySuccessCalloutMessage(`List ${listName} was successfully exported to CSV.`);
+  },
+
   verifyCalloutMessage(message) {
     cy.expect(Callout(including(message)).exists());
+  },
+
+  verifyMultipleTenantsMessageBanner() {
+    cy.expect(
+      MessageBanner({
+        textContent: 'This list may contain records from multiple tenants.',
+      }).exists(),
+    );
   },
 
   closeListDetailsPane() {

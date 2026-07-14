@@ -118,6 +118,8 @@ describe('Data Export', () => {
               body: { jobExecutionHrId },
             },
           }) => {
+            cy.resetTenant();
+            cy.getToken(users.username, users.password);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               jobExecutionHrId,
               exportedInstanceFileName,
@@ -145,6 +147,9 @@ describe('Data Export', () => {
               body: { jobExecutionHrId },
             },
           }) => {
+            cy.resetTenant();
+            cy.getToken(users.username, users.password);
+            cy.setTenant(Affiliations.College);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               jobExecutionHrId,
               exportedInstanceFileName,

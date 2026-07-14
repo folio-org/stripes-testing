@@ -136,7 +136,10 @@ describe('Bulk-edit', () => {
 
         // Step 5: Unselect specific capability sets
         capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, {
+            isSelected: false,
+            confirmModal: true,
+          });
         });
 
         // Step 6: Save the changes

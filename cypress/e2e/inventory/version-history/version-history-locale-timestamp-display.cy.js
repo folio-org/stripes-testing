@@ -25,7 +25,7 @@ describe('Inventory', () => {
         instanceTitle: `AT_C692114_MarcBibInstance_${randomPostfix}`,
         createdRecordId: null,
         userProperties: null,
-        newTimezone: 'America/Toronto',
+        newTimezone: 'America/Phoenix',
         initialTimestamp: null,
       };
       const permissions = [

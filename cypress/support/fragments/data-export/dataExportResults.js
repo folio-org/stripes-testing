@@ -56,7 +56,7 @@ export default {
       runBy: row.find(MultiColumnListCell({ columnIndex: 8 })),
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
-    cy.getAdminToken().then(() => {
+    cy.getAdminToken(false).then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
           let userNameToVerify;
@@ -133,7 +133,7 @@ export default {
       runBy: row.find(MultiColumnListCell({ columnIndex: 8 })),
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
-    cy.getAdminToken().then(() => {
+    cy.getAdminToken(false).then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
         () => {
           const userNameToVerify = `${Cypress.env('users')[0].personal.lastName}, ${Cypress.env('users')[0].personal.firstName} `;

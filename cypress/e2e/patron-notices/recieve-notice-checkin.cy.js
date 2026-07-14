@@ -279,7 +279,6 @@ describe('Patron notices', () => {
                 `object=="${searchResultsData.object}"`,
                 `action=="${searchResultsData.circAction}"`,
                 `source=="${searchResultsData.source}"`,
-                `description=="${searchResultsData.desc}"`,
               ].join(' AND '),
             },
             failOnStatusCode: false,

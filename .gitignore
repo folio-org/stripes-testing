@@ -35,6 +35,7 @@ environments.js
 CLAUDE.md
 .claude
 .opencode
+.codemie
 cypress.local.js
 
 .agents/*

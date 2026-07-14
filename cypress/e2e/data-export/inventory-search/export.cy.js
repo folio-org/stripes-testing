@@ -119,7 +119,7 @@ describe('Data Export', () => {
 
     it(
       'C196757 Export selected records (MARC) (firebird)',
-      { tags: ['smoke', 'firebird', 'broken', 'C196757'] },
+      { tags: ['smoke', 'firebird', 'C196757'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());

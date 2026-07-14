@@ -206,7 +206,7 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             'Notes',
-            `Dissertation note;${notes.dissertationStaffOnly};true | Dissertation note;${notes.dissertation};false`,
+            `Dissertation note;${notes.dissertationStaffOnly};true|Dissertation note;${notes.dissertation};false`,
           );
           BulkEditActions.openStartBulkEditFolioInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
@@ -315,6 +315,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.clearDefaultFilter('Held by');
             InventorySearchAndFilter.searchInstanceByTitle(instance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();

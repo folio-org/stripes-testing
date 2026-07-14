@@ -11,6 +11,8 @@ import {
   PaneHeader,
   Section,
   TextField,
+  Checkbox,
+  DropdownMenu,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -25,11 +27,13 @@ const searchField = TextField({ id: 'input-search-job-profiles-field' });
 const deleteUploadedFileModal = Modal('Delete uploaded file?');
 const modalNoButton = Button('No, do not delete');
 const modalYesButton = Button('Yes, delete');
+const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
+const newJobProfileButton = Button('New job profile');
 
 const openNewJobProfileForm = () => {
   cy.expect(Pane('Job profiles').exists());
   cy.wait(1000);
-  cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
+  cy.do([paneResults.find(actionsButton).click(), newJobProfileButton.click()]);
   cy.wait(1000);
   cy.expect(HTML({ className: including('form-'), id: 'job-profiles-form' }).exists());
 };
@@ -40,6 +44,7 @@ const closeJobProfile = (profileName) => {
 
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay()).should('be.visible');
+  cy.expect(jobProfilesList.find(MultiColumnListCell(including('Default'))).exists());
 };
 const waitLoading = (selector) => cy.expect(selector.exists());
 
@@ -61,7 +66,7 @@ const search = (jobProfileTitle) => {
 
 export default {
   openNewJobProfileForm: () => {
-    cy.do([actionsButton.click(), Button('New job profile').click()]);
+    cy.do([actionsButton.click(), newJobProfileButton.click()]);
   },
 
   waitLoadingList,
@@ -89,7 +94,7 @@ export default {
 
   selectJobProfile: () => {
     // need to wait until file upload
-    cy.wait(1000);
+    cy.wait(2000);
     cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
     cy.do(paneResults.find(MultiColumnListRow({ index: 0 })).click());
     cy.expect(waitSelector.exists());
@@ -148,7 +153,7 @@ export default {
     cy.expect(PaneHeader(fileName).exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.find(MultiColumnList({ id: 'job-profiles-list' })).exists()),
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.find(jobProfilesList).exists()),
 
   checkCalloutMessage: (message) => {
     cy.expect(
@@ -206,5 +211,21 @@ export default {
   openJobProfileView(jobProfileTitle) {
     cy.do(MultiColumnListCell(jobProfileTitle).click());
     cy.expect(waitSelector.find(HTML(jobProfileTitle)).exists());
+  },
+
+  verifyNoCheckboxesInList() {
+    cy.expect(jobProfilesList.find(Checkbox()).absent());
+  },
+
+  verifyActionsMenuOptions() {
+    cy.do(paneResults.find(actionsButton).click());
+    cy.expect(newJobProfileButton.exists());
+    cy.expect([
+      Button('Export selected').absent(),
+      Button('Select all').absent(),
+      Button('Deselect all').absent(),
+    ]);
+    cy.do(paneResults.find(actionsButton).click());
+    cy.expect(DropdownMenu().absent());
   },
 };

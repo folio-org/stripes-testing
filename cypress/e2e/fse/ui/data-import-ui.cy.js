@@ -26,7 +26,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195289 - verify that data-import module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195289 - verify that data-import module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'data-import', 'TC195289'] },
     () => {
       DataImport.waitLoadingNoInteractors();
@@ -34,7 +34,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195767 - check data-import log for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195767 - check data-import log for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'data-import', 'fse-user-journey', 'nonProd', 'TC195767'] },
     () => {
       Logs.openViewAllLogs();
@@ -45,7 +45,7 @@ describe('fse-data-import - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195768 - check data-import file upload for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195768 - check data-import file upload for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'data-import', 'toBeFixed', 'TC195768'] },
     () => {
       // upload small marc file
@@ -112,7 +112,7 @@ describe('fse-data-import - UI (data manipulation)', () => {
   });
 
   it(
-    `TC196048 - verify simple MARC data import for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196048 - verify simple MARC data import for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'data-import', 'fse-user-journey', 'nonProd', 'TC196048'] },
     () => {
       DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(

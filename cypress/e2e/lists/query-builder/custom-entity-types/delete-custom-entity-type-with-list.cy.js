@@ -18,40 +18,42 @@ describe('Lists', () => {
       };
 
       before('Create test data', () => {
-        const capabSetsToAssign = [
-          CapabilitySets.moduleListsManage,
-          CapabilitySets.uiUsersView,
-        ];
+        const capabSetsToAssign = [CapabilitySets.moduleListsManage, CapabilitySets.uiUsersView];
         const capabsToAssign = [
           Capabilities.fqmEntityTypesCustomCollectionCreate,
           Capabilities.fqmEntityTypesCustomItemDelete,
         ];
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
-        }).then(() => {
-          Lists.generateSimpleUsersEntityTypeSource().then((source) => {
-            newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
-              'Custom entity type with sources C825342',
-              [source],
-              false,
-            );
-          });
-        }).then(() => {
-          cy.getUserToken(userData.username, userData.password);
-          Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
-            expect(response.status).to.equal(201);
-            listData.entityTypeId = newCustomEntityTypeWithSources.id;
-          }).then(() => {
-            Lists.createViaApi(listData)
-              .then((body) => {
-                listData.id = body.id;
+        cy.createTempUser([])
+          .then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
+          })
+          .then(() => {
+            Lists.generateSimpleUsersEntityTypeSource().then((source) => {
+              newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
+                'Custom entity type with sources C825342',
+                [source],
+                false,
+              );
+            });
+          })
+          .then(() => {
+            cy.getUserToken(userData.username, userData.password);
+            Lists.createCustomEntityType(newCustomEntityTypeWithSources)
+              .then((response) => {
+                expect(response.status).to.equal(201);
+                listData.entityTypeId = newCustomEntityTypeWithSources.id;
               })
               .then(() => {
-                Lists.waitForListToCompleteRefreshViaApi(listData.id);
+                Lists.createViaApi(listData)
+                  .then((body) => {
+                    listData.id = body.id;
+                  })
+                  .then(() => {
+                    Lists.waitForListToCompleteRefreshViaApi(listData.id);
+                  });
               });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -60,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C825342 Verify that it\'s NOT possible to DELETE the existing custom entity type when the permission is assigned and list is created (eureka)',
-        { tags: ['extendedPath', 'eureka', 'C825342'] },
+        "C825342 Verify that it's NOT possible to DELETE the existing custom entity type when the permission is assigned and list is created (corsair)",
+        { tags: ['extendedPath', 'corsair', 'C825342'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 

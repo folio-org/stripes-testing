@@ -24,10 +24,19 @@ describe('fse-bulk-edit - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195812 - verify that bulk edit page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195812 - verify that bulk edit page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'bulk-edit', 'TC195812'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.BULK_EDIT);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.BULK_EDIT}"):visible`)
+            .length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.BULK_EDIT);
+        }
+      });
       BulkEditSearch.waitLoading();
       BulkEditSearch.verifyBulkEditImage();
       // verify logs items

@@ -156,7 +156,10 @@ describe('Eureka', () => {
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
         testData.originalCapabilitySets.forEach((set) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(set, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(set, {
+            isSelected: false,
+            confirmModal: true,
+          });
         });
         testData.newCapabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set);

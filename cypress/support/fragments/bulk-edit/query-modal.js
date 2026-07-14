@@ -153,6 +153,7 @@ export const holdingsFieldValues = {
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
+  instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
   instanceSource: 'Instance — Source',
@@ -165,6 +166,7 @@ export const instanceFieldValues = {
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
+  instanceDateTypeName: 'Instance date type — Name',
   statisticalCodeNames: 'Instance — Statistical codes',
   statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
@@ -548,6 +550,20 @@ export default {
     const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
     cy.do(targetSelection.open());
     cy.expect(SelectionList().has({ optionList: expectedOptions }));
+    this.closeOpenedSelection();
+  },
+
+  verifyOptionsInValueSelectWhenUnsorted(expectedOption, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(valueSelection);
+    cy.do(targetSelection.open());
+
+    cy.then(() => {
+      return SelectionList({ placeholder: 'Filter options list' }).optionList();
+    }).then((options) => {
+      const sortedExpectedOptions = expectedOption.sort();
+
+      expect(options).to.deep.equal(sortedExpectedOptions);
+    });
     this.closeOpenedSelection();
   },
 
@@ -1002,7 +1018,7 @@ export default {
   },
 
   verifyNumberOfMatchedRecords(numberOfMatchedRecords) {
-    cy.wait(3000);
+    cy.wait(4000);
     cy.contains('h3', /^Query returns/).then(($element) => {
       cy.wrap($element)
         .invoke('text')

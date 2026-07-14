@@ -71,8 +71,8 @@ describe('eHoldings', () => {
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
-        EHoldingsPackages.verifyPackageInResults(testData.packageName);
-        EHoldingsPackages.openPackage();
+        EHoldingsPackages.verifyPackageExistsInResults(testData.packageName);
+        EHoldingsPackages.openPackageByName(testData.packageName);
         EHoldingsPackageView.waitLoading();
         EHoldingsPackage.searchTitles(testData.title, 'Title');
         EHoldingsPackage.filterTitles(testData.selectedStatus);

@@ -74,24 +74,39 @@ describe('Users', () => {
       UsersSearchPane.chooseTagOption(testData.tagLabel);
       UsersSearchResultsPane.verifyRecordsFoundInPaneHeader(usersQuantity);
 
-      // Step 2: Navigate to the last page and back to the first page of the results list
+      // Step 2: Navigate to the last page and back to the first page of the results list.
+      // Intercept the limit=0 count request that UserSearchContainer issues for large result sets.
+      // goToFirstPage() clicks Previous once per page (11 times for 12 pages), and each click
+      // triggers its own limit=0 request. The last one may still be in-flight when reset is clicked,
+      // writing stale "1,101 records found" back into component state (the race condition).
       UsersSearchResultsPane.goToLastPage();
       UsersSearchResultsPane.verifyPagingText('1101 - 1101');
+      cy.intercept('GET', '**/users?*limit=0*').as('userCountRequest');
       UsersSearchResultsPane.goToFirstPage();
       UsersSearchResultsPane.verifyPagingText('1 - 100');
 
-      // Step 3: Click "Reset all" and verify the results pane returns to the correct pane subtitle text
+      // Step 3: Click "Reset all" and verify the results pane returns to the correct pane subtitle text.
+      // Drain every limit=0 request captured during goToFirstPage — the exact count varies because
+      // rapid navigation causes requests to overlap. .all gives the actual captured count; cy.wait
+      // pops FIFO and blocks on any response that is still in-flight.
+      cy.get('@userCountRequest.all').then((intercepts) => {
+        Cypress._.times(intercepts.length, () => cy.wait('@userCountRequest'));
+      });
       UsersSearchPane.resetAllFilters();
       UsersSearchResultsPane.verifyEnterSearchCriteriaInPaneHeader();
 
       // Step 4: Add a search term, search, then remove the search term
+      cy.intercept('GET', '**/users?*limit=0*').as('userCountRequest');
       UsersSearchPane.searchByKeywords(testData.commonUserName);
       UsersSearchResultsPane.verifyRecordsFoundInPaneHeader(usersQuantity);
+      cy.wait('@userCountRequest');
       UsersSearchPane.clearSearchField();
       UsersSearchResultsPane.verifyEnterSearchCriteriaInPaneHeader();
 
       // Step 5: Select a filter, then unselect it
+      cy.intercept('GET', '**/users?*limit=0*').as('userCountRequest');
       UsersSearchPane.selectActiveUsersStatusFilter();
+      cy.wait('@userCountRequest');
       UsersSearchPane.unselectActiveUsersStatusFilter();
       UsersSearchResultsPane.verifyEnterSearchCriteriaInPaneHeader();
 

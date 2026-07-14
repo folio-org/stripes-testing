@@ -121,6 +121,7 @@ describe('Inventory', () => {
             InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
             InventoryInstances.resetAllFilters();
           }
+          cy.wait(3000);
           cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
             testData.user = userProperties;
           });
@@ -146,7 +147,9 @@ describe('Inventory', () => {
         });
 
         InventorySearchAndFilter.selectBrowseSubjects();
-        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);
+        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true, {
+          allLinked: true,
+        });
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
         BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
           5,

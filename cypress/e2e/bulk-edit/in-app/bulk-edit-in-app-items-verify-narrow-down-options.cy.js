@@ -8,7 +8,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { BULK_EDIT_ACTIONS, ITEM_STATUS_NAMES, LOAN_TYPE_NAMES } from '../../../support/constants';
+import {
+  BULK_EDIT_ACTIONS,
+  ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../../support/constants';
 
 let user;
 const instance = {
@@ -50,8 +55,8 @@ describe('Bulk-edit', () => {
       () => {
         const allOptions = [
           'Administrative note',
-          'Check in note',
-          'Check out note',
+          'Suppress from discovery',
+          'Material type',
           'Action note',
           'Binding',
           'Copy note',
@@ -59,12 +64,13 @@ describe('Bulk-edit', () => {
           'Note',
           'Provenance',
           'Reproduction',
+          'Check in note',
+          'Check out note',
           'Item status',
           'Permanent loan type',
           'Temporary loan type',
           'Permanent item location',
           'Temporary item location',
-          'Suppress from discovery',
         ];
         const selectedOptions = [];
 
@@ -91,9 +97,9 @@ describe('Bulk-edit', () => {
 
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
-          if (rowIndex < 15) {
+          if (rowIndex < 16) {
             BulkEditActions.addNewBulkEditFilterString();
-            if (rowIndex < 14) BulkEditActions.verifyNewBulkEditRow(rowIndex + 1);
+            if (rowIndex < 15) BulkEditActions.verifyNewBulkEditRow(rowIndex + 1);
             BulkEditActions.clickOptionsSelection(rowIndex + 1);
 
             verifyOptionsState(
@@ -191,16 +197,20 @@ describe('Bulk-edit', () => {
           selectOptionAndVerifyState(config.option, config.action, config.rowIndex);
         });
 
+        selectOptionAndVerifyState('Material type', null, 15, (rowIndex) => {
+          BulkEditActions.fillMaterialType(MATERIAL_TYPE_NAMES.DVD, rowIndex);
+        });
+
         // Step 19: Click "Select option" dropdown on the final row
-        BulkEditActions.clickOptionsSelection(15);
+        BulkEditActions.clickOptionsSelection(16);
 
         verifyOptionsState(['Suppress from discovery'], selectedOptions);
 
-        BulkEditActions.clickOptionsSelection(15);
+        BulkEditActions.clickOptionsSelection(16);
 
         // Step 20: Select "Suppress from discovery" option => Select "Set true" in "Select action" dropdown
-        BulkEditActions.selectOption('Suppress from discovery', 15);
-        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE, 15);
+        BulkEditActions.selectOption('Suppress from discovery', 16);
+        BulkEditActions.selectAction(BULK_EDIT_ACTIONS.SET_TRUE, 16);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.verifyCancelButtonDisabled(false);
 

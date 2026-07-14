@@ -21,6 +21,7 @@ describe('Data Import', () => {
         indicator2: '*',
         subfield: '5',
         data: 'VLR',
+        source: 'USER',
       },
       secondProtectedFieldData: {
         field: '600',
@@ -28,6 +29,7 @@ describe('Data Import', () => {
         indicator2: '*',
         subfield: 'a',
         data: '*',
+        source: 'USER',
       },
       mappingProfile: {
         name: `C366101 MARC Authority mapping profile ${getRandomPostfix()}`,

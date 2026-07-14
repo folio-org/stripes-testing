@@ -24,8 +24,6 @@ describe('Eureka', () => {
 
       before(() => {
         cy.getAdminToken();
-        // set default locale settings for tenant (with UTC)
-        cy.setDefaultLocaleApi();
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
           cy.assignCapabilitiesToExistingUser(
@@ -42,12 +40,13 @@ describe('Eureka', () => {
               capabSetsToAssign,
             );
             if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userA.username, testData.userA.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
-            }, 20_000);
+
+            // set default locale settings for tenant (with UTC)
+            cy.setDefaultLocaleApi();
+            cy.login(testData.userA.username, testData.userA.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
           });
         });
       });
@@ -83,12 +82,10 @@ describe('Eureka', () => {
               `${testData.userA.lastName}, ${testData.userA.firstName}`,
             );
             cy.logout();
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userB.username, testData.userB.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
-            }, 20_000);
+            cy.login(testData.userB.username, testData.userB.password, {
+              path: TopMenu.settingsAuthorizationRoles,
+              waiter: AuthorizationRoles.waitContentLoading,
+            });
             AuthorizationRoles.waitLoading();
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);

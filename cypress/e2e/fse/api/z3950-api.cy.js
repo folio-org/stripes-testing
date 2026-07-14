@@ -1,6 +1,6 @@
 describe('fse-z3950', () => {
   it(
-    `TC195634 - check z3950 service for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195634 - check z3950 service for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'z3950', 'TC195634'] },
     () => {
       cy.allure().logCommandSteps(false);

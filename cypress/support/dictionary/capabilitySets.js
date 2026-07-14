@@ -334,6 +334,11 @@ export default {
     resource: 'Base-Url Item',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  acquisitionUnitsMembershipsManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Acquisitions-Units Memberships',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {
@@ -346,7 +351,7 @@ export default {
     resource: 'UI-Consortia-Settings Consortium-Manager Share',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
-  uiConsortiaInventoryLocalSharingInstances: {
+  consortiaInventoryLocalSharingInstances: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'Consortia Inventory Local Sharing-Instances',
     action: CAPABILITY_ACTIONS.EXECUTE,

@@ -20,6 +20,7 @@ Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'orders/acquisition-methods',
     searchParams,
+    isDefaultSearchParamsRequired: false,
   });
 });
 

@@ -70,7 +70,7 @@ describe('Inventory', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectValue);
         BrowseSubjects.checkSearchResultsTable();
         BrowseSubjects.checkValueIsBold(testData.subjectValue);
-        BrowseCallNumber.checkNumberOfTitlesForRow(testData.subjectValue, '3');
+        BrowseCallNumber.checkNumberOfTitlesForRow(testData.subjectValue, '3', 3);
         BrowseSubjects.openInstance({ name: testData.subjectValue });
         InventorySearchAndFilter.verifyResultListExists();
         for (let index = 1; index <= testData.numberOfTitles; index++) {

@@ -152,6 +152,7 @@ const expectedCapabilityTableActions = {
   ],
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
+const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -284,11 +285,15 @@ export default {
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
-  selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilitySetCheckbox: (
+    { table, resource, action, type },
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
+    const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
       capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListCell(resource, { column: 'Resource' }))
         .perform((el) => {
           targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
@@ -296,22 +301,33 @@ export default {
     );
     cy.then(() => {
       const targetCheckbox = capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
       cy.do(targetCheckbox.click());
-      cy.expect(targetCheckbox.has({ checked: isSelected }));
+      if (!isSelected && confirmModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(continueButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: isSelected }));
+      } else if (!isSelected && dismissModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(cancelButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: !isSelected }));
+      } else cy.expect(targetCheckbox.has({ checked: isSelected }));
       // wait for capabilities selection to be updated
       cy.wait(1000);
     });
   },
 
-  selectCapabilityCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilityCheckbox: ({ table, resource, action, type }, isSelected = true) => {
+    const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
       capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListCell(resource, { column: 'Resource' }))
         .perform((el) => {
           targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
@@ -319,7 +335,7 @@ export default {
     );
     cy.then(() => {
       const targetCheckbox = capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
@@ -328,16 +344,18 @@ export default {
     });
   },
 
-  verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  verifyCapabilityCheckboxUncheckedAndEnabled: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxUncheckedAndEnabled: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: false, disabled: false }));
   },
@@ -395,23 +413,26 @@ export default {
     cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 
-  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action }, isEnabled = true) => {
+  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action, type }, isEnabled = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     if (isEnabled) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
     else cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  verifyCapabilitySetCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+  verifyCapabilitySetCheckboxChecked: ({ table, resource, action, type }, isSelected = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
-  clickOnCheckedDisabledCheckbox: ({ table, resource, action }) => {
-    const targetCheckbox = capabilitiesAccordion.find(capabilityTables[table]).find(
+  clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    const targetCheckbox = capabilitiesAccordion.find(capabilityTables[targetTable]).find(
       Checkbox({
         ariaLabel: `${action} ${resource}`,
         isWrapper: false,
@@ -457,22 +478,24 @@ export default {
     if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
-  verifyCapabilityCheckboxAbsent: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     cy.expect(
       capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
         .absent(),
     );
   },
 
   verifyCapabilityCheckboxChecked: (
-    { table, resource, action },
+    { table, resource, action, type },
     isSelected = true,
     isEnabled = null,
   ) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
     if (isEnabled === true || isEnabled === false) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
@@ -944,13 +967,27 @@ export default {
       });
   },
 
-  selectCapabilitySetColumn: (table, action, isSelected = true) => {
+  selectCapabilitySetColumn: (
+    table,
+    action,
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListHeader(including(action)))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (!isSelected && confirmModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(continueButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: isSelected }));
+    } else if (!isSelected && dismissModal) {
+      cy.expect(unselectSetConfirmModal.exists());
+      cy.do(cancelButton.click());
+      cy.expect(unselectSetConfirmModal.absent());
+      cy.expect(targetCheckbox.has({ checked: !isSelected }));
+    } else cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   getCapabilitySetCheckboxCountInColumn: (table, action) => {
@@ -1084,17 +1121,19 @@ export default {
     );
   },
 
-  shareRole(roleName, { verifyModal = false, timeout = 72_000 } = {}) {
+  shareRole(roleName, { notShared = false, verifyModal = false, timeout = 72_000 } = {}) {
     cy.do([Pane(roleName).find(actionsButton).click(), shareToAllButton.click()]);
     if (verifyModal) this.verifyConfirmShareModal(roleName);
     cy.do(shareToAllModal.find(submitButton).click());
-    recurse(
-      () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
-      (count) => count === 0,
-      { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
-    );
-    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
-    this.checkRoleCentrallyManaged(roleName, true);
+    if (!notShared) {
+      recurse(
+        () => cy.get('body').then(($body) => $body.find('[label="Confirm share to all"]').length),
+        (count) => count === 0,
+        { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
+      );
+      cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+      this.checkRoleCentrallyManaged(roleName, true);
+    }
   },
 
   verifyConfirmShareModal(roleName) {

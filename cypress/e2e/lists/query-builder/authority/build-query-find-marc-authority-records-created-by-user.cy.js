@@ -119,7 +119,7 @@ describe('Lists', () => {
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
-            waiter: Lists.waitLoading,
+            waiter: Lists.filtersWaitLoading,
           });
 
           // Steps shuffled for better stability

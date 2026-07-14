@@ -26,7 +26,7 @@ describe('Inventory', () => {
     // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
       'C350397 Change focus for Inventory settings (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C350397'] },
+      { tags: ['extendedPathFlaky', 'folijet'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

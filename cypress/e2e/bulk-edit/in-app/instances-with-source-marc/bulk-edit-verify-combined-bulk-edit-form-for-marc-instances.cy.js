@@ -12,7 +12,7 @@ import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import { BULK_EDIT_ACTIONS, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 
 let user;
 let instanceTypeId;
@@ -201,16 +201,21 @@ describe(
           BulkEditActions.verifySubfield('a');
 
           // Step 21: Verify action options
-          BulkEditActions.verifyTheActionOptionsEqual(['Add', 'Find', 'Remove all']);
+          BulkEditActions.verifyTheActionOptionsEqual([
+            BULK_EDIT_ACTIONS.ADD,
+            BULK_EDIT_ACTIONS.FIND,
+            BULK_EDIT_ACTIONS.REMOVE_FIELD,
+            BULK_EDIT_ACTIONS.REMOVE_SUBFIELD,
+          ]);
 
           // Step 22: Select "Add" option
-          BulkEditActions.selectActionForMarcInstance('Add');
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.ADD);
 
           // Step 23: Test adding new row
           BulkEditActions.addNewBulkEditFilterString(true);
           BulkEditActions.verifyTagAndIndicatorsAndSubfieldValues('', '\\', '\\', '', 1);
           BulkEditActions.verifyNewBulkEditRowInMarcInstanceAccordion();
-          BulkEditActions.selectActionForMarcInstance('Add', 1);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.ADD, 1);
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 24: Test deleting row
@@ -278,7 +283,7 @@ describe(
           // Step 34: Test MARC field validation with various scenarios
           BulkEditActions.typeValueInTagField('536');
           BulkEditActions.verifyTagField('536');
-          BulkEditActions.selectActionForMarcInstance('Remove all');
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_SUBFIELD);
           BulkEditActions.verifyConfirmButtonDisabled(true);
 
           // Step 35: Fill in "In.1*" , "In.2*" column and "Subfield*" column

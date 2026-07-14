@@ -49,11 +49,11 @@ describe('MARC', () => {
         // Delete any existing test records
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: 'keyword="C386496*"',
+          query: 'keyword="C386496 "',
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });
@@ -87,7 +87,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         testData.createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
       });
 

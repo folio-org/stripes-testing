@@ -277,7 +277,10 @@ describe('Eureka', () => {
             testData.updatedRoleName,
             testData.updatedRoleDescription,
           );
-          AuthorizationRoles.selectCapabilitySetCheckbox(testData.originalCapabilitySets[0], false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(testData.originalCapabilitySets[0], {
+            isSelected: false,
+            confirmModal: true,
+          });
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
           cy.wait(2000);
           cy.intercept('PUT', `/roles/${testData.roleId}`).as('roleCall');

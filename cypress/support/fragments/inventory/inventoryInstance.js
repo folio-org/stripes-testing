@@ -159,6 +159,7 @@ const editInMGButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
+const instanceRelationshipAccordion = Accordion('Instance relationship');
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1241,11 +1242,11 @@ export default {
     });
   },
 
-  getInstanceRelationshipTypesViaApi() {
+  getInstanceRelationshipTypesViaApi(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'instance-relationship-types',
-        searchParams: { limit: 1 },
+        searchParams,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body.instanceRelationshipTypes);
@@ -2053,5 +2054,23 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(/The item barcode .+ was successfully copied to the clipboard/),
     );
+  },
+
+  openInstanceRelationshipAccordion: () => cy.do(instanceRelationshipAccordion.clickHeader()),
+
+  removeInstanceRelationshipsViaApi(instanceId) {
+    cy.getInstanceById(instanceId).then((body) => {
+      body.parentInstances = [];
+      body.childInstances = [];
+      cy.updateInstance(body);
+    });
+  },
+
+  removePrecedingSucceedingTitlesViaApi(instanceId) {
+    cy.getInstanceById(instanceId).then((body) => {
+      body.precedingTitles = [];
+      body.succeedingTitles = [];
+      cy.updateInstance(body);
+    });
   },
 };

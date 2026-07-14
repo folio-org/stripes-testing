@@ -4,6 +4,7 @@ import {
   Pane,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   Link,
   KeyValue,
   Callout,
@@ -13,6 +14,7 @@ const viewPane = Pane({ id: 'view-action-profile-pane' });
 const resultsPane = Pane({ id: 'pane-results' });
 const actionsButton = Button('Actions');
 const closeButton = Button({ icon: 'times' });
+const associatedMappingProfilesList = MultiColumnList({ id: 'associated-mappingProfiles-list' });
 
 export default {
   waitLoading: () => {
@@ -38,9 +40,7 @@ export default {
 
   verifyLinkedFieldMappingProfile: (profileName) => {
     cy.expect(
-      MultiColumnList({ id: 'associated-mappingProfiles-list' })
-        .find(MultiColumnListCell({ content: profileName }))
-        .exists(),
+      associatedMappingProfilesList.find(MultiColumnListCell({ content: profileName })).exists(),
     );
   },
 
@@ -74,5 +74,27 @@ export default {
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+  verifyAssociatedMappingProfileShownColumns: (columns) => {
+    cy.get('#associated-mappingProfiles-list')
+      .find('div[class*="mclScrollable"]')
+      .scrollTo('right');
+    cy.wait(300);
+
+    columns.forEach((column) => {
+      cy.expect(
+        associatedMappingProfilesList.find(MultiColumnListHeader({ content: column })).exists(),
+      );
+    });
+  },
+  verifyAssociatedMappingProfileHiddenColumns: (columns) => {
+    cy.get('#associated-mappingProfiles-list').find('div[class*="mclScrollable"]').scrollTo('left');
+    cy.wait(300);
+
+    columns.forEach((column) => {
+      cy.expect(
+        associatedMappingProfilesList.find(MultiColumnListHeader({ content: column })).absent(),
+      );
+    });
   },
 };

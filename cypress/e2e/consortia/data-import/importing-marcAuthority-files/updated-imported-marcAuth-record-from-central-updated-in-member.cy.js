@@ -154,8 +154,6 @@ describe('Data Import', () => {
                 path: SettingsMenu.actionProfilePath,
                 waiter: SettingsActionProfiles.waitLoading,
               });
-              cy.reload();
-              SettingsActionProfiles.waitLoading();
             }, 20_000);
             SettingsActionProfiles.create(actionProfile, mappingProfile.name);
 
@@ -169,6 +167,7 @@ describe('Data Import', () => {
             cy.wait(1000);
             NewJobProfile.saveAndClose();
 
+            cy.getAdminToken(false);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -249,6 +248,7 @@ describe('Data Import', () => {
           MarcAuthority.contains(testData.updated1XXField);
           MarcAuthority.notContains(testData.deletedSubfield);
 
+          cy.wait(3000);
           cy.login(users.userBProperties.username, users.userBProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,

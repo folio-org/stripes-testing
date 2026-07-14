@@ -7,7 +7,7 @@ describe('fse-serials', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195523 - Get serials by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195523 - Get serials by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'serials', 'loc', 'TC195523'] },
     () => {
       cy.getserialsByStatus().then((response) => {

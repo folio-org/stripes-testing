@@ -7,7 +7,7 @@ describe('fse-password-reset-config', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC196414 - Verify password reset link configuration for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196414 - Verify password reset link configuration for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'password-reset', 'TC196414'] },
     () => {
       const expectedTenantUrl = Cypress.config().baseUrl;

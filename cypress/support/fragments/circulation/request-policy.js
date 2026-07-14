@@ -6,6 +6,7 @@ import {
   KeyValue,
   Link,
   Pane,
+  RadioButton,
   TextArea,
   TextField,
 } from '../../../../interactors';
@@ -21,6 +22,7 @@ const confirmDeleteButton = Button({ id: 'clickable-delete-item-confirmation-con
 const nameTextField = TextField({ id: 'request_policy_name' });
 const descriptionTextField = TextArea({ id: 'request_policy_description' });
 const saveAndCloseButton = Button({ id: 'footer-save-entity' });
+const cancelButton = Button({ id: 'footer-cancel-entity' });
 const holdCheckbox = Checkbox({ id: 'hold-checkbox' });
 const pageCheckbox = Checkbox({ id: 'page-checkbox' });
 const recallCheckbox = Checkbox({ id: 'recall-checkbox' });
@@ -112,8 +114,37 @@ export default {
     cy.wait(1000);
   },
 
+  selectPageCheckboxAndAllowSomePickupServicePoints(servicePointName) {
+    cy.do(pageCheckbox.checkIfNotSelected());
+    cy.wait(1000);
+    cy.do(RadioButton('Allow some pickup service points').click());
+    cy.wait(500);
+    cy.get('input[class*="multiSelectFilterField"]').type(servicePointName);
+    cy.wait(300);
+    cy.contains('[class*="multiSelectOption"]', servicePointName).click();
+  },
+
   save() {
     cy.do(saveAndCloseButton.click());
+  },
+
+  clickCancel() {
+    cy.do(cancelButton.click());
+  },
+
+  verifyNewPolicyFormIsOpened() {
+    cy.expect(Pane('New request policy').exists());
+  },
+
+  verifyNameFieldValue(name) {
+    cy.expect(nameTextField.has({ value: name }));
+  },
+
+  verifyPolicyNotCreated(policyName) {
+    this.getRequestPolicyViaAPI().then((policies) => {
+      const policy = policies.find((p) => p.name === policyName);
+      expect(policy).to.equal(undefined);
+    });
   },
 
   deleteRequestPolicy() {

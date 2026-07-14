@@ -84,6 +84,7 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             cy.wait(1000);
             MarcAuthorities.chooseTypeOfHeading('Genre');
+            cy.wait(3000);
             InventoryInstance.searchResults(testData.linkingValue);
             MarcAuthority.contains(`\t$a ${testData.linkingValue}`);
             MarcAuthorities.clickLinkButton();

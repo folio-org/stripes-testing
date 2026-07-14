@@ -348,7 +348,7 @@ export default {
     subjectName,
     isPresent = true,
     isLinked = false,
-    { allUnlinked = false } = {},
+    { allUnlinked = false, allLinked = false } = {},
   ) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
@@ -378,6 +378,13 @@ export default {
 
         if (isPresent) {
           if (isLinked) {
+            if (allLinked) {
+              return (
+                foundSubjects.length > 0 &&
+                !hasNotLinkedItem(foundSubjects) &&
+                hasLinkedItem(foundSubjects)
+              );
+            }
             return hasLinkedItem(foundSubjects);
           } else {
             if (allUnlinked) {

@@ -266,7 +266,7 @@ describe('Inventory', () => {
 
     it(
       'C651515 Call number of each type which belong to Shared and Local Instances could be found by call number browse from Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C651515'] },
+      { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C651515'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         folioInstancesShared.forEach((instance) => {
@@ -307,6 +307,7 @@ describe('Inventory', () => {
                 2, // 2 titles for each call number include "Shared" and "Local" instances
               );
               BrowseCallNumber.SharedAccordion.byShared('Yes');
+              cy.wait(2_000); // wait for the result table to be updated
               BrowseCallNumber.checkNumberOfTitlesForRow(itemCallNumberValue, 1); // 1 title for call number include "Shared" instance
 
               BrowseCallNumber.SharedAccordion.reset();

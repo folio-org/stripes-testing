@@ -70,6 +70,7 @@ describe('MARC', () => {
         'C442840 MARC authority | Use "Reset all" in "Advanced search" modal (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C442840'] },
         () => {
+          cy.wait(3000);
           MarcAuthoritiesSearch.fillSearchInput(testData.searchQuery);
           cy.title().should('eq', expectedPageTitle());
 
@@ -89,6 +90,7 @@ describe('MARC', () => {
           MarcAuthorities.chooseTypeOfHeading(testData.accordionOption);
           cy.title().should('eq', expectedPageTitle());
 
+          cy.wait(3000);
           MarcAuthoritiesSearch.fillSearchInput(testData.searchQuery);
           MarcAuthoritiesSearch.clickSearchButton();
           MarcAuthorityBrowse.waitLoading();

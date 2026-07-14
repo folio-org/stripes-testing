@@ -42,7 +42,7 @@ describe('MARC', () => {
           'sh',
           'D',
           'rbmscv',
-          'lctgm',
+          'lcgtm',
           getRandomLetters(15),
         ],
         user: {},
@@ -151,13 +151,11 @@ describe('MARC', () => {
             DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
           );
 
-          MarcAuthorities.selectSearchOptionInDropdown(MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME);
-          MarcAuthorities.checkSelectOptionFieldContent(
-            MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,
-          );
+          MarcAuthorities.selectSearchOptionInDropdown(MARC_AUTHORITY_BROWSE_OPTIONS.GENRE);
+          MarcAuthorities.checkSelectOptionFieldContent(MARC_AUTHORITY_BROWSE_OPTIONS.GENRE);
 
           MarcAuthorities.searchBeats(testData.authorityheadingPrefix);
-          MarcAuthorities.verifyEmptySearchResults(testData.authorityheadingPrefix);
+          MarcAuthorityBrowse.checkResultWithNoValue(testData.authorityheadingPrefix);
           MarcAuthorities.checkTotalRecordsForOptionInPlugInModal(
             DEFAULT_FOLIO_AUTHORITY_FILES.LC_SUBJECT_HEADINGS,
             0,

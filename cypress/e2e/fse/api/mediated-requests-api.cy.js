@@ -7,7 +7,7 @@ describe('fse-mediated-requests', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195956 - Get mediated-requests for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195956 - Get mediated-requests for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'mediatedRequests', 'loc', 'TC195956'] },
     () => {
       cy.getMediatedRequests().then((mediatedRequestsResponse) => {

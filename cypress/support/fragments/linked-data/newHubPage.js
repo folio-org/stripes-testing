@@ -38,6 +38,7 @@ export default {
   },
 
   handleProfileModalIfPresent: () => {
+    cy.wait(2000);
     cy.get('body').then(($body) => {
       if ($body.find('[data-testid="modal-choose-profile-content"]').length > 0) {
         cy.get('[data-testid="modal-button-submit"]').click();

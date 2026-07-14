@@ -20,6 +20,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   INSTANCE_NOTE_TYPES,
+  BULK_EDIT_ACTIONS,
 } from '../../../../support/constants';
 
 let user;
@@ -311,7 +312,7 @@ describe(
           // Step 11: Remove all 926 0\ fields (PROTECTED - should NOT apply)
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(6);
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('926', '0', '\\', 'a', 7);
-          BulkEditActions.selectActionForMarcInstance('Remove all', 7);
+          BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_FIELD, 7);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 12: Confirm changes and verify "Are you sure?" form

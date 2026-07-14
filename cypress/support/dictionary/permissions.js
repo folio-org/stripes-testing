@@ -48,6 +48,10 @@ export default {
     internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
   },
+  bulkEditUsersDelete: {
+    internal: 'ui-bulk-edit.users.delete',
+    gui: 'Bulk edit: In app - Delete user records',
+  },
   bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   bulkEditSettingsCreate: {

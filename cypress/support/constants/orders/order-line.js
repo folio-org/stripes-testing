@@ -1,3 +1,8 @@
+export const ORDER_LINE_SEARCH_OPTIONS = {
+  KEYWORD: 'Keyword',
+  POL_NUMBER: 'PO line number',
+};
+
 export const ORDER_LINE_ACCORDION_NAMES = {
   ITEM_DETAILS: 'Item details',
   PURCHASE_ORDER_LINE: 'Purchase order line',

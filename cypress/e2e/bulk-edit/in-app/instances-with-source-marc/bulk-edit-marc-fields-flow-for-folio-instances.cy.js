@@ -116,7 +116,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.clickKeepEditingBtn();
 
         // Step 6: Select "Remove all" action and confirm changes
-        BulkEditActions.selectActionForMarcInstance('Remove all');
+        BulkEditActions.selectActionForMarcInstance('Remove field');
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.clickConfirmChangesButton();
         BulkEditActions.verifyAreYouSureFormWhenUsingMarcFieldsFlowForFolioInstance();

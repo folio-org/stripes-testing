@@ -59,7 +59,7 @@ const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ label: 'Type of heading' });
 const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 const detailsMarcViewPaneheader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
-const authorityActionsDropDown = Dropdown('Actions');
+const authorityActionsDropDown = Dropdown('Show results list actions');
 const checkboxSeletAuthorityRecord = Checkbox({ ariaLabel: 'Select Authority record' });
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const recordNotFoundMessage = 'Record cannot be found or loaded.';
@@ -189,6 +189,7 @@ export default {
   },
   clickActionsAndNewAuthorityButton() {
     cy.do([actionsButton.click(), newAuthorityButton.click()]);
+    cy.expect(Spinner().absent());
     cy.wait(1000);
     QuickMarcEditorWindow.waitLoading();
   },
@@ -1067,8 +1068,10 @@ export default {
     ]);
   },
 
-  checkAuthoritySourceDropdownHasOption(optionName) {
-    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(optionName))).exists());
+  checkAuthoritySourceDropdownHasOption(optionName, isShown = true) {
+    const targetOption = sourceFileAccordion.find(MultiSelectOption(including(optionName)));
+    if (isShown) cy.expect(targetOption.exists());
+    else cy.expect(targetOption.absent());
   },
 
   checkAuthoritySourceOptions() {

@@ -84,6 +84,11 @@ export default {
     resource: 'Fqm EntityTypes Custom Item',
     action: CAPABILITY_ACTIONS.DELETE,
   },
+  acquisitionUnitsMembershipsItemView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Acquisitions-Units Memberships Item',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {
@@ -94,6 +99,16 @@ export default {
   usersKeycloakPasswordResetLinkGenerate: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'Users-keycloak Password-Reset-Link Generate',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiConsortiaSettingsConsortiumManagerShare: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Consortia-Settings Consortium-Manager Share',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  consortiaInventoryLocalSharingInstances: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'Consortia Inventory Local Sharing-Instances',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

@@ -43,7 +43,7 @@ const testInstancesData = [
     title: `AT_C965840_MarcInstance_4_${getRandomPostfix()}`,
     source: 'MARC',
     languageCode: 'ase',
-    expectedLanguageNames: ['Undetermined'],
+    expectedLanguageNames: ['ase'],
   },
 ];
 
@@ -151,6 +151,7 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('AT_C965840', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyQueryAreaContent(
             '(instance.languages == Dutch; Flemish) AND (instance.title starts with AT_C965840)',
@@ -179,8 +180,9 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.languages, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.selectDuplicateOptionByText('Undetermined', 1, 1);
+          QueryModal.chooseValueSelect('Undetermined', 1);
           QueryModal.clickTestQuery();
+
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyQueryAreaContent(
             '(instance.title starts with AT_C965840) AND (instance.languages == Undetermined)',
@@ -212,6 +214,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('Sign Languages', 1);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
+
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyQueryAreaContent(
             '(instance.title starts with AT_C965840) AND (instance.languages == Sign Languages)',
@@ -240,12 +243,13 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.languages, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-          QueryModal.selectDuplicateOptionByText('Undetermined', 1, 0);
+          QueryModal.chooseValueSelect('ase', 1, 0);
           QueryModal.clickTestQuery();
+
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(1);
           QueryModal.verifyQueryAreaContent(
-            '(instance.title starts with AT_C965840) AND (instance.languages == Undetermined)',
+            '(instance.title starts with AT_C965840) AND (instance.languages == ase)',
           );
 
           // Expected to find: Instance 4 (Undetermined with "ase" code)
@@ -271,9 +275,10 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(instanceFieldValues.languages, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN, 1);
-          QueryModal.selectAllMatchingFromMultiselect('Undetermined', 1);
+          QueryModal.chooseFromValueMultiselect('Undetermined', 1);
           QueryModal.chooseFromValueMultiselect('Dutch; Flemish', 1);
           QueryModal.chooseFromValueMultiselect('Sign Languages', 1);
+          QueryModal.chooseFromValueMultiselect('ase', 1);
 
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();

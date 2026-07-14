@@ -136,17 +136,17 @@ describe('MARC', () => {
               });
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-            });
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-              authRefresh: true,
+
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
             });
           });
         });
 
         after('Delete test data', () => {
-          cy.getAdminToken().then(() => {
+          cy.getAdminToken(false).then(() => {
             Users.deleteViaApi(userData.userId);
             createdRecordIDs.forEach((id, index) => {
               if (index === 0) InventoryInstance.deleteInstanceViaApi(id);

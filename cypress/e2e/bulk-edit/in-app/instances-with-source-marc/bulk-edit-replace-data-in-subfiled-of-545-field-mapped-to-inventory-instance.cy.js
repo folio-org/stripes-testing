@@ -162,6 +162,7 @@ describe(
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 11: Confirm changes
+          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -176,7 +177,6 @@ describe(
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
           BulkEditActions.downloadPreviewInMarcFormat();
 
-          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           const currentTimestampUpToMinutesOneMinuteAfter =
             DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
           const assertionsOnMarcFileContent = [
