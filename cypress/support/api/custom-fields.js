@@ -86,6 +86,36 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'replaceCustomFieldViaApi',
+  (updatedCustomField, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) => {
+    let moduleVersionPromise;
+
+    if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
+      moduleVersionPromise = cy.getModUsersVersion();
+    }
+
+    return cy.getCustomFieldsViaApi().then((response) => {
+      return moduleVersionPromise.then((modVersion) => {
+        const updatedFields = response.customFields.map((f) => {
+          return f.id === updatedCustomField.id ? updatedCustomField : f;
+        });
+
+        return cy.okapiRequest({
+          path: 'custom-fields',
+          method: 'PUT',
+          body: {
+            customFields: updatedFields,
+            entityType,
+          },
+          isDefaultSearchParamsRequired: false,
+          additionalHeaders: { 'x-okapi-module-id': modVersion },
+        });
+      });
+    });
+  },
+);
+
+Cypress.Commands.add(
   'deleteCustomFieldsViaApi',
   ({ ids, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER }) => {
     let moduleVersionPromise;
