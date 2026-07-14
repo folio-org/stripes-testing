@@ -8,6 +8,7 @@ import {
   MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
+  MultiSelectMenu,
   RepeatableFieldItem,
   Select,
   Selection,
@@ -756,6 +757,22 @@ export default {
     cy.wait(1000);
   },
 
+  verifyValueMultiselectMenuIncludesOption(expectedOption, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      const hasMatch = options.some((option) => {
+        return option.includes(expectedOption);
+      });
+
+      // eslint-disable-next-line no-unused-expressions
+      expect(
+        hasMatch,
+        `Expected to find option containing "${expectedOption}". Available options: [${options.join(', ')}]`,
+      ).to.be.true;
+    });
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+  },
+
   verifySelectedMultiselectValue(expectedValue, row = 0) {
     const selected = Array.isArray(expectedValue) ? expectedValue : [expectedValue];
 
@@ -917,7 +934,7 @@ export default {
   },
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
-    cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+    cy.expect(buildQueryModal.find(MultiColumnList()).has({ rowCount: expectedNumberOfRows }));
   },
 
   verifyRecordWithContent(content) {
