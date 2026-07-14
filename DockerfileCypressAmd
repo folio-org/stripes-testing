@@ -6,5 +6,15 @@ ARG CYPRESS_VERSION='12.0.0'
 FROM cypress/factory:7.3.1
 
 WORKDIR /opt/app
-RUN npm install --save-dev cypress
+
 RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
+
+ENV YARN_CACHE_FOLDER=/opt/yarn-cache
+ENV CYPRESS_CACHE_FOLDER=/opt/cypress-cache
+
+COPY package.json yarn.lock ./
+
+RUN yarn install --frozen-lockfile \
+ && npx cypress install \
+ && rm -rf node_modules \
+ && chmod -R a+rwX /opt/yarn-cache /opt/cypress-cache /opt/app
