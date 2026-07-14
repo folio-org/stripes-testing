@@ -27,4 +27,5 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile \
  && npx cypress install \
- && rm -rf node_modules
+ && rm -rf node_modules \
+ && chmod -R a+rwX /opt/yarn-cache /opt/cypress-cache /opt/app
