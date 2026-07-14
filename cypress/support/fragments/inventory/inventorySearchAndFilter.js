@@ -214,7 +214,6 @@ export default {
   searchInstanceByTitle(title) {
     if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
-    cy.wait(500);
     cy.do(searchButton.click());
     cy.wait(500);
     InventoryInstance.waitInventoryLoading();
@@ -636,6 +635,9 @@ export default {
   },
 
   executeSearch(text) {
+    cy.do(inventorySearchAndFilter.fillIn(''));
+    cy.wait(1000);
+    cy.expect(inventorySearchAndFilterInput.has({ disabled: false }));
     cy.do(inventorySearchAndFilter.fillIn(text));
     this.clickSearch();
   },
