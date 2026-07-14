@@ -58,23 +58,20 @@ describe('MARC', () => {
           InventoryInstance.getId().then((id) => {
             createdInstanceIDs.push(id);
           });
-          InventorySearchAndFilter.selectSearchOptions(
+          InventorySearchAndFilter.searchByParameter(
             testData.firstSearchOption,
             testData.searchText1,
           );
-          InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-          InventorySearchAndFilter.selectSearchOptions(
+          InventorySearchAndFilter.searchByParameter(
             testData.secondSearchOption,
             testData.searchText1,
           );
-          InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-          InventorySearchAndFilter.selectSearchOptions(
+          InventorySearchAndFilter.searchByParameter(
             testData.firstSearchOption,
             testData.searchText2,
           );
-          InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         },

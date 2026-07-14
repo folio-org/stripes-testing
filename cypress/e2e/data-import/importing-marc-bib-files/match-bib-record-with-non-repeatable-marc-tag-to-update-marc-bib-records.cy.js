@@ -79,14 +79,18 @@ describe('Data Import', () => {
     const collectionOfMatchProfiles = [
       {
         matchProfile: {
-          profileName: `C350694 010$a to 010$a match${getRandomPostfix()}`,
+          profileName: `C350694 999$s to 999$s match${getRandomPostfix()}`,
           incomingRecordFields: {
-            field: '010',
-            subfield: 'a',
+            field: '999',
+            in1: 'f',
+            in2: 'f',
+            subfield: 's',
           },
           existingRecordFields: {
-            field: '010',
-            subfield: 'a',
+            field: '999',
+            in1: 'f',
+            in2: 'f',
+            subfield: 's',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,

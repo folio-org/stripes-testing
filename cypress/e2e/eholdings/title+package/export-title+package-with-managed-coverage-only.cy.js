@@ -9,6 +9,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -31,6 +32,7 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+        EHoldingsTitle.changeResourceSelectionStatusViaApi({ resourceId: testData.resourceId });
 
         cy.login(userProperties.username, userProperties.password, {
           path: `/eholdings/resources/${testData.resourceId}`,

@@ -99,12 +99,12 @@ describe('Inventory', () => {
         InventorySearchAndFilter.itemTabIsDefault();
 
         // Steps 1, 2: Input any query in search input field → Click "Search" button and check title
-        InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
+        InventoryInstances.searchByTitle(testData.searchQueries.basic);
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
 
         // Step 3: Select "Query search" search option and search
         InventorySearchAndFilter.selectSearchOption(testData.querySearchOption);
-        InventorySearchAndFilter.executeSearch(testData.searchQueries.querySearch);
+        InventoryInstances.searchByTitle(testData.searchQueries.querySearch);
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.querySearch }));
 
         // Step 4: Click on "Advanced search" button
@@ -139,7 +139,7 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 8: Input any query and search
-        InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
+        InventoryInstances.searchByTitle(testData.searchQueries.basic);
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
 
         // Step 9: Click "Reset all" button
@@ -153,7 +153,7 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 10: Input any query and search
-        InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
+        InventoryInstances.searchByTitle(testData.searchQueries.basic);
         InventorySearchAndFilter.verifyResultListExists();
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
 
@@ -182,7 +182,7 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 13: Input a query which will return only 1 record
-        InventorySearchAndFilter.executeSearch(`${instanceTitlePrefix}_orig`);
+        InventoryInstances.searchByTitle(`${instanceTitlePrefix}_orig`);
         InventoryInstances.selectInstanceByTitle(`${instanceTitlePrefix}_orig`);
         InventoryInstance.waitLoading();
         cy.title().should('eq', getExpectedTitle({ title: `${instanceTitlePrefix}_orig` }));

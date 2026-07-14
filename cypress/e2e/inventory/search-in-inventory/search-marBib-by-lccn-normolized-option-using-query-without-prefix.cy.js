@@ -75,10 +75,10 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
-        InventorySearchAndFilter.executeSearch(testData.searchQueryWithoutAsteriks);
+        InventoryInstances.searchByTitle(testData.searchQueryWithoutAsteriks);
         InventorySearchAndFilter.verifySearchResult(testData.searchResultWithoutAsteriks);
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
-        InventorySearchAndFilter.executeSearch(testData.searchQueryWithAsteriks);
+        InventoryInstances.searchByTitle(testData.searchQueryWithAsteriks);
         testData.searchResultsWithAsteriks.forEach((expectedResult) => {
           InventorySearchAndFilter.verifySearchResult(expectedResult);
         });

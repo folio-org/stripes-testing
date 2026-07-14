@@ -75,7 +75,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
           testData.searchQueries.forEach((query) => {
-            InventorySearchAndFilter.executeSearch(query);
+            InventoryInstances.searchByTitle(query);
             testData.searchResultsAll.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
@@ -83,7 +83,7 @@ describe('Inventory', () => {
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.identifierAllOption, '');
-            InventorySearchAndFilter.executeSearch(query);
+            InventoryInstances.searchByTitle(query);
             testData.searchResultsAll.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
@@ -91,7 +91,7 @@ describe('Inventory', () => {
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.oclcOption, '');
-            InventorySearchAndFilter.executeSearch(query);
+            InventoryInstances.searchByTitle(query);
             testData.searchResultsTwoRecords.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });
@@ -99,7 +99,7 @@ describe('Inventory', () => {
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
-            InventorySearchAndFilter.executeSearch(query);
+            InventoryInstances.searchByTitle(query);
             testData.searchResultsAll.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
             });

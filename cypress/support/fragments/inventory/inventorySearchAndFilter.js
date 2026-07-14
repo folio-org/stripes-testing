@@ -645,7 +645,6 @@ export default {
   },
 
   clickSearch() {
-    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(searchButton.click());
   },
 

@@ -5,32 +5,32 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { randomNDigitNumber } from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
-    const randomDigits = `C368028${randomFourDigitNumber()}`;
+    const randomDigits = randomNDigitNumber(6);
     const keywordOption = searchInstancesOptions[0];
     const titleAllOption = searchInstancesOptions[2];
 
     const titles = [
-      `AT_C368028_FolioInstance_${randomDigits} extendettest466 ~ ! @ # % ^ ( ) - _ + = { } [ ] / : ; " ' < > , . ? extendettest466`,
-      `AT_C368028_FolioInstance_${randomDigits} 1960 hydrologic data ~ Mekong River ! Basin @ in Thailand # a report % by ^ Harza Engineering ( Company ) prepared - for _ Committee + for = Coordination { of Investigation } of the Lower Mekong [ River Basin ] and the Agency for International / Development : Données ; hydrologiques pour " l'année 1960, basin " [sic] du ' Mékong < en > Thaïlande : rapport / preparé par Harza Engineering Company ; pour le Comité des de coordination , des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis . pour le développment international ?`,
-      `AT_C368028_FolioInstance_${randomDigits} 1960 hydrologic data, Mekong River Basin in Thailand a report by Harza Engineering Company prepared for Committee for Coordination of Investigation of the Lower Mekong River Basin and the Agency for International Development Données hydrologiques pour l'année 1960, basin [sic] du Mékong en Thaïlande rapport preparé par Harza Engineering Company pour le Comité des de coordination des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis pour le développment international.`,
+      `AT_C368028_${randomDigits} extendettest466 ~ ! @ # % ^ ( ) - _ + = { } [ ] / : ; " ' < > , . ? extendettest466`,
+      `AT_C368028_${randomDigits} ~ Mekong River ! Basin @ in Thailand # a report % by ^ Harza Engineering ( Company ) prepared - for _ Committee + for = Coordination { of Investigation } of the Lower Mekong [ River Basin ] and the Agency for International / Development : Données ; hydrologiques pour " l'année 1960, basin " [sic] du ' Mékong < en > Thaïlande : rapport / preparé par Harza Engineering Company ; pour le Comité des de coordination , des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis . pour le développment international ?`,
+      `AT_C368028_${randomDigits} Mekong River Basin in Thailand a report by Harza Engineering Company prepared for Committee for Coordination of Investigation of the Lower Mekong River Basin and the Agency for International Development Données hydrologiques pour l'année 1960, basin [sic] du Mékong en Thaïlande rapport preparé par Harza Engineering Company pour le Comité des de coordination des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis pour le développment international.`,
     ];
 
     const searchTerms = [
       {
-        value: `AT_C368028_FolioInstance_${randomDigits} extendettest466 ~ ! @ # % ^ ( ) - _ + = { } [ ] / : ; " ' < > , . ? extendettest466`,
+        value: `AT_C368028_${randomDigits} extendettest466 ~ ! @ # % ^ ( ) - _ + = { } [ ] / : ; " ' < > , . ? extendettest466`,
         expectedInstanceIndexes: [1],
       },
       {
-        value: `AT_C368028_FolioInstance_${randomDigits} 1960 hydrologic data ~ Mekong River ! Basin @ in Thailand # a report % by ^ Harza Engineering ( Company ) prepared - for _ Committee + for = Coordination { of Investigation } of the Lower Mekong [ River Basin ] and the Agency for International / Development : Données ; hydrologiques pour " l'année 1960, basin " [sic] du ' Mékong < en > Thaïlande : rapport / preparé par Harza Engineering Company ; pour le Comité des de coordination , des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis . pour le développment international ?`,
+        value: `AT_C368028_${randomDigits} ~ Mekong River ! Basin @ in Thailand # a report % by ^ Harza Engineering ( Company ) prepared - for _ Committee + for = Coordination { of Investigation } of the Lower Mekong [ River Basin ] and the Agency for International / Development : Données ; hydrologiques pour " l'année 1960, basin " [sic] du ' Mékong < en > Thaïlande : rapport / preparé par Harza Engineering Company ; pour le Comité des de coordination , des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis . pour le développment international ?`,
         expectedInstanceIndexes: [2, 3],
       },
       {
-        value: `AT_C368028_FolioInstance_${randomDigits} 1960 hydrologic data, Mekong River Basin in Thailand a report by Harza Engineering Company prepared for Committee for Coordination of Investigation of the Lower Mekong River Basin and the Agency for International Development Données hydrologiques pour l'année 1960, basin [sic] du Mékong en Thaïlande rapport preparé par Harza Engineering Company pour le Comité des de coordination des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis pour le développment international.`,
+        value: `AT_C368028_${randomDigits} Mekong River Basin in Thailand a report by Harza Engineering Company prepared for Committee for Coordination of Investigation of the Lower Mekong River Basin and the Agency for International Development Données hydrologiques pour l'année 1960, basin [sic] du Mékong en Thaïlande rapport preparé par Harza Engineering Company pour le Comité des de coordination des études sur le bassin du Mékong inférieur et l'Agence des Etats-Unis pour le développment international.`,
         expectedInstanceIndexes: [2, 3],
       },
     ];
@@ -44,7 +44,7 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi('AT_C368028_FolioInstance');
+      InventoryInstances.deleteInstanceByTitleViaApi('AT_C368028_');
 
       cy.then(() => {
         // Get required instance metadata

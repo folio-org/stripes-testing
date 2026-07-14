@@ -68,6 +68,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375256');
+        InventoryInstances.deleteInstanceByTitleViaApi('Prayer Bible (Test');
 
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
@@ -140,39 +141,35 @@ describe('Inventory', () => {
       'C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)',
       { tags: ['criticalPathFlaky', 'spitfire', 'C375256'] },
       () => {
-        InventorySearchAndFilter.selectSearchOptions(
+        InventorySearchAndFilter.searchByParameter(
           testData.querySearchOption,
           testData.searchQueries.allRecords,
         );
-        InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstNotLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondNotLinkedRecord);
         InventorySearchAndFilter.checkRowsCount(4);
 
-        InventorySearchAndFilter.selectSearchOptions(
+        InventorySearchAndFilter.searchByParameter(
           testData.querySearchOption,
           testData.searchQueries.secondLinkedRecord,
         );
-        InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
         InventorySearchAndFilter.checkRowsCount(1);
 
-        InventorySearchAndFilter.selectSearchOptions(
+        InventorySearchAndFilter.searchByParameter(
           testData.querySearchOption,
           testData.searchQueries.bothLinkedRecords,
         );
-        InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
         InventorySearchAndFilter.checkRowsCount(2);
 
-        InventorySearchAndFilter.selectSearchOptions(
+        InventorySearchAndFilter.searchByParameter(
           testData.querySearchOption,
           testData.searchQueries.linkedAndFirstNotLinkedRecords,
         );
-        InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
         InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstNotLinkedRecord);

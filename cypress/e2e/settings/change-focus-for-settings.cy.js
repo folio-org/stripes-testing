@@ -29,7 +29,7 @@ describe('Inventory', () => {
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();
-        SettingsPane.checkAppSettingsNavPaneFocused();
+        SettingsPane.checkSettingsNavPaneFocused();
       },
     );
   });
