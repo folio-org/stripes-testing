@@ -1010,6 +1010,10 @@ export default {
     internal: 'orders-storage.acquisition-methods.collection.get',
     gui: 'acquisition-methods-collection get',
   },
+  sourceStorageRecordsCollectionGet: {
+    internal: 'source-storage.records.collection.get',
+    gui: 'source-storage records collection get',
+  },
   // Finance
   uiFinanceFinanceViewGroup: {
     internal: 'ui-finance.group.view',

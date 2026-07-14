@@ -1,17 +1,19 @@
 import moment from 'moment';
 import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Users from '../../support/fragments/users/users';
-import Checkout from '../../support/fragments/checkout/checkout';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../support/constants';
+
 
 describe('Check in', () => {
   describe(
@@ -115,7 +117,7 @@ describe('Check in', () => {
       });
 
       afterEach('Delete New Service point, Item and User', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
         Users.deleteViaApi(userData.userId);
       });
@@ -134,13 +136,15 @@ describe('Check in', () => {
           CheckInActions.checkActionsMenuOptions();
 
           CheckInActions.openLoanDetails(userData.username);
-          CheckInActions.openCheckInPane();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+          cy.wait(2000);
           CheckInActions.openPatronDetails(userData.username);
-          CheckInActions.openCheckInPane();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+          cy.wait(2000);
           CheckInActions.openItemDetails(itemData.barcode);
-          CheckInActions.openCheckInPane();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+          cy.wait(2000);
           CheckInActions.openNewFeeFinesPane();
-          CheckInActions.openCheckInPane();
         },
       );
     },
