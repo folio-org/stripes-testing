@@ -217,7 +217,7 @@ describe('Patron notices', () => {
 
     it(
       'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347623'] },
+      { tags: ['smoke', 'volaris', 'shiftLeftBroken', 'C347623'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
