@@ -83,7 +83,7 @@ describe('Eureka', () => {
             );
             cy.intercept('POST', /\/users|\/users-keycloak\/users/).as('createUser');
             UserEdit.saveUserEditForm();
-            if (!Cypress.env('ecs_enabled')) {
+            if (!Cypress.env('ecsEnabled')) {
               cy.ifConsortia(true, () => {
                 UserEdit.checkPromoteUserModal(testData.lastName, '');
                 UserEdit.clickConfirmInPromoteUserModal();

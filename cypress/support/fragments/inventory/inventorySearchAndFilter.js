@@ -212,7 +212,7 @@ export default {
   },
 
   searchInstanceByTitle(title) {
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
     cy.wait(500);
     cy.do(searchButton.click());
@@ -221,7 +221,7 @@ export default {
   },
 
   searchInstanceByHRID(id) {
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
       TextArea({ id: 'input-inventory-search' }).fillIn(id),
@@ -289,7 +289,7 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([keywordInput.fillIn(kw), searchButton.click()]);
     cy.expect(MultiColumnListRow().exists());
   },
@@ -517,7 +517,7 @@ export default {
   },
 
   searchByParameter(parameter, value) {
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       keywordInput.fillIn(value),
@@ -645,7 +645,7 @@ export default {
   },
 
   clickSearch() {
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(searchButton.click());
   },
 
@@ -954,7 +954,7 @@ export default {
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
       });
     } else {
-      cy.do([inventorySearchAndFilter.fillIn(searchValue)]);
+      cy.do(inventorySearchAndFilter.fillIn(searchValue));
     }
   },
 

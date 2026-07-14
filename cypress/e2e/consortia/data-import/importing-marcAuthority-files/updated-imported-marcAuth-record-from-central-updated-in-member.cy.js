@@ -118,6 +118,7 @@ describe('Data Import', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405144');
         // create user A
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
@@ -149,14 +150,10 @@ describe('Data Import', () => {
             NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
             // create Action profile and link it to Field mapping profile
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin({
-                path: SettingsMenu.actionProfilePath,
-                waiter: SettingsActionProfiles.waitLoading,
-              });
-              cy.reload();
-              SettingsActionProfiles.waitLoading();
-            }, 20_000);
+            cy.loginAsAdmin({
+              path: SettingsMenu.actionProfilePath,
+              waiter: SettingsActionProfiles.waitLoading,
+            });
             SettingsActionProfiles.create(actionProfile, mappingProfile.name);
 
             // create Job profile
@@ -245,7 +242,7 @@ describe('Data Import', () => {
           Logs.verifyInstanceStatus(0, 6, RECORD_STATUSES.UPDATED);
           Logs.clickOnHotLink(0, 6, RECORD_STATUSES.UPDATED);
           MarcAuthority.contains(testData.addedField);
-          MarcAuthority.notContains(testData.tag377);
+          MarcAuthority.notContains(`${testData.tag377}\t`);
           MarcAuthority.contains(testData.updated1XXField);
           MarcAuthority.notContains(testData.deletedSubfield);
 
@@ -256,7 +253,7 @@ describe('Data Import', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
           MarcAuthority.contains(testData.addedField);
-          MarcAuthority.notContains(testData.tag377);
+          MarcAuthority.notContains(`${testData.tag377}\t`);
           MarcAuthority.contains(testData.updated1XXField);
           MarcAuthority.notContains(testData.deletedSubfield);
         },

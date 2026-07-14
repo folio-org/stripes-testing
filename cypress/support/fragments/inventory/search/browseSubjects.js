@@ -254,7 +254,7 @@ export default {
   },
 
   browse(subjectName) {
-    if (!Cypress.env('ecs_enabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do(recordSearch.fillIn(subjectName));
     cy.expect([recordSearch.has({ value: subjectName }), searchButton.has({ disabled: false })]);
     cy.do(searchButton.click());

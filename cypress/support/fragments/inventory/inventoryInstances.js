@@ -430,7 +430,7 @@ export default {
 
   searchByTitle(title, result = true) {
     cy.wait(2000);
-    if (!Cypress.env('ecs_enabled')) this.clearDefaultHeldbyFilter();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       filterSection.find(inventorySearchInput).fillIn(title),
       filterSection.find(searchButton).click(),

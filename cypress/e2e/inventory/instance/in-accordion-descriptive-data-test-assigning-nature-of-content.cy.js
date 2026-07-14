@@ -42,18 +42,22 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet', 'C9214'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
+        InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
         InstanceRecordEdit.addNatureOfContent();
         InstanceRecordEdit.selectNatureOfContent(testData.natureOfContent);
+        InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContent);
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyNatureOfContent(testData.natureOfContent);
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
         InstanceRecordEdit.selectNatureOfContent(testData.natureOfContentForChanging);
+        InstanceRecordEdit.verifyNatureOfContentSelected(testData.natureOfContentForChanging);
         InstanceRecordEdit.saveAndClose();
+        InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyNatureOfContent(testData.natureOfContentForChanging);
       },

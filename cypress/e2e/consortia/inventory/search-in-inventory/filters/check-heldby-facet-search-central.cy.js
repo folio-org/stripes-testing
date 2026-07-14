@@ -268,8 +268,7 @@ describe('Inventory', () => {
             });
             InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
 
-            InventorySearchAndFilter.fillInSearchQuery(nonExistingTitle);
-            InventorySearchAndFilter.clickSearch();
+            InventoryInstances.searchByTitle(nonExistingTitle, false);
             InventorySearchAndFilter.verifyResultPaneEmpty({
               noResultsFound: true,
               searchQuery: nonExistingTitle,
@@ -305,8 +304,7 @@ describe('Inventory', () => {
               false,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
+            InventoryInstances.searchByTitle(instancePrefix);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.college,
@@ -356,8 +354,7 @@ describe('Inventory', () => {
               false,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
+            InventoryInstances.searchByTitle(instancePrefix);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               heldbyAccordionName,
               tenantNames.university,
@@ -374,8 +371,7 @@ describe('Inventory', () => {
               instanceIndexesHelbyUniversity.length,
             );
 
-            InventorySearchAndFilter.fillInSearchQuery(instanceTitles[3]);
-            InventorySearchAndFilter.clickSearch();
+            InventoryInstances.searchByTitle(instanceTitles[3]);
             InventorySearchAndFilter.verifySearchResult(instanceTitles[3]);
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventoryInstance.waitLoading();
@@ -430,8 +426,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventoryInstance.waitLoading();
 
-            InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
-            InventorySearchAndFilter.clickSearch();
+            InventoryInstances.searchByTitle(instancePrefix);
             instanceIndexesHelbyCollege.forEach((instanceIndex) => {
               InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
             });

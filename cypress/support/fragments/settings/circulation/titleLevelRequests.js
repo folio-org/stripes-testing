@@ -169,9 +169,9 @@ export default {
 
   updateGeneralTlrSettingViaApi(newSettings) {
     cy.getCirculationSettingsByName('generalTlr').then((body) => {
-      let config = body.items[0];
+      let config = body.circulationSettings[0];
 
-      if (body.items.length === 0) {
+      if (body.circulationSettings.length === 0) {
         cy.wrap(true)
           .then(() => {
             config = {

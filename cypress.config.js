@@ -118,7 +118,7 @@ module.exports = defineConfig({
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'adminRole',
-    newSettings: false,
+    newSettings: true,
     ...(envOverrides.env || {}),
   },
   reporterOptions: reportportalOptions,

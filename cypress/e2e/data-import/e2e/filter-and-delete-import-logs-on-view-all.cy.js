@@ -98,7 +98,7 @@ describe('Data Import', () => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
         secondTestData.authorityIds.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
       });
     });
