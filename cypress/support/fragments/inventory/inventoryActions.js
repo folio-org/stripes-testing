@@ -32,7 +32,7 @@ function open() {
 export default {
   open,
   options: {
-    new: Button('New'),
+    new: Button(or('New', 'New local record')),
     newFastAddRecord: Button('New fast add record'),
     newMarcBibRecord: Button('New MARC bibliographic record'),
     InTransitItemsReport: Button('In transit items report (CSV)'),

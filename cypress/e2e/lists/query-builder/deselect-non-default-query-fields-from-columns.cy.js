@@ -1,4 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import QueryModal, {
   holdingsFieldValues,
   QUERY_OPERATIONS,
@@ -27,8 +28,8 @@ describe('Lists', () => {
         testData.instanceTypeId = instanceTypes[0].id;
       });
 
-      cy.getLocations({ limit: 1 }).then((location) => {
-        testData.locationId = location.id;
+      Locations.getViaApiAnyDefault().then((location) => {
+        testData.locationId = location[0].id;
       });
 
       cy.then(() => {

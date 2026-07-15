@@ -140,7 +140,7 @@ describe(
           AuthorizationRoles.selectCapabilitySetCheckbox(capabSetToSelect);
 
           capabSetToUnselect.forEach((capabSet) => {
-            AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
+            AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, { isSelected: false });
           });
 
           AuthorizationRoles.clickSaveButton();

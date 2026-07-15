@@ -249,7 +249,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808447_FolioInstance', 1);
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
             '(instance.identifiers[*]->identifier_type_name == ISBN) AND (instance.title starts with AT_C808447_FolioInstance)',
@@ -283,7 +285,9 @@ describe('Bulk-edit', () => {
           QueryModal.verifySelectedField(instanceFieldValues.identifiersIdentifier);
           QueryModal.selectOperator(STRING_OPERATORS.CONTAINS);
           QueryModal.fillInValueTextfield('3518573');
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
             '(instance.identifiers[*]->identifier_value contains 3518573) AND (instance.title starts with AT_C808447_FolioInstance)',
@@ -301,7 +305,9 @@ describe('Bulk-edit', () => {
 
           // Step 4: Check display of Instance data from Preconditions in "Instance — Identifiers" column in the result table
           QueryModal.clickGarbage(0);
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyMatchedRecordsByIdentifier(
             mappedInstancesDataToUIView[3].hrid,
             'Instance — Identifiers',
@@ -337,7 +343,9 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808447_FolioInstance', 1);
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
             '(instance.classifications[*]->type_name in [NLM, SUDOC]) AND (instance.title starts with AT_C808447_FolioInstance)',
@@ -358,7 +366,9 @@ describe('Bulk-edit', () => {
           QueryModal.verifySelectedField(instanceFieldValues.classificationsClassification);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH);
           QueryModal.fillInValueTextfield('HC107.');
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
             '(instance.classifications[*]->number starts with HC107.) AND (instance.title starts with AT_C808447_FolioInstance)',
@@ -376,7 +386,9 @@ describe('Bulk-edit', () => {
 
           // Step 8: Check display of Instance data from Preconditions in "Instance — Classifications" column in the result table
           QueryModal.clickGarbage(0);
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
           QueryModal.verifyMatchedRecordsByIdentifier(
             mappedInstancesDataToUIView[3].hrid,
             'Instance — Classifications',
