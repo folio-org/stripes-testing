@@ -73,6 +73,14 @@ export default {
     return cy.do(Link({ href: including(userName) }).click());
   },
 
+  verifyUserIsAbsentInSearchResults(userName) {
+    cy.expect(
+      Pane({ id: 'users-search-results-pane' })
+        .find(MultiColumnListRow({ content: including(userName) }))
+        .absent(),
+    );
+  },
+
   openUserCard(userName) {
     this.searchByUsername(userName);
     this.openUser(userName);
