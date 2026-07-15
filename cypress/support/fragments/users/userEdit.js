@@ -1500,7 +1500,11 @@ export default {
         }),
       )
       .find(Checkbox());
-    if (searchRole) this.searchRoleInModal(roleName);
+    if (searchRole) {
+      this.searchRoleInModal(roleName);
+      this.checkRolesCountInModal(1);
+    }
+    cy.expect(targetCheckbox.has({ checked: !isSelected }));
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },

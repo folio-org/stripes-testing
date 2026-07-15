@@ -14,6 +14,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
   or,
@@ -27,6 +28,7 @@ import {
   TextArea,
   TextField,
   Row,
+  matching,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import MultiColumnListHelper from '../multiColumnList';
@@ -93,9 +95,15 @@ const rolesAffiliationSelectionList = SelectionList({
   id: including('user-assigned-affiliations-select'),
 });
 const popupNoteModal = Modal({ id: 'popup-note-modal' });
+const affiliationsAssignModal = Modal({ id: 'affiliations-manager-modal' });
 const popupNoteDeleteButton = popupNoteModal.find(Button('Delete note'));
 const popupNoteCloseButton = popupNoteModal.find(Button('Close'));
 const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
+const assignAffiliationsButton = Button({ id: 'affiliations-manager-trigger' });
+const saveAndCloseBtn = Button('Save & close');
+const cancelBtn = Button('Cancel');
+const unassignedCheckbox = Checkbox({ id: 'clickable-filter-status-unassigned' });
+const assignedCheckbox = Checkbox({ id: 'clickable-filter-status-assigned' });
 
 const getAccordionByLabel = (accordionLabel) => rootSection.find(Accordion(accordionLabel));
 
@@ -155,6 +163,7 @@ export default {
   },
 
   expandAffiliationsAccordion() {
+    cy.expect(rootSection.find(Spinner()).absent());
     cy.do(affiliationsSection.clickHeader());
     cy.wait(1000);
   },
@@ -849,7 +858,7 @@ export default {
     cy.expect(profilePictureCard.absent());
   },
 
-  verifyUserLastFirstNameInCard(lastName, firstName = '-') {
+  verifyUserLastFirstNameInCard(lastName, firstName = 'No value set-') {
     cy.expect([
       rootSection.find(lastNameField).has({ value: lastName }),
       rootSection.find(firstNameField).has({ value: firstName }),
@@ -1200,5 +1209,79 @@ export default {
     if (checked) {
       cy.expect(extendedInfoSection.find(HTML(including('Delivery'))).exists());
     }
+  },
+
+  openAffiliationsModal() {
+    cy.do(affiliationsSection.find(assignAffiliationsButton).click());
+    cy.expect(affiliationsAssignModal.exists());
+  },
+
+  verifyAffiliationModalDefaultState() {
+    cy.expect([
+      affiliationsAssignModal.find(saveAndCloseBtn).exists(),
+      affiliationsAssignModal.find(cancelBtn).exists(),
+      affiliationsAssignModal.find(TextField({ type: 'search' })).exists(),
+      affiliationsAssignModal.find(Button({ type: 'submit' })).has({ disabled: true }),
+      affiliationsAssignModal
+        .find(Button({ dataTestID: 'reset-all-affiliations-filters' }))
+        .has({ disabled: true }),
+      affiliationsAssignModal.find(assignedCheckbox).has({ checked: false }),
+      affiliationsAssignModal.find(unassignedCheckbox).has({ checked: false }),
+      affiliationsAssignModal.find(MultiColumnListHeader('Name')).exists(),
+      affiliationsAssignModal.find(MultiColumnListHeader('Status')).exists(),
+      affiliationsAssignModal.find(Checkbox({ ariaLabel: 'Assign all affiliations' })).exists(),
+      affiliationsAssignModal.find(HTML(matching(/\d+ affiliations* found/))).exists(),
+      affiliationsAssignModal.find(HTML(matching(/Total selected: \d+/))).exists(),
+    ]);
+  },
+
+  verifyTenantInAffiliationsModal(tenantName, { isShown = true, isChecked = false } = {}) {
+    const tenantRow = affiliationsAssignModal.find(
+      MultiColumnListRow({ innerText: matching(`^${tenantName}\n`), isContainer: false }),
+    );
+    if (isShown) {
+      cy.expect([
+        tenantRow.find(Checkbox()).has({ checked: isChecked }),
+        tenantRow
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: isChecked ? 'Assigned' : 'Unassigned' }),
+      ]);
+    } else cy.expect(tenantRow.absent());
+  },
+
+  verifyTotalSelectedInAffiliationsModal(expectedCount) {
+    cy.expect(
+      affiliationsAssignModal
+        .find(HTML(matching(new RegExp(`Total selected: ${expectedCount}$`))))
+        .exists(),
+    );
+  },
+
+  toggleTenantCheckboxInModal(tenantName, { isChecked = true } = {}) {
+    const targetCheckbox = affiliationsAssignModal
+      .find(MultiColumnListRow({ innerText: matching(`^${tenantName}\n`), isContainer: false }))
+      .find(Checkbox());
+    cy.expect(targetCheckbox.has({ checked: !isChecked }));
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: isChecked }));
+  },
+
+  saveAndCloseAffiliationsModal({ modalClosed = true } = {}) {
+    cy.do(affiliationsAssignModal.find(saveAndCloseBtn).click());
+    if (modalClosed) cy.expect(affiliationsAssignModal.absent());
+  },
+
+  cancelAffiliationsModal() {
+    cy.do(affiliationsAssignModal.find(cancelBtn).click());
+    cy.expect(affiliationsAssignModal.absent());
+  },
+
+  selectFilterOptionsInAffiliationsModal({ assigned = null, unassigned = null } = {}) {
+    if (assigned !== true) cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
+    else if (assigned === false) cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
+    if (unassigned === true) cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
+    else if (unassigned === false) cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
+    if (assigned !== null) cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
+    if (unassigned !== null) cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
   },
 };
