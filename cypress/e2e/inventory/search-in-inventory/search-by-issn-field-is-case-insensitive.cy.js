@@ -77,6 +77,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
               InventorySearchAndFilter.verifySearchResult(expectedResult);
@@ -84,6 +87,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.identifierAllOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -92,6 +98,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.issnOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -100,6 +109,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           });
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -117,6 +129,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyResultPaneEmpty();
           InventorySearchAndFilter.verifySearchFieldIsEmpty();
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.issnOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -131,6 +146,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyResultPaneEmpty();
           InventorySearchAndFilter.verifySearchFieldIsEmpty();
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.issnOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {

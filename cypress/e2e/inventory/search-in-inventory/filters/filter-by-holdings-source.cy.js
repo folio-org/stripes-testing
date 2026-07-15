@@ -97,6 +97,9 @@ describe('Inventory', () => {
         'C476758 Filter "Instance" records by Holdings "Source" filter (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476758'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(

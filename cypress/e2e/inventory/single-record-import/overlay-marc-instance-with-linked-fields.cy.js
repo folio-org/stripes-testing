@@ -183,6 +183,9 @@ describe('Inventory', () => {
           InventoryInstance.checkInstanceTitle(testData.newInstanceTitle);
 
           InventorySearchAndFilter.closeInstanceDetailPane();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(hrid);
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.newInstanceTitle);

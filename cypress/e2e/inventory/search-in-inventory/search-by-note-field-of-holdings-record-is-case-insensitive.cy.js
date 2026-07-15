@@ -215,12 +215,18 @@ describe('Inventory', () => {
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.holdingsNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[0]);
           testData.searchResultsAll.forEach((expectedResult) => {
             InventorySearchAndFilter.verifySearchResult(expectedResult);
           });
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.holdingsNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[1]);
           testData.searchResultsAll.forEach((expectedResult) => {
@@ -228,6 +234,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.holdingsAdmNotesOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResultsTwoRecords.forEach((expectedResult) => {
@@ -236,6 +245,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResultsAll.forEach((expectedResult) => {

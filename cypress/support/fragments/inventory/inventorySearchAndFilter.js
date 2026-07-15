@@ -635,9 +635,6 @@ export default {
   },
 
   executeSearch(text) {
-    cy.do(inventorySearchAndFilter.fillIn(''));
-    cy.wait(1000);
-    cy.expect(inventorySearchAndFilterInput.has({ disabled: false }));
     cy.do(inventorySearchAndFilter.fillIn(text));
     this.clickSearch();
   },

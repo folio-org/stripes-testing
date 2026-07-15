@@ -56,6 +56,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkSearchButtonEnabled();
         });
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickSearch();
         BrowseSubjects.checkSearchResultsTable();
 
@@ -69,6 +72,9 @@ describe('Inventory', () => {
           ...Object.values(BROWSE_CALL_NUMBER_OPTIONS).slice(0, 4),
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         ].forEach((browseOption, index) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.clickSearch();
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(browseOption);
           InventorySearchAndFilter.checkBrowseOptionSelected(browseOption);

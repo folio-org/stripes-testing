@@ -159,6 +159,9 @@ describe('Inventory', () => {
       'C375257 Title (all) | Search by "Series" field of linked "MARC Bib" record (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C375257'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(testData.searchQueries[0]);
         InventorySearchAndFilter.checkSearchQueryText(testData.searchQueries[0]);
         InventorySearchAndFilter.checkSearchButtonEnabled();

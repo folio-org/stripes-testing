@@ -134,6 +134,9 @@ describe('Inventory', () => {
       () => {
         BrowseCallNumber.waitForCallNumberToAppear(testData.query);
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         browseAndVerifyClearIconWorks();
       },

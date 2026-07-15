@@ -161,6 +161,9 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C476764'] },
         () => {
           // 1. Open facet, check options and counters
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(STAT_CODE_ACCORDION);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(STAT_CODE_ACCORDION);
 

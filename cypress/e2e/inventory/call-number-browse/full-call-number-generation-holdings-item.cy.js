@@ -127,6 +127,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         BrowseCallNumber.waitForCallNumberToAppear(fullCallNumber);
         InventorySearchAndFilter.fillInBrowseSearch(fullCallNumber);
         // Intercept browse call

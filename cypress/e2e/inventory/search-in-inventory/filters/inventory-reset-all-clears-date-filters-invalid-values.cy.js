@@ -102,6 +102,9 @@ describe('Inventory', () => {
         'C594392 "Reset all" button clears Date filters filled with invalid values (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C594392'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(instancesTitlePrefix);
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
 
@@ -123,6 +126,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyDateFilterValues(accordionName, '', '');
           });
 
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(instancesTitlePrefix);
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);
 

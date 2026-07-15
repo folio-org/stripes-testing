@@ -315,7 +315,7 @@ describe('Inventory', () => {
           // Create all instances
           cy.then(() => {
             instanceTitles.forEach((title, index) => {
-              if (recordsData.find(el => el.instanceIndex === index && el.isMarcInstance)) {
+              if (recordsData.find((el) => el.instanceIndex === index && el.isMarcInstance)) {
                 cy.createSimpleMarcBibViaAPI(title).then((instanceId) => {
                   instanceIds[index] = instanceId;
                 });
@@ -506,6 +506,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkBrowseOptionSelected(
             BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           // Search for exact match call number
           InventorySearchAndFilter.fillInBrowseSearch(expectedOrder[0]);
           InventorySearchAndFilter.clickSearch();

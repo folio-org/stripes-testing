@@ -103,6 +103,9 @@ describe('Inventory', () => {
 
         // Step 1: Run browse with query which contain a space
         InventorySearchAndFilter.fillInBrowseSearch(callNumberData.callNumberWithSpace);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.checkNonExactSearchResult(callNumberData.callNumberWithSpace);
 

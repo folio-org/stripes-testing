@@ -67,6 +67,9 @@ describe('Inventory', () => {
         'C476739 Filter "Instance" records by "Source" filter (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476739'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(

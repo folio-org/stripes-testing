@@ -65,6 +65,9 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C466152'] },
       () => {
         testData.searchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOption(testData.classificationOption);
           InventorySearchAndFilter.executeSearch(query);
           InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchResult);

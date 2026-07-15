@@ -123,6 +123,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         BrowseCallNumber.waitForCallNumberToAppear(browseQuery);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(browseQuery);
 
         InventorySearchAndFilter.clickSearch();

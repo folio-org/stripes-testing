@@ -123,6 +123,9 @@ describe('Inventory', () => {
         searchData.forEach((search) => {
           InventorySearchAndFilter.selectSearchOption(querySearchOption);
           InventoryInstances.verifySelectedSearchOption(querySearchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(search.query);
           search.foundInstanceIndexes.forEach((index) => {
             InventorySearchAndFilter.verifySearchResult(`${instanceTitlePrefix} ${index}`);

@@ -123,6 +123,9 @@ describe('Inventory', () => {
 
         testData.searchItem.forEach((item) => {
           InventorySearchAndFilter.selectSearchOption(item.searchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(item.searchValue);
           InventorySearchAndFilter.verifySearchResult(testData.searchResult);
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();

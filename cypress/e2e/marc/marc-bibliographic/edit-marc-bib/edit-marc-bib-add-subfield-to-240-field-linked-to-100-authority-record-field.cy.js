@@ -135,6 +135,9 @@ describe('MARC', () => {
         'C376594 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "100" field of "MARC authority" record) (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C376594'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(
             testData.inventoryInstanceSearchOption,
             testData.marcBibTitle,

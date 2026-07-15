@@ -80,6 +80,9 @@ describe('Inventory', () => {
         'C476751 Filter "Instance" records by "Holdings permanent location" facet (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C476751'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(locationAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(locationAccordionName);
 

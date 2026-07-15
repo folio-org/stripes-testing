@@ -121,12 +121,18 @@ describe('Inventory', () => {
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.callNumberNotNormalizedOption, '');
           InventorySearchAndFilter.executeSearch(testData.instances[1].callNumber);
           testData.instances.forEach((expectedResult) => {
             InventorySearchAndFilter.verifySearchResult(expectedResult.title);
           });
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.callNumberNotNormalizedOption, '');
           InventorySearchAndFilter.executeSearch(testData.instances[0].callNumber);
           testData.instances.forEach((expectedResult) => {
@@ -134,6 +140,9 @@ describe('Inventory', () => {
           });
           testData.instances.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.callNumbeNormalizedOption, '');
             InventorySearchAndFilter.executeSearch(query.callNumber);
             testData.instances.forEach((expectedResult) => {
@@ -142,6 +151,9 @@ describe('Inventory', () => {
           });
           testData.instances.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query.callNumber);
             testData.instances.forEach((expectedResult) => {

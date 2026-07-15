@@ -36,16 +36,14 @@ describe('MARC', () => {
         testData.userProperties = createdUserProperties;
 
         cy.getAdminToken().then(() => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then(
-            (servicePoint) => {
-              testData.servicePointId = servicePoint.id;
-              NewLocation.createViaApi(
-                NewLocation.getDefaultLocation(testData.servicePointId),
-              ).then((res) => {
+          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            testData.servicePointId = servicePoint.id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.servicePointId)).then(
+              (res) => {
                 testData.location = res;
-              });
-            },
-          );
+              },
+            );
+          });
         });
 
         cy.getAdminToken();
@@ -76,6 +74,9 @@ describe('MARC', () => {
       'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C387462'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
         InventorySearchAndFilter.clickSearch();

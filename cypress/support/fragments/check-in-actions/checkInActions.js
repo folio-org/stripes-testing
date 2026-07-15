@@ -104,7 +104,7 @@ export default {
 
   checkInItem: (barcode) => {
     waitLoading();
-    cy.intercept('/inventory/items?*').as('getItems');
+    cy.intercept('**/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());

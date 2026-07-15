@@ -22,6 +22,9 @@ describe('Inventory', () => {
     const instanceIds = [];
 
     function searchAndVerifyClearIconWorks() {
+      cy.ifConsortia(true, () => {
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
+      });
       InventorySearchAndFilter.fillInSearchQuery(testData.instanceTitlePrefix);
       InventorySearchAndFilter.checkSearchQueryText(testData.instanceTitlePrefix);
       InventorySearchAndFilter.checkSearchButtonEnabled();

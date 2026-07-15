@@ -61,6 +61,9 @@ describe('Inventory', () => {
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
         BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         queries.forEach((query) => {
           InventorySearchAndFilter.fillInBrowseSearch(query);

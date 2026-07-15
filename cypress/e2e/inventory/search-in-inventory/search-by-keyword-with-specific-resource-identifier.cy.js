@@ -81,6 +81,9 @@ describe('Inventory', () => {
       'C367976 Verify that search by "Keyword" will find records with specific string type (e.g.: ".b1234") in "Resource identifier" field (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C367976'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(testData.identifierValue);
         InventorySearchAndFilter.checkSearchQueryText(testData.identifierValue);
         InventorySearchAndFilter.checkSearchButtonEnabled();
@@ -96,6 +99,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
           testData.searchOptions.identifierAll,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.fillInSearchQuery(testData.identifierValue);
         InventorySearchAndFilter.checkSearchQueryText(testData.identifierValue);

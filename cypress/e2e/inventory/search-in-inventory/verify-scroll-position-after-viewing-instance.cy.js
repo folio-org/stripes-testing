@@ -83,6 +83,9 @@ describe('Inventory', () => {
             verifyTab();
             InventorySearchAndFilter.verifyResultPaneEmpty();
           }
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch('*');
           InventoryInstances.waitLoading();
           verifyScrollPositionSteps();

@@ -29,6 +29,9 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch('DE3');
         InventorySearchAndFilter.verifySearchButtonDisabled(false);
         InventorySearchAndFilter.verifyResetAllButtonDisabled(false);

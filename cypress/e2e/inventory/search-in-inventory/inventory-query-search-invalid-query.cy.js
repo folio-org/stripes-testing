@@ -64,6 +64,9 @@ describe('Inventory', () => {
       'C357541 Invalid search request by "Query search" option leads to error (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C357541'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(validQuery);
         InventorySearchAndFilter.checkSearchQueryText(validQuery);
         InventorySearchAndFilter.checkSearchButtonEnabled();
@@ -76,6 +79,9 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.selectSearchOption(testData.searchOption);
           InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventorySearchAndFilter.fillInSearchQuery(invalidQueryData.query);
           InventorySearchAndFilter.checkSearchQueryText(invalidQueryData.query);

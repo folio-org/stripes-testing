@@ -197,6 +197,9 @@ describe('Inventory', () => {
             InventorySearchAndFilter.checkBrowseOptionSelected(
               BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
             );
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
           });
       });
 

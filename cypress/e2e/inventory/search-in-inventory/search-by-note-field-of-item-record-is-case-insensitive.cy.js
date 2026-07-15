@@ -289,12 +289,18 @@ describe('Inventory', () => {
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.itemNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[0]);
           testData.searchResultsAll.forEach((expectedResult) => {
             InventorySearchAndFilter.verifySearchResult(expectedResult);
           });
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.itemNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[1]);
           testData.searchResultsAll.forEach((expectedResult) => {
@@ -302,6 +308,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.itemAdmNotesOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults3thAnd4thRecords.forEach((expectedResult) => {
@@ -310,6 +319,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.circulationNotesOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults5thAnd6thRecords.forEach((expectedResult) => {
@@ -318,6 +330,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResultsAll.forEach((expectedResult) => {

@@ -61,6 +61,9 @@ describe('Inventory', () => {
       'C353938 Verify that the search option dropdown doesnt reset selected value after user cleared search box (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C353938', 'eurekaPhase1'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.titleAllSearchOption,
           testData.instance.name,
@@ -80,6 +83,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToHoldings();
         InventoryInstances.verifyInstanceResultListIsAbsent();
         InventoryInstances.verifySelectedSearchOption(searchHoldingsOptions[0]);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.holdingUUID.title,
@@ -99,6 +105,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToItem();
         InventoryInstances.verifyInstanceResultListIsAbsent();
         InventoryInstances.verifySelectedSearchOption(searchItemsOptions[0]);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.barcode.title,
           `${testData.instance.barcode}`,

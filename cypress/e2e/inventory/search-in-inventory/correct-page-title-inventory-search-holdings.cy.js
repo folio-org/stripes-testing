@@ -99,6 +99,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.holdingsTabIsDefault();
 
         // Steps 1, 2: Input any query in search input field → Click "Search" button and check title
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
 
@@ -126,6 +129,9 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 7: Select any values in any facets on the first pane
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickAccordionByName(testData.sourceAccordionName);
         InventorySearchAndFilter.selectOptionInExpandedFilter(
           testData.sourceAccordionName,
@@ -153,6 +159,9 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 10: Input any query and search
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);
         InventorySearchAndFilter.verifyResultListExists();
         cy.title().should('eq', getExpectedTitle({ query: testData.searchQueries.basic }));
@@ -182,6 +191,9 @@ describe('Inventory', () => {
         cy.title().should('eq', getExpectedTitle());
 
         // Step 13: Input a query which will return only 1 record
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.executeSearch(`${instanceTitlePrefix}_orig`);
         InventoryInstances.selectInstanceByTitle(`${instanceTitlePrefix}_orig`);
         InventoryInstance.waitLoading();

@@ -83,6 +83,9 @@ describe('Inventory', () => {
     let classificationIdentifierTypeId;
     let user;
     const search = (query, expectedResult) => {
+      cy.ifConsortia(true, () => {
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
+      });
       InventorySearchAndFilter.selectSearchOption(testData.classificationOption);
       InventorySearchAndFilter.executeSearch(query);
       InventorySearchAndFilter.verifySearchResult(expectedResult);

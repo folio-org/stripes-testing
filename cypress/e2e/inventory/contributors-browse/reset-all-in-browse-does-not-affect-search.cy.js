@@ -96,6 +96,9 @@ describe('Inventory', () => {
                 authRefresh: true,
               });
               InventorySearchAndFilter.instanceTabIsDefault();
+              cy.ifConsortia(true, () => {
+                InventorySearchAndFilter.clearDefaultHeldbyFilter();
+              });
             });
         },
       );

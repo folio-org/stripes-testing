@@ -151,6 +151,9 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.selectSearchOptions(testData.searchOptions.titleAll, 'C410764');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickSearch();
         InventoryInstances.verifyInstanceResultListIsAbsent(false);
         InventorySearchAndFilter.checkRowsCount(2);
@@ -166,6 +169,9 @@ describe('Inventory', () => {
           testData.searchOptions.holdingUUID.title,
           testData.folioInstance.uuid,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.folioInstance.title, true);
         InventorySearchAndFilter.checkRowsCount(1);
@@ -186,6 +192,9 @@ describe('Inventory', () => {
           testData.searchOptions.barcode.title,
           `${testData.folioInstance.barcode}`,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.clickSearch();
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.folioInstance.title, true);

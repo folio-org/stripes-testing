@@ -80,6 +80,9 @@ describe('Inventory', () => {
         'C468233 Search for "MARC bibliographic" by "LCCN, normalized" option using a query without prefix (numbers only) when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C468233'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(
             testData.lccnSearchOption,
             testData.searchQueryNumbersOnly,

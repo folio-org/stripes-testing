@@ -156,6 +156,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.validateSearchTabIsDefault();
 
         searchData.forEach((search) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOption(querySearchOption);
           InventoryInstances.verifySelectedSearchOption(querySearchOption);
           InventorySearchAndFilter.executeSearch(search.query);

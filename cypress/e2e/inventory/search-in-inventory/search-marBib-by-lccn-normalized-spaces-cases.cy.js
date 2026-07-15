@@ -94,6 +94,9 @@ describe('Inventory', () => {
         });
         queries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOption(lccnSearchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(query);
 
           lccnValues.forEach((_, index) => {

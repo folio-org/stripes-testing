@@ -67,6 +67,9 @@ describe('Inventory', () => {
         'C813007 Filter "Instance" records which has an empty or unrecognizable "language" field by "Language" filter/facet (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C813007'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(testData.instancesTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();
 

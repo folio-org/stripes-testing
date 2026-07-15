@@ -83,6 +83,9 @@ describe('Inventory', () => {
         { tags: ['extendedPath', 'spitfire', 'C446088'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(accordionName, false);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventoryInstances.searchByTitle(instanceTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();
@@ -96,6 +99,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifySearchResult(`${instanceTitlePrefix}_2`);
 
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventorySearchAndFilter.executeSearch(`${instanceTitlePrefix}_3`);
           InventorySearchAndFilter.verifyResultPaneEmpty({
@@ -104,6 +110,9 @@ describe('Inventory', () => {
           });
 
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventorySearchAndFilter.executeSearch(`${instanceTitlePrefix}_4`);
           InventorySearchAndFilter.verifyResultPaneEmpty({
@@ -113,6 +122,9 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventoryInstances.searchByTitle(instanceTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();
@@ -123,6 +135,9 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventoryInstances.searchByTitle(instanceTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();

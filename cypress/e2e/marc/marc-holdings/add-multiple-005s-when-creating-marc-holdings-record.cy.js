@@ -74,6 +74,9 @@ describe('MARC', () => {
       { tags: ['extendedPath', 'spitfire', 'C496215'] },
       () => {
         // #1 Navigate to Instance and click "Actions" → "+Add MARC holdings record"
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
         InventorySearchAndFilter.clickSearch();

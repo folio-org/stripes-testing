@@ -87,6 +87,9 @@ describe('Inventory', () => {
             testData.querySearchOption,
             testData.searchQueries.query,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.clickSearch();
           cy.title().should('eq', testData.expectedTitles.querySearch);
 
@@ -120,6 +123,9 @@ describe('Inventory', () => {
             testData.languageAccordionName,
             testData.instance.language,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 8: Do a basic search with search text
@@ -137,6 +143,9 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 10: Do a basic search with search text
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(testData.searchQueries.all);
           InventorySearchAndFilter.verifyResultListExists();
           cy.title().should('eq', testData.expectedTitles.all);
@@ -165,6 +174,9 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 13: Perform a search that returns single result and click on it
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(testData.instance.title);
           InventoryInstances.selectInstanceByTitle(testData.instance.title);
           InventoryInstance.waitLoading();

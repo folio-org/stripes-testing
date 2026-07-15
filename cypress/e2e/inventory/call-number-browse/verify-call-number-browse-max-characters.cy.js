@@ -122,6 +122,9 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         // Step 1: Run browse for call number with maximum characters using "Call numbers (all)" option
         InventorySearchAndFilter.fillInBrowseSearch(browseQuery);
@@ -135,6 +138,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(browseQuery);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(expectedResult);

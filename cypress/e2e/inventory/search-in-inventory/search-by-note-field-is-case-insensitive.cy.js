@@ -114,12 +114,18 @@ describe('Inventory', () => {
         { tags: ['extendedPath', 'spitfire', 'C466074'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.instanceNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[0]);
           testData.searchResultsAll.forEach((expectedResult) => {
             InventorySearchAndFilter.verifySearchResult(expectedResult);
           });
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.instanceNotesOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueries[1]);
           testData.searchResultsAll.forEach((expectedResult) => {
@@ -127,6 +133,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.admNotesOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResultsTwoRecords.forEach((expectedResult) => {
@@ -135,6 +144,9 @@ describe('Inventory', () => {
           });
           testData.searchQueries.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResultsAll.forEach((expectedResult) => {

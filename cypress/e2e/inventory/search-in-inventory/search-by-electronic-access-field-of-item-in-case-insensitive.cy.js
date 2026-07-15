@@ -51,6 +51,9 @@ describe('Inventory', () => {
             ? `item.electronicAccess any "${instance[searchValue]}"`
             : instance[searchValue];
 
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.executeSearch(searchString);
           cy.wait(1000);
           testData.searchResults.forEach((expectedResult) => {

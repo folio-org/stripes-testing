@@ -128,6 +128,7 @@ describe('Inventory', () => {
           Receiving.checkReceivedPiece(0, 'No value set-');
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         });
       });
@@ -179,6 +180,7 @@ describe('Inventory', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.switchToItem();
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.searchByParameter(
             'Keyword (title, contributor, identifier, HRID, UUID, barcode)',
             instanceTitle,

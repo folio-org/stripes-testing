@@ -89,6 +89,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
 
         // Steps 10-11: Select "Subject" search option and fill query
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions(
           subjectOption,
           testData.subjectWithDoubleQuotes,

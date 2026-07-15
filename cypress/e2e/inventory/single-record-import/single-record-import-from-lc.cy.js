@@ -49,6 +49,9 @@ describe('Inventory', () => {
       'C397981 Create record by import of single MARC record from LC (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C397981'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryActions.importLoc(locNumber);
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceTitle(instanceTitle);

@@ -42,6 +42,9 @@ describe('Inventory', () => {
 
       const search = (option, value, isHoldingElectronic = false) => {
         testData.instances.forEach((instance) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(option, '');
           InventorySearchAndFilter.executeSearch(
             isHoldingElectronic

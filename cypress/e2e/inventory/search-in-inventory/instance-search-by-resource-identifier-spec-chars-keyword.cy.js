@@ -143,7 +143,9 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'spitfire', 'C368042'] },
       () => {
         searchData.forEach(({ query, expectedInstanceIndexes }) => {
-          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.fillInSearchQuery(query);
           InventorySearchAndFilter.checkSearchQueryText(query);
           InventorySearchAndFilter.checkSearchButtonEnabled();

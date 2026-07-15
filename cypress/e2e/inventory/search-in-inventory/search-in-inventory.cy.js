@@ -71,12 +71,18 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions('Contributor', 'Sauguet, Henri');
         InventorySearchAndFilter.checkContributorRequest();
         InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
         InventorySearchAndFilter.checkContributorsColumResult('Henri');
         // The resetAll button is used because the reset search input is very unstable
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOptions('Contributor', query);
@@ -106,6 +112,9 @@ describe('Inventory', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOptions(
@@ -135,6 +144,9 @@ describe('Inventory', () => {
         cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
         });
         InventoryInstances.searchByTitle('*');
         InventoryInstances.waitLoading();

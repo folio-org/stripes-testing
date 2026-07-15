@@ -32,6 +32,9 @@ describe('Inventory', () => {
       };
 
       const search = (option, value) => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions(option, '');
         InventorySearchAndFilter.executeSearch(value);
         testData.instances.forEach((expectedResult) => {

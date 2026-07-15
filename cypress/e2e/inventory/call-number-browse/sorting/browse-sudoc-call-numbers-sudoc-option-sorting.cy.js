@@ -243,6 +243,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
             BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
           );
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           callNumberValuesInApi.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber, true, sudocTypeCode);
           });

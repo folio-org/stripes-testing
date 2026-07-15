@@ -116,20 +116,19 @@ describe('Inventory', () => {
       'C651492 Browse for same call numbers with different copy numbers (enumeration data) which belongs to different instances (spitfire)',
       { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C651492'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         // Switch to Browse tab and select Library of Congress classification
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
         BrowseCallNumber.waitForCallNumberToAppear(browseQuery, true, 'lc');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(browseQuery);
         InventorySearchAndFilter.clickSearch();
         // Assert exact match row, number of titles, and blank title

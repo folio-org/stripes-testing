@@ -93,6 +93,9 @@ describe('Inventory', () => {
       () => {
         queries.forEach((query, index) => {
           if (index) InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.fillInSearchQuery(query);
           InventorySearchAndFilter.clickSearch();
           if (index === 1) InventorySearchAndFilter.verifyNoRecordsFound();

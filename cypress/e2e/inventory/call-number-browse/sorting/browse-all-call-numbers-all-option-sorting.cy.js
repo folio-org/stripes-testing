@@ -135,6 +135,9 @@ describe('Inventory', () => {
           // Switch to Browse tab and select Call numbers (all)
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           expectedRows.forEach((row) => {
             BrowseCallNumber.waitForCallNumberToAppear(row);
           });

@@ -74,6 +74,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.searchOption);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOption);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(testData.instanceTitle);
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);

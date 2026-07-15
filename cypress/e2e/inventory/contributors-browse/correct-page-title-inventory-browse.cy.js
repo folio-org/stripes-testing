@@ -46,6 +46,9 @@ describe('Inventory', () => {
 
         // Step 1: Select "Call numbers (all)" browse option
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         BrowseContributors.waitForContributorToAppear(instances[0].contributors[0].name);
 
         // Step 2: Input query and search - verify page title includes search query
@@ -92,6 +95,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(testData.searchQuery);
         InventorySearchAndFilter.clickSearch();
         cy.title().should('eq', expectedPageTitle(testData.searchQuery));

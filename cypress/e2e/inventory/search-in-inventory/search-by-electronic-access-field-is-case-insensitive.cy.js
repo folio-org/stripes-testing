@@ -74,12 +74,18 @@ describe('Inventory', () => {
         { tags: ['extendedPathFlaky', 'spitfire', 'C466077'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueriesURI[0]);
           testData.searchResults.forEach((expectedResult) => {
             InventorySearchAndFilter.verifySearchResult(expectedResult);
           });
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
           InventorySearchAndFilter.executeSearch(testData.searchQueriesURI[1]);
           testData.searchResults.forEach((expectedResult) => {
@@ -87,6 +93,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesLinkText.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -95,6 +104,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesMaterialSpecified.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -103,6 +115,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesUrlPublicNote.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');
             InventorySearchAndFilter.executeSearch(query);
             testData.searchResults.forEach((expectedResult) => {
@@ -111,6 +126,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesURI.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
             InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
             testData.searchResults.forEach((expectedResult) => {
@@ -119,6 +137,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesLinkText.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
             InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
             testData.searchResults.forEach((expectedResult) => {
@@ -127,6 +148,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesMaterialSpecified.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
             InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
             testData.searchResults.forEach((expectedResult) => {
@@ -135,6 +159,9 @@ describe('Inventory', () => {
           });
           testData.searchQueriesUrlPublicNote.forEach((query) => {
             InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, '');
             InventorySearchAndFilter.executeSearch(`electronicAccess any "${query}"`);
             testData.searchResults.forEach((expectedResult) => {

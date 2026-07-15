@@ -152,6 +152,9 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.verifySearchButtonDisabled();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.fillInBrowseSearch(callNumbers[0]);
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent(callNumbers[0]);

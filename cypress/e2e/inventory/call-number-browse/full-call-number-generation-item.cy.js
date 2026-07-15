@@ -112,6 +112,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         BrowseCallNumber.waitForCallNumberToAppear(fullCallNumber);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(fullCallNumber);
         // Intercept browse call
         cy.intercept('GET', '/browse/call-numbers/all/instances*').as('browseCallNumbers');

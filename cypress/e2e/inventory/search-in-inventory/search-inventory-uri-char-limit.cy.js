@@ -44,6 +44,9 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'spitfire', 'C503245'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(searchOptions.query);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(queries.tooLong, {
           directInput: true,
         });
@@ -64,6 +67,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyResultPaneEmpty();
 
         InventorySearchAndFilter.selectSearchOption(searchOptions.query);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(queries.tooLong, {
           directInput: true,
         });
@@ -76,6 +82,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyResultPaneEmpty();
 
         InventorySearchAndFilter.selectSearchOption(searchOptions.query);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(queries.tooLong, {
           directInput: true,
         });

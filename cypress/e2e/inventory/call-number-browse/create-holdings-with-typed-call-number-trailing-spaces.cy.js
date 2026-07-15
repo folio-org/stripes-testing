@@ -79,6 +79,9 @@ describe('Inventory', () => {
         }, 20_000);
 
         // Navigate to instance
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.searchByTitle(instanceId);
         InventoryInstances.selectInstanceById(instanceId);
         InventoryInstance.waitLoading();
@@ -129,6 +132,9 @@ describe('Inventory', () => {
         // Step 11: Run browse using created call number without trailing spaces and using "Call numbers (all)" browse option
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(testData.callNumberWithoutSpaces);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberWithoutSpaces);
@@ -136,6 +142,9 @@ describe('Inventory', () => {
         // Step 12: Run browse using created call number with trailing spaces and using "Call numbers (all)" browse option
         InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(testData.callNumber);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberWithoutSpaces);
@@ -145,6 +154,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(testData.callNumberWithoutSpaces);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberWithoutSpaces);
@@ -154,6 +166,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(testData.callNumber);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberWithoutSpaces);

@@ -69,6 +69,9 @@ describe('Inventory', () => {
         testData.searchOption.forEach((option) => {
           testData.searchValue.forEach((value) => {
             InventorySearchAndFilter.selectSearchOption(option);
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             if (option === 'Query search') {
               InventorySearchAndFilter.executeSearch(`publication.place=${value}`);
             } else {

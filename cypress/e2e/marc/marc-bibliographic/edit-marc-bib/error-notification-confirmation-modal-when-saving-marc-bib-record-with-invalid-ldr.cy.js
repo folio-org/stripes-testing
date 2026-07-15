@@ -59,6 +59,9 @@ describe('MARC', () => {
         'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C375205'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(
             testData.searchOption,
             testData.instanceTitle,

@@ -55,6 +55,9 @@ describe('Inventory', () => {
         BrowseSubjects.verifySearchTextFieldEmpty();
         InventorySearchAndFilter.verifySearchButtonDisabled();
         InventorySearchAndFilter.switchToSearchTab();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions('Subject', testData.subjectName);
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);

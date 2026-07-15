@@ -445,6 +445,9 @@ describe('Inventory', () => {
             }
           });
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           // Step 1: QS
           InventorySearchAndFilter.fillInBrowseSearch(`QS ${randomDigits}`);

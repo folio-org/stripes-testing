@@ -65,12 +65,18 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C442835'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
         InventorySearchAndFilter.executeSearch(testData.lccnSearchQuery);
         InventorySearchAndFilter.verifySearchResult(testData.searchResult);
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
         InventorySearchAndFilter.verifyResultPaneEmpty();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

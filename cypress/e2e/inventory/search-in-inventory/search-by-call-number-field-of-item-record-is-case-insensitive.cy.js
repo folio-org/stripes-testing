@@ -110,6 +110,9 @@ describe('Inventory', () => {
 
           testData.searchOptions.forEach((option) => {
             testData.instances.forEach((instance) => {
+              cy.ifConsortia(true, () => {
+                InventorySearchAndFilter.clearDefaultHeldbyFilter();
+              });
               InventorySearchAndFilter.selectSearchOptions(option, '');
               InventorySearchAndFilter.executeSearch(instance.callNumber);
               testData.instances.forEach((expectedResult) => {

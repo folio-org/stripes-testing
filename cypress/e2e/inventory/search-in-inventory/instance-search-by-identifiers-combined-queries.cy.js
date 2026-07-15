@@ -153,9 +153,12 @@ describe('Inventory', () => {
       () => {
         function searchAndCheck() {
           searchData.forEach(({ query, expectedTitles }) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
+
             InventorySearchAndFilter.executeSearch(query);
 
-            InventorySearchAndFilter.clickSearch();
             if (!expectedTitles.length) {
               InventorySearchAndFilter.verifyResultPaneEmpty({
                 noResultsFound: true,

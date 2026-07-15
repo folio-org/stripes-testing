@@ -102,6 +102,9 @@ describe('Inventory', () => {
       () => {
         // Step 1: Open the Inventory app - Instance segment is selected by default
         InventorySearchAndFilter.instanceTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         // Step 2: Test filters for several combinations (Instance segment)
         InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
@@ -133,11 +136,17 @@ describe('Inventory', () => {
         );
 
         // Step 4: Try using "reset all" button again when no filters are applied
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.verifyResetAllButtonDisabled();
 
         // Step 5: Select Holdings segment and repeat steps 2-4
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
         InventorySearchAndFilter.clickAccordionByName(testData.filterNames.holdingsLocation);
@@ -165,11 +174,17 @@ describe('Inventory', () => {
           false,
         );
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.verifyResetAllButtonDisabled();
 
         // Step 6: Select Item segment and repeat steps 2-4
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.clickAccordionByName(testData.filterNames.materialType);
         cy.intercept(testData.searchRequestPath).as('getInstances3');
@@ -209,6 +224,9 @@ describe('Inventory', () => {
           false,
         );
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.verifyResetAllButtonDisabled();
       },
     );

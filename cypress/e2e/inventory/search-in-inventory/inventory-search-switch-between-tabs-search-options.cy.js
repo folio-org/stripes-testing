@@ -100,6 +100,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOptions.titleAll);
         InventorySearchAndFilter.checkSearchQueryText(testData.allQuery);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.clickSearch();
         InventorySearchAndFilter.verifyResultListExists();

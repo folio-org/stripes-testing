@@ -82,6 +82,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         testData.lccnSearchQueries.forEach((query) => {
           InventorySearchAndFilter.executeSearch(query);

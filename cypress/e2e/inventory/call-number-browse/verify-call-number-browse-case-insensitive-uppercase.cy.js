@@ -213,6 +213,9 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         // Test cases for "Call numbers (all)" browse option
         const noTypeCallNumber = callNumbers.find((cn) => cn.type === null);
@@ -225,6 +228,9 @@ describe('Inventory', () => {
         // Step 2: Run browse for call number without selected type using Upper case
         InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(noTypeCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(noTypeCallNumber.value);
@@ -235,6 +241,9 @@ describe('Inventory', () => {
           // Test lowercase search
           InventorySearchAndFilter.clickResetAllButton();
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.fillInBrowseSearch(callNumber.valueLowerCase);
           InventorySearchAndFilter.clickSearch();
           BrowseCallNumber.valueInResultTableIsHighlighted(callNumber.value);
@@ -242,6 +251,9 @@ describe('Inventory', () => {
           // Test uppercase search
           InventorySearchAndFilter.clickResetAllButton();
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.fillInBrowseSearch(callNumber.value);
           InventorySearchAndFilter.clickSearch();
           BrowseCallNumber.valueInResultTableIsHighlighted(callNumber.value);
@@ -255,6 +267,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(deweyCallNumber.valueLowerCase);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(deweyCallNumber.value);
@@ -263,6 +278,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(deweyCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(deweyCallNumber.value);
@@ -275,6 +293,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(lcCallNumber.valueLowerCase);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(lcCallNumber.value);
@@ -283,6 +304,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(lcCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(lcCallNumber.value);
@@ -295,6 +319,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(nlmCallNumber.valueLowerCase);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(nlmCallNumber.value);
@@ -303,6 +330,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(nlmCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(nlmCallNumber.value);
@@ -315,6 +345,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(otherCallNumber.valueLowerCase);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(otherCallNumber.value);
@@ -323,6 +356,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(otherCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(otherCallNumber.value);
@@ -333,6 +369,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(sudocCallNumber.valueLowerCase);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(sudocCallNumber.value);
@@ -341,6 +380,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInBrowseSearch(sudocCallNumber.value);
         InventorySearchAndFilter.clickSearch();
         BrowseCallNumber.valueInResultTableIsHighlighted(sudocCallNumber.value);

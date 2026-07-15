@@ -116,6 +116,9 @@ describe('Inventory', () => {
         'C415361 Filter "Instance" records by instance status (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C415361'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(testData.instanceStatusAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.instanceStatusAccordionName,
@@ -142,6 +145,9 @@ describe('Inventory', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventorySearchAndFilter.executeSearch(testData.instancesTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();
