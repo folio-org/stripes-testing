@@ -169,6 +169,7 @@ describe('Data Import', () => {
           instanceHrid = initialInstanceHrId;
           // check fields are absent in the view source
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.verifyResourceIdentifier(

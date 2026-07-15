@@ -73,6 +73,9 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C476718'] },
         () => {
           // Verify we're on the Search tab and Instance tab by default
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifySearchAndFilterPane();
 
           // Step 1: Check facets and filters displayed on Instance tab

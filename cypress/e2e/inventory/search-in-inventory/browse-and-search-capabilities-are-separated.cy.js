@@ -44,9 +44,15 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.switchToSearchTab();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventoryInstances.verifyInstanceSearchOptions();
         InventorySearchAndFilter.switchToBrowseTab();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.verifySearchAndFilterPaneBrowseToggle();
         InventorySearchAndFilter.browseOptionsDropdownIncludesOptions(
           Object.values(BROWSE_CALL_NUMBER_OPTIONS),

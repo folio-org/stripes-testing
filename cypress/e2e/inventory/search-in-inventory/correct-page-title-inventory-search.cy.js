@@ -58,13 +58,10 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }, 20_000);
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
 
@@ -83,13 +80,13 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.basicSearch);
 
           // Step 3: Do a query search
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(
             testData.querySearchOption,
             testData.searchQueries.query,
           );
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          });
           InventorySearchAndFilter.clickSearch();
           cy.title().should('eq', testData.expectedTitles.querySearch);
 
@@ -114,6 +111,9 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 7: Select facets (using Language facet with English)
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.clickAccordionByName(testData.languageAccordionName);
           InventorySearchAndFilter.selectMultiSelectFilterOption(
             testData.languageAccordionName,
@@ -123,9 +123,6 @@ describe('Inventory', () => {
             testData.languageAccordionName,
             testData.instance.language,
           );
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          });
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 8: Do a basic search with search text
@@ -135,6 +132,9 @@ describe('Inventory', () => {
           // Step 9: Reset all filters and facets
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.checkSearchQueryText('');
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             testData.languageAccordionName,
             testData.instance.language,
@@ -143,9 +143,6 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 10: Do a basic search with search text
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          });
           InventorySearchAndFilter.executeSearch(testData.searchQueries.all);
           InventorySearchAndFilter.verifyResultListExists();
           cy.title().should('eq', testData.expectedTitles.all);
@@ -166,6 +163,9 @@ describe('Inventory', () => {
           // Step 12: Reset all filters and facets
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.checkSearchQueryText('');
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             testData.languageAccordionName,
             testData.instance.language,
@@ -174,9 +174,6 @@ describe('Inventory', () => {
           cy.title().should('eq', testData.expectedTitles.default);
 
           // Step 13: Perform a search that returns single result and click on it
-          cy.ifConsortia(true, () => {
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
-          });
           InventorySearchAndFilter.executeSearch(testData.instance.title);
           InventoryInstances.selectInstanceByTitle(testData.instance.title);
           InventoryInstance.waitLoading();

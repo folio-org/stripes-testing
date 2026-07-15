@@ -93,6 +93,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

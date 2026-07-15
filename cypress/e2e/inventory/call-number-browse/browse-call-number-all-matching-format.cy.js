@@ -101,6 +101,9 @@ describe('Inventory', () => {
       InventorySearchAndFilter.verifyKeywordsAsDefault();
 
       InventorySearchAndFilter.selectBrowseCallNumbers();
+      cy.ifConsortia(true, () => {
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
+      });
     });
 
     after('Delete test data', () => {

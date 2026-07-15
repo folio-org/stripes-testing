@@ -73,7 +73,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.searchOptions.titleAll);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOptions.titleAll);
-
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(testData.allQuery);
         InventorySearchAndFilter.clickSearchAndVerifySearchExecuted();
 
@@ -83,6 +85,9 @@ describe('Inventory', () => {
           testData.searchOptions.holdingsKeyword,
         );
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.fillInSearchQuery(testData.allQuery);
         InventorySearchAndFilter.clickSearchAndVerifySearchExecuted();
 
@@ -120,6 +125,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
           testData.searchOptions.itemKeyword,
         );
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         InventorySearchAndFilter.fillInSearchQuery(queries[1]);
         InventorySearchAndFilter.clickSearchAndVerifySearchExecuted();

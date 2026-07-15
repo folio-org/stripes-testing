@@ -135,6 +135,9 @@ describe('Inventory', () => {
                 InventorySearchAndFilter.instanceTabIsDefault();
                 InventorySearchAndFilter.switchToItem();
                 InventorySearchAndFilter.itemTabIsDefault();
+                cy.ifConsortia(true, () => {
+                  InventorySearchAndFilter.clearDefaultHeldbyFilter();
+                });
               });
           },
         );

@@ -245,6 +245,9 @@ describe('Data Import', () => {
 
         // check updated instance in Inventory
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        cy.reload();
+        InventoryInstance.waitLoading();
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

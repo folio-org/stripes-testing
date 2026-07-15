@@ -132,6 +132,9 @@ describe('Inventory', () => {
         BrowseContributors.waitForContributorToAppear(testData.contributorValue);
 
         BrowseContributors.select();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         BrowseContributors.browse(testData.query);
         BrowseContributors.checkSearchResultsTable();
 
@@ -158,6 +161,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseOptionSelected(testData.callNumberOption);
         InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
 
         BrowseContributors.browse(testData.query);
         BrowseCallNumber.checkSearchResultsTable();
@@ -181,6 +187,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         BrowseSubjects.select();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.checkBrowseOptionSelected(testData.subjectsOption);
         InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');

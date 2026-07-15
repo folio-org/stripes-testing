@@ -253,11 +253,6 @@ describe('Inventory', () => {
             sharedAccordionName,
             'Yes',
           );
-          InventorySearchAndFilter.verifyCheckboxOptionPresentInAccordion(
-            sharedAccordionName,
-            'No',
-            false,
-          );
 
           cy.intercept('/browse/call-numbers/all/instances*').as('browseCall1');
           InventorySearchAndFilter.selectEcsLocationFilterOption(

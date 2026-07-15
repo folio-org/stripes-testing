@@ -119,6 +119,9 @@ describe('Inventory', () => {
           // Verify we're on Instance tab and Search tab by default
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.validateSearchTabIsDefault();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyAccordionExistance(accordionName);
 
           // Step 1: Expand the "Staff suppress" facet

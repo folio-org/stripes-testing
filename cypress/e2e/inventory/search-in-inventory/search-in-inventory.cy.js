@@ -70,9 +70,11 @@ describe('Inventory', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
 
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventorySearchAndFilter.byShared('No');
         });
         InventorySearchAndFilter.selectSearchOptions('Contributor', 'Sauguet, Henri');
         InventorySearchAndFilter.checkContributorRequest();
@@ -80,13 +82,16 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkContributorsColumResult('Henri');
         // The resetAll button is used because the reset search input is very unstable
         InventorySearchAndFilter.resetAll();
-        cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.clearDefaultHeldbyFilter();
-        });
 
         searchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions('Contributor', query);
           InventorySearchAndFilter.clickSearch();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
           InventorySearchAndFilter.checkContributorsColumResult('Henri');
           if (query.includes('1901-1989')) InventorySearchAndFilter.checkContributorsColumResult('Henri');
@@ -112,16 +117,19 @@ describe('Inventory', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.clearDefaultHeldbyFilter();
-        });
 
         searchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.selectSearchOptions(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             query,
           );
           InventorySearchAndFilter.clickSearch();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifySearchResult(
             '"Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.',
           );
@@ -146,7 +154,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchByTitle('*');
         InventoryInstances.waitLoading();

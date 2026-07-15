@@ -129,7 +129,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C473260'] },
       () => {
         testData.searchQueriesC473260.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.querySearchOption, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC473260, true);
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
@@ -142,7 +148,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C471498'] },
       () => {
         testData.searchQueriesC471498.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471498, true);
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
@@ -155,7 +167,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C471497'] },
       () => {
         testData.searchQueriesC471497.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471497, true);
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
@@ -168,7 +186,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C471496'] },
       () => {
         testData.searchQueriesC471496.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC473260, true);
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
@@ -181,7 +205,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C471495'] },
       () => {
         testData.searchQueriesC471495.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.subjectSearchOption, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471495, true);
           InventorySearchAndFilter.checkRowsCount(1);
           InventoryInstances.resetAllFilters();
@@ -194,6 +224,9 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C471494'] },
       () => {
         testData.searchQueriesC471494.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(testData.contributorSearchOption, query);
           InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResultC471494, true);
           InventoryInstances.checkResultsCellContainsAnyOfValues(
@@ -212,7 +245,13 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C466290'] },
       () => {
         testData.searchQueriesC466290.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventoryInstances.searchInstancesWithOption(undefined, query);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.checkRowsCount(8);
           InventoryInstances.resetAllFilters();
         });

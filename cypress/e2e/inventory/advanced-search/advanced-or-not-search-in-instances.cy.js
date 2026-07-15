@@ -75,14 +75,13 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
       });
     });
 
@@ -170,6 +169,9 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
           InventorySearchAndFilter.verifySearchFieldIsEmpty();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
 
           InventoryInstances.clickAdvSearchButton();
           cy.wrap([1, 2, 3, 4]).each((rowNumber) => {

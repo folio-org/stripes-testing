@@ -220,6 +220,9 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
           });
         });
     });
@@ -290,6 +293,9 @@ describe('Inventory', () => {
 
         // Step 2: Configure advanced search query for Holdings tab
         InventorySearchAndFilter.switchToHoldings();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -325,6 +331,9 @@ describe('Inventory', () => {
 
         // Step 3: Configure advanced search query for Item tab
         InventorySearchAndFilter.switchToItem();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

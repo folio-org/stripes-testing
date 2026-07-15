@@ -107,14 +107,13 @@ describe('Inventory', () => {
       'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C466156'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.checkAdvSearchInstancesModalFields(0);
         InventoryInstances.checkAdvSearchInstancesModalFields(1);
@@ -163,6 +162,9 @@ describe('Inventory', () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
         });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
@@ -231,14 +233,13 @@ describe('Inventory', () => {
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C414977', 'eurekaPhase1'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

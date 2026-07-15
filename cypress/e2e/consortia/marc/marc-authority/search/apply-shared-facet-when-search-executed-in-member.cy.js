@@ -142,7 +142,7 @@ describe('MARC', () => {
         Users.deleteViaApi(users.userProperties.userId);
         marcFiles.forEach((marcFile) => {
           cy.setTenant(marcFile.affiliation);
-          MarcAuthority.deleteViaAPI(marcFile.createdAuthorityID);
+          MarcAuthority.deleteViaAPI(marcFile.createdAuthorityID, true);
         });
       });
 

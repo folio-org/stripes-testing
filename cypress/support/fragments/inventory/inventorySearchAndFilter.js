@@ -25,6 +25,7 @@ import {
   ValueChipRoot,
   not,
   or,
+  Spinner,
 } from '../../../../interactors';
 import {
   BROWSE_CALL_NUMBER_OPTIONS,
@@ -278,13 +279,24 @@ export default {
 
   byShared(condititon) {
     cy.wait(1000);
-    cy.do(sharedAccordion.clickHeader());
-    if (condititon === 'Yes') {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' })).click());
-    } else {
-      cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' })).click());
-    }
-    cy.wait(1000);
+    cy.then(() => sharedAccordion.open()).then((isOpen) => {
+      if (!isOpen) cy.do(sharedAccordion.clickHeader());
+      if (condititon === 'Yes') {
+        cy.do(
+          sharedAccordion
+            .find(Checkbox({ id: 'clickable-filter-shared-true' }))
+            .checkIfNotSelected(),
+        );
+      } else {
+        cy.do(
+          sharedAccordion
+            .find(Checkbox({ id: 'clickable-filter-shared-false' }))
+            .checkIfNotSelected(),
+        );
+      }
+      cy.wait(1000);
+      cy.expect(sharedAccordion.find(Spinner()).absent());
+    });
   },
 
   byKeywords(kw = '*') {
@@ -516,6 +528,7 @@ export default {
   },
 
   searchByParameter(parameter, value) {
+    cy.expect([SearchField({ id: 'input-inventory-search' }).exists(), keywordInput.exists(value)]);
     if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),

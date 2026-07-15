@@ -429,6 +429,10 @@ export default {
   },
 
   searchByTitle(title, result = true) {
+    cy.expect([
+      filterSection.find(inventorySearchInput).exists(),
+      filterSection.find(searchButton).has({ disabled: or(true, false) }),
+    ]);
     cy.wait(2000);
     if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([

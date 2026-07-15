@@ -165,6 +165,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(
@@ -178,6 +179,7 @@ describe('Inventory', () => {
         InventoryInstances.resetAllFilters();
 
         cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(
@@ -190,6 +192,7 @@ describe('Inventory', () => {
         InventoryInstances.resetAllFilters();
 
         cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(

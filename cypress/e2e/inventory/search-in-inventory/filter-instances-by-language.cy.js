@@ -59,6 +59,9 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             });
             InventorySearchAndFilter.instanceTabIsDefault();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
           });
       });
 

@@ -91,6 +91,7 @@ describe('Inventory', () => {
         });
       });
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
       InventoryInstances.searchByTitle(testData.instanceRecords[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
@@ -127,6 +128,10 @@ describe('Inventory', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
         });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
+
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.AUTHORITY_UUID,
           testData.recordIDs[2],

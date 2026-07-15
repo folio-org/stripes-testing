@@ -160,6 +160,7 @@ const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
 const instanceRelationshipAccordion = Accordion('Instance relationship');
+const heldbyAccordionName = 'Held by';
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1032,6 +1033,9 @@ export default {
     cy.wait(1000);
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
+    cy.ifConsortia(true, () => {
+      this.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
     this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen, itemIndex);
@@ -1076,10 +1080,13 @@ export default {
     InventoryInstancesMovement.move();
   },
 
-  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
+  moveHoldingsToAnotherInstanceByItemTitle(holdingName, title) {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
+    cy.ifConsortia(true, () => {
+      this.clearDefaultHeldbyFilter();
+    });
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     // cypress clicks too fast
@@ -2071,6 +2078,38 @@ export default {
       body.precedingTitles = [];
       body.succeedingTitles = [];
       cy.updateInstance(body);
+    });
+  },
+
+  clearDefaultFilter(accordionName) {
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
+  },
+
+  clearDefaultHeldbyFilter() {
+    cy.wait(3000);
+
+    cy.get('body').then(($body) => {
+      const clearBtn = $body.find(
+        `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
+      );
+      if (clearBtn.length > 0) {
+        this.clearDefaultFilter(heldbyAccordionName);
+        cy.expect(
+          Button({
+            ariaLabel: or(
+              `Clear selected filters for "${heldbyAccordionName}"`,
+              `Clear selected ${heldbyAccordionName} filters`,
+            ),
+          }).absent(),
+        );
+      }
     });
   },
 };

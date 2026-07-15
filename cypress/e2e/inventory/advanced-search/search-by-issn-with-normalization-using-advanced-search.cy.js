@@ -178,6 +178,9 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
       });
     });
 
@@ -215,6 +218,9 @@ describe('Inventory', () => {
 
         // Run searches on Holdings tab
         InventorySearchAndFilter.switchToHoldings();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         testStepsHoldings.forEach((step) => {
           InventoryInstances.clickAdvSearchButton();
           step.rows.forEach((data) => {
@@ -235,6 +241,9 @@ describe('Inventory', () => {
 
         // Run searches on Item tab
         InventorySearchAndFilter.switchToItem();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         testStepsItem.forEach((step) => {
           InventoryInstances.clickAdvSearchButton();
           step.rows.forEach((data) => {

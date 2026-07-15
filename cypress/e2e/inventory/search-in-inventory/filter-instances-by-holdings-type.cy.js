@@ -102,6 +102,9 @@ describe('Inventory', () => {
                 InventorySearchAndFilter.instanceTabIsDefault();
                 InventorySearchAndFilter.switchToHoldings();
                 InventorySearchAndFilter.holdingsTabIsDefault();
+                cy.ifConsortia(true, () => {
+                  InventorySearchAndFilter.clearDefaultHeldbyFilter();
+                });
               });
           },
         );

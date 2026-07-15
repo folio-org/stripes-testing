@@ -93,6 +93,9 @@ describe('Inventory', () => {
             cy.login(userProperties.username, userProperties.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.waitContentLoading();
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               testData.resourceTypeAccordionName,

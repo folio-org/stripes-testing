@@ -198,6 +198,9 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.NO_ACTION);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.UPDATED);
         Logs.clickOnHotLink(1, 3, RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        cy.reload();
+        InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyMarkAsStaffSuppressedWarning();
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);

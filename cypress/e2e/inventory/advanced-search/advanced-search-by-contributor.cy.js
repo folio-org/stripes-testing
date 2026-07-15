@@ -72,6 +72,9 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
       });
     });
 
@@ -100,6 +103,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[0].length);
 
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -115,6 +121,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[1].length);
 
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -130,6 +139,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[2].length);
 
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -145,6 +157,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[3].length);
 
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -174,6 +189,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[5].length);
 
         InventorySearchAndFilter.resetAll();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
