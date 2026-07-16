@@ -1,7 +1,6 @@
 import Users from '../../../../support/fragments/users/users';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UserEdit from '../../../../support/fragments/users/userEdit';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -102,13 +101,12 @@ describe('Eureka', () => {
       before('Login', () => {
         cy.resetTenant();
         cy.login(testUser.username, testUser.password, {
-          // path: `${TopMenu.usersPath}/view/${users.userA.userId}`,
-          // waiter: UsersCard.waitLoading,
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         cy.visit(`${TopMenu.usersPath}/view/${users.userA.userId}`);
+        UsersCard.waitLoading();
       });
 
       after('Delete users', () => {
@@ -180,10 +178,8 @@ describe('Eureka', () => {
             `${users.userA.firstName} ${users.userA.middleName}`,
           );
           UserEdit.clickConfirmInPromoteUserModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
             tenantNames.central,
             2,
@@ -203,10 +199,8 @@ describe('Eureka', () => {
 
           // Step 9: Confirm → 2 affiliations (Central + Member-2)
           UserEdit.clickConfirmInPromoteUserModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
             tenantNames.central,
             2,
@@ -218,10 +212,8 @@ describe('Eureka', () => {
           UsersCard.openAffiliationsModal();
           UsersCard.toggleTenantCheckboxInModal(tenantNames.college);
           UsersCard.saveAndCloseAffiliationsModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
             tenantNames.central,
             3,
@@ -244,10 +236,8 @@ describe('Eureka', () => {
             `${users.userB.firstName} ${users.userB.middleName}`,
           );
           UserEdit.clickConfirmInPromoteUserModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
             tenantNames.central,
             3,
@@ -269,10 +259,8 @@ describe('Eureka', () => {
             `${users.userC.firstName} ${users.userC.middleName}`,
           );
           UserEdit.clickConfirmInPromoteUserModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
             tenantNames.central,
             3,
@@ -289,17 +277,13 @@ describe('Eureka', () => {
           UsersCard.openAffiliationsModal();
           UsersCard.toggleTenantCheckboxInModal(tenantNames.university);
           UsersCard.saveAndCloseAffiliationsModal();
-          UserEdit.checkPromoteUserModal(
-            users.userD.lastName,
-            `${users.userD.firstName} ${users.userD.middleName}`,
-          );
+          UserEdit.checkPromoteUserModal(users.userD.lastName, users.userD.firstName);
           UserEdit.clickConfirmInPromoteUserModal();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
+          UsersCard.verifyAffiliationChangeSuccessCallout();
+          UsersCard.waitLoading();
           UsersCard.verifyAffiliationsDetails(
-            tenantNames.central,
+            tenantNames.college,
             3,
             tenantNames.university,
             tenantNames.college,
@@ -324,11 +308,10 @@ describe('Eureka', () => {
           // Step 18: Confirm → 3 affiliations
           UserEdit.clickConfirmInPromoteUserModal();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
+          UsersCard.verifyAffiliationChangeSuccessCallout();
+          UsersCard.waitLoading();
           UsersCard.verifyAffiliationsDetails(
-            tenantNames.central,
+            tenantNames.college,
             3,
             tenantNames.university,
             tenantNames.college,
@@ -340,11 +323,10 @@ describe('Eureka', () => {
           UsersCard.toggleTenantCheckboxInModal(tenantNames.university, { isChecked: false });
           UsersCard.saveAndCloseAffiliationsModal();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
+          UsersCard.verifyAffiliationChangeSuccessCallout();
+          UsersCard.waitLoading();
           UsersCard.verifyAffiliationsDetails(
-            tenantNames.central,
+            tenantNames.college,
             2,
             tenantNames.college,
             tenantNames.central,
@@ -354,12 +336,10 @@ describe('Eureka', () => {
           UsersCard.openAffiliationsModal();
           UsersCard.toggleTenantCheckboxInModal(tenantNames.university);
           UsersCard.saveAndCloseAffiliationsModal();
+          UsersCard.verifyAffiliationChangeSuccessCallout();
           UsersCard.waitLoading();
-          InteractorsTools.checkCalloutMessage(
-            'User affiliation changes have been saved successfully.',
-          );
           UsersCard.verifyAffiliationsDetails(
-            tenantNames.central,
+            tenantNames.college,
             3,
             tenantNames.university,
             tenantNames.college,

@@ -34,6 +34,7 @@ import DateTools from '../../utils/dateTools';
 import MultiColumnListHelper from '../multiColumnList';
 import NewNote from '../notes/newNote';
 import { NO_VALUE, SORT_DIRECTIONS } from '../../constants';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const affiliationsAccordion = Accordion('Affiliations');
 const patronBlocksAccordion = Accordion('Patron blocks');
@@ -104,6 +105,8 @@ const saveAndCloseBtn = Button('Save & close');
 const cancelBtn = Button('Cancel');
 const unassignedCheckbox = Checkbox({ id: 'clickable-filter-status-unassigned' });
 const assignedCheckbox = Checkbox({ id: 'clickable-filter-status-assigned' });
+const affiliationChangeSuccessCalloutText =
+  'User affiliation changes have been saved successfully.';
 
 const getAccordionByLabel = (accordionLabel) => rootSection.find(Accordion(accordionLabel));
 
@@ -1277,11 +1280,17 @@ export default {
   },
 
   selectFilterOptionsInAffiliationsModal({ assigned = null, unassigned = null } = {}) {
-    if (assigned !== true) cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
+    if (assigned === true) cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
     else if (assigned === false) cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
     if (unassigned === true) cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
     else if (unassigned === false) cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
     if (assigned !== null) cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
     if (unassigned !== null) cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
+  },
+
+  verifyAffiliationChangeSuccessCallout() {
+    InteractorsTools.checkCalloutMessage(affiliationChangeSuccessCalloutText);
+    InteractorsTools.dismissCallout(affiliationChangeSuccessCalloutText);
+    InteractorsTools.checkCalloutExists(affiliationChangeSuccessCalloutText, false);
   },
 };
