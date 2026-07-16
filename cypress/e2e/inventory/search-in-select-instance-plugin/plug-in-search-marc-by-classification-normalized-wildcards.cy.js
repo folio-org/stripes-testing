@@ -99,6 +99,9 @@ describe('Inventory', () => {
         searchQueries.forEach((query) => {
           SelectInstanceModal.chooseSearchOption(searchOption);
           SelectInstanceModal.checkSearchOptionSelected(searchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           SelectInstanceModal.fillInSearchQuery(query);
           SelectInstanceModal.checkSearchInputFieldValue(query);
           SelectInstanceModal.clickSearchButton();

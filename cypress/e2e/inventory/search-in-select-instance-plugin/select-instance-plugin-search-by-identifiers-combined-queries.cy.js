@@ -157,6 +157,9 @@ describe('Inventory', () => {
 
         function searchAndCheck() {
           searchData.forEach(({ query, expectedTitles }) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             SelectInstanceModal.fillInSearchQuery(query);
             SelectInstanceModal.clickSearchButton();
 

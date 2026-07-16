@@ -410,11 +410,20 @@ describe('Inventory', () => {
       'C196769 Assign tags to an Instance record (folijet)',
       { tags: ['smoke', 'folijet', 'C196769', 'shiftLeft'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.addTag(tag.label);
         InventoryInstances.resetAllFilters();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventoryInstances.searchByTag(tag.label);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstance.checkAddedTag(tag.label, instanceTitle);
         InventoryInstance.deleteTag(tag.label);

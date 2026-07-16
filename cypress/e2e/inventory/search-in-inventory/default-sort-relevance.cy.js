@@ -44,7 +44,9 @@ describe('Inventory', () => {
         }
       });
 
-      cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.RELEVANCE.toLowerCase());
+      cy.resetInventoryDisplaySettingsViaAPI().then(() => {
+        cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.RELEVANCE.toLowerCase());
+      });
     });
 
     before('Create data', () => {
@@ -69,7 +71,7 @@ describe('Inventory', () => {
 
     after('Reset settings, delete data, users', () => {
       cy.getAdminToken();
-      cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
+      cy.resetInventoryDisplaySettingsViaAPI();
       createdInstanceIds.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });

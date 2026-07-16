@@ -143,6 +143,9 @@ describe('Inventory', () => {
         'C446106 Find Instance plugin | Staff suppress facet is on by default when user has permission to use facet (search by "ISSN") (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C446106'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(
             staffSuppressAccordionName,

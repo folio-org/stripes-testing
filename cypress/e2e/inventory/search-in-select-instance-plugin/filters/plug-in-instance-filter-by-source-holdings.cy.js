@@ -114,6 +114,9 @@ describe('Inventory', () => {
         { tags: ['extendedPath', 'spitfire', 'C476829'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(
             sourceAccordionName,

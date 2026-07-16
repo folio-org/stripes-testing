@@ -69,6 +69,7 @@ describe('Inventory', () => {
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
           });
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);
@@ -153,7 +154,7 @@ describe('Inventory', () => {
             })
             .then(() => {
               InventorySearchAndFilter.clearFilter(sourceAccordionName);
-              InventorySearchAndFilter.verifyResultPaneEmpty();
+              InventorySearchAndFilter.waitLoading();
               InventorySearchAndFilter.verifyCheckboxInAccordion(
                 sourceAccordionName,
                 INSTANCE_SOURCE_NAMES.FOLIO,

@@ -133,6 +133,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 
         // Run searchse on Instance tab
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         testData.searchQueries.forEach((query) => {
           searchOptions.instance.forEach((option) => {
             SelectInstanceModal.searchByParameter(option, query);
@@ -144,6 +147,10 @@ describe('Inventory', () => {
 
         // Run searchse on Holdings tab
         SelectInstanceModal.switchToHoldings();
+        InventorySearchAndFilter.holdingsTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         testData.searchQueries.forEach((query) => {
           searchOptions.holdings.forEach((option) => {
             SelectInstanceModal.searchByParameter(option, query);
@@ -155,6 +162,10 @@ describe('Inventory', () => {
 
         // Run searchse on Item tab
         SelectInstanceModal.switchToItem();
+        InventorySearchAndFilter.itemTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         testData.searchQueries.forEach((query) => {
           searchOptions.items.forEach((option) => {
             SelectInstanceModal.searchByParameter(option, query);

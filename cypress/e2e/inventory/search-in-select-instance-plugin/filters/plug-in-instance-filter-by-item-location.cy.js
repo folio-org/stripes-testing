@@ -55,7 +55,10 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 3, query: '(isActive=true and name<>"AT_*")' }).then(() => {
+          cy.getLocations({
+            limit: 3,
+            query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+          }).then(() => {
             locations.push(...Cypress.env('locations'));
           });
           cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
@@ -183,6 +186,10 @@ describe('Inventory', () => {
             locationAccordionName,
             locations[0].name,
           );
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+            locationAccordionName,
+            locations[0].name,
+          );
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
 
@@ -201,6 +208,10 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkRowsCount(instanceTitles.length);
 
           SelectInstanceModal.selectMultiSelectFilterOption(
+            locationAccordionName,
+            locations[0].name,
+          );
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             locationAccordionName,
             locations[0].name,
           );

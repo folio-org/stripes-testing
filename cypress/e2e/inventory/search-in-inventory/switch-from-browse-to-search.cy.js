@@ -143,11 +143,13 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
           testData.locationAccordionName,
         );
-        InventorySearchAndFilter.selectMultiSelectFilterOption(
-          testData.locationAccordionName,
-          locationName,
-        );
-        BrowseCallNumber.checkSearchResultsTable();
+        cy.ifConsortia(false, () => {
+          InventorySearchAndFilter.selectMultiSelectFilterOption(
+            testData.locationAccordionName,
+            locationName,
+          );
+          BrowseCallNumber.checkSearchResultsTable();
+        });
 
         BrowseContributors.select();
         InventorySearchAndFilter.toggleAccordionByName(testData.nameTypeAccordionName);

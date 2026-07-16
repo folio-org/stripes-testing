@@ -47,7 +47,6 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
       });
     });
@@ -65,6 +64,10 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet', 'C584533'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
+
         cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject source');
         testData.subjectSources.forEach((subjectSource) => {

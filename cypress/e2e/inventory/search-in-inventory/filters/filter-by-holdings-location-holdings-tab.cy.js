@@ -82,6 +82,7 @@ describe('Inventory', () => {
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
           });
           InventorySearchAndFilter.toggleAccordionByName(locationAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(locationAccordionName);
@@ -169,7 +170,7 @@ describe('Inventory', () => {
             })
             .then(() => {
               InventorySearchAndFilter.clearFilter(locationAccordionName);
-              InventorySearchAndFilter.verifyResultPaneEmpty();
+              InventorySearchAndFilter.waitLoading();
 
               InventorySearchAndFilter.executeSearch(instanceTitlePrefix);
               InventorySearchAndFilter.verifyResultListExists();

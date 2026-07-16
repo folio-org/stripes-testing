@@ -108,6 +108,9 @@ describe('Inventory', () => {
         'C446114 Find Instance plugin | Staff suppressed records still displays when user without permission clicks "Reset all" button (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C446114'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifyAccordionExistance(staffSuppressAccordionName, false);
 
           SelectInstanceModal.searchByName(instanceTitlePrefix);

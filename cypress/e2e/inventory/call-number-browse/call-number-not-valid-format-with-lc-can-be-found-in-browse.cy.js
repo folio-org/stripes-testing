@@ -196,6 +196,9 @@ describe('Inventory', () => {
           const callNumberQuery =
             instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
           InventorySearchAndFilter.selectBrowseCallNumbers();
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
           InventorySearchAndFilter.browseSearch(callNumberQuery);
           InventorySearchAndFilter.verifyBrowseInventorySearchResults({
@@ -224,6 +227,9 @@ describe('Inventory', () => {
             }
             InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumberType);
             BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventorySearchAndFilter.browseSearch(callNumberQuery);
             InventorySearchAndFilter.verifyBrowseInventorySearchResults({
               records: [{ callNumber: callNumberQuery }],

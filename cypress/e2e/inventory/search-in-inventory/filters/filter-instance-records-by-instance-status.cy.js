@@ -144,9 +144,10 @@ describe('Inventory', () => {
           });
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.waitLoading();
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
           });
 
           InventorySearchAndFilter.executeSearch(testData.instancesTitlePrefix);

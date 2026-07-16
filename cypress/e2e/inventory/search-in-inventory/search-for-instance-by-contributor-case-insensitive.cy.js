@@ -90,6 +90,7 @@ describe('Inventory', () => {
               testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
             });
           });
+          cy.resetInventoryDisplaySettingsViaAPI();
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
@@ -111,6 +112,9 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C464068'] },
         () => {
           testData.searchQueriesKeyword.forEach((query, index) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchByTitle(query);
             for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
               InventoryInstances.checkResultsCellContainsAnyOfValues(
@@ -126,6 +130,9 @@ describe('Inventory', () => {
           });
 
           testData.searchQueriesContributor.forEach((query, index) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(testData.contributorSearchOption, query);
             for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
               InventoryInstances.checkResultsCellContainsAnyOfValues(
@@ -141,6 +148,9 @@ describe('Inventory', () => {
           });
 
           testData.searchQueriesAll.forEach((query, index) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(testData.allSearchOption, query);
             for (let rowIndex = 0; rowIndex < resultsInstancesTable[index].length; rowIndex++) {
               InventoryInstances.checkResultsCellContainsAnyOfValues(

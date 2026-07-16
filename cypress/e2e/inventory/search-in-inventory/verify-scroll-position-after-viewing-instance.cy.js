@@ -42,6 +42,7 @@ describe('Inventory', () => {
             for (let i = 0; i < 2; i++) {
               InventoryInstances.scrollToRow(middleIndex);
               InventoryInstances.selectInstance(middleIndex);
+              InventoryInstance.waitInstanceRecordViewOpened();
               InventoryInstances.verifyRowIsHighlighted(middleIndex);
               InventorySearchAndFilter.closeInstanceDetailPane();
             }
@@ -49,12 +50,14 @@ describe('Inventory', () => {
             // Steps 6-8: Scroll to near the bottom, open instance, close detail pane
             InventoryInstances.scrollToRow(bottomIndex);
             InventoryInstances.selectInstance(bottomIndex);
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstances.verifyRowIsHighlighted(bottomIndex);
             InventorySearchAndFilter.closeInstanceDetailPane();
 
             // Steps 9-10: Open record near bottom, enter edit mode, cancel, close detail pane
             InventoryInstances.scrollToRow(previousBottomIndex);
             InventoryInstances.selectInstance(previousBottomIndex);
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventoryInstances.verifyRowIsHighlighted(previousBottomIndex);
             InventoryInstance.editInstance();
             InstanceRecordEdit.close();
@@ -85,8 +88,10 @@ describe('Inventory', () => {
           }
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
           });
           InventorySearchAndFilter.executeSearch('*');
+          cy.wait(3000);
           InventoryInstances.waitLoading();
           verifyScrollPositionSteps();
         });

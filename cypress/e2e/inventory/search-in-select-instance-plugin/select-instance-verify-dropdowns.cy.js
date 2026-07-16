@@ -71,6 +71,16 @@ describe('Inventory', () => {
 
       before('Create user and open Select instance plugin', () => {
         cy.getAdminToken().then(() => {
+          cy.ifConsortia(true, () => {
+            [
+              testData.filtersOrder.instance,
+              testData.filtersOrder.holdings,
+              testData.filtersOrder.item,
+            ].forEach((filterSet) => {
+              filterSet.unshift('Shared', 'Held by');
+            });
+          });
+
           Organizations.createOrganizationViaApi(organization).then((response) => {
             organization.id = response;
             order.vendor = response;

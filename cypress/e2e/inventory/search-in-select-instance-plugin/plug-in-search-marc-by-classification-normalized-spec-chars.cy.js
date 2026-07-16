@@ -113,6 +113,9 @@ describe('Inventory', () => {
         testData.classificationNumbers.forEach((number) => {
           SelectInstanceModal.chooseSearchOption(testData.searchOption);
           SelectInstanceModal.checkSearchOptionSelected(testData.searchOption);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           SelectInstanceModal.fillInSearchQuery(number);
           SelectInstanceModal.checkSearchInputFieldValue(number);
           SelectInstanceModal.clickSearchButton();

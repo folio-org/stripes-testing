@@ -151,6 +151,7 @@ export default {
     }
   },
   searchByName(instanceTitle) {
+    if (!Cypress.env('ecsEnabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do([searchInput.fillIn(instanceTitle), searchButton.click()]);
     cy.expect(
       selectInstanceModal.find(HTML(including('Enter search criteria to start search'))).absent(),

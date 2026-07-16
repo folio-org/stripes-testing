@@ -107,6 +107,9 @@ describe('Inventory', () => {
         'C446101 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Keyword") in three segments (Instance|Holdings|Item) (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C446101'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(
             staffSuppressAccordionName,

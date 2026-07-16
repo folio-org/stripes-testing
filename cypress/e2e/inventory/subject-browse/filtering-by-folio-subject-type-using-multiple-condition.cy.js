@@ -45,7 +45,6 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
       });
     });
@@ -62,6 +61,9 @@ describe('Inventory', () => {
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         cy.wait(5000);
         BrowseSubjects.expandAccordion('Subject type');
         BrowseSubjects.selectSubjectType(testData.firstConditionForFiltering);

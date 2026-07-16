@@ -86,6 +86,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.validateSearchTabIsDefault();
         InventorySearchAndFilter.verifyAccordionExistance(accordionName, false);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventorySearchAndFilter.byShared('No');
+        });
 
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

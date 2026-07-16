@@ -70,11 +70,14 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
-        InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
         cy.wait(5000);
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
+
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
         cy.wait(2000);
         BrowseSubjects.openInstance(testData.subject);

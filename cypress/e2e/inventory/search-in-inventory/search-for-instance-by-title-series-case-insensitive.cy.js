@@ -89,6 +89,9 @@ describe('Inventory', () => {
           });
 
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
             testData.searchResulsAllInstances.forEach((result) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -97,6 +100,9 @@ describe('Inventory', () => {
           });
 
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(testData.allSearchOption, query);
             testData.searchResulsAllInstances.forEach((result) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(result, true);

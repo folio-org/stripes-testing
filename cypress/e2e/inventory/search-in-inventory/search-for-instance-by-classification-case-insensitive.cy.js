@@ -100,6 +100,9 @@ describe('Inventory', () => {
         { tags: ['extendedPathFlaky', 'spitfire', 'C466151'] },
         () => {
           testData.searchQueries.forEach((query, index) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(
               testData.classificationSearchOption,
               query,

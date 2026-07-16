@@ -55,7 +55,10 @@ describe('Inventory', () => {
           cy.getInstanceTypes({ limit: 1, query: 'source=rdacontent' }).then((instanceTypes) => {
             instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 3, query: '(isActive=true and name<>"AT_*")' }).then(() => {
+          cy.getLocations({
+            limit: 3,
+            query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+          }).then(() => {
             locations.push(...Cypress.env('locations'));
           });
           cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {

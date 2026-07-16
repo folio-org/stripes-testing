@@ -118,14 +118,23 @@ describe('Inventory', () => {
           SelectInstanceModal.checkClearIconShownInSearchField(false);
         }
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         searchClearAndCheck();
 
         SelectInstanceModal.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         searchClearAndCheck();
 
         SelectInstanceModal.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        });
         searchClearAndCheck();
       },
     );

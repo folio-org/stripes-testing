@@ -74,9 +74,16 @@ describe('Inventory', () => {
         'C584507 Check filtering by local Subject Source (folijet)',
         { tags: ['criticalPath', 'folijet', 'C584507'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
+
           cy.wait(2000);
           BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
           cy.wait(2000);

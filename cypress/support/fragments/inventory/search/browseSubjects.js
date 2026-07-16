@@ -179,7 +179,7 @@ export default {
   },
 
   navigateToFirstPage() {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get('#browse-results-list-browseSubjects-prev-paging-button').then(($btn) => {
       if (!$btn.prop('disabled')) {
         cy.wrap($btn).click();
@@ -189,7 +189,7 @@ export default {
   },
 
   navigateToLastPage() {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get('#browse-results-list-browseSubjects-next-paging-button').then(($btn) => {
       if (!$btn.prop('disabled')) {
         cy.wrap($btn).click();

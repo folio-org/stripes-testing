@@ -77,6 +77,10 @@ describe('Inventory', () => {
         { tags: ['criticalPathFlaky', 'spitfire', 'C466075'] },
         () => {
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
+
             InventoryInstances.searchInstancesWithOption(testData.subjectSearchOption, query);
             testData.searchResults.forEach((title) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(title, true);
@@ -85,6 +89,9 @@ describe('Inventory', () => {
           });
 
           testData.searchQueries.forEach((query) => {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            });
             InventoryInstances.searchInstancesWithOption(testData.allSearchOption, query);
             testData.searchResults.forEach((title) => {
               InventorySearchAndFilter.verifyInstanceDisplayed(title, true);

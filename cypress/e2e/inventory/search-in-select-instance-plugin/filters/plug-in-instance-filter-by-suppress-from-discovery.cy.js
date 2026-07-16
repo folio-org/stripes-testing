@@ -93,6 +93,9 @@ describe('Inventory', () => {
         'C476811 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C476811'] },
         () => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          });
           InventorySearchAndFilter.toggleAccordionByName(suppressFromDiscoveryAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(
             suppressFromDiscoveryAccordionName,
