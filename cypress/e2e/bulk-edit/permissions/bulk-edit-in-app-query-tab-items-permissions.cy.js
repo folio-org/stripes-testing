@@ -139,6 +139,8 @@ describe('Bulk-edit', () => {
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
         cy.wait(2000);
+        cy.logout();
+        cy.reload();
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,

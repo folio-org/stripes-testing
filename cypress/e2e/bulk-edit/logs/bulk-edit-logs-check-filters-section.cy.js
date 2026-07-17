@@ -258,16 +258,18 @@ describe('Bulk-edit', () => {
         BulkEditLogs.fillLogsDate('Started', 'From', yesterday);
         BulkEditLogs.fillLogsDate('Started', 'To', currentDate);
         BulkEditLogs.applyStartDateFilters();
-        cy.wait(3000);
+        cy.wait(6000);
         BulkEditLogs.verifyDateCellsValues(6, yesterday, currentDate);
         BulkEditLogs.verifyClearSelectedFiltersButton('Started');
 
         // Step 17: Verify User dropdown with all filters applied
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.verifyUserIsInUserList(usersForJobs[2].username);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
 
         // Step 18: Click "x" icon of the "Started" accordion
         BulkEditLogs.clickClearStartedFilter();
@@ -297,6 +299,7 @@ describe('Bulk-edit', () => {
 
         // Step 23: Verify User dropdown with Ended filter
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.verifyUserIsInUserList(usersForJobs[2].username);
         BulkEditLogs.verifyLogStatus(
@@ -305,6 +308,7 @@ describe('Bulk-edit', () => {
         );
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
 
         // Step 24: Click on the "Reset all" button
         BulkEditLogs.resetAll();
@@ -320,15 +324,18 @@ describe('Bulk-edit', () => {
 
         // Step 25: Click "User" accordion and verify all users shown
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.verifyUserIsInUserList(usersForJobs[0].username);
         BulkEditLogs.verifyUserIsInUserList(usersForJobs[1].username);
         BulkEditLogs.verifyUserIsInUserList(usersForJobs[2].username);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
 
         // Step 26: Type a name of any user who executed jobs
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.fillUserFilterInput(usersForJobs[2].username);
 
@@ -342,10 +349,13 @@ describe('Bulk-edit', () => {
           `${usersForJobs[2].personal.lastName}, ${usersForJobs[2].personal.preferredFirstName} ${usersForJobs[2].personal.middleName}`,
         );
         BulkEditLogs.clickChooseUserUnderUserAccordion();
+
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
 
         // Step 28: Click on dropdown and select different user
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.selectUserFromDropdown(usersForJobs[1].username);
         BulkEditLogs.verifyClearSelectedButtonExists('User');
         BulkEditLogs.resetAllBtnIsDisabled(false);
@@ -364,6 +374,7 @@ describe('Bulk-edit', () => {
 
         // Step 30: Type a name of user who did NOT execute jobs
         BulkEditLogs.clickUserAccordion();
+        cy.wait(1000);
         BulkEditLogs.clickChooseUserUnderUserAccordion();
         BulkEditLogs.fillUserFilterInput(user.username);
         BulkEditLogs.verifyUserIsNotInUserList(user.username);
