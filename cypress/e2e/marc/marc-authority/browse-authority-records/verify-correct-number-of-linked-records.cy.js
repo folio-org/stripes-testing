@@ -171,6 +171,11 @@ describe('MARC', () => {
                 InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 MarcAuthorities.switchToSearch();
+                cy.ifConsortia(true, () => {
+                  MarcAuthorities.clickAccordionByName('Shared');
+                  MarcAuthorities.verifySharedAccordionOpen(true);
+                  MarcAuthorities.actionsSelectCheckbox('No');
+                });
                 InventoryInstance.searchResults(record.authorityTitle);
                 MarcAuthorities.checkFieldAndContentExistence(
                   record.authorityFieldTag,
@@ -225,6 +230,12 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C367936'] },
         () => {
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[2].title);
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[2].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[2].title, 1);
           MarcAuthorities.clickOnNumberOfTitlesForRowWithValue(marcFiles[2].title, 1);
@@ -238,6 +249,12 @@ describe('MARC', () => {
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[3].title);
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[3].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[3].title, 2);
           MarcAuthorities.clickOnNumberOfTitlesForRowWithValue(marcFiles[3].title, 2);
@@ -252,6 +269,12 @@ describe('MARC', () => {
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[4].title);
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[4].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[4].title, 1);
 

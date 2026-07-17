@@ -100,6 +100,12 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
           MarcAuthorities.searchByParameter(testData.forC359232.searchOption, '*');
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           // wait for the results to be loaded.
           cy.wait(1000);
           MarcAuthorities.checkSingleHeadingType(

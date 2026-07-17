@@ -94,6 +94,8 @@ describe('MARC', () => {
           cy.title().should('eq', getExpectedTitle(Object.values(authorityHeadings)[index]));
 
           MarcAuthorities.clickResetAndCheck();
+          MarcAuthorities.fillSearchInput(Object.values(authorityHeadings)[index]);
+          MarcAuthorities.clickResetAndCheck();
           cy.title().should('eq', getExpectedTitle());
         });
       },

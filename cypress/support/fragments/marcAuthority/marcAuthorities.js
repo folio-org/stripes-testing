@@ -247,6 +247,9 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.do(searchButton.click());
   },
+  fillSearchInput(value) {
+    cy.do(searchInput.fillIn(value));
+  },
   checkFieldTagExists: () => {
     cy.expect([editorSection.exists(), QuickMarcEditorRow({ tagValue: '625' }).exists()]);
   },

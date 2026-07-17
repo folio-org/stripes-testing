@@ -84,6 +84,12 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySearchOptions();
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            cy.ifConsortia(true, () => {
+              cy.wait(2000);
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.verifySharedAccordionOpen(true);
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag100,
               testData.authority100FieldValue,

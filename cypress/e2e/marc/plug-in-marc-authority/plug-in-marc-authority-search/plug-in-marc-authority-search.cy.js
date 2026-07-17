@@ -554,20 +554,24 @@ describe('MARC', () => {
         'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C380569'] },
         () => {
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+            cy.wait(2000);
+          });
           cy.intercept('search/authorities?*').as('searchAuthorities');
 
           MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');

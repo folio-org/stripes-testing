@@ -78,10 +78,6 @@ describe('MARC', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        cy.waitForAuthRefresh(() => {
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        });
       });
 
       after('Deleting created user', () => {
@@ -102,6 +98,12 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.searchByParameter(testData.searchOptionA, testData.value);
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           // wait for the results to be loaded.
           cy.wait(1000);
           MarcAuthorities.checkAuthorizedReferenceColumn(testData.authorized, testData.reference);

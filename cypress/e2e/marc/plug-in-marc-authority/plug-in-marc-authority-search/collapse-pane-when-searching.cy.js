@@ -48,45 +48,45 @@ describe('MARC', () => {
           InventoryInstances.getInstancesViaApi({
             limit: 100,
             query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
+          })
+            .then((instances) => {
+              if (instances) {
+                instances.forEach(({ id }) => {
+                  InventoryInstance.deleteInstanceViaApi(id);
+                });
+              }
+            })
+            .then(() => {
+              testData.marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    if (
+                      marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                    ) {
+                      testData.instanceIDs.push(record[marcFile.propertyName].id);
+                    } else {
+                      testData.authorityIDs.push(record[marcFile.propertyName].id);
+                    }
+                  });
+                });
               });
-            }
-          });
-
-          testData.marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                if (
-                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                ) {
-                  testData.instanceIDs.push(record[marcFile.propertyName].id);
-                } else {
-                  testData.authorityIDs.push(record[marcFile.propertyName].id);
-                }
+            })
+            .then(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
               });
+              InventoryInstances.searchByTitle(testData.instanceIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
             });
-          });
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
-          InventoryInstances.searchByTitle(testData.instanceTitle);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
         });
       });
 
@@ -111,6 +111,13 @@ describe('MARC', () => {
           MarcAuthoritiesSearch.verifySearchPaneIsCollapsed(true);
           MarcAuthoritiesSearch.clickShowFilters();
           MarcAuthoritiesSearch.clickSearchButton();
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+            cy.wait(2000);
+          });
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthoritiesSearch.collapseSearchPane();
           MarcAuthoritiesSearch.verifySearchPaneIsCollapsed();

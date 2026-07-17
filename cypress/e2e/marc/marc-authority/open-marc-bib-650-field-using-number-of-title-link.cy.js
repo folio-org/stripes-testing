@@ -73,6 +73,12 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.verifySearchOptions();
+          cy.ifConsortia(true, () => {
+            cy.wait(2000);
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           InventoryInstance.searchResults(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
@@ -101,6 +107,12 @@ describe('MARC', () => {
       { tags: ['criticalPath', 'spitfire', 'C375271'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
+        cy.ifConsortia(true, () => {
+          cy.wait(2000);
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.verifySharedAccordionOpen(true);
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthorities.checkRow(testData.marcValue);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
         MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');

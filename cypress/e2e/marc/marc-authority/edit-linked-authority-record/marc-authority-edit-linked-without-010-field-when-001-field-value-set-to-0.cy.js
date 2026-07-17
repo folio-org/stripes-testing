@@ -10,6 +10,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -147,6 +148,9 @@ describe('MARC', () => {
           );
 
           TopMenuNavigation.navigateToApp('Inventory');
+          InventoryInstances.waitContentLoading();
+
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
 
           InventoryInstances.searchAndVerify(marcFiles[0].instanceTitle);
           InventoryInstances.selectInstance();

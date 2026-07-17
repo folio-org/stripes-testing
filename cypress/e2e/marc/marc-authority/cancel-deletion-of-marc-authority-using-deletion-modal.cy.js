@@ -69,6 +69,12 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C367928'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFile.authorityTitle);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+            cy.wait(2000);
+          });
 
           MarcAuthorities.selectFirstRecord();
           MarcAuthority.waitLoading();

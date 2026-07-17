@@ -75,7 +75,7 @@ describe('MARC', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -105,7 +105,7 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-            InventoryInstances.searchByTitle(testData.instanceTitle);
+            InventoryInstances.searchByTitle(testData.instanceIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
@@ -130,6 +130,11 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C360111'] },
         () => {
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.searchByParameter(
             testData.authSearchOption.PERSONAL_NAME,
             testData.authTitle,

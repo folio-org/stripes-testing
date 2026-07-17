@@ -110,7 +110,7 @@ describe('MARC', () => {
         },
         {
           tag: testData.tag100,
-          content: testData.bibTag100Content,
+          content: `$a ${testData.bibTag100Content}`,
           indicators: ['1', '\\'],
         },
         {
@@ -200,6 +200,7 @@ describe('MARC', () => {
               cy.ifConsortia(true, () => {
                 MarcAuthorities.clickAccordionByName('Shared');
                 MarcAuthorities.verifySharedAccordionOpen(false);
+                cy.wait(2000);
               });
             }
             MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);
@@ -214,6 +215,7 @@ describe('MARC', () => {
               MarcAuthorities.clickAccordionByName('Shared');
               MarcAuthorities.verifySharedAccordionOpen(true);
               MarcAuthorities.actionsSelectCheckbox('No');
+              cy.wait(2000);
             });
 
             expectedHeadings.forEach((heading) => {
