@@ -7,14 +7,18 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import DateTools from '../../../support/utils/dateTools';
 
 let user;
 const birthdate = '1970-12-02';
 const birthdateSlashFormat = '12/2/1970';
 const dateEnrolled = '2020-01-15';
 const dateEnrolledSlashFormat = '1/15/2020';
-const expirationDate = '2035-06-30';
-const expirationDateSlashFormat = '6/30/2035';
+const expirationDateObj = DateTools.addDays(2);
+const expirationDate = DateTools.getFormattedDate({ date: expirationDateObj });
+const expirationDateSlashFormat = DateTools.getFormattedDateWithSlashes({
+  date: expirationDateObj,
+});
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const fileNames = BulkEditFiles.getAllDownloadedFileNames(userBarcodesFileName, true);
 const expectedDateFields = [

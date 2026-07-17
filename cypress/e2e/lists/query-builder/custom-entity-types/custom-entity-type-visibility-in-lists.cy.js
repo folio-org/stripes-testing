@@ -38,7 +38,7 @@ describe('Lists', () => {
             Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
               expect(response.status).to.equal(201);
 
-              cy.wait(300_000); // need to wait created custom entity type be available in Lists
+              cy.wait(60 * 1000 * 5); // need to wait around 5 minutes for the created custom entity type to be available in Lists
             });
           });
       });
@@ -81,7 +81,7 @@ describe('Lists', () => {
             privateEntityType,
           ).then((response) => {
             expect(response.status).to.equal(200);
-            cy.wait(300_000); // need to wait changes to be reflected in Lists
+            cy.wait(60 * 1000 * 5); // need to wait around 5 minutes for changes to be reflected in Lists
           });
 
           // Step 4: Verify the private ET no longer appears in the Lists app dropdowns

@@ -1262,7 +1262,7 @@ const API = {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: `{"$and":[{"instance.source":{"$ne":"LINKED_DATA"}},{"instance.created_at":{"$gt":"${dateTenDaysAgo}"}}],"_version":"24"}`,
+          fqlQuery: `{"$and":[{"instance.source":{"$ne":"LINKED_DATA"}},{"instance.created_at":{"$gt":"${dateTenDaysAgo}"}}]}`,
         },
         fields: [
           'instance.hrid',
