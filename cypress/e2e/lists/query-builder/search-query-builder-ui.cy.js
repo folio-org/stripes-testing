@@ -33,6 +33,7 @@ describe('Lists', () => {
   describe('Query Builder UI', () => {
     let userData = {};
     let listName;
+    const todayDate = DateTools.getCurrentDate();
 
     const buildQueryModal = Pane('Build query');
     const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
@@ -145,6 +146,13 @@ describe('Lists', () => {
       QueryModal.selectField(field);
       QueryModal.selectOperator(operator);
       QueryModal.populateFiled(filedType, value);
+
+      if (field.startsWith('Instance')) {
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
+      }
       QueryModal.testQuery();
       cy.wait(2000); // wait for query to process
       Lists.verifyQueryHeader(field);

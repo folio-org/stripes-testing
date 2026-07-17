@@ -10,10 +10,7 @@ describe('Lists', () => {
       let userData = {};
       let newCustomEntityTypeWithSources;
 
-      const capabSetsToAssign = [
-        CapabilitySets.moduleListsManage,
-        CapabilitySets.uiUsersView,
-      ];
+      const capabSetsToAssign = [CapabilitySets.moduleListsManage, CapabilitySets.uiUsersView];
       const capabsToAssign = [
         Capabilities.fqmEntityTypesCustomCollectionCreate,
         Capabilities.fqmEntityTypesCustomItemView,
@@ -22,6 +19,7 @@ describe('Lists', () => {
       ];
 
       before('Create test data', () => {
+        cy.clearLocalStorage();
         cy.getAdminToken();
         Lists.generateSimpleUsersEntityTypeSource().then((source) => {
           newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
@@ -30,15 +28,17 @@ describe('Lists', () => {
             false,
           );
         });
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
-        }).then(() => {
-          cy.getUserToken(userData.username, userData.password);
-          Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
-            expect(response.status).to.equal(201);
+        cy.createTempUser([])
+          .then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
+          })
+          .then(() => {
+            cy.getUserToken(userData.username, userData.password);
+            Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
+              expect(response.status).to.equal(201);
+            });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -61,7 +61,9 @@ describe('Lists', () => {
           // Check Record types filter dropdown
           Lists.openRecordTypeFilter();
           Lists.searchRecordTypeFilterInDropdown(newCustomEntityTypeWithSources.name);
-          Lists.verifyRecordTypeFilterDropdownContainsOptions([newCustomEntityTypeWithSources.name]);
+          Lists.verifyRecordTypeFilterDropdownContainsOptions([
+            newCustomEntityTypeWithSources.name,
+          ]);
 
           // Check Record type dropdown when creating a new list
           Lists.openNewListPane();
@@ -72,7 +74,10 @@ describe('Lists', () => {
           // Step 3: Update the entity type to private: true
           cy.getUserToken(userData.username, userData.password);
           const privateEntityType = { ...newCustomEntityTypeWithSources, private: true };
-          Lists.updateCustomEntityTypeById(newCustomEntityTypeWithSources.id, privateEntityType).then((response) => {
+          Lists.updateCustomEntityTypeById(
+            newCustomEntityTypeWithSources.id,
+            privateEntityType,
+          ).then((response) => {
             expect(response.status).to.equal(200);
           });
 

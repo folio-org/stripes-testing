@@ -413,7 +413,7 @@
             "items": {}
           },
           "instance.statistical_code_names": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.status_id": {
             "type": ["string", "null"]
