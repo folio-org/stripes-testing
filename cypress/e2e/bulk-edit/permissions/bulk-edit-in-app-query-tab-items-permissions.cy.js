@@ -132,7 +132,7 @@ describe('Bulk-edit', () => {
         AuthorizationRoles.selectCapabilitySetCheckbox(capabSetToSelect);
 
         capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, { isSelected: false });
+          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
         });
 
         AuthorizationRoles.clickSaveButton();

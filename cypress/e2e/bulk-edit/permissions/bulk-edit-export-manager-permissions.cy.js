@@ -184,7 +184,7 @@ describe.skip('Bulk-edit', () => {
         AuthorizationRoles.checkCapabilitySpinnersAbsent();
 
         capabSetsToUnselect.forEach((capabilitySet) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet, { isSelected: false });
+          AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet, false);
           cy.wait(2000);
         });
         capabSetsToSelect.forEach((capabilitySet) => {
