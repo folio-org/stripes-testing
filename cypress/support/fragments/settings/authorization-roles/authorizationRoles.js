@@ -284,7 +284,7 @@ export default {
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
-  selectCapabilitySetCheckbox: ({ table, resource, action, type }, { isSelected = true } = {}) => {
+  selectCapabilitySetCheckbox: ({ table, resource, action, type }, isSelected = true) => {
     const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
