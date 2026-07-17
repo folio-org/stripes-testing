@@ -3,6 +3,7 @@ import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
@@ -19,11 +20,10 @@ describe('Lists', () => {
       ];
 
       before('Create test data', () => {
-        cy.clearLocalStorage();
         cy.getAdminToken();
         Lists.generateSimpleUsersEntityTypeSource().then((source) => {
           newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
-            'Custom entity type C825347',
+            `Custom entity type C825347 ${getRandomPostfix()}`,
             [source],
             false,
           );
@@ -37,6 +37,8 @@ describe('Lists', () => {
             cy.getUserToken(userData.username, userData.password);
             Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
               expect(response.status).to.equal(201);
+
+              cy.wait(300_000); // need to wait created custom entity type be available in Lists
             });
           });
       });
@@ -79,6 +81,7 @@ describe('Lists', () => {
             privateEntityType,
           ).then((response) => {
             expect(response.status).to.equal(200);
+            cy.wait(300_000); // need to wait changes to be reflected in Lists
           });
 
           // Step 4: Verify the private ET no longer appears in the Lists app dropdowns

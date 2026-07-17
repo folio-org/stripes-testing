@@ -1099,8 +1099,8 @@ describe('Lists', () => {
       );
 
       it(
-        'Search instances in the query builder by classification identifier type (corsair)',
-        { tags: ['criticalPath', 'corsair'] },
+        'C594516 Search instances in the query builder by classification identifier type (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C594516'] },
         () => {
           listName = getTestEntityValue('C_lists_query_builder_classification_list');
           openQueryBuilder(recordType);
@@ -1114,11 +1114,15 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueMultiselect(testData.classificationIdentifierTypeName);
           QueryModal.verifySelectedMultiselectValue(testData.classificationIdentifierTypeName);
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.createdDate, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.pickDate(todayDate, 1);
           QueryModal.testQuery();
           Lists.verifyPreviewOfRecordsMatched();
           cy.contains(testData.instanceTitle).should('be.visible');
           QueryModal.verifyQueryAreaContent(
-            `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}])`,
+            `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}] AND (instance.created_at == ${todayDate}))`,
           );
         },
       );
