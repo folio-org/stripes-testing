@@ -1,36 +1,19 @@
 import { Permissions } from '../../../support/dictionary';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
       instance: {},
+      contributorName: `AT_C357577_contributor_${getRandomPostfix()}`,
     };
 
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
-          InventoryInstance.createInstanceViaApi({
-            contributors: [
-              {
-                name: `autotest_contributor_name_${randomFourDigitNumber()}`,
-                contributorNameTypeId: contributorNameTypes[0].id,
-                contributorTypeText: '',
-                primary: false,
-              },
-            ],
-          }).then(({ instanceData }) => {
-            testData.instance = instanceData;
-          });
-        });
-      });
-
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -43,7 +26,6 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       Users.deleteViaApi(testData.user.userId);
     });
 

@@ -59,6 +59,10 @@ describe('MARC', () => {
                 Permissions.uiSettingsViewAuthorityFiles.gui,
               ]);
               cy.resetTenant();
+              // force increased limit for UI to load all files
+              cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+                req.url = req.url.replace(/limit=\d+/, 'limit=200');
+              });
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.settingsAuthorityFilesPath,
                 waiter: ManageAuthorityFiles.waitLoading,

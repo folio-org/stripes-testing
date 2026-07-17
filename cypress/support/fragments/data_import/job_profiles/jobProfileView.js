@@ -52,12 +52,8 @@ export default {
   },
 
   addExistingTag: (tag) => {
-    cy.intercept({
-      method: 'GET',
-      url: '/tags?limit=10000',
-    }).as('getTags');
     cy.do(Accordion({ id: 'tag-accordion' }).clickHeader());
-    cy.wait('@getTags');
+    cy.wait(1000);
     cy.expect(tagSelect.exists());
     cy.wait(1000);
     cy.do(tagSelect.choose(tag));

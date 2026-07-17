@@ -74,6 +74,10 @@ describe('MARC', () => {
           'C423375 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane of Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C423375'] },
           () => {
+            // force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             // Step 1: User A in Central
             cy.resetTenant();
             cy.login(userA.username, userA.password, {

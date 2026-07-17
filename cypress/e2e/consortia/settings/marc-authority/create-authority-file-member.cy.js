@@ -40,6 +40,10 @@ describe('MARC', () => {
               cy.assignPermissionsToExistingUser(testData.user.userId, [
                 Permissions.uiSettingsViewAuthorityFiles.gui,
               ]);
+              // force increased limit for UI to load all files
+              cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+                req.url = req.url.replace(/limit=\d+/, 'limit=200');
+              });
               cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.login(testData.user.username, testData.user.password);
