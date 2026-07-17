@@ -7,17 +7,19 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 describe('Lists', () => {
   describe('Export concurrent list', () => {
     let userData = {};
-    const listData = {
-      name: `C411767-${getTestEntityValue('list')}`,
-      description: `C411767-${getTestEntityValue('desc')}`,
-      recordType: 'Instances',
-      fqlQuery: '',
-      isActive: true,
-      isPrivate: false,
-    };
+    let listData;
     let listId;
 
     beforeEach('Create user and list', () => {
+      listData = {
+        name: `C411767-${getTestEntityValue('list')}`,
+        description: `C411767-${getTestEntityValue('desc')}`,
+        recordType: 'Instances',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: false,
+      };
+
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
@@ -48,11 +50,12 @@ describe('Lists', () => {
     });
 
     afterEach('Delete test data', () => {
-      cy.getAdminToken();
-      Lists.deleteRecursivelyViaApi(listId);
+      cy.getAdminToken(false);
+      //  Lists.deleteRecursivelyViaApi(listId);
       Users.deleteViaApi(userData.userId);
     });
 
+    // NOTE: Test case is depandable on the number of instances on the environment that returns in query
     it(
       'C411767 (Multiple users) Edit list when export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411767'] },

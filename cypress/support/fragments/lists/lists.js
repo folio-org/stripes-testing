@@ -30,6 +30,7 @@ import {
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
+import DateTools from '../../utils/dateTools';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -128,7 +129,10 @@ const UI = {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
+    cy.xpath(
+      '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
+      { timeout: 120000 },
+    ).should('not.exist');
   },
 
   filtersWaitLoading() {
@@ -1250,10 +1254,15 @@ const API = {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Instances',
       ).id;
+
+      // Get date from 10 days ago
+      const tenDaysAgoDate = DateTools.addDays(-10);
+      const dateTenDaysAgo = `${DateTools.getFormattedDate({ date: tenDaysAgoDate })}T00:00:00.000`;
+
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"instance.source":{"$ne":"LINKED_DATA"}}',
+          fqlQuery: `{"$and":[{"instance.source":{"$ne":"LINKED_DATA"}},{"instance.created_at":{"$gt":"${dateTenDaysAgo}"}}],"_version":"24"}`,
         },
         fields: [
           'instance.hrid',
