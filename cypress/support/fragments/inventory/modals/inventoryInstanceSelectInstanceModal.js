@@ -22,6 +22,7 @@ export default {
         .find(HTML(including('Choose a filter or enter a search query to show result')))
         .exists(),
     );
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(rootModal.find(SearchField('Search field index')).selectIndex('Instance HRID'));
     cy.do(rootModal.find(SearchField('Search field index')).fillIn(instanceHrId));
     cy.do(rootModal.find(Button('Search')).click());
@@ -33,6 +34,7 @@ export default {
         .find(HTML(including('Choose a filter or enter a search query to show result')))
         .exists(),
     );
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do([
       rootModal.find(searchField).selectIndex('Title (all)'),
       rootModal.find(searchField).fillIn(title),
@@ -71,12 +73,16 @@ export default {
 
   clearDefaultFilter(accordionName) {
     cy.do(
-      Button({
-        ariaLabel: or(
-          `Clear selected filters for "${accordionName}"`,
-          `Clear selected ${accordionName} filters`,
-        ),
-      }).click(),
+      rootModal
+        .find(
+          Button({
+            ariaLabel: or(
+              `Clear selected filters for "${accordionName}"`,
+              `Clear selected ${accordionName} filters`,
+            ),
+          }),
+        )
+        .click(),
     );
   },
 
@@ -84,12 +90,16 @@ export default {
     cy.wait(2000);
     this.clearDefaultFilter(heldbyAccordionName);
     cy.expect(
-      Button({
-        ariaLabel: or(
-          `Clear selected filters for "${heldbyAccordionName}"`,
-          `Clear selected ${heldbyAccordionName} filters`,
-        ),
-      }).absent(),
+      rootModal
+        .find(
+          Button({
+            ariaLabel: or(
+              `Clear selected filters for "${heldbyAccordionName}"`,
+              `Clear selected ${heldbyAccordionName} filters`,
+            ),
+          }),
+        )
+        .absent(),
     );
   },
 };

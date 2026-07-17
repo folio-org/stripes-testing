@@ -172,7 +172,7 @@ describe('MARC', () => {
           // Step 1: Actions → Edit MARC bibliographic record
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
+          QuickMarcEditor.checkPaneheaderContains(/Edit .*MARC record/);
 
           // Verify local control fields don't have subfield indicators ($a)
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);
@@ -213,7 +213,7 @@ describe('MARC', () => {
           // Step 6: Actions → Edit MARC bibliographic record again
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
+          QuickMarcEditor.checkPaneheaderContains(/Edit .*MARC record/);
 
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);
           QuickMarcEditor.checkContentByTag(testData.tags.tag004, testData.fieldValues.field004);

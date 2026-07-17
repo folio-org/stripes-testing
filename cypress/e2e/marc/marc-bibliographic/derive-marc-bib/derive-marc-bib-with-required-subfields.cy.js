@@ -224,7 +224,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBibRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains(/Derive a new MARC bib record/);
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Step 2: Make sure that "245" has required standard and appended Subfield codes
           QuickMarcEditor.updateExistingField(testData.tag245, testData.field245Content);

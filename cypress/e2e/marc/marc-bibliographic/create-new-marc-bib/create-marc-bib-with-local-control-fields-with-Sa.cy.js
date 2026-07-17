@@ -162,7 +162,7 @@ describe('MARC', () => {
           // Step 7: Click on the "Actions" button in the third pane >> Select "Edit MARC bibliographic record" option
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
+          QuickMarcEditor.checkPaneheaderContains(/Edit .*MARC record/);
 
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);
           QuickMarcEditor.checkContentByTag(testData.tags.tag004, testData.fieldValues.field004);

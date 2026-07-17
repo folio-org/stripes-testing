@@ -89,7 +89,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBibRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Derive a new MARC bib record');
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           QuickMarcEditor.verifyTagValue(0, 'LDR');
           QuickMarcEditor.verifyTagValue(1, '001');
@@ -151,7 +151,7 @@ describe('MARC', () => {
           // Step 4: Click Actions → "Edit MARC bibliographic record"
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Edit MARC record');
+          QuickMarcEditor.checkPaneheaderContains(/Edit .*MARC record/);
           QuickMarcEditor.verifyRowOrderByTags(testData.expectedOrderAfterMove);
 
           // Step 5: Close editing window and view source

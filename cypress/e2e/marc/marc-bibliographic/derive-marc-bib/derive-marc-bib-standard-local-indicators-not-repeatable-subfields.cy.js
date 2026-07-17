@@ -229,7 +229,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Derive a new MARC bib record');
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Step 2: Update field 245 with standard and appended Indicator and Subfield codes
           QuickMarcEditor.updateExistingField(

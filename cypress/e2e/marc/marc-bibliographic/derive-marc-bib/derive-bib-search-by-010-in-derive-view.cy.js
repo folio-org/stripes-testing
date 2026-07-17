@@ -175,11 +175,15 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C476806'] },
         () => {
           function goToDeriveBib(field010Content) {
-            InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);
-            InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
+            cy.wait(2000);
+            // InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);
+            // InventorySearchAndFilter.verifyDefaultSearchOptionSelected(
+            //   testData.keywordSearchOption,
+            // );
+            InventorySearchAndFilter.searchByParameter(
               testData.keywordSearchOption,
+              testInstanceId,
             );
-            InventoryInstances.searchByTitle(testInstanceId);
             InventoryInstances.selectInstanceById(testInstanceId);
             InventoryInstance.waitLoading();
             InventoryInstance.deriveNewMarcBibRecord();

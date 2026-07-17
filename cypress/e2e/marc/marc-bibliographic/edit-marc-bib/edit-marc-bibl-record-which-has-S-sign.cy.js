@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -81,6 +82,10 @@ describe('MARC', () => {
         () => {
           // 1 Fill in the search query with title of imported record
           // Click on the "Search" button
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchAndVerify(instanceTitle);
           InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
           InstanceRecordView.verifyResourceTitle(instanceTitle);

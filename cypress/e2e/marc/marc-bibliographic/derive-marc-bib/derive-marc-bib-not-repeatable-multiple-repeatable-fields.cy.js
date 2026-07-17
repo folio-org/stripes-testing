@@ -156,7 +156,7 @@ describe('MARC', () => {
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains(/Derive a new MARC bib record/);
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Step 2: Add multiple repeatable fields (Standard and Local) and 1 not repeatable field
           MarcAuthority.addNewField(

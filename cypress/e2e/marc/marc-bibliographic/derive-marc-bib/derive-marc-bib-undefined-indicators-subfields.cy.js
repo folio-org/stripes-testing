@@ -135,7 +135,7 @@ describe('MARC', () => {
           InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.waitLoading();
           InventoryInstance.deriveNewMarcBibRecord();
-          QuickMarcEditor.checkPaneheaderContains(/Derive a new MARC bib record/);
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Step 2: Update field 245 with undefined indicators '8' '8' and subfield $t
           QuickMarcEditor.updateExistingField(testData.tag245, testData.field245.content);

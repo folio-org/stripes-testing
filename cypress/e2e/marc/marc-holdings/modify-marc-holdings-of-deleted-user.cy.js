@@ -8,6 +8,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
@@ -111,6 +112,7 @@ describe('MARC', () => {
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.searchInstanceByTitle(instanceID);
         InventorySearchAndFilter.selectViewHoldings();
         // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.

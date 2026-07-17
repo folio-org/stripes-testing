@@ -75,14 +75,10 @@ describe('Inventory', () => {
           ).then((response) => {
             testData.createdRecordId = response[0].instance.id;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstances.searchByTitle(testData.createdRecordId);
             InventoryInstances.selectInstanceById(testData.createdRecordId);
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);

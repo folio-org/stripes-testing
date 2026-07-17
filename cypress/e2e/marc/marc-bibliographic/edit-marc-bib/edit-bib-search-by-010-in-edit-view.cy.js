@@ -175,8 +175,11 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C476807'] },
         () => {
           function goToEditBib(field010Content) {
-            InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);
-            InventoryInstances.searchByTitle(testInstanceId);
+            cy.wait(2000);
+            InventorySearchAndFilter.searchByParameter(
+              testData.keywordSearchOption,
+              testInstanceId,
+            );
             InventoryInstances.selectInstanceById(testInstanceId);
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.editMarcBibliographicRecord();

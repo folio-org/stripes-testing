@@ -1069,7 +1069,7 @@ export default {
     cy.do(moveItemsButton.click());
   },
 
-  moveHoldingsToAnotherInstance: (newInstanceHrId) => {
+  moveHoldingsToAnotherInstance(newInstanceHrId) {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
@@ -1084,9 +1084,6 @@ export default {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
-    cy.ifConsortia(true, () => {
-      this.clearDefaultHeldbyFilter();
-    });
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     // cypress clicks too fast

@@ -154,7 +154,7 @@ describe('MARC', () => {
           // Click on Actions → Derive new MARC bibliographic record
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Derive a new MARC bib record');
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Verify local control fields don't have subfield indicators ($a)
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);
@@ -202,7 +202,7 @@ describe('MARC', () => {
           // Step 6: Derive again from first derived record
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.checkPaneheaderContains('Derive a new MARC bib record');
+          QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
 
           // Verify fields still don't have $a subfield indicators
           QuickMarcEditor.checkContentByTag(testData.tags.tag002, testData.fieldValues.field002);

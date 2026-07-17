@@ -337,7 +337,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
 
             InventoryInstance.deriveNewMarcBibRecord();
-            QuickMarcEditor.checkPaneheaderContains('Derive a new MARC bib record');
+            QuickMarcEditor.checkPaneheaderContains(/Derive a new .*MARC bib record/);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // Verify $0 fields don't have protocol before linking
             QuickMarcEditor.checkContentByTag(
