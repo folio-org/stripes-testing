@@ -5,6 +5,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import Users from '../../../support/fragments/users/users';
 
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -35,6 +36,8 @@ describe('Data Export', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     });
 

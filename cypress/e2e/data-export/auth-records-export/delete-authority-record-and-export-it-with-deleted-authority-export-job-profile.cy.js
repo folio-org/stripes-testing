@@ -34,6 +34,7 @@ describe('Data Export', () => {
   describe('Authority records export', () => {
     before('create test data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C446015');
       cy.createTempUser([
         permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

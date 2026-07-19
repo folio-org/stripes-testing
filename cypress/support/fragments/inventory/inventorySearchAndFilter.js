@@ -648,6 +648,7 @@ export default {
   },
 
   executeSearch(text) {
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.do(inventorySearchAndFilter.fillIn(text));
     this.clickSearch();
   },
@@ -1123,6 +1124,8 @@ export default {
     this.instanceTabIsDefault();
     this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
     this.verifySearchFieldIsEmpty();
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
+
     cy.expect([
       searchToggleButton.exists(),
       browseButton.exists(),

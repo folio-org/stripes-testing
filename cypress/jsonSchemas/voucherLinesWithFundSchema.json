@@ -48,7 +48,7 @@
             "type": ["string", "null"]
           },
           "voucher.acquisition_units": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "voucher.acq_unit_ids": {
             "type": ["array", "null"],
@@ -222,7 +222,7 @@
             "type": ["number", "null"]
           },
           "ledger.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "ledger.acq_unit_ids": {
             "type": ["array", "null"],

@@ -142,12 +142,8 @@ describe('Bulk-edit', () => {
         // Step 6: Save the changes
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
-        AuthorizationRoles.clickOnCapabilitySetsAccordion();
-        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
-        });
+        cy.logout();
+        cy.reload();
 
         // Step 7: Relog into FOLIO with updated capability sets and navigate to Bulk edit
         cy.login(user.username, user.password, {

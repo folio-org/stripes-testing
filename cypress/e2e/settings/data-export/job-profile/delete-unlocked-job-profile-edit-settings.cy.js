@@ -83,14 +83,14 @@ describe('Data Export', () => {
                     'instance',
                     referencedJobProfile.jobProfileName,
                   );
+
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.settingsPath,
+                    waiter: SettingsPane.waitLoading,
+                  });
                 });
               });
             });
-          });
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.settingsPath,
-            waiter: SettingsPane.waitLoading,
           });
         },
       );
@@ -186,7 +186,7 @@ describe('Data Export', () => {
         );
         ExportJobProfiles.clearSearchField();
         ExportJobProfiles.waitLoading();
-        ExportJobProfiles.verifyJobProfileAbsentInTheTable();
+        ExportJobProfiles.verifyJobProfileAbsentInTheTable(referencedJobProfile.jobProfileName);
         SingleJobProfile.verifyDeleteModalClosed();
 
         // Step 10: Click "Field mapping profiles" in "Data export" pane => Verify mapping profile associated with deleted job profile is present on the list of mapping profiles

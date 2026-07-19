@@ -3,6 +3,7 @@ import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
@@ -10,10 +11,7 @@ describe('Lists', () => {
       let userData = {};
       let newCustomEntityTypeWithSources;
 
-      const capabSetsToAssign = [
-        CapabilitySets.moduleListsManage,
-        CapabilitySets.uiUsersView,
-      ];
+      const capabSetsToAssign = [CapabilitySets.moduleListsManage, CapabilitySets.uiUsersView];
       const capabsToAssign = [
         Capabilities.fqmEntityTypesCustomCollectionCreate,
         Capabilities.fqmEntityTypesCustomItemView,
@@ -25,20 +23,24 @@ describe('Lists', () => {
         cy.getAdminToken();
         Lists.generateSimpleUsersEntityTypeSource().then((source) => {
           newCustomEntityTypeWithSources = Lists.generateCustomEntityTypeBodyWithSources(
-            'Custom entity type C825347',
+            `Custom entity type C825347 ${getRandomPostfix()}`,
             [source],
             false,
           );
         });
-        cy.createTempUser([]).then((userProperties) => {
-          userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
-        }).then(() => {
-          cy.getUserToken(userData.username, userData.password);
-          Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
-            expect(response.status).to.equal(201);
+        cy.createTempUser([])
+          .then((userProperties) => {
+            userData = userProperties;
+            cy.assignCapabilitiesToExistingUser(userData.userId, capabsToAssign, capabSetsToAssign);
+          })
+          .then(() => {
+            cy.getUserToken(userData.username, userData.password);
+            Lists.createCustomEntityType(newCustomEntityTypeWithSources).then((response) => {
+              expect(response.status).to.equal(201);
+
+              cy.wait(60 * 1000 * 5); // need to wait around 5 minutes for the created custom entity type to be available in Lists
+            });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -61,7 +63,9 @@ describe('Lists', () => {
           // Check Record types filter dropdown
           Lists.openRecordTypeFilter();
           Lists.searchRecordTypeFilterInDropdown(newCustomEntityTypeWithSources.name);
-          Lists.verifyRecordTypeFilterDropdownContainsOptions([newCustomEntityTypeWithSources.name]);
+          Lists.verifyRecordTypeFilterDropdownContainsOptions([
+            newCustomEntityTypeWithSources.name,
+          ]);
 
           // Check Record type dropdown when creating a new list
           Lists.openNewListPane();
@@ -72,8 +76,12 @@ describe('Lists', () => {
           // Step 3: Update the entity type to private: true
           cy.getUserToken(userData.username, userData.password);
           const privateEntityType = { ...newCustomEntityTypeWithSources, private: true };
-          Lists.updateCustomEntityTypeById(newCustomEntityTypeWithSources.id, privateEntityType).then((response) => {
+          Lists.updateCustomEntityTypeById(
+            newCustomEntityTypeWithSources.id,
+            privateEntityType,
+          ).then((response) => {
             expect(response.status).to.equal(200);
+            cy.wait(60 * 1000 * 5); // need to wait around 5 minutes for changes to be reflected in Lists
           });
 
           // Step 4: Verify the private ET no longer appears in the Lists app dropdowns

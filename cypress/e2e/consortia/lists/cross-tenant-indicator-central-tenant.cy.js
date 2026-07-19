@@ -59,8 +59,8 @@ describe('Lists', () => {
     });
 
     it(
-      'Verify cross-tenant indicator displays only for Inventory lists created in central tenant (consortia)',
-      { tags: ['criticalPathECS', 'corsair'] },
+      'C411844 Verify cross-tenant indicator displays only for Inventory lists created in central tenant (consortia)',
+      { tags: ['criticalPathECS', 'corsair', 'C411844'] },
       () => {
         cy.setTenant(Affiliations.Consortia);
         cy.login(testData.user.username, testData.user.password, {
