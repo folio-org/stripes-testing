@@ -49,8 +49,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C567891 Verify bulk delete Users (firebird)',
-      { tags: ['smoke', 'firebird', 'C567891'] },
+      'C1385648 Verify bulk delete Users (firebird)',
+      { tags: ['smoke', 'firebird', 'C1385648'] },
       () => {
         // Preconditions (step 5): select Users, User UUIDs and upload file
         BulkEditSearchPane.checkUsersRadio();
@@ -92,6 +92,9 @@ describe('Bulk-edit', () => {
         BulkEditSearchPane.verifyPaneTitleFileName(userUUIDsFileName);
         BulkEditSearchPane.verifyFileNameHeadLine(userUUIDsFileName);
         BulkEditActions.verifyActionsButtonAbsent();
+        BulkEditSearchPane.verifyPaneRecordsChangedCount(0);
+        BulkEditSearchPane.verifyPaneTitleFileName(userUUIDsFileName);
+        BulkEditSearchPane.verifyFileNameHeadLine(userUUIDsFileName);
 
         // Step 6: Open "Logs" tab and filter to the latest Users delete job
         BulkEditSearchPane.openLogsSearch();
