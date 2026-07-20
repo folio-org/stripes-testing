@@ -250,6 +250,15 @@ export const itemFieldValues = {
   itemAdditionalCallNumbersPrefix: 'Item — Item additional call numbers — Prefix',
   itemAdditionalCallNumbersSuffix: 'Item — Item additional call numbers — Suffix',
   itemAdditionalCallNumbersType: 'Item — Item additional call numbers — Type',
+  itemSortOrder: 'Item — Sort order',
+  lastCheckInServicePointName: 'Last check in service point — Name',
+  lastCheckInServicePointCode: 'Last check in service point — Code',
+  lastCheckInServicePointDiscoveryDisplayName:
+    'Last check in service point — Discovery display name',
+  lastCheckInServicePointPickupLocation: 'Last check in service point — Pickup location',
+  destinationServicePointName: 'Destination service point — Name',
+  destinationServicePointCode: 'Destination service point — Code',
+  destinationServicePointDiscoveryDisplayName: 'Destination service point — Discovery display name',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',

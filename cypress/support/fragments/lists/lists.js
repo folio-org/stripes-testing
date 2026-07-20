@@ -638,6 +638,19 @@ const UI = {
     cy.do(Checkbox(columnName).checkIfNotSelected());
   },
 
+  uncheckSelectedColumn(columnName) {
+    cy.do(Checkbox(columnName).uncheckIfSelected());
+  },
+
+  uncheckAllSelectedColumns() {
+    cy.wait(2000);
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.do(Checkbox(header.innerText).uncheckIfSelected());
+      });
+    });
+  },
+
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
