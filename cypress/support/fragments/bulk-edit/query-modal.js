@@ -85,6 +85,7 @@ const embeddedTableHeadersMap = {
     'Primary address',
     'Line 2',
   ],
+  additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
 export const embeddedFields = {
@@ -245,6 +246,10 @@ export const itemFieldValues = {
   affiliationName: 'Item — Affiliation name',
   instanceShared: 'Instance — Shared',
   statisticalCodeNames: 'Item — Statistical codes',
+  itemAdditionalCallNumbersCallNumber: 'Item — Item additional call numbers — Call number',
+  itemAdditionalCallNumbersPrefix: 'Item — Item additional call numbers — Prefix',
+  itemAdditionalCallNumbersSuffix: 'Item — Item additional call numbers — Suffix',
+  itemAdditionalCallNumbersType: 'Item — Item additional call numbers — Type',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -1121,7 +1126,7 @@ export default {
 
     cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
       // Find the DynamicTable specifically within this row
-      cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+      cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`).within(() => {
         // Verify table headers
         cy.get('[class^="DynamicTable-"]')
           .find('tr')
@@ -1216,6 +1221,8 @@ export default {
           dataObj.primaryAddress,
           dataObj.line2,
         ];
+      case 'additionalCallNumbers':
+        return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1317,6 +1324,17 @@ export default {
 
   verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
+  },
+
+  verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
+    itemIdentifier,
+    expectedAdditionalCallNumbers, // Can be a single call number object or array of objects, ex: { callNumber: '170495a', prefix: 'call_Num_a.170495', suffix: '170495.call_Num_a', type: 'Dewey Decimal classification' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'additionalCallNumbers',
+      itemIdentifier,
+      expectedAdditionalCallNumbers,
+    );
   },
 
   clickShowColumnsButton() {
