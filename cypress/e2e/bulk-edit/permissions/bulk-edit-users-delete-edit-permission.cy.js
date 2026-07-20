@@ -25,7 +25,6 @@ describe('Bulk-edit', () => {
           permissions.uiUsersView.gui,
           permissions.uiUserEdit.gui,
           permissions.uiUsersCreate.gui,
-          permissions.bulkEditUpdateRecords.gui,
         ],
         'undergrad',
       ).then((userProperties) => {

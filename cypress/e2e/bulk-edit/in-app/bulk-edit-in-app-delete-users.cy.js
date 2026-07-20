@@ -88,6 +88,9 @@ describe('Bulk-edit', () => {
         // Step 5: Click "Delete" and verify confirmation screen
         BulkEditActions.clickDeleteButtonInDeleteUserRecordsModal();
         BulkEditActions.verifyUsersDeletedSuccessfully(1, 1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount(0);
+        BulkEditSearchPane.verifyPaneTitleFileName(userUUIDsFileName);
+        BulkEditSearchPane.verifyFileNameHeadLine(userUUIDsFileName);
         BulkEditActions.verifyActionsButtonAbsent();
 
         // Step 6: Open "Logs" tab and filter to the latest Users delete job
