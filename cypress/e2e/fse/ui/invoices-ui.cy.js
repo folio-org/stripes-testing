@@ -30,7 +30,7 @@ describe('fse-invoices - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195468 - create invoice for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195468 - create invoice for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'invoice', 'fse-user-journey', 'TC195468'] },
     () => {
       Invoices.createDefaultInvoiceWithoutAddress(invoice);
@@ -59,10 +59,19 @@ describe('fse-invoices - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195320 - verify that invoices page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'invoice', 'TC195320'] },
     () => {
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.INVOICES}"):visible`)
+            .length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVOICES);
+        }
+      });
       Invoices.waitLoading();
     },
   );

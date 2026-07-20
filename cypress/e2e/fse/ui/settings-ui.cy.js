@@ -22,7 +22,7 @@ describe('fse-settings - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195469 - verify software versions page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195469 - verify software versions page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'settings', 'software-version', 'TC195469'] },
     () => {
       SoftwareVersions.selectSoftwareVersions();
@@ -34,7 +34,7 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195765 - verify ECS settings options for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195765 - verify ECS settings options for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['ramsons', 'fse', 'ui', 'settings', 'consortia', 'TC195765'] },
     () => {
       cy.visit(SettingsMenu.consortiumManagerPath);
@@ -70,7 +70,7 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
   });
 
   it(
-    `FDOPS-5214 - verify EBSCOSupport role can be updated via UI for ${Cypress.env('OKAPI_HOST')}`,
+    `FDOPS-5214 - verify EBSCOSupport role can be updated via UI for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'authorization-roles', 'sanity', 'FDOPS-5214'] },
     () => {
       // Navigate to the roles list

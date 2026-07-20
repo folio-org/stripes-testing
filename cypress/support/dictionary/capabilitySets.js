@@ -164,6 +164,11 @@ export default {
     resource: 'UI-Consortia-Settings Consortia Affiliations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiConsortiaSettingsConsortiaAffiliationsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Consortia-Settings Consortia Affiliations',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiCheckout: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Checkout',
@@ -324,6 +329,11 @@ export default {
     resource: 'UI-Bulk-Edit Inventory',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiBulkEditUsersDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Users',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Scheduler',
@@ -351,7 +361,7 @@ export default {
     resource: 'UI-Consortia-Settings Consortium-Manager Share',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
-  uiConsortiaInventoryLocalSharingInstances: {
+  consortiaInventoryLocalSharingInstances: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'Consortia Inventory Local Sharing-Instances',
     action: CAPABILITY_ACTIONS.EXECUTE,

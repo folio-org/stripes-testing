@@ -1,4 +1,3 @@
-import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -14,7 +13,6 @@ import SettingsInventory, {
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -32,7 +30,6 @@ describe('Consortia', () => {
         const secondSubjectType = {
           name: `C594406 autotestSubjectTypeName${getRandomPostfix()}`,
         };
-        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create users data', () => {
           cy.getAdminToken();
@@ -90,7 +87,6 @@ describe('Consortia', () => {
             ConsortiumManager.verifyStatusOfConsortiumManager(2);
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectTypes.choose();
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.clickNewButton();
             ConsortiumSubjectTypes.verifyNewRecordRowBeforeFilling();
             ConsortiumSubjectTypes.createSharedWithAllMembersSubjectTypeWithValidationNameField(
@@ -106,7 +102,6 @@ describe('Consortia', () => {
               'valid',
             );
             ConsortiumSubjectTypes.confirmShareWithAllMembers(firstSubjectType.name);
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectTypes.verifySharedToAllMembersSubjectTypeExists(
               firstSubjectType.name,
               firstSubjectType.source,

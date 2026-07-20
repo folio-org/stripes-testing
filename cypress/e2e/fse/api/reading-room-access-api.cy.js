@@ -7,7 +7,7 @@ describe('fse-reading-room-access', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195706 - Get reading rooms for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195706 - Get reading rooms for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'reading-room', 'loc', 'TC195706'] },
     () => {
       cy.getReadingRoom().then((response) => {

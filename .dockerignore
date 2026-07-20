@@ -1,0 +1,52 @@
+# Version control
+.git
+.github
+.gitignore
+.gitattributes
+
+# Dependencies (installed fresh in the image)
+node_modules
+
+# Cypress runtime artifacts
+cypress/screenshots
+cypress/videos
+cypress/downloads
+
+# Test reports
+allure-results
+allure-report
+mochawesome-report
+reports
+cypress-results
+
+# Caches
+cache
+.cache
+.yarn
+
+# IDE / editor
+.idea
+.vscode
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local env / secrets
+.env
+.env.*
+environments.js
+
+# Coverage
+coverage
+
+# Other Dockerfiles / CI config (not needed inside build context)
+Dockerfile*
+Jenkinsfile*

@@ -7,7 +7,7 @@ describe('fse-eholdings', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195060 - Get eholdings titles for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195060 - Get eholdings titles for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'eholdings', 'loc', 'TC195060'] },
     () => {
       cy.getEHoldingsTitlesViaAPI('time').then((response) => {

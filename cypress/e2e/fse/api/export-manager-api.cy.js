@@ -7,7 +7,7 @@ describe('fse-export-manager', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195313 - Get export manager job by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195313 - Get export manager job by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'export-manager', 'loc', 'TC195313'] },
     () => {
       cy.getExportManagerJobByStatus('SUCCESSFUL').then((response) => {

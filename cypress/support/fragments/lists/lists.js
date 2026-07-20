@@ -126,9 +126,9 @@ const constants = {
 const UI = {
   waitLoading() {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
-    cy.wait(3000);
-    // have to duplicate code because cannot use this.waitForSpinnerToDisappear() for some reason...
-    cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
+    cy.wait(5000);
+    // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
+    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
   },
 
   filtersWaitLoading() {
@@ -1420,6 +1420,15 @@ const API = {
     });
   },
 
+  getAllEntityTypesIncludeAllViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types',
+      isDefaultSearchParamsRequired: false,
+      searchParams: { includeAll: true },
+    });
+  },
+
   getEntityTypeIdByNameViaApi(type) {
     return this.getAllEntityTypesViaApi().then((response) => {
       return response.body.entityTypes.find((entityType) => entityType.label === type).id;
@@ -1432,6 +1441,15 @@ const API = {
       path: `entity-types/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
+    });
+  },
+
+  getEntityTypeByIdIncludeAllViaApi(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: { includeAll: true },
     });
   },
 

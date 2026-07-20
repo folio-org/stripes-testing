@@ -7,7 +7,7 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195325 - Get licenses by status for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195325 - Get licenses by status for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'licenses', 'loc', 'TC195325'] },
     () => {
       cy.getLicensesByStatus('active').then((response) => {
@@ -17,7 +17,7 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `TC196410 - Verify license file docs are accessible for ${Cypress.env('OKAPI_HOST')}`,
+    `TC196410 - Verify license file docs are accessible for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'licenses-docs', 'TC196410'] },
     () => {
       cy.getLicenses().then((response) => {

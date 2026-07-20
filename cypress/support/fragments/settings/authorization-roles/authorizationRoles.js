@@ -286,13 +286,14 @@ export default {
   },
 
   selectCapabilitySetCheckbox: (
-    { table, resource, action },
+    { table, resource, action, type },
     { isSelected = true, confirmModal = false, dismissModal = false } = {},
   ) => {
+    const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
       capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListCell(resource, { column: 'Resource' }))
         .perform((el) => {
           targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
@@ -300,7 +301,7 @@ export default {
     );
     cy.then(() => {
       const targetCheckbox = capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
@@ -321,11 +322,12 @@ export default {
     });
   },
 
-  selectCapabilityCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilityCheckbox: ({ table, resource, action, type }, isSelected = true) => {
+    const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
       capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListCell(resource, { column: 'Resource' }))
         .perform((el) => {
           targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
@@ -333,7 +335,7 @@ export default {
     );
     cy.then(() => {
       const targetCheckbox = capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
@@ -342,16 +344,18 @@ export default {
     });
   },
 
-  verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxCheckedAndDisabled: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  verifyCapabilityCheckboxUncheckedAndEnabled: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxUncheckedAndEnabled: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: false, disabled: false }));
   },
@@ -409,23 +413,26 @@ export default {
     cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 
-  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action }, isEnabled = true) => {
+  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action, type }, isEnabled = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     if (isEnabled) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
     else cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  verifyCapabilitySetCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+  verifyCapabilitySetCheckboxChecked: ({ table, resource, action, type }, isSelected = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
-  clickOnCheckedDisabledCheckbox: ({ table, resource, action }) => {
-    const targetCheckbox = capabilitiesAccordion.find(capabilityTables[table]).find(
+  clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    const targetCheckbox = capabilitiesAccordion.find(capabilityTables[targetTable]).find(
       Checkbox({
         ariaLabel: `${action} ${resource}`,
         isWrapper: false,
@@ -471,22 +478,24 @@ export default {
     if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
-  verifyCapabilityCheckboxAbsent: ({ table, resource, action }) => {
+  verifyCapabilityCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
     cy.expect(
       capabilitiesAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
         .absent(),
     );
   },
 
   verifyCapabilityCheckboxChecked: (
-    { table, resource, action },
+    { table, resource, action, type },
     isSelected = true,
     isEnabled = null,
   ) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
     if (isEnabled === true || isEnabled === false) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));

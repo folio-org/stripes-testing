@@ -121,6 +121,18 @@ export default {
     cy.expect(Button(`Select ${recordType} bulk edit profile`).exists());
   },
 
+  verifySelectBulkEditProfileButtonAbsent(recordType) {
+    cy.expect(Button(`Select ${recordType} bulk edit profile`).absent());
+  },
+
+  startBulkDeleteAbsent() {
+    cy.expect(startBulkDeleteButton.absent());
+  },
+
+  startBulkDeleteButtonExists() {
+    cy.expect(startBulkDeleteButton.exists());
+  },
+
   verifyStartBulkEditOptions() {
     cy.expect([
       startBulkEditFolioInstanceButton.exists(),
@@ -475,6 +487,10 @@ export default {
 
   startBulkEditLocalButtonExists() {
     cy.expect(startBulkEditLocalButton.exists());
+  },
+
+  startBulkEditButtonExists() {
+    cy.expect(startBulkEditButton.exists());
   },
 
   verifyActionAfterChangingRecords() {
@@ -2317,6 +2333,12 @@ export default {
   },
 
   fillInSubfieldAndVerify(value, rowIndex = 0) {
+    // When the value is empty there is nothing to type in.
+    // In some states (e.g. after "Remove field" action is selected) the subfield
+    // textbox becomes disabled, so attempting to fillIn/verify would fail.
+    if (value === '') {
+      return;
+    }
     cy.do(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
@@ -2355,6 +2377,24 @@ export default {
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(subField)
         .has({ value, focused: true }),
+    );
+  },
+
+  verifySubfieldDisabled(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: true, required: false, value: '' }),
+    );
+  },
+
+  verifySubfieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ disabled: false, required: true }),
     );
   },
 
@@ -2839,5 +2879,55 @@ export default {
 
   clickCancelButtonInDeleteUserRecordsModal() {
     cy.do(deleteUserRecordsModal.find(cancelButton).click());
+  },
+
+  verifyDeleteUserRecordsModalContent(recordsCount, retentionDays = 30) {
+    cy.expect([
+      deleteUserRecordsModal
+        .find(
+          HTML(
+            including(
+              `${recordsCount} user records will be deleted if the Delete button is clicked.`,
+            ),
+          ),
+        )
+        .exists(),
+      deleteUserRecordsModal
+        .find(
+          HTML(
+            including(
+              `This action cannot be undone but a file of deleted user records will be available for download in Logs for ${retentionDays} days.`,
+            ),
+          ),
+        )
+        .exists(),
+    ]);
+  },
+
+  clickDeleteButtonInDeleteUserRecordsModal() {
+    cy.do(deleteUserRecordsModal.find(deleteButton).click());
+    cy.wait(2000);
+  },
+
+  verifyUsersDeletedSuccessfully(matchedRecordsCount, deletedRecordsCount = matchedRecordsCount) {
+    cy.get('[class*="paneSub"]').should(
+      'contain.text',
+      `${matchedRecordsCount} user records match`,
+    );
+    cy.get('[class*="paneSub"]').should(
+      'contain.text',
+      `${deletedRecordsCount} user records deleted`,
+    );
+    cy.expect(
+      MessageBanner().has({
+        textContent: including(
+          `${deletedRecordsCount} user records have been successfully deleted.`,
+        ),
+      }),
+    );
+  },
+
+  verifyActionsButtonAbsent() {
+    cy.expect(actionsBtn.absent());
   },
 };

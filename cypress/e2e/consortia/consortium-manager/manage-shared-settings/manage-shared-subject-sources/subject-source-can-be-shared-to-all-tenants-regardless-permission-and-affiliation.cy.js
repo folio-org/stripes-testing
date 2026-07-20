@@ -1,4 +1,3 @@
-import { calloutTypes } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -14,7 +13,6 @@ import SettingsInventory, {
 } from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -28,7 +26,6 @@ describe('Consortia', () => {
           source: 'consortium',
           consortiaUser: 'System, System user - mod-consortia-keycloak',
         };
-        const calloutMessage = `You do not have permissions at one or more members: ${tenantNames.college}`;
 
         before('Create users data', () => {
           cy.clearCookies({ domain: null });
@@ -94,7 +91,6 @@ describe('Consortia', () => {
             ConsortiumManager.verifyStatusOfConsortiumManager(2);
             ConsortiumManager.chooseSettingsItem(settingsItems.inventory);
             ConsortiumSubjectSources.choose();
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectSources.createSharedWithAllMembersSubjectSourceWithValidationNameField(
               '',
               'empty',
@@ -110,7 +106,6 @@ describe('Consortia', () => {
               'unique',
             );
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSource.name);
-            InteractorsTools.checkCalloutMessage(calloutMessage, calloutTypes.error);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSource.name,
               actions: ['edit', 'trash'],

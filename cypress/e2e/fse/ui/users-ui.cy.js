@@ -26,7 +26,7 @@ describe('fse-users - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195391 - verify that users page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'users', 'TC195391'] },
     () => {
       UsersSearchPane.searchByKeywords(adminId);
