@@ -4,6 +4,11 @@ import { Button } from '../../../../../interactors';
 const srsMarcTab = Button(including('SRS MARC'));
 const instanceTab = Button(including('Instance'));
 const itemTab = Button(including('Item'));
+const incomingRecordTab = Button('Incoming record');
+const holdingsTab = Button('Holdings');
+const authorityTab = Button('Authority');
+const orderTab = Button('Order');
+const invoiceTab = Button('Invoice');
 
 export default {
   verifyJsonScreenIsOpened: () => {
@@ -38,19 +43,29 @@ export default {
       });
   },
 
-  openMarcSrsTab: () => cy.do(srsMarcTab.click()),
+  openMarcSrsTab: () => {
+    cy.do(srsMarcTab.click());
+    cy.do(
+      srsMarcTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
   openInstanceTab: () => cy.do(instanceTab.click()),
   openItemTab: () => cy.do(itemTab.click()),
-
-  openHoldingsTab: () => {
-    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="3"]').click();
-  },
-
-  openOrderTab: () => {
-    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="6"]').click();
+  openHoldingsTab: () => cy.do(holdingsTab.click()),
+  openOrderTab: () => cy.do(orderTab.click()),
+  openAuthorityTab: () => {
+    cy.do(authorityTab.click());
+    cy.do(
+      authorityTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
   },
 
   verifyContentInTab: (value) => {
+    cy.wait(1000); // wait for content to load
     cy.expect(HTML(including(value)).exists());
   },
   verifyContentNotExistInTab: (value) => {
@@ -59,14 +74,22 @@ export default {
 
   verifyTabsPresented: () => {
     cy.expect([
-      Button(including('Incoming record')).exists(),
+      incomingRecordTab.exists(),
       srsMarcTab.exists(),
       instanceTab.exists(),
-      Button(including('Holdings')).exists(),
+      holdingsTab.exists(),
       itemTab.exists(),
-      Button(including('Authority')).exists(),
-      Button(including('Order')).exists(),
-      Button(including('Invoice')).exists(),
+      authorityTab.exists(),
+      orderTab.exists(),
+      invoiceTab.exists(),
     ]);
+  },
+
+  verifyIncomingRecordTabIsActive: () => {
+    cy.do(
+      incomingRecordTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
   },
 };

@@ -78,7 +78,7 @@ const visibleColumnsInResultsList = {
   INVOICE: { columnIndex: 8 },
 };
 
-const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
+const checkSrsRecordQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -87,7 +87,7 @@ const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkInstanceQuantityInSummaryTable = (quantity, row = 0) => {
+const checkInstanceQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -96,7 +96,7 @@ const checkInstanceQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkHoldingsQuantityInSummaryTable = (quantity, row = 0) => {
+const checkHoldingsQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -105,7 +105,7 @@ const checkHoldingsQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
+const checkItemQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -114,7 +114,7 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkAuthorityQuantityInSummaryTable = (quantity, row = 0) => {
+const checkAuthorityQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -123,7 +123,7 @@ const checkAuthorityQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkInvoiceInSummaryTable = (quantity, row = 0) => {
+const checkInvoiceInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -132,7 +132,7 @@ const checkInvoiceInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkOrderQuantityInSummaryTable = (quantity, row = 0) => {
+const checkOrderQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -141,7 +141,7 @@ const checkOrderQuantityInSummaryTable = (quantity, row = 0) => {
   );
 };
 
-const checkErrorQuantityInSummaryTable = (quantity, row = 0) => {
+const checkErrorQuantityInSummaryTable = (quantity = 'No value set-', row = 0) => {
   cy.expect(
     jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${row}` }))
