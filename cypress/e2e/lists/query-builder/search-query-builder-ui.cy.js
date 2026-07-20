@@ -274,7 +274,7 @@ describe('Lists', () => {
             QUERY_OPERATIONS.IS_NULL,
             'select',
             'True',
-            'users.middle_name is null/empty true',
+            'users.middle_name is null/empty True',
             'list-column-users.middle_name',
             '',
           );
@@ -829,7 +829,7 @@ describe('Lists', () => {
             QUERY_OPERATIONS.IS_NULL,
             'select',
             'False',
-            'instance.discovery_suppress is null/empty false',
+            'instance.discovery_suppress is null/empty False',
             'list-column-instance.discovery_suppress',
             'False',
           );
@@ -1091,8 +1091,8 @@ describe('Lists', () => {
       );
 
       it(
-        'Search instances in the query builder by classification identifier type (corsair)',
-        { tags: ['criticalPath', 'corsair'] },
+        'C594516 Search instances in the query builder by classification identifier type (corsair)',
+        { tags: ['criticalPath', 'corsair', 'C594516'] },
         () => {
           listName = getTestEntityValue('C_lists_query_builder_classification_list');
           openQueryBuilder(recordType);

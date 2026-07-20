@@ -97,7 +97,7 @@
             "type": ["string", "null"]
           },
           "instance.nature_of_content_term": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.nature_of_content_term_ids": {
             "type": "array",
