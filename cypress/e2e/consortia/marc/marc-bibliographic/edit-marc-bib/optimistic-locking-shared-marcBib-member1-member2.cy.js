@@ -106,7 +106,7 @@ describe('MARC', () => {
 
         after('Delete users, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           Users.deleteViaApi(userA.userId);
           Users.deleteViaApi(userB.userId);
           cy.setTenant(Affiliations.College);
@@ -154,6 +154,7 @@ describe('MARC', () => {
                     cy.setTenant(Affiliations.College);
                     cy.clearCookies({ domain: null });
                     cy.getToken(userA.username, userA.password);
+                    cy.wait(2000);
                   })
                   .then(() => {
                     // Step 6: User A makes changes to 245 field, tries to save (will trigger conflict because record was updated by User B)
