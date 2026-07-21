@@ -851,8 +851,19 @@ export default {
     ]);
   },
 
-  verifyInstanceSubjectAbsent: () => {
-    cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  verifyInstanceSubjectsAbsent: () => {
+    cy.expect([
+      subjectAccordion.find(MultiColumnList()).has({ rowCount: 1 }),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 0 }))
+        .exists(),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 1 }))
+        .exists(),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 2 }))
+        .exists(),
+    ]);
   },
 
   verifyHoldingsListIsEmpty(instanceId) {

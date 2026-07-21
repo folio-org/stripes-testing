@@ -297,6 +297,18 @@ export default {
     if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
     if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
   },
+  clickAddSubjectButton: () => {
+    cy.do(subjectAccordion.find(Button('Add subject')).click());
+  },
+
+  verifySubjectRowIsDisplayed: () => {
+    cy.expect([
+      subjectField.exists(),
+      Select({ name: 'subjects[0].sourceId' }).exists(),
+      Select({ name: 'subjects[0].typeId' }).exists(),
+    ]);
+  },
+
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
   },
