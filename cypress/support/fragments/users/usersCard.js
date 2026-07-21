@@ -458,6 +458,11 @@ export default {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 
+  showClosedRequests() {
+    cy.do(Link({ id: 'clickable-viewclosedrequests' }).click());
+    cy.wait(2000);
+  },
+
   showOpenedFeeFines() {
     return cy.do(Link({ id: 'clickable-viewcurrentaccounts' }).click());
   },

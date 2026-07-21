@@ -2,10 +2,12 @@ import uuid from 'uuid';
 import {
   Button,
   Checkbox,
+  IconButton,
   including,
   KeyValue,
   Link,
   Pane,
+  Popover,
   RadioButton,
   TextArea,
   TextField,
@@ -26,6 +28,12 @@ const cancelButton = Button({ id: 'footer-cancel-entity' });
 const holdCheckbox = Checkbox({ id: 'hold-checkbox' });
 const pageCheckbox = Checkbox({ id: 'page-checkbox' });
 const recallCheckbox = Checkbox({ id: 'recall-checkbox' });
+const holdsInfoIcon = IconButton({ icon: 'info' });
+const holdsInfoPopover = Popover({
+  content: including(
+    'If the "Fail to create title level hold when request is blocked by circulation rule" setting is unchecked, title level holds will always be allowed. (Settings > Circulation > Title level requests)',
+  ),
+});
 
 export const defaultRequestPolicy = {
   requestTypes: [REQUEST_TYPES.HOLD],
@@ -124,6 +132,16 @@ export default {
     cy.contains('[class*="multiSelectOption"]', servicePointName).click();
   },
 
+  verifyServicePointSelected(servicePointName) {
+    // Verify service point appears in any of the multiselect value lists
+    cy.get('body').should('contain', servicePointName);
+    cy.get('[class*="multiSelectValueList"]').should('be.visible');
+  },
+
+  waitLoadingEditForm() {
+    cy.wait(3000);
+  },
+
   save() {
     cy.do(saveAndCloseButton.click());
   },
@@ -166,6 +184,26 @@ export default {
         return body;
       });
   },
+
+  createWithAllowedServicePointsViaApi({
+    name,
+    description = '',
+    holdServicePointId,
+    recallServicePointId,
+  }) {
+    const id = uuid();
+    const requestBody = {
+      id,
+      name,
+      description,
+      requestTypes: [REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL],
+      allowedServicePoints: {
+        Hold: [holdServicePointId],
+        Recall: [recallServicePointId],
+      },
+    };
+    return this.createViaApi(requestBody);
+  },
   deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
@@ -191,5 +229,26 @@ export default {
         this.deleteViaApi(policy.id);
       }
     });
+  },
+
+  verifyHoldsInfoIconDisplayed() {
+    cy.expect(holdsInfoIcon.exists());
+  },
+
+  clickHoldsInfoIcon() {
+    cy.do(holdsInfoIcon.click());
+  },
+
+  verifyHoldsInfoPopoverContent() {
+    cy.expect(holdsInfoPopover.exists());
+  },
+
+  verifyHoldsInfoPopoverNotDisplayed() {
+    cy.expect(holdsInfoPopover.absent());
+  },
+
+  clickOutsidePopover() {
+    // Click on the pane header to close the popover
+    cy.do(Pane('New request policy').click());
   },
 };

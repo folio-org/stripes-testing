@@ -222,10 +222,13 @@ export default {
     ]);
   },
 
-  openRequestDetails: (itemBarcode) => {
-    cy.do([availableActionsButton.click(), requestDetailsButton.click()]);
+  checkRequestDetails: (itemBarcode) => {
     cy.expect(Pane(including('Request details')).exists());
     cy.expect(HTML(including(itemBarcode)).exists());
+  },
+
+  openRequestDetails: () => {
+    cy.do([availableActionsButton.click(), requestDetailsButton.click()]);
   },
 
   openNewFeeFinesPane: () => {
@@ -297,6 +300,14 @@ export default {
     return cy.expect(
       MultiColumnListRow({ indexRow: 'row-0' })
         .find(MultiColumnListCell({ content: including(itemBarcode) }))
+        .exists(),
+    );
+  },
+
+  verifyLastCheckInItemStatus(status) {
+    return cy.expect(
+      MultiColumnListRow({ indexRow: 'row-0' })
+        .find(MultiColumnListCell({ content: including(status) }))
         .exists(),
     );
   },

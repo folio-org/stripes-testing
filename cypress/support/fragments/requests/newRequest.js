@@ -74,6 +74,12 @@ export default {
   openNewRequestPane,
   openNewMediatedRequestPane,
   printPickSlips,
+  rootSection,
+
+  clickCancel() {
+    cy.do(cancelButton.click());
+    cy.wait(1000);
+  },
 
   waitForInstanceOrItemSpinnerToDisappear() {
     cy.wait(1000);
@@ -439,7 +445,7 @@ export default {
     );
   },
   verifyModal(header, content) {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.expect(
       Modal(including(header)).has({
         message: including(content),
@@ -450,6 +456,25 @@ export default {
     cy.wait(3000);
     cy.expect(Modal(including(header)).absent());
   },
+
+  closeRequestNotAllowedModal() {
+    cy.do(Modal('Request not allowed').find(Button('Close')).click());
+    cy.expect(Modal('Request not allowed').absent());
+  },
+
+  closeRequestNotAllowedModalWithXButton() {
+    cy.do(
+      Modal('Request not allowed')
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(Modal('Request not allowed').absent());
+  },
+
+  verifyNewRequestFormIsOpen() {
+    cy.expect(rootSection.exists());
+  },
+
   viewBlockDetails() {
     cy.do(Button('View block details').click());
   },
@@ -520,5 +545,15 @@ export default {
       'have.text',
       servicePointName,
     );
+  },
+
+  chooseFulfillmentPreference(fulfillmentPreference) {
+    cy.do(Select({ name: 'fulfillmentPreference' }).choose(fulfillmentPreference));
+    cy.wait(1000);
+  },
+
+  chooseDeliveryAddress(addressTypeId) {
+    cy.do(Select({ name: 'deliveryAddressTypeId' }).choose(addressTypeId));
+    cy.wait(1000);
   },
 };
