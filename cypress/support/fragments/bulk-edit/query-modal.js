@@ -8,6 +8,7 @@ import {
   MultiColumnListHeader,
   MultiSelect,
   MultiSelectOption,
+  MultiSelectMenu,
   RepeatableFieldItem,
   Select,
   Selection,
@@ -84,6 +85,7 @@ const embeddedTableHeadersMap = {
     'Primary address',
     'Line 2',
   ],
+  additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
 export const embeddedFields = {
@@ -244,6 +246,19 @@ export const itemFieldValues = {
   affiliationName: 'Item — Affiliation name',
   instanceShared: 'Instance — Shared',
   statisticalCodeNames: 'Item — Statistical codes',
+  itemAdditionalCallNumbersCallNumber: 'Item — Item additional call numbers — Call number',
+  itemAdditionalCallNumbersPrefix: 'Item — Item additional call numbers — Prefix',
+  itemAdditionalCallNumbersSuffix: 'Item — Item additional call numbers — Suffix',
+  itemAdditionalCallNumbersType: 'Item — Item additional call numbers — Type',
+  itemSortOrder: 'Item — Sort order',
+  lastCheckInServicePointName: 'Last check in service point — Name',
+  lastCheckInServicePointCode: 'Last check in service point — Code',
+  lastCheckInServicePointDiscoveryDisplayName:
+    'Last check in service point — Discovery display name',
+  lastCheckInServicePointPickupLocation: 'Last check in service point — Pickup location',
+  destinationServicePointName: 'Destination service point — Name',
+  destinationServicePointCode: 'Destination service point — Code',
+  destinationServicePointDiscoveryDisplayName: 'Destination service point — Discovery display name',
 };
 export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
@@ -282,6 +297,11 @@ export const purchaseOrderLinesFieldValues = {
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
+  uuid: 'POL — UUID',
+  costCurrency: 'POL — Cost currency',
+  costPOLEstimatedPrice: 'POL — Cost PO line estimated price',
+  vendorOrgEdiType: 'Vendor org — EDI vendor type',
+  vendorOrgName: 'Vendor org — Name',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -751,6 +771,22 @@ export default {
     cy.wait(1000);
   },
 
+  verifyValueMultiselectMenuIncludesOption(expectedOption, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      const hasMatch = options.some((option) => {
+        return option.includes(expectedOption);
+      });
+
+      // eslint-disable-next-line no-unused-expressions
+      expect(
+        hasMatch,
+        `Expected to find option containing "${expectedOption}". Available options: [${options.join(', ')}]`,
+      ).to.be.true;
+    });
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+  },
+
   verifySelectedMultiselectValue(expectedValue, row = 0) {
     const selected = Array.isArray(expectedValue) ? expectedValue : [expectedValue];
 
@@ -912,7 +948,7 @@ export default {
   },
 
   verifyNumberOfRowsInPreviewTable(expectedNumberOfRows) {
-    cy.expect(MultiColumnList().has({ rowCount: expectedNumberOfRows }));
+    cy.expect(buildQueryModal.find(MultiColumnList()).has({ rowCount: expectedNumberOfRows }));
   },
 
   verifyRecordWithContent(content) {
@@ -1039,6 +1075,18 @@ export default {
     });
   },
 
+  getNumberOfMatchedRecords() {
+    return cy.contains('h3', /^Query returns/).then(($element) => {
+      const text = $element.text();
+      const numberMatches = text.match(/[\d,]+/g);
+      if (numberMatches && numberMatches.length > 0) {
+        const count = Number(numberMatches[0].replace(/,/g, ''));
+        return cy.wrap(count);
+      }
+      return cy.wrap(0);
+    });
+  },
+
   verifyMatchedRecordsByIdentifier(identifier, columnName, value) {
     cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -1087,7 +1135,7 @@ export default {
 
     cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
       // Find the DynamicTable specifically within this row
-      cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+      cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`).within(() => {
         // Verify table headers
         cy.get('[class^="DynamicTable-"]')
           .find('tr')
@@ -1182,6 +1230,8 @@ export default {
           dataObj.primaryAddress,
           dataObj.line2,
         ];
+      case 'additionalCallNumbers':
+        return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1283,6 +1333,17 @@ export default {
 
   verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
+  },
+
+  verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
+    itemIdentifier,
+    expectedAdditionalCallNumbers, // Can be a single call number object or array of objects, ex: { callNumber: '170495a', prefix: 'call_Num_a.170495', suffix: '170495.call_Num_a', type: 'Dewey Decimal classification' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'additionalCallNumbers',
+      itemIdentifier,
+      expectedAdditionalCallNumbers,
+    );
   },
 
   clickShowColumnsButton() {

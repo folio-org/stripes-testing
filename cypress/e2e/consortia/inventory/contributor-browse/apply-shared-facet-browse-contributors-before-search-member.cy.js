@@ -140,6 +140,7 @@ describe('Inventory', () => {
         'C402378 Apply "Shared" facet when Browse for same contributors without executed search (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire', 'C402378'] },
         () => {
+          cy.getToken(user.username, user.password);
           contributors.forEach((contributor) => {
             BrowseContributors.waitForContributorToAppear(contributor);
           });

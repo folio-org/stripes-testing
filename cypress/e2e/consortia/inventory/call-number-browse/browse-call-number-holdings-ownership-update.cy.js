@@ -13,6 +13,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -59,7 +60,7 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College);
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((res) => {
               testData.holdings.locationId = res.id;
             });
@@ -101,7 +102,7 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.University);
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((res) => {
               testData.holdings.locationUniversity = res;
             });
@@ -121,6 +122,10 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+              callNumberTypes: [],
+            });
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -177,6 +182,7 @@ describe('Inventory', () => {
             BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
           );
           InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
+          cy.getToken(testData.user.username, testData.user.password);
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);
 

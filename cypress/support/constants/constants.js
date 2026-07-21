@@ -1836,3 +1836,8 @@ export const INSTANCE_RELATIONSHIP_TYPES = {
   MONOGRAPHIC_SERIES: 'monographic series',
   MULTIPART_MONOGRAPH: 'multipart monograph',
 };
+
+export const TIMER_TYPES = {
+  USER: 'USER',
+  SYSTEM: 'SYSTEM',
+};

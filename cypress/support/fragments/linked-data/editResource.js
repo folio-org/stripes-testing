@@ -743,6 +743,10 @@ export default {
     cy.xpath(instanceActionsButton).should('not.exist');
   },
 
+  checkWorkActionsHidden() {
+    cy.expect(workActionsButton.absent());
+  },
+
   setSectionFieldValue(value, section) {
     cy.wait(1000);
     cy.xpath(

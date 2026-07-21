@@ -1,7 +1,8 @@
-Cypress.Commands.add('getTimers', () => {
+Cypress.Commands.add('getTimers', (searchParams = { limit: 50 }) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'scheduler/timers?limit=50',
+    path: 'scheduler/timers',
+    searchParams,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   });

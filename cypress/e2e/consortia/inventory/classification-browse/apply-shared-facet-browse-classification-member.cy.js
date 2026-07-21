@@ -111,7 +111,7 @@ describe('Inventory', () => {
 
       after('Delete user, data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.College);
         Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceByTitleViaApi(instancePrefix);
@@ -124,6 +124,7 @@ describe('Inventory', () => {
         'C471471 Apply "Shared" facet to browse classifications result list during browsing by "Classification (all)" option when settings are empty (consortia) (spitfire)',
         { tags: ['extendedPathECS', 'spitfire', 'C471471'] },
         () => {
+          cy.getToken(user.username, user.password);
           classificationValues.forEach((classification) => {
             BrowseClassifications.waitForClassificationNumberToAppear(classification);
           });

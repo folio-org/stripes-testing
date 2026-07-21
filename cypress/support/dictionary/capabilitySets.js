@@ -164,6 +164,11 @@ export default {
     resource: 'UI-Consortia-Settings Consortia Affiliations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiConsortiaSettingsConsortiaAffiliationsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Consortia-Settings Consortia Affiliations',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiCheckout: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Checkout',
@@ -323,6 +328,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Bulk-Edit Inventory',
     action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiBulkEditUsersDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Users',
+    action: CAPABILITY_ACTIONS.DELETE,
   },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,

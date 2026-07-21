@@ -212,6 +212,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.checkBrowseOptionSelected(
               BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
             );
+            cy.getToken(testData.user.username, testData.user.password);
             BrowseCallNumber.waitForCallNumberToAppear(testData.callNumberValue);
             InventorySearchAndFilter.browseSearch(testData.callNumberValue);
             BrowseCallNumber.valueInResultTableIsHighlighted(testData.callNumberValue);
@@ -238,6 +239,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.checkBrowseOptionSelected(
               BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
             );
+            cy.getToken(testData.user.username, testData.user.password);
             cy.setTenant(Affiliations.University);
             BrowseCallNumber.waitForCallNumberToAppear(testData.callNumberValue);
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
