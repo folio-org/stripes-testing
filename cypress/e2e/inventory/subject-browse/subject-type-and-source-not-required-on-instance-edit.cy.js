@@ -58,7 +58,7 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
         InstanceRecordView.openSubjectAccordion();
-        InstanceRecordView.verifyInstanceSubjectsAbsent();
+        InstanceRecordView.verifyOnlyEmptySubjectRow();
         InteractorsTools.checkNoErrorCallouts();
       },
     );

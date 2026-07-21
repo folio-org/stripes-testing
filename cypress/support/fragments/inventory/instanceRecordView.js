@@ -851,7 +851,11 @@ export default {
     ]);
   },
 
-  verifyInstanceSubjectsAbsent: () => {
+  verifyInstanceSubjectAbsent: () => {
+    cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  },
+
+  verifyOnlyEmptySubjectRow: () => {
     cy.expect([
       subjectAccordion.find(MultiColumnList()).has({ rowCount: 1 }),
       subjectAccordion
