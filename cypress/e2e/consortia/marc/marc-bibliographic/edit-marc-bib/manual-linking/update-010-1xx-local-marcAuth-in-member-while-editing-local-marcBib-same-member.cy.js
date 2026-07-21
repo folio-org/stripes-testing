@@ -150,7 +150,7 @@ describe('MARC', () => {
 
           after('Delete users and data', () => {
             cy.resetTenant();
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             cy.setTenant(Affiliations.College);
             InventoryInstance.deleteInstanceViaApi(createdInstanceId);
             MarcAuthority.deleteViaAPI(authorityId, true);
@@ -184,8 +184,9 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...tag100AfterLinking);
               })
                 .then(() => {
-                  // Steps 5-9: User B edits authority (simulated via API)
+                  // Steps 5-9: User edits authority in same tenant in different tab (simulated via API)
                   // Update both 100 field content and 010 $a
+                  cy.getToken(user.username, user.password);
                   cy.getMarcRecordDataViaAPI(authorityId).then((marcData) => {
                     const field100 = marcData.fields.find((f) => f.tag === testData.tag100);
                     const field010 = marcData.fields.find((f) => f.tag === testData.tag010);

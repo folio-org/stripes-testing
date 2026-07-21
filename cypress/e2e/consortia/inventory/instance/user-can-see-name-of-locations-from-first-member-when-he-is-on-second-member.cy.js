@@ -44,7 +44,10 @@ describe('Inventory', () => {
             cy.getHoldingTypes({ limit: 1 }).then((res) => {
               testData.holdingTypeId = res[0].id;
             });
-            cy.getLocations({ limit: 1 }).then((locations) => {
+            cy.getLocations({
+              limit: 1,
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+            }).then((locations) => {
               testData.locationName = locations.name;
               testData.locationId = locations.id;
             });
@@ -98,7 +101,7 @@ describe('Inventory', () => {
 
       after('Delete test data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(user.userId);
         cy.setTenant(Affiliations.University);
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(

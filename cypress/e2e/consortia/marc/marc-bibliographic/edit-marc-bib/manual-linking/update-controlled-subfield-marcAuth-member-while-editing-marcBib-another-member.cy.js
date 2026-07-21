@@ -154,7 +154,7 @@ describe('MARC', () => {
 
           after('Delete users and data', () => {
             cy.resetTenant();
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             InventoryInstance.deleteInstanceViaApi(createdInstanceId);
             MarcAuthority.deleteViaAPI(authorityId, true);
             cy.setTenant(Affiliations.College);
@@ -188,6 +188,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...tag100AfterLinking);
               })
                 .then(() => {
+                  cy.setTenant(Affiliations.College);
+                  cy.getToken(user.username, user.password);
                   cy.resetTenant();
                   // Steps 5-8: Update authority via API (simulating edit)
                   cy.getMarcRecordDataViaAPI(authorityId).then((marcData) => {
