@@ -329,6 +329,11 @@ export default {
     resource: 'UI-Bulk-Edit Inventory',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiBulkEditUsersDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Users',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
   schedulerManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Scheduler',

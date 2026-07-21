@@ -276,6 +276,7 @@ const UI = {
 
   duplicateList() {
     cy.do(duplicateList.click());
+    cy.expect(Pane({ titleLabel: including('Duplicate List: ') }).exists());
     cy.wait(1000);
   },
 
@@ -651,6 +652,19 @@ const UI = {
     cy.do(Checkbox(columnName).checkIfNotSelected());
   },
 
+  uncheckSelectedColumn(columnName) {
+    cy.do(Checkbox(columnName).uncheckIfSelected());
+  },
+
+  uncheckAllSelectedColumns() {
+    cy.wait(2000);
+    cy.get('[role=columnheader]').then((headers) => {
+      headers.each((_index, header) => {
+        cy.do(Checkbox(header.innerText).uncheckIfSelected());
+      });
+    });
+  },
+
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
@@ -664,6 +678,17 @@ const UI = {
         .find(MultiColumnListCell({ column: columnName, content: including(content) }))
         .exists(),
     );
+  },
+
+  verifyResultCellByIdentifier(identifier, columnName, value) {
+    cy.then(() => resultViewerTable.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        resultViewerTable
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
   },
 
   verifyNoValueInResultCell(rowIndex, columnName) {
@@ -1206,6 +1231,19 @@ const QueryBuilder = {
         return parsedText;
       });
     });
+  },
+
+  getNumberOfFoundRecordsFromPaneHeader(listName) {
+    return cy
+      .then(() => Pane(listName).subtitle)
+      .then((subtitle) => {
+        const subtitleText = String(subtitle);
+        const match = subtitleText.match(/(\d+) records found/);
+        if (match) {
+          return Number(match[1]);
+        }
+        return 0;
+      });
   },
 };
 

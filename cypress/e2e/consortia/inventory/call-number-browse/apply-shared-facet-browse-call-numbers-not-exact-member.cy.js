@@ -360,6 +360,7 @@ describe('Inventory', () => {
             false,
           );
 
+          cy.getToken(user.username, user.password);
           allVisibleInstanceIndexes.forEach((instanceIndex) => {
             instancesData[instanceIndex].holdings.forEach((holding) => {
               BrowseCallNumber.waitForCallNumberToAppear(holding.callNumberValue, true, 'lc');

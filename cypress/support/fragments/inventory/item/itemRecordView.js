@@ -625,8 +625,9 @@ export default {
   },
 
   validateOptionInActionsMenu(options) {
+    const optionsTocheck = Array.isArray(options) ? options : [options];
     cy.do(actionsButton.click());
-    options.forEach(({ optionName, shouldExist }) => {
+    optionsTocheck.forEach(({ optionName, shouldExist }) => {
       if (shouldExist) {
         cy.expect(Button(optionName).exists());
       } else {
