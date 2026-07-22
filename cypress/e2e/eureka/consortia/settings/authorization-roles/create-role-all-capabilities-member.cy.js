@@ -103,7 +103,7 @@ describe('Eureka', () => {
 
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId, true);
+          cy.deleteAuthorizationRoleApi(roleId, true, 120_000);
         });
       });
 

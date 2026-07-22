@@ -222,14 +222,18 @@ Cypress.Commands.add('updateAuthorizationRoleApi', (roleId, requestBody) => {
   });
 });
 
-Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `roles/${roleId}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: !ignoreErrors,
-  });
-});
+Cypress.Commands.add(
+  'deleteAuthorizationRoleApi',
+  (roleId, ignoreErrors = false, customTimeout = null) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `roles/${roleId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+      ...(customTimeout !== null ? { customTimeout } : {}),
+    });
+  },
+);
 
 Cypress.Commands.add('getAuthorizationRolesForUserApi', (userId) => {
   cy.okapiRequest({
