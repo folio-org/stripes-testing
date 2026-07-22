@@ -48,7 +48,7 @@ describe('eHoldings', () => {
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
           EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName();
+          EHoldingsPackagesSearch.byName('wiley');
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
