@@ -15,6 +15,7 @@ describe('Eureka', () => {
     const errorMessage = HTML({ text: 'Error: server is forbidden, unreachable, or unavailable.' });
 
     beforeEach(() => {
+      cy.wait(3000);
       cy.logoutViaApi();
       cy.clearCookies({ domain: null });
     });
