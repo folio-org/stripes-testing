@@ -2,6 +2,7 @@ import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Notes from '../../support/fragments/notes/notes';
 
 describe('Note creation', () => {
   const testData = {};
@@ -13,6 +14,7 @@ describe('Note creation', () => {
 
   beforeEach('Creating data', () => {
     cy.getAdminToken();
+    Notes.deleteNotesForEHoldingViaApi(394, 'provider');
     cy.createTempUser([
       Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,

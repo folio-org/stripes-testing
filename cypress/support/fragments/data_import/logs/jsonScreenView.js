@@ -1,14 +1,14 @@
 import { HTML, including } from '@interactors/html';
-import { Button } from '../../../../../interactors';
+import { Button, ButtonGroup } from '../../../../../interactors';
 
-const srsMarcTab = Button(including('SRS MARC'));
-const instanceTab = Button(including('Instance'));
-const itemTab = Button(including('Item'));
-const incomingRecordTab = Button('Incoming record');
-const holdingsTab = Button('Holdings');
-const authorityTab = Button('Authority');
-const orderTab = Button('Order');
-const invoiceTab = Button('Invoice');
+const srsMarcTab = ButtonGroup().find(Button(including('SRS MARC')));
+const instanceTab = ButtonGroup().find(Button(including('Instance')));
+const itemTab = ButtonGroup().find(Button(including('Item')));
+const incomingRecordTab = ButtonGroup().find(Button(including('Incoming record')));
+const holdingsTab = ButtonGroup().find(Button(including('Holdings')));
+const authorityTab = ButtonGroup().find(Button(including('Authority')));
+const orderTab = ButtonGroup().find(Button(including('Order')));
+const invoiceTab = ButtonGroup().find(Button(including('Invoice')));
 
 export default {
   verifyJsonScreenIsOpened: () => {
