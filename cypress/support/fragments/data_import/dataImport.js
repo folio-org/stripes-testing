@@ -40,6 +40,7 @@ const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
+const fileUploadPane = Pane('Files');
 
 const uploadFile = (filePathName, fileName, shouldWaitFullUpload = true) => {
   cy.expect(sectionPaneJobsTitle.exists());
@@ -529,5 +530,10 @@ export default {
 
   checkJobSummaryTableExists() {
     cy.xpath("//div[@id= 'job-summary-table']").should('be.visible');
+  },
+
+  checkFileUploadData(fileName, date) {
+    cy.expect(fileUploadPane.find(HTML(including(fileName))).exists());
+    if (date) cy.expect(fileUploadPane.find(HTML(including(date))).exists());
   },
 };
