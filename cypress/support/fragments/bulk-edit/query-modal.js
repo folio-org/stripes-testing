@@ -167,6 +167,7 @@ export const instanceFieldValues = {
   instanceResourceTitle: 'Instance — Resource title',
   resourceType: 'Instance — Resource type',
   instanceSource: 'Instance — Source',
+  instanceSourceUri: 'Instance — Instance source URI',
   instanceStatusCode: 'Instance status — Code',
   instanceStatusTerm: 'Instance status — Term',
   staffSuppress: 'Instance — Staff suppress',
