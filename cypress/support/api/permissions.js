@@ -230,7 +230,7 @@ Cypress.Commands.add(
       path: `roles/${roleId}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: !ignoreErrors,
-      ...(customTimeout !== null ? { timeout: customTimeout } : {}),
+      ...(customTimeout !== null ? { customTimeout } : {}),
     });
   },
 );
