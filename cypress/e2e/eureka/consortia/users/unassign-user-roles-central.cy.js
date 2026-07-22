@@ -93,17 +93,17 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         centralRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
         Users.deleteViaApi(testUser.userId);
         Users.deleteViaApi(assignUser.userId);
         cy.setTenant(Affiliations.College);
         collegeRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
         cy.setTenant(Affiliations.University);
         universityRoleIds.forEach((roleId) => {
-          cy.deleteAuthorizationRoleApi(roleId);
+          cy.deleteAuthorizationRoleApi(roleId, true);
         });
       });
 

@@ -27,6 +27,7 @@ describe('Notes', () => {
   });
 
   beforeEach('Login before each test', () => {
+    cy.wait(3000);
     cy.login(testData.userProperties.username, testData.userProperties.password, {
       path: urlToEholdings,
       waiter: NotesEholdings.waitLoading,
@@ -67,6 +68,7 @@ describe('Notes', () => {
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteCreation(note.title, note.details);
 
+      cy.wait(3000);
       cy.login(testData.viewUserProperties.username, testData.viewUserProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
@@ -75,6 +77,7 @@ describe('Notes', () => {
       NotesEholdings.openNoteView(note.title, note.details);
       NotesEholdings.verifyActionButtonVisibilityWithViewPermission();
 
+      cy.wait(3000);
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: urlToEholdings,
         waiter: NotesEholdings.waitLoading,
