@@ -83,6 +83,9 @@ describe('Inventory', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InventoryInstance.startOverlaySourceBibRecord();
+          cy.resetTenant();
+          cy.getToken(testData.user.username, testData.user.password);
+          cy.setTenant(Affiliations.College);
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();
 

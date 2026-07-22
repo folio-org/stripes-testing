@@ -175,7 +175,7 @@ describe('Inventory', () => {
 
       after('Delete user, data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         InventoryInstances.deleteInstanceByTitleViaApi(instancePrefix);
         cy.setTenant(Affiliations.College);
         Users.deleteViaApi(user.userId);
@@ -191,6 +191,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(contributorBrowseoption);
 
+          cy.getToken(user.username, user.password);
           [...visibleLocalContributors, ...visibleSharedContributors].forEach((contributor) => {
             BrowseContributors.waitForContributorToAppear(contributor.contributorValue);
           });

@@ -64,6 +64,8 @@ describe('MARC', () => {
           });
 
           // Create user in Member 1 tenant (where they'll work)
+          cy.resetTenant();
+          cy.getAdminToken();
           cy.setTenant(Affiliations.College);
           cy.createTempUser([
             Permissions.inventoryAll.gui,
