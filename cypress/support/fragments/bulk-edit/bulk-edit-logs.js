@@ -485,6 +485,10 @@ export default {
     cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
   },
 
+  verifyLogsRowActionForBulkDelete() {
+    cy.expect([triggerBtn.exists(), matchingRecordsBtn.exists()]);
+  },
+
   verifyLogsRowActionWhenCompleted(isMarcInstance = false) {
     cy.expect([
       triggerBtn.exists(),

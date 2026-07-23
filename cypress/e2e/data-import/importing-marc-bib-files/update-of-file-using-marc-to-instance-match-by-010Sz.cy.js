@@ -192,6 +192,11 @@ describe('Data Import', () => {
           FileDetails.columnNameInResultList.instance,
         );
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
+        cy.reload();
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyResourceIdentifier(
           testData.identifier.type,

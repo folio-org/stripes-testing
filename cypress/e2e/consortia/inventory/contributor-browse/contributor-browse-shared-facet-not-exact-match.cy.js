@@ -188,6 +188,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOption(contributorBrowseoption);
 
           cy.setTenant(Affiliations.College);
+          cy.getToken(user.username, user.password);
           [...visibleLocalContributors, ...visibleSharedContributors].forEach((contributor) => {
             BrowseContributors.waitForContributorToAppear(contributor.contributorValue);
           });

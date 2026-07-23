@@ -164,7 +164,7 @@ describe('Inventory', () => {
               cy.setTenant(Affiliations.College);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 locations[Affiliations.College] = res;
               });
@@ -174,7 +174,7 @@ describe('Inventory', () => {
               cy.setTenant(Affiliations.University);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 locations[Affiliations.University] = res;
               });
@@ -236,6 +236,7 @@ describe('Inventory', () => {
               false,
             );
 
+            cy.getToken(user.username, user.password);
             cy.intercept('/search/instances?*').as('getInstances');
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               heldbyAccordionName,

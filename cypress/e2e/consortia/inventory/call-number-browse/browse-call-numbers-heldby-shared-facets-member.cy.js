@@ -16,8 +16,12 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import BrowseSubjects from '../../../../support/fragments/inventory/search/browseSubjects';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  BROWSE_CALL_NUMBER_OPTIONS,
+} from '../../../../support/constants';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -416,19 +420,20 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C404360'] },
         () => {
           cy.resetTenant();
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
-            InventorySearchAndFilter.selectBrowseCallNumbers();
+          CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+            name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+            callNumberTypes: [],
           });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.selectBrowseCallNumbers();
+
           cy.setTenant(Affiliations.College);
           InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           allVisibleCNs.forEach((callNumber) => {

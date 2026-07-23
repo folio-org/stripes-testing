@@ -104,7 +104,7 @@ describe('MARC', () => {
 
         after('Delete users, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           // Delete User A from College tenant (where it was created)
           cy.setTenant(Affiliations.College);
           Users.deleteViaApi(userA.userId);
@@ -154,6 +154,7 @@ describe('MARC', () => {
                     cy.setTenant(Affiliations.College);
                     cy.clearCookies({ domain: null });
                     cy.getToken(userA.username, userA.password);
+                    cy.wait(2000);
 
                     // Step 6: User A makes changes to 245 field, tries to save (will trigger conflict because record was updated by User B)
                     QuickMarcEditor.updateExistingField(

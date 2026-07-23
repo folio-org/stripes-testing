@@ -67,7 +67,7 @@ describe('MARC', () => {
 
         after('Delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           MarcAuthority.deleteViaAPI(authorityId, true);
           Users.deleteViaApi(userA.userId);
           cy.setTenant(Affiliations.College);
@@ -94,7 +94,7 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.getToken(userA.username, userA.password);
               MarcAuthority.deleteViaAPI(authorityId);
-              cy.getAdminToken();
+              cy.getAdminToken(false);
               cy.recurse(
                 () => MarcAuthorities.getMarcAuthoritiesViaApi({
                   query: `keyword="${testData.authorityHeading}" and authRefType=="${AUTHORITY_TYPES.AUTHORIZED}"`,

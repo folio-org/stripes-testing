@@ -221,6 +221,7 @@ export default {
           query: `(fullCallNumber>="${callNumberValue}")`,
         },
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then((response) => response.body.items);
   },

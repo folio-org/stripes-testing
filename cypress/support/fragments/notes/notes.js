@@ -62,10 +62,10 @@ export default {
   defaultUnassignedNote,
   defaultTwoAssignedNote,
 
-  getNotesForEHoldingViaApi(eHoldingId) {
+  getNotesForEHoldingViaApi(eHoldingId, type = 'package') {
     return cy
       .okapiRequest({
-        path: `note-links/domain/eholdings/type/package/id/${eHoldingId}?status=assigned`,
+        path: `note-links/domain/eholdings/type/${type}/id/${eHoldingId}?status=assigned`,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body);
@@ -88,8 +88,8 @@ export default {
       failOnStatusCode: !ignoreErrors,
     });
   },
-  deleteNotesForEHoldingViaApi(eHoldingId) {
-    this.getNotesForEHoldingViaApi(eHoldingId).then(({ notes }) => {
+  deleteNotesForEHoldingViaApi(eHoldingId, type = 'package') {
+    this.getNotesForEHoldingViaApi(eHoldingId, type).then(({ notes }) => {
       notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
     });
   },

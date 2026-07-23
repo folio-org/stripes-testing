@@ -213,6 +213,7 @@ describe('Inventory', () => {
             false,
           );
 
+          cy.getToken(user.username, user.password);
           allVisibleCallNumbers.forEach((callNumberValue) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumberValue);
           });
