@@ -496,30 +496,24 @@ export default {
   },
 
   verifySubjectTypeDropdownOptions(types) {
-    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
-    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
+    const targetMultiselect = MultiSelect({ id: 'subjectType-multiselect' });
+    cy.expect(searchFilterPane.find(targetMultiselect).exists());
+    cy.do(targetMultiselect.open());
     cy.expect(MultiSelectMenu().exists());
     cy.wait(1500);
-    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
-      types.forEach((option) => {
-        cy.wrap(options).then(
-          (opts) => expect(opts.some((opt) => opt.includes(option))).to.be.true,
-        );
-      });
+    types.forEach((option) => {
+      cy.expect(targetMultiselect.find(MultiSelectOption(including(option))).exists());
     });
   },
 
   verifySubjectSourceDropdownOptions(sources) {
-    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectSource-multiselect' })).exists());
-    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).open());
+    const targetMultiselect = MultiSelect({ id: 'subjectSource-multiselect' });
+    cy.expect(searchFilterPane.find(targetMultiselect).exists());
+    cy.do(targetMultiselect.open());
     cy.expect(MultiSelectMenu().exists());
     cy.wait(2000);
-    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
-      sources.forEach((option) => {
-        cy.wrap(options).then(
-          (opts) => expect(opts.some((opt) => opt.includes(option))).to.be.true,
-        );
-      });
+    sources.forEach((option) => {
+      cy.expect(targetMultiselect.find(MultiSelectOption(including(option))).exists());
     });
   },
 
