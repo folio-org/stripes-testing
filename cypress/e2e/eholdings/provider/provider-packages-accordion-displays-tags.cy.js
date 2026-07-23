@@ -67,6 +67,7 @@ describe('eHoldings', () => {
         EHoldingsProviders.verifyPackagesAccordionExpanded('true');
 
         EHoldingsProviders.searchPackageByName(testPackage.data.attributes.name);
+        EHoldingsProviders.toggleShowColumnsOption('Tags', { isChecked: true });
         EHoldingsProviders.verifyPackageWithTag(testPackage.data.attributes.name, addedTag);
       },
     );
