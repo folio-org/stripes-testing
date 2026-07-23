@@ -108,10 +108,10 @@ describe('Lists', () => {
 
           // Step 3: Test "is null/empty" operator with False
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL, 1);
-          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL, 1);
+          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`, 1);
           QueryModal.selectValueFromSelect('False', 1);
           QueryModal.verifyQueryAreaContent(
-            `(instance.title starts with ${titlePrefix}) AND (instance.source_uri is null/empty False)`,
+            `(instance.title starts with ${titlePrefix}) AND (instance.source_uri  is null/empty false)`,
           );
           QueryModal.testQueryDisabled(false);
           QueryModal.clickTestQuery();

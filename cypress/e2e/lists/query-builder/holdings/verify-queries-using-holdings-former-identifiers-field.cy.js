@@ -151,13 +151,13 @@ describe('Lists', () => {
 
           // Step 3: Test with "is null/empty" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL, 1);
-          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL, 1);
+          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`, 1);
           QueryModal.verifyQueryAreaContent(
-            `(instance.title == ${instanceTitle}) AND (holdings.former_ids is null/empty )`,
+            `(instance.title == ${instanceTitle}) AND (holdings.former_ids  is null/empty )`,
           );
           QueryModal.selectValueFromSelect('False', 1);
           QueryModal.verifyQueryAreaContent(
-            `(instance.title == ${instanceTitle}) AND (holdings.former_ids is null/empty False)`,
+            `(instance.title == ${instanceTitle}) AND (holdings.former_ids  is null/empty false)`,
           );
           QueryModal.testQueryDisabled(false);
           QueryModal.clickTestQuery();
