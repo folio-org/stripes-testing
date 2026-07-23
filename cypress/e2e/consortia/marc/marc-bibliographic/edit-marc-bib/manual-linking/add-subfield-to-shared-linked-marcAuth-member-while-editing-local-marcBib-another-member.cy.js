@@ -138,6 +138,7 @@ describe('MARC', () => {
                 ]);
               })
               .then(() => {
+                cy.wait(2000);
                 cy.setTenant(Affiliations.College);
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,

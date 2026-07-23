@@ -26,6 +26,7 @@ describe('Inventory', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryUpdateOwnership.gui,
       ];
+      let servicePoint;
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -37,7 +38,7 @@ describe('Inventory', () => {
             .then(({ instanceData }) => {
               testData.instance = instanceData;
 
-              cy.getLocations({ query: 'name="DCB"' }).then((res) => {
+              cy.getLocations({ query: '(name<>"*auto*" and name<>"AT_*")' }).then((res) => {
                 testData.holdings.locationId = res.id;
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -62,7 +63,9 @@ describe('Inventory', () => {
             });
         });
         cy.withinTenant(Affiliations.University, () => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          servicePoint = ServicePoints.getDefaultServicePoint();
+          ServicePoints.createViaApi(servicePoint);
+          cy.then(() => {
             testData.location = Locations.getDefaultLocation({
               servicePointId: servicePoint.id,
             }).location;
@@ -93,13 +96,15 @@ describe('Inventory', () => {
       });
 
       after('Delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken(false);
         cy.withinTenant(Affiliations.University, () => {
           cy.deleteHoldingRecordViaApi(testData.holdings.id);
           InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
           Locations.deleteViaApi(testData.location);
+          ServicePoints.deleteViaApi(servicePoint.id);
         });
         cy.withinTenant(Affiliations.Consortia, () => {
-          cy.getAdminToken();
           Users.deleteViaApi(testData.user.userId);
         });
       });

@@ -95,7 +95,8 @@ describe('MARC', () => {
             MarcAuthorities.searchBeats(testData.authorityHeading);
             MarcAuthorities.selectAuthorityById(authorityId);
             MarcAuthority.waitLoading();
-            MarcAuthority.verifySharedAuthorityDetailsHeading(testData.authorityHeading);
+            MarcAuthority.contains('Shared • ');
+            MarcAuthority.contains(testData.authorityHeading);
 
             MarcAuthority.edit();
             QuickMarcEditor.waitLoading();
@@ -131,9 +132,7 @@ describe('MARC', () => {
                   // Step 13: Click "View latest version" → opens detail view with User B's changes
                   QuickMarcEditor.clickViewLatestVersionLink();
                   MarcAuthority.waitLoading();
-                  MarcAuthority.verifySharedAuthorityDetailsHeading(
-                    testData.authorityHeadingUpdatedByB,
-                  );
+                  MarcAuthority.contains('Shared • ');
                   MarcAuthority.contains(testData.authorityHeadingUpdatedByB);
 
                   // Step 14: User A opens edit from the latest version

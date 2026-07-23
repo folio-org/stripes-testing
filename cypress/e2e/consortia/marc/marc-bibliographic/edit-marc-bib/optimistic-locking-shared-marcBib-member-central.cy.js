@@ -53,34 +53,36 @@ describe('MARC', () => {
           cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcBibFields).then(
             (instanceId) => {
               createdRecordIDs.push(instanceId);
+
+              // Create User A in College tenant (primary affiliation = College)
+              // This ensures User A logs into College tenant directly without affiliation switch
+              cy.setTenant(Affiliations.College);
+              cy.createTempUser([
+                Permissions.inventoryAll.gui,
+                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+              ])
+                .then((userProperties) => {
+                  userA = userProperties;
+
+                  // Assign Central tenant permissions (Central affiliation is automatic)
+                  cy.resetTenant();
+                  cy.assignPermissionsToExistingUser(userA.userId, [
+                    Permissions.inventoryAll.gui,
+                    Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                  ]);
+                })
+                .then(() => {
+                  // Create User B in Central tenant only
+                  cy.resetTenant();
+                  cy.createTempUser([
+                    Permissions.inventoryAll.gui,
+                    Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                  ]).then((userPropertiesB) => {
+                    userB = userPropertiesB;
+                  });
+                });
             },
           );
-
-          // Create User A in College tenant (primary affiliation = College)
-          // This ensures User A logs into College tenant directly without affiliation switch
-          cy.setTenant(Affiliations.College);
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          ]).then((userProperties) => {
-            userA = userProperties;
-
-            // Assign Central tenant permissions (Central affiliation is automatic)
-            cy.resetTenant();
-            cy.assignPermissionsToExistingUser(userA.userId, [
-              Permissions.inventoryAll.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            ]);
-          });
-
-          // Create User B in Central tenant only
-          cy.resetTenant();
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          ]).then((userProperties) => {
-            userB = userProperties;
-          });
         });
 
         after('Delete users, data', () => {
@@ -100,6 +102,7 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C405524'] },
           () => {
             // Steps 1-2: User A logs in to Member tenant, opens record for editing
+            cy.wait(2000);
             cy.setTenant(Affiliations.College);
             cy.login(userA.username, userA.password, {
               path: TopMenu.inventoryPath,
