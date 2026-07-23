@@ -85,6 +85,9 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();
+        subjectValues.forEach((subjectValue) => {
+          BrowseSubjects.waitForSubjectToAppear(subjectValue);
+        });
 
         // Step 1: Run browse with any search query; verify browse result list displayed
         BrowseSubjects.browse(subjectValues[0]);
