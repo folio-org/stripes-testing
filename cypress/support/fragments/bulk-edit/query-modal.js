@@ -285,6 +285,7 @@ export const usersFieldValues = {
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
   userCreatedDate: 'User — User created date',
+  userUpdatedDate: 'User — User updated date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
@@ -297,6 +298,8 @@ export const usersFieldValues = {
   userAddressCity: 'User — Address — City',
   userAddressLine1: 'User — Address — Line 1',
   userAddressLine2: 'User — Address — Line 2',
+  userAddressCountry: 'User — Address — Country',
+  userAddressPrimaryAddress: 'User — Address — Primary address',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -487,6 +490,7 @@ export default {
       RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
+    cy.wait(500);
   },
 
   filterFieldSelectionList(string, row = 0) {
