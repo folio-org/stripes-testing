@@ -77,9 +77,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(subjectType.name);
             ConsortiumSubjectTypes.confirmSaveForMemberLibraries(
               subjectType.name,
-              tenantNames.college,
-              tenantNames.central,
-              tenantNames.university,
+              ...[tenantNames.college, tenantNames.central, tenantNames.university].sort(),
             );
             ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
             ConsortiumSubjectTypes.verifyThreeLocalSubjectTypesExist(

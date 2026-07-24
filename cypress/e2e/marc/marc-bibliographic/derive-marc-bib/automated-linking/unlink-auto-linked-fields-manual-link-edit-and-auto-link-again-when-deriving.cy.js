@@ -34,7 +34,7 @@ describe('MARC', () => {
           field610: {
             rowIndex: 40,
             tag: '610',
-            newContent: '$a Value610 $0 n93016434',
+            newContent: '$a Value610 $0 n93016434388646',
           },
           field650: {
             rowIndex: 41,
@@ -137,8 +137,8 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388646*');
-          InventoryInstances.deleteInstanceByTitleViaApi('C388646*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388646 ');
+          InventoryInstances.deleteInstanceByTitleViaApi('C388646 ');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
