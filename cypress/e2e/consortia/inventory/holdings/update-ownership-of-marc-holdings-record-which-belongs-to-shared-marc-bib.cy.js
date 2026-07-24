@@ -1,8 +1,4 @@
-import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  LOCATION_NAMES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -31,6 +27,7 @@ describe('Inventory', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
       ];
+      let servicePoint;
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -45,7 +42,7 @@ describe('Inventory', () => {
           cy.resetTenant();
           cy.setTenant(Affiliations.College)
             .then(() => {
-              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
+              cy.getLocations({ query: '(name<>"*auto*" and name<>"AT_*")' }).then((res) => {
                 testData.location = res;
               });
             })
@@ -65,7 +62,9 @@ describe('Inventory', () => {
         });
 
         cy.withinTenant(Affiliations.University, () => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+          servicePoint = ServicePoints.getDefaultServicePoint();
+          ServicePoints.createViaApi(servicePoint);
+          cy.then(() => {
             testData.location = Locations.getDefaultLocation({
               servicePointId: servicePoint.id,
             }).location;
@@ -99,10 +98,12 @@ describe('Inventory', () => {
       });
 
       after('Delete test data', () => {
-        cy.getAdminToken();
+        cy.resetTenant();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.University);
         cy.deleteHoldingRecordViaApi(testData.holding.id);
         Locations.deleteViaApi(testData.location);
+        ServicePoints.deleteViaApi(servicePoint.id);
         cy.withinTenant(Affiliations.Consortia, () => {
           cy.getAdminToken();
           InventoryInstance.deleteInstanceViaApi(testData.instanceId);
