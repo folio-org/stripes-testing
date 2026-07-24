@@ -113,7 +113,7 @@ describe('Requests', () => {
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
-      CheckInActions.openRequestDetails(itemData.barcodes[0]);
+      CheckInActions.checkRequestDetails(itemData.barcodes[0]);
       RequestDetail.checkRequestStatus('Open - In transit');
       CheckInActions.openCheckInPane();
       // Change your logged in service point to match the pickup service point for your request
@@ -125,7 +125,7 @@ describe('Requests', () => {
       AwaitingPickupForARequest.unselectCheckboxPrintSlip();
       AwaitingPickupForARequest.closeModal();
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS1);
-      CheckInActions.openRequestDetails(itemData.barcodes[0]);
+      CheckInActions.checkRequestDetails(itemData.barcodes[0]);
       RequestDetail.checkRequestStatus('Open - Awaiting pickup');
       // Check the item out to the requester
 

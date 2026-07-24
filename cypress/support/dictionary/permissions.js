@@ -573,6 +573,7 @@ export default {
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
+  uiUsersEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissionsView: {
     internal: 'ui-users.perms.view',
@@ -601,6 +602,7 @@ export default {
     gui: 'Fee/Fine History: Can create, edit and remove accounts',
   },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUsersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans-anonymize.execute',
     gui: 'Users: User loans anonymize',
