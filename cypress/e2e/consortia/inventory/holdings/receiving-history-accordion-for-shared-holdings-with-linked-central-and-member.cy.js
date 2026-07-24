@@ -68,7 +68,7 @@ describe('Inventory', () => {
           },
           locations: [
             {
-              tenantId: 'college',
+              tenantId: Affiliations.College,
               holdingId: testData.holdings.holdingId,
               quantityPhysical: 1,
             },
