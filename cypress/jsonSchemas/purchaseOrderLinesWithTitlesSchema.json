@@ -357,7 +357,7 @@
             "type": ["string", "null"]
           },
           "instance.publication_range": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.created_by": {
             "type": ["string", "null"]
@@ -393,7 +393,7 @@
             "type": ["string", "null"]
           },
           "instance.publication_frequency": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.agreement_id": {
             "type": ["string", "null"]

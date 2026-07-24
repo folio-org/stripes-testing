@@ -129,7 +129,7 @@
             "type": ["string", "null"]
           },
           "to_fund.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "fiscal_year.series": {
             "type": ["string", "null"]

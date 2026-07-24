@@ -21,6 +21,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   not,
+  or,
   Pane,
   RadioButton,
   SelectionList,
@@ -54,7 +55,7 @@ const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
 const listsPane = Pane('Lists');
-const newLink = new Link('New');
+const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
@@ -128,7 +129,10 @@ const UI = {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
+    cy.xpath(
+      '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
+      { timeout: 120000 },
+    ).should('not.exist');
   },
 
   filtersWaitLoading() {
@@ -1170,13 +1174,23 @@ const QueryBuilder = {
                 break;
               case 'is null/empty':
                 if (locator) {
-                  cy.expect(
-                    MultiColumnListCell({
-                      row: index,
-                      columnIndex: columnNumber,
-                      content: valueInColumn,
-                    }).exists(),
-                  );
+                  if (Array.isArray(valueInColumn)) {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: or(...valueInColumn),
+                      }).exists(),
+                    );
+                  } else {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: valueInColumn,
+                      }).exists(),
+                    );
+                  }
                 } else {
                   cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
                 }
@@ -1221,14 +1235,14 @@ const QueryBuilder = {
 
   getNumberOfFoundRecordsFromPaneHeader(listName) {
     return cy
-      .then(() => Pane(listName).subtitle)
-      .then((subtitle) => {
-        const subtitleText = String(subtitle);
-        const match = subtitleText.match(/(\d+) records found/);
-        if (match) {
-          return Number(match[1]);
-        }
-        return 0;
+      .get('[class^=paneHeader-]')
+      .contains(listName)
+      .closest('[class^=paneHeader-]')
+      .contains(/records? found/)
+      .invoke('text')
+      .then((text) => {
+        const match = text.match(/(\d+) records? found/);
+        return match ? Number(match[1]) : 0;
       });
   },
 };
