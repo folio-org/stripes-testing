@@ -126,7 +126,7 @@ describe('Bulk-edit', () => {
 
         // Step 2: Upload a .csv file with valid Item barcodes
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-        BulkEditSearchPane.checkForUploading(itemBarcodesFileName);
+        BulkEditSearchPane.verifyRetrievingRecordsStatus(itemBarcodesFileName);
 
         // Step 3: Immediately switch to Logs to catch "Retrieving records" status
         BulkEditSearchPane.openLogsSearch();

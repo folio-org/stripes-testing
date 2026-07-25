@@ -24,7 +24,7 @@
             "type": ["string", "null"]
           },
           "po.notes": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "po_created_by_user.active": {
             "type": ["string", "null"]
@@ -111,13 +111,13 @@
             "type": ["string", "null"]
           },
           "po.tags": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.description": {
             "type": ["string", "null"]
           },
           "po.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "po_updated_by_user.username": {
             "type": ["string", "null"]
@@ -183,7 +183,7 @@
             "type": ["string", "null"]
           },
           "pol.tags": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "po.updated_by": {
             "type": ["string", "null"]

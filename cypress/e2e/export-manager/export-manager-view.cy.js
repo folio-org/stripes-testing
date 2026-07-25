@@ -12,6 +12,7 @@ import {
   NewOrganization,
   Organizations,
 } from '../../support/fragments/organizations';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 let now;
@@ -46,6 +47,7 @@ describe(
 
             now.set('second', now.second() + 10);
             testData.integration = Integrations.getDefaultIntegration({
+              accountNoList: [getRandomPostfix()],
               vendorId: testData.organization.id,
               acqMethodId: acqMethod.id,
               ediFtp: {
