@@ -221,6 +221,8 @@ export const instanceFieldValues = {
   electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
   tags: 'Instance — Tags',
   series: 'Instance — Series',
+  marcBibliographicMarcJsonb: 'MARC bibliographic — MARC jsonb',
+  marcBibliographicState: 'MARC bibliographic — State',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
