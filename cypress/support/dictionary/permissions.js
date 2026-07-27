@@ -354,6 +354,38 @@ export default {
     internal: 'inventory-storage.instance-date-types.collection.get',
     gui: 'inventory storage - get list of instance-date-types',
   },
+  inventoryStorageClassificationTypesCollectionGet: {
+    internal: 'inventory-storage.classification-types.collection.get',
+    gui: 'inventory storage - get list of classification-types',
+  },
+  inventoryStorageInstancesItemGet: {
+    internal: 'inventory-storage.instances.item.get',
+    gui: 'inventory storage - get instance',
+  },
+  inventoryStorageContributorNameTypesCollectionGet: {
+    internal: 'inventory-storage.contributor-name-types.collection.get',
+    gui: 'inventory storage - get list of contributor-name-types',
+  },
+  inventoryStorageContributorTypesCollectionGet: {
+    internal: 'inventory-storage.contributor-types.collection.get',
+    gui: 'inventory storage - get list of contributor-types',
+  },
+  inventoryStorageStatisticalCodesCollectionGet: {
+    internal: 'inventory-storage.statistical-codes.collection.get',
+    gui: 'inventory storage - get list of statistical-codes',
+  },
+  inventoryStorageStatisticalCodeTypesCollectionGet: {
+    internal: 'inventory-storage.statistical-code-types.collection.get',
+    gui: 'inventory storage - get list of statistical-code-types',
+  },
+  inventoryStorageInstanceFormatsCollectionGet: {
+    internal: 'inventory-storage.instance-formats.collection.get',
+    gui: 'inventory storage - get list of instance-formats',
+  },
+  inventoryStorageNatureOfContentTermsCollectionGet: {
+    internal: 'inventory-storage.nature-of-content-terms.collection.get',
+    gui: 'inventory storage - get list of nature-of-content-terms',
+  },
   inventoryViewEditGeneralSettings: {
     internal: 'ui-inventory.settings.displaySettings',
     gui: 'Settings (Inventory): Can view and edit general settings',

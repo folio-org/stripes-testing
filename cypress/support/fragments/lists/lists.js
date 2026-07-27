@@ -85,6 +85,7 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
   },
   userColumns: [
     'User — Active',
