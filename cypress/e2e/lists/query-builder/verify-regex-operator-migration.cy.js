@@ -41,6 +41,7 @@ describe('Lists', () => {
         QueryModal.verifyClosed();
         Lists.waitForCompilingToComplete();
         Lists.closeListDetailsPane();
+        Lists.verifyListIsPresent(testData.listName);
       });
     });
 

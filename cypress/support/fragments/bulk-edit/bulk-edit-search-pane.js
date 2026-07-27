@@ -307,6 +307,11 @@ export default {
     });
   },
 
+  verifyRetrievingRecordsStatus(fileName) {
+    cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
+    cy.expect(HTML(including('Retrieving...')));
+  },
+
   progresBarIsAbsent() {
     cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
     cy.expect(HTML(including('Retrieving...')).absent());
