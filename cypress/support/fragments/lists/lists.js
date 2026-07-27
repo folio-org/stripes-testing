@@ -84,6 +84,7 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
   },
   userColumns: [
     'User — Active',
@@ -128,7 +129,10 @@ const UI = {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
+    cy.xpath(
+      '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
+      { timeout: 120000 },
+    ).should('not.exist');
   },
 
   filtersWaitLoading() {
