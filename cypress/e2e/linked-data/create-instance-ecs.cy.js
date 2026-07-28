@@ -121,7 +121,7 @@ describe('Citation: create instance in central tenant + holdings in member', () 
 
   it(
     'C736677 [User journey] Marigold - Create new instance in central tenant (citation)',
-    { tags: ['criticalPathECS', 'citation', 'marigold', 'C736677'] },
+    { tags: ['draft', 'citation', 'marigold', 'C736677'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
