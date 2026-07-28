@@ -20,6 +20,7 @@ import {
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import UserEdit from './userEdit';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
@@ -252,7 +253,7 @@ export default {
     );
   },
 
-  createViaUi: (userData) => {
+  createViaUi: (userData, { isKeycloak = false } = {}) => {
     return cy
       .do([
         Section({ id: 'users-search-results-pane' })
@@ -273,6 +274,11 @@ export default {
       .then(() => {
         cy.wait(10000);
         cy.do(Button({ id: 'clickable-save' }).click());
+
+        if (isKeycloak) {
+          UserEdit.checkPromoteUserModal(userData.personal?.lastName);
+          UserEdit.clickConfirmInPromoteUserModal();
+        }
       })
       .then(() => {
         cy.intercept('/users').as('user');

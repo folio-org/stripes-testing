@@ -69,7 +69,7 @@ describe('Consortia', () => {
     'C387512 Affiliation in central tenant is automatically added after creating user in the member tenant (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet', 'C387512'] },
     () => {
-      Users.createViaUi(testUser).then((id) => {
+      Users.createViaUi(testUser, { isKeycloak: true }).then((id) => {
         testUser.id = id;
       });
       ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
