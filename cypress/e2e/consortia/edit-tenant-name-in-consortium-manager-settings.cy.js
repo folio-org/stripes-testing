@@ -9,6 +9,10 @@ import ConsortiumManager from '../../support/fragments/settings/consortium-manag
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 
+const targetTenantName = tenantNames.university;
+const targetTenantCode = tenantCodes.university;
+const targetTenantAffiliation = Affiliations.University;
+
 describe('Consortia', () => {
   const character151 =
     'Beyond the horizon, a world of possibilities awaits. Embrace the journey, learn from challenges, and celebrate every small victory along the way.1234567';
@@ -40,27 +44,24 @@ describe('Consortia', () => {
     { tags: ['smokeECS', 'thunderjet', 'C380515'] },
     () => {
       ConsortiumManager.selectMembership();
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(
-        `${tenantCodes.professional}E`,
-        `${tenantNames.professional}-Edited`,
-      );
+      ConsortiumManager.editTenant(targetTenantName);
+      ConsortiumManager.editTenantInformation(`${targetTenantCode}E`, `${targetTenantName}-Edited`);
       ConsortiumManager.saveEditingTenantInformation();
       ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-        `${tenantCodes.professional}E`,
-        `${tenantNames.professional}-Edited`,
-        Affiliations.Professional,
+        `${targetTenantCode}E`,
+        `${targetTenantName}-Edited`,
+        targetTenantAffiliation,
       ]);
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(tenantCodes.professional, tenantNames.professional);
+      ConsortiumManager.editTenant(targetTenantName);
+      ConsortiumManager.editTenantInformation(targetTenantCode, targetTenantName);
       ConsortiumManager.saveEditingTenantInformation();
       ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-        tenantCodes.professional,
-        tenantNames.professional,
-        Affiliations.Professional,
+        targetTenantCode,
+        targetTenantName,
+        targetTenantAffiliation,
       ]);
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(`${tenantCodes.professional}-ED`, character151);
+      ConsortiumManager.editTenant(targetTenantName);
+      ConsortiumManager.editTenantInformation(`${targetTenantCode}-Edited`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(tenantErrors.code, tenantErrors.name);
 
       ConsortiumManager.cancelEditingTenantInformation();
