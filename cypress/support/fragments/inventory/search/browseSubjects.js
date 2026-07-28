@@ -349,7 +349,7 @@ export default {
     subjectName,
     isPresent = true,
     isLinked = false,
-    { allUnlinked = false } = {},
+    { allUnlinked = false, allLinked = false, quantity = null } = {},
   ) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
@@ -379,16 +379,33 @@ export default {
 
         if (isPresent) {
           if (isLinked) {
-            return hasLinkedItem(foundSubjects);
+            if (allLinked) {
+              return (
+                (quantity !== null
+                  ? foundSubjects.length === quantity
+                  : foundSubjects.length > 0) &&
+                !hasNotLinkedItem(foundSubjects) &&
+                hasLinkedItem(foundSubjects)
+              );
+            }
+            return (
+              (quantity !== null ? foundSubjects.length === quantity : foundSubjects.length > 0) &&
+              hasLinkedItem(foundSubjects)
+            );
           } else {
             if (allUnlinked) {
               return (
-                foundSubjects.length > 0 &&
+                (quantity !== null
+                  ? foundSubjects.length === quantity
+                  : foundSubjects.length > 0) &&
                 hasNotLinkedItem(foundSubjects) &&
                 !hasLinkedItem(foundSubjects)
               );
             }
-            return foundSubjects.length > 0 && hasNotLinkedItem(foundSubjects);
+            return (
+              (quantity !== null ? foundSubjects.length === quantity : foundSubjects.length > 0) &&
+              hasNotLinkedItem(foundSubjects)
+            );
           }
         } else {
           return foundSubjects.length === 0;
@@ -536,6 +553,57 @@ export default {
         content: including(subjectValue),
         selected: true,
       }).exists(),
+    );
+  },
+
+  checkResultsWithSameSubject(
+    subjectValue,
+    expectedCount,
+    {
+      isHighlighted,
+      subjectSourceValues = [],
+      subjectTypeValues = [],
+      numberOfTitlesValues = [],
+    } = {},
+  ) {
+    cy.wait(1500);
+    cy.do(
+      resultTable.perform((el) => {
+        const rows = [...el.querySelectorAll('[data-row-inner]')];
+        const matchingRows = rows.filter((row) => {
+          const cells = row.querySelectorAll('[class*="mclCell"]');
+          return cells[0]?.textContent.replace('Linked to MARC authority', '') === subjectValue;
+        });
+        expect(matchingRows.length).to.equal(expectedCount);
+
+        const actualSourceValues = [];
+        const actualTypeValues = [];
+        const actualTitleCounts = [];
+
+        matchingRows.forEach((row) => {
+          if (isHighlighted) {
+            const strong = row.querySelector('strong');
+            expect(strong === null).to.equal(false);
+            expect(strong.textContent).to.equal(subjectValue);
+          }
+          const cells = row.querySelectorAll('[class*="mclCell"]');
+          actualSourceValues.push(cells[1]?.textContent);
+          actualTypeValues.push(cells[2]?.textContent);
+          actualTitleCounts.push(cells[3]?.textContent);
+        });
+
+        if (subjectSourceValues.length) {
+          expect(actualSourceValues.sort()).to.deep.equal([...subjectSourceValues].sort());
+        }
+        if (subjectTypeValues.length) {
+          expect(actualTypeValues.sort()).to.deep.equal([...subjectTypeValues].sort());
+        }
+        if (numberOfTitlesValues.length) {
+          expect(actualTitleCounts.sort()).to.deep.equal(
+            [...numberOfTitlesValues].map(String).sort(),
+          );
+        }
+      }),
     );
   },
 };
