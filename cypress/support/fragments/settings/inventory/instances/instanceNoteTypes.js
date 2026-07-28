@@ -30,7 +30,10 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
   verifyConsortiumInstanceNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({
+      content: including(name),
+      isContainer: false,
+    });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -51,7 +54,10 @@ export default {
   },
 
   verifyLocalInstanceNoteTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({
+      content: including(name),
+      isContainer: false,
+    });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -83,7 +89,7 @@ export default {
 
   clickTrashButtonForInstanceNoteTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),
