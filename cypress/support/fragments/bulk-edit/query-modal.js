@@ -19,6 +19,7 @@ import {
   Calendar,
   Pane,
   or,
+  not,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
@@ -644,6 +645,15 @@ export default {
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionAbsent(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: not(including(field)) }));
     });
     this.closeOpenedSelection();
   },
