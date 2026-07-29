@@ -31,6 +31,7 @@ import {
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
+import { poll } from '../../utils/polling';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -1461,6 +1462,34 @@ const API = {
       path: `entity-types/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
+    });
+  },
+
+  waitForCustomFieldToBeQueryable(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+        },
+      );
+    });
+  },
+
+  waitForFieldLabelToBeAbsent(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => !body.columns?.some(({ labelAlias }) => labelAlias === fieldLabel),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not disappear from ${recordType}`,
+        },
+      );
     });
   },
 
