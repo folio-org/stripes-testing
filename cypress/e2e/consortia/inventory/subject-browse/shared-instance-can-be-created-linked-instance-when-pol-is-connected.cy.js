@@ -2,6 +2,7 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import SelectInstanceModal from '../../../../support/fragments/inventory/modals/inventoryInstanceSelectInstanceModal';
 import { NewOrder, Orders } from '../../../../support/fragments/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
@@ -117,8 +118,11 @@ describe('Inventory', () => {
           Orders.searchByParameter('PO number', testData.order.poNumber);
           Orders.selectFromResultsList(testData.order.poNumber);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+          OrderLines.clickInstanceTitleLookup();
+          SelectInstanceModal.clearDefaultHeldbyFilter(); // Clear default filter to avoid selecting instance from the wrong tenant
+          SelectInstanceModal.searchByTitle(testData.sharedInstance.title);
+          SelectInstanceModal.selectInstance();
+          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
           OrderLines.selectPOLInOrder();
