@@ -103,6 +103,7 @@ export default {
         path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
         isDefaultSearchParamsRequired: false,
         failOnStatusCode: false,
+        customTimeout: 100_000,
       })
       .then(({ status }) => {
         return status;

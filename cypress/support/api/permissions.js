@@ -228,6 +228,7 @@ Cypress.Commands.add('deleteAuthorizationRoleApi', (roleId, ignoreErrors = false
     path: `roles/${roleId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: !ignoreErrors,
+    customTimeout: 100_000,
   });
 });
 

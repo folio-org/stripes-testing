@@ -64,6 +64,7 @@ describe('Eureka', () => {
             UserEdit.clickConfirmInPromoteUserModal();
           });
         }
+        cy.wait('@createUser', { timeout: 100_000 });
         Users.checkCreateUserPaneOpened(false);
 
         Users.verifyLastNameOnUserDetailsPane(testData.lastName);

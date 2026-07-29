@@ -1615,6 +1615,7 @@ export default {
   },
 
   checkPromoteUserModal(lastName, firstName = '') {
+    cy.get('[class^="modalHeader-"]', { timeout: 100_000 }).should('be.visible');
     cy.expect([
       promoteUserModal.find(cancelButton).exists(),
       promoteUserModal.find(confirmButton).exists(),
