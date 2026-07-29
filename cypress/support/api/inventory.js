@@ -655,17 +655,19 @@ Cypress.Commands.add('setInventoryDisplaySettingsViaAPI', (body) => {
 });
 
 Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
+  const apiSortOption =
+    sortOption.toLowerCase() === 'date' ? 'normalizedDate1' : sortOption.toLowerCase();
   cy.getInventoryDisplaySettingsViaAPI().then((entries) => {
     let updatedBody;
     if (entries.length) {
       updatedBody = { ...entries[0] };
-      updatedBody.value.defaultSort = sortOption;
+      updatedBody.value.defaultSort = apiSortOption;
       cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
     } else {
       updatedBody = { ...defaultDisplaySettings };
       updatedBody.id = uuid();
       updatedBody.value = {
-        defaultSort: sortOption,
+        defaultSort: apiSortOption,
       };
       cy.setInventoryDisplaySettingsViaAPI(updatedBody);
     }

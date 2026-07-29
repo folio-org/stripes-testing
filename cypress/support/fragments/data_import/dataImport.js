@@ -41,6 +41,8 @@ const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 const fileUploadPane = Pane('Files');
+const buttonCancel = Button('Cancel');
+const chooseOtherFilesButton = Button('Choose other files to upload');
 
 const uploadFile = (filePathName, fileName) => {
   cy.expect(sectionPaneJobsTitle.exists());
@@ -479,17 +481,35 @@ export default {
   },
 
   cancelBlockedImportModal() {
-    cy.do(importBlockedModal.find(Button('Cancel')).click());
+    cy.do(importBlockedModal.find(buttonCancel).click());
+    cy.expect(importBlockedModal.absent());
   },
 
-  verifyImportBlockedModal() {
+  chooseOtherFilesBlockedImportModal() {
+    cy.get('input[type="file"]').then(($input) => {
+      cy.spy($input[0], 'click').as('filePickerOpened');
+    });
+    cy.do(importBlockedModal.find(chooseOtherFilesButton).click());
+    cy.expect(importBlockedModal.absent());
+    cy.get('@filePickerOpened').should('have.been.called');
+  },
+
+  verifyImportBlockedModal({ noExtension = false } = {}) {
     cy.expect([
       importBlockedModal.exists(),
       importBlockedModal
-        .find(HTML(including('You cannot upload files with this file extension')))
+        .find(
+          HTML(
+            including(
+              noExtension
+                ? 'You cannot upload a file without a file extension'
+                : 'You cannot upload files with this file extension',
+            ),
+          ),
+        )
         .exists(),
-      importBlockedModal.find(Button('Cancel')).exists(),
-      importBlockedModal.find(Button('Choose other files to upload')).exists(),
+      importBlockedModal.find(buttonCancel).exists(),
+      importBlockedModal.find(chooseOtherFilesButton).exists(),
     ]);
   },
 
