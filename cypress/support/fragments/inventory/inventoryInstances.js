@@ -1593,8 +1593,12 @@ export default {
   },
 
   checkColumnHeaderSort(headerName, isAscending = true) {
-    const sort = isAscending ? 'ascending' : 'descending';
-    cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+    if (isAscending === null) {
+      cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort: 'none' })).exists());
+    } else {
+      const sort = isAscending ? 'ascending' : 'descending';
+      cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+    }
   },
 
   getResultsCount() {
