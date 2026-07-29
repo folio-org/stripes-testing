@@ -86,6 +86,11 @@ const constants = {
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
     instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
+    receivingPieces: 'Receiving pieces',
+    feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
+    usersWithFeeFineLoans: 'Users with fees/fines, loans',
+    usersWithManualBlocks: 'Users with manual blocks',
+    lostItemsRequiringActualCost: 'Lost items requiring actual cost',
   },
   userColumns: [
     'User — Active',

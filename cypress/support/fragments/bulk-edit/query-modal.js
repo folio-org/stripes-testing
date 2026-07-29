@@ -19,6 +19,7 @@ import {
   Calendar,
   Pane,
   or,
+  not,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
@@ -75,6 +76,7 @@ const embeddedTableHeadersMap = {
     'Distribution type',
     'Value',
   ],
+  polLocations: ['Name', 'Code', 'Quantity electronic', 'Quantity physical'],
   userAddress: [
     'City',
     'Region',
@@ -310,6 +312,7 @@ export const transactionFieldValues = {
 export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
+  uuid: 'Organization — UUID',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -319,6 +322,7 @@ export const purchaseOrderLinesFieldValues = {
   uuid: 'POL — UUID',
   costCurrency: 'POL — Cost currency',
   costPOLEstimatedPrice: 'POL — Cost PO line estimated price',
+  locationsCode: 'POL — Locations — Code',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
 };
@@ -628,6 +632,15 @@ export default {
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionAbsent(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: not(including(field)) }));
     });
     this.closeOpenedSelection();
   },
@@ -1238,6 +1251,8 @@ export default {
         ];
       case 'additionalCallNumbers':
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
+      case 'polLocations':
+        return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1350,6 +1365,13 @@ export default {
       itemIdentifier,
       expectedAdditionalCallNumbers,
     );
+  },
+
+  verifyPOLLocationsEmbeddedTableInQueryModal(
+    polIdentifier,
+    expectedLocations, // Can be a single location object or array of objects, ex: { name: 'Main Library', code: 'KU/CC/DI/A', quantityElectronic: '0', quantityPhysical: '1' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('polLocations', polIdentifier, expectedLocations);
   },
 
   clickShowColumnsButton() {
