@@ -335,12 +335,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-linkedInstances' }).click());
   },
 
-  clickInstanceTitleLookup: () => {
+  clickInstanceTitleLookup() {
     cy.do(titleLookupTrigger.click());
-  },
-
-  addPackageTitle: () => {
-    this.clickInstanceTitleLookup();
   },
 
   varifyAddingInstanceTPackageTitle: (instanceTitle, polNumber) => {
