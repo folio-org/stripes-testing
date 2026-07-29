@@ -18,6 +18,7 @@ const team = {
   Citation: 18,
   Corsair: 19,
   Eureka: 21,
+  Promin: 27,
 };
 
 const testTypes = {

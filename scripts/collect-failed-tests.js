@@ -10,6 +10,7 @@ const selectedTestTypes = [
   testTypes.criticalPath,
   testTypes.extendedPath,
   testTypes.edgeCases,
+  testTypes.backend,
 ];
 
 const selectedStatus = [

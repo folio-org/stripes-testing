@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils/stringTools';
+import { getBibliographicSpec } from '../../../../../support/api/specifications-helper';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -129,6 +130,9 @@ describe('MARC', () => {
 
         before('Create user and test data', () => {
           cy.getAdminToken();
+          getBibliographicSpec().then((bibSpec) => {
+            cy.syncSpecifications(bibSpec.id);
+          });
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C387513_MarcAuthority');
 
           cy.createTempUser([
