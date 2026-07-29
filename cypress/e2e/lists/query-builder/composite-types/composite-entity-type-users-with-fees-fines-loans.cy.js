@@ -18,7 +18,7 @@ describe('Lists', () => {
           Permissions.uiFeeFinesActions.gui,
           Permissions.uiFeeFines.gui,
           Permissions.uiUsersViewLoans.gui,
-          Permissions.uiUsersViewRequests.gui,
+          Permissions.usersViewRequests.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
