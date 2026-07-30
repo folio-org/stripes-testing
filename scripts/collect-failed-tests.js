@@ -31,6 +31,7 @@ const selectedTeams = [
   team.Corsair,
   team.Eureka,
   team.Citation,
+  team.Promin,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
