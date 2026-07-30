@@ -144,6 +144,7 @@ describe('Lists', () => {
           Lists.selectVisibility(listData.visibility);
           Lists.selectStatus(listData.status[1]);
           Lists.saveList();
+          cy.wait(30_000);
           Lists.closeListDetailsPane();
           Lists.openList(listData.name);
           Lists.openActions();

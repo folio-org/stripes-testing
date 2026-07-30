@@ -64,6 +64,7 @@ describe('Lists', () => {
 
         Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.waitForCompilingToComplete();
+        cy.wait(30_000);
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);

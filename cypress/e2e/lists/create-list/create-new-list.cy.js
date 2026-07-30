@@ -54,8 +54,10 @@ describe('Lists', () => {
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
+        cy.wait(30_000);
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
+        cy.wait(30_000);
         Lists.closeListDetailsPane();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);

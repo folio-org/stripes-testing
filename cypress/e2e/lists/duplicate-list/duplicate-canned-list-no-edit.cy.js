@@ -56,6 +56,7 @@ describe('Lists', () => {
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete(5000);
+        cy.wait(30_000);
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
