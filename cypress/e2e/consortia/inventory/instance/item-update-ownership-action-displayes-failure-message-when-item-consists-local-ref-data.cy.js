@@ -48,16 +48,18 @@ describe('Inventory', () => {
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
                 testData.colledgeHoldings.holdingTypeId = res[0].id;
               });
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.colledgeHoldings.location = location;
-                  testData.colledgeHoldings.locationId = location.id;
-                  testData.colledgeHoldings.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    testData.colledgeHoldings.location = location;
+                    testData.colledgeHoldings.locationId = location.id;
+                    testData.colledgeHoldings.locationName = location.name;
+                  });
+                },
+              );
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.collegeItem.loanTypeId = res[0].id;
               });
@@ -105,10 +107,10 @@ describe('Inventory', () => {
                 })
                 .then(() => {
                   cy.withinTenant(Affiliations.University, () => {
-                    ServicePoints.getCircDesk1ServicePointViaApi()
-                      .then((servicePoint) => {
+                    ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' })
+                      .then((servicePoints) => {
                         const universityLocationData = Locations.getDefaultLocation({
-                          servicePointId: servicePoint.id,
+                          servicePointId: servicePoints[0].id,
                         }).location;
                         Locations.createViaApi(universityLocationData).then((location) => {
                           testData.universityHoldings.location = location;

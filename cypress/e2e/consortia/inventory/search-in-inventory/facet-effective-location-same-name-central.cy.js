@@ -441,6 +441,7 @@ describe('Inventory', () => {
 
             // Step 2: Search for created instances
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Step 3: Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
@@ -461,18 +462,24 @@ describe('Inventory', () => {
               locationsAccordionName,
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Step 5: Cancel and select Member 2 location
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               locationsAccordionName,
               `${testData.locations.testLocation_member2.name} (${tenantDisplayNames.member2})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared4);
             // Step 6: Cancel and select Location A (unique)
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
               testData.locations.locationA_member1.name,
@@ -492,6 +499,7 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             // Step 8: Search again
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
@@ -514,10 +522,13 @@ describe('Inventory', () => {
               locationsAccordionName,
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Cancel and select Location B (unique)
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
               testData.locations.locationB_member2.name,
@@ -537,6 +548,7 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             // Search again
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
@@ -560,14 +572,10 @@ describe('Inventory', () => {
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Also slect Location A (unique)
-            InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
-              locationsAccordionName,
-              testData.locations.locationA_member1.name,
-              true,
-              1,
-            );
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               locationsAccordionName,
               `${testData.locations.locationA_member1.name} (${tenantDisplayNames.member1})`,

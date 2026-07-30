@@ -167,7 +167,7 @@ describe('Inventory', () => {
         });
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
-            ServicePoints.getViaApi({ query: 'name=Circ Desk' }).then((servicePoints) => {
+            ServicePoints.getViaApi({ query: 'name<>"*auto*"' }).then((servicePoints) => {
               testData.defaultLocation[tenant] = Location.getDefaultLocation(servicePoints[0].id);
               Location.createViaApi(testData.defaultLocation[tenant]);
             });
