@@ -78,7 +78,8 @@ describe('Lists', () => {
                   {
                     ...Users.generateUserModel(),
                     customFields: {
-                      [createdCustomField.refId]: option1Value,
+                      [createdCustomField.refId]:
+                        testData.customField.selectField.options.values[0].id,
                     },
                   },
                   [],

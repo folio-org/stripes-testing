@@ -282,7 +282,7 @@ describe('Data Export', () => {
           });
 
           cy.withinTenant(Affiliations.University, () => {
-            cy.getLocations({ query: 'name="Main Library"' }).then((location) => {
+            cy.getLocations({ limit: 1 }).then((location) => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: instances[0].uuid,
                 sourceId: testData.sourceId,

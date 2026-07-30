@@ -66,12 +66,12 @@ describe('Lists', () => {
         QueryModal.verifySelectedField(organizationFieldValues.code);
         QueryModal.verifyQueryAreaContent('(organization.code  )');
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-        QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
-        QueryModal.verifyQueryAreaContent('(organization.code  is null/empty )');
+        QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
+        QueryModal.verifyQueryAreaContent('(organization.code is null/empty )');
         QueryModal.verifyOptionsInValueSelect(['True', 'False']);
         QueryModal.selectValueFromSelect('False');
         QueryModal.verifySelectedValue('False');
-        QueryModal.verifyQueryAreaContent('(organization.code  is null/empty false)');
+        QueryModal.verifyQueryAreaContent('(organization.code is null/empty False)');
         QueryModal.addNewRow();
         QueryModal.selectField(organizationFieldValues.name, 1);
         QueryModal.verifySelectedField(organizationFieldValues.name, 1);
@@ -101,10 +101,10 @@ describe('Lists', () => {
         Lists.editList();
         Lists.editQuery();
         QueryModal.verifyQueryAreaContent(
-          `(organization.code  is null/empty false) AND (organization.name == ${organization.name})`,
+          `(organization.code is null/empty False) AND (organization.name == ${organization.name})`,
         );
         QueryModal.verifySelectedField(organizationFieldValues.code);
-        QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
+        QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.verifySelectedValue('False');
         QueryModal.verifySelectedField(organizationFieldValues.name, 1);
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);

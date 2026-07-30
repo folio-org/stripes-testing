@@ -214,6 +214,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield(sharedItemBarcode);
           QueryModal.testQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(2);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
@@ -291,6 +292,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield(sharedAccessionNumber);
           QueryModal.testQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(2);
 
           // Step 11: Click "Run query" button

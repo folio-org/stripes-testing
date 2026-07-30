@@ -93,6 +93,9 @@ describe('Data Export', () => {
           });
         })
         .then(() => {
+          // reset to default (if more records than slice size, they will be split in several files)
+          cy.configureDataExportFileLimit('slice_size', 10_000);
+
           cy.login(user.username, user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,

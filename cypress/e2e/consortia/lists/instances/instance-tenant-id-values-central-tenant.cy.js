@@ -129,10 +129,10 @@ describe('Lists', () => {
 
           // Step 6: Select "is null/empty" operator with "False" value and test query
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
           QueryModal.selectValueFromSelect('False');
           QueryModal.verifySelectedValue('False');
-          QueryModal.verifyQueryAreaContent('(instance.tenant_id  is null/empty false)');
+          QueryModal.verifyQueryAreaContent('(instance.tenant_id is null/empty False)');
 
           // Add additional filter: Instance title starts with test prefix to narrow down results
           QueryModal.addNewRow();
@@ -140,7 +140,7 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C503086_SharedInstance', 1);
           QueryModal.verifyQueryAreaContent(
-            '(instance.tenant_id  is null/empty false) AND (instance.title starts with AT_C503086_SharedInstance)',
+            '(instance.tenant_id is null/empty False) AND (instance.title starts with AT_C503086_SharedInstance)',
           );
 
           // Add additional filter: Instance created date equals today to further narrow results
@@ -149,7 +149,7 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
           QueryModal.fillInValueTextfield(todayDate, 2);
           QueryModal.verifyQueryAreaContent(
-            `(instance.tenant_id  is null/empty false) AND (instance.title starts with AT_C503086_SharedInstance) AND (instance.created_at == ${todayDate})`,
+            `(instance.tenant_id is null/empty False) AND (instance.title starts with AT_C503086_SharedInstance) AND (instance.created_at == ${todayDate})`,
           );
 
           QueryModal.testQueryDisabled(false);

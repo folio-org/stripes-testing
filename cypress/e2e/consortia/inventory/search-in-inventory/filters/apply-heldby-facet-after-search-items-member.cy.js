@@ -168,23 +168,25 @@ describe('Inventory', () => {
               cy.setTenant(Affiliations.College);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 locations[Affiliations.College] = res;
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 holdingsSourceId = folioSource.id;
               });
-              cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
-                loanTypeId = loanTypes[0].id;
-              });
+              cy.getLoanTypes({ limit: 1, query: '(name<>"AT_*" and name<>"*auto*")' }).then(
+                (loanTypes) => {
+                  loanTypeId = loanTypes[0].id;
+                },
+              );
               cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
                 materialTypeId = res.id;
               });
               cy.setTenant(Affiliations.University);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 locations[Affiliations.University] = res;
               });

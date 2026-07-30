@@ -21,6 +21,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   not,
+  or,
   Pane,
   RadioButton,
   SelectionList,
@@ -30,6 +31,7 @@ import {
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
+import { poll } from '../../utils/polling';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -54,7 +56,7 @@ const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
 const listsPane = Pane('Lists');
-const newLink = new Link('New');
+const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
@@ -84,6 +86,12 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
+    receivingPieces: 'Receiving pieces',
+    feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
+    usersWithFeeFineLoans: 'Users with fees/fines, loans',
+    usersWithManualBlocks: 'Users with manual blocks',
+    lostItemsRequiringActualCost: 'Lost items requiring actual cost',
   },
   userColumns: [
     'User — Active',
@@ -128,7 +136,10 @@ const UI = {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
+    cy.xpath(
+      '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
+      { timeout: 120000 },
+    ).should('not.exist');
   },
 
   filtersWaitLoading() {
@@ -1170,13 +1181,23 @@ const QueryBuilder = {
                 break;
               case 'is null/empty':
                 if (locator) {
-                  cy.expect(
-                    MultiColumnListCell({
-                      row: index,
-                      columnIndex: columnNumber,
-                      content: valueInColumn,
-                    }).exists(),
-                  );
+                  if (Array.isArray(valueInColumn)) {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: or(...valueInColumn),
+                      }).exists(),
+                    );
+                  } else {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: valueInColumn,
+                      }).exists(),
+                    );
+                  }
                 } else {
                   cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
                 }
@@ -1221,14 +1242,14 @@ const QueryBuilder = {
 
   getNumberOfFoundRecordsFromPaneHeader(listName) {
     return cy
-      .then(() => Pane(listName).subtitle)
-      .then((subtitle) => {
-        const subtitleText = String(subtitle);
-        const match = subtitleText.match(/(\d+) records found/);
-        if (match) {
-          return Number(match[1]);
-        }
-        return 0;
+      .get('[class^=paneHeader-]')
+      .contains(listName)
+      .closest('[class^=paneHeader-]')
+      .contains(/records? found/)
+      .invoke('text')
+      .then((text) => {
+        const match = text.match(/(\d+) records? found/);
+        return match ? Number(match[1]) : 0;
       });
   },
 };
@@ -1441,6 +1462,34 @@ const API = {
       path: `entity-types/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
+    });
+  },
+
+  waitForCustomFieldToBeQueryable(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+        },
+      );
+    });
+  },
+
+  waitForFieldLabelToBeAbsent(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => !body.columns?.some(({ labelAlias }) => labelAlias === fieldLabel),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not disappear from ${recordType}`,
+        },
+      );
     });
   },
 
