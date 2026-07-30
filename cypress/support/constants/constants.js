@@ -620,6 +620,26 @@ export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
   U: 'u - Continuing resource status unknown',
 };
 
+export const INVENTORY_008_FIELD_ILLS_DROPDOWN = {
+  NO: '| - No attempt to code',
+  NONE: '\\ - No illustrations',
+  A: 'a - Illustrations',
+  B: 'b - Maps',
+  C: 'c - Portraits',
+  D: 'd - Charts',
+  E: 'e - Plans',
+  F: 'f - Plates',
+  G: 'g - Music',
+  H: 'h - Facsimiles',
+  I: 'i - Coats of arms',
+  J: 'j - Genealogical tables',
+  K: 'k - Forms',
+  L: 'l - Samples',
+  M: 'm - Phonodisc, phonowire, etc.',
+  O: 'o - Photographs',
+  P: 'p - Illuminations',
+};
+
 export const INVENTORY_008_FIELD_CONF_DROPDOWN = {
   NO: '| - No attempt to code',
   ZERO: '0 - Not a conference publication',
