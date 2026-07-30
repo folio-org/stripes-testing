@@ -1673,14 +1673,16 @@ export default {
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null, index = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
-    cy.expect(
-      targetRow
-        .find(Select({ label: including(dropdownLabel) }))
-        .has({ checkedOptionText: option }),
-    );
+    const matcher = {
+      label: matching(new RegExp(`^${dropdownLabel}\\**$`)),
+    };
+    if (index !== null) {
+      matcher.name = matching(new RegExp(`\\[${index}\\]$`));
+    }
+    cy.expect(targetRow.find(Select(matcher)).has({ checkedOptionText: option }));
   },
 
   verifyDropdownHoverText(id, hoverText) {
