@@ -15,7 +15,7 @@ import {
 } from '../../interactors';
 
 const invalidCredentialsMessage = 'Invalid username or password.';
-const accountDisabledMessage = invalidCredentialsMessage;
+const accountDisabledMessage = 'Account is disabled, contact your administrator.';
 const loginAgainButton = Button({ text: 'Log in again' });
 const userProfileDropdown = Dropdown({ id: 'profileDropdown' });
 const restartLoginLink = Link({ id: 'reset-login' });

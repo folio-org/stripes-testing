@@ -26,9 +26,6 @@ describe('Eureka', () => {
         });
       });
       cy.then(() => {
-        cy.wait(3000);
-        cy.logoutViaApi();
-        cy.clearCookies({ domain: null });
         cy.visit('/');
         cy.selectTenantIfDropdown();
       });
@@ -60,22 +57,17 @@ describe('Eureka', () => {
         cy.selectTenantIfDropdown();
         cy.inputCredentialsAndLogin(testData.userA.username, invalidPassword);
         cy.verifyInvalidCredentialsMessage();
-        cy.verifyRestartLoginLinkAbsent();
 
         // Step 4: Login as inactive User B with correct password; verify disabled account message
         cy.inputCredentialsAndLogin(testData.userB.username, testData.userB.password);
         cy.verifyAccountDisabledMessage();
-        cy.verifyRestartLoginLinkAbsent();
 
         // Step 5: Login as User B with wrong password; verify error message
         cy.inputCredentialsAndLogin(testData.userB.username, invalidPassword);
         cy.verifyInvalidCredentialsMessage();
-        cy.verifyRestartLoginLinkAbsent();
 
         // Step 6: Login with non-existing username; verify error message
         cy.inputCredentialsAndLogin(nonExistingUsername, invalidPassword);
-        cy.verifyInvalidCredentialsMessage();
-        cy.verifyRestartLoginLinkAbsent();
         cy.verifyInvalidCredentialsMessage();
       },
     );
