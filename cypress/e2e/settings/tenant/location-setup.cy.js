@@ -86,6 +86,12 @@ describe('Settings: Tenant', () => {
       // Select "Campuses" option on the "Location setup" subsection
       // Select any existing institution from the  "Select institution" dropdown
       TenantPane.selectTenant(TENANTS.CAMPUSES);
+
+      // force increased limit to get all institutions
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       Campuses.selectOption('Institution', {
         name: testData.location.institutionName,
         id: testData.location.institutionId,
@@ -95,6 +101,11 @@ describe('Settings: Tenant', () => {
       // Select "Libraries" option on the "Location setup" subsection
       // Select any existing institution from the  "Select institution" dropdown
       TenantPane.selectTenant(TENANTS.LIBRARIES);
+
+      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       Libraries.selectOption('Institution', {
         name: testData.location.institutionName,
         id: testData.location.institutionId,

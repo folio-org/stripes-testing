@@ -37,8 +37,8 @@ describe('Bulk-edit', () => {
           item.itemBarcode,
         );
 
-        Locations.getViaApiAnyDefault().then((locations) => {
-          locationId = locations[0].id;
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          locationId = locations.find((location) => location.name !== 'Main Library').id;
         });
         cy.getHoldings({
           limit: 1,

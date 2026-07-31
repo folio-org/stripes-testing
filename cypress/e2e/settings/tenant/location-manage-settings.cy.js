@@ -81,6 +81,11 @@ describe('Settings: Tenant', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       Locations.openLTabFromSettingsList();
 
+      // force increased limit to get all institutions
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       // Step 7.1: Select institution, campus, library
       Locations.selectOption('Institution', testData.institution);
       Locations.selectOption('Campus', testData.campus);
