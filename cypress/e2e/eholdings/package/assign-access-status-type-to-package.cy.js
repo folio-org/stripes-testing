@@ -26,10 +26,16 @@ describe('eHoldings', () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           user = userProperties;
         });
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
-          testData.accessStatusTypeName,
-        ).then((id) => {
-          createdAccessStatusTypeId = id;
+        AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+          if (accessStatusTypes.length > 10) {
+            testData.accessStatusTypeName = accessStatusTypes[0].attributes.name;
+          } else {
+            AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+              testData.accessStatusTypeName,
+            ).then((id) => {
+              createdAccessStatusTypeId = id;
+            });
+          }
         });
         EHoldingsPackages.createPackageViaAPI({
           data: {

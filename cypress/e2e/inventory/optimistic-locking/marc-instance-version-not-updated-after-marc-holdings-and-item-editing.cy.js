@@ -119,6 +119,8 @@ describe('Inventory', () => {
       'C466065 Verify that version of "Instance" record (source=MARC) was not updated after editing of "Holdings" (source=MARC) and "Item" record (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C466065'] },
       () => {
+        let holdingsVersion;
+
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -146,60 +148,64 @@ describe('Inventory', () => {
         cy.intercept('GET', `/holdings-storage/holdings/${holdingsId}`).as('getHoldings');
         InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();
-        cy.wait('@getHoldings').then(({ response }) => {
-          expect(response.body._version).to.eq(initialVersion);
-        });
-
-        // Step 4: Edit MARC Holdings record - update field 852, save
         QuickMarcEditor.waitLoading();
-        QuickMarcEditor.updateExistingField(testData.tag852, getUpdated852Content(location.code));
-        cy.intercept('GET', `/holdings-storage/holdings/${holdingsId}`).as('getHoldingsAfterEdit');
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveHoldings();
-
-        // Step 5: Verify Holdings _version incremented by 1
-        cy.wait('@getHoldingsAfterEdit').then(({ response }) => {
-          expect(response.body._version).to.eq(initialVersion + 1);
-        });
-        HoldingsRecordView.waitLoading();
-
-        // Step 6: Close the Holdings detail view
-        HoldingsRecordView.close();
-        InventoryInstance.waitLoading();
-        InventoryInstance.waitInstanceRecordViewOpened();
-
-        // Step 7: Open Item record - note _version from GET inventory/items
-        // Note: Item version should be incremented by 1 after related holdings update
-        cy.intercept('GET', `/inventory/items/${itemId}`).as('getItem');
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcode('No barcode');
-        cy.wait('@getItem').then(({ response }) => {
-          expect(response.body._version).to.eq(`${initialVersion + 1}`);
+        cy.wait('@getHoldings').then(({ response }) => {
+          holdingsVersion = response.body._version;
         });
 
-        // Step 8: Edit Item record - update barcode, save
-        ItemRecordView.openItemEditForm(testData.instanceTitle);
-        ItemRecordEdit.addBarcode(`C466065-${randomPostfix}`);
-        cy.intercept('GET', `/inventory/items/${itemId}`).as('getItemAfterEdit');
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
+        cy.then(() => {
+          // Step 4: Edit MARC Holdings record - update field 852, save
+          QuickMarcEditor.updateExistingField(testData.tag852, getUpdated852Content(location.code));
+          cy.intercept('GET', `/holdings-storage/holdings/${holdingsId}`).as(
+            'getHoldingsAfterEdit',
+          );
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
 
-        // Step 9: Verify Item _version incremented by 1
-        cy.wait('@getItemAfterEdit').then(({ response }) => {
-          expect(response.body._version).to.eq(`${initialVersion + 2}`);
-        });
-        ItemRecordView.waitLoading();
+          // Step 5: Verify Holdings _version incremented by 1
+          cy.wait('@getHoldingsAfterEdit').then(({ response }) => {
+            expect(response.body._version).to.eq(holdingsVersion + 1);
+          });
+          HoldingsRecordView.waitLoading();
 
-        // Step 10: Close Item detail view
-        ItemRecordView.closeDetailView();
-        InventoryInstance.waitLoading();
-        InventoryInstance.waitInstanceRecordViewOpened();
-        cy.wait(1000); // wait for holdings/item data to be loaded to avoid actions menu closing
+          // Step 6: Close the Holdings detail view
+          HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
 
-        // Step 11: Verify Instance _version did not change
-        cy.intercept('GET', `/inventory/instances/${instanceId}*`).as('getInstanceAfter');
-        InventoryInstance.goToEditMARCBiblRecord();
-        cy.wait('@getInstanceAfter').then(({ response }) => {
-          expect(response.body._version).to.eq(`${initialVersion}`);
+          // Step 7: Open Item record - note _version from GET inventory/items
+          // Note: Item version should be incremented by 1 after related holdings update
+          cy.intercept('GET', `/inventory/items/${itemId}`).as('getItem');
+          InventoryInstance.openHoldingsAccordion(location.name);
+          InventoryInstance.openItemByBarcode('No barcode');
+          cy.wait('@getItem').then(({ response }) => {
+            expect(response.body._version).to.eq(`${initialVersion + 1}`);
+          });
+
+          // Step 8: Edit Item record - update barcode, save
+          ItemRecordView.openItemEditForm(testData.instanceTitle);
+          ItemRecordEdit.addBarcode(`C466065-${randomPostfix}`);
+          cy.intercept('GET', `/inventory/items/${itemId}`).as('getItemAfterEdit');
+          ItemRecordEdit.saveAndClose({ itemSaved: true });
+
+          // Step 9: Verify Item _version incremented by 1
+          cy.wait('@getItemAfterEdit').then(({ response }) => {
+            expect(response.body._version).to.eq(`${initialVersion + 2}`);
+          });
+          ItemRecordView.waitLoading();
+
+          // Step 10: Close Item detail view
+          ItemRecordView.closeDetailView();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          cy.wait(1000); // wait for holdings/item data to be loaded to avoid actions menu closing
+
+          // Step 11: Verify Instance _version did not change
+          cy.intercept('GET', `/inventory/instances/${instanceId}*`).as('getInstanceAfter');
+          InventoryInstance.goToEditMARCBiblRecord();
+          cy.wait('@getInstanceAfter').then(({ response }) => {
+            expect(response.body._version).to.eq(`${initialVersion}`);
+          });
         });
       },
     );

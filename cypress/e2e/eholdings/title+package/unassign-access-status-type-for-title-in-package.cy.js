@@ -23,6 +23,7 @@ describe('eHoldings', () => {
     };
     let user;
     let createdAccessStatusTypeId;
+    let statusTypeId;
 
     before('Create user, data and login', () => {
       cy.then(() => {
@@ -32,10 +33,21 @@ describe('eHoldings', () => {
         ]).then((userProperties) => {
           user = userProperties;
         });
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
-          testData.accessStatusTypeName,
-        ).then((typeId) => {
-          createdAccessStatusTypeId = typeId;
+        AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+          if (accessStatusTypes.length > 10) {
+            testData.accessStatusTypeName = accessStatusTypes[0].attributes.name;
+            statusTypeId = accessStatusTypes[0].id;
+          } else {
+            AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+              testData.accessStatusTypeName,
+            ).then((id) => {
+              createdAccessStatusTypeId = id;
+              statusTypeId = id;
+            });
+          }
+        });
+      })
+        .then(() => {
           EHoldingsPackages.createPackageViaAPI({
             data: {
               type: 'packages',
@@ -51,19 +63,19 @@ describe('eHoldings', () => {
             }).then((itemData) => {
               const resourceId = `${id}-${itemData.id}`;
               EHoldingsResourceEdit.updateResourceAttributesViaApi(resourceId, {
-                accessTypeId: createdAccessStatusTypeId,
+                accessTypeId: statusTypeId,
               });
             });
           });
+        })
+        .then(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+            authRefresh: true,
+          });
+          EHoldingSearch.switchToPackages();
         });
-      }).then(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-          authRefresh: true,
-        });
-        EHoldingSearch.switchToPackages();
-      });
     });
 
     after('Delete user, data', () => {

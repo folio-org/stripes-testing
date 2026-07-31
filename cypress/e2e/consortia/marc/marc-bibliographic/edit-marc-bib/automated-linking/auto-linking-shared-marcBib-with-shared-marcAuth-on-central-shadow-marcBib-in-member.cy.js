@@ -1,3 +1,4 @@
+import { or } from '../../../../../../../interactors';
 import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
@@ -38,7 +39,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C410818 Johnson, Samuel, $d 1709-1784',
-            '$x Criticism and interpretation.',
+            or('$x Criticism and interpretation.', ''),
             '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
             '',
           ],
@@ -204,7 +205,7 @@ describe('MARC', () => {
           { tags: ['criticalPathECS', 'spitfire', 'C410818'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdRecordIDs[0]);
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
@@ -229,7 +230,7 @@ describe('MARC', () => {
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdRecordIDs[0]);
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);

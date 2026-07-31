@@ -38,8 +38,8 @@ describe('Inventory', () => {
 
         // Fill in the input field with the long not-existing contributor name, which will retrieve non-exact match result.
         // Click on the "Search" button.
-        BrowseContributors.searchRecordByName(testData.instance.contributors[0].name);
-        BrowseContributors.checkNonExactSearchResultForARow(testData.instance.contributors[0].name);
+        BrowseContributors.searchRecordByName(testData.contributorName);
+        BrowseContributors.checkNonExactSearchResultForARow(testData.contributorName);
       },
     );
   });

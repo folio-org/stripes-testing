@@ -17,7 +17,6 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag100: '100',
-          createdRecordIDs: [],
           bib100AfterLinkingToAuth100: [
             11,
             '100',
@@ -75,6 +74,9 @@ describe('MARC', () => {
           },
         ];
 
+        let createdInstanceId;
+        const createdAuthorityIds = [];
+
         before('Creating test data', () => {
           // make sure there are no duplicate authority records in the system
           cy.getAdminToken().then(() => {
@@ -87,7 +89,11 @@ describe('MARC', () => {
                 marcFile.jobProfileToRun,
               ).then((response) => {
                 response.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+                  if (marcFile.propertyName === 'instance') {
+                    createdInstanceId = record[marcFile.propertyName].id;
+                  } else {
+                    createdAuthorityIds.push(record[marcFile.propertyName].id);
+                  }
                 });
               });
             });
@@ -108,8 +114,8 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               });
             }, 20_000).then(() => {
-              InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
+              InventoryInstances.searchByTitle(createdInstanceId);
+              InventoryInstances.selectInstanceById(createdInstanceId);
               InventoryInstance.editMarcBibliographicRecord();
               linkingTagAndValues.forEach((linking) => {
                 QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
@@ -136,16 +142,18 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(testData.user.userId);
-          InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-          MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
+          InventoryInstance.deleteInstanceViaApi(createdInstanceId);
+          createdAuthorityIds.forEach((id) => {
+            MarcAuthority.deleteViaAPI(id, true);
+          });
         });
 
         it(
           'C366579 Derive | Delete unlinked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
           { tags: ['extendedPath', 'spitfire', 'C366579'] },
           () => {
-            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.searchByTitle(createdInstanceId);
+            InventoryInstances.selectInstanceById(createdInstanceId);
             InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);

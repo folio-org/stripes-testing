@@ -53,7 +53,8 @@ describe('MARC', () => {
         },
       ];
 
-      const createdRecordIDs = [];
+      let createdInstanceId;
+      let createdAuthorityId;
 
       before('Create test data', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -68,7 +69,11 @@ describe('MARC', () => {
               marcFile.jobProfileToRun,
             ).then((response) => {
               response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+                if (marcFile.propertyName === 'instance') {
+                  createdInstanceId = record[marcFile.propertyName].id;
+                } else if (marcFile.propertyName === 'authority') {
+                  createdAuthorityId = record[marcFile.propertyName].id;
+                }
               });
             });
             cy.wait(2000);
@@ -81,8 +86,8 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
         }, 20_000).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
+          InventoryInstances.searchByTitle(createdInstanceId);
+          InventoryInstances.selectInstanceById(createdInstanceId);
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
           InventoryInstance.verifySelectMarcAuthorityModal();
@@ -123,8 +128,8 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         Users.deleteViaApi(testData.preconditionUserId);
-        InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        InventoryInstance.deleteInstanceViaApi(createdInstanceId);
+        MarcAuthority.deleteViaAPI(createdAuthorityId, true);
       });
 
       it(

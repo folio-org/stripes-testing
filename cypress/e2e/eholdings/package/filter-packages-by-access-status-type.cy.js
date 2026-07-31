@@ -23,11 +23,20 @@ describe('eHoldings', () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           user = userProperties;
         });
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
-          testData.accessStatusTypeName,
-        ).then((id) => {
-          createdAccessStatusTypeId = id;
-
+        AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+          if (accessStatusTypes.length > 14) {
+            accessStatusTypes.forEach((accessStatusType) => {
+              AccessStatusTypes.deleteAccessStatusTypeFromDefaultKbViaApi(accessStatusType.id);
+            });
+          }
+          AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+            testData.accessStatusTypeName,
+          ).then((id) => {
+            createdAccessStatusTypeId = id;
+          });
+        });
+      })
+        .then(() => {
           EHoldingsPackages.createPackageViaAPI({
             data: {
               type: 'packages',
@@ -38,15 +47,15 @@ describe('eHoldings', () => {
               },
             },
           });
+        })
+        .then(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+            authRefresh: true,
+          });
+          EHoldingSearch.switchToPackages();
         });
-      }).then(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-          authRefresh: true,
-        });
-        EHoldingSearch.switchToPackages();
-      });
     });
 
     after('Delete user, data', () => {
@@ -58,7 +67,7 @@ describe('eHoldings', () => {
 
     it(
       'C11091 Filter package results by an access status type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C11091'] },
+      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C11091'] },
       () => {
         EHoldingsPackagesSearch.openAccessStatusTypesDropdown();
         EHoldingsPackagesSearch.selectAccessStatusType(testData.accessStatusTypeName);

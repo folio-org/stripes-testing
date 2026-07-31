@@ -153,7 +153,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388534*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388534 ');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -213,7 +213,7 @@ describe('MARC', () => {
 
         it(
           'C388534 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C388534'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C388534'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

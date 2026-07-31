@@ -28,12 +28,13 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      // import with Single record import
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-      InventoryInstances.importWithOclcViaApi(testData.oclcNumber);
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
+
+        // import with Single record import
+        InventoryInstances.importWithOclcViaApi(testData.oclcNumber);
 
         // Create file dynamically with given name and content in fixtures
         FileManager.createFile(`cypress/fixtures/${testData.fileName}`);
