@@ -30,9 +30,18 @@ describe('eHoldings', () => {
   before('Creating data', () => {
     cy.getAdminToken();
     cy.then(() => {
-      accessStatusTypesData.forEach(({ name, description }) => {
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(name, description).then((id) => {
-          createdAccessStatusTypeIds.push(id);
+      AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+        if (accessStatusTypes.length > 13) {
+          accessStatusTypes.forEach((accessStatusType) => {
+            AccessStatusTypes.deleteAccessStatusTypeFromDefaultKbViaApi(accessStatusType.id);
+          });
+        }
+        accessStatusTypesData.forEach(({ name, description }) => {
+          AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(name, description).then(
+            (id) => {
+              createdAccessStatusTypeIds.push(id);
+            },
+          );
         });
       });
     }).then(() => {
@@ -61,7 +70,7 @@ describe('eHoldings', () => {
 
   it(
     'C590793 Delete access status types (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C590793'] },
+    { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C590793'] },
     () => {
       AccessStatusTypes.openTab();
       AccessStatusTypes.checkTableHeaders();

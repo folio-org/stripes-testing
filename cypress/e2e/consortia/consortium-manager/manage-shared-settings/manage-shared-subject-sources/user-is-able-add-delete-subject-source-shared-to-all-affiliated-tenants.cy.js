@@ -1,3 +1,4 @@
+import { including } from '../../../../../../interactors';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -77,7 +78,6 @@ describe('Consortia', () => {
             ConsortiumSubjectSources.confirmShareWithAllMembers(subjectSourceNames.name1);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSourceNames.name1,
-              user: 'No value set-',
               actions: ['edit', 'trash'],
             });
 
@@ -89,7 +89,7 @@ describe('Consortia', () => {
             ConsortiumSubjectSources.verifyNewSubjectSourceRowIsInEditMode(
               subjectSourceNames.name2,
               'local',
-              'No value set-',
+              including(''),
               true,
               false,
             );
@@ -115,7 +115,6 @@ describe('Consortia', () => {
             cy.wait(3000);
             ConsortiumSubjectSources.verifySharedSubjectSourceExists({
               name: subjectSourceNames.name1,
-              user: 'No value set-',
               actions: ['edit', 'trash'],
             });
             ConsortiumSubjectSources.deleteSubjectSourceByName(subjectSourceNames.name1);

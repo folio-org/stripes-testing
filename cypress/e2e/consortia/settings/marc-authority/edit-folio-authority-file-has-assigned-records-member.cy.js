@@ -95,6 +95,10 @@ describe('MARC', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
             SettingsPane.waitLoading();
+            // force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             SettingsPane.selectSettingsTab(manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
@@ -155,6 +159,10 @@ describe('MARC', () => {
             // Step 5: Switch active affiliation to Central tenant
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             SettingsPane.waitLoading();
+            // force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             SettingsPane.selectSettingsTab(manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();

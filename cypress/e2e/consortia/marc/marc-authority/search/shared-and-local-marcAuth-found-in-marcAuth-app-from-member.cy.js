@@ -40,23 +40,23 @@ describe('MARC', () => {
           marc: 'marcAuthFileForC410744-Shared.mrc',
           fileNameImported: `testMarcFileC4107444.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          tenant: 'Central Office',
+          tenant: Affiliations.Consortia,
         },
         {
           marc: 'marcAuthFileForC410744-Local-M1.mrc',
           fileNameImported: `testMarcFileC410744.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          tenant: 'University',
+          tenant: Affiliations.University,
         },
         {
           marc: 'marcAuthFileForC410744-Local-M2.mrc',
           fileNameImported: `testMarcFileC410744.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          tenant: 'College',
+          tenant: Affiliations.College,
         },
       ];
 
-      const createdRecordIDs = [];
+      const createdRecordIDs = {};
 
       before('Create users, data', () => {
         cy.getAdminToken();
@@ -80,13 +80,8 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
-            cy.resetTenant();
             marcFiles.forEach((marcFile) => {
-              if (marcFile.tenant === 'University') {
-                cy.setTenant(Affiliations.University);
-              } else if (marcFile.tenant === 'College') {
-                cy.setTenant(Affiliations.College);
-              }
+              cy.setTenant(marcFile.tenant);
 
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -94,7 +89,7 @@ describe('MARC', () => {
                 marcFile.jobProfileToRun,
               ).then((response) => {
                 response.forEach((record) => {
-                  createdRecordIDs.push(record.authority.id);
+                  createdRecordIDs[marcFile.tenant] = record.id;
                 });
               });
             });
@@ -120,11 +115,11 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[0]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[Affiliations.Consortia], true);
         cy.setTenant(Affiliations.University);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[Affiliations.University], true);
         cy.setTenant(Affiliations.College);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[2]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[Affiliations.College], true);
       });
 
       it(

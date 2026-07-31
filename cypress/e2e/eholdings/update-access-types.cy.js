@@ -22,11 +22,18 @@ describe('eHoldings', () => {
   before('Creating data', () => {
     cy.getAdminToken();
     cy.then(() => {
-      AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
-        accessStatusTypeName,
-        accessStatusTypeDescription,
-      ).then((id) => {
-        createdAccessStatusTypeIds.push(id);
+      AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+        if (accessStatusTypes.length > 14) {
+          accessStatusTypes.forEach((accessStatusType) => {
+            AccessStatusTypes.deleteAccessStatusTypeFromDefaultKbViaApi(accessStatusType.id);
+          });
+        }
+        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+          accessStatusTypeName,
+          accessStatusTypeDescription,
+        ).then((id) => {
+          createdAccessStatusTypeIds.push(id);
+        });
       });
     }).then(() => {
       cy.createTempUser([Permissions.uiSettingsEHoldingsAccessStatusTypesAll.gui]).then(
@@ -54,7 +61,7 @@ describe('eHoldings', () => {
 
   it(
     'C590792 Update access status types (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C590792'] },
+    { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C590792'] },
     () => {
       AccessStatusTypes.openTab();
       AccessStatusTypes.checkTableHeaders();

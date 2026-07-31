@@ -23,51 +23,51 @@ describe('MARC', () => {
         const instanceTitle =
           'Black Panther (Test: with all eligible for linking fields with and without valid subfield 0)';
         const fields = [
-          { rowIndex: 32, tag: '100', subfield0: 'n2008001084', isLinked: true },
-          { rowIndex: 33, tag: '240', subfield0: 'no2020024230', isLinked: true },
-          { rowIndex: 61, tag: '600', subfield0: 'n2016004081', isLinked: true },
-          { rowIndex: 58, tag: '630', subfield0: 'no2023006889', isLinked: true },
-          { rowIndex: 69, tag: '655', subfield0: 'gf2014026266', isLinked: true },
-          { rowIndex: 84, tag: '710', subfield0: 'no2008081921', isLinked: true },
-          { rowIndex: 85, tag: '711', subfield0: 'n84745425', isLinked: true },
-          { rowIndex: 87, tag: '800', subfield0: 'n79023811', isLinked: true },
-          { rowIndex: 90, tag: '830', subfield0: 'no2018018754', isLinked: true },
-          { rowIndex: 56, tag: '610', subfield0: 'nb20090244889', isLinked: false },
-          { rowIndex: 57, tag: '611', subfield0: 'n 822167579', isLinked: false },
-          { rowIndex: 63, tag: '650', subfield0: 'sh20091259899', isLinked: false },
-          { rowIndex: 67, tag: '651', subfield0: 'sh 850015319', isLinked: false },
+          { rowIndex: 32, tag: '100', subfield0: 'n2008001084388501', isLinked: true },
+          { rowIndex: 33, tag: '240', subfield0: 'no2020024230388501', isLinked: true },
+          { rowIndex: 61, tag: '600', subfield0: 'n2016004081388501', isLinked: true },
+          { rowIndex: 58, tag: '630', subfield0: 'no2023006889388501', isLinked: true },
+          { rowIndex: 69, tag: '655', subfield0: 'gf2014026266388501', isLinked: true },
+          { rowIndex: 84, tag: '710', subfield0: 'no2008081921388501', isLinked: true },
+          { rowIndex: 85, tag: '711', subfield0: 'n84745425388501', isLinked: true },
+          { rowIndex: 87, tag: '800', subfield0: 'n79023811388501', isLinked: true },
+          { rowIndex: 90, tag: '830', subfield0: 'no2018018754388501', isLinked: true },
+          { rowIndex: 56, tag: '610', subfield0: 'nb20090244889388501', isLinked: false },
+          { rowIndex: 57, tag: '611', subfield0: 'n 822167579388501', isLinked: false },
+          { rowIndex: 63, tag: '650', subfield0: 'sh20091259899388501', isLinked: false },
+          { rowIndex: 67, tag: '651', subfield0: 'sh 850015319388501', isLinked: false },
           {
             rowIndex: 82,
             tag: '700',
             subfield0: 'http://id.loc.gov/authorities/names/n831692679',
             isLinked: false,
           },
-          { rowIndex: 86, tag: '730', subfield0: 'n790660959 ', isLinked: false },
-          { rowIndex: 88, tag: '810', subfield0: 'n 800955859', isLinked: false },
-          { rowIndex: 89, tag: '811', subfield0: 'no20181255879', isLinked: false },
+          { rowIndex: 86, tag: '730', subfield0: 'n790660959388501 ', isLinked: false },
+          { rowIndex: 88, tag: '810', subfield0: 'n 800955859388501', isLinked: false },
+          { rowIndex: 89, tag: '811', subfield0: 'no20181255879388501', isLinked: false },
         ];
         const createdRecordIDs = [];
         const naturalIds = [
-          'n2008001084',
-          'no2020024230',
-          'n2016004081',
-          'no2023006889',
-          'gf2014026266',
-          'no2008081921',
-          'n84745425',
-          'n79023811',
-          'no2018018754',
-          'no2006108277',
-          'no2009176429',
-          'n80026980',
-          'nb2009024488',
-          'n82216757',
-          'sh2009125989',
-          'sh85001531',
-          'n83169267',
-          'n790660959',
-          'n80095585',
-          'no2018125587',
+          'n2008001084388501',
+          'no2020024230388501',
+          'n2016004081388501',
+          'no2023006889388501',
+          'gf2014026266388501',
+          'no2008081921388501',
+          'n84745425388501',
+          'n79023811388501',
+          'no2018018754388501',
+          'no2006108277388501',
+          'no2009176429388501',
+          'n80026980388501',
+          'nb2009024488388501',
+          'n82216757388501',
+          'sh2009125989388501',
+          'sh85001531388501',
+          'n83169267388501',
+          'n790660959388501',
+          'n80095585388501',
+          'no2018125587388501',
         ];
         const marcFiles = [
           {
@@ -85,7 +85,7 @@ describe('MARC', () => {
             propertyName: 'authority',
           },
         ];
-        const field710Content = 'Robinson & Associates, Inc.';
+        const field710Content = 'C388501 Robinson & Associates, Inc.';
         const numOfTitles = {
           columnIndex: 5,
           rowIndex: 0,
@@ -102,6 +102,7 @@ describe('MARC', () => {
               }),
             );
           });
+          MarcAuthorities.deleteMarcAuthorityByIdentifierViaAPI('C388501 ');
 
           cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
@@ -125,14 +126,11 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
-            cy.waitForAuthRefresh(() => {
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+              authRefresh: true,
+            });
           });
         });
 
@@ -152,7 +150,7 @@ describe('MARC', () => {
           () => {
             // #1 Find and open detail view of "MARC Bib" record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdRecordIDs[0]);
             // #2 Click on "Actions" button in second pane → Select "Edit MARC bibliographic record" option
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();

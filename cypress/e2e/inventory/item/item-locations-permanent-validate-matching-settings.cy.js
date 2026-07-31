@@ -126,6 +126,10 @@ describe('Inventory', () => {
 
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         TenantPane.goToTenantTab();
+        // force increased limit for UI to load all institutions
+        cy.intercept('GET', /location-units\/institutions\?.*limit=\d+/, (req) => {
+          req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+        });
         TenantPane.selectTenant(TENANTS.LOCATIONS);
         Locations.waitLoading();
         [...Array(3)].forEach((_, index) => {

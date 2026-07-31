@@ -6,6 +6,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../support/constants';
 import { including } from '../../../interactors';
 import TopMenu from '../../support/fragments/topMenu';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Permissions', () => {
   describe('Permissions --> Users', () => {
@@ -34,23 +35,29 @@ describe('Permissions', () => {
       'C1223 Users: Can send create/reset password link (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C1223'] },
       () => {
-        cy.login(testUser.username, testUser.password);
+        cy.login(testUser.username, testUser.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+          authRefresh: true,
+        });
         TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.INVENTORY);
         TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.USERS, false);
 
         cy.getAdminToken();
         cy.assignPermissionsToExistingUser(testUser.userId, updatedPermissions);
 
-        cy.login(testUser.username, testUser.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-          authRefresh: true,
+        cy.then(() => {
+          cy.login(testUser.username, testUser.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+            authRefresh: true,
+          });
+          UsersSearchPane.searchByUsername(testUser.username);
+          UsersSearchPane.selectUserFromList(testUser.username);
+          UserEdit.openEdit();
+          UserEdit.clickResetPasswordLink();
+          UserEdit.verifyResetLink(including(resetLinkPart));
         });
-        UsersSearchPane.searchByUsername(testUser.username);
-        UsersSearchPane.selectUserFromList(testUser.username);
-        UserEdit.openEdit();
-        UserEdit.clickResetPasswordLink();
-        UserEdit.verifyResetLink(including(resetLinkPart));
       },
     );
   });

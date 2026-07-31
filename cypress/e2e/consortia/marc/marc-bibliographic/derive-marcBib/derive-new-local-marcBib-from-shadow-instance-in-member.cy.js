@@ -202,11 +202,11 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
         cy.setTenant(Affiliations.College);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[3]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[3], true);
         cy.setTenant(Affiliations.University);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[2]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[2], true);
         testData.collegeHoldings.forEach((holding) => {
           InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
         });

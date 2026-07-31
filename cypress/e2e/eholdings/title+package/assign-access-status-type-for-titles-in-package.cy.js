@@ -32,10 +32,22 @@ describe('eHoldings', () => {
         ]).then((userProperties) => {
           user = userProperties;
         });
-        AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
-          testData.accessStatusTypeName,
-        ).then((typeId) => {
-          createdAccessStatusTypeId = typeId;
+      })
+        .then(() => {
+          cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
+            user = userProperties;
+          });
+          AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((accessStatusTypes) => {
+            if (accessStatusTypes.length > 10) {
+              testData.accessStatusTypeName = accessStatusTypes[0].attributes.name;
+            } else {
+              AccessStatusTypes.createAccessStatusTypeForDefaultKbViaApi(
+                testData.accessStatusTypeName,
+              ).then((id) => {
+                createdAccessStatusTypeId = id;
+              });
+            }
+          });
           EHoldingsPackages.createPackageViaAPI({
             data: {
               type: 'packages',
@@ -52,15 +64,15 @@ describe('eHoldings', () => {
               });
             }
           });
+        })
+        .then(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsTitlesSearch.waitLoading,
+            authRefresh: true,
+          });
+          EHoldingSearch.switchToPackages();
         });
-      }).then(() => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.eholdingsPath,
-          waiter: EHoldingsTitlesSearch.waitLoading,
-          authRefresh: true,
-        });
-        EHoldingSearch.switchToPackages();
-      });
     });
 
     after('Delete user, data', () => {
@@ -71,7 +83,7 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9313 Filter title results by an access status type (spitfire)',
+      'C9313 Assign Access status types to two selected titles in a package (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C9313'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customPackageName);

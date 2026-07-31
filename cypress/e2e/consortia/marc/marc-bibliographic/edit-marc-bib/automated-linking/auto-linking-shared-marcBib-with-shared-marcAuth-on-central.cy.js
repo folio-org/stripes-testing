@@ -1,3 +1,4 @@
+import { or } from '../../../../../../../interactors';
 import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
@@ -39,7 +40,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a Johnson, Samuel, $d 1709-1784',
-            '$x Criticism and interpretation.',
+            or('$x Criticism and interpretation.', ''),
             '$0 http://id.loc.gov/authorities/names/n78095825C400663',
             '',
           ],

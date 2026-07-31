@@ -230,7 +230,7 @@ describe('MARC', () => {
           Users.deleteViaApi(userData.userId);
           Cypress.Promise.all(
             createdAuthorityIDs.map((id) => {
-              return MarcAuthority.deleteViaAPI(id);
+              return MarcAuthority.deleteViaAPI(id, true);
             }),
           );
           InventoryInstance.deleteInstanceViaApi(createdInstanceID);
