@@ -112,6 +112,11 @@ describe('Settings: Tenant', () => {
       cy.visit(SettingsMenu.tenantLocationsPath);
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       TenantPane.selectTenant(TENANTS.CAMPUSES);
+
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       Campuses.checkEmptyTableContent();
       Campuses.selectOption('Institution', testData.institutions[0]);
       // * **"Campus A"** and **"Campus B"** records are displayed in "Campuses" table
@@ -119,6 +124,11 @@ describe('Settings: Tenant', () => {
 
       // #2 Select "Libraries" option on the "Tenant" pane
       TenantPane.selectTenant(TENANTS.LIBRARIES);
+
+      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       // #3 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Libraries" pane
       Libraries.selectOption('Institution', testData.institutions[0]);
       // #4 Select **"Campus A"** in the "Campus" dropdown

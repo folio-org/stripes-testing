@@ -106,6 +106,14 @@ describe('Settings: Tenant', () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // Select "Institution AB" in "Institution" dropdown on "Libraries" pane
       let pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
+
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
+
       pane.checkEmptyTableContent();
       pane.selectOption('Institution', testData.institutions[0]);
       pane.checkEmptyTableContent();

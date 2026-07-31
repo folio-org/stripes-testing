@@ -88,6 +88,11 @@ describe('Settings: Tenant', () => {
       });
 
       Locations.goToLocationsTab();
+
+      // force increased limit to get all institutions
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
     });
   });
 
