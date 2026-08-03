@@ -102,6 +102,9 @@ describe('Settings: Tenant', () => {
       // Select any existing institution from the  "Select institution" dropdown
       TenantPane.selectTenant(TENANTS.LIBRARIES);
 
+      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
       cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
         req.url = req.url.replace(/limit=\d+/, 'limit=1000');
       });

@@ -177,7 +177,7 @@
             "type": ["string", "null"]
           },
           "transaction.tags": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "from_fund.tag_list": {
             "type": ["string", "null"]
