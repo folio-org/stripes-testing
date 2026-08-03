@@ -87,7 +87,7 @@ describe('Inventory', () => {
 
         after('Delete user, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.setTenant(Affiliations.College);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
@@ -134,6 +134,7 @@ describe('Inventory', () => {
                   });
                 }
               }).then(() => {
+                cy.wait(5000); // Wait for holdings to be indexed in search
                 // Verify "Held by" counter
                 InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
                 InventoryInstances.waitContentLoading();
@@ -157,6 +158,7 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.verifySearchResult(instanceTitles[i]);
                   InventorySearchAndFilter.verifyNumberOfSearchResults(1);
                   InventoryInstance.waitLoading();
+                  InventoryInstance.waitInstanceRecordViewOpened();
                 });
               });
             }
