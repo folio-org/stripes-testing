@@ -1,10 +1,11 @@
+import { NO_VALUE, USER_TYPES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import { ExecutionFlowManager } from '../../../support/utils';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-let user;
 const testUser = {
   username: '', // leave empty
   barcode: getTestEntityValue('barcode'),
@@ -16,20 +17,31 @@ const testUser = {
     email: 'test@folio.org',
   },
   patronGroup: 'undergrad (Undergraduate Student)',
-  userType: 'Staff', // select staff
+  userType: USER_TYPES.STAFF, // select staff
 };
 const newUsername = getTestEntityValue('username');
 
+const RESOURCES = {
+  ACTOR: 'actor',
+  CREATED_USER: 'createdUser',
+};
+
+const NATIVE_VALIDATION_MESSAGE = 'Please fill out this field.';
+
 describe('Users', () => {
+  const flow = new ExecutionFlowManager();
+
   before('create test data', () => {
     cy.getAdminToken();
+
     cy.createTempUser([
       permissions.uiUsersCreate.gui,
       permissions.uiUsersPermissionsView.gui,
       permissions.uiUsersView.gui,
     ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
+      flow.set(RESOURCES.ACTOR, userProperties, () => Users.deleteViaApi(userProperties.userId));
+
+      cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.usersPath,
         waiter: Users.waitLoading,
       });
@@ -38,29 +50,50 @@ describe('Users', () => {
 
   after('delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+    flow.cleanup();
   });
 
   it(
     'C418647 Creating new patron user with empty "Username" field (consortia) (thunderjet)',
     { tags: ['criticalPathECS', 'thunderjet', 'C418647'] },
     () => {
-      Users.createViaUiIncomplete(testUser).then((id) => {
-        testUser.id = id;
-      });
+      cy.log('<----- STEP 1-2 ----->');
+      Users.createViaUiIncomplete(testUser, { submit: false });
       Users.verifyUsernameMandatory();
-      UserEdit.changeUserType();
+
+      cy.log('<----- STEP 3 ----->');
+      UserEdit.saveAndCloseStayOnEdit();
+      UserEdit.assertUsernameFieldNativeValidationMessage(NATIVE_VALIDATION_MESSAGE);
+
+      cy.log('<----- STEP 4 ----->');
+      UserEdit.changeUserType(USER_TYPES.PATRON);
       Users.verifyUsernameMandatory(false);
-      Users.saveCreatedUser();
-      Users.verifyUsernameOnUserDetailsPane('No value set-');
-      Users.verifyUserTypeOnUserDetailsPane('patron');
+
+      cy.log('<----- STEP 5 ----->');
+      Users.saveCreatedUser().then(({ response }) => {
+        flow.toCleanup(RESOURCES.CREATED_USER, () => Users.deleteViaApi(response.body.id));
+      });
+
+      cy.log('<----- STEP 6-7 ----->');
+      Users.verifyUsernameOnUserDetailsPane(NO_VALUE);
+      Users.verifyUserTypeOnUserDetailsPane(USER_TYPES.PATRON.toLocaleLowerCase());
+
+      cy.log('<----- STEP 8 ----->');
       UserEdit.openEdit();
-      UserEdit.changeUserType('Staff');
-      UserEdit.saveAndClose();
-      UserEdit.changeUserType('Staff');
+
+      cy.log('<----- STEP 9 ----->');
+      UserEdit.changeUserType(USER_TYPES.STAFF);
+
+      cy.log('<----- STEP 10 ----->');
+      UserEdit.saveAndCloseStayOnEdit();
+      UserEdit.assertUsernameFieldNativeValidationMessage(NATIVE_VALIDATION_MESSAGE);
+
+      cy.log('<----- STEP 11 ----->');
       UserEdit.editUsername(newUsername);
       UserEdit.saveEditedUser();
-      Users.verifyUserTypeOnUserDetailsPane('staff');
+
+      cy.log('<----- STEP 12 ----->');
+      Users.verifyUserTypeOnUserDetailsPane(USER_TYPES.STAFF.toLocaleLowerCase());
       Users.verifyUsernameOnUserDetailsPane(newUsername);
     },
   );

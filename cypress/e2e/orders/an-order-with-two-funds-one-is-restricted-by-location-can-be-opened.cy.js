@@ -19,6 +19,7 @@ import SelectLocationModal from '../../support/fragments/orders/modals/selectLoc
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import { ExecutionFlowManager } from '../../support/utils';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   FUND_DISTRIBUTION_TYPES,
@@ -28,322 +29,355 @@ import {
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 
-describe('Orders', () => {
-  const testData = {
-    fiscalYear: {},
-    ledger: {},
-    funds: {
-      fundA: {},
-      fundB: {},
+const R = {
+  SERVICE_POINT: 'servicePoint',
+  LOCATION_1: 'location1',
+  LOCATION_2: 'location2',
+  FISCAL_YEAR: 'fiscalYear',
+  LEDGER: 'ledger',
+  FUND_A: 'fundA',
+  FUND_B: 'fundB',
+  BUDGET_A: 'budgetA',
+  BUDGET_B: 'budgetB',
+  INSTANCE: 'instance',
+  ORGANIZATION: 'organization',
+  MATERIAL_TYPE: 'materialType',
+  ACQUISITION_METHOD: 'acquisitionMethod',
+  ORDER_1: 'order1',
+  ORDER_LINE_1: 'orderLine1',
+  ORDER_2: 'order2',
+  ORDER_LINE_2: 'orderLine2',
+  USER: 'user',
+};
+
+const buildOrderLine = (flow, { purchaseOrderId, fundDistribution, locations, quantity }) => {
+  // eslint-disable-next-line no-unused-vars
+  const { id, ...orderLine } = {
+    ...BasicOrderLine.defaultOrderLine,
+    purchaseOrderId,
+    cost: {
+      listUnitPrice: 20,
+      currency: 'USD',
+      quantityPhysical: quantity,
+      poLineEstimatedPrice: 20,
     },
-    budgets: {
-      budgetA: {},
-      budgetB: {},
+    fundDistribution,
+    locations,
+    acquisitionMethod: flow.get(R.ACQUISITION_METHOD).id,
+    instanceId: flow.get(R.INSTANCE).instanceId,
+    physical: {
+      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
+      materialType: flow.get(R.MATERIAL_TYPE).id,
+      materialSupplier: flow.get(R.ORGANIZATION).id,
     },
-    locations: {
-      location1: {},
-      location2: {},
-    },
-    organization: {},
-    instance: {},
-    order1: {},
-    orderLine1: {},
-    order2: {},
-    orderLine2: {},
-    user: {},
   };
 
-  const createLocations = (servicePointId) => {
-    return NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-      .then((location1) => {
-        testData.locations.location1 = location1;
-        return NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId));
+  return orderLine;
+};
+
+const getPreconditionSteps = () => {
+  const fetchServicePoint = (flow) => {
+    return ServicePoints.getViaApi().then((servicePoints) => flow.set(R.SERVICE_POINT, servicePoints[0]));
+  };
+
+  const createLocation1 = (flow) => {
+    return NewLocation.createViaApi(
+      NewLocation.getDefaultLocation(flow.get(R.SERVICE_POINT).id),
+    ).then((location) => flow.set(R.LOCATION_1, location, ({ institutionId, campusId, libraryId, id }) => NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+      institutionId,
+      campusId,
+      libraryId,
+      id,
+    )));
+  };
+
+  const createLocation2 = (flow) => {
+    return NewLocation.createViaApi(
+      NewLocation.getDefaultLocation(flow.get(R.SERVICE_POINT).id),
+    ).then((location) => flow.set(R.LOCATION_2, location, ({ institutionId, campusId, libraryId, id }) => NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+      institutionId,
+      campusId,
+      libraryId,
+      id,
+    )));
+  };
+
+  const createFiscalYear = (flow) => {
+    return FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYear) => flow.set(R.FISCAL_YEAR, fiscalYear, ({ id }) => FiscalYears.deleteFiscalYearViaApi(id)));
+  };
+
+  const createLedger = (flow) => {
+    return Ledgers.createViaApi({
+      ...Ledgers.defaultUiLedger,
+      fiscalYearOneId: flow.get(R.FISCAL_YEAR).id,
+    }).then((ledger) => flow.set(R.LEDGER, ledger, ({ id }) => Ledgers.deleteLedgerViaApi(id)));
+  };
+
+  const createFundA = (flow) => {
+    return Funds.createViaApi({
+      ...Funds.getDefaultFund(),
+      ledgerId: flow.get(R.LEDGER).id,
+      restrictByLocations: false,
+    }).then(({ fund }) => flow.set(R.FUND_A, fund, ({ id }) => Funds.deleteFundViaApi(id)));
+  };
+
+  const createBudgetA = (flow) => {
+    return Budgets.createViaApi({
+      ...Budgets.getDefaultBudget(),
+      fiscalYearId: flow.get(R.FISCAL_YEAR).id,
+      fundId: flow.get(R.FUND_A).id,
+      allocated: 100,
+    }).then((budget) => flow.set(R.BUDGET_A, budget, ({ id }) => Budgets.deleteViaApi(id)));
+  };
+
+  const createFundB = (flow) => {
+    return Funds.createViaApi({
+      ...Funds.getDefaultFund(),
+      ledgerId: flow.get(R.LEDGER).id,
+      restrictByLocations: true,
+      locations: [{ locationId: flow.get(R.LOCATION_1).id }],
+    }).then(({ fund }) => flow.set(R.FUND_B, fund, ({ id }) => Funds.deleteFundViaApi(id)));
+  };
+
+  const createBudgetB = (flow) => {
+    return Budgets.createViaApi({
+      ...Budgets.getDefaultBudget(),
+      fiscalYearId: flow.get(R.FISCAL_YEAR).id,
+      fundId: flow.get(R.FUND_B).id,
+      allocated: 100,
+    }).then((budget) => flow.set(R.BUDGET_B, budget, ({ id }) => Budgets.deleteViaApi(id)));
+  };
+
+  const createInstance = (flow) => {
+    return InventoryInstance.createInstanceViaApi().then(({ instanceData }) => flow.set(R.INSTANCE, instanceData));
+  };
+
+  const createOrganization = (flow) => {
+    return Organizations.createOrganizationViaApi({
+      ...NewOrganization.defaultUiOrganizations,
+      isVendor: true,
+    }).then((organizationId) => flow.set(
+      R.ORGANIZATION,
+      { id: organizationId, erpCode: NewOrganization.defaultUiOrganizations.erpCode },
+      () => Organizations.deleteOrganizationViaApi(organizationId),
+    ));
+  };
+
+  const fetchMaterialType = (flow) => {
+    return cy
+      .getMaterialTypes({ limit: 1 })
+      .then((materialType) => flow.set(R.MATERIAL_TYPE, materialType));
+  };
+
+  const fetchAcquisitionMethod = (flow) => {
+    return cy
+      .getAcquisitionMethodsApi({
+        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
       })
-      .then((location2) => {
-        testData.locations.location2 = location2;
-      });
+      .then((response) => flow.set(R.ACQUISITION_METHOD, response.body.acquisitionMethods[0]));
   };
 
-  const createFinanceData = () => {
-    return FiscalYears.createViaApi(FiscalYears.defaultUiFiscalYear).then((fiscalYearResponse) => {
-      testData.fiscalYear = fiscalYearResponse;
-
-      const ledger = {
-        ...Ledgers.defaultUiLedger,
-        fiscalYearOneId: fiscalYearResponse.id,
-      };
-
-      return Ledgers.createViaApi(ledger).then((ledgerResponse) => {
-        testData.ledger = ledgerResponse;
-
-        const fundA = {
-          ...Funds.getDefaultFund(),
-          ledgerId: ledgerResponse.id,
-          restrictByLocations: false,
-        };
-
-        return Funds.createViaApi(fundA).then((fundAResponse) => {
-          testData.funds.fundA = fundAResponse.fund;
-
-          const budgetA = {
-            ...Budgets.getDefaultBudget(),
-            fiscalYearId: fiscalYearResponse.id,
-            fundId: fundAResponse.fund.id,
-            allocated: 100,
-          };
-
-          return Budgets.createViaApi(budgetA).then((budgetAResponse) => {
-            testData.budgets.budgetA = budgetAResponse;
-
-            const fundB = {
-              ...Funds.getDefaultFund(),
-              ledgerId: ledgerResponse.id,
-              restrictByLocations: true,
-              locations: [{ locationId: testData.locations.location1.id }],
-            };
-
-            return Funds.createViaApi(fundB).then((fundBResponse) => {
-              testData.funds.fundB = fundBResponse.fund;
-
-              const budgetB = {
-                ...Budgets.getDefaultBudget(),
-                fiscalYearId: fiscalYearResponse.id,
-                fundId: fundBResponse.fund.id,
-                allocated: 100,
-              };
-
-              return Budgets.createViaApi(budgetB).then((budgetBResponse) => {
-                testData.budgets.budgetB = budgetBResponse;
-              });
-            });
-          });
-        });
-      });
-    });
-  };
-
-  const createOrderLine = (purchaseOrderId, materialTypeId, acquisitionMethodId, config) => {
-    // eslint-disable-next-line no-unused-vars
-    const { id, ...baseOrderLine } = {
-      ...BasicOrderLine.defaultOrderLine,
-      purchaseOrderId,
-      cost: {
-        listUnitPrice: 20,
-        currency: 'USD',
-        quantityPhysical: config.quantity,
-        poLineEstimatedPrice: 20,
-      },
-      fundDistribution: config.fundDistribution,
-      locations: config.locations,
-      acquisitionMethod: acquisitionMethodId,
-      instanceId: config.instanceId,
-      physical: {
-        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-        materialType: materialTypeId,
-        materialSupplier: testData.organization.id,
-      },
-    };
-
-    return baseOrderLine;
-  };
-
-  const createOrder1WithLine = (materialTypeId, acquisitionMethodId) => {
+  const createOrder1WithLine = (flow) => {
     const order = {
-      ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+      ...NewOrder.getDefaultOrder({ vendorId: flow.get(R.ORGANIZATION).id }),
       orderType: ORDER_TYPES.ONE_TIME_API,
       reEncumber: true,
     };
 
-    return Orders.createOrderViaApi(order).then((orderResponse) => {
-      testData.order1 = orderResponse;
+    return Orders.createOrderViaApi(order)
+      .then((orderResponse) => {
+        flow.set(R.ORDER_1, orderResponse, (savedOrder) => Orders.updateOrderViaApi(
+          { ...savedOrder, workflowStatus: ORDER_STATUSES.PENDING },
+          true,
+        ).then(() => Orders.deleteOrderViaApi(savedOrder.id)));
 
-      const orderLine = createOrderLine(orderResponse.id, materialTypeId, acquisitionMethodId, {
-        fundDistribution: [
-          {
-            code: testData.funds.fundB.code,
-            fundId: testData.funds.fundB.id,
-            distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-            value: 100,
-          },
-        ],
-        locations: [
-          {
-            locationId: testData.locations.location1.id,
+        return OrderLines.createOrderLineViaApi(
+          buildOrderLine(flow, {
+            purchaseOrderId: orderResponse.id,
+            fundDistribution: [
+              {
+                code: flow.get(R.FUND_B).code,
+                fundId: flow.get(R.FUND_B).id,
+                distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                value: 100,
+              },
+            ],
+            locations: [
+              { locationId: flow.get(R.LOCATION_1).id, quantity: 1, quantityPhysical: 1 },
+            ],
             quantity: 1,
-            quantityPhysical: 1,
-          },
-        ],
-        quantity: 1,
-        instanceId: testData.instance.instanceId,
-      });
-
-      return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
-        testData.orderLine1 = orderLineResponse;
-
+          }),
+        );
+      })
+      .then((orderLineResponse) => {
+        flow.set(R.ORDER_LINE_1, orderLineResponse);
         return Orders.updateOrderViaApi({
-          ...testData.order1,
+          ...flow.get(R.ORDER_1),
           workflowStatus: ORDER_STATUSES.OPEN,
         });
       });
-    });
   };
 
-  const createOrder2WithLine = (materialTypeId, acquisitionMethodId) => {
+  const createOrder2WithLine = (flow) => {
     const order = {
-      ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+      ...NewOrder.getDefaultOrder({ vendorId: flow.get(R.ORGANIZATION).id }),
       orderType: ORDER_TYPES.ONE_TIME_API,
       reEncumber: true,
       approved: true,
     };
 
-    return Orders.createOrderViaApi(order).then((orderResponse) => {
-      testData.order2 = orderResponse;
+    return Orders.createOrderViaApi(order)
+      .then((orderResponse) => {
+        flow.set(R.ORDER_2, orderResponse, (savedOrder) => Orders.updateOrderViaApi(
+          { ...savedOrder, workflowStatus: ORDER_STATUSES.PENDING },
+          true,
+        ).then(() => Orders.deleteOrderViaApi(savedOrder.id)));
 
-      const orderLine = createOrderLine(orderResponse.id, materialTypeId, acquisitionMethodId, {
-        fundDistribution: [
-          {
-            code: testData.funds.fundA.code,
-            fundId: testData.funds.fundA.id,
-            distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-            value: 50,
-          },
-          {
-            code: testData.funds.fundB.code,
-            fundId: testData.funds.fundB.id,
-            distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-            value: 50,
-          },
-        ],
-        locations: [
-          {
-            locationId: testData.locations.location2.id,
+        return OrderLines.createOrderLineViaApi(
+          buildOrderLine(flow, {
+            purchaseOrderId: orderResponse.id,
+            fundDistribution: [
+              {
+                code: flow.get(R.FUND_A).code,
+                fundId: flow.get(R.FUND_A).id,
+                distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                value: 50,
+              },
+              {
+                code: flow.get(R.FUND_B).code,
+                fundId: flow.get(R.FUND_B).id,
+                distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                value: 50,
+              },
+            ],
+            locations: [
+              { locationId: flow.get(R.LOCATION_2).id, quantity: 2, quantityPhysical: 2 },
+            ],
             quantity: 2,
-            quantityPhysical: 2,
-          },
-        ],
-        quantity: 2,
-        instanceId: testData.instance.instanceId,
-      });
+          }),
+        );
+      })
+      .then((orderLineResponse) => flow.set(R.ORDER_LINE_2, orderLineResponse));
+  };
 
-      return OrderLines.createOrderLineViaApi(orderLine).then((orderLineResponse) => {
-        testData.orderLine2 = orderLineResponse;
-      });
+  const createUser = (flow) => {
+    return cy
+      .createTempUser([Permissions.uiOrdersApprovePurchaseOrders.gui, Permissions.uiOrdersEdit.gui])
+      .then((userProperties) => flow.set(R.USER, userProperties, ({ userId }) => Users.deleteViaApi(userId)));
+  };
+
+  const loginAndNavigate = (flow) => {
+    const { username, password } = flow.get(R.USER);
+    return cy.login(username, password, {
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
     });
   };
 
-  const createOrderData = () => {
-    return InventoryInstance.createInstanceViaApi()
-      .then(({ instanceData }) => {
-        testData.instance = instanceData;
-        return Organizations.createOrganizationViaApi({
-          ...NewOrganization.defaultUiOrganizations,
-          isVendor: true,
-        });
-      })
-      .then((organizationId) => {
-        testData.organization = {
-          id: organizationId,
-          erpCode: NewOrganization.defaultUiOrganizations.erpCode,
-        };
-        return cy.getMaterialTypes({ limit: 1 });
-      })
-      .then((materialType) => cy
-        .getAcquisitionMethodsApi({
-          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE}"`,
-        })
-        .then((acquisitionMethodResponse) => ({
-          materialType,
-          acquisitionMethod: acquisitionMethodResponse.body.acquisitionMethods[0],
-        })))
-      .then(({ materialType, acquisitionMethod }) => {
-        return createOrder1WithLine(materialType.id, acquisitionMethod.id).then(() => createOrder2WithLine(materialType.id, acquisitionMethod.id));
-      });
+  return {
+    fetchServicePoint,
+    createLocation1,
+    createLocation2,
+    createFiscalYear,
+    createLedger,
+    createFundA,
+    createBudgetA,
+    createFundB,
+    createBudgetB,
+    createInstance,
+    createOrganization,
+    fetchMaterialType,
+    fetchAcquisitionMethod,
+    createOrder1WithLine,
+    createOrder2WithLine,
+    createUser,
+    loginAndNavigate,
   };
+};
+
+describe('Orders', () => {
+  const flow = new ExecutionFlowManager();
 
   before('Create test data', () => {
     cy.getAdminToken();
-    return ServicePoints.getViaApi()
-      .then((servicePoints) => createLocations(servicePoints[0].id))
-      .then(() => createFinanceData())
-      .then(() => createOrderData())
-      .then(() => {
-        cy.createTempUser([
-          Permissions.uiOrdersApprovePurchaseOrders.gui,
-          Permissions.uiOrdersEdit.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        });
-      });
+    const steps = getPreconditionSteps();
+
+    flow
+      .step(steps.fetchServicePoint)
+      .step(steps.createLocation1)
+      .step(steps.createLocation2)
+      .step(steps.createFiscalYear)
+      .step(steps.createLedger)
+      .step(steps.createFundA)
+      .step(steps.createBudgetA)
+      .step(steps.createFundB)
+      .step(steps.createBudgetB)
+      .step(steps.createInstance)
+      .step(steps.createOrganization)
+      .step(steps.fetchMaterialType)
+      .step(steps.fetchAcquisitionMethod)
+      .step(steps.createOrder1WithLine)
+      .step(steps.createOrder2WithLine)
+      .step(steps.createUser)
+      .step(steps.loginAndNavigate);
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      Promise.all(
-        Object.values({ order1: testData.order1, order2: testData.order2 }).map((order) => Orders.updateOrderViaApi(
-          {
-            ...order,
-            workflowStatus: ORDER_STATUSES.PENDING,
-          },
-          true,
-        )),
-      ).then(() => {
-        Object.values({ order1: testData.order1, order2: testData.order2 }).forEach((order) => Orders.deleteOrderViaApi(order.id));
-        Object.values(testData.locations).forEach((location) => {
-          NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-            location.institutionId,
-            location.campusId,
-            location.libraryId,
-            location.id,
-          );
-        });
-        Object.values(testData.budgets).forEach((budget) => Budgets.deleteViaApi(budget.id));
-        Object.values(testData.funds).forEach((fund) => Funds.deleteFundViaApi(fund.id));
-        Ledgers.deleteLedgerViaApi(testData.ledger.id);
-        FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
-        Users.deleteViaApi(testData.user.userId);
-        Organizations.deleteOrganizationViaApi(testData.organization.id);
-      });
-    });
+    cy.getAdminToken();
+    flow.cleanup();
   });
 
   it(
     'C435907 An order with two funds (one is restricted by location) can be opened (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C435907'] },
     () => {
-      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order2.poNumber);
-      Orders.selectFromResultsList(testData.order2.poNumber);
+      const { order2, orderLine2, location1 } = flow.ctx();
+
+      cy.log('<----- STEP 1 ----->');
+      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, order2.poNumber);
+      Orders.selectFromResultsList(order2.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
+
+      cy.log('<----- STEP 2 ----->');
       Orders.openOrder();
-      Orders.checkInvalidLocationErrorMessage(testData.orderLine2.poLineNumber);
+      Orders.checkInvalidLocationErrorMessage(orderLine2.poLineNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
       InteractorsTools.closeCalloutMessage();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
-      OrderDetails.openPolDetails(testData.orderLine2.titleOrPackage);
+
+      cy.log('<----- STEP 3 ----->');
+      OrderDetails.openPolDetails(orderLine2.titleOrPackage);
       OrderLines.checkLocationRestrictedErrorMessage();
       InteractorsTools.closeCalloutMessage();
+
+      cy.log('<----- STEP 4 ----->');
       OrderLineDetails.openOrderLineEditForm();
+
+      cy.log('<----- STEP 5 ----->');
       OrderLines.setPhysicalQuantity({
         quantity: '1',
         index: 0,
       });
       OrderLines.openCreateHoldingForLocation();
-      SelectLocationModal.selectLocation(testData.locations.location1.name);
+      SelectLocationModal.selectLocation(location1.name);
       OrderLines.setPhysicalQuantity({
         quantity: '1',
         index: 1,
         changeQuantity: false,
       });
+
+      cy.log('<----- STEP 6 ----->');
       OrderLineEditForm.clickSaveButton();
       InteractorsTools.checkNoErrorCallouts();
+
+      cy.log('<----- STEP 7 ----->');
       OrderLineDetails.backToOrderDetails();
-      OrderDetails.openOrder({ orderNumber: testData.order2.poNumber });
+      OrderDetails.openOrder({ orderNumber: order2.poNumber });
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-      OrderDetails.openPolDetails(testData.orderLine2.titleOrPackage);
+
+      cy.log('<----- STEP 8 ----->');
+      OrderDetails.openPolDetails(orderLine2.titleOrPackage);
       InteractorsTools.checkNoErrorCallouts();
     },
   );
