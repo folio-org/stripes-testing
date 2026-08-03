@@ -243,7 +243,7 @@ describe('Data Export', () => {
 
                   // Add electronic access to MARC holdings
                   cy.getRecordDataInEditorViaApi(holdingId).then((marcData) => {
-                    marcData.relatedRecordVersion = 1;
+                    marcData.relatedRecordVersion = 2;
                     marcData.fields.push({
                       tag: '856',
                       content: [
@@ -327,7 +327,7 @@ describe('Data Export', () => {
 
                 // Add electronic access to MARC holdings
                 cy.getRecordDataInEditorViaApi(holdingId).then((marcData) => {
-                  marcData.relatedRecordVersion = 1;
+                  marcData.relatedRecordVersion = 2;
                   marcData.fields.push({
                     tag: '856',
                     content: [
