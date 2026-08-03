@@ -4,6 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SelectInstanceModal from '../../../support/fragments/inventory/modals/inventoryInstanceSelectInstanceModal';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -130,15 +131,17 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
         OrderLines.preparePOLToPackage(packageNameForPol);
-        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
+        OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.name);
         OrderLines.expandPackageTitles();
-        OrderLines.addPackageTitle();
+        OrderLines.clickInstanceTitleLookup();
+        SelectInstanceModal.clearDefaultHeldbyFilter(); // Clear default filter to avoid selecting instance from the wrong tenant.clearDefaultHeldbyFilter(); // Clear default filter to avoid selecting instance from the wrong tenant
         OrderLines.selectInstanceInSelectInstanceModal(testData.firstSharedInstance.title, 0);
         OrderLines.varifyAddingInstanceTPackageTitle(
           testData.firstSharedInstance.title,
           testData.order.poNumber,
         );
-        OrderLines.addPackageTitle();
+        OrderLines.clickInstanceTitleLookup();
+        SelectInstanceModal.clearDefaultHeldbyFilter();
         OrderLines.selectInstanceInSelectInstanceModal(testData.secondSharedInstance.title, 0);
         OrderLines.varifyAddingInstanceTPackageTitle(
           testData.secondSharedInstance.title,
